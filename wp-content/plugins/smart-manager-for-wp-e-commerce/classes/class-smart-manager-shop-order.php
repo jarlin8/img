@@ -46,6 +46,7 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 				// Filters for modifying advanced search query clauses
 				add_filter( 'woocommerce_orders_table_query_clauses',  array( &$this, 'modify_orders_table_query_clauses' ), 99, 3 );
 				add_filter( 'sm_search_query_formatted', array( 'Smart_Manager_Shop_Order', 'sm_order_addresses_search_query_formatted' ), 12, 2 );
+				add_filter( 'sm_search_wc_orders_meta_cond', array( &$this,'search_wc_orders_meta_cond' ), 10, 2 );
 
 				// Filters for 'inline_update' functionality
 				add_filter( 'sm_default_inline_update', function() { return false; } );
@@ -603,11 +604,15 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 				if ( ! empty( $curr_obj->req_params['advanced_search_query'] ) && $curr_obj->req_params['advanced_search_query'] != '[]' ) {
 					$curr_obj->req_params['advanced_search_query'] = ( ! is_array( $curr_obj->req_params['advanced_search_query'] ) ) ? json_decode( stripslashes( $curr_obj->req_params['advanced_search_query'] ), true ) : $curr_obj->req_params['advanced_search_query'];
 					if( ! empty( $curr_obj->req_params['advanced_search_query'] ) ) {
-						$curr_obj->process_search_cond( array( 'post_type' => '',
+						$curr_obj->process_search_cond( array( 'post_type' => ( ! empty( $curr_obj->post_type ) && 'shop_subscription' === $curr_obj->post_type ) ? '' : $curr_obj->post_type,
 														'search_query' => (!empty($curr_obj->req_params['advanced_search_query'])) ? $curr_obj->req_params['advanced_search_query'] : array(),
 														'SM_IS_WOO30' => (!empty($curr_obj->req_params['SM_IS_WOO30'])) ? $curr_obj->req_params['SM_IS_WOO30'] : '',
 														'search_cols_type' => $data_col_params['search_cols_type'],
-														'data_col_params' => $data_col_params ) );
+														'data_col_params' => $data_col_params,
+														'pkey' => 'order_id',
+														'join_table' => 'wc_orders',
+														'type' => 'type'
+														 ) );
 
 					}
 				}
@@ -1928,6 +1933,22 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 			}
 
 			return ( ! empty( Smart_Manager_Shop_Order::$hpos_tables_column_property_mapping[$key][$col_nm]['name'] ) ) ? Smart_Manager_Shop_Order::$hpos_tables_column_property_mapping[$key][$col_nm]['name'] : $col_nm;
+		}
+
+		/**
+		 * Search meta data from wc_orders_meta table.
+		 *
+		 * @param string $meta_cond meta conditions.
+		 * @param array $search_params search params array.
+		 * @return string $meta_cond Updated meta conditions
+		 */
+		public static function search_wc_orders_meta_cond( $meta_cond = '', $search_params = array() ) {
+			if ( ( ! in_array( $search_params['search_col'], array( '_schedule_next_payment', '_schedule_trial_end', '_schedule_start', '_schedule_end', '_schedule_cancelled',
+			'_schedule_payment_retry'
+			 ) ) ) || ( ( ! empty( $search_params['rule_val'] ) && in_array( $search_params['search_operator'], array ( '=', '>', '>=' ) ) ) && ( '0' !== $search_params['rule_val'] && '' !== $search_params['rule_val'] && 0 !== $search_params['rule_val'] ) ) || empty( $search_params['search_col'] ) ) {
+				return $meta_cond;
+			}
+			return ( '0' === $search_params['rule_val'] || '' === $search_params['rule_val'] || 0 === $search_params['rule_val'] ) ? "( ". $meta_cond ." OR ( ". $search_params['table_nm'] .".meta_key = '". $search_params['search_col'] . "' AND ". $search_params['table_nm'] .".meta_value ". $search_params['search_operator']." 0"." ) )" : "( ". $meta_cond ." OR ( ". $search_params['table_nm'] .".meta_key = '". $search_params['search_col'] . "' AND ". $search_params['table_nm'] .".meta_value = 0"." ) OR ( ". $search_params['table_nm'] .".meta_key = '". $search_params['search_col'] . "' AND ". $search_params['table_nm'] .".meta_value ". $search_params['search_operator']." '".$search_params['rule_val']."' ) )";
 		}
 	}
 }

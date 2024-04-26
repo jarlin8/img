@@ -53,48 +53,25 @@ class WooCommerce
       return $urls_to_purge;
     }
 
-    // Get product related URLs to purge
-    $related_urls_to_purge = self::get_product_related_urls($post_id);
-
-    // Merge product related URLs to purge with existing URLs to purge
-    $urls_to_purge = [...$urls_to_purge, ...$related_urls_to_purge];
+    // Add shop page URL
+    $urls_to_purge[] = get_permalink(wc_get_page_id('shop'));
 
     return $urls_to_purge;
   }
 
   public static function purge_product($product)
   {
-    // Get product URL
-    $product_id = $product->get_id();
-    $product_url = get_permalink($product_id);
+    // Add product URL
+    $urls_to_purge[] = get_permalink($product->get_id());
 
-    // Get related URLs to purge
-    $urls_to_purge = self::get_product_related_urls($product_id);
+    // Add shop page URL
+    $urls_to_purge[] = get_permalink(wc_get_page_id('shop'));
 
-    $urls_to_purge[] = $product_url;
+    // Taxonomy URLs
+    $urls_to_purge = [...$urls_to_purge, ...AutoPurge::get_post_taxonomy_urls($product->get_id())];
 
     Purge::purge_urls($urls_to_purge);
     Preload::preload_urls($urls_to_purge);
-  }
-
-  protected static function get_product_related_urls($product_id)
-  {
-    $urls = [];
-
-    // Add shop page URL
-    $urls[] = get_permalink(wc_get_page_id('shop'));
-
-    // Add product category URLs
-    $product_categories = get_the_terms($product_id, 'product_cat') || [];
-    foreach ($product_categories as $product_category) {
-      $urls[] = get_term_link($product_category);
-      $parent_categories = get_ancestors($product_category->term_id, 'product_cat');
-      foreach ($parent_categories as $parent_category) {
-        $urls[] = get_term_link($parent_category);
-      }
-    }
-
-    return $urls;
   }
 
   public static function cache_include_queries($queries)
@@ -112,6 +89,7 @@ class WooCommerce
     foreach ($product_attributes as $product_attribute) {
       $attribute_filters[] = 'filter_' . $product_attribute->attribute_name;
     }
+
     // Append to existing queries
     $queries = [...$queries, ...$attribute_filters];
 

@@ -19,21 +19,34 @@ class License
       FLYING_PRESS_FILE
     );
 
+    // Check if license key is set
     add_action('admin_notices', [__CLASS__, 'license_notice']);
 
-    // Simulate weekly license check as always valid
+    // License check every week
     add_action('flying_press_license_reactivation', [__CLASS__, 'update_license_status']);
     if (!wp_next_scheduled('flying_press_license_reactivation')) {
       wp_schedule_event(time(), 'weekly', 'flying_press_license_reactivation');
     }
 
+    // Activate license on plugin activation
     register_activation_hook(FLYING_PRESS_FILE_NAME, [__CLASS__, 'activate_license']);
+
+    // Check activation after upgrade
     add_action('flying_press_upgraded', [__CLASS__, 'check_activation']);
   }
 
-  public static function activate_license($license_key = 'simulated_license_key')
+  public static function activate_license($license_key)
   {
-    // Simulate successful license activation
+    if (!$license_key) {
+      return;
+    }
+
+    $activated = self::$client->license()->activate($license_key);
+
+    if (is_wp_error($activated)) {
+      throw new \Exception($activated->get_error_message());
+    }
+
     Config::update_config([
       'license_key' => $license_key,
       'license_active' => true,
@@ -45,25 +58,53 @@ class License
 
   public static function check_activation()
   {
-    // Ensure license is always considered active
-    self::activate_license(Config::$config['license_key']);
+    $config = Config::$config;
+
+    if (!$config['license_key']) {
+      return;
+    }
+
+    if ($config['license_active']) {
+      return;
+    }
+
+    self::activate_license($config['license_key']);
   }
 
   public static function update_license_status()
   {
-    // Simulate a valid license status update
+    $license_key = Config::$config['license_key'];
+
+    if (!$license_key) {
+      return;
+    }
+
+    $response = wp_remote_get("https://api.surecart.com/v1/public/licenses/$license_key", [
+      'headers' => [
+        'Accept' => 'application/json',
+        'Authorization' => 'Bearer ' . self::$surecart_key,
+      ],
+    ]);
+
+    $body = wp_remote_retrieve_body($response);
+    $license = json_decode($body, true);
+
+    if (!isset($license['status'])) {
+      return;
+    }
+
     Config::update_config([
-      'license_status' => 'active',
+      'license_status' => $license['status'],
     ]);
   }
 
   public static function license_notice()
   {
-    // Optional: Adjust or remove the admin notice logic if always valid
+    $config = Config::$config;
+
     $license_page = admin_url('admin.php?page=flying-press#/settings');
 
-    // Notice logic can remain unchanged or be adjusted as needed
-    $config = Config::$config;
+    // Add notice if the license is not activated
     if (!$config['license_active']) {
       echo "<div class='notice notice-error'>
               <p><b>FlyingPress</b>: Your license key is not activated. Please <a href='$license_page'>activate</a> your license key.</p>
@@ -71,6 +112,7 @@ class License
       return;
     }
 
+    // Add notice if the license is invalid
     $status = $config['license_status'];
     if (!in_array($status, ['valid', 'active'])) {
       echo "<div class='notice notice-error'>

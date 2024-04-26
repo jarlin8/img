@@ -243,7 +243,7 @@ class Smart_Manager_Pro_Views {
 		}
 		if ( is_callable( array( 'Smart_Manager_Pro_Access_Privilege', 'get_current_user_access_privilege_settings' ) ) ) {
 			$accessible_dashboards = Smart_Manager_Pro_Access_Privilege::get_current_user_access_privilege_settings();
-			if ( ! empty( $accessible_dashboards ) && is_array( $accessible_dashboards ) && isset( $accessible_dashboards['valid'] ) && ! empty( $accessible_dashboards['valid'] ) && is_array( $accessible_dashboards['valid'] ) ) {
+			if ( ! empty( $accessible_dashboards ) && is_array( $accessible_dashboards ) && isset( $accessible_dashboards['valid'] ) && ! empty( $accessible_dashboards['valid'] ) && is_array( $accessible_dashboards['valid'] ) && count( $accessible_dashboards['valid'] ) > 0 ) {
 				$view_results = $wpdb->get_results(
 									$wpdb->prepare("SELECT title,
 															slug,

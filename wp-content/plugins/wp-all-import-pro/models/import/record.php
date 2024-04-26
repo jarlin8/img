@@ -168,10 +168,9 @@ class PMXI_Import_Record extends PMXI_Model_Record {
 				}
 
 				// If processing is being forced then we must ensure a file exists even if it's empty.
-				if( apply_filters('wp_all_import_force_cron_processing_on_empty_feed', false, $this->id) ){
-					if(!empty($filePath) && !file_exists($filePath)){
+				// Do the file checks first so that we don't call the filter if a file exists.
+				if( !empty($filePath) && !file_exists($filePath) && apply_filters('wp_all_import_force_cron_processing_on_empty_feed', false, $this->id) ){
 						file_put_contents($filePath, '');
-					}
 				}
 
 				// if feed path found
@@ -5699,83 +5698,112 @@ class PMXI_Import_Record extends PMXI_Model_Record {
                             $this->set(array('changed_missing' => $this->changed_missing + count($changed_ids)))->update();
                         }
 
-                        if ( ! empty($missingPostRecords) ){
+	                    if ( ! empty($missingPostRecords) ){
 
-                            $ids = array();
+		                    $ids = array();
+		                    $admins = [];
 
-                            foreach ($missingPostRecords as $k => $missingPostRecord) {
-                                $ids[] = intval($missingPostRecord['post_id']);
-                            }
+		                    foreach ($missingPostRecords as $k => $missingPostRecord) {
+			                    $ids[] = intval($missingPostRecord['post_id']);
+		                    }
 
-                            switch ($this->options['custom_type']){
-                                case 'import_users':
-                                case 'shop_customer':
-                                    foreach( $ids as $k => $id) {
-                                        $user_meta = get_userdata($id);
-                                        $user_roles = $user_meta->roles;
-                                        if (!empty($user_roles) && in_array('administrator', $user_roles)) {
-                                            unset($ids[$k]);
-                                        }
-                                    }
-                                    do_action('pmxi_delete_post', $ids, $this);
-                                    // delete_user action
-                                    foreach( $ids as $id) {
-                                        do_action( 'delete_user', $id, $reassign = null, new WP_User($id) );
-                                    }
-                                    $sql = "delete a,b
+		                    switch ($this->options['custom_type']){
+			                    case 'import_users':
+			                    case 'shop_customer':
+				                    foreach( $ids as $k => $id) {
+					                    $user_meta = get_userdata($id);
+					                    $user_roles = $user_meta->roles;
+					                    if (!empty($user_roles) && in_array('administrator', $user_roles)) {
+						                    $admins[] = $id;
+						                    unset($ids[$k]);
+
+											// Update skipped record's iteration so that it's not processed in a loop indefinitely.
+						                    $adminRecord = new PMXI_Post_Record();
+						                    $adminRecord->getBy(array(
+							                    'post_id' => $id,
+							                    'import_id' => $this->id,
+						                    ));
+						                    if ( ! $adminRecord->isEmpty() ) {
+												$adminRecord->set(array(
+													'iteration' => $iteration
+												))->save();
+						                    }
+					                    }
+				                    }
+
+				                    // Don't proceed if there are no non-admin IDs left.
+				                    if(empty($ids)){
+					                    break;
+				                    }
+
+				                    do_action('pmxi_delete_post', $ids, $this);
+				                    // delete_user action
+				                    foreach( $ids as $id) {
+					                    do_action( 'delete_user', $id, $reassign = null, new WP_User($id) );
+				                    }
+				                    $sql = "delete a,b
                                       FROM ".$this->wpdb->users." a
                                       LEFT JOIN ".$this->wpdb->usermeta." b ON ( a.ID = b.user_id )
                                       WHERE a.ID IN (" . implode(',', $ids) . ");";
-                                    // deleted_user action
-                                    foreach( $ids as $id) {
-                                        do_action( 'deleted_user', $id, $reassign = null, new WP_User($id) );
-                                    }
-                                    $this->wpdb->query( $sql );
-                                    break;
-                                case 'taxonomies':
-                                    do_action('pmxi_delete_taxonomy_term', $ids, $this);
-                                    foreach ($ids as $term_id){
-                                        wp_delete_term( $term_id, $this->options['taxonomy_type'] );
-                                    }
-                                    break;
-                                case 'woo_reviews':
-                                case 'comments':
-                                    do_action('pmxi_delete_comment', $ids, $this);
-                                    foreach ($ids as $comment_id){
-                                        wp_delete_comment( $comment_id, true );
-                                    }
-                                    break;
-                                case 'gf_entries':
-                                    do_action('pmxi_delete_gf_entries', $ids, $this);
-                                    foreach ($ids as $post_id) {
-                                        GFAPI::delete_entry($post_id);
-                                    }
-                                    break;
-                                case 'shop_order':
-                                    do_action('pmxi_delete_shop_orders', $ids, $this);
-                                    foreach ($ids as $order_id) {
-                                        $order = wc_get_order($order_id);
-                                        if ($order && !is_wp_error($order)) {
-                                            $order->delete(true);
-                                        }
-                                    }
-                                    break;
-                                default:
-                                    do_action('pmxi_delete_post', $ids, $this);
-                                    foreach ($ids as $post_id){
-                                        wp_delete_post( $post_id, TRUE );
-                                    }
-                                    break;
-                            }
+				                    // deleted_user action
+				                    foreach( $ids as $id) {
+					                    do_action( 'deleted_user', $id, $reassign = null, new WP_User($id) );
+				                    }
+				                    $this->wpdb->query( $sql );
+				                    break;
+			                    case 'taxonomies':
+				                    do_action('pmxi_delete_taxonomy_term', $ids, $this);
+				                    foreach ($ids as $term_id){
+					                    wp_delete_term( $term_id, $this->options['taxonomy_type'] );
+				                    }
+				                    break;
+			                    case 'woo_reviews':
+			                    case 'comments':
+				                    do_action('pmxi_delete_comment', $ids, $this);
+				                    foreach ($ids as $comment_id){
+					                    wp_delete_comment( $comment_id, true );
+				                    }
+				                    break;
+			                    case 'gf_entries':
+				                    do_action('pmxi_delete_gf_entries', $ids, $this);
+				                    foreach ($ids as $post_id) {
+					                    GFAPI::delete_entry($post_id);
+				                    }
+				                    break;
+			                    case 'shop_order':
+				                    do_action('pmxi_delete_shop_orders', $ids, $this);
+				                    foreach ($ids as $order_id) {
+					                    $order = wc_get_order($order_id);
+					                    if ($order && !is_wp_error($order)) {
+						                    $order->delete(true);
+					                    }
+				                    }
+				                    break;
+			                    default:
+				                    do_action('pmxi_delete_post', $ids, $this);
+				                    foreach ($ids as $post_id){
+					                    wp_delete_post( $post_id, TRUE );
+				                    }
+				                    break;
+		                    }
 
-                            // Delete record form pmxi_posts
-                            $sql = "DELETE FROM " . PMXI_Plugin::getInstance()->getTablePrefix() . "posts WHERE post_id IN (".implode(',', $ids ).")";
-                            $this->wpdb->query( $sql );
+		                    // Only perform these actions if there are ids to process.
+		                    if(!empty($ids)){
 
-                            $this->set(array('deleted' => $this->deleted + count($ids)))->update();
+			                    // Delete record from pmxi_posts
+			                    $sql = "DELETE FROM " . PMXI_Plugin::getInstance()->getTablePrefix() . "posts WHERE post_id IN (".implode(',', $ids ).")";
+			                    $this->wpdb->query( $sql );
 
-                            $logger and call_user_func($logger, sprintf(__('%d Posts deleted from database. IDs (%s)', 'wp_all_import_plugin'), $this->deleted, implode(",", $ids)));
-                        }
+			                    $this->set(array('deleted' => $this->deleted + count($ids)))->update();
+
+			                    $logger and call_user_func($logger, sprintf(__('%d Posts deleted from database. IDs (%s)', 'wp_all_import_plugin'), $this->deleted, implode(",", $ids)));
+		                    }
+
+		                    // Only perform these actions if admin users were skipped in the deletion process.
+		                    if(!empty($admins)){
+			                    $logger and call_user_func($logger, sprintf(__('%d Users not deleted due to administrator role. IDs (%s)', 'wp_all_import_plugin'), count($admins), implode(",", $admins)));
+		                    }
+						}
                     }
 
                     if ( PMXI_Plugin::is_ajax() ) break;

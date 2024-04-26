@@ -3676,7 +3676,7 @@ jQuery.widget('ui.dialog', jQuery.extend({}, jQuery.ui.dialog.prototype, {
 
         function numericRenderer(hotInstance, td, row, col, prop, value, cellProperties) {
 		    Handsontable.renderers.NumericRenderer.apply(this, arguments);
-
+			let currentRowData = (Object.keys(window.smart_manager.currentDashboardData).length > 0 && window.smart_manager.currentDashboardData.hasOwnProperty(row)) ? window.smart_manager.currentDashboardData[row] : {};
 		    let colObj = ( window.smart_manager.currentVisibleColumns.indexOf(col) != -1 ) ? window.smart_manager.currentVisibleColumns[col] : {};
 
 		    if( !value && '' === value && null === value ) {
@@ -3689,13 +3689,15 @@ jQuery.widget('ui.dialog', jQuery.extend({}, jQuery.ui.dialog.prototype, {
 		    } else {
 		    	td.innerHTML = '<div title="'+ td.innerHTML +'" class="wrapper">' + td.innerHTML + '</div>';
 		    }
-
 			// Code for handling colorCodes highlighting for the cells
 			let colorCodes = ( typeof(cellProperties.colorCodes) != 'undefined' ) ? cellProperties.colorCodes : '';
 
 			if( value !== '' && value != null ) {
 
-				if( colorCodes != '' ) {					
+				if( colorCodes != '' ) {	
+					if ( currentRowData && currentRowData.hasOwnProperty('custom_stock_color_code') ) {
+						return td.classList.add(...['sm_beta_select_'+currentRowData['custom_stock_color_code'], 'sm_font_bold']);
+					}				
 					for( let color in colorCodes ) {
 						
 						let min = (colorCodes[color].hasOwnProperty('min')) ? colorCodes[color]['min'] : -1,
@@ -3710,7 +3712,6 @@ jQuery.widget('ui.dialog', jQuery.extend({}, jQuery.ui.dialog.prototype, {
 						if(isNaN(v)){
 							continue;
 						}
-
 						if( ((min < 0 || max < 0) && ((min >= 0 && v >= min) || (max >= 0 && v <= max)))
 							|| ((min >= 0 && max >= 0) && (v >= min) && (v <= max)) ){
 							td.classList.add(...['sm_beta_select_'+color, 'sm_font_bold'])

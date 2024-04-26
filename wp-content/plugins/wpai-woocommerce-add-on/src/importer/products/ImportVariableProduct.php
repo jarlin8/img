@@ -598,6 +598,10 @@ class ImportVariableProduct extends ImportProduct {
                             $variation = new \WC_Product_Variation($child->get_id());
                             $variation->set_status('publish');
                             $variation->save();
+                            wp_update_post([
+                                'ID' => $child->get_id(),
+                                'post_author'  => get_post_field( 'post_author', $this->product->get_id() ),
+                            ]);
                             $postRecord->set(array('iteration' => $this->getImport()->iteration))->update();
                             break;
                         }
@@ -647,12 +651,12 @@ class ImportVariableProduct extends ImportProduct {
 
         // Created posts will all have the following data.
         $variation_post_data = array(
-            'post_title' => 'Product #' . $this->product->get_id() . ' Variation',
+            'post_title'   => 'Product #' . $this->product->get_id() . ' Variation',
             'post_content' => '',
-            'post_status' => 'publish',
-            'post_author' => get_current_user_id(),
-            'post_parent' => $this->product->get_id(),
-            'post_type' => 'product_variation',
+            'post_status'  => 'publish',
+            'post_author'  => get_post_field( 'post_author', $this->product->get_id() ),
+            'post_parent'  => $this->product->get_id(),
+            'post_type'    => 'product_variation',
         );
 
         $variation_ids = array();
@@ -671,6 +675,12 @@ class ImportVariableProduct extends ImportProduct {
             // Sync SKU by adding variation ID as suffix, otherwise when variation have empty SKUs parent product imported as outofstock.
             $productVariation->set_sku($this->product->get_sku() . '-' . ($key + 1));
             $variation_id = $productVariation->save();
+
+			// Set post author for variation.
+	        wp_update_post([
+		        'ID' => $variation_id,
+		        'post_author'  => get_post_field( 'post_author', $this->product->get_id() ),
+	        ]);
 
             $postRecord = new \PMXI_Post_Record();
             $postRecord->isEmpty() and $postRecord->set(array(

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Rank Math SEO PRO\n"
-"POT-Creation-Date: 2024-02-21 23:07-0300\n"
-"PO-Revision-Date: 2024-02-21 23:15-0300\n"
+"POT-Creation-Date: 2024-03-07 23:26-0300\n"
+"PO-Revision-Date: 2024-03-07 23:32-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -36,12 +36,12 @@ msgid "Added by the Rank Math SEO Plugin."
 msgstr "Adicionado pelo plugin Rank Math SEO."
 
 #: includes/3rdparty/divi/class-divi.php:375
-#: includes/modules/local-seo/views/titles-options.php:510
+#: includes/modules/local-seo/views/titles-options.php:553
 msgid "Yes"
 msgstr "Sim"
 
 #: includes/3rdparty/divi/class-divi.php:376
-#: includes/modules/local-seo/views/titles-options.php:509
+#: includes/modules/local-seo/views/titles-options.php:552
 msgid "No"
 msgstr "Não"
 
@@ -82,10 +82,10 @@ msgstr "Tag HTML"
 
 #: includes/3rdparty/elementor/class-widget-breadcrumbs.php:115
 #: includes/modules/acf/class-acf.php:48
-#: includes/modules/local-seo/views/titles-options.php:340
-#: includes/modules/local-seo/views/titles-options.php:630
-#: includes/modules/local-seo/views/titles-options.php:645
-#: includes/modules/local-seo/views/titles-options.php:660
+#: includes/modules/local-seo/views/titles-options.php:350
+#: includes/modules/local-seo/views/titles-options.php:673
+#: includes/modules/local-seo/views/titles-options.php:688
+#: includes/modules/local-seo/views/titles-options.php:703
 #: includes/modules/schema/class-video.php:78
 #: includes/modules/schema/class-video.php:93
 #: includes/modules/schema/class-video.php:119
@@ -2293,7 +2293,7 @@ msgstr ""
 "no sitemap."
 
 #: includes/admin/wizard/class-sitemap.php:118 includes/class-modules.php:50
-#: includes/modules/news-sitemap/class-news-sitemap.php:139
+#: includes/modules/news-sitemap/class-admin.php:134
 msgid "News Sitemap"
 msgstr "Sitemap de notícias"
 
@@ -2317,12 +2317,12 @@ msgstr ""
 "estiver incluído no Google News (Google Notícias)."
 
 #: includes/admin/wizard/class-sitemap.php:137
-#: includes/modules/news-sitemap/settings-news.php:19
+#: includes/modules/news-sitemap/settings-news.php:20
 msgid "Google News Publication Name"
 msgstr "Nome da publicação no Google Notícias"
 
 #: includes/admin/wizard/class-sitemap.php:139
-#: includes/modules/news-sitemap/settings-news.php:20
+#: includes/modules/news-sitemap/settings-news.php:21
 msgid ""
 "The name of the news publication. It must match the name exactly as it "
 "appears on your articles in news.google.com, omitting any trailing "
@@ -2335,12 +2335,12 @@ msgstr ""
 "answer/9606710\" target=\"_blank\">Mais informações em support.google.com</a>"
 
 #: includes/admin/wizard/class-sitemap.php:149
-#: includes/modules/news-sitemap/settings-news.php:33
+#: includes/modules/news-sitemap/settings-news.php:34
 msgid "News Post Type"
 msgstr "Tipo de post de notícias"
 
 #: includes/admin/wizard/class-sitemap.php:150
-#: includes/modules/news-sitemap/settings-news.php:34
+#: includes/modules/news-sitemap/settings-news.php:35
 msgid "Select the post type you use for News articles."
 msgstr "Selecione o tipo de post que você usa para artigos de notícias."
 
@@ -2487,8 +2487,9 @@ msgstr "Adicionar marca d'água"
 
 #: includes/class-thumbnail-overlays.php:378
 #: includes/modules/image-seo/options.php:155
-#: includes/modules/local-seo/views/titles-options.php:411
-#: includes/modules/local-seo/views/titles-options.php:467
+#: includes/modules/local-seo/views/titles-options.php:421
+#: includes/modules/local-seo/views/titles-options.php:477
+#: includes/modules/local-seo/views/titles-options.php:520
 msgid "Remove"
 msgstr "Remover"
 
@@ -2593,10 +2594,10 @@ msgid "Include images added in the ACF fields."
 msgstr "Incluir imagens adicionadas nos campos ACF."
 
 #: includes/modules/acf/class-acf.php:49
-#: includes/modules/local-seo/views/titles-options.php:341
-#: includes/modules/local-seo/views/titles-options.php:631
-#: includes/modules/local-seo/views/titles-options.php:646
-#: includes/modules/local-seo/views/titles-options.php:661
+#: includes/modules/local-seo/views/titles-options.php:351
+#: includes/modules/local-seo/views/titles-options.php:674
+#: includes/modules/local-seo/views/titles-options.php:689
+#: includes/modules/local-seo/views/titles-options.php:704
 #: includes/modules/schema/class-video.php:79
 #: includes/modules/schema/class-video.php:94
 #: includes/modules/schema/class-video.php:120
@@ -2684,7 +2685,7 @@ msgid "Search Impression:"
 msgstr "Impressão de pesquisa:"
 
 #: includes/modules/analytics/class-email-reports.php:118
-#: includes/modules/local-seo/views/titles-options.php:317
+#: includes/modules/local-seo/views/titles-options.php:327
 msgid "Logo"
 msgstr "Logo"
 
@@ -3365,13 +3366,13 @@ msgid "Parent Category:"
 msgstr "Categoria principal (ascendente):"
 
 #: includes/modules/local-seo/class-local-seo.php:268
-#: includes/modules/local-seo/views/titles-options.php:371
+#: includes/modules/local-seo/views/titles-options.php:381
 msgid "Address"
 msgstr "Endereço"
 
 #: includes/modules/local-seo/class-local-seo.php:269
 #: includes/modules/local-seo/shortcodes/class-address.php:38
-#: includes/modules/local-seo/views/titles-options.php:361
+#: includes/modules/local-seo/views/titles-options.php:371
 msgid "Phone"
 msgstr "Telefone"
 
@@ -3398,12 +3399,12 @@ msgid "Fax"
 msgstr "Fax"
 
 #: includes/modules/local-seo/shortcodes/class-address.php:50
-#: includes/modules/local-seo/views/titles-options.php:352
+#: includes/modules/local-seo/views/titles-options.php:362
 msgid "Email"
 msgstr "E-mail"
 
 #: includes/modules/local-seo/shortcodes/class-address.php:54
-#: includes/modules/local-seo/views/titles-options.php:327
+#: includes/modules/local-seo/views/titles-options.php:337
 #: includes/modules/schema/shortcode/claimreview.php:19
 #: includes/modules/schema/shortcode/dataset.php:21
 #: includes/modules/schema/shortcode/dataset.php:106
@@ -3619,7 +3620,17 @@ msgstr ""
 "Seu nome ou nome da empresa destinado a aparecer no painel de Conhecimento do "
 "Google (Google's Knowledge)."
 
+#: includes/modules/local-seo/views/titles-options.php:317
+#: includes/modules/schema/shortcode/dataset.php:87
+#: includes/modules/video-sitemap/sitemap-xsl.php:154
+msgid "Description"
+msgstr "Descrição"
+
 #: includes/modules/local-seo/views/titles-options.php:318
+msgid "Provide a detailed description of your organization."
+msgstr "Forneça uma descrição detalhada da sua organização."
+
+#: includes/modules/local-seo/views/titles-options.php:328
 msgid ""
 "<strong>Min Size: 112Χ112px</strong>.<br /> A squared image is preferred by "
 "the search engines."
@@ -3627,15 +3638,15 @@ msgstr ""
 "<strong>Tamanho mínimo: 112Χ112px</strong>.<br /> Uma imagem quadrada é "
 "preferida pelos mecanismos de pesquisa."
 
-#: includes/modules/local-seo/views/titles-options.php:328
-msgid "URL of the item."
-msgstr "URL do item."
+#: includes/modules/local-seo/views/titles-options.php:338
+msgid "URL of your website or your company’s website."
+msgstr "URL do seu site ou do site da sua empresa."
 
-#: includes/modules/local-seo/views/titles-options.php:337
+#: includes/modules/local-seo/views/titles-options.php:347
 msgid "Use Multiple Locations"
 msgstr "Usar várias localizações"
 
-#: includes/modules/local-seo/views/titles-options.php:338
+#: includes/modules/local-seo/views/titles-options.php:348
 msgid ""
 "Once you save the changes, we will create a new custom post type called "
 "\"Locations\" where you can add multiple locations of your business/"
@@ -3645,12 +3656,15 @@ msgstr ""
 "chamado \"Localizações\", onde você poderá adicionar vários locais do seu "
 "negócio/organização."
 
-#: includes/modules/local-seo/views/titles-options.php:353
-msgid "Search engines display your email address."
-msgstr "Os mecanismos de pesquisa exibem seu endereço de e-mail."
+#: includes/modules/local-seo/views/titles-options.php:363
+msgid ""
+"Enter the contact email address that could be displayed on search engines."
+msgstr ""
+"Digite o endereço de e-mail de contato que poderá ser exibido nos mecanismos "
+"de pesquisa."
 
-#: includes/modules/local-seo/views/titles-options.php:362
-#: includes/modules/local-seo/views/titles-options.php:464
+#: includes/modules/local-seo/views/titles-options.php:372
+#: includes/modules/local-seo/views/titles-options.php:474
 msgid ""
 "Search engines may prominently display your contact phone number for mobile "
 "users."
@@ -3658,11 +3672,11 @@ msgstr ""
 "Os mecanismos de pesquisa podem exibir com destaque o seu número de telefone "
 "de contato para usuários de dispositivos móveis."
 
-#: includes/modules/local-seo/views/titles-options.php:380
+#: includes/modules/local-seo/views/titles-options.php:390
 msgid "Address Format"
 msgstr "Formato do endereço"
 
-#: includes/modules/local-seo/views/titles-options.php:381
+#: includes/modules/local-seo/views/titles-options.php:391
 msgid ""
 "Format used when the address is displayed using the "
 "<code>[rank_math_contact_info]</code> shortcode.<br><strong>Available Tags: "
@@ -3672,15 +3686,15 @@ msgstr ""
 "<code>[rank_math_contact_info]</code>.<br><strong>Tags disponíveis: "
 "{address}, {locality}, {region}, {postalcode}, {country}, {gps}</strong>"
 
-#: includes/modules/local-seo/views/titles-options.php:396
+#: includes/modules/local-seo/views/titles-options.php:406
 msgid "Business Type"
 msgstr "Tipo de negócio"
 
-#: includes/modules/local-seo/views/titles-options.php:407
+#: includes/modules/local-seo/views/titles-options.php:417
 msgid "Opening Hours"
 msgstr "Horário de funcionamento"
 
-#: includes/modules/local-seo/views/titles-options.php:408
+#: includes/modules/local-seo/views/titles-options.php:418
 msgid ""
 "Select opening hours. You can add multiple sets if you have different opening "
 "or closing hours on some days or if you have a mid-day break. Times are "
@@ -3691,95 +3705,111 @@ msgstr ""
 "tiver um intervalo no meio do dia. Os horários são especificados usando o "
 "horário de 24:00."
 
-#: includes/modules/local-seo/views/titles-options.php:410
+#: includes/modules/local-seo/views/titles-options.php:420
 msgid "Add time"
 msgstr "Adicionar horário"
 
-#: includes/modules/local-seo/views/titles-options.php:424
+#: includes/modules/local-seo/views/titles-options.php:434
 msgid "Monday"
 msgstr "Segunda-feira"
 
-#: includes/modules/local-seo/views/titles-options.php:425
+#: includes/modules/local-seo/views/titles-options.php:435
 msgid "Tuesday"
 msgstr "Terça-feira"
 
-#: includes/modules/local-seo/views/titles-options.php:426
+#: includes/modules/local-seo/views/titles-options.php:436
 msgid "Wednesday"
 msgstr "Quarta-feira"
 
-#: includes/modules/local-seo/views/titles-options.php:427
+#: includes/modules/local-seo/views/titles-options.php:437
 msgid "Thursday"
 msgstr "Quinta-feira"
 
-#: includes/modules/local-seo/views/titles-options.php:428
+#: includes/modules/local-seo/views/titles-options.php:438
 msgid "Friday"
 msgstr "Sexta-feira"
 
-#: includes/modules/local-seo/views/titles-options.php:429
+#: includes/modules/local-seo/views/titles-options.php:439
 msgid "Saturday"
 msgstr "Sábado"
 
-#: includes/modules/local-seo/views/titles-options.php:430
+#: includes/modules/local-seo/views/titles-options.php:440
 msgid "Sunday"
 msgstr "Domingo"
 
-#: includes/modules/local-seo/views/titles-options.php:440
+#: includes/modules/local-seo/views/titles-options.php:450
 msgid "e.g. 09:00-17:00"
 msgstr "por exemplo: 09:00-17:00"
 
-#: includes/modules/local-seo/views/titles-options.php:448
+#: includes/modules/local-seo/views/titles-options.php:458
 msgid "Opening Hours Format"
 msgstr "Formato do horário de funcionamento"
 
-#: includes/modules/local-seo/views/titles-options.php:453
+#: includes/modules/local-seo/views/titles-options.php:463
 msgid "Time format used in the contact shortcode."
 msgstr "Formato da hora usado no shortcode de contato."
 
-#: includes/modules/local-seo/views/titles-options.php:463
+#: includes/modules/local-seo/views/titles-options.php:473
 msgid "Phone Number"
 msgstr "Número de telefone"
 
-#: includes/modules/local-seo/views/titles-options.php:466
+#: includes/modules/local-seo/views/titles-options.php:476
 msgid "Add number"
 msgstr "Adicionar número"
 
-#: includes/modules/local-seo/views/titles-options.php:488
+#: includes/modules/local-seo/views/titles-options.php:498
 msgid "Format: +1-401-555-1212"
 msgstr "Formato: +1-401-555-1212"
 
-#: includes/modules/local-seo/views/titles-options.php:496
+#: includes/modules/local-seo/views/titles-options.php:506
 msgid "Price Range"
 msgstr "Faixa de preço"
 
-#: includes/modules/local-seo/views/titles-options.php:497
+#: includes/modules/local-seo/views/titles-options.php:507
 msgid "The price range of the business, for example $$$."
 msgstr "A faixa de preço do negócio, por exemplo R$ R$ R$."
 
-#: includes/modules/local-seo/views/titles-options.php:506
+#: includes/modules/local-seo/views/titles-options.php:516
+msgid "Additional Info"
+msgstr "Informações adicionais"
+
+#: includes/modules/local-seo/views/titles-options.php:517
+msgid ""
+"Provide relevant details of your company to include in the Organization "
+"Schema."
+msgstr ""
+"Forneça detalhes relevantes de sua empresa para incluir nos dados "
+"estruturados (Schemas) de organização."
+
+#: includes/modules/local-seo/views/titles-options.php:519
+msgid "Add"
+msgstr "Adicionar"
+
+#: includes/modules/local-seo/views/titles-options.php:549
 msgid "Hide Opening Hours"
 msgstr "Ocultar horário de funcionamento"
 
-#: includes/modules/local-seo/views/titles-options.php:507
+#: includes/modules/local-seo/views/titles-options.php:550
 msgid "Don't add opening hours data in Schema"
 msgstr ""
 "Não adicionar dados de horário de funcionamento nos dados estruturados "
 "(schema)"
 
-#: includes/modules/local-seo/views/titles-options.php:522
+#: includes/modules/local-seo/views/titles-options.php:565
 msgid "Closed label"
 msgstr "Rótulo \"Fechado\""
 
-#: includes/modules/local-seo/views/titles-options.php:523
+#: includes/modules/local-seo/views/titles-options.php:566
 msgid "Text to show in Opening hours when business is closed."
 msgstr ""
 "Texto a ser mostrado nos horários de funcionamento quando a empresa estiver "
 "fechada."
 
-#: includes/modules/local-seo/views/titles-options.php:533
+#: includes/modules/local-seo/views/titles-options.php:576
 msgid "Open 24/7 label"
 msgstr "Rótulo \"Aberto 24/7\""
 
-#: includes/modules/local-seo/views/titles-options.php:534
+#: includes/modules/local-seo/views/titles-options.php:577
 msgid ""
 "Select the text to display alongside your opening hours when your store is "
 "open 24/7."
@@ -3787,55 +3817,55 @@ msgstr ""
 "Selecione o texto a ser exibido ao lado do horário de funcionamento quando a "
 "loja estiver aberta 24 horas por dia, 7 dias por semana."
 
-#: includes/modules/local-seo/views/titles-options.php:544
+#: includes/modules/local-seo/views/titles-options.php:587
 msgid "Open 24h label"
 msgstr "Rótulo \"Aberto 24h\""
 
-#: includes/modules/local-seo/views/titles-options.php:554
+#: includes/modules/local-seo/views/titles-options.php:597
 msgid "Measurement system"
 msgstr "Sistema de medição"
 
-#: includes/modules/local-seo/views/titles-options.php:555
+#: includes/modules/local-seo/views/titles-options.php:598
 msgid "Select your preferred measurement system (miles or kilometers)."
 msgstr "Selecione o seu sistema de medição preferido (milhas ou quilômetros)."
 
-#: includes/modules/local-seo/views/titles-options.php:557
+#: includes/modules/local-seo/views/titles-options.php:600
 msgid "Kilometers"
 msgstr "Quilômetros"
 
-#: includes/modules/local-seo/views/titles-options.php:558
+#: includes/modules/local-seo/views/titles-options.php:601
 msgid "Miles"
 msgstr "Milhas"
 
-#: includes/modules/local-seo/views/titles-options.php:569
+#: includes/modules/local-seo/views/titles-options.php:612
 msgid "Map Style"
 msgstr "Estilo do mapa"
 
-#: includes/modules/local-seo/views/titles-options.php:570
+#: includes/modules/local-seo/views/titles-options.php:613
 msgid "Select the map style you wish to use on the frontend of your website."
 msgstr "Selecione o estilo de mapa que deseja usar na interface do seu site."
 
-#: includes/modules/local-seo/views/titles-options.php:572
+#: includes/modules/local-seo/views/titles-options.php:615
 msgid "Hybrid"
 msgstr "Híbrido"
 
-#: includes/modules/local-seo/views/titles-options.php:573
+#: includes/modules/local-seo/views/titles-options.php:616
 msgid "Satellite"
 msgstr "Satélite"
 
-#: includes/modules/local-seo/views/titles-options.php:574
+#: includes/modules/local-seo/views/titles-options.php:617
 msgid "Roadmap"
 msgstr "Mapa de estradas"
 
-#: includes/modules/local-seo/views/titles-options.php:575
+#: includes/modules/local-seo/views/titles-options.php:618
 msgid "Terrain"
 msgstr "Terreno"
 
-#: includes/modules/local-seo/views/titles-options.php:586
+#: includes/modules/local-seo/views/titles-options.php:629
 msgid "Maximum number of locations to show"
 msgstr "Número máximo de localizações a serem exibidos"
 
-#: includes/modules/local-seo/views/titles-options.php:587
+#: includes/modules/local-seo/views/titles-options.php:630
 msgid ""
 "Limit the number of locations shown on your website to those nearest your "
 "user."
@@ -3843,11 +3873,11 @@ msgstr ""
 "Limite o número de localizações exibidas em seu site aos mais próximos do "
 "usuário."
 
-#: includes/modules/local-seo/views/titles-options.php:605
+#: includes/modules/local-seo/views/titles-options.php:648
 msgid "Primary Country"
 msgstr "País principal"
 
-#: includes/modules/local-seo/views/titles-options.php:606
+#: includes/modules/local-seo/views/titles-options.php:649
 msgid ""
 "Select your organization’s primary country of operation. This helps improve "
 "the accuracy of the store locator."
@@ -3855,11 +3885,11 @@ msgstr ""
 "Selecione o país principal de operação da sua organização. Isso ajuda a "
 "melhorar a precisão do localizador de lojas."
 
-#: includes/modules/local-seo/views/titles-options.php:616
+#: includes/modules/local-seo/views/titles-options.php:659
 msgid "Show Route label"
 msgstr "Mostrar rótulo da rota"
 
-#: includes/modules/local-seo/views/titles-options.php:617
+#: includes/modules/local-seo/views/titles-options.php:660
 msgid ""
 "Customize the label of the option users can use can click to get directions "
 "to your business location on the frontend."
@@ -3867,19 +3897,19 @@ msgstr ""
 "Personalize o rótulo da opção que os usuários podem usar para clicar para "
 "obter direções para a localização da sua empresa na interface."
 
-#: includes/modules/local-seo/views/titles-options.php:627
+#: includes/modules/local-seo/views/titles-options.php:670
 msgid "Location Detection"
 msgstr "Detecção de localização"
 
-#: includes/modules/local-seo/views/titles-options.php:628
+#: includes/modules/local-seo/views/titles-options.php:671
 msgid "Automatically detect the user's location as the starting point."
 msgstr "Detecte automaticamente a localização do usuário como ponto de partida."
 
-#: includes/modules/local-seo/views/titles-options.php:642
+#: includes/modules/local-seo/views/titles-options.php:685
 msgid "All Locations are part of the same Organization"
 msgstr "Todas as localizações fazem parte da mesma organização"
 
-#: includes/modules/local-seo/views/titles-options.php:643
+#: includes/modules/local-seo/views/titles-options.php:686
 msgid ""
 "Enable if all of the locations where you serve customers are a part of the "
 "same legal entity."
@@ -3887,21 +3917,21 @@ msgstr ""
 "Ative se todas as localizações onde você atende clientes, fazem parte da "
 "mesma entidade legal."
 
-#: includes/modules/local-seo/views/titles-options.php:657
+#: includes/modules/local-seo/views/titles-options.php:700
 msgid "Enhanced Search"
 msgstr "Pesquisa aprimorada"
 
-#: includes/modules/local-seo/views/titles-options.php:658
+#: includes/modules/local-seo/views/titles-options.php:701
 msgid "Include business locations in site-wide search results."
 msgstr ""
 "Inclua as localizações comerciais nos resultados da pesquisa em todo o site."
 
-#: includes/modules/local-seo/views/titles-options.php:672
+#: includes/modules/local-seo/views/titles-options.php:715
 msgid "Google Maps API Key"
 msgstr "Chave de API do Google Maps"
 
 #. translators: %s expands to "Google Maps Embed API" https://developers.google.com/maps/documentation/embed/
-#: includes/modules/local-seo/views/titles-options.php:674
+#: includes/modules/local-seo/views/titles-options.php:717
 #, php-format
 msgid ""
 "An API Key is required to display embedded Google Maps on your site. Get it "
@@ -3910,31 +3940,31 @@ msgstr ""
 "É necessária uma chave de API para exibir mapas do Google incorporados em seu "
 "site. Obtenha-a aqui: %s"
 
-#: includes/modules/local-seo/views/titles-options.php:674
+#: includes/modules/local-seo/views/titles-options.php:717
 msgid "Google Maps Embed API"
 msgstr "API de incorporação do Google Maps"
 
-#: includes/modules/local-seo/views/titles-options.php:684
+#: includes/modules/local-seo/views/titles-options.php:727
 msgid "Geo Coordinates"
 msgstr "Coordenadas geográficas"
 
-#: includes/modules/local-seo/views/titles-options.php:685
+#: includes/modules/local-seo/views/titles-options.php:728
 msgid "Latitude and longitude values separated by comma."
 msgstr "Valores de latitude e longitude separados por vírgula."
 
-#: includes/modules/local-seo/views/titles-options.php:694
+#: includes/modules/local-seo/views/titles-options.php:737
 msgid "Locations Post Type Base"
 msgstr "Base do tipo de post de localização"
 
-#: includes/modules/local-seo/views/titles-options.php:705
+#: includes/modules/local-seo/views/titles-options.php:748
 msgid "Locations Category Base"
 msgstr "Base da categoria de localizações"
 
-#: includes/modules/local-seo/views/titles-options.php:716
+#: includes/modules/local-seo/views/titles-options.php:759
 msgid "Location Post Type Name"
 msgstr "Nome do tipo de post de localização"
 
-#: includes/modules/local-seo/views/titles-options.php:718
+#: includes/modules/local-seo/views/titles-options.php:761
 msgid ""
 "The label that appears in the sidebar for the custom post type where you can "
 "add & manage locations."
@@ -3942,11 +3972,11 @@ msgstr ""
 "O rótulo que aparece na barra lateral para o tipo de post personalizado onde "
 "você pode adicionar e gerenciar localizações."
 
-#: includes/modules/local-seo/views/titles-options.php:727
+#: includes/modules/local-seo/views/titles-options.php:770
 msgid "Locations Post Type Name (Plural)"
 msgstr "Nome do tipo de post de localizações (plural)"
 
-#: includes/modules/local-seo/views/titles-options.php:729
+#: includes/modules/local-seo/views/titles-options.php:772
 msgid ""
 "As above, but the label that would be applicable for more than one location "
 "(default: RM Locations)."
@@ -3954,28 +3984,29 @@ msgstr ""
 "Como acima, mas o rótulo que seria aplicável a mais de uma localização "
 "(padrão: Localizações RM)."
 
-#: includes/modules/local-seo/views/titles-options.php:735
-#: includes/modules/local-seo/views/titles-options.php:751
+#: includes/modules/local-seo/views/titles-options.php:778
+#: includes/modules/local-seo/views/titles-options.php:794
 msgid "Select Page"
 msgstr "Selecionar página"
 
-#: includes/modules/local-seo/views/titles-options.php:744
+#: includes/modules/local-seo/views/titles-options.php:787
 msgid "About Page"
 msgstr "Página sobre"
 
-#: includes/modules/local-seo/views/titles-options.php:745
-#: includes/modules/local-seo/views/titles-options.php:761
+#: includes/modules/local-seo/views/titles-options.php:788
+#: includes/modules/local-seo/views/titles-options.php:804
 msgid ""
 "Select a page on your site where you want to show the LocalBusiness meta data."
 msgstr ""
 "Selecione uma página do seu site onde você deseja mostrar os metadados do "
 "LocalBusiness (Negócios locais)."
 
-#: includes/modules/local-seo/views/titles-options.php:760
+#: includes/modules/local-seo/views/titles-options.php:803
 msgid "Contact Page"
 msgstr "Página de contato"
 
-#: includes/modules/news-sitemap/class-news-sitemap.php:141
+#. translators: News Sitemap KB link
+#: includes/modules/news-sitemap/class-admin.php:138
 #, php-format
 msgid ""
 "News Sitemaps allow you to control which content you submit to Google News. "
@@ -3986,19 +4017,31 @@ msgstr ""
 "target=\"_blank\">Visão geral dos sitemaps de notícias</a>"
 
 #. translators: News Sitemap Url
-#: includes/modules/news-sitemap/class-news-sitemap.php:144
+#: includes/modules/news-sitemap/class-admin.php:142
 #, php-format
 msgid "Your News Sitemap index can be found here: : %s"
 msgstr "O índice do seu sitemap de notícias pode ser encontrado aqui: %s"
 
+#: includes/modules/news-sitemap/class-rest.php:51
+msgid "Sorry, only authenticated users can research the keyword."
+msgstr "Apenas usuários autenticados podem pesquisar a palavra-chave."
+
+#: includes/modules/news-sitemap/class-rest.php:80
+msgid "Taxonomy to look for terms"
+msgstr "Taxonomia para procurar termos"
+
+#: includes/modules/news-sitemap/class-rest.php:86
+msgid "Searched string"
+msgstr "String pesquisada"
+
 #. translators: Post Type
-#: includes/modules/news-sitemap/settings-news.php:77
+#: includes/modules/news-sitemap/settings-news.php:73
 #, php-format
 msgid "Exclude %s Terms "
 msgstr "Excluir termos %s "
 
 #. translators: 1. Taxonomy Name 2. Post Type
-#: includes/modules/news-sitemap/settings-news.php:93
+#: includes/modules/news-sitemap/settings-news.php:88
 #, php-format
 msgid "%1$s to exclude for %2$s."
 msgstr "%1$s a excluir para %2$s."
@@ -4799,11 +4842,6 @@ msgstr "Cobertura especial"
 msgid "Name"
 msgstr "Nome"
 
-#: includes/modules/schema/shortcode/dataset.php:87
-#: includes/modules/video-sitemap/sitemap-xsl.php:154
-msgid "Description"
-msgstr "Descrição"
-
 #: includes/modules/schema/shortcode/dataset.php:91
 msgid "Data Sets"
 msgstr "Conjuntos de dados"
@@ -5427,6 +5465,12 @@ msgid ""
 msgstr ""
 "https://rankmath.com/?"
 "utm_source=Plugin&utm_medium=Readme%20Author%20URI&utm_campaign=WP"
+
+#~ msgid "URL of the item."
+#~ msgstr "URL do item."
+
+#~ msgid "Search engines display your email address."
+#~ msgstr "Os mecanismos de pesquisa exibem seu endereço de e-mail."
 
 #~ msgid "&#8595; Rank Math"
 #~ msgstr "↓ Rank Math"

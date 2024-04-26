@@ -3,6 +3,7 @@
 namespace FlyingPress\Optimizer;
 
 use FlyingPress\Config;
+use FlyingPress\Utils;
 
 class Font
 {
@@ -20,15 +21,15 @@ class Font
       $html,
       $googlefonts
     );
+
     try {
       foreach ($googlefonts[0] as $google_font_tag) {
         $google_font = new HTML($google_font_tag);
-        $href = $google_font->href;
-        // Remove display=swap if it exists
-        $href = preg_replace('/(\?|&)display=[^\'"]*/', '', $href);
-        // Add display=swap
-        $href .= '&display=swap';
-        $google_font->href = $href;
+
+        $google_font->href = preg_match('/display=\w+/', $google_font->href)
+          ? preg_replace('/display=\w+/', 'display=swap', $google_font->href)
+          : $google_font->href . '&display=swap';
+
         $html = str_replace($google_font_tag, $google_font, $html);
       }
     } catch (\Exception $e) {
@@ -117,7 +118,7 @@ class Font
         $preload_tags .= "<link rel='preload' href='$font_url' as='font' type='$type' fetchpriority='high' crossorigin='anonymous'>";
       }
 
-      $html = str_replace('</head>', $preload_tags . '</head>', $html);
+      $html = Utils::str_replace_first('</title>', '</title>' . PHP_EOL . $preload_tags, $html);
     } catch (\Exception $e) {
       error_log($e->getMessage());
     } finally {
@@ -176,6 +177,9 @@ class Font
       $url = 'https:' . $url;
     }
 
+    // Decode URL (e.g. https://fonts.googleapis.com/css?display=swap&#038;family=Nunito%3A400%2C700&#038;ver=c63b)
+    $url = html_entity_decode($url);
+
     // Download style sheet
     $css_file_response = wp_remote_get($url, [
       'user-agent' => self::$user_agent,
@@ -187,7 +191,7 @@ class Font
       is_wp_error($css_file_response) ||
       wp_remote_retrieve_response_code($css_file_response) !== 200
     ) {
-      return false;
+      throw new \Exception('Failed to download Google Fonts CSS: ' . $url);
     }
 
     // Extract body (CSS)

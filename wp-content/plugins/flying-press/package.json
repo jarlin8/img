@@ -4,7 +4,7 @@
   "scripts": {
     "minify-core": "microbundle -i assets/core.js -o assets/core.min.js --no-pkg-main -f umd --no-sourcemap",
     "minify-lazy": "microbundle -i assets/lazyrender.js -o assets/lazyrender.min.js --no-pkg-main -f umd --no-sourcemap",
-    "build": "cd .. && zip -r flying-press.zip flying-press -x '*node_modules*' '*.git*'",
+    "build": "cd .. && zip -r flying-press.zip flying-press -x '*node_modules*' '*assets/core.js*' '*assets/lazyrender.js*' '*.git*'",
     "format": "prettier src/** --write"
   },
   "devDependencies": {

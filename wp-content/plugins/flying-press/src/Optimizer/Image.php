@@ -45,7 +45,7 @@ class Image
     }
 
     try {
-      foreach (self::$images as $key => $image) {
+      foreach (self::$images as $image) {
         // get src attribute
         $src = $image->src;
 
@@ -73,8 +73,6 @@ class Image
         } elseif (!is_numeric($image->height)) {
           $image->height = $image->width / $ratio;
         }
-        // replace the image
-        self::$images[$key] = $image;
       }
     } catch (\Exception $e) {
       error_log($e->getMessage());
@@ -96,7 +94,6 @@ class Image
     foreach (self::$images as $key => $image) {
       if ($key < $count) {
         $image->loading = 'eager';
-        self::$images[$key] = $image;
       }
     }
   }
@@ -114,7 +111,7 @@ class Image
     $exclude_keywords = array_merge($default_exclude_keywords, $user_exclude_keywords);
 
     try {
-      foreach (self::$images as $key => $image) {
+      foreach (self::$images as $image) {
         // Image is excluded from lazy loading
         if (Utils::any_keywords_match_string($exclude_keywords, $image)) {
           $image->loading = 'eager';
@@ -124,8 +121,6 @@ class Image
           $image->loading = 'lazy';
           $image->fetchpriority = 'low';
         }
-
-        self::$images[$key] = $image;
       }
     } catch (\Exception $e) {
       error_log($e->getMessage());
@@ -134,11 +129,7 @@ class Image
 
   public static function responsive_images($html)
   {
-    if (
-      !Config::$config['img_responsive'] ||
-      !Config::$config['cdn'] ||
-      !Config::$config['cdn_url']
-    ) {
+    if (!Config::$config['img_responsive']) {
       return $html;
     }
 
@@ -148,31 +139,29 @@ class Image
     });
 
     try {
-      foreach ($images as $key => $image) {
+      foreach ($images as $image) {
         // Skip images with loading="eager" attribute
         if ($image->loading === 'eager') {
           continue;
         }
 
-        // Get src attribute
-        $src = $image->src;
-
-        // Skip SVG images
-        if (strpos($src, '.svg') !== false) {
+        // Skip if srcset is not set
+        if (!$image->srcset) {
           continue;
         }
 
-        // Set data-origin-src for responsive images (used by core.js)
-        $image->{'data-origin-src'} = $src;
+        // Skip if width and height are not set
+        if (!is_numeric($image->width) || !is_numeric($image->height)) {
+          continue;
+        }
 
-        // Set 1px transparent image as src
-        $image->src = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+        // Skip SVG images
+        if (strpos($image->src, '.svg') !== false) {
+          continue;
+        }
 
-        // Remove srcset and sizes attributes
-        unset($image->srcset);
-        unset($image->sizes);
-
-        self::$images[$key] = $image;
+        // Set sizes=auto for responsive images
+        $image->sizes = 'auto';
       }
     } catch (\Exception $e) {
       error_log($e->getMessage());
@@ -184,24 +173,52 @@ class Image
     if (!Config::$config['img_localhost_gravatar']) {
       return $html;
     }
+
     try {
-      foreach (self::$images as $key => $image) {
+      foreach (self::$images as $image) {
         if (strpos($image->src, 'gravatar.com/avatar/') === false) {
           continue;
         }
 
-        $gravatar_file_name = 'gravatar-' . substr(md5($image->src), 0, 12) . '.png';
-        $gravatar_file_path = FLYING_PRESS_CACHE_DIR . $gravatar_file_name;
+        // Get the self-hosted Gravatar URL for src
+        $self_hosted_url = self::get_self_hosted_gravatar($image->src);
 
-        if (!file_exists($gravatar_file_path)) {
-          file_put_contents($gravatar_file_path, file_get_contents($image->src));
+        // Change src to self hosted url
+        $image->src = $self_hosted_url;
+
+        // Skip if image does not have srcset
+        if (!$image->srcset) {
+          continue;
         }
-        $image->src = FLYING_PRESS_CACHE_URL . $gravatar_file_name;
-        self::$images[$key] = $image;
+
+        foreach (explode(',', $image->srcset) as $descriptor) {
+          // Extract the URL before the first space
+          // Use the entire descriptor if no space is found.
+          $url = strstr(trim($descriptor), ' ', true) ?: trim($descriptor);
+
+          // Get the self-hosted Gravatar URL for srcset
+          $self_hosted_url = self::get_self_hosted_gravatar($url);
+
+          // Change srcset to self hosted urls
+          $image->srcset = str_replace($url, $self_hosted_url, $image->srcset);
+        }
       }
     } catch (\Exception $e) {
       error_log($e->getMessage());
     }
+
+    return $html;
+  }
+
+  private static function get_self_hosted_gravatar($url)
+  {
+    $file_name = 'gravatar-' . substr(md5($url), 0, 12) . '.png';
+
+    if (!file_exists(FLYING_PRESS_CACHE_DIR . $file_name)) {
+      file_put_contents(FLYING_PRESS_CACHE_DIR . $file_name, file_get_contents($url));
+    }
+
+    return FLYING_PRESS_CACHE_URL . $file_name;
   }
 
   public static function write_images($html)

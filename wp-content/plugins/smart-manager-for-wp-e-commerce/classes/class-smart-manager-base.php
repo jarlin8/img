@@ -1363,6 +1363,11 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 					$store_model_transient = false;
 					update_option( '_sm_update_8340_product', 1, 'no' );
 				}
+				if ( false === get_option( '_sm_update_8360_product' ) ) {
+					delete_transient( 'sa_sm_product' );
+					$store_model_transient = false;
+					update_option( '_sm_update_8360_product', 1, 'no' );
+				}
 			}
 
 			$store_model = $store_model_transient;
@@ -1610,8 +1615,10 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 								$advanced_search_query[$i] = $this->create_meta_table_search_query( array(
 									'table_nm'	=> $table_name,
 									'search_query' => $advanced_search_query[$i],
-									'search_params' => array_merge( $search_params, array( 'is_meta_table' => true ) ),
-									'rule'			=> $rule
+									'search_params' => array_merge( $search_params, array( 'is_meta_table' => true, 'pkey' => ( ! empty( $params['pkey'] ) ) ? $params['pkey'] : 'post_id',
+									'join_table' => ( ! empty( $params['join_table'] ) ) ? $params['join_table'] : 'posts',
+									'type' => ( ! empty( $params['type'] ) ) ? $params['type'] : 'post_type' ) ),
+									'rule'			=> $rule,
 								) );
                             } else if ( !in_array( $table_name, array_keys( $this->advanced_search_table_types['flat'] ) ) && 'terms' === $table_name ) {
                                 $advanced_search_query[$i] = $this->create_terms_table_search_query( array(
@@ -3301,16 +3308,23 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 				}	
 			}
 
-			$meta_cond = apply_filters( 'sm_search_'.$meta_table.'_cond', $meta_cond, array_merge( $search_params, array( 'table_nm' => $params['rule']['table_name'] ) ) );
+			$meta_cond = apply_filters( 'sm_search_'.$meta_table.'_cond', $meta_cond, array_merge( $search_params, array( 'table_nm' => $params['rule']['table_name'], 'rule_val' => $params['rule']['value'] ) ) );
+			$pkey = ( ! empty( $search_params['pkey'] ) ) ? $search_params['pkey'] : 'post_id';
+			$join_table = ( ! empty( $search_params['join_table'] ) ) ? $search_params['join_table'] : 'posts';
+			$type = ( ! empty( $search_params['type'] ) ) ? $search_params['type'] : 'post_type';
+			$post_type_condn = '';
+			if ( ! empty( $search_params['post_type'] ) ) {
+				$post_type_condn = ( is_array( $search_params['post_type'] ) && count( $search_params['post_type'] ) > 0 ) ? $type . " IN ('" . implode( "','", $search_params['post_type'] ) ."')" : $type . " = '". $search_params['post_type']."'";
+			}
 
-			if( ( ( empty( $params['rule']['value'] ) && '0' !== $params['rule']['value'] ) || $params['rule']['value'] == "''") && ! empty( $search_params['post_type'] ) && ! empty( $search_params['search_col'] ) ) {
+			if( ( ( empty( $params['rule']['value'] ) && '0' !== $params['rule']['value'] ) || $params['rule']['value'] == "''") && ! empty( $search_params['post_type'] ) && ! empty( $search_params['search_col'] ) && ! empty( $post_type_condn ) ) {
 				$empty_search_value = ( $search_params['search_operator'] == 'is' || $search_params['search_operator'] == '=' ) ? 'IS NULL' : 'IS NOT NULL';
 				$meta_cond = "( ". $meta_cond ." OR ( ". $params['rule']['table_name'] .".meta_key LIKE '". $search_params['search_col'] . "' AND ". $params['rule']['table_name'] .".meta_value " . $empty_search_value ." )
-								OR ( ". $params['rule']['table_name'] .".post_id ". ( ( $search_params['search_operator'] == 'is' || $search_params['search_operator'] == '=' ) ? 'NOT IN' : 'IN' ) ." ( SELECT DISTINCT p.id 
+								OR ( ". $params['rule']['table_name'] .".".$pkey." ". ( ( $search_params['search_operator'] == 'is' || $search_params['search_operator'] == '=' ) ? 'NOT IN' : 'IN' ) ." ( SELECT DISTINCT ft.id 
 																																										FROM {$wpdb->prefix}".$meta_table." as mt
-																																											JOIN {$wpdb->prefix}posts as p
-																																												ON(p.id = mt.post_id
-																																													AND p.post_type IN ('". implode( "','", $search_params['post_type'] ) ."') )
+																																											JOIN {$wpdb->prefix}".$join_table." as ft
+																																												ON(ft.id = mt.".$pkey."
+																																													AND ft.".$post_type_condn." )
 																																										WHERE mt.meta_key = '". $search_params['search_col'] . "' ) ) )";
 			}
 

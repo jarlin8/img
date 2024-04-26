@@ -34,6 +34,12 @@ class Htaccess
       );
     }
 
+    // Get the site's hostname
+    $hostname = parse_url(site_url(), PHP_URL_HOST);
+
+    // Replace HOSTNAME with the current site's hostname
+    $flying_press_rules = str_replace('HOSTNAME', $hostname, $flying_press_rules);
+
     // Allow others to modify the rules
     $flying_press_rules = apply_filters('flying_press_htaccess_rules', $flying_press_rules);
 

@@ -1138,11 +1138,7 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 					$column_model = array_values($column_model); //added for recalculating the indexes of the array
 					$product_visibility_index = sm_multidimesional_array_search ('terms/product_visibility', 'src', $column_model);
 				}
-
 				$index = sizeof($column_model);
-
-				$index++;
-
 				if( empty( $product_visibility_index ) ) {
 
 					//Code for including custom columns for product dashboard
@@ -1707,7 +1703,9 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 	                    	$attributes_list = "";
 
 	                    	foreach ($prod_attr as &$prod_attr1) {
-
+								if ( empty( $prod_attr1 ) || ! is_array( $prod_attr1 ) ) {
+									continue;
+								}
 	                    		if( !empty($attributes_list) ) {
 	                    			$attributes_list .= ", <br>";
 	                    		}

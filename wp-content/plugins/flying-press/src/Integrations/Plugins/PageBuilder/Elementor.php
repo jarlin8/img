@@ -16,19 +16,7 @@ class Elementor
     }
 
     // Add FlyingPress Controls to sections and containers
-    add_action(
-      'elementor/element/section/section_advanced/before_section_start',
-      [__CLASS__, 'add_controls'],
-      10,
-      2
-    );
-
-    add_action(
-      'elementor/element/container/section_layout/before_section_start',
-      [__CLASS__, 'add_controls'],
-      10,
-      2
-    );
+    add_action('elementor/element/after_section_end', [__CLASS__, 'add_controls'], 99, 3);
 
     // Start capturing element
     add_action('elementor/frontend/before_render', [__CLASS__, 'lazy_render_before'], 5);
@@ -37,26 +25,37 @@ class Elementor
     add_action('elementor/frontend/after_render', [__CLASS__, 'lazy_render_after'], 99);
   }
 
-  public static function add_controls($element, $args)
+  public static function add_controls($element, $section_id, $args)
   {
-    // Add FlyingPress control section
-    $element->start_controls_section('flying_press', [
-      'tab' => \Elementor\Controls_Manager::TAB_ADVANCED,
-      'label' => esc_html__('FlyingPress', 'flying-press'),
-    ]);
+    // If elemenet is not section or container return early
+    if (
+      in_array($element->get_name(), self::VALID_ELEMENTS) &&
+      strpos($section_id, 'section_custom_css') !== false
+    ) {
+      // Add FlyingPress control section
+      if (!$element->get_controls('flying_press')) {
+        $element->start_controls_section('flying_press', [
+          'tab' => \Elementor\Controls_Manager::TAB_ADVANCED,
+          'label' => esc_html__('FlyingPress', 'flying-press'),
+        ]);
 
-    // Add a checkbox control to enable lazy render
-    $element->add_control('flying_press_lazy_render', [
-      'label' => esc_html__('Lazy Render', 'flying-press'),
-      'type' => \Elementor\Controls_Manager::SWITCHER,
-      'description' => "Render elements on the screen only as they're about to come into view",
-      'label_on' => esc_html__('Yes', 'flying-press'),
-      'label_off' => esc_html__('No', 'flying-press'),
-      'return_value' => 'yes',
-      'default' => 'no',
-    ]);
+        // Add a checkbox control to enable lazy render
+        if (!$element->get_controls('flying_press_lazy_render')) {
+          $element->add_control('flying_press_lazy_render', [
+            'label' => esc_html__('Lazy Render', 'flying-press'),
+            'type' => \Elementor\Controls_Manager::SWITCHER,
+            'description' =>
+              "Render elements on the screen only as they're about to come into view",
+            'label_on' => esc_html__('Yes', 'flying-press'),
+            'label_off' => esc_html__('No', 'flying-press'),
+            'return_value' => 'yes',
+            'default' => 'no',
+          ]);
+        }
 
-    $element->end_controls_section();
+        $element->end_controls_section();
+      }
+    }
   }
 
   public static function lazy_render_before($element)

@@ -50,7 +50,7 @@ if( ! class_exists('PMXI_Updater') ) {
             add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_update' ), 20 );
             add_filter( 'plugins_api', array( $this, 'plugins_api_filter' ), 10, 3 );
 
-          //  add_action( 'after_plugin_row_' . $this->name, array( $this, 'show_update_notification' ), 11, 2 );
+         //   add_action( 'after_plugin_row_' . $this->name, array( $this, 'show_update_notification' ), 11, 2 );
             add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
             add_filter( 'plugin_auto_update_setting_html', array( $this, 'plugin_auto_update_setting_html' ), 10, 3 );
 	        add_action( 'in_plugin_update_message-'.$this->name, [$this, 'custom_update_note'], 10, 2);

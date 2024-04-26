@@ -5,9 +5,9 @@ Author URI: https://www.storeapps.org/woocommerce-plugins/
 Plugin URI: https://www.storeapps.org/product/smart-manager/?utm_source=wprepo&utm_medium=web&utm_campaign=smwp_readme
 Tags: woocommerce advanced bulk edit, wordpress bulk edit, woocommerce inventory management, woocommerce stock manager, woocommerce product manager
 Requires at least: 4.8
-Tested up to: 6.4.3
+Tested up to: 6.5.2
 Requires PHP: 5.6
-Stable tag: 8.34.0
+Stable tag: 8.37.0
 License: GPLv2
 
 Most advanced WooCommerce bulk edit plugin for products, orders, coupons, any WordPress post type using an Excel-like sheet editor.
@@ -135,25 +135,25 @@ https://www.youtube.com/watch?v=20iodFpP5ow
 - **Import** products, orders, coupons and any other post type (coming soon).
 - Manage, view, filter and edit custom fields of top WooCommerce & WordPress plugins. Smart Manager is compatible with these plugins. It automatically recognizes all custom fields added by other plugins.
 -- [Advanced Custom Fields (ACF)](https://wordpress.org/plugins/advanced-custom-fields/)
--- [WooCommerce Subscriptions](https://woo.com/products/woocommerce-subscriptions/?aff=5475)
--- [Affiliate For WooCommerce](https://woo.com/products/affiliate-for-woocommerce/)
--- [WooCommerce Smart Coupons](https://woo.com/products/smart-coupons/)
--- [WooCommerce Memberships](https://woo.com/products/woocommerce-memberships/?aff=5475)
--- [WooCommerce Bookings](https://woo.com/products/woocommerce-bookings/?aff=5475)
--- [WooCommerce Product Add-Ons](https://woo.com/products/product-add-ons/?aff=5475)
--- [WooCommerce Cost of Goods](https://woo.com/products/woocommerce-cost-of-goods/?aff=5475)
--- [Min/Max Quantities](https://woo.com/products/minmax-quantities/?aff=5475)
+-- [WooCommerce Subscriptions](https://woocommerce.com/products/woocommerce-subscriptions/?aff=5475)
+-- [Affiliate For WooCommerce](https://woocommerce.com/products/affiliate-for-woocommerce/)
+-- [WooCommerce Smart Coupons](https://woocommerce.com/products/smart-coupons/)
+-- [WooCommerce Memberships](https://woocommerce.com/products/woocommerce-memberships/?aff=5475)
+-- [WooCommerce Bookings](https://woocommerce.com/products/woocommerce-bookings/?aff=5475)
+-- [WooCommerce Product Add-Ons](https://woocommerce.com/products/product-add-ons/?aff=5475)
+-- [WooCommerce Cost of Goods](https://woocommerce.com/products/woocommerce-cost-of-goods/?aff=5475)
+-- [Min/Max Quantities](https://woocommerce.com/products/minmax-quantities/?aff=5475)
 -- [Min and Max Quantity for WooCommerce](https://wordpress.org/plugins/minmax-quantity-for-woocommerce/)
 -- [Woocommerce Minimum and Maximum Quantity](https://wordpress.org/plugins/woo-min-max-quantity-limit/)
--- [Customer Email Verification](https://woo.com/products/customer-email-verification/?aff=5475)
+-- [Customer Email Verification](https://woocommerce.com/products/customer-email-verification/?aff=5475)
 -- [Yoast SEO](https://wordpress.org/plugins/wordpress-seo/)
 -- [WordPress SEO Plugin – Rank Math](https://wordpress.org/plugins/seo-by-rank-math/)
 -- [Germanized for WooCommerce](https://wordpress.org/plugins/woocommerce-germanized/)
 -- [LifterLMS](https://wordpress.org/plugins/lifterlms/)
 -- [TutorLMS](https://wordpress.org/plugins/tutor/)
 -- [ShopEngine](https://wordpress.org/plugins/shopengine/)
--- [WooCommerce Dropshipping](https://woo.com/products/woocommerce-dropshipping/?aff=5475)
--- [WooCommerce Product Vendors](https://woo.com/products/product-vendors/?aff=5475)
+-- [WooCommerce Dropshipping](https://woocommerce.com/products/woocommerce-dropshipping/?aff=5475)
+-- [WooCommerce Product Vendors](https://woocommerce.com/products/product-vendors/?aff=5475)
 -- [Orderable](https://stellarwp.pxf.io/c/3616375/1287872/9639)
 -- [GiveWP](https://stellarwp.pxf.io/c/3616375/1287837/9639)
 -- [File Uploads Addon for WooCommerce](https://wordpress.org/plugins/woo-addon-uploads/)
@@ -278,6 +278,30 @@ It also gives the warm feeling of supporting further development of the plugin.
 
 == Changelog ==
 
+= 8.37.0 (18.04.2024) =
+* New: WordPress 6.5.2 compatible
+* New: WooCommerce 8.8.2 compatible
+* New: Compatibility with [Legal Pages](https://wordpress.org/plugins/legal-pages/)
+* Fix: PHP warning when loading WooCommerce Products dashboard
+* Fix: Using 'increase by/decrease by' Bulk Edit operators setting value to '0' for WooCommerce Products 'Regular price' & 'Sale price' fields having empty values (Pro)
+* Fix: Using 'increase by/decrease by' Bulk Edit operators setting value to '0' for any numeric fields having empty values (Pro)
+* Update: Replace 'woo.com' links with 'woocommerce.com'
+* Update: POT file
+
+= 8.36.0 (05.04.2024) =
+* New: WordPress 6.5 compatible
+* Fix: 'Featured' column not detected in 'Column Manager' on WooCommerce Products dashboard
+* Fix: PHP 8.1.27 Uncaught TypeError: Cannot access offset of type string on string when clicking on 'Load More Products' button on WooCommerce Products dashboard
+* Fix: Advanced Search not filtering null value for date fields on WooCommerce Subscriptions dashboard (Pro)
+* Fix: PHP warning when fetching all accessible views for current user (Pro)
+* Update: POT file
+
+= 8.35.0 (22.03.2024) =
+* New: WooCommerce 8.7.0 compatible
+* Fix: Dashboard not loading due to 'select2' library conflict with other plugins
+* Update: Integrated product specific low stock threshold value in 'Stock' column color-coding on WooCommerce Products dashboard (Pro)
+* Update: POT file
+
 = 8.34.0 (15.03.2024) =
 * Fix: Advanced Search functionality displays variations of products whose parents are not published for 'Post Status' column in WooCommerce Products dashboard
 * Update: POT file
@@ -399,7 +423,7 @@ It also gives the warm feeling of supporting further development of the plugin.
 * Update: Updated 'Action Scheduler' library (Pro)
 * Update: Speed improvements for 'Bulk Edit', 'Duplicate Records' and 'Delete Records' functionalities (Pro)
 * Update: Success notification for non-background process of 'Bulk Edit', 'Duplicate Records' and 'Delete Records' functionalities (Pro)
-* Update: Code improvements related to mapping for [Affiliate For WooCommerce](https://woo.com/products/affiliate-for-woocommerce/) fields in Users dashboard (Pro)
+* Update: Code improvements related to mapping for [Affiliate For WooCommerce](https://woocommerce.com/products/affiliate-for-woocommerce/) fields in Users dashboard (Pro)
 * Update: POT file
 
 = 8.17.0 (22.09.2023) =
@@ -411,7 +435,7 @@ It also gives the warm feeling of supporting further development of the plugin.
 
 = 8.16.0 (15.09.2023) =
 * New: WooCommerce 8.1.0 compatible
-* New: Added compatibility support for [Affiliate For WooCommerce](https://woo.com/products/affiliate-for-woocommerce/) (Pro)
+* New: Added compatibility support for [Affiliate For WooCommerce](https://woocommerce.com/products/affiliate-for-woocommerce/) (Pro)
 * Fix: WooCommerce Orders 'Delete' functionality not working for non-HPOS stores
 * Fix: Duplicated records added to grid after updating value for any paginated records using inline edit
 * Fix: Unable to save edited records after successful inline edit
@@ -474,7 +498,7 @@ It also gives the warm feeling of supporting further development of the plugin.
 
 = 8.10.0 (22.06.2023) =
 * New: Tooltip for column headers
-* New: Compatibility with [Customer Email Verification](https://woo.com/products/customer-email-verification/?aff=5475)
+* New: Compatibility with [Customer Email Verification](https://woocommerce.com/products/customer-email-verification/?aff=5475)
 * Fix: Import CSV functionality not working in some cases
 * Fix: Settings menu not clickable in some cases
 * Fix: Progress modal getting hidden immediately when trying to use Undo or Delete Tasks functionality (Pro)
@@ -631,7 +655,7 @@ It also gives the warm feeling of supporting further development of the plugin.
 
 = 6.6.0 (02.09.2022) =
 * New: Compatibility with WordPress v6.0.2 & WooCommerce v6.8.2
-* New: Compatibility with [WooCommerce Subscriptions](https://woo.com/products/woocommerce-subscriptions/?aff=5475) v4.5.1 (Pro)
+* New: Compatibility with [WooCommerce Subscriptions](https://woocommerce.com/products/woocommerce-subscriptions/?aff=5475) v4.5.1 (Pro)
 * New: Compatibility with [Orderable](https://stellarwp.pxf.io/c/3616375/1287872/9639) (Pro)
 * New: Compatibility with [GiveWP](https://stellarwp.pxf.io/c/3616375/1287837/9639) (Pro)
 * Fix: Access Privilege settings getting deleted when trying to update 'Company logo' using non-administrator WordPress user role (Pro)
@@ -771,7 +795,7 @@ It also gives the warm feeling of supporting further development of the plugin.
 
 = 5.34.0 (28.01.2022) =
 * New: WordPress v5.9 compatible
-* New: Compatibility with [WooCommerce Dropshipping](https://woo.com/products/woocommerce-dropshipping/?aff=5475) (Pro)
+* New: Compatibility with [WooCommerce Dropshipping](https://woocommerce.com/products/woocommerce-dropshipping/?aff=5475) (Pro)
 * Update: Improvements related to overriding Order Print Invoice template (WooCommerce)
 * Update: Pricing page related changes
 * Update: POT file
@@ -780,6 +804,15 @@ It also gives the warm feeling of supporting further development of the plugin.
 [See changelog for all versions](https://www.storeapps.org/docs/sm-changelog/?utm_source=wprepo&utm_medium=web&utm_campaign=smwp_readme).
 
 == Upgrade Notice ==
+
+= 8.37.0 =
+WordPress 6.5.2 compatible, WooCommerce 8.8.2 compatible, Compatibility with [Legal Pages](https://wordpress.org/plugins/legal-pages/), Fixes related to PHP warning when loading WooCommerce Products dashboard, Using 'increase by/decrease by' Bulk Edit operators setting value to '0' for WooCommerce Products 'Regular price' & 'Sale price' fields having empty values (Pro), Using 'increase by/decrease by' Bulk Edit operators setting value to '0' for any numeric fields having empty values (Pro), Updates related to Replace 'woo.com' links with 'woocommerce.com'. Recommended upgrade.
+
+= 8.36.0 =
+WordPress 6.5 compatible, Fixes related to 'Featured' column not detected in 'Column Manager' on WooCommerce Products dashboard, PHP 8.1.27 Uncaught TypeError: Cannot access offset of type string on string when clicking on 'Load More Products' button on WooCommerce Products dashboard, Advanced Search not filtering null value for date fields on WooCommerce Subscriptions dashboard (Pro), PHP warning when fetching all accessible views for current user (Pro). Recommended upgrade.
+
+= 8.35.0 =
+WooCommerce 8.7.0 compatible, Fixes related to Dashboard not loading due to 'select2' library conflict with other plugins, Updates related to Integrated product specific low stock threshold value in 'Stock' column color-coding on WooCommerce Products dashboard (Pro). Recommended upgrade.
 
 = 8.34.0 =
 Fixes related to Advanced Search functionality displays variations of products whose parents are not published for 'Post Status' column in WooCommerce Products dashboard. Recommended upgrade.
@@ -839,7 +872,7 @@ Added Stock Log dashboard for WooCommerce Products, Fixes related to Stock statu
 WooCommerce 8.1.1 compatible, Fixes related to WooCommerce Products dashboard fails to load data in some cases, Confirm dialog won't close after successful deletion of records for any dashboards (Lite), Custom views based on 'WooCommerce Products' post type fails to load data in some cases (Pro) along with other important fixes and updates. Recommended upgrade.
 
 = 8.16.0 =
-WooCommerce 8.1.0 compatible, Added compatibility support for [Affiliate For WooCommerce](https://woo.com/products/affiliate-for-woocommerce/) (Pro), Fixes related to WooCommerce Orders 'Delete' functionality not working for non-HPOS stores, Duplicated records added to grid after updating value for any paginated records using inline edit, Unable to save edited records after successful inline edit, Duplicated records added to grid after updating value for any paginated records using bulk edit (Pro), Added support for managing taxonomy fields in Users dashboard (Pro) along with other important fixes and updates. Recommended upgrade.
+WooCommerce 8.1.0 compatible, Added compatibility support for [Affiliate For WooCommerce](https://woocommerce.com/products/affiliate-for-woocommerce/) (Pro), Fixes related to WooCommerce Orders 'Delete' functionality not working for non-HPOS stores, Duplicated records added to grid after updating value for any paginated records using inline edit, Unable to save edited records after successful inline edit, Duplicated records added to grid after updating value for any paginated records using bulk edit (Pro), Added support for managing taxonomy fields in Users dashboard (Pro) along with other important fixes and updates. Recommended upgrade.
 
 = 8.15.0 =
 Fixes related to Adding multiple custom attributes using inline edit not working properly in WooCommerce Products dashboard, WooCommerce Orders dashboard 'Print Invoice' functionality not working for all / all filtered records (Pro), Updates related to Exclude internal Smart Manager state management meta keys (like 'sa_sm_%') from loading in Users dashboard (Pro), Code improvements for WooCommerce Orders dashboard 'Print Invoice' functionality (Pro) along with other important fixes and updates. Recommended upgrade.
@@ -857,7 +890,7 @@ Exporting categories or other taxonomies in a properly formatted manner that is 
 Setting for enabling/disabling date picker for date/datetime columns, Fixes related to WooCommerce product variations title not displaying attribute list when data is sorted in the grid, 'Date', 'DateTime' and 'Time' columns showing incorrect placeholder when using inline edit in some cases, 'Export CSV' not working in Safari browser (Pro), Update the dashboard state for custom views only when the columns are shown/hidden by the view's author. (Pro) along with other important fixes and updates. Recommended upgrade.
 
 = 8.10.0 =
-Tooltip for column headers, Compatibility with [Customer Email Verification](https://woo.com/products/customer-email-verification/?aff=5475), Fixes related to Import CSV functionality not working in some cases, Settings menu not clickable in some cases, Progress modal getting hidden immediately when trying to use Undo or Delete Tasks functionality (Pro) along with other important fixes and updates. Recommended upgrade.
+Tooltip for column headers, Compatibility with [Customer Email Verification](https://woocommerce.com/products/customer-email-verification/?aff=5475), Fixes related to Import CSV functionality not working in some cases, Settings menu not clickable in some cases, Progress modal getting hidden immediately when trying to use Undo or Delete Tasks functionality (Pro) along with other important fixes and updates. Recommended upgrade.
 
 = 8.9.0 =
 Dedicated & improved settings UI, Fixes related to Dashboard refreshing to first page when inline editing Product Gallery Images on non-first Pages, Unable to edit Product Gallery Images when editing after saving changes along with other important fixes and updates. Recommended upgrade.
@@ -911,7 +944,7 @@ View & manage any Custom Taxonomies (Pro), WooCommerce 7.0.0 compatible, WordPre
 Compatibility with WooCommerce v6.9.4, Added 'Product SKU' and 'Product title' advanced search fields for WooCommerce Orders dashboard (Pro), 'Coupons used' and 'Shipping method' advanced search fields for WooCommerce Orders dashboard (Pro), Fixes related to WooCommerce Product Attribute editing not getting added using inline edit when using [Variation Swatches for WooCommerce](https://wordpress.org/plugins/woo-variation-swatches/) plugin along with other important fixes and updates. Recommended upgrade.
 
 = 6.6.0 =
-Compatibility with WordPress v6.0.2 & WooCommerce v6.8.2, [WooCommerce Subscriptions](https://woo.com/products/woocommerce-subscriptions/?aff=5475) v4.5.1 (Pro), [Orderable](https://stellarwp.pxf.io/c/3616375/1287872/9639) (Pro), [GiveWP](https://stellarwp.pxf.io/c/3616375/1287837/9639) (Pro), Fixes related to Access Privilege settings getting deleted when trying to update 'Company logo' using non-administrator WordPress user role (Pro), WooCommerce Product Attribute editing not working when using [Variation Swatches for WooCommerce](https://wordpress.org/plugins/woo-variation-swatches/) plugin, Stock alert emails not getting triggered when updating stock for WooCommerce Product Variations, Inline edit for Categories not working in case of nested categories along with other important fixes and updates. Recommended upgrade.
+Compatibility with WordPress v6.0.2 & WooCommerce v6.8.2, [WooCommerce Subscriptions](https://woocommerce.com/products/woocommerce-subscriptions/?aff=5475) v4.5.1 (Pro), [Orderable](https://stellarwp.pxf.io/c/3616375/1287872/9639) (Pro), [GiveWP](https://stellarwp.pxf.io/c/3616375/1287837/9639) (Pro), Fixes related to Access Privilege settings getting deleted when trying to update 'Company logo' using non-administrator WordPress user role (Pro), WooCommerce Product Attribute editing not working when using [Variation Swatches for WooCommerce](https://wordpress.org/plugins/woo-variation-swatches/) plugin, Stock alert emails not getting triggered when updating stock for WooCommerce Product Variations, Inline edit for Categories not working in case of nested categories along with other important fixes and updates. Recommended upgrade.
 
 = 6.5.0 =
 Compatibility with WooCommerce v6.8.0, Added 'starts with' and 'not starts with' advanced search operators for text fields (Pro), 'ends with' and 'not ends with' advanced search operators for text fields (Pro) along with other important fixes and updates. Recommended upgrade.
@@ -956,7 +989,7 @@ Allow adding/removing columns to/from custom views (Pro), Fixes related to Custo
 WooCommerce v6.2.0 compatible, Allow users to increase/decrease date, datetime & time field by durations of days, weeks, months, years, hours & minutes (Pro), ‘set time to’ action for ‘time’ fields (Pro), Fixes related to Timestamp fields getting 0 value when clearing date using date picker in inline edit, Bulk Edit placeholder for value field not getting cleared after switching actions (Pro) along with other important fixes and updates. Recommended upgrade.
 
 = 5.34.0 =
-WordPress v5.9 compatible, Compatibility with [WooCommerce Dropshipping](https://woo.com/products/woocommerce-dropshipping/?aff=5475) (Pro), Updates related to Improvements related to overriding Order Print Invoice template (WooCommerce), Pricing page related changes along with other important fixes and updates. Recommended upgrade.
+WordPress v5.9 compatible, Compatibility with [WooCommerce Dropshipping](https://woocommerce.com/products/woocommerce-dropshipping/?aff=5475) (Pro), Updates related to Improvements related to overriding Order Print Invoice template (WooCommerce), Pricing page related changes along with other important fixes and updates. Recommended upgrade.
 
 = 5.33.0 =
 WordPress v5.8.3 compatible & WooCommerce v6.1.1 compatible, Fixes related to Declaring a required parameter after an optional one is deprecated (PHP8), Advanced Search returning incorrect results when searching using Product Category along with other important fixes and updates. Recommended upgrade.
@@ -1151,7 +1184,7 @@ Fixed issues related to Batch delete getting stuck, Some columns showing as '#ba
 Tested with latest versions of WordPress & WooCommerce and fixed issues related to 'Product Featured' column showing '#bad-value#' in some cases in Products Dashboard, Inline edit for the 'checkbox' fields not working in some cases, Some of the 'postmeta' columns not getting detected in Smart Manager grid along with other important fixes and updates. Recommended upgrade.
 
 = 4.3 =
-Added compatibility support for [WooCommerce Smart Coupons](https://woo.com/products/smart-coupons/), Compatibility with WooCommerce Coupons, fixed issues related to Sort for numeric fields not working along with other important fixes and updates. Recommended upgrade.
+Added compatibility support for [WooCommerce Smart Coupons](https://woocommerce.com/products/smart-coupons/), Compatibility with WooCommerce Coupons, fixed issues related to Sort for numeric fields not working along with other important fixes and updates. Recommended upgrade.
 
 = 4.2.26 =
 Fixed issues related to Infinite Scroll of the grid going into an infinite loop in some cases, column sort related fixes, advanced search related fixes along with other important fixes and updates. Recommended upgrade.
@@ -1190,13 +1223,13 @@ Fixed issues related to Smart Manager Access Privilege functionality not working
 Compatibility with [Yoast SEO](https://wordpress.org/plugins/wordpress-seo/) (Pro), [WordPress SEO Plugin – Rank Math](https://wordpress.org/plugins/seo-by-rank-math/) (Pro), Fixed issues related to PHP Warnings when accessing the users dashboard, Javascript errors casing no records to load in Smart Manager grid along with other important fixes and updates. Recommended upgrade.
 
 = 4.2.16 =
-Compatibility with [WooCommerce Subscriptions](https://woo.com/products/woocommerce-subscriptions/?aff=5475) (Pro), [WooCommerce Cost of Goods](https://woo.com/products/woocommerce-cost-of-goods/?aff=5475) (Pro), Added support for 'set to regular price' & 'set to sale price' option using Batch Update for products dashboard (WooCommerce) (Pro) along with other important fixes and updates. Recommended upgrade.
+Compatibility with [WooCommerce Subscriptions](https://woocommerce.com/products/woocommerce-subscriptions/?aff=5475) (Pro), [WooCommerce Cost of Goods](https://woocommerce.com/products/woocommerce-cost-of-goods/?aff=5475) (Pro), Added support for 'set to regular price' & 'set to sale price' option using Batch Update for products dashboard (WooCommerce) (Pro) along with other important fixes and updates. Recommended upgrade.
 
 = 4.2.15 =
 New column 'Order Sub Total' added to Orders Dashboard & CSV export (WooCommerce), Fixed issues related to Smart Manager dashboard column mapping not getting refreshed on addition of new data like categories, attributes, etc. along with other important fixes and updates. Recommended upgrade.
 
 = 4.2.14 =
-Compatibility with [Min/Max Quantities](https://woo.com/products/minmax-quantities/?aff=5475) (Pro), [Min and Max Quantity for WooCommerce](https://wordpress.org/plugins/minmax-quantity-for-woocommerce/) (Pro), Compatibility with [Woocommerce Minimum and Maximum Quantity](https://wordpress.org/plugins/woo-min-max-quantity-limit/) (Pro), Search and Replace any string for any field using batch update functionality (Pro), along with other important fixes and updates. Recommended upgrade.
+Compatibility with [Min/Max Quantities](https://woocommerce.com/products/minmax-quantities/?aff=5475) (Pro), [Min and Max Quantity for WooCommerce](https://wordpress.org/plugins/minmax-quantity-for-woocommerce/) (Pro), Compatibility with [Woocommerce Minimum and Maximum Quantity](https://wordpress.org/plugins/woo-min-max-quantity-limit/) (Pro), Search and Replace any string for any field using batch update functionality (Pro), along with other important fixes and updates. Recommended upgrade.
 
 = 4.2.13 =
 Fixed issues related to Delete All Records in the store functionality not working, Duplicate All records in search result duplicating all records in the store, Search functionality not working in 'WP Media Library' when accessed from batch update functionality along with other important fixes and updates. Recommended upgrade.

@@ -9,16 +9,16 @@ class CDN
 {
   public static function add_preconnect($html)
   {
-    if (!Config::$config['cdn'] || !Config::$config['cdn_url']) {
+    $config = Config::$config;
+
+    if (!$config['cdn'] || !$config['cdn_url'] || $config['cdn_type'] != 'custom') {
       return $html;
     }
-
-    $cdn_url = Config::$config['cdn_url'];
 
     // Add preconnect link
     $html = Utils::str_replace_first(
       '</title>',
-      '</title>' . PHP_EOL . '<link rel="preconnect" href="' . $cdn_url . '"/>',
+      '</title>' . PHP_EOL . '<link rel="preconnect" href="' . $config['cdn_url'] . '"/>',
       $html
     );
 
@@ -28,13 +28,15 @@ class CDN
   public static function rewrite($html)
   {
     // No need to add CDN
-    if (!Config::$config['cdn'] || !Config::$config['cdn_url']) {
+    $config = Config::$config;
+
+    if (!$config['cdn'] || !$config['cdn_url'] || $config['cdn_type'] != 'custom') {
       return $html;
     }
 
     // Get site domain and CDN domain
     $site_domain = '//' . preg_replace('(^https?://)', '', site_url());
-    $cdn_domain = '//' . preg_replace('(^https?://)', '', Config::$config['cdn_url']);
+    $cdn_domain = '//' . preg_replace('(^https?://)', '', $config['cdn_url']);
 
     // Files types as regex
     $file_types = [
@@ -44,7 +46,7 @@ class CDN
     ];
 
     // Pick the regex based on `cdn_file_types` config
-    $file_types_regex = $file_types[Config::$config['cdn_file_types']];
+    $file_types_regex = $file_types[$config['cdn_file_types']];
 
     // Escape for regex
     $site_domain_escaped = preg_quote($site_domain, '/');

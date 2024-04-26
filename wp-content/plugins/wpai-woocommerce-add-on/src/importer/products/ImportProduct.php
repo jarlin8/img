@@ -88,6 +88,27 @@ abstract class ImportProduct extends ImportProductBase {
         $this->prepareProperties();
         foreach ($this->productProperties as $property => $value) {
             $this->log(sprintf(__('Property `%s` updated with value `%s`', \PMWI_Plugin::TEXT_DOMAIN), $property, maybe_serialize($value)));
+
+			/**
+			 * Handle date props separately so they match the WC format used when
+			 * manually updating them: https://github.com/woocommerce/woocommerce/pull/22973
+			 */
+			if(in_array($property, ['date_on_sale_to', 'date_on_sale_from']) && apply_filters('wp_all_import_use_wc_to_and_from_sale_date_times', true)){
+
+				switch($property){
+					case 'date_on_sale_to':
+						if ( ! empty( $value ) ) {
+							$this->productProperties[$property] = date( 'Y-m-d 23:59:59', strtotime( $value ) );
+						}
+						break;
+					case 'date_on_sale_from':
+						if ( ! empty( $value ) ) {
+							$this->productProperties[$property] = date( 'Y-m-d 00:00:00', strtotime( $value ) );
+						}
+						break;
+				}
+
+			}
         }
         $errors = $this->product->set_props($this->productProperties);
         if (is_wp_error($errors)) {

@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '55e3241af063e14711dc89ec42b9e2446d2c7a65',
+    'reference' => '8b121bf1a49c7bfbc36f84f705f309b40c7e3cba',
     'name' => '__root__',
   ),
   'versions' => 
@@ -18,16 +18,16 @@
       'aliases' => 
       array (
       ),
-      'reference' => '55e3241af063e14711dc89ec42b9e2446d2c7a65',
+      'reference' => '8b121bf1a49c7bfbc36f84f705f309b40c7e3cba',
     ),
     'matthiasmullie/minify' => 
     array (
-      'pretty_version' => '1.3.71',
-      'version' => '1.3.71.0',
+      'pretty_version' => '1.3.73',
+      'version' => '1.3.73.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'ae42a47d7fecc1fbb7277b2f2d84c37a33edc3b1',
+      'reference' => 'cb7a9297b4ab070909cefade30ee95054d4ae87a',
     ),
     'matthiasmullie/path-converter' => 
     array (

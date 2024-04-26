@@ -68,6 +68,7 @@ class Caching
     'sb_referer_host',
     'ref',
     'ttclid',
+    'gad_source',
   ];
 
   // Default include query strings
@@ -118,7 +119,11 @@ class Caching
     // Get cache file path
     $host = $_SERVER['HTTP_HOST'];
     $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    $cache_file_path = FLYING_PRESS_CACHE_DIR . $host . $path;
+
+    // Allow developers to modify the cache file path
+    $path = apply_filters('flying_press_cache_file_path', $path);
+
+    $cache_file_path = FLYING_PRESS_CACHE_DIR . "$host/$path/";
 
     // Create the cache directory if it does not exist
     !is_dir($cache_file_path) && mkdir($cache_file_path, 0755, true);

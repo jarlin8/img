@@ -33,6 +33,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 			}
 
 			add_filter('sm_dashboard_model',array(&$this,'products_dashboard_model'),12,2);
+			add_filter( 'sm_data_model', array( &$this, 'products_data_model' ), 12, 2 );
 		}
 
 		public function __call( $function_name, $arguments = array() ) {
@@ -66,6 +67,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 			add_filter( 'sm_task_update_action',__CLASS__. '::task_update_action', 12, 2 );
 			add_filter( 'sm_delete_attachment_get_matching_gallery_images_post_ids',__CLASS__. '::get_matching_gallery_images_post_ids', 12, 2 );
 			add_action( 'woocommerce_product_duplicate_before_save', __CLASS__. '::product_duplicate_before_save', 10, 2 );
+			add_action( 'sm_beta_pre_process_batch', __CLASS__. '::products_pre_batch_update' );
 		}
 		
 		public static function products_post_batch_process_args( $args ) {
@@ -886,6 +888,56 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 			$status = ( is_callable( array( $product, 'get_status' ) ) ) ? $product->get_status() : '';
 			if ( ! empty( $status ) && is_callable( array( $duplicate, 'set_status' ) ) ) {
 				$duplicate->set_status( $status );
+			}
+		}
+
+		/**
+		* Adding new custom column in data model for stock column color code based on each product level low stock threshold
+		*
+		* @param array $data_model data model array.
+		* @param array $data_col_params data columns params array.
+		* @return array $data_model Updated data model array
+		*/ 
+		public function products_data_model( $data_model = array(), $data_col_params = array() ) {
+			if ( empty( $data_model ) || ! is_array( $data_model ) || empty( $data_model['items'] ) || ! is_array( $data_model['items'] ) ) {
+				return $data_model;
+			}
+			$color_code = 'red';
+			foreach ( $data_model['items'] as $key => $data ) {
+				if ( empty( $data['postmeta_meta_key__stock_meta_value__stock'] ) || empty( $data['posts_id'] ) ) {
+					continue;
+				}
+				$low_stock_threshold = get_post_meta( $data['posts_id'], '_low_stock_amount', true );
+				$low_stock_threshold = ( '' !== $low_stock_threshold ) ? absint( $low_stock_threshold ) : -1;
+				if ( $low_stock_threshold < 0 ) {
+					continue;
+				}
+				switch ( true ) {
+					case ( absint( $data['postmeta_meta_key__stock_meta_value__stock'] ) > absint( $low_stock_threshold ) ):
+						$color_code = 'green';
+						break;
+					case ( absint( $data['postmeta_meta_key__stock_meta_value__stock'] ) <= absint( $low_stock_threshold ) && ! empty( absint( $data['postmeta_meta_key__stock_meta_value__stock'] ) ) ):
+						$color_code = 'yellow';
+						break;
+				}
+				$data_model['items'][ $key ]['custom_stock_color_code'] = $color_code;
+			}
+			return $data_model;
+		}
+
+		/**
+		* Update certain columns before doing batch update
+		*
+		* @param array $args array of update related data.
+		* @return void
+		*/ 
+		public static function products_pre_batch_update( $args = array() ) {
+			if ( empty( $args['type'] ) || ( ! empty( $args['type'] ) && ( 'postmeta/meta_key=_sale_price/meta_value=_sale_price' !== $args['type'] ) ) || ( ! in_array( $args['operator'], array( 'increase_by_per', 'decrease_by_per', 'increase_by_num', 'decrease_by_num' ) ) ) || empty( $args['id'] ) ) {
+				return;
+			}
+			$regular_price = get_post_meta( $args['id'], '_regular_price', true );
+			if ( ! empty( $regular_price ) && empty( get_post_meta( $args['id'], '_sale_price', true ) ) ) {
+				update_post_meta( $args['id'], '_sale_price', $regular_price );
 			}
 		}
 

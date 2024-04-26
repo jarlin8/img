@@ -1,13 +1,54 @@
 === FlyingPress ===
 Requires at least: 4.7
-Tested up to: 6.4
+Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 4.10.3
+Stable tag: 4.13.3
 
 == Description ==
 Lightning-Fast WordPress on Autopilot
 
 == Changelog ==
+
+= 4.13.3 - 13 April, 2024 =
+
+- Improvement: Better used CSS detection
+
+= 4.13.2 - 12 April, 2024 =
+
+- Improvement: Enhanced stability for the complete removal of unused CSS, ensuring a more reliable performance
+- Improvement: Logic behind the Image Optimizer has been simplified for better efficiency
+- Fix: Gravatar images inside srcset were not self-hosted correctly 
+- Fix: Website assets were still using old CDN URLs whereas new FlyingCDN was active
+
+= 4.13.1 - 5 April, 2024 = 
+
+- Fix: Custom CDN URL not working after last update
+
+= 4.13.0 - 5 April, 2024 = 
+
+- New: Unveiling the new FlyingCDN, powered by Cloudflare Enterprise. Visit [FlyingCDN.com](https://flyingcdn.com/) 
+- Improvement: Streamlined purging process for post taxonomies  
+- Improvement: Auto purge and preload WeGlot translated URLs
+- Improvement: Added 'gad_source' to default ignore query list
+- Improvement: Responsive images uses native auto sizes
+- Fix: Missing trailing slash in the page URL resulted in invalid cache file names in certain cases    
+
+= 4.12.0 - 28 March, 2024 = 
+
+- New: FlyingPress is now compatible with WeGlot translation 
+- Fix: A notice regarding the redeclaration of controls with same name in Elementor
+- Fix: Undefined array key HTTP_HOST in CLI context
+- Fix: Post 4.11 release website styles got broken in certain cases 
+
+= 4.11.0 - 18 March, 2024 = 
+
+- New: WP CLI commands for preload cache, purge pages , purge everything and activate license , try `wp flying-press`
+- Improvement: Efficient logic for checking if WP_CACHE constant is set
+- Improvement: Adjusted FlyingPress controls after custom css toggle in Elementor
+- Improvement: Higher loading priority for preloaded fonts
+- Improvement: Upgraded assets minification library
+- Fix: Adding display=swap to encoded Google font URLs resulted in invalid font
+- Fix: A warning while fetching WooCommerce product categories 
 
 = 4.10.3 - 01 March, 2024 = 
 

@@ -59,6 +59,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 				// Filters for modifying advanced search query clauses
 				add_filter( 'woocommerce_orders_table_query_clauses',  array( &$this, 'modify_subscriptions_table_query_clauses' ), 99, 3 );
 				add_filter( 'sm_search_query_formatted', array( 'Smart_Manager_Shop_Order', 'sm_order_addresses_search_query_formatted' ), 12, 2 );
+				add_filter( 'sm_search_wc_orders_meta_cond', array( 'Smart_Manager_Shop_Order','search_wc_orders_meta_cond' ), 10, 2 );
 
 				// Filters for 'inline_update' functionality
 				add_filter( 'sm_default_inline_update', function() { return false; } );

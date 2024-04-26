@@ -357,6 +357,8 @@ final class XmlImportWooCommerceService {
             $product_type_term = is_exists_term('simple', 'product_type', 0);
             if (!empty($product_type_term) && !is_wp_error($product_type_term)) {
                 $this->getTaxonomiesService()->associateTerms($product->get_id(), array( (int) $product_type_term['term_taxonomy_id'] ), 'product_type');
+                $simpleProduct = new \WC_Product_Simple($product->get_id());
+                $simpleProduct->save();
             }
         }
         // Sync prices after conversion to simple product or if product has less than 2 variations.
@@ -595,6 +597,30 @@ final class XmlImportWooCommerceService {
 	        // Update gallery custom field if images is set to be updated.
 	        update_post_meta($pid, $meta_key, $meta_value);
         }
+    }
+
+    /**
+     * Find existing product by SKU, ID or title.
+     *
+     * @param $identifier
+     * @return bool|\WC_Product
+     */
+    public static function getProductByIdentifier($identifier) {
+        $product_id = wc_get_product_id_by_sku($identifier);
+        if ( empty($product_id) ) {
+            $result = wp_all_import_get_page_by_title($identifier, ['product', 'product_variation']);
+            if ( $result && !is_wp_error($result) ) {
+                $product_id = $result->ID;
+            }
+            if ( empty($product_id) && is_numeric($identifier) ) {
+                $product_id = (int) $identifier;
+            }
+        }
+        $product = FALSE;
+        if ( ! empty($product_id) ) {
+            $product = WC()->product_factory->get_product($product_id);
+        }
+        return $product;
     }
 
     /**

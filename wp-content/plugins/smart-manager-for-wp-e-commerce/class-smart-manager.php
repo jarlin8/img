@@ -398,7 +398,7 @@ class Smart_Manager {
 		add_filter( 'site_transient_update_plugins', array( &$this, 'overwrite_site_transient' ), 11, 1 );
 		add_filter( 'pre_set_site_transient_update_plugins', array( &$this, 'overwrite_site_transient' ), 11, 1 );
 		
-		add_action( 'admin_enqueue_scripts', array( $this, 'sa_sm_dequeue_scripts' ), 998 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'sa_sm_dequeue_scripts' ), 999 );
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 999 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
@@ -439,6 +439,7 @@ class Smart_Manager {
 		// Action to declare WooCommerce HPOS compatibility.
 		add_action( 'before_woocommerce_init', array( $this, 'declare_hpos_compatibility' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'add_additonal_links' ), 99, 4 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'sa_sm_dequeue_styles' ), 999 );
 	}
 
 	// Find latest StoreApps Upgrade file
@@ -965,7 +966,7 @@ class Smart_Manager {
 	public function sa_sm_dequeue_scripts() {
 		global $wp_scripts;
 		if (  is_admin() && !empty( $_GET['page'] ) && ( 'smart-manager' === $_GET['page'] || 'smart-manager-settings' === $_GET['page'] ) ) {
-			$dequeue_handles = array( 'wpml-tm-progressbar', 'wpml-tm-scripts', 'toolset-utils' );
+			$dequeue_handles = array( 'wpml-tm-progressbar', 'wpml-tm-scripts', 'toolset-utils', 'elex_selectwoo_js', 'adl-bootstrap-js' );
 			if ( is_plugin_active( 'addify-product-labels-and-stickers/class-af_wcbm_main.php' ) && ( is_array( $dequeue_handles ) ) ) { // Compat for 'Product Labels and Stickers' plugin.
 				array_push( $dequeue_handles, 'cpt_badge_managment_select_js' );
 			}
@@ -1910,6 +1911,27 @@ class Smart_Manager {
 			error_log( 'smart-manager-for-wp-e-commerce' . ' ' . $message ); // phpcs:ignore
 		}
    }
+
+   /**
+	* Function to dequeue styles in Smart Manager page
+	*
+	* @return void
+	*/
+	public function sa_sm_dequeue_styles() {
+		
+		global $wp_styles;
+		if (  ! is_admin() || empty( $_GET['page'] ) || ( ! empty( $_GET['page'] ) && ( 'smart-manager' !== $_GET['page'] ) ) || empty( $wp_styles->queue ) || ( ! is_array( $wp_styles->queue ) ) ) {
+			return;
+		}
+		$dequeue_handles = array( 'adl-lp-bootstrap' );
+		foreach ( $wp_styles->queue as $handle ) {
+			if ( empty( $handle ) || empty( $dequeue_handles ) || ( ! is_array( $dequeue_handles ) ) || ( ! in_array( $handle, $dequeue_handles ) ) || ( ! wp_style_is( $handle ) ) ) {
+				continue;
+			}
+			wp_dequeue_style( $handle );
+			wp_deregister_style( $handle );
+		}
+	}
 }
 
 $GLOBALS['smart_manager_beta'] = Smart_Manager::instance();

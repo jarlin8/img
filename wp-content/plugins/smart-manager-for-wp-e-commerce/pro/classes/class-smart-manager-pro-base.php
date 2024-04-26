@@ -588,7 +588,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 
 		//function to process batch update conditions
 		public static function process_batch_update( $args= array() ) {
-			do_action('sm_beta_pre_process_batch');
+			do_action( 'sm_beta_pre_process_batch', $args );
 			// code for processing logic for batch update
 			if( empty($args['type']) || empty($args['operator']) || empty($args['id']) || empty( $args['date_type'] ) ) {
 				return false;
@@ -749,16 +749,16 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 					}
 					break;
 				case 'increase_by_per':
-					$new_val = round( ($prev_val + ($prev_val * ($value1 / 100))), apply_filters('sm_beta_pro_num_decimals',get_option( 'woocommerce_price_num_decimals' )) );
+					$new_val = ( ! empty( $prev_val ) ) ? round( ($prev_val + ($prev_val * ($value1 / 100))), apply_filters('sm_beta_pro_num_decimals',get_option( 'woocommerce_price_num_decimals' )) ) : '';
 					break;
 				case 'decrease_by_per':
-					$new_val = round( ($prev_val - ($prev_val * ($value1 / 100))), apply_filters('sm_beta_pro_num_decimals',get_option( 'woocommerce_price_num_decimals' )) );
+					$new_val = ( ! empty( $prev_val ) ) ? round( ($prev_val - ($prev_val * ($value1 / 100))), apply_filters('sm_beta_pro_num_decimals',get_option( 'woocommerce_price_num_decimals' )) ) : '';
 					break;
 				case 'increase_by_num':
 					$new_val = round( ($prev_val + $value1), apply_filters('sm_beta_pro_num_decimals',get_option( 'woocommerce_price_num_decimals' )) );
 					break;
 				case 'decrease_by_num':
-					$new_val = round( ($prev_val - $value1), apply_filters('sm_beta_pro_num_decimals',get_option( 'woocommerce_price_num_decimals' )) );
+					$new_val = ( ! empty( $prev_val ) ) ? round( ($prev_val - $value1), apply_filters('sm_beta_pro_num_decimals',get_option( 'woocommerce_price_num_decimals' )) ) : '';
 					break;
 				default:
 					$new_val = $value1;

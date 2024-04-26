@@ -39,7 +39,11 @@ class CSS
         $css = file_get_contents($file_path);
         // Generate hash based on the css content and CDN url
         // If CDN URL changes, new hash will be generated
-        $hash = Config::$config['cdn'] ? md5($css) : md5($css . Config::$config['cdn_url']);
+        $hash =
+          Config::$config['cdn'] && Config::$config['cdn_type'] == 'custom'
+            ? md5($css . Config::$config['cdn_url'])
+            : md5($css);
+
         $file_name = substr($hash, 0, 12) . '.' . basename($file_path);
         $minified_path = FLYING_PRESS_CACHE_DIR . $file_name;
         $minified_url = FLYING_PRESS_CACHE_URL . $file_name;
@@ -84,6 +88,7 @@ class CSS
 
     // Force include selectors
     $include_selectors = $config['css_rucss_include_selectors'];
+    $include_selectors = [...$include_selectors, ...self::get_js_selectors($html)];
     $include_selectors = array_filter($include_selectors);
     $include_selectors = array_map('preg_quote', $include_selectors);
     $include_selectors = implode('|', $include_selectors);
@@ -321,5 +326,50 @@ class CSS
     }
 
     return $parsed_css;
+  }
+
+  private static function get_js_selectors($html)
+  {
+    $htmlObj = new HTML($html);
+    $scripts = $htmlObj->getElementsBySelector('script');
+
+    //  Get the content of all the scripts
+    $js = '';
+    foreach ($scripts as $script) {
+      $script = new HTML($script);
+      if ($script->src) {
+        $file_path = Caching::get_file_path_from_url($script->src);
+        if (is_file($file_path)) {
+          $js .= file_get_contents($file_path);
+        }
+      } else {
+        $js .= $script->getContent();
+      }
+    }
+
+    $regex = '/(?:classList\.add|classList\.toggle|addClass|toggleClass)\(\s*[\'"](.*?)[\'"]/';
+
+    preg_match_all($regex, $js, $matches);
+
+    // Split by space, for example: 'class1 class2' => ['class1', 'class2']
+    $selectors = array_map(function ($match) {
+      return explode(' ', $match);
+    }, $matches[1]);
+
+    // Flatten the array
+    $selectors = array_reduce(
+      $selectors,
+      function ($carry, $item) {
+        return array_merge($carry, $item);
+      },
+      []
+    );
+
+    // Remove selectors with less than 4 characters (just to be safe)
+    $selectors = array_filter($selectors, function ($selector) {
+      return strlen($selector) >= 4;
+    });
+
+    return array_unique($selectors);
   }
 }

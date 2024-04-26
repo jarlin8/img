@@ -36,7 +36,7 @@
 												</tr>
 												<tr>
 													<td colspan="2">
-														<h4><?php _e('Date', PMWI_Plugin::TEXT_DOMAIN) ?><a href="#help" class="wpallimport-help" style="position:relative;top:-2px;" title="<?php _e('Use any format supported by the PHP <b>strtotime</b> function. That means pretty much any human-readable date will work.', PMWI_Plugin::TEXT_DOMAIN) ?>">?</a></h4>
+														<h4><?php _e('Date', PMWI_Plugin::TEXT_DOMAIN) ?><a href="#help" class="wpallimport-help" style="position:relative;top:-1px;left:6px;" title="<?php _e('Use any format supported by the PHP <b>strtotime</b> function. That means pretty much any human-readable date will work.', PMWI_Plugin::TEXT_DOMAIN) ?>">?</a></h4>
 														<div class="input">
 															<input type="text" class="datepicker" name="pmwi_order[notes][<?php echo $i; ?>][date]" value="<?php echo esc_attr($note['date']) ?>"/>
 														</div>	
@@ -61,7 +61,7 @@
 														<div class="switcher-target-order_note_visibilityy_xpath_<?php echo $i; ?>">										
 															<span class="wpallimport-slide-content" style="padding-left:0;">
 																<input type="text" class="short" name="pmwi_order[notes][<?php echo $i; ?>][visibility_xpath]" style="" value="<?php echo esc_attr($note['visibility_xpath']); ?>"/>	
-																<a href="#help" class="wpallimport-help" title="<?php _e('Use \'private\' or \'customer\'.', PMWI_Plugin::TEXT_DOMAIN) ?>" style="position:relative; top:0px;">?</a>
+																<a href="#help" class="wpallimport-help" title="<?php _e('Use \'private\' or \'customer\'.', PMWI_Plugin::TEXT_DOMAIN) ?>" style="position:relative; top:-2px;left:4px;">?</a>
 															</span>
 														</div>
 													</td>
@@ -100,7 +100,7 @@
 											</tr>
 											<tr>
 												<td colspan="2">
-													<h4><?php _e('Date', PMWI_Plugin::TEXT_DOMAIN) ?><a href="#help" class="wpallimport-help" style="position:relative; top: -2px;" title="<?php _e('Use any format supported by the PHP <b>strtotime</b> function. That means pretty much any human-readable date will work.', PMWI_Plugin::TEXT_DOMAIN) ?>">?</a></h4>
+													<h4><?php _e('Date', PMWI_Plugin::TEXT_DOMAIN) ?><a href="#help" class="wpallimport-help" style="position:relative; top: -1px;left:6px;" title="<?php _e('Use any format supported by the PHP <b>strtotime</b> function. That means pretty much any human-readable date will work.', PMWI_Plugin::TEXT_DOMAIN) ?>">?</a></h4>
 													<div class="input">
 														<input type="text" name="pmwi_order[notes][ROWNUMBER][date]" class="date-picker" value="now"/>
 													</div>	
@@ -126,7 +126,7 @@
 														<div class="switcher-target-order_note_visibilityy_xpath_ROWNUMBER" style="display:none;">										
 															<span class="wpallimport-slide-content" style="padding-left:0;">
 																<input type="text" class="short" name="pmwi_order[notes][ROWNUMBER][visibility_xpath]" value=""/>	
-																<a href="#help" class="wpallimport-help" title="<?php _e('Use \'private\' or \'customer\'.', PMWI_Plugin::TEXT_DOMAIN) ?>" style="position:relative; top:0px;">?</a>
+																<a href="#help" class="wpallimport-help" title="<?php _e('Use \'private\' or \'customer\'.', PMWI_Plugin::TEXT_DOMAIN) ?>" style="position:relative; top:-2px;left:4px;">?</a>
 															</span>
 														</div>
 													</div>
@@ -178,7 +178,7 @@
 									<span class="order-separator-label wpallimport-slide-content" style="padding-left:0;">	
 										<label><?php _e('Multiple notes separated by', PMWI_Plugin::TEXT_DOMAIN); ?></label>
 										<input type="text" class="short rad4 order-separator-input" name="pmwi_order[notes_repeater_mode_separator]" value="<?php echo esc_attr($post['pmwi_order']['notes_repeater_mode_separator']) ?>" style="width:8%; text-align: center;"/>
-										<a href="#help" class="wpallimport-help" style="top:0px;left:4px;" title="For example, two notes would be imported like this Note 1|Note 2">?</a>
+										<a href="#help" class="wpallimport-help" style="top:0px;left:5px;" title="For example, two notes would be imported like this Note 1|Note 2">?</a>
 									</span>
 								</div>
 							</div>								
@@ -198,9 +198,17 @@
 							<div class="form-field input" style="padding-left: 20px;">
 								<label class="order-separator-label" style="line-height: 30px;"><?php _e('Multiple notes separated by', PMWI_Plugin::TEXT_DOMAIN); ?></label>
 								<input type="text" class="short rad4 order-separator-input" name="pmwi_order[notes_repeater_mode_separator]" value="<?php echo esc_attr($post['pmwi_order']['notes_repeater_mode_separator']) ?>" style="width:10%; text-align: center;"/>
-								<a href="#help" class="wpallimport-help" style="top:0px;left:8px;" title="For example, two notes would be imported like this 'Note 1|Note 2'">?</a>
+								<a href="#help" class="wpallimport-help" style="top:0px;left:3px;" title="For example, two notes would be imported like this 'Note 1|Note 2'">?</a>
 							</div>
-							<?php endif; ?>	
+							<?php endif; ?>
+                            <input type="hidden" name="pmwi_order[notes_add_auto_order_status_notes]" value="0"/>
+                            <div class="form-field input" style="padding-left: 5px;padding-top: 25px;">
+
+                                <input id="pmwi_order[notes_add_auto_order_status_notes]" type="checkbox" class="short rad4 order-separator-input" name="pmwi_order[notes_add_auto_order_status_notes]" value="1" <?php if(!empty($post['pmwi_order']['notes_add_auto_order_status_notes'])){ echo 'checked="checked"';} ?>" style="width:10%; text-align: center;"/>
+
+                                <label for="pmwi_order[notes_add_auto_order_status_notes]" class="order-separator-label" style="line-height: 30px;"><?php _e('Allow automatic order status change notes', PMWI_Plugin::TEXT_DOMAIN); ?></label>
+                                <a href="#help" class="wpallimport-help" style="top:0px;left:3px;" title="When checked, any order status changes made by WP All Import will have notes added automatically based on your WooCommerce configuration.">?</a>
+                            </div>
 						</div>				
 					</div>
 				</div>

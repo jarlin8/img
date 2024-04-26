@@ -71,8 +71,7 @@
 		AddType 'text/html; charset=UTF-8' html
 	</IfModule>
     <IfModule mod_headers.c>
-        SetEnvIf Host "^(.*)$" REQUESTED_HOST=$1
-        Header set Cache-Tag "%{REQUESTED_HOST}e"
+        Header set Cache-Tag "HOSTNAME"
         Header set CDN-Cache-Control "max-age=2592000"
         Header set Cache-Control "public"
         Header set x-flying-press-cache "HIT"

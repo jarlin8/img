@@ -50,20 +50,6 @@ class AutoPurge
     // Add home URL
     $urls[] = home_url();
 
-    // URls of categories
-    $categories = get_the_category($post_id);
-    foreach ($categories as $category) {
-      $urls[] = get_category_link($category->term_id);
-    }
-
-    // URLs of tags
-    $tags = get_the_tags($post_id);
-    if ($tags) {
-      foreach ($tags as $tag) {
-        $urls[] = get_tag_link($tag->term_id);
-      }
-    }
-
     // Posts page (blog archive)
     $posts_page = get_option('page_for_posts');
     if ($posts_page) {
@@ -73,6 +59,9 @@ class AutoPurge
     // Add author profile URL
     $author_id = get_post_field('post_author', $post_id);
     $urls[] = get_author_posts_url($author_id);
+
+    // Urls of the post taxonomies
+    $urls = [...$urls, ...self::get_post_taxonomy_urls($post_id)];
 
     // Add URLs from filter
     $urls = apply_filters('flying_press_auto_purge_urls', $urls, $post_id);
@@ -89,5 +78,49 @@ class AutoPurge
     $url = get_permalink($post_id);
     Purge::purge_url($url);
     Preload::preload_url($url);
+  }
+
+  public static function get_post_taxonomy_urls($post_id)
+  {
+    $urls = [];
+
+    $taxonomies = get_object_taxonomies(get_post_type($post_id), 'objects');
+
+    // Include taxonomies with public archive
+    $taxonomies = array_filter($taxonomies, function ($taxonomy) {
+      return $taxonomy->publicly_queryable;
+    });
+
+    foreach ($taxonomies as $taxonomy) {
+      // Get the terms of the taxonomy
+      $terms = get_the_terms($post_id, $taxonomy->name);
+
+      // if terms is not an array, continue
+      if (!is_array($terms) || is_wp_error($terms) || empty($terms)) {
+        continue;
+      }
+
+      foreach ($terms as $term) {
+        if (!is_object($term)) {
+          continue;
+        }
+
+        // Add taxonomy archive URL
+        $urls[] = get_term_link($term);
+
+        // If no parent term, continue
+        if ($term->parent == 0) {
+          continue;
+        }
+
+        // Add taxonomy term parent URLs
+        $parent_terms = get_ancestors($term->term_id, $taxonomy->name);
+
+        foreach ($parent_terms as $parent_term) {
+          $urls[] = get_term_link($parent_term);
+        }
+      }
+    }
+    return $urls;
   }
 }

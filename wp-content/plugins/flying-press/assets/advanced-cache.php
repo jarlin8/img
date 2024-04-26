@@ -71,7 +71,7 @@ $file_name .= '.html';
 // File path of the cached file
 $host = $_SERVER['HTTP_HOST'];
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$cache_file_path = WP_CONTENT_DIR . '/cache/flying-press/' . $host . $path . $file_name;
+$cache_file_path = WP_CONTENT_DIR . "/cache/flying-press/$host/$path/$file_name";
 
 // If we don't have a cache copy, we do not need to proceed
 if (!file_exists($cache_file_path)) {
@@ -80,7 +80,7 @@ if (!file_exists($cache_file_path)) {
 
 // CDN cache headers
 header("Cache-Tag: $host");
-header("CDN-Cache-Control: max-age=2592000");
+header('CDN-Cache-Control: max-age=2592000');
 
 // Set cache HIT response header
 header('x-flying-press-cache: HIT');
