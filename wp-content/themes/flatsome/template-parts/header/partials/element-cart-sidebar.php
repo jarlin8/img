@@ -3,7 +3,7 @@
  * Cart sidebar element.
  *
  * @package          Flatsome\Templates
- * @flatsome-version 3.18.0
+ * @flatsome-version 3.18.7
  */
 
 if ( is_woocommerce_activated() && flatsome_is_wc_cart_available() ) {
@@ -38,14 +38,16 @@ if ( is_woocommerce_activated() && flatsome_is_wc_cart_available() ) {
 	<ul class="children">
 		<li>
 			<!-- Cart Sidebar Popup -->
-			<div id="cart-popup" class="widget_shopping_cart">
+			<div id="cart-popup">
 				<div class="cart-popup-inner inner-padding">
 						<div class="cart-popup-title text-center">
 								<span class="heading-font uppercase"><?php _e('Cart', 'woocommerce'); ?></span>
 								<div class="is-divider"></div>
 						</div>
-						<div class="widget_shopping_cart_content">
+						<div class="widget_shopping_cart">
+							<div class="widget_shopping_cart_content">
 								<?php woocommerce_mini_cart(); ?>
+							</div>
 						</div>
 						<?php if($custom_cart_content) {
 							echo '<div class="header-cart-content">'.do_shortcode($custom_cart_content).'</div>'; }

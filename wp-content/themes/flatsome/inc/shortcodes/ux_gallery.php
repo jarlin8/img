@@ -169,9 +169,10 @@ function ux_gallery($atts) {
             $link_end = '</a>';
 
         } else if( 'false' !== $lightbox) {
-           $get_image = wp_get_attachment_image_src( $attachment->ID, $lightbox_image_size);
+           $image_src = wp_get_attachment_image_src( $attachment->ID, $lightbox_image_size);
+		   $link_href = $image_src ? $image_src[0] : '';
            $link_class = $is_multi_gallery ? '' : 'image-lightbox lightbox-gallery';
-           $link_start = '<a class="' . $link_class . '" href="'.$get_image[0].'" title="'. esc_attr( $attachment->post_excerpt ) . '">';
+           $link_start = '<a class="' . $link_class . '" href="'.$link_href.'" title="'. esc_attr( $attachment->post_excerpt ) . '">';
            $link_end = '</a>';
         }
 

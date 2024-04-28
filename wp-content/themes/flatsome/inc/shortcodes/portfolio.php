@@ -227,7 +227,7 @@ get_flatsome_repeater_start($repeater);
           $has_lightbox = '';
           if($lightbox == 'true'){
             $link = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), $lightbox_image_size );
-            $link = $link[0];
+            $link = $link ? $link[0] : '';
             $has_lightbox = 'lightbox-gallery';
           }
 

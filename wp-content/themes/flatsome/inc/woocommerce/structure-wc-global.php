@@ -539,11 +539,11 @@ add_action( 'wp_loaded', 'flatsome_move_store_notice' );
  * @return array Attributes.
  */
 function flatsome_filter_shortcode_atts_products( $attrs ) {
-	if ( $attrs['limit'] == '-1' ) {
+	if ( ! isset( $attrs['limit'] ) || $attrs['limit'] == '-1' ) {
 		$attrs['limit'] = '12';
 	}
 
-	if ( $attrs['columns'] == '' ) {
+	if ( ! isset( $attrs['columns'] ) || $attrs['columns'] == '' ) {
 		$attrs['columns'] = '4';
 	}
 

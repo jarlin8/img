@@ -152,7 +152,7 @@ if (rehub_option('enable_brand_taxonomy') == 1) {
                 <?php endif; ?>
 
                 <?php do_action('rehub_after_compact_grid_price'); ?>
-                <h3 class="flowhidden mb10 mt0 fontnormal position-relative <?php if (rehub_option('hotmeter_disable') != '1') : ?><?php echo getHotIconclass($post->ID); ?><?php endif; ?>"><?php echo rh_expired_or_not($post->ID, 'span'); ?><a href="<?php echo '' . $link; ?>" <?php echo '' . $target; ?> <?php echo ''.$outsidelinkpart; ?> class="re_track_btn<?php echo ($outsidelinkpart) ? ' masked_coupon' : '';?>"><?php the_title(); ?></a></h3>
+                <h2 class="flowhidden mb10 mt0 fontnormal position-relative <?php if (rehub_option('hotmeter_disable') != '1') : ?><?php echo getHotIconclass($post->ID); ?><?php endif; ?>"><?php echo rh_expired_or_not($post->ID, 'span'); ?><a href="<?php echo '' . $link; ?>" <?php echo '' . $target; ?> <?php echo ''.$outsidelinkpart; ?> class="re_track_btn<?php echo ($outsidelinkpart) ? ' masked_coupon' : '';?>"><?php the_title(); ?></a></h2>
                 <?php if ($gridtype == 'mobile') : ?><?php rehub_generate_offerbtn('showme=price&wrapperclass=mb0 fontbold font110'); ?><?php endif; ?>
                     <?php 
                         $verify = get_post_meta( $postid, 'rehub_offer_verify_label', true );

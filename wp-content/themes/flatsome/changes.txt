@@ -1,3 +1,77 @@
+--- 3.18.7 ---
+NEW: WooCommerce 8.8 compatibility.
+NEW: Added new .l10n.php translation file format.
+
+ENHANCEMENT: Improved mini cart drawer rendering performance.
+
+FIXED: Element pagination with offset value produced incorrect results.
+FIXED: Free shipping bar did not consider "Apply minimum order rule before coupon discount" option and always applied minimum order rule before coupon logic.
+
+UPDATED: Language files.
+
+--- 3.18.6 ---
+NEW: WooCommerce 8.7 compatibility.
+
+FIXED: Corrected lightbox menu item text in admin bar options to 'Drawer & Lightbox'.
+
+UPDATED: Google Fonts list.
+UPDATED: Language files.
+
+--- 3.18.5 ---
+NEW: Added a button to clear typography cache and locally downloaded files.
+
+FIXED: Addressed an issue where locally served font files were returning 403 errors in some cases due to irregular Google font API responses.
+FIXED: Image lazy loading on WC Composite components.
+FIXED: Hotspot tooltip on a mobile device.
+
+CHANGED: Upgraded the format of font files to woff2 from woff.
+
+UPDATED: Language files.
+
+--- 3.18.4 ---
+NEW: WooCommerce 8.6 compatibility.
+
+ENHANCEMENT: Added check for global $product object existence in flatsome_sticky_add_to_cart_template function.
+ENHANCEMENT: Improved WPML configuration.
+
+FIXED: Improved handling of non-existent attachment images.
+FIXED: Shop category header title color with dark content.
+FIXED: Undefined array key "limit" PHP warning in some cases.
+
+UPDATED: Google Fonts list.
+UPDATED: Language files.
+
+--- 3.18.3 ---
+NEW: WooCommerce 8.5 compatibility.
+
+ENHANCEMENT: Free shipping bar was displayed when only virtual products were in the cart.
+ENHANCEMENT: Header newsletter title setting stays now visible if a custom block is chosen.
+ENHANCEMENT: Improved mini cart loading state styles.
+ENHANCEMENT: Improved shortcode image detection for sitemap.
+ENHANCEMENT: Mini cart qty input improvements.
+ENHANCEMENT: Sticky add to cart only consider the first visible Add to Cart button as intersection.
+ENHANCEMENT: Various CSS improvements.
+
+FIXED: Free shipping threshold currency conversion issue in some cases.
+
+UPDATED: Language files.
+
+--- 3.18.2 ---
+ENHANCEMENT: Mini Cart Quantity: Automatically remove items from the cart when their quantity is reduced to zero.
+ENHANCEMENT: Mini Cart Quantity: Validation for user manual input.
+ENHANCEMENT: Refined the description of the 'maintenance bypass key' option for better understanding.
+ENHANCEMENT: Various CSS improvements.
+
+FIXED: Altered Widget link color and link color hover settings, they no longer target the mini cart widget.
+FIXED: AJAX 'Add to Cart': Enhanced compatibility with different plugins to prevent conflicts.
+FIXED: Rectified the width issue of Login lightbox with register panel layout.
+FIXED: Corrected the improper display of Mobile product sidebar on certain product layouts.
+FIXED: Show Page Layout widget in Classic Editor when Block Editor is disabled for pages.
+
+DEV: Added flatsome_is_blog_archive filter.
+DEV: Added flatsome_is_shop_archive filter.
+DEV: Recommended PHP version 8.1 or higher (8.0 EOL) for better performance and security.
+
 --- 3.18.1 ---
 ENHANCEMENT: Made theme colors available through theme CSS custom properties (see note).
 ENHANCEMENT: Various CSS improvements.

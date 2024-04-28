@@ -3,7 +3,7 @@
  * Product gallery wide.
  *
  * @package          Flatsome/WooCommerce/Templates
- * @flatsome-version 3.16.0
+ * @flatsome-version 3.18.2
  */
 
 ?>
@@ -59,6 +59,20 @@
 							?>
 						</div>
 					</div>
+					<?php if ( get_theme_mod( 'product_offcanvas_sidebar' ) ) : ?>
+					<div id="product-sidebar" class="mfp-hide">
+						<div class="sidebar-inner">
+							<?php
+								do_action( 'flatsome_before_product_sidebar' );
+								if ( is_active_sidebar( 'product-sidebar' ) ) {
+									dynamic_sidebar( 'product-sidebar' );
+								} else if ( is_active_sidebar( 'shop-sidebar' ) ) {
+									dynamic_sidebar( 'shop-sidebar' );
+								}
+							?>
+						</div>
+					</div>
+					<?php endif; ?>
 				</div>
 			</div>
 			<div class="product-footer" style="margin-top: 30px;">

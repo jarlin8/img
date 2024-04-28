@@ -13,7 +13,7 @@
  * @see              https://docs.woocommerce.com/document/template-structure/
  * @package          Flatsome\Templates
  * @version          7.0.1
- * @flatsome-version 3.16.2
+ * @flatsome-version 3.18.2
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -72,7 +72,7 @@ do_action( 'woocommerce_before_customer_login_form' ); ?>
 						</div>
 					<?php endif; ?>
 
-					<div class="account-register-inner relative flex-col flex-grow dark text-center">
+					<div class="account-register-inner inner-padding relative flex-col flex-grow dark text-center">
 
 						<h3 class="uppercase"><?php esc_html_e( 'Register', 'woocommerce' ); ?></h3>
 						<p><?php esc_html_e( "Don't have an account? Register one!", 'flatsome' ); ?></p>

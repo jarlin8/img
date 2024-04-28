@@ -251,17 +251,23 @@ function flatsome_sticky_add_to_cart_template() {
 
 	if (
 		! is_product()
+		|| ! $product
 		|| ! $product->is_purchasable()
 		|| ! get_theme_mod( 'product_sticky_cart', 0 )
 		|| ! apply_filters( 'flatsome_sticky_add_to_cart_enabled', true, $product ) ) {
 		return;
 	}
 
+	$classes         = array( 'sticky-add-to-cart' );
 	$product_classes = implode( ' ', array_diff( wc_get_product_class( 'sticky-add-to-cart__product', $product ), [ 'product' ] ) );
+
+	if ( get_theme_mod( 'content_color' ) === 'dark' ) {
+		$classes[] = 'dark';
+	}
 	?>
 	<!--Legacy wrapper-->
 	<div class="sticky-add-to-cart-wrapper">
-		<div class="sticky-add-to-cart" data-product-id="<?php echo esc_attr( $product->get_id() ); ?>">
+		<div class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>" data-product-id="<?php echo esc_attr( $product->get_id() ); ?>">
 			<div class="<?php echo esc_attr( $product_classes ); ?>">
 				<?php
 				echo woocommerce_get_product_thumbnail( 'woocommerce_gallery_thumbnail', array( // phpcs:ignore WordPress.Security.EscapeOutput

@@ -75,10 +75,15 @@ final class Shipping {
 	 * @return void
 	 */
 	public function free_shipping() {
+		if ( ! WC()->cart->needs_shipping() || ! WC()->cart->show_shipping() ) {
+			return;
+		}
+
 		$free_shipping_threshold = 0;
 		$subtotal                = WC()->cart->get_displayed_subtotal();
 		$classes                 = array( 'ux-free-shipping' );
 		$free_shipping_by_coupon = false;
+		$ignore_discounts        = false;
 
 		// Check shipping packages.
 		$packages = WC()->cart->get_shipping_packages();
@@ -88,11 +93,15 @@ final class Shipping {
 		foreach ( $zone->get_shipping_methods( true ) as $method ) {
 			if ( 'free_shipping' === $method->id ) {
 				$free_shipping_threshold = $method->get_option( 'min_amount' );
+
+				if ( in_array( $method->get_option( 'requires' ), array( 'min_amount', 'either', 'both' ), true ) ) {
+					$ignore_discounts = $method->get_option( 'ignore_discounts' ) === 'yes'; // Apply minimum order rule before coupon discount option.
+				}
 			}
 		}
 
 		// WPML.
-		if ( class_exists( 'woocommerce_wpml' ) ) {
+		if ( class_exists( 'woocommerce_wpml' ) && ! class_exists( 'WCML_Multi_Currency_Shipping' ) ) {
 			global $woocommerce_wpml;
 
 			$multi_currency = $woocommerce_wpml->get_multi_currency();
@@ -103,12 +112,21 @@ final class Shipping {
 		}
 
 		// Check coupons.
-		if ( $subtotal && WC()->cart->get_coupons() ) {
-			foreach ( WC()->cart->get_coupons() as $coupon ) {
-				$subtotal -= WC()->cart->get_coupon_discount_amount( $coupon->get_code(), WC()->cart->display_cart_ex_tax );
+		if ( $subtotal && wc_coupons_enabled() ) {
+			$coupons = WC()->cart->get_coupons();
+
+			foreach ( $coupons as $coupon ) {
+				if ( ! $coupon->is_valid() ) continue;
+
 				if ( $coupon->get_free_shipping() ) {
 					$free_shipping_by_coupon = true;
 					break;
+				}
+
+				$discount_amount = WC()->cart->get_coupon_discount_amount( $coupon->get_code(), WC()->cart->display_cart_ex_tax );
+
+				if ( ! $ignore_discounts && $subtotal >= $discount_amount ) {
+					$subtotal -= $discount_amount;
 				}
 			}
 		}

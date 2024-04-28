@@ -26,6 +26,10 @@ function flatsome_woocommerce_create_pages( $pages ) {
 		return $pages;
 	}
 
+	if ( apply_filters( 'experimental_flatsome_woocommerce_blockify', false ) ) {
+		return $pages;
+	}
+
 	$pages['cart']['content']     = '<!-- wp:shortcode -->[woocommerce_cart]<!-- /wp:shortcode -->';
 	$pages['checkout']['content'] = '<!-- wp:shortcode -->[woocommerce_checkout]<!-- /wp:shortcode -->';
 
@@ -33,6 +37,31 @@ function flatsome_woocommerce_create_pages( $pages ) {
 }
 
 add_filter( 'woocommerce_create_pages', 'flatsome_woocommerce_create_pages' );
+
+/**
+ * Remove the "CustomizeStore" task from each task list.
+ *
+ * @param array $task_lists An array of task lists.
+ *
+ * @return array The modified task lists.
+ */
+function experimental_flatsome_woocommerce_admin_onboarding_tasklists( $task_lists ) {
+	if ( isset( $task_lists ) && is_array( $task_lists ) ) {
+		foreach ( $task_lists as $task_list ) {
+			if ( isset( $task_list->tasks ) && is_array( $task_list->tasks ) ) {
+				foreach ( $task_list->tasks as $key => $task ) {
+					if ( is_object( $task ) && get_class( $task ) == 'Automattic\WooCommerce\Admin\Features\OnboardingTasks\Tasks\CustomizeStore' ) {
+						unset( $task_list->tasks[ $key ] );
+					}
+				}
+			}
+		}
+	}
+
+	return $task_lists;
+}
+
+add_filter( 'woocommerce_admin_experimental_onboarding_tasklists', 'experimental_flatsome_woocommerce_admin_onboarding_tasklists' );
 
 /**
  * Setup Flatsome.

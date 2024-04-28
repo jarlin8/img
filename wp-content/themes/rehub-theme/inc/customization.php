@@ -912,7 +912,8 @@ body.dark_body .products .col_item h3 a, .errorpage h2{color: #fff;}
 .dark_body .post-readopt .date_time_post,
 .dark_body .post-readopt .wpsm_pretty_list,
 .dark_body #rh_p_l_fullwidth_opt .title_single_area .post-meta,
-.dark_body .full_gutenberg .post{color: #eee}
+.dark_body .full_gutenberg .post, 
+.dark_body .wp-element-caption{color: #eee}
 .dark_body .products .product, .dark_body .post-readopt .wpsm-titlebox{background-color: #fff}
 .rh_post_layout_outside .title_single_area, .dark_body .widget.better_woocat{border-bottom: 1px solid #8c8c8c;margin-bottom: 0;}
 .dark_body .main-side .rh-post-wrapper .title h1{color: #111}

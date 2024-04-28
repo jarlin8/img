@@ -166,7 +166,7 @@ class WPS_Shortcode
 	function ajax_shortcode_generate() {
 		check_ajax_referer( 'shortcodename', 'security' );
 		$shortcode_name = sanitize_text_field($_GET['shortcode_name']);
-		$shortcode_content = rh_locate_template( 'shortcodes/tinyMCE/includes/'. $shortcode_name .'.php' );
+		$shortcode_content = rh_locate_template( 'shortcodes/tinyMCE/includes/'. sanitize_file_name($shortcode_name) .'.php' );
 		
 		if ( $shortcode_content ) {
 			load_template( $shortcode_content );

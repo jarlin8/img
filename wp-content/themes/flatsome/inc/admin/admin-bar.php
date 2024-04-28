@@ -216,7 +216,7 @@ $wp_admin_bar->add_menu( array(
 $wp_admin_bar->add_menu( array(
  'parent' => 'options_style',
  'id' => 'options_style_lightbox',
- 'title' => 'Image Lightbox',
+ 'title' => 'Drawer & Lightbox',
  'href' =>  $optionUrl_section.'lightbox'
 ));
 

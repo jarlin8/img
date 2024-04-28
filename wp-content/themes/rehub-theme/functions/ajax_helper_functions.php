@@ -538,7 +538,7 @@ function ajax_action_re_filterpost() {
             $wp_query->the_post();
             ob_start();
             if(!empty($innerargs)) {extract($innerargs);}
-            include(rh_locate_template('inc/parts/'.$template.'.php'));
+            include(rh_locate_template('inc/parts/'.sanitize_file_name($template).'.php'));
             $i++;
             $response .= ob_get_clean();
         }

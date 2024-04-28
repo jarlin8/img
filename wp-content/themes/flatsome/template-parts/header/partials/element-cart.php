@@ -3,7 +3,7 @@
  * Cart element.
  *
  * @package          Flatsome\Templates
- * @flatsome-version 3.18.0
+ * @flatsome-version 3.18.7
  */
 
 if(is_woocommerce_activated() && flatsome_is_wc_cart_available() ) {
@@ -95,7 +95,11 @@ else { ?>
           <span class="heading-font uppercase"><?php _e('Cart', 'woocommerce'); ?></span>
           <div class="is-divider"></div>
       </div>
-      <?php the_widget( 'WC_Widget_Cart', array( 'title' => '' ) ); ?>
+	  <div class="widget_shopping_cart">
+		  <div class="widget_shopping_cart_content">
+			  <?php woocommerce_mini_cart(); ?>
+		  </div>
+	  </div>
       <?php if($custom_cart_content) {
         echo '<div class="header-cart-content">'.do_shortcode($custom_cart_content).'</div>'; }
       ?>

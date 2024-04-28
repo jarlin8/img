@@ -473,7 +473,7 @@ if ( ! function_exists( 'of_options' ) ) {
 		$of_options[] = array(
 			'name' => 'Bypass key',
 			'id'   => 'maintenance_mode_bypass_key',
-			'desc' => 'This key, when passed as a parameter in the URL, allows a user to bypass the maintenance mode and access the website.<br/>f.ex: https://example.com/?nomaintenance1234',
+			'desc' => 'Enter a unique key here. This key, when appended as a parameter in the URL, allows a user to bypass the maintenance mode and access the website. For example, if you enter "key1234" as the key, you can bypass maintenance mode on any URL by appending the key f.ex.: https://example.com/?key1234 or https://example.com/shop/?key1234, etc.',
 			'std'  => '',
 			'type' => 'text',
 		);

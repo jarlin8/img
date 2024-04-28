@@ -3,7 +3,7 @@
  * Category layout with left sidebar.
  *
  * @package          Flatsome/WooCommerce/Templates
- * @flatsome-version 3.16.0
+ * @flatsome-version 3.18.7
  */
 
 ?>
@@ -33,19 +33,18 @@
 		 */
 		do_action( 'woocommerce_before_main_content' );
 
-		?>
-
-		<?php
-		/**
-		 * Hook: woocommerce_archive_description.
-		 *
-		 * @hooked woocommerce_taxonomy_archive_description - 10
-		 * @hooked woocommerce_product_archive_description - 10
-		 */
-		do_action( 'woocommerce_archive_description' );
-		?>
-
-		<?php
+		if ( fl_woocommerce_version_check( '8.8.0' ) ) {
+			/**
+			 * Hook: woocommerce_shop_loop_header.
+			 *
+			 * @since 8.8.0
+			 *
+			 * @hooked woocommerce_product_taxonomy_archive_header - 10
+			 */
+			do_action( 'woocommerce_shop_loop_header' );
+		} else {
+			do_action( 'woocommerce_archive_description' );
+		}
 
 		if ( woocommerce_product_loop() ) {
 

@@ -2,7 +2,7 @@
 /**
  * "Order received" message.
  *
- * This template can be overridden by copying it to yourtheme/woocommerce/checkout/thankyou.php.
+ * This template can be overridden by copying it to yourtheme/woocommerce/checkout/order-received.php.
  *
  * HOWEVER, on occasion WooCommerce will need to update template files and you
  * (the theme developer) will need to copy the new files to your theme to
@@ -12,8 +12,8 @@
  *
  * @see https://docs.woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates
- * @version 8.3.0
- * @flatsome-version 3.18.0
+ * @version 8.8.0
+ * @flatsome-version 3.18.7
  *
  * @var WC_Order|false $order
  */

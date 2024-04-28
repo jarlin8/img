@@ -3,7 +3,11 @@
 include('meta/meta_box_framework.php');
 
 function flatsome_custom_meta_boxes() {
-    if ( flatsome_wp_version_check( '6.3' ) ) {
+    if (
+      flatsome_wp_version_check( '6.3' ) &&
+      use_block_editor_for_post_type( 'page' ) &&
+      ! isset( $_REQUEST['classic-editor'] )
+    ) {
       // Don't use meta boxes in WordPress 6.3 and above, as they will
       // prevent the Block Editor from rendering the blocks in an iframe.
       return;

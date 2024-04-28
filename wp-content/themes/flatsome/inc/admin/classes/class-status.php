@@ -94,7 +94,7 @@ final class Status {
 	 *
 	 * @var string Version.
 	 */
-	private $recommended_php_version = '8.0';
+	private $recommended_php_version = '8.1';
 
 	/**
 	 * Status icons.

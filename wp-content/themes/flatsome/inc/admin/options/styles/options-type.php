@@ -35,6 +35,26 @@ Flatsome_Option::add_field( 'option',
 	)
 );
 
+Flatsome_Option::add_field( 'option', array(
+	'type'            => 'custom',
+	'settings'        => 'clear_typography_cache',
+	'tooltip'         => 'Clear typography cache and locally downloaded font files.',
+	'section'         => 'type',
+	'default'         => '<button id="flatsome-customizer-clear-typography-cache" class="button-primary button" title="Clear typography cache">Clear typography cache</button>',
+	'active_callback' => array(
+		array(
+			'setting'  => 'disable_fonts',
+			'operator' => '==',
+			'value'    => false,
+		),
+		array(
+			'setting'  => 'google_fonts_cdn',
+			'operator' => '==',
+			'value'    => false,
+		),
+	),
+) );
+
 Flatsome_Option::add_field( 'option',
 	array(
 		'type'        => 'select',

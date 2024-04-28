@@ -1,4 +1,4 @@
-# Copyright (C) 2023 UX-Themes
+# Copyright (C) 2024 UX-Themes
 # This file is distributed under the https://themeforest.net/licenses.
 msgid ""
 msgstr ""
@@ -9,9 +9,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-11-13T10:54:44+00:00\n"
-"PO-Revision-Date: 2023-11-13 10:56\n"
-"X-Generator: WP-CLI 2.8.1\n"
+"POT-Creation-Date: 2024-04-10T12:28:40+00:00\n"
+"PO-Revision-Date: 2024-04-10 12:31\n"
+"X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: flatsome\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
 "X-Crowdin-Project: l10n-flatsome\n"
@@ -22,23 +22,28 @@ msgstr ""
 "Language: cs_CZ\n"
 
 #. Theme Name of the theme
+#: style.css
 #: inc/admin/admin-notice.php:75
 msgid "Flatsome"
 msgstr ""
 
 #. Theme URI of the theme
+#: style.css
 msgid "http://flatsome.uxthemes.com"
 msgstr ""
 
 #. Description of the theme
+#: style.css
 msgid "Multi-Purpose Responsive WooCommerce Theme"
 msgstr ""
 
 #. Author of the theme
+#: style.css
 msgid "UX-Themes"
 msgstr ""
 
 #. Author URI of the theme
+#: style.css
 msgid "https://uxthemes.com"
 msgstr ""
 
@@ -133,7 +138,7 @@ msgid "Manage registration"
 msgstr "Spravovat registraci"
 
 #: inc/admin/admin-notice.php:43
-#: inc/admin/envato_setup/envato_setup.php:2018
+#: inc/admin/envato_setup/envato_setup.php:2025
 #: inc/functions/function-site-health.php:79
 #: template-parts/admin/envato/register-form.php:105
 msgid "Manage your licenses"
@@ -183,7 +188,7 @@ msgstr "Připojit"
 
 #: inc/admin/advanced/functions/functions.php:23
 msgid "Super Admin"
-msgstr ""
+msgstr "Super Admin"
 
 #: inc/admin/backend/menu/class-menu.php:89
 msgid "Flatsome menu item options"
@@ -372,7 +377,7 @@ msgstr "Zobrazuje, zda je aktuální aktivní šablona podřízenou šablonou."
 #. translators: %s: Docs link.
 #: inc/admin/classes/class-status.php:628
 msgid "If you are modifying Flatsome on the parent theme we recommend using a child theme. See: <a href=\"%s\" target=\"_blank\">How to create a child theme</a>"
-msgstr ""
+msgstr "Pokud upravujete Flatsome v nadřazené šabloně, doporučujeme použít podřízenou šablonu. Viz: <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Jak vytvořit podřízenou šablonu</a>"
 
 #: inc/admin/classes/class-status.php:634
 msgid "Release channel"
@@ -522,7 +527,7 @@ msgstr "Je připojení k vašemu webu bezpečné?"
 #. translators: %s: Docs link.
 #: inc/admin/classes/class-status.php:900
 msgid "Your site is not using HTTPS. <a href=\"%s\" target=\"_blank\">Learn more about HTTPS and SSL Certificates</a>."
-msgstr ""
+msgstr "Váš web nepoužívá HTTPS. <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Další informace o HTTPS a certifikátech SSL</a>."
 
 #: inc/admin/classes/class-status.php:907
 msgid "Hide errors from visitors"
@@ -561,19 +566,19 @@ msgstr "Tato část zobrazuje všechny soubory, které přepisují výchozí ša
 msgid "%1$s version %2$s is out of date. The core version is %3$s"
 msgstr "%1$s verze %2$s je zastaralá. Základní verze je %3$s"
 
-#: inc/admin/envato_setup/envato_setup.php:2011
+#: inc/admin/envato_setup/envato_setup.php:2018
 msgid "Register Theme"
 msgstr "Registrovat šablonu"
 
-#: inc/admin/envato_setup/envato_setup.php:2036
+#: inc/admin/envato_setup/envato_setup.php:2043
 msgid "Continue"
 msgstr "Pokračovat"
 
-#: inc/admin/envato_setup/envato_setup.php:2037
+#: inc/admin/envato_setup/envato_setup.php:2044
 msgid "Unregister"
 msgstr "Zrušit registraci"
 
-#: inc/admin/envato_setup/envato_setup.php:2039
+#: inc/admin/envato_setup/envato_setup.php:2046
 msgid "Register"
 msgstr "Registrovat"
 
@@ -607,26 +612,26 @@ msgstr "HTML po příspěvcích na blogu"
 
 #: inc/admin/options/header/options-header-cart.php:117
 msgid "Show quantity input"
-msgstr ""
+msgstr "Zobrazit pole množství"
 
 #: inc/admin/options/header/options-header-cart.php:127
 #: inc/admin/options/shop/options-shop-cart-checkout.php:81
 #: inc/admin/options/shop/options-shop-cart-checkout.php:258
 msgid "Show free shipping"
-msgstr ""
+msgstr "Zobrazit dopravu zdarma"
 
 #: inc/admin/options/header/options-header-cart.php:158
 #: inc/admin/options/styles/options-lightbox.php:30
 msgid "Drawer width"
-msgstr ""
+msgstr "Šířka menu"
 
 #: inc/admin/options/header/options-header-cart.php:167
 msgid "Sticky footer"
-msgstr ""
+msgstr "Připnout k patičce"
 
 #: inc/admin/options/header/options-header-cart.php:177
 msgid "Show cross sells"
-msgstr ""
+msgstr "Zobrazit křížový prodej"
 
 #: inc/admin/options/header/options-header-logo.php:106
 msgid "Logo link"
@@ -709,7 +714,7 @@ msgid "Menu elements tab 2"
 msgstr "Karta prvků nabídky 2"
 
 #: inc/admin/options/header/options-header-nav-vertical.php:9
-#: inc/functions/function-setup.php:91
+#: inc/functions/function-setup.php:95
 msgid "Vertical Menu"
 msgstr "Vertikální menu"
 
@@ -786,11 +791,11 @@ msgstr "Zobrazit odhadovaný cíl dopravy"
 
 #: inc/admin/options/shop/options-shop-category.php:261
 msgid "Show result count"
-msgstr ""
+msgstr "Zobrazit počet výsledků"
 
 #: inc/admin/options/shop/options-shop-category.php:270
 msgid "Show catalog ordering"
-msgstr ""
+msgstr "Zobrazit řazení katalogu"
 
 #: inc/admin/options/shop/options-shop-category.php:766
 #: inc/admin/options/shop/options-shop-product-page.php:413
@@ -832,19 +837,19 @@ msgstr "Zakázat zrušení výběru"
 #: inc/shortcodes/follow.php:184
 msgctxt "social media"
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #: inc/admin/options/styles/options-colors.php:144
 msgid "Tooltip colors"
-msgstr ""
+msgstr "Barvy nápovědy"
 
 #: inc/admin/options/styles/options-colors.php:150
 msgid "Tooltip color"
-msgstr ""
+msgstr "Barva nápovědy"
 
 #: inc/admin/options/styles/options-colors.php:159
 msgid "Tooltip background color"
-msgstr ""
+msgstr "Barva pozadí nápovědy"
 
 #: inc/admin/panel/panel.php:31
 msgid "Sorry, an error occurred while accessing the API."
@@ -927,15 +932,15 @@ msgstr "Žádný nákupní kód."
 #: inc/classes/class-flatsome-relay.php:227
 #: inc/extensions/flatsome-infinite-scroll/templates/button.php:2
 msgid "Load more"
-msgstr ""
+msgstr "Načíst další"
 
 #: inc/classes/class-flatsome-relay.php:238
 msgid "Previous"
-msgstr ""
+msgstr "Předchozí"
 
 #: inc/classes/class-flatsome-relay.php:243
 msgid "Next"
-msgstr ""
+msgstr "Další"
 
 #: inc/classes/class-flatsome-wupdates-registration.php:70
 #: inc/classes/class-flatsome-wupdates-registration.php:108
@@ -1145,44 +1150,44 @@ msgstr "Oblíbené"
 msgid "Follow on %s"
 msgstr "Sledovat na %s"
 
-#: inc/functions/function-setup.php:85
-#: inc/functions/function-setup.php:223
+#: inc/functions/function-setup.php:89
+#: inc/functions/function-setup.php:227
 msgid "Main Menu"
 msgstr "Hlavní menu"
 
-#: inc/functions/function-setup.php:86
+#: inc/functions/function-setup.php:90
 msgid "Main Menu - Mobile"
 msgstr "Hlavní menu - Mobil"
 
-#: inc/functions/function-setup.php:87
+#: inc/functions/function-setup.php:91
 msgid "Secondary Menu"
 msgstr "Vedlejší menu"
 
-#: inc/functions/function-setup.php:88
+#: inc/functions/function-setup.php:92
 msgid "Footer Menu"
 msgstr "Menu v patičce"
 
-#: inc/functions/function-setup.php:89
+#: inc/functions/function-setup.php:93
 msgid "Top Bar Menu"
 msgstr "Menu v horním pruhu"
 
-#: inc/functions/function-setup.php:90
+#: inc/functions/function-setup.php:94
 msgid "My Account Menu"
 msgstr "Menu v  \"Můj účet\""
 
-#: inc/functions/function-setup.php:125
+#: inc/functions/function-setup.php:129
 msgid "Sidebar"
 msgstr "Postranní panel"
 
-#: inc/functions/function-setup.php:135
+#: inc/functions/function-setup.php:139
 msgid "Footer 1"
 msgstr "Patička č. 1"
 
-#: inc/functions/function-setup.php:145
+#: inc/functions/function-setup.php:149
 msgid "Footer 2"
 msgstr "Patička č. 2"
 
-#: inc/functions/function-setup.php:224
+#: inc/functions/function-setup.php:228
 #: inc/shortcodes/accordion.php:140
 #: woocommerce/single-product/tabs/accordian.php:33
 msgid "Toggle"
@@ -1262,7 +1267,7 @@ msgstr "Namiřte kameru SnapChat na toto a přidejte nás do SnapChatu."
 #: inc/shortcodes/follow.php:188
 #: inc/shortcodes/follow.php:189
 msgid "Follow on X"
-msgstr ""
+msgstr "Sledovat na X"
 
 #: inc/shortcodes/follow.php:202
 #: inc/shortcodes/follow.php:203
@@ -1351,7 +1356,7 @@ msgstr "Sdílet na Facebooku"
 #: inc/shortcodes/share.php:125
 #: inc/shortcodes/share.php:126
 msgid "Share on X"
-msgstr ""
+msgstr "Sdílet na X"
 
 #: inc/shortcodes/share.php:139
 #: inc/shortcodes/share.php:140
@@ -1504,19 +1509,19 @@ msgstr "Přidání upsell produktů na stránky produktů."
 msgid "Complete the look"
 msgstr "Nastavte vzhled"
 
-#: inc/woocommerce/class-mini-cart.php:135
+#: inc/woocommerce/class-mini-cart.php:157
 msgctxt "mini cart add to cart button label"
 msgid "Add"
-msgstr ""
+msgstr "Přidat"
 
 #. translators: %s: The threshold
-#: inc/woocommerce/class-shipping.php:131
+#: inc/woocommerce/class-shipping.php:149
 msgid "Add %s to cart and get free shipping!"
-msgstr ""
+msgstr "Přidejte ještě produkty v hodnotě %s do košíku a získejte dopravu zdarma!"
 
-#: inc/woocommerce/class-shipping.php:142
+#: inc/woocommerce/class-shipping.php:160
 msgid "Your order qualifies for free shipping 🎉"
-msgstr ""
+msgstr "Vaše objednávka splňuje podmínky pro dopravu zdarma 🎉"
 
 #: inc/woocommerce/structure-wc-category-page.php:97
 #: inc/woocommerce/structure-wc-product-page-fields.php:31
@@ -1613,9 +1618,9 @@ msgstr "Video"
 msgid "Zoom"
 msgstr "Přiblížení"
 
-#: inc/woocommerce/structure-wc-product-page.php:280
+#: inc/woocommerce/structure-wc-product-page.php:286
 msgid "Select options"
-msgstr ""
+msgstr "Vybrat možnosti"
 
 #. Template Name of the theme
 msgid "Page - Full Width - Parallax Title"
@@ -1741,7 +1746,7 @@ msgstr "Kontakt"
 #: template-parts/header/partials/element-contact-mobile.php:81
 #: template-parts/header/partials/element-contact.php:92
 msgid "WhatsApp"
-msgstr ""
+msgstr "WhatsApp"
 
 #: template-parts/header/partials/element-menu-icon.php:13
 #: template-parts/header/partials/element-menu-icon.php:17
@@ -1757,7 +1762,7 @@ msgstr "Kategorie"
 #: template-parts/portfolio/portfolio-summary-full.php:30
 #: template-parts/portfolio/portfolio-summary.php:26
 msgid "Tags"
-msgstr ""
+msgstr "Tagy"
 
 #: template-parts/posts/content-none.php:14
 msgid "Nothing Found"
@@ -1910,30 +1915,30 @@ msgstr "Vytvoření účtu"
 #: inc/blocks/uxbuilder/block.json
 msgctxt "block title"
 msgid "UX Builder content"
-msgstr ""
+msgstr "UX Builder tvůrce"
 
 #: inc/blocks/uxbuilder/block.json
 msgctxt "block description"
 msgid "This block contains content created with UX Builder."
-msgstr ""
+msgstr "Tento blok obsahuje obsah vytvořený UX Builderem."
 
 #: theme.json
 msgctxt "Color name"
 msgid "Primary"
-msgstr ""
+msgstr "Primární"
 
 #: theme.json
 msgctxt "Color name"
 msgid "Secondary"
-msgstr ""
+msgstr "Sekundární"
 
 #: theme.json
 msgctxt "Color name"
 msgid "Success"
-msgstr ""
+msgstr "Úspěch"
 
 #: theme.json
 msgctxt "Color name"
 msgid "Alert"
-msgstr ""
+msgstr "Výstraha"
 

@@ -379,8 +379,8 @@ background-color: <?php echo get_theme_mod('type_nav_bottom_color_hover'); ?>;
 <?php } ?>
 
 <?php if(get_theme_mod('color_widget_links')){ ?>
-.widget a{color: <?php echo get_theme_mod('color_widget_links'); ?>;}
-.widget a:hover{color: <?php echo get_theme_mod('color_widget_links_hover'); ?>;}
+.widget:where(:not(.widget_shopping_cart)) a{color: <?php echo get_theme_mod('color_widget_links'); ?>;}
+.widget:where(:not(.widget_shopping_cart)) a:hover{color: <?php echo get_theme_mod('color_widget_links_hover'); ?>;}
 .widget .tagcloud a:hover{border-color: <?php echo get_theme_mod('color_widget_links_hover'); ?>; background-color: <?php echo get_theme_mod('color_widget_links_hover'); ?>;}
 <?php } ?>
 

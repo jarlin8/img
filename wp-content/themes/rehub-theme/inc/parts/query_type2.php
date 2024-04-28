@@ -6,6 +6,7 @@
         </h2>
     </div>         
     <figure class="mb20 position-relative text-center">
+        <?php echo re_badge_create('ribbonleft'); ?>
         <div class="abdposleftbot"><?php rh_post_header_cat('post', false);?></div>
         <a href="<?php the_permalink();?>"><?php WPSM_image_resizer::show_static_resized_image(array('thumb'=> true, 'crop'=> true, 'width'=> 800, 'height'=> 400));?></a> 
         <div class="rev-in-blog-circle abdposright mt10 mr10 ml10">

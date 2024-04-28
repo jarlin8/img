@@ -105,7 +105,7 @@ function flatsome_is_register_request() {
  * @return bool
  */
 function flatsome_is_blog_archive() {
-	return is_home() || is_search() || is_tag() || is_category() || is_date() || is_author();
+	return apply_filters( 'flatsome_is_blog_archive', is_home() || is_search() || is_tag() || is_category() || is_date() || is_author() );
 }
 
 /**
@@ -118,5 +118,5 @@ function flatsome_is_shop_archive() {
 	$is_product_attribute_archive = ( $queried_object && property_exists( $queried_object, 'taxonomy' ) ) ? taxonomy_is_product_attribute( $queried_object->taxonomy ) : false;
 	$is_product_search_archive    = is_search() && is_post_type_archive( 'product' );
 
-	return is_shop() || is_product_category() || is_product_tag() || $is_product_search_archive || $is_product_attribute_archive;
+	return apply_filters( 'flatsome_is_shop_archive', is_shop() || is_product_category() || is_product_tag() || $is_product_search_archive || $is_product_attribute_archive );
 }

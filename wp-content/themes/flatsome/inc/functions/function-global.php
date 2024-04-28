@@ -396,6 +396,15 @@ function flatsome_clean( $data ) {
 }
 
 /**
+ * Retrieves the directory path for the theme uploaded fonts.
+ *
+ * @return string The directory path for the theme uploaded fonts.
+ */
+function flatsome_get_fonts_dir() {
+	return WP_CONTENT_DIR . '/fonts';
+}
+
+/**
  * Check if support is expired.
  *
  * @return bool

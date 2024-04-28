@@ -9,6 +9,8 @@
 
 namespace Flatsome\Integrations;
 
+use Flatsome_Shortcode_Image_Extractor;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -30,6 +32,7 @@ class WP_Seo {
 	 */
 	private function __construct() {
 		add_action( 'wp', [ $this, 'integrate' ] );
+		add_filter( 'wpseo_sitemap_urlimages', [ $this, 'sitemap_url_images' ], 10, 2 );
 	}
 
 	/**
@@ -179,6 +182,28 @@ class WP_Seo {
 	 */
 	public function wrap_crumb_separator( $separator ) {
 		return '<span class="divider">' . $separator . '</span>';
+	}
+
+	/**
+	 * Adds images to XML sitemap.
+	 *
+	 * @param array $images  Current post images.
+	 * @param int   $post_id The post ID.
+	 */
+	public function sitemap_url_images( $images, $post_id ) {
+		$post = get_post( $post_id );
+		if ( ! $post ) return $images;
+
+		$content = $post->post_content;
+
+		$image_extractor = Flatsome_Shortcode_Image_Extractor::get_instance();
+
+		$extracted_images = $image_extractor->extract_images( $content );
+		if ( ! empty( $extracted_images ) ) {
+			$images = array_merge( $images, $extracted_images );
+		}
+
+		return $images;
 	}
 
 	/**

@@ -12,10 +12,10 @@
  * happen. When this occurs the version of the template file will be bumped and
  * the readme will list any important changes.
  *
- * @see              https://docs.woocommerce.com/document/template-structure/
+ * @see              https://woo.com/document/template-structure/
  * @package          WooCommerce\Templates
- * @version          7.3.0
- * @flatsome-version 3.16.5
+ * @version          8.8.0
+ * @flatsome-version 3.18.6
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -32,7 +32,7 @@ $calculator_text          = '';
 				<tr>
 					<th <?php if ( 1 < count( $available_methods ) ) : ?> colspan="2" <?php endif; ?>><?php echo wp_kses_post( $package_name ); ?></th>
 					<td data-title="<?php echo esc_attr( $package_name ); ?>">
-						<?php if ( $available_methods ) : ?>
+						<?php if ( ! empty( $available_methods ) && is_array( $available_methods ) ) : ?>
 							<ul id="shipping_method" class="shipping__list woocommerce-shipping-methods">
 								<?php foreach ( $available_methods as $method ) : ?>
 									<li class="shipping__list_item">

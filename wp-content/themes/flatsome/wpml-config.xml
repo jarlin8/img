@@ -1,4 +1,16 @@
 <wpml-config>
+	<custom-fields>
+		<custom-field action="translate">wc_productdata_options</custom-field>
+	</custom-fields>
+	<custom-fields-texts>
+		<key name="wc_productdata_options">
+			<key name="*">
+				<key name="*">
+					<key name="*"/>
+				</key>
+			</key>
+		</key>
+	</custom-fields-texts>
 	<custom-types>
 		<custom-type translate="1">blocks</custom-type>
 		<custom-type translate="1">featured_item</custom-type>

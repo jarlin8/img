@@ -3,7 +3,7 @@
  * Mobile cart element.
  *
  * @package          Flatsome\Templates
- * @flatsome-version 3.18.0
+ * @flatsome-version 3.18.7
  */
 
 if ( is_woocommerce_activated() && flatsome_is_wc_cart_available() ) {
@@ -65,12 +65,16 @@ else { ?>
 
   <!-- Cart Sidebar Popup -->
   <div id="cart-popup" class="mfp-hide">
-  <div class="cart-popup-inner inner-padding<?php echo get_theme_mod( 'header_cart_sticky_footer', 1 ) ? ' cart-popup-inner--sticky' : ''; ?>"">
+  <div class="cart-popup-inner inner-padding<?php echo get_theme_mod( 'header_cart_sticky_footer', 1 ) ? ' cart-popup-inner--sticky' : ''; ?>">
       <div class="cart-popup-title text-center">
           <span class="heading-font uppercase"><?php _e('Cart', 'woocommerce'); ?></span>
           <div class="is-divider"></div>
       </div>
-      <?php the_widget( 'WC_Widget_Cart', array( 'title' => '' ) ); ?>
+	  <div class="widget_shopping_cart">
+		  <div class="widget_shopping_cart_content">
+			  <?php woocommerce_mini_cart(); ?>
+		  </div>
+	  </div>
       <?php if($custom_cart_content) {
         echo '<div class="header-cart-content">'.do_shortcode($custom_cart_content).'</div>'; }
       ?>

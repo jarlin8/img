@@ -268,61 +268,61 @@ function rehub_get_social_links($atts, $content = null){
 		
 
 		<?php if ( rehub_option('rehub_facebook') != '' ) :?>
-			<a href="<?php echo rehub_option('rehub_facebook'); ?>" class="fb" rel="nofollow" target="_blank"><i class="rhicon rhi-facebook"></i></a>
+			<a href="<?php echo rehub_option('rehub_facebook'); ?>" class="fb" title="Facebook" rel="nofollow" target="_blank"><i class="rhicon rhi-facebook"></i></a>
 		<?php endif;?>	
 
 		<?php if ( rehub_option('rehub_twitter') != '' ) :?>
-			<a href="<?php echo rehub_option('rehub_twitter'); ?>" class="tw" rel="nofollow" target="_blank"><i class="rhicon rhi-twitter"></i></a>
+			<a href="<?php echo rehub_option('rehub_twitter'); ?>" class="tw" title="twitter" rel="nofollow" target="_blank"><i class="rhicon rhi-twitter"></i></a>
 		<?php endif;?>
 
 		<?php if ( rehub_option('rehub_tiktok') != '' ) :?>
 			<style scope>.social_icon .ttk svg{width: 20px; height:20px; fill:#fff;transform: translateY(2px);}.social_icon.small_i .ttk svg{width: 14px;height:14px}.social_icon .ttk{background:black}</style>
-			<a href="<?php echo rehub_option('rehub_tiktok'); ?>" class="ttk" rel="nofollow" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2859 3333" fill-rule="evenodd" clip-rule="evenodd"><path d="M2081 0c55 473 319 755 778 785v532c-266 26-499-61-770-225v995c0 1264-1378 1659-1932 753-356-583-138-1606 1004-1647v561c-87 14-180 36-265 65-254 86-398 247-358 531 77 544 1075 705 992-358V1h551z"/></svg></a>
+			<a href="<?php echo rehub_option('rehub_tiktok'); ?>" class="ttk"title="TikTok" rel="nofollow" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2859 3333" fill-rule="evenodd" clip-rule="evenodd"><path d="M2081 0c55 473 319 755 778 785v532c-266 26-499-61-770-225v995c0 1264-1378 1659-1932 753-356-583-138-1606 1004-1647v561c-87 14-180 36-265 65-254 86-398 247-358 531 77 544 1075 705 992-358V1h551z"/></svg></a>
 		<?php endif;?>
 
 		<?php if ( rehub_option('rehub_instagram') != '' ) :?>
-			<a href="<?php echo rehub_option('rehub_instagram'); ?>" class="ins" rel="nofollow" target="_blank"><i class="rhicon rhi-instagram"></i></a>
+			<a href="<?php echo rehub_option('rehub_instagram'); ?>" class="ins" title="Instagramm" rel="nofollow" target="_blank"><i class="rhicon rhi-instagram"></i></a>
 		<?php endif;?>
 
 		<?php if ( rehub_option('rehub_wa') != '' ) :?>
-			<a href="<?php echo rehub_option('rehub_wa'); ?>" class="wa" rel="nofollow" target="_blank"><i class="rhicon rhi-whatsapp"></i></a>
+			<a href="<?php echo rehub_option('rehub_wa'); ?>" class="wa"  title="Whatsapp" rel="nofollow" target="_blank"><i class="rhicon rhi-whatsapp"></i></a>
 		<?php endif;?>	
 
 		<?php if ( rehub_option('rehub_youtube') != '' ) :?>
-			<a href="<?php echo rehub_option('rehub_youtube'); ?>" class="yt" rel="nofollow" target="_blank"><i class="rhicon rhi-youtube"></i></a>
+			<a href="<?php echo rehub_option('rehub_youtube'); ?>" class="yt" title="Youtube" rel="nofollow" target="_blank"><i class="rhicon rhi-youtube"></i></a>
 		<?php endif;?>
 
 		<?php if ( rehub_option('rehub_vimeo') != '' ) :?>
-			<a href="<?php echo rehub_option('rehub_vimeo'); ?>" class="vim" rel="nofollow" target="_blank"><i class="rhicon rhi-vimeo-square"></i></a>
+			<a href="<?php echo rehub_option('rehub_vimeo'); ?>" class="vim" title="Vimeo" rel="nofollow" target="_blank"><i class="rhicon rhi-vimeo-square"></i></a>
 		<?php endif;?>			
 		
 		<?php if ( rehub_option('rehub_pinterest') != '' ) :?>
-			<a href="<?php echo rehub_option('rehub_pinterest'); ?>" class="pn" rel="nofollow" target="_blank"><i class="rhicon rhi-pinterest"></i></a>
+			<a href="<?php echo rehub_option('rehub_pinterest'); ?>" class="pn" title="Pinterest" rel="nofollow" target="_blank"><i class="rhicon rhi-pinterest"></i></a>
 		<?php endif;?>
 
 		<?php if ( rehub_option('rehub_linkedin') != '' ) :?>
-			<a href="<?php echo rehub_option('rehub_linkedin'); ?>" class="in" rel="nofollow" target="_blank"><i class="rhicon rhi-linkedin"></i></a>
+			<a href="<?php echo rehub_option('rehub_linkedin'); ?>" class="in" title="Linkedin" rel="nofollow" target="_blank"><i class="rhicon rhi-linkedin"></i></a>
 		<?php endif;?>
 
 		<?php if ( rehub_option('rehub_soundcloud') != '' ) :?>
-			<a href="<?php echo rehub_option('rehub_soundcloud'); ?>" class="sc" rel="nofollow" target="_blank"><i class="rhicon rhi-soundcloud"></i></a>
+			<a href="<?php echo rehub_option('rehub_soundcloud'); ?>" class="sc" title="Soundcloud" rel="nofollow" target="_blank"><i class="rhicon rhi-soundcloud"></i></a>
 		<?php endif;?>
 
 		<?php if ( rehub_option('rehub_dribbble') != '' ) :?>
-			<a href="<?php echo rehub_option('rehub_dribbble'); ?>" class="db" rel="nofollow" target="_blank"><i class="rhicon rhi-dribbble"></i></a>
+			<a href="<?php echo rehub_option('rehub_dribbble'); ?>" class="db" title="Dribble" rel="nofollow" target="_blank"><i class="rhicon rhi-dribbble"></i></a>
 		<?php endif;?>
 
 		<?php if ( rehub_option('rehub_vk') != '' ) :?>
-			<a href="<?php echo rehub_option('rehub_vk'); ?>" class="vk" rel="nofollow" target="_blank"><i class="rhicon rhi-vk"></i></a>
+			<a href="<?php echo rehub_option('rehub_vk'); ?>" class="vk" rel="nofollow" title="Vkontakte" target="_blank"><i class="rhicon rhi-vk"></i></a>
 		<?php endif;?>	
 		<?php if ( rehub_option('rehub_telegram') != '' ) :?>
-			<a href="<?php echo rehub_option('rehub_telegram'); ?>" class="telegram" rel="nofollow" target="_blank"><i class="rhicon rhi-telegram"></i></a>
+			<a href="<?php echo rehub_option('rehub_telegram'); ?>" class="telegram" title="Telegram" rel="nofollow" target="_blank"><i class="rhicon rhi-telegram"></i></a>
 		<?php endif;?>
 		<?php if ( rehub_option('discord') != '' ) :?>
-			<a href="<?php echo rehub_option('discord'); ?>" class="dscord" rel="nofollow" target="_blank"><i class="rhicon rhi-discord"></i></a>
+			<a href="<?php echo rehub_option('discord'); ?>" class="dscord" rel="nofollow" title="Discord" target="_blank"><i class="rhicon rhi-discord"></i></a>
 		<?php endif;?>			
 		<?php if ( rehub_option('rehub_rss') != '' ) :?>
-			<a href="<?php echo rehub_option('rehub_rss'); ?>" class="rss" rel="nofollow" target="_blank"><i class="rhicon rhi-rss"></i></a>
+			<a href="<?php echo rehub_option('rehub_rss'); ?>" class="rss" rel="nofollow" title="RSS" target="_blank"><i class="rhicon rhi-rss"></i></a>
 		<?php endif;?>																		
 	</div>
 

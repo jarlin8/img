@@ -407,6 +407,13 @@ if ( ! class_exists( 'Envato_Theme_Setup_Wizard' ) ) {
 			wp_enqueue_media();
 			wp_enqueue_script( 'media' );
 
+			if (
+				flatsome_wp_version_check( '6.4' ) &&
+				function_exists( 'wp_enqueue_emoji_styles' )
+			) {
+				wp_enqueue_emoji_styles(); // Removes a deprectation message in WordPress 6.4.
+			}
+
 			ob_start();
 			$this->setup_wizard_header();
 			$this->setup_wizard_steps();

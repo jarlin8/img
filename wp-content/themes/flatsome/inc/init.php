@@ -30,6 +30,7 @@ require get_template_directory() . '/inc/classes/class-flatsome-envato-admin.php
 require get_template_directory() . '/inc/classes/class-flatsome-envato-registration.php';
 require get_template_directory() . '/inc/classes/class-flatsome-instagram.php';
 require get_template_directory() . '/inc/classes/class-flatsome-relay.php';
+require get_template_directory() . '/inc/classes/class-flatsome-shortcode-image-extractor.php';
 require get_template_directory() . '/inc/classes/class-uxthemes-api.php';
 
 /**

@@ -12,8 +12,8 @@
  *
  * @see              https://docs.woocommerce.com/document/template-structure/
  * @package          WooCommerce/Templates
- * @version          3.9.0
- * @flatsome-version 3.16.0
+ * @version          8.6.0
+ * @flatsome-version 3.18.4
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -27,9 +27,10 @@ if ( ! $notices ) {
 ?>
 
 <?php foreach ( $notices as $notice ) : ?>
-	<div class="woocommerce-info message-wrapper"<?php echo wc_get_notice_data_attr( $notice ); ?>>
+	<div class="woocommerce-info message-wrapper"<?php echo wc_get_notice_data_attr( $notice ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 		<div class="message-container container medium-text-center">
 			<?php echo wc_kses_notice( $notice['notice'] ); ?>
 		</div>
 	</div>
-<?php endforeach; ?>
+	<?php
+endforeach;

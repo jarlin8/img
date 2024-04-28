@@ -801,11 +801,17 @@ function flatsome_main_classes() {
 /**
  * Flatsome header title classes.
  *
- * @return void
+ * @param bool $echo Optional. Whether to echo the classes or not. Default true.
+ *
+ * @return string|void If $echo is true, the classes will be echoed. If $echo is false, the classes will be returned.
  */
-function flatsome_header_title_classes() {
-	// Add / remove hooked classes.
-	echo implode( ' ', apply_filters( 'flatsome_header_title_class', array() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+function flatsome_header_title_classes( $echo = true ) {
+	$class = implode( ' ', apply_filters( 'flatsome_header_title_class', array() ) );
+	if ( $echo ) {
+		echo $class; // phpcs:ignore WordPress.Security.EscapeOutput
+	} else {
+		return $class;
+	}
 }
 
 /**

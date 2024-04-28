@@ -1,7 +1,7 @@
 <?php
 
-//add_action( 'admin_notices', 'flatsome_status_check_admin_notice' );
-//add_action( 'admin_notices', 'flatsome_maintenance_admin_notice' );
+add_action( 'admin_notices', 'flatsome_status_check_admin_notice' );
+add_action( 'admin_notices', 'flatsome_maintenance_admin_notice' );
 
 function flatsome_maintenance_admin_notice() {
 	$screen       = get_current_screen();

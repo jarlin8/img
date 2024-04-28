@@ -9,6 +9,8 @@
 
 namespace Flatsome\Integrations;
 
+use Flatsome_Shortcode_Image_Extractor;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -30,6 +32,7 @@ class Rank_Math {
 	 */
 	private function __construct() {
 		add_action( 'wp', [ $this, 'integrate' ] );
+		add_filter( 'rank_math/sitemap/urlimages', [ $this, 'sitemap_url_images' ], 10, 2 );
 	}
 
 	/**
@@ -143,6 +146,28 @@ class Rank_Math {
 	}
 
 	/**
+	 * Adds images to XML sitemap.
+	 *
+	 * @param array $images  Current post images.
+	 * @param int   $post_id The post ID.
+	 */
+	public function sitemap_url_images( $images, $post_id ) {
+		$post = get_post( $post_id );
+		if ( ! $post ) return $images;
+
+		$content = $post->post_content;
+
+		$image_extractor = Flatsome_Shortcode_Image_Extractor::get_instance();
+
+		$extracted_images = $image_extractor->extract_images( $content );
+		if ( ! empty( $extracted_images ) ) {
+			$images = array_merge( $images, $extracted_images );
+		}
+
+		return $images;
+	}
+
+	/**
 	 * Initializes the object and returns its instance.
 	 *
 	 * @return Rank_Math The object instance
@@ -157,4 +182,3 @@ class Rank_Math {
 }
 
 Rank_Math::get_instance();
-
