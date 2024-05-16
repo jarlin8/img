@@ -31,9 +31,9 @@ class YandexTranslator{
 		
 		//translating
 		$x='error';
-		$curlurl='https://translate.yandex.net/api/v1.5/tr.json/translate?key='.wp_automatic_trim($this->key).'&lang='.wp_automatic_trim($fromLanguage).'-'.wp_automatic_trim($toLanguage);
+		$curlurl='https://translate.yandex.net/api/v1.5/tr.json/translate?key='.trim($this->key).'&lang='.trim($fromLanguage).'-'.trim($toLanguage);
 		
-		$curlurl = wp_automatic_str_replace('auto-','' , $curlurl);
+		$curlurl = str_replace('auto-','' , $curlurl);
 		
 		
 		
@@ -49,7 +49,7 @@ class YandexTranslator{
  
 	 		 		
 		// Empty response check
-		if(wp_automatic_trim($exec) == ''){
+		if(trim($exec) == ''){
 			throw new Exception('Empty translator reply with possible curl error '.$x);
 		}
 		
@@ -74,7 +74,7 @@ class YandexTranslator{
 		
 		$translated_array = $json_reply->text;
 		
-		if ( wp_automatic_trim($translated_array[0]) == ''){
+		if ( trim($translated_array[0]) == ''){
 			throw new Exception('Can not extract returned translation' );
 		}
 		 

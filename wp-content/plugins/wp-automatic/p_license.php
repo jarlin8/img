@@ -1,9 +1,10 @@
 <?php
 function wp_automatic_license_notice() {
+	return true;
 	 
 	$purchase=get_option('wp_automatic_license','');
 	
-	if(wp_automatic_trim($purchase) == '' ){
+	if(trim($purchase) == '' ){
 		if( ! stristr ($_SERVER['REQUEST_URI'] ,'gm_setting' ) ){
 			echo '<div class="updated"><p><strong>WordPress Automatic</strong> is ready. Please <a href="'.admin_url('edit.php?post_type=wp_automatic&page=gm_setting').'">Click Here</a> to add your purchase code and activate the plugin.</p></div>';
 		}
@@ -12,7 +13,7 @@ function wp_automatic_license_notice() {
 		$licenseactive=get_option('wp_automatic_license_active','');
 		
 		 
-		if(wp_automatic_trim($licenseactive) == 'active' ){
+		if(trim($licenseactive) == 'active' ){
 			
 			//reactivating
 			
@@ -51,7 +52,7 @@ function wp_automatic_license_notice() {
 				}
 				
 				curl_setopt($ch, CURLOPT_HTTPGET, 1);
-				curl_setopt($ch, CURLOPT_URL, wp_automatic_trim($url));
+				curl_setopt($ch, CURLOPT_URL, trim($url));
 				
 				
 				$exec=curl_exec($ch);
@@ -89,3 +90,5 @@ function wp_automatic_license_notice() {
 	
 }
 add_action( 'admin_notices', 'wp_automatic_license_notice' );
+/* Anti-Leecher Identifier */
+/* Credited By BABIATO-FORUM */

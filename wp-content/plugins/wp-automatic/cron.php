@@ -32,7 +32,6 @@ if (isset ( $_GET ['id'] )) {
 	// check if there is an already running cron job by checking if an option exist with the name wp_automatic_cron_running
 	$wp_automatic_cron_running = get_option ( 'wp_automatic_cron_running', false );
 
-
 	if ($wp_automatic_cron_running != false) {
 		
 		// check if the cron is running for more than 5 minutes
@@ -95,7 +94,7 @@ function wp_automatic_fatal_handler() {
 	
 	if (in_array ( 'OPT_AMAZON_PRICE', $wp_automatic_options ) && ! isset ( $_GET ['id'] )) {
 		 
-		if ( in_array('OPT_AMAZON_NOAPI', $wp_automatic_options) || wp_automatic_trim( get_option ( 'wp_amazonpin_apvtk', '' ) ) == '' ){
+		if ( in_array('OPT_AMAZON_NOAPI', $wp_automatic_options) || trim( get_option ( 'wp_amazonpin_apvtk', '' ) ) == '' ){
 				// no API price updates
 			wp_automatic_amazon_prices_update ( false );
 		}else{

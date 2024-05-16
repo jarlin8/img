@@ -146,7 +146,6 @@ function gm_log(){
 					class="button-secondary" id="post-query-submit" name="submit">
 			</div>
 
-			<p>Current server time: <?php echo date('Y-m-d H:i:s');  ?> </p>
 
 
 
@@ -197,7 +196,7 @@ function gm_log(){
 				
 				if(stristr($displayTitle , '></a')   ){
 				
-					$displayTitle = wp_automatic_str_replace('><', '> (no title)<', $displayTitle);
+					$displayTitle = str_replace('><', '> (no title)<', $displayTitle);
 
 				
 				}

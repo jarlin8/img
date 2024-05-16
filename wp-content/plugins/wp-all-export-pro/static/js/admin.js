@@ -686,7 +686,7 @@
 
 		    		$('#wp_all_export_available_rules').html('<div class="wp_all_export_preloader" style="display:block;"></div>');
 
-		    		var date_fields = ['post_date', 'post_modified', 'comment_date', 'comment_parent_date', 'comment_parent_date_gmt', 'user_registered', 'cf__completed_date', 'product_date'];
+		    		var date_fields = ['post_date', 'post_modified', 'comment_date', 'comment_parent_date', 'comment_parent_date_gmt', 'user_registered', 'cf__completed_date', 'product_date', '_date_paid'];
 
 	    			if ( date_fields.indexOf(params.selected) > -1 )
 		    		{
@@ -697,9 +697,14 @@
 		    			$('#date_field_notice').hide();
 		    		}
 
+					var type = $(evt.target).find(":selected").data("type");
+
 		    		var request = {
 						action: 'wpae_available_rules',
-						data: {'selected' : params.selected},
+						data: {
+							'selected' : params.selected,
+							'type' : type,
+						},
 						security: wp_all_export_security
 				    };
 
@@ -1582,9 +1587,73 @@
 				$sortable.find('li:last').append($clone.removeClass('template').fadeIn());
 			}
 
-			var $fieldType = $elementType.val();
+			var $options = $clone.find('input[name^=cc_options]').val();
 
-			if ($elementLabel == '_sale_price_dates_from' || $elementLabel == '_sale_price_dates_to') $fieldType = 'date';
+			var $fieldType = $elementType.val();
+			var isAddon = wpae_addons.includes($fieldType);
+
+			function isFieldType(type) {
+				return (
+					$options.indexOf(`s:4:"type";s:${type.length}:"${type}";`) !== -1
+				);
+			}
+
+			if ($elementLabel == '_sale_price_dates_from' || $elementLabel == '_sale_price_dates_to' || $elementLabel == '_date_paid') $fieldType = 'date';
+
+			// set up additional settings for addons fields
+
+			if ( isAddon || $fieldType === 'acf' ) {
+				if ( isFieldType('repeater') ) {
+					var obj = {};
+					obj['repeater_field_item_per_line'] = $addAnotherForm.find('#repeater_field_item_per_line').is(':checked');
+					obj['repeater_field_fill_empty_columns'] = $addAnotherForm.find('#repeater_field_fill_empty_columns').is(':checked');
+					$clone.find('input[name^=cc_settings]').val(window.JSON.stringify(obj));
+				}
+			}
+
+			if ( isAddon && ( isFieldType('date') || isFieldType('datetime') ) ) {
+				var $dateType = $addAnotherForm.find('select.date_field_export_data').val();
+				if ($dateType == 'unix')
+					$clone.find('input[name^=cc_settings]').val('unix');
+				else
+					$clone.find('input[name^=cc_settings]').val($('.pmxe_date_format').val());
+			}
+
+			if ( isAddon && ( isFieldType('time') ) ) {
+				var $format = $addAnotherForm.find('.pmxe_time_format').val();
+				var obj = {
+					time_format: $format,
+				};
+
+				$clone.find('input[name^=cc_settings]').val(window.JSON.stringify(obj));
+			}
+
+			if ( isAddon && ( isFieldType('media') || isFieldType('gallery') ) ) {
+				var $format = $addAnotherForm.find('select.media_field_export_data').val();
+				var obj = {
+					value_format: $format,
+				};
+
+				$clone.find('input[name^=cc_settings]').val(window.JSON.stringify(obj));
+			}
+
+			if ( isAddon && isFieldType('post') ) {
+				var $format = $addAnotherForm.find('select.post_field_export_data').val();
+				var obj = {
+					post_value_format: $format,
+				};
+
+				$clone.find('input[name^=cc_settings]').val(window.JSON.stringify(obj));
+			}
+
+			if ( isAddon && isFieldType('user') ) {
+				var $format = $addAnotherForm.find('select.user_field_export_data').val();
+				var obj = {
+					user_value_format: $format,
+				};
+
+				$clone.find('input[name^=cc_settings]').val(window.JSON.stringify(obj));
+			}
 
 			// set up additional element settings by element type
 			switch ( $fieldType )
@@ -1601,22 +1670,12 @@
 				case 'comment_parent_date_gmt':
 				case 'user_registered':
 				case 'post_modified':
+				case '_date_paid':
 					var $dateType = $addAnotherForm.find('select.date_field_export_data').val();
 					if ($dateType == 'unix')
 						$clone.find('input[name^=cc_settings]').val('unix');
 					else
 						$clone.find('input[name^=cc_settings]').val($('.pmxe_date_format').val());
-					break;
-				// set up additional settings for repeater field
-				case 'acf':
-					// determine is repeater field selected in dropdown
-					if ( $clone.find('input[name^=cc_options]').val().indexOf('s:4:"type";s:8:"repeater"') !== -1 )
-					{
-						var obj = {};
-						obj['repeater_field_item_per_line'] = $addAnotherForm.find('#repeater_field_item_per_line').is(':checked');
-						obj['repeater_field_fill_empty_columns'] = $addAnotherForm.find('#repeater_field_fill_empty_columns').is(':checked');
-						$clone.find('input[name^=cc_settings]').val(window.JSON.stringify(obj));
-					}
 					break;
 				case 'woo':
 					switch ( $clone.find('input[name^=cc_value]').val() )
@@ -1635,6 +1694,7 @@
 						case 'post_date':
 						case 'post_modified':
 						case '_completed_date':
+						case '_date_paid':
 							var $dateType = $addAnotherForm.find('select.date_field_export_data').val();
 							if ($dateType == 'unix')
 								$clone.find('input[name^=cc_settings]').val('unix');
@@ -1754,8 +1814,91 @@
                 var $settings = $(this).find('input[name^=cc_settings]').val();
 
                 var $fieldType = $elementType.val();
+				var isAddon = wpae_addons.includes($fieldType);
+
+				function isFieldType(type) {
+					return (
+					  $options.indexOf(`s:4:"type";s:${type.length}:"${type}";`) !== -1
+					);
+				}
 
                 if ($elementLabel.val() == '_sale_price_dates_from' || $elementLabel.val() == '_sale_price_dates_to') $fieldType = 'date';
+
+                if ( isAddon || $fieldType === 'acf' ) {
+					if ( isFieldType('repeater') ) {
+						$addAnotherForm.find('.repeater_field_type').show();
+						if ($settings != "") {
+							var $field_options = window.JSON.parse($settings);
+							if ($field_options.repeater_field_item_per_line) $addAnotherForm.find('#repeater_field_item_per_line').prop('checked', 'checked');
+							if ($field_options.repeater_field_fill_empty_columns) $addAnotherForm.find('#repeater_field_fill_empty_columns').prop('checked', 'checked');
+						}
+					}
+                }
+
+				if ( isAddon && ( isFieldType('date') || isFieldType('datetime') ) ) {
+					$addAnotherForm.find('select.date_field_export_data').find('option').each(function () {
+						if ($(this).val() == $settings || $settings != 'unix' && $(this).val() == 'php')
+							$(this).attr({'selected': 'selected'}).trigger('click');
+						else
+							$(this).removeAttr('selected');
+					});
+
+					if ($settings != 'php' && $settings != 'unix') {
+						if ($settings != '0') $('.pmxe_date_format').val($settings); else $('.pmxe_date_format').val('');
+						$('.pmxe_date_format_wrapper').show();
+					}
+					else {
+						$('.pmxe_date_format').val('');
+					}
+					$addAnotherForm.find('.date_field_type').show();
+				}
+
+				if ( isAddon && ( isFieldType('time') ) ) {
+					const valueFormat = $settings || '{}';
+					const selectedFormat = JSON.parse(valueFormat)?.time_format;
+					$('.pmxe_time_format').val(selectedFormat);
+
+					$addAnotherForm.find('.time_field_type').show();
+				}
+
+				if ( isAddon && ( isFieldType('media') || isFieldType('gallery') ) ) {
+					const valueFormat = $settings || '{}';
+					const selectedFormat = JSON.parse(valueFormat)?.value_format;
+					$addAnotherForm.find('.media_field_type').show();
+
+					$addAnotherForm.find('.media_field_type')
+						.find('option')
+						.filter(function() {
+							return $(this).val() == selectedFormat;
+						})
+						.prop('selected', true);
+				}
+
+				if ( isAddon && isFieldType('post') ) {
+					const valueFormat = $settings || '{}';
+					const selectedFormat = JSON.parse(valueFormat)?.post_value_format;
+					$addAnotherForm.find('.post_field_type').show();
+
+					$addAnotherForm.find('.post_field_type')
+						.find('option')
+						.filter(function() {
+							return $(this).val() == selectedFormat;
+						})
+						.prop('selected', true);
+				}
+
+				if ( isAddon && isFieldType('user') ) {
+					const valueFormat = $settings || '{}';
+					const selectedFormat = JSON.parse(valueFormat)?.user_value_format;
+					$addAnotherForm.find('.user_field_type').show();
+
+					$addAnotherForm.find('.user_field_type')
+						.find('option')
+						.filter(function() {
+							return $(this).val() == selectedFormat;
+						})
+						.prop('selected', true);
+				}
 
                 switch ($fieldType) {
                     case 'content':
@@ -1772,16 +1915,6 @@
                     case 'sql':
                         $addAnotherForm.find('textarea.column_value').val($(this).find('input[name^=cc_sql]').val());
                         $addAnotherForm.find('.sql_field_type').show();
-                        break;
-                    case 'acf':
-                        if ($options.indexOf('s:4:"type";s:8:"repeater"') !== -1) {
-                            $addAnotherForm.find('.repeater_field_type').show();
-                            if ($settings != "") {
-                                var $field_options = window.JSON.parse($settings);
-                                if ($field_options.repeater_field_item_per_line) $addAnotherForm.find('#repeater_field_item_per_line').prop('checked', 'checked');
-                                if ($field_options.repeater_field_fill_empty_columns) $addAnotherForm.find('#repeater_field_fill_empty_columns').prop('checked', 'checked');
-                            }
-                        }
                         break;
                     case 'woo':
                         $woo_type = $(this).find('input[name^=cc_value]');
@@ -1807,6 +1940,7 @@
                             case 'post_date':
                             case 'post_modified':
                             case '_completed_date':
+							case '_date_paid':
 
                                 $addAnotherForm.find('select.date_field_export_data').find('option').each(function () {
                                     if ($(this).val() == $settings || $settings != 'unix' && $(this).val() == 'php')

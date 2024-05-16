@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS `{$prefix}automatic_log` (
 		$que=explode(';',$querys);
 			
 		foreach($que  as $query){
-			if(wp_automatic_trim($query)!=''){
+			if(trim($query)!=''){
 				$resval = $wpdb->query($query);
 			}
 		}
@@ -508,7 +508,7 @@ CREATE TABLE IF NOT EXISTS `{$prefix}automatic_clickbank_links` (
 		$que=explode(';',$querys);
 			
 		foreach($que  as $query){
-			if(wp_automatic_trim($query)!=''){
+			if(trim($query)!=''){
 				 
 				$resval = $wpdb->query($query);
 				  
@@ -568,7 +568,7 @@ CREATE TABLE IF NOT EXISTS `{$prefix}automatic_clickbank_links` (
 		$que=explode(';',$querys);
 			
 		foreach($que  as $query){
-			if(wp_automatic_trim($query)!=''){
+			if(trim($query)!=''){
 				
 				$wpdb->query($query);
 				
@@ -1208,7 +1208,7 @@ ALTER TABLE `{$prefix}automatic_log` ADD INDEX( `action`);
 		$que=explode(';',$querys);
 		
 		foreach($que  as $query){
-			if(wp_automatic_trim($query)!=''){
+			if(trim($query)!=''){
 				$resval = $wpdb->query($query);
 			}
 		}

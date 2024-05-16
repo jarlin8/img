@@ -9,7 +9,7 @@ if ( !class_exists('Puc_v4p9_DebugBar_ThemePanel', false) ):
 		protected $updateChecker;
 
 		protected function displayConfigHeader() {
-			$this->row('Theme directory', wp_automatic_htmlentities($this->updateChecker->directoryName));
+			$this->row('Theme directory', htmlentities($this->updateChecker->directoryName));
 			parent::displayConfigHeader();
 		}
 

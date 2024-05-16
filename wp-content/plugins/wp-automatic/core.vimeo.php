@@ -19,13 +19,13 @@ Class WpAutomaticVimeo extends wp_automatic{
 	
 		foreach ( $keywords as $keyword ) {
 				
-			$keyword = wp_automatic_trim($keyword);
+			$keyword = trim($keyword);
 	
 			//update last keyword
-			update_post_meta($camp->camp_id, 'last_keyword', wp_automatic_trim($keyword));
+			update_post_meta($camp->camp_id, 'last_keyword', trim($keyword));
 	
 			//when valid keyword
-			if (wp_automatic_trim( $keyword ) != '') {
+			if (trim ( $keyword ) != '') {
 	
 				//record current used keyword
 				$this->used_keyword=$keyword;
@@ -134,7 +134,7 @@ Class WpAutomaticVimeo extends wp_automatic{
 		$access_tocken = get_option('wp_automatic_vm_tocken','');
 	
 		//validate tocken
-		if (wp_automatic_trim( $access_tocken ) == '') {
+		if (trim ( $access_tocken ) == '') {
 			  echo '<br>Vimeo Access token is required visit settings and add it...';
 			exit ();
 		}
@@ -174,17 +174,7 @@ Class WpAutomaticVimeo extends wp_automatic{
 				
 		}
 	
-		//cap start at no more than 200
-		if($start > 200){
-			
-			//report
-			echo '<br>Reached max 10k videos for this keyword, returning to start';
-
-			//reset start
-			$start = 1;
-		}
-		
-		echo ' index:' . $start;
+		  echo ' index:' . $start;
 	
 		// update start index to start+1
 		$nextstart = $start + 1;
@@ -192,14 +182,14 @@ Class WpAutomaticVimeo extends wp_automatic{
 		$this->db->query ( $query );
 	
 		//auth
-		curl_setopt($this->ch,CURLOPT_HTTPHEADER,array('Authorization: bearer '.wp_automatic_trim($access_tocken)));
+		curl_setopt($this->ch,CURLOPT_HTTPHEADER,array('Authorization: bearer '.trim($access_tocken)));
 	
 		//if specific user posting
 		if(in_array('OPT_VM_USER', $camp_opt)){
 	
 			$author = $camp_general['cg_vm_user'];
 			 
-			$url = 'https://api.vimeo.com/'.$camp_general['cg_vm_user_channel'].'/'.wp_automatic_trim($author).'/videos?page='.$start.'&per_page=50';
+			$url = 'https://api.vimeo.com/'.$camp_general['cg_vm_user_channel'].'/'.trim($author).'/videos?page='.$start.'&per_page=50';
 			//$url = 'https://api.vimeo.com/me/videos?page='.$start.'&per_page=50';
 				
 			if($keyword !='*'){
@@ -227,7 +217,7 @@ Class WpAutomaticVimeo extends wp_automatic{
 		 echo '<br>Vimeo url:'.$url;
 	
 		curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-		curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($url));
+		curl_setopt($this->ch, CURLOPT_URL, trim($url));
 		$exec=curl_exec($this->ch);
 		$x=curl_error($this->ch);
 	
@@ -260,7 +250,7 @@ Class WpAutomaticVimeo extends wp_automatic{
 	
 	
 				$itm['vid_title'] = $vid->name;
-				$itm['vid_id'] = wp_automatic_str_replace('/videos/', '', $vid->uri) ;
+				$itm['vid_id'] = str_replace('/videos/', '', $vid->uri) ;
 				$itm['vid_description'] = $vid->description;
 				$itm['vid_duration'] = $vid->duration;
 				$itm['vid_width'] = $vid->width;
@@ -272,8 +262,8 @@ Class WpAutomaticVimeo extends wp_automatic{
 				$itm['vid_embed'] = $vid->embed->html;
 	
 				//replace width and height
-				$itm['vid_embed'] = wp_automatic_str_replace('width="'.$itm['vid_width'].'"', 'width="560"', $itm['vid_embed']);
-				$itm['vid_embed'] = wp_automatic_str_replace('height="'.$itm['vid_height'].'"', 'height="315"', $itm['vid_embed']);
+				$itm['vid_embed'] = str_replace('width="'.$itm['vid_width'].'"', 'width="560"', $itm['vid_embed']);
+				$itm['vid_embed'] = str_replace('height="'.$itm['vid_height'].'"', 'height="315"', $itm['vid_embed']);
 			 	
 				//extract tags
 				$tags=$vid->tags;
@@ -296,18 +286,18 @@ Class WpAutomaticVimeo extends wp_automatic{
 				$itm['vid_modified_time'] = $vid->modified_time;
 	
 				//fixing dates
-				$itm['vid_created_time'] =  wp_automatic_str_replace('T', ' ', $itm['vid_created_time']) ;
-				$itm['vid_created_time'] =   wp_automatic_str_replace('+00:00', '', $itm['vid_created_time']);
+				$itm['vid_created_time'] =  str_replace('T', ' ', $itm['vid_created_time']) ;
+				$itm['vid_created_time'] =   str_replace('+00:00', '', $itm['vid_created_time']);
 	
-				$itm['vid_modified_time'] =  wp_automatic_str_replace('T', ' ', $itm['vid_modified_time']) ;
-				$itm['vid_modified_time'] =   wp_automatic_str_replace('+00:00', '', $itm['vid_modified_time']);
+				$itm['vid_modified_time'] =  str_replace('T', ' ', $itm['vid_modified_time']) ;
+				$itm['vid_modified_time'] =   str_replace('+00:00', '', $itm['vid_modified_time']);
 	
 	
 	
 	
 				$itm['vid_likes'] = $vid->metadata->connections->likes->total;
 				$itm['vid_author_name'] = $vid->user->name;
-				$itm['vid_author_id'] =  wp_automatic_str_replace('/users/', '', $vid->user->uri)  ;
+				$itm['vid_author_id'] =  str_replace('/users/', '', $vid->user->uri)  ;
 				$itm['vid_author_link'] = $vid->user->link;
 				$itm['vid_author_picutre'] = @$vid->user->pictures->sizes[count($vid->user->pictures->sizes) -1]->link;
 				$itm['vid_comments_count'] = $vid->metadata->connections->comments->total;

@@ -51,7 +51,7 @@ class DeeplTranslator{
 		
 		
 		//formality
-		if( wp_automatic_trim($this->fomality) != '' && $this->fomality != 'default'){
+		if( trim($this->fomality) != '' && $this->fomality != 'default'){
 			$curlurl .= '&formality=' . $this->fomality;
 		}
 			
@@ -75,7 +75,7 @@ class DeeplTranslator{
 		 
 		
 		// Empty response check
-		if(wp_automatic_trim($exec) == ''){
+		if(trim($exec) == ''){
 			
 			if($cuinfo['http_code'] == 403){
 				throw new Exception('Deepl returned 403 error which could mean your key is incorrect or your subscription is not valid '.$x);

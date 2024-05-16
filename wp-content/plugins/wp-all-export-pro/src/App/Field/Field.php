@@ -44,7 +44,12 @@ abstract class Field
 
     public function getFieldValue($snippetData)
     {
-        $value = strip_tags($this->getValue($snippetData));
+		// Allow HTML in the description field.
+        if( 'description' !== $this->getFieldName()) {
+	        $value = strip_tags( $this->getValue( $snippetData ) );
+        }else{
+			$value = $this->getValue( $snippetData );
+        }
 
 
         $functions = array();

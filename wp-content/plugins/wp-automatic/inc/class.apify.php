@@ -25,12 +25,12 @@ class ValvePress_APIFY {
 	function apify($apify_wait_for_mills = 0){
 		
 		//empty reply
-		if(wp_automatic_trim($this->token) == '' ){
+		if(trim($this->token) == '' ){
 			throw new Exception( '<span style="color:red">ERROR: You have enabled the option to use APIFY.COM, please visit the plugin settings page and add the required APIFY API token</span>'   );
 		}
 		
 		
-		$json_to_post =wp_automatic_str_replace('https://www.example.com', $this->link, $this->json_raw);
+		$json_to_post =str_replace('https://www.example.com', $this->link, $this->json_raw);
 
 		//parse int $api_wait_for_mills
 		$apify_wait_for_mills = intval($apify_wait_for_mills);
@@ -39,7 +39,7 @@ class ValvePress_APIFY {
 		if($apify_wait_for_mills != 0 && is_numeric($apify_wait_for_mills) ){
 			
 			// add await context.waitFor(1000); to the json before const pageTitle
-			$json_to_post = wp_automatic_str_replace('const pageTitle', 'await context.waitFor(' . $apify_wait_for_mills . ');\n    const pageTitle', $json_to_post);
+			$json_to_post = str_replace('const pageTitle', 'await context.waitFor(' . $apify_wait_for_mills . ');\n    const pageTitle', $json_to_post);
 		
 			//echo $json_to_post;exit;
 		}
@@ -56,7 +56,7 @@ class ValvePress_APIFY {
 		$x=curl_error($this->ch);
 		
 		//empty reply 
-		if(wp_automatic_trim($exec) == '' ){
+		if(trim($exec) == '' ){
 			throw new Exception( 'Empty reply from APIFY ' . $x  );
 		}
 		

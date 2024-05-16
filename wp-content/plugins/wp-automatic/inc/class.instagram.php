@@ -51,7 +51,7 @@ class InstaScrape {
 			$after = "";
 		} else {
 			
-			$after = "&after=" . urlencode ( wp_automatic_trim( $index ) );
+			$after = "&after=" . urlencode ( trim ( $index ) );
 		}
 		
 		$url = "https://www.instagram.com/graphql/query/?query_id=17880160963012870&id=$usrID&first=12" . $after;
@@ -85,7 +85,7 @@ class InstaScrape {
 	
 		
 		// Curl error check
-		if (wp_automatic_trim( $exec ) == '') {
+		if (trim ( $exec ) == '') {
 			
 			throw new Exception ( 'Empty results from instagram call with possible curl error:' . $x );
 		}
@@ -126,12 +126,12 @@ class InstaScrape {
 			$after = "";
 		} else {
 			
-			//$after = "&max_id=" . urlencode ( wp_automatic_trim( $index ) );
-			$after = "&after=" . urlencode ( wp_automatic_trim( $index ) );
+			//$after = "&max_id=" . urlencode ( trim ( $index ) );
+			$after = "&after=" . urlencode ( trim ( $index ) );
 		}
 		
-		$url = "https://www.instagram.com/graphql/query/?query_id=17882293912014529&tag_name=" . urlencode ( wp_automatic_trim( $hashTag ) ) . "&first=11" . $after;
-		//$url = "https://www.instagram.com/explore/tags/" . urlencode ( wp_automatic_trim( $hashTag ) ) . "/?__a=1" . $after  ;
+		$url = "https://www.instagram.com/graphql/query/?query_id=17882293912014529&tag_name=" . urlencode ( trim ( $hashTag ) ) . "&first=11" . $after;
+		//$url = "https://www.instagram.com/explore/tags/" . urlencode ( trim ( $hashTag ) ) . "/?__a=1" . $after  ;
 		
 		curl_setopt ( $this->ch, CURLOPT_URL, $url );
 		
@@ -149,7 +149,7 @@ class InstaScrape {
 			throw new Exception ( '<br><span style="color:red">Added session is not correct or expired. Please visit the plugin settings page and add a fresh session. Also make sure not to logout of your account for the session to stay alive.</span>' );
 		}
 		
-		if (wp_automatic_trim( $exec ) == '') {
+		if (trim ( $exec ) == '') {
 			throw new Exception ( 'Empty results from instagram call with possible curl error:' . $x );
 		}
 		
@@ -199,9 +199,9 @@ class InstaScrape {
 		
 		// Curl get
 		$x = 'error';
-		$url = 'https://www.instagram.com/' . wp_automatic_trim( $name ).'/';
+		$url = 'https://www.instagram.com/' . trim ( $name ).'/';
 		curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-		curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $url ) );
+		curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
 		
 		$headers = array();
 		$headers[] = "Authority: www.instagram.com";
@@ -248,7 +248,7 @@ class InstaScrape {
 			curl_setopt($ch, CURLOPT_MAXREDIRS, 5); // Good leeway for redirections.
 			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); // Many login forms redirect at least once.
 			curl_setopt($ch, CURLOPT_COOKIEJAR , "cookie.txt");
-			curl_setopt ( $ch, CURLOPT_PROXY, wp_automatic_trim( '108.186.244.116:80' ) );
+			curl_setopt ( $ch, CURLOPT_PROXY, trim ( '108.186.244.116:80' ) );
 			
 			//curl get
 			$x='error';
@@ -257,7 +257,7 @@ class InstaScrape {
 			$x='error';
 		 
 			curl_setopt($ch, CURLOPT_HTTPGET, 1);
-			curl_setopt($ch, CURLOPT_URL, wp_automatic_trim($url));
+			curl_setopt($ch, CURLOPT_URL, trim($url));
 			$exec=curl_exec($ch);
 			$x=curl_error($ch);
 			$cui = curl_getinfo ( $ch );
@@ -282,7 +282,7 @@ class InstaScrape {
 			throw new Exception ( '<br><span style="color:red">Added session is not correct or expired. Please visit the plugin settings page and add a fresh session. Also make sure not to logout of your account for the session to stay alive.</span>' );
 		}
 		
-		if (wp_automatic_trim( $exec ) == '') {
+		if (trim ( $exec ) == '') {
 			throw new Exception ( 'Empty results from instagram call with possible curl error:' . $x );
 		}
 		
@@ -305,7 +305,7 @@ class InstaScrape {
 		$possibleID = $matchs [1];
 		
 		// Validate extracted id
-		if (! is_numeric ( $possibleID ) || wp_automatic_trim( $possibleID ) == '') {
+		if (! is_numeric ( $possibleID ) || trim ( $possibleID ) == '') {
 			throw new Exception ( 'Can not extract the id from instagram page' . $x );
 		}
 		
@@ -323,15 +323,15 @@ class InstaScrape {
 		$this->resetCookies();
 		
 		// Preparing uri
-		//$url = "https://www.instagram.com/p/" . wp_automatic_trim( $itmID ) . "/?__a=1";
-		$url = "https://i.instagram.com/api/v1/media/" . wp_automatic_trim( $itmID ) . "/info/" ;
+		//$url = "https://www.instagram.com/p/" . trim ( $itmID ) . "/?__a=1";
+		$url = "https://i.instagram.com/api/v1/media/" . trim ( $itmID ) . "/info/" ;
 		
 		// curl get
 		$x = 'error';
 		
 		curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-		curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $url ) );
-		curl_setopt ( $this->ch, CURLOPT_REFERER, "https://www.instagram.com/p/" . wp_automatic_trim( $itmID ) );
+		curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
+		curl_setopt ( $this->ch, CURLOPT_REFERER, "https://www.instagram.com/p/" . trim ( $itmID ) );
 		 
 		
 		
@@ -368,7 +368,7 @@ class InstaScrape {
 		}
 		
 		// Curl error check
-		if (wp_automatic_trim( $exec ) == '') {
+		if (trim ( $exec ) == '') {
 			
 			throw new Exception ( 'Empty results from instagram call with possible curl error:' . $x );
 		}

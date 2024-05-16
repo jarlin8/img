@@ -66,7 +66,7 @@ class MicrosoftTranslator {
 		
 		// Post translate request
 		$curlUrl = "http://api.microsofttranslator.com/V2/Http.svc/TranslateArray";
-		$requestXml = '<TranslateArrayRequest><AppId/>' . '<From>' . $fromLanguage . '</From>' . '<Options>' . '<Category xmlns="http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2" />' . '<ContentType xmlns="http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2">text/plain</ContentType>' . '<ReservedFlags xmlns="http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2" />' . '<State xmlns="http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2" />' . '<Uri xmlns="http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2" />' . '<User xmlns="http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2" />' . '</Options>' . '<Texts>' . '<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">' . wp_automatic_htmlspecialchars ( $sourceText ) . '</string>' . '</Texts>' . '<To>' . $toLanguage . '</To>' . '</TranslateArrayRequest>';
+		$requestXml = '<TranslateArrayRequest><AppId/>' . '<From>' . $fromLanguage . '</From>' . '<Options>' . '<Category xmlns="http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2" />' . '<ContentType xmlns="http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2">text/plain</ContentType>' . '<ReservedFlags xmlns="http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2" />' . '<State xmlns="http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2" />' . '<Uri xmlns="http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2" />' . '<User xmlns="http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2" />' . '</Options>' . '<Texts>' . '<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">' . htmlspecialchars ( $sourceText ) . '</string>' . '</Texts>' . '<To>' . $toLanguage . '</To>' . '</TranslateArrayRequest>';
 		
 		curl_setopt ( $this->ch, CURLOPT_URL, $curlUrl );
 		curl_setopt ( $this->ch, CURLOPT_POST, true );
@@ -79,7 +79,7 @@ class MicrosoftTranslator {
 		$x = curl_error ( $this->ch );
 		
 		// Empty reply check
-		if (wp_automatic_trim( $exec ) == '') {
+		if (trim ( $exec ) == '') {
 			throw new Exception ( 'Empty translator token request reply with possible curl error ' . $x );
 		}
 		
@@ -158,8 +158,8 @@ class MicrosoftTranslator {
 		$headers [] = "Ocp-Apim-Subscription-Key: " . $this->key;
 		
 		//region
-		if(wp_automatic_trim($this->region) != ''){
-			$headers [] = "Ocp-Apim-Subscription-Region: " . wp_automatic_trim($this->region)  ;
+		if(trim($this->region) != ''){
+			$headers [] = "Ocp-Apim-Subscription-Region: " . trim($this->region)  ;
 		}
 		
 		
@@ -171,7 +171,7 @@ class MicrosoftTranslator {
 		$x = curl_error ( $this->ch );
 		
 		// Empty reply check
-		if (wp_automatic_trim( $exec ) == '') {
+		if (trim ( $exec ) == '') {
 			throw new Exception ( 'Empty translator token request reply with possible curl error ' . $x );
 		}
 		

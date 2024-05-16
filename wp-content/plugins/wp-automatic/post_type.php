@@ -134,7 +134,7 @@ function wp_automatic_columns_display($wp_automatic_columns){
 		case "wp_automatic_keywords":
 			//getting the keyword
 			 
-			if(wp_automatic_trim($ret->camp_type) == 'Feeds'){
+			if(trim($ret->camp_type) == 'Feeds'){
 				
 				if(strlen($ret->feeds) > 100){
 					  echo substr($ret->feeds, 0,100).'...';
@@ -144,14 +144,14 @@ function wp_automatic_columns_display($wp_automatic_columns){
 				
 				
 				
-			}elseif( wp_automatic_trim($ret->camp_type) == 'Facebook' ){
+			}elseif( trim($ret->camp_type) == 'Facebook' ){
 				$camp_general = unserialize (base64_decode( $ret->camp_general) );
 				  echo $camp_general['cg_fb_page'] ;
-			}elseif( wp_automatic_trim($ret->camp_type) == 'Craigslist' ){
+			}elseif( trim($ret->camp_type) == 'Craigslist' ){
 				$camp_general = unserialize (base64_decode( $ret->camp_general) );
 				  echo $camp_general['cg_cl_page'] ;
 			
-			}elseif( wp_automatic_trim($ret->camp_type) == 'Reddit' ){
+			}elseif( trim($ret->camp_type) == 'Reddit' ){
 				$camp_general = unserialize (base64_decode( $ret->camp_general) );
 				  echo $camp_general['cg_rd_page'] ;
 			
@@ -159,22 +159,13 @@ function wp_automatic_columns_display($wp_automatic_columns){
 				$camp_general = unserialize (base64_decode( $ret->camp_general) );
 				echo $camp_general['cg_sn_source'] ;
 			
-			}elseif( $ret->camp_type == 'Multi' || $ret->camp_type == 'Multi-page scraper'){
+			}elseif( $ret->camp_type == 'Multi'){
 				$camp_general = unserialize (base64_decode( $ret->camp_general) );
 				
-				if(wp_automatic_trim( $camp_general['cg_ml_source'] ) == '' ){
+				if(trim( $camp_general['cg_ml_source'] ) == '' ){
 					
-					//cg_multi_posts_list
-					$cg_multi_posts_list = $camp_general['cg_multi_posts_list'];
+					echo $camp_general['cg_multi_posts_list'];
 					
-					//limit to 200 chars
-					if(strlen($cg_multi_posts_list) > 200){
-						echo substr($cg_multi_posts_list, 0,200).'...';
-
-					}else{
-
-						echo $camp_general['cg_multi_posts_list'];
-					}
 				}else{
 				
 					if(strlen($camp_general['cg_ml_source'] ) > 100){
@@ -228,19 +219,11 @@ function wp_automatic_columns_display($wp_automatic_columns){
 				
 				$camp_general = unserialize (base64_decode( $ret->camp_general) );
 			
-				if(wp_automatic_trim($camp_general['cg_am_custom_urls']) != ''){
+				if(trim($camp_general['cg_am_custom_urls']) != ''){
 					echo $camp_general['cg_am_custom_urls'] ;
 				}else{
 					echo 'Custom HTML';
 				}
-
-			}elseif( $ret->camp_type == 'telegram'  ){
-				
-				$camp_general = unserialize (base64_decode( $ret->camp_general) );
-				
-				 
-					echo $camp_general['cg_te_page'] ;
-				 
 				
 			}else{
 				
@@ -255,18 +238,8 @@ function wp_automatic_columns_display($wp_automatic_columns){
 
 			case "wp_automatic_type":
 			
-				//if campaign type is gpt3, modify to ChatGPT Articles
-				if($ret->camp_type == 'gpt3'){
-					 $ret->camp_type = 'ChatGPT Articles';
-				}
-
-				//if Multi, modify it to multi-page scraper
-				if($ret->camp_type == 'Multi'){
-					$ret->camp_type = 'Multi-page scraper';
-				}
 				
-				//echo uppsercase first letter of $ret->camp_type;				 
-				echo ucfirst($ret->camp_type);
+				  echo $ret->camp_type;
 				break;
 					
 		
@@ -276,7 +249,7 @@ function wp_automatic_columns_display($wp_automatic_columns){
 			if(isset($ret->camp_post_category)){
 				$catname = get_cat_name ($camp_post_category);
 				
-				if(wp_automatic_trim($catname) != ''){
+				if(trim($catname) != ''){
 					echo $catname;
 				}else{
 					echo 'Default';
@@ -308,19 +281,9 @@ function wp_automatic_columns_display($wp_automatic_columns){
 			break;
 			
 		case "wp_automatic_last_run":
+			$last_run_timestamp = get_post_meta ( $id, 'last_update' ,1 );
 			
-			 
-			//get the value of the record from postmeta table when the key is last_update and the post id is $id
-			$query = "SELECT meta_value FROM {$prefix}postmeta WHERE meta_key = 'last_update' AND post_id = $id";
-
-			//get the result
-			$result = $wpdb->get_results($query);
-
-			//get the value of the first row
-			$last_run_timestamp = $result[0]->meta_value;
-			
-			 
-			if(wp_automatic_trim($last_run_timestamp) != ''){
+			if(trim($last_run_timestamp) != ''){
 				echo human_time_diff($last_run_timestamp);
 			}else{
 				echo 'N/A';
@@ -374,53 +337,6 @@ function codex_book_updated_messages( $messages ) {
 
 	return $messages;
 }
-
-
-/*=============================================================
- *  Deactivate campaign button which set the campaign as draft
- * ============================================================*/
-function register_custom_bulk_actions($actions) {
-    global $post_type;
-    
-    if ($post_type === 'wp_automatic') {
-        $actions['deactivate'] = 'Deactivate';
-        $actions['activate'] = 'Activate';
-    }
-    
-    return $actions;
-}
-add_filter('bulk_actions-edit-wp_automatic', 'register_custom_bulk_actions');
-
-function handle_custom_bulk_actions($redirect_to, $doaction, $post_ids) {
-    if (in_array($doaction, ['deactivate', 'activate'])) {
-        $new_status = ($doaction === 'deactivate') ? 'draft' : 'publish';
-        
-        foreach ($post_ids as $post_id) {
-            wp_update_post(array(
-                'ID' => $post_id,
-                'post_status' => $new_status,
-            ));
-        }
-        
-        $redirect_to = add_query_arg($doaction . '_success', count($post_ids), $redirect_to);
-    }
-    
-    return $redirect_to;
-}
-add_filter('handle_bulk_actions-edit-wp_automatic', 'handle_custom_bulk_actions', 10, 3);
-
-function display_custom_success_notice() {
-    if (isset($_REQUEST['deactivate_success'])) {
-        $count = intval($_REQUEST['deactivate_success']);
-        echo '<div class="notice notice-success is-dismissible"><p>' . sprintf(_n('%s post has been deactivated.', '%s posts have been deactivated.', $count), $count) . '</p></div>';
-    }
-    
-    if (isset($_REQUEST['activate_success'])) {
-        $count = intval($_REQUEST['activate_success']);
-        echo '<div class="notice notice-success is-dismissible"><p>' . sprintf(_n('%s post has been activated.', '%s posts have been activated.', $count), $count) . '</p></div>';
-    }
-}
-add_action('admin_notices', 'display_custom_success_notice');
 
 
 ?>

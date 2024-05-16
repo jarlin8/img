@@ -38,11 +38,11 @@ if ( !class_exists('Puc_v4p9_DebugBar_Panel', false) && class_exists('Debug_Bar_
 			echo '<h3>Configuration</h3>';
 			echo '<table class="puc-debug-data">';
 			$this->displayConfigHeader();
-			$this->row('Slug', wp_automatic_htmlentities($this->updateChecker->slug));
-			$this->row('DB option', wp_automatic_htmlentities($this->updateChecker->optionName));
+			$this->row('Slug', htmlentities($this->updateChecker->slug));
+			$this->row('DB option', htmlentities($this->updateChecker->optionName));
 
 			$requestInfoButton = $this->getMetadataButton();
-			$this->row('Metadata URL', wp_automatic_htmlentities($this->updateChecker->metadataUrl) . ' ' . $requestInfoButton . $this->responseBox);
+			$this->row('Metadata URL', htmlentities($this->updateChecker->metadataUrl) . ' ' . $requestInfoButton . $this->responseBox);
 
 			$scheduler = $this->updateChecker->scheduler;
 			if ( $scheduler->checkPeriod > 0 ) {
@@ -104,10 +104,10 @@ if ( !class_exists('Puc_v4p9_DebugBar_Panel', false) && class_exists('Debug_Bar_
 			$this->row('Next automatic check', $this->formatTimeWithDelta($nextCheck));
 
 			if ( $state->getCheckedVersion() !== '' ) {
-				$this->row('Checked version', wp_automatic_htmlentities($state->getCheckedVersion()));
+				$this->row('Checked version', htmlentities($state->getCheckedVersion()));
 				$this->row('Cached update', $state->getUpdate());
 			}
-			$this->row('Update checker class', wp_automatic_htmlentities(get_class($this->updateChecker)));
+			$this->row('Update checker class', htmlentities(get_class($this->updateChecker)));
 			echo '</table>';
 		}
 
@@ -119,7 +119,7 @@ if ( !class_exists('Puc_v4p9_DebugBar_Panel', false) && class_exists('Debug_Bar_
 				$fields = $this->getUpdateFields();
 				foreach($fields as $field) {
 					if ( property_exists($update, $field) ) {
-						$this->row(ucwords(wp_automatic_str_replace('_', ' ', $field)), wp_automatic_htmlentities($update->$field));
+						$this->row(ucwords(str_replace('_', ' ', $field)), htmlentities($update->$field));
 					}
 				}
 				echo '</table>';
@@ -154,7 +154,7 @@ if ( !class_exists('Puc_v4p9_DebugBar_Panel', false) && class_exists('Debug_Bar_
 
 		public function row($name, $value) {
 			if ( is_object($value) || is_array($value) ) {
-				$value = '<pre>' . wp_automatic_htmlentities(print_r($value, true)) . '</pre>';
+				$value = '<pre>' . htmlentities(print_r($value, true)) . '</pre>';
 			} else if ($value === null) {
 				$value = '<code>null</code>';
 			}

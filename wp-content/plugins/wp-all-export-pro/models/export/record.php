@@ -13,8 +13,10 @@ class PMXE_Export_Record extends PMXE_Model_Record {
 
     /**
      * Import all files matched by path
+     *
      * @param callable[optional] $logger Method where progress messages are submmitted
-     * @return PMXI_Export_Record
+     *
+     * @return PMXE_Export_Record|void
      * @chainable
      */
     public function execute($logger = NULL, $cron = false, $post_id = false) {
@@ -28,7 +30,7 @@ class PMXE_Export_Record extends PMXE_Model_Record {
         wp_reset_postdata();
 
         $functions = $wp_uploads['basedir'] . DIRECTORY_SEPARATOR . WP_ALL_EXPORT_UPLOADS_BASE_DIRECTORY . DIRECTORY_SEPARATOR . 'functions.php';
-
+	    $functions = apply_filters( 'wp_all_export_functions_file_path', $functions );
         if (@file_exists($functions)) {
             require_once $functions;
         }
@@ -224,7 +226,26 @@ class PMXE_Export_Record extends PMXE_Model_Record {
                     $foundPosts = count($totalQuery->results);
                     $postCount = count($exportQuery->results);
 
-                } else {
+                }
+                else if (in_array('shop_order', $this->options['cpt']) && $this->hposEnabled()) {
+                        add_filter('posts_where', 'wp_all_export_numbering_where', 15, 1);
+
+                        if(XmlExportEngine::get_addons_service()->isWooCommerceAddonActive()) {
+                            $exportQuery = new \Wpae\WordPress\OrderQuery();
+
+                            $totalOrders = $exportQuery->getOrders();
+                            $foundOrders = $exportQuery->getOrders($this->exported, $this->options['records_per_iteration'], $post_id);
+
+                            $foundPosts = count($totalOrders);
+                            $postCount = count($foundOrders);
+
+
+
+                        remove_filter('posts_where', 'wp_all_export_numbering_where');
+
+                    }
+                }
+                else {
                     remove_all_actions('parse_query');
                     remove_all_filters('posts_clauses');
                     wp_all_export_remove_before_post_except_toolset_actions();
@@ -402,10 +423,28 @@ class PMXE_Export_Record extends PMXE_Model_Record {
             $foundPosts = count($result->get_terms());
             remove_filter('terms_clauses', 'wp_all_export_terms_clauses');
         }
+        else if (in_array('shop_order', $this->options['cpt']) && $this->hposEnabled()) {
+            add_filter('posts_where', 'wp_all_export_numbering_where', 15, 1);
+
+            if(XmlExportEngine::get_addons_service()->isWooCommerceAddonActive()) {
+                $exportQuery = new \Wpae\WordPress\OrderQuery();
+
+                $totalOrders = $exportQuery->getOrders();
+                $foundOrders = $exportQuery->getOrders($this->exported, $this->options['records_per_iteration'], $post_id);
+
+                $foundPosts = count($totalOrders);
+                $postCount = count($foundOrders);
+
+
+
+                remove_filter('posts_where', 'wp_all_export_numbering_where');
+
+            }
+        }
         else
         {
             $exportOptions = $this->options;
-            if(strpos($exportOptions['cpt'][0], 'custom_') === 0) {
+            if(isset($exportOptions['cpt'][0]) && strpos($exportOptions['cpt'][0], 'custom_') === 0) {
 
                 $addon = GF_Export_Add_On::get_instance();
 
@@ -463,9 +502,11 @@ class PMXE_Export_Record extends PMXE_Model_Record {
 
                     if($post_id) {
                         // Add an opening tag also if the file is empty
-                        $content = file_get_contents($file_path);
-                        if (strpos($content, $main_xml_tag) === false) {
-                            file_put_contents($file_path, '<' . $main_xml_tag . '>', FILE_APPEND);
+                        if(file_exists($file_path)) {
+                            $content = file_get_contents($file_path);
+                            if (strpos($content, $main_xml_tag) === false) {
+                                file_put_contents($file_path, '<' . $main_xml_tag . '>', FILE_APPEND);
+                            }
                         }
                     }
 
@@ -804,17 +845,17 @@ class PMXE_Export_Record extends PMXE_Model_Record {
 
                         $new_fields = array('title', 'caption', 'description', 'alt');
 
-                        foreach ($new_fields as $value)
+                        foreach ($new_fields as $new_value)
                         {
                             $new_field = array(
-                                'cc_label' => $value,
+                                'cc_label' => $new_value,
                                 'cc_php' => empty($options['cc_php'][$ID]) ? '' : $options['cc_php'][$ID],
                                 'cc_code' => empty($options['cc_code'][$ID]) ? '' : $options['cc_code'][$ID],
                                 'cc_sql' => empty($options['cc_sql'][$ID]) ? '' : $options['cc_sql'][$ID],
-                                'cc_type' => 'image_' . $value,
+                                'cc_type' => 'image_' . $new_value,
                                 'cc_options' => '{"is_export_featured":true,"is_export_attached":true,"image_separator":"|"}',
-                                'cc_value' => $value,
-                                'cc_name' => $field_name . '_' . $value,
+                                'cc_value' => $new_value,
+                                'cc_name' => $field_name . '_' . $new_value,
                                 'cc_settings' => ''
                             );
 
@@ -895,7 +936,7 @@ class PMXE_Export_Record extends PMXE_Model_Record {
 
     /**
      * Clear associations with posts
-     * @return PMXE_Import_Record
+     * @return PMXE_Export_Record
      * @chainable
      */
     public function deletePosts() {
@@ -947,6 +988,10 @@ class PMXE_Export_Record extends PMXE_Model_Record {
         if ( @file_exists($file_for_remote_access)) @unlink($file_for_remote_access);
 
         return parent::delete();
+    }
+
+    private function hposEnabled() {
+        return class_exists('Automattic\WooCommerce\Utilities\OrderUtil') && \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled();
     }
 
 }

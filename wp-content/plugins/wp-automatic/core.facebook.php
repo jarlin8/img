@@ -9,41 +9,33 @@
 		function fb_get_post($camp) {
 			
 			// Authorisation info
-			$wp_automatic_fb_cuser = wp_automatic_trim( get_option ( 'wp_automatic_fb_cuser', '' ) );
-			$wp_automatic_fb_xs = wp_automatic_trim( get_option ( 'wp_automatic_fb_xs' ) );
+			$wp_automatic_fb_cuser = trim ( get_option ( 'wp_automatic_fb_cuser', '' ) );
+			$wp_automatic_fb_xs = trim ( get_option ( 'wp_automatic_fb_xs' ) );
 			
-			if (wp_automatic_trim( $wp_automatic_fb_cuser ) == '' || wp_automatic_trim( $wp_automatic_fb_xs ) == '') {
+			if (trim ( $wp_automatic_fb_cuser ) == '' || trim ( $wp_automatic_fb_xs ) == '') {
 				// echo '<br><span style="color:red">Please visit the plugin settings page and add the required Facebook cookies values</span>';
 				// return false;
 			}
 			
 			// get page id
-			$camp_general = $this->camp_general;
-			$camp_opt = $this->camp_opt;
-
-			// source profile, page or group
-			$cg_fb_source = $camp_general ['cg_fb_source'];
+			$camp_general = unserialize ( base64_decode ( $camp->camp_general ) );
+			$camp_opt = unserialize ( $camp->camp_options );
 			
-			// page url
-			$url = $camp_general ['cg_fb_page'];
-
-			// page id custom field name is cg_fb_page_id + source + md5 of page url
-			$cg_fb_page_id_custom_field_name = 'cg_fb_page_id_' . $cg_fb_source . '_' . md5 (  $url );
-
-			// report page
 			echo '<br>Processing FB page:' . $camp_general ['cg_fb_page'];
 			
-			// cached PAGE ID
-			$cg_fb_page_id = get_post_meta ( $camp->camp_id, $cg_fb_page_id_custom_field_name , 1 );
+			// PAGE ID
+			$cg_fb_page_id = get_post_meta ( $camp->camp_id, 'cg_fb_page_id', 1 );
 			
 			// if a numeric id use it direclty
+			$url = $camp_general ['cg_fb_page'];
+			
 			if (is_numeric ( $url )) {
 				echo '<br>Numeric id added manually using it as the page id.';
-				$cg_fb_page_id = wp_automatic_trim( $url );
+				$cg_fb_page_id = trim ( $url );
 			}
 			
 			// get page id if not still extracted
-			if (wp_automatic_trim( $cg_fb_page_id ) == '') {
+			if (trim ( $cg_fb_page_id ) == '') {
 				echo '<br>Extracting page ID from original page link';
 				
 				// getting page name from url
@@ -52,7 +44,7 @@
 				$x = 'error';
 				$url = $camp_general ['cg_fb_page'];
 				curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-				curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $url ) );
+				curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
 				
 				// authorization
 				curl_setopt ( $this->ch,CURLOPT_HTTPHEADER, array('sec-fetch-site: none', 'sec-fetch-mode: navigate','sec-fetch-user: ?1','sec-fetch-dest: document' ));
@@ -61,10 +53,7 @@
 				
 				$exec = curl_exec ( $this->ch );
 				$x = curl_error ( $this->ch );
-
-				//echo size of the reply
-				echo '<--Reply size:' . strlen ( $exec ) . ' chars';
-
+				
 				
 				// entity_id if the fb page validation check
 				if (stristr ( $exec, 'entity_id' ) || stristr ( $exec, '"pageID":' ) || stristr ( $exec, '"userID":"' ) || stristr ( $exec, '"groupID":"' )) {
@@ -89,9 +78,9 @@
 					$smatch = $matches [1];
 					$cg_fb_page_id = $smatch [0];
 					
-					if (wp_automatic_trim( $cg_fb_page_id ) != '') {
+					if (trim ( $cg_fb_page_id ) != '') {
 						echo '<br>Successfully extracted entityID:' . $cg_fb_page_id;
-						update_post_meta ( $camp->camp_id, $cg_fb_page_id_custom_field_name, $cg_fb_page_id );
+						update_post_meta ( $camp->camp_id, 'cg_fb_page_id', $cg_fb_page_id );
 					} else {
 						echo '<br>Can not find numeric entityID';
 					}
@@ -104,9 +93,9 @@
 						$smatch = $matches [1];
 						$cg_fb_page_id = $smatch [0];
 						
-						if (wp_automatic_trim( $cg_fb_page_id ) != '') {
+						if (trim ( $cg_fb_page_id ) != '') {
 							echo '<br>Successfully extracted  :' . $cg_fb_page_id;
-							update_post_meta ( $camp->camp_id, $cg_fb_page_id_custom_field_name, $cg_fb_page_id );
+							update_post_meta ( $camp->camp_id, 'cg_fb_page_id', $cg_fb_page_id );
 						} else {
 							echo '<br>Can not find numeric entityID';
 						}
@@ -124,15 +113,12 @@
 			}
 			
 			// building feed
-			if ((wp_automatic_trim( $cg_fb_page_id ) != '')) {
-
-				//retport page Id
-				echo '<br>FB ID:' . $cg_fb_page_id;
+			if ((trim ( $cg_fb_page_id ) != '')) {
 				
 				$cg_fb_source = $camp_general ['cg_fb_source'];
 				$cg_fb_from = $camp_general ['cg_fb_from'];
 				
-				if (wp_automatic_trim( $cg_fb_from ) != 'events')
+				if (trim ( $cg_fb_from ) != 'events')
 					$cg_fb_from = 'posts';
 				
 				curl_setopt ( $this->ch, CURLOPT_REFERER, 'https://m.facebook.com/' );
@@ -144,11 +130,6 @@
 					// https://m.facebook.com/profile/timeline/stream/?profile_id=837764889&replace_id=u_0_16
 					//curl_setopt ( $this->ch, CURLOPT_REFERER, 'https://m.facebook.com/' );
 					$cg_fb_page_feed2 = $cg_fb_page_feed = 'https://m.facebook.com/profile/timeline/stream/?profile_id=' . $cg_fb_page_id . '&replace_id=u_0_16';
-				
-					//set mobile user agent to prevent redirection from FB side 
-					$this->set_mobile_user_agent();
-					
-				
 				} elseif ($cg_fb_source == 'group') {
 					// https://m.facebook.com/groups/1432743533609453?&multi_permalinks
 					//curl_setopt ( $this->ch, CURLOPT_REFERER, 'https://m.facebook.com/' );
@@ -179,7 +160,7 @@
 				$x = 'error';
 				$url = $cg_fb_page_feed;
 				curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-				curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $url ) );
+				curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
 				
 				// authorization
 				curl_setopt ( $this->ch,CURLOPT_HTTPHEADER, array('sec-fetch-site: none', 'sec-fetch-mode: navigate','sec-fetch-user: ?1','sec-fetch-dest: document' ));
@@ -208,7 +189,7 @@
 						
 						// nextpage if available
 						$nextPageUrl = get_post_meta ( $camp->camp_id, 'nextPageUrl', true );
-						if (wp_automatic_trim( $nextPageUrl != '' ) && in_array ( 'OPT_FB_OLD', $camp_opt ) && ! stristr ( $nextPageUrl, 'graph.' )  ) {
+						if (trim ( $nextPageUrl != '' ) && in_array ( 'OPT_FB_OLD', $camp_opt ) && ! stristr ( $nextPageUrl, 'graph.' )  ) {
 							 
 							//deprecated m.facebook group pagination reset 
 							if($cg_fb_source == 'group' && ! stristr($nextPageUrl , 'mbasic')){
@@ -216,7 +197,7 @@
 							}else{
 								echo '<br>Pagination url:' . $nextPageUrl;
 								$url = $nextPageUrl;
-								curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $nextPageUrl ) );
+								curl_setopt ( $this->ch, CURLOPT_URL, trim ( $nextPageUrl ) );
 								
 							}
 							
@@ -238,10 +219,8 @@
 					 
 				}
 	 
-				 echo '<--Reply size:' . strlen ( $exec ) . ' chars';
 				  
-				//reset user agent 
-				$this->reset_user_agent();
+				
 				
 				$x = curl_error ( $this->ch );
 				$cu_info = curl_getinfo($this->ch);
@@ -262,7 +241,7 @@
 					$url='https://www.facebook.com/'. $cg_fb_page_id .'/events';
 					echo '<br>Loading:' . $url;
 					curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-					curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($url));
+					curl_setopt($this->ch, CURLOPT_URL, trim($url));
 					
 					$headers = array();
 					$headers[] = "Authority: www.facebook.com";
@@ -325,7 +304,7 @@
 	 			
 				if (1) {
 					
-					// $exec =wp_automatic_str_replace( '&amp;', '&', $exec );
+					// $exec = str_replace ( '&amp;', '&', $exec );
 					
 					// if save cache enbaled
 					if ($saveCache) {
@@ -336,8 +315,6 @@
 					  
 						
 					if ($cg_fb_from != 'events') {
-
-						//group or profile
 					
 						
 						if ($cg_fb_source == 'group') {
@@ -346,40 +323,42 @@
 							 
 						}else{
 							
-							$list_exec_raw = $exec =wp_automatic_str_replace( 'for (;;);', '', $exec );
+							$list_exec_raw = $exec = str_replace ( 'for (;;);', '', $exec );
 							$json = (json_decode ( $exec ));
- 
+							
 							if(isset ($json->payload)){
-								echo '<br>JSON payload found';
 								$exec = $json->payload->actions [0]->html;
 							}else{
 								$exec = '';
 							}
 							
 						}
+						
+								 
+					 
 						 
 						
 						require_once 'inc/class.dom.php';
 						$wpAutomaticDom = new wpAutomaticDom ( '<html><head></head><body>' . $exec . '</body>' );
 						$items = $wpAutomaticDom->getContentByXPath ( '//article', false );
 						
-						//report number of items
-						echo '<br>RAW Items found:' . count ( $items );
-					 
+					
+						
 						// Loop through each feed item and display each item as a hyperlink.
 						
 						// delete embeded articles
 						$i = 0;
 						foreach ( $items as $item ) {
-							 
-
+							
+						 
+							
 							if (stristr ( $item, 'og_action_id' )) {
 								// remove feeling action "og_action_id":"1872937199467035",
 								$item = preg_replace ( '{"og_action_id":"\d*?",}', '', $item );
 							}
 							
-							if ((! stristr ( $item, 'data-ft=\'{"top_level_post_id' ) && ! stristr ( $item, 'data-ft=\'{"qid' ) && ! stristr ( $item, 'data-ft=' )) || ! stristr ( $item, 'top_level_post_id' ) || ! stristr ( $item, '"target_id"' )) {
-								//unset ( $items [$i] );
+							if ((! stristr ( $item, 'data-ft=\'{"top_level_post_id' ) && ! stristr ( $item, 'data-ft=\'{"qid' ) && ! stristr ( $item, 'data-ft=' )) || ! stristr ( $item, 'top_level_post_id' )) {
+								unset ( $items [$i] );
 							}
 							
 							$i ++;
@@ -429,34 +408,15 @@
 						// txt content for title generation ini
 						$txtContent = '';
 						
-						 
-
 						// get the post ID
 						if ($cg_fb_from != 'events') {
 							
 							if (stristr ( $item, 'top_level_post_id":' )) {
 								preg_match ( '{top_level_post_id":"(.*?)"}', $item, $pMatches );
-							} elseif(stristr ( $item, 'top_level_post_id' )) {
+							} else {
 								preg_match ( '{top_level_post_id\.(\d*)}', $item, $pMatches );
-							}elseif(stristr ( $item, 'feedback_target' )) {
-
-								//"/story.php?story_fbid
-								//"feedback_target":"pfbid0KbVmkapajkydBuPoANRpBReb7Pk2V7LSNK6aGRHj5oYw7DvsVo7J9dhnUBgxfddel"
-
-								echo '<br>feedback_target ID found, trying to get the post id from it';
-								preg_match ( '{feedback_target":"(.*?)"}', $item, $pMatches );
-
-								
-							}else{
-								//group link
-								//https://mbasic.facebook.com/groups/1649057672022772/permalink/3523674537894400/
-
-								echo '<br>Grouplink ID found, trying to get the post id from it';
-								preg_match ( '{/permalink/(\d*)/}', $item, $pMatches );
-
 							}
-
- 							
+							
 							$item_id = $cg_fb_page_id . '_' . $pMatches [1];
 							$single_id = $pMatches [1];
 							
@@ -471,7 +431,7 @@
 								 
 								preg_match ( '{content_owner_id_new":"(.*?)"}s', $item, $from_matches2 );
 								
-								if (isset ( $from_matches2 [1] ) && wp_automatic_trim( $from_matches2 [1] ) != '') {
+								if (isset ( $from_matches2 [1] ) && trim ( $from_matches2 [1] ) != '') {
 									$owner_id = $from_matches2 [1];
 								}
 								
@@ -538,7 +498,7 @@
 						
 						// check if old before loading original page if created_time exists in page
 						$foundOldPost = false;
-						if (in_array ( 'OPT_YT_DATE', $camp_opt ) && wp_automatic_trim( $created_time ) != '') {
+						if (in_array ( 'OPT_YT_DATE', $camp_opt ) && trim ( $created_time ) != '') {
 							if ($this->is_link_old ( $camp->camp_id, ($created_time) )) {
 								echo '<--old post execluding...';
 								$foundOldPost = true;
@@ -565,7 +525,7 @@
 							// curl get
 							$x = 'error';
 							curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-							curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $mbasic_event_url ) );
+							curl_setopt ( $this->ch, CURLOPT_URL, trim ( $mbasic_event_url ) );
 							$item = $this->curl_exec_follow ( $this->ch );
 							$x = curl_error ( $this->ch );
 							
@@ -574,16 +534,12 @@
 						}
 						
 						// found images
-						preg_match_all ( '{<img src=".*?>}',wp_automatic_str_replace( '&amp;', '&', $item ), $imgMatchs );
+						preg_match_all ( '{<img src=".*?>}', str_replace ( '&amp;', '&', $item ), $imgMatchs );
 						$all_imgs = $imgMatchs [0];
 						
-						 
-
 						$i = 0;
 						foreach ( $all_imgs as $single_img ) {
-							
-							//skip like button <img src="https://scontent.fjed4-2.fna.fbcdn.net/m1/v/t6/An_awEcP5a-VJkiSKC4SklmLyo8p7Q3iP5vL6HDsa_ZTJdFfRRdtUFNJfr9LXPYfMhVSkFk4hqLRcj3zU9hTsyzpPGIc4jC3fiqwidCEo8AGZ4Rq.png?ccb=10-5&oh=00_AfBEpcbY_s6oDdf37uezZhl8H4sFR29TJ24kwIxSDpRAzg&oe=64CC8652&_nc_sid=7da55a" width="14" height="14" class="s">
-							if (stristr ( $single_img, 'static' ) || stristr ( $single_img, '32x32' )  || stristr ( $single_img, '40x40' ) || stristr($single_img,'width="14"') ) {
+							if (stristr ( $single_img, 'static' ) || stristr ( $single_img, '32x32' )  || stristr ( $single_img, '40x40' ) ) {
 								unset ( $all_imgs [$i] );
 							}
 							
@@ -650,7 +606,7 @@
 							// <span class="co">(Sold)</span><span>bla bla title</span>
 							preg_match ( '!<span class="\w+?">\(.*?\)</span><span>(.*?)</span>!s', $item, $title_matches );
 							
-							if (isset ( $title_matches [1] ) && wp_automatic_trim( $title_matches [1] ) != '') {
+							if (isset ( $title_matches [1] ) && trim ( $title_matches [1] ) != '') {
 								$title = $title_matches [1];
 							}
 						} else {
@@ -661,7 +617,7 @@
 							require_once 'inc/class.dom.php';
 							 
 							
-							$item_html =wp_automatic_str_replace( '{"tn":"*s"}', 'target', $item );
+							$item_html = str_replace ( '{"tn":"*s"}', 'target', $item );
 							
 							$wpAutomaticDom = new wpAutomaticDom ( '<html><head></head><body>' . $item_html . '</body></html>' );
 							$items = $wpAutomaticDom->getContentByXPath ( '//*[@data-ft="target"]' );
@@ -752,7 +708,7 @@
 						// echo '----------------';
 						// echo $content;
 						
-						$content =wp_automatic_str_replace( 'See Translation', '', $content );
+						$content = str_replace ( 'See Translation', '', $content );
 						$content = preg_replace ( '{<span class="text_exposed_hide.*?span>}su', '', $content );
 						
 						// If shared, find original post id
@@ -762,7 +718,7 @@
 						if (false && stristr ( $item, 'original_content_id' )) {
 							preg_match ( '{"original_content_id":"(\d*?)"}s', $item, $original_id_matches );
 							
-							if (isset ( $original_id_matches [1] ) && wp_automatic_trim( $original_id_matches [1] ) != '') {
+							if (isset ( $original_id_matches [1] ) && trim ( $original_id_matches [1] ) != '') {
 								$original_post_url = 'https://www.facebook.com/' . $original_id_matches [1];
 								
 								echo '<br>Original post URL:' . $original_post_url;
@@ -775,10 +731,10 @@
 						curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
 						
 						if (false && $is_an_album == true) {
-							curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $album_url ) );
+							curl_setopt ( $this->ch, CURLOPT_URL, trim ( $album_url ) );
 							echo '<br>exec2 album:' . $album_url;
 						} else {
-							curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $original_post_url ) );
+							curl_setopt ( $this->ch, CURLOPT_URL, trim ( $original_post_url ) );
 							echo '<br>exec2:' . $original_post_url;
 						}
 	 
@@ -806,7 +762,7 @@
 						}
 						
 						//verify valid session 
-						if( ! stristr ( $exec2 , '"ACCOUNT_ID":"'. wp_automatic_trim($wp_automatic_fb_cuser) .'"' ) && strlen($exec2) != 0 ){
+						if( ! stristr ( $exec2 , '"ACCOUNT_ID":"'. trim($wp_automatic_fb_cuser) .'"' ) && strlen($exec2) != 0 ){
 							echo '<br><br><span style="color:orange"><b><u>WARNING !!!</u></b>: Not logged in which means the current session cookie is <b>not correct or got expired</b> or you have the classic FB UI. The plugin will not be able to <b>fully function</b> or access content that requires authentication (<b><u> ADD A NEW SESSION COOKIE TO THE PLUGIN SETTINGS PAGE</u></b> if you have any issues).</span> <br>';
 							$this->notify_the_admin('wp_automatic_fb_xs' , 'Last call to FB did not work, Facebook session needs to be updated');
 						}
@@ -818,7 +774,7 @@
 							$exec2 = preg_replace ( '!timeline_pinned_unit":{"id.*?script>!s', '', $exec2 );
 							
 							//bug retrun null ticket 20687
-							if(wp_automatic_trim($exec2) == ''){
+							if(trim($exec2) == ''){
 								$exec2 = $exec2_backup; //restore
 								$exec2_parts = explode('timeline_pinned_unit":{"id' , $exec2 );
 								$exec2_first = $exec2_parts[0];
@@ -840,7 +796,7 @@
 						
  							
 							//bug retrun null ticket 20687
-							if(wp_automatic_trim($exec2) == ''){
+							if(trim($exec2) == ''){
 								$exec2 = $exec2_backup; //restore
 								$exec2_parts = explode('timeline_feed_units":{"edges' , $exec2 );
 								$exec2_first = $exec2_parts[0];
@@ -865,28 +821,28 @@
 						 * $node_json = json_decode($final_node);
 						 */
 						
-						$exec2_raw = $exec2 =wp_automatic_str_replace( '&amp;', '&', $exec2 );
+						$exec2_raw = $exec2 = str_replace ( '&amp;', '&', $exec2 );
 						$x = curl_error ( $this->ch );
 						
-						if (wp_automatic_trim( $exec2 ) == '') {
+						if (trim ( $exec2 ) == '') {
 							echo '<-- was not able to load the original FB page ' . $x;
 						}
 						 
 						// publish date 
 						$created_time = '';
-						if (wp_automatic_trim( $created_time ) == '') {
+						if (trim ( $created_time ) == '') {
 						 
 							// get the created time "creation_time":1604609958
 							preg_match ( '{"creation_time":(\d*)}', $exec2, $time_matches );
 							
-							if (isset ( $time_matches [1] ) && wp_automatic_trim( $time_matches [1] ) != '') {
+							if (isset ( $time_matches [1] ) && trim ( $time_matches [1] ) != '') {
 								$created_time = $time_matches [1];
 							
 							}else{
 								
 								//"publish_time":1608988283,
 								preg_match ( '!publish_time.?":(\d{10})!', $exec2 , $time_matches );
-								if (isset ( $time_matches [1] ) && wp_automatic_trim( $time_matches [1] ) != '') {
+								if (isset ( $time_matches [1] ) && trim ( $time_matches [1] ) != '') {
 									$created_time = $time_matches [1];
 								}
 								
@@ -896,7 +852,7 @@
 							
 							// check if old before loading original page if created_time exists in page
 							$foundOldPost = false;
-							if (in_array ( 'OPT_YT_DATE', $camp_opt ) && wp_automatic_trim( $created_time ) != '') {
+							if (in_array ( 'OPT_YT_DATE', $camp_opt ) && trim ( $created_time ) != '') {
 								if ($this->is_link_old ( $camp->camp_id, ($created_time) )) {
 									echo '<--old post execluding all coming older posts';
 									$foundOldPost = true;
@@ -908,7 +864,7 @@
 					
 						
 						// utc convert
-						if(wp_automatic_trim($created_time) != ''){
+						if(trim($created_time) != ''){
 							$created_time = date ( 'Y-m-d H:i:s', $created_time );
 							$created_time = get_date_from_gmt ( $created_time );
 						}
@@ -920,25 +876,27 @@
 	
 						// "share_count":{"count":0,
 						preg_match ( '/"share_count":{"count":(.*?),/s', $exec2, $share_matches ); // pages share matches
-						if (isset ( $share_matches [1] ) && wp_automatic_trim( $share_matches [1] ) != '')
+						if (isset ( $share_matches [1] ) && trim ( $share_matches [1] ) != '')
 							$shares_count = $share_matches [1];
 						
 						if (stristr ( $exec2, 'permalinkPost' )) {
 							
 							preg_match ( '{permalinkPost">.*?<div class="_4-u2 _4-u8}s', $exec2, $post_matches );
 							
-							if (isset ( $post_matches [0] ) && wp_automatic_trim( $post_matches [0] ) != '') {
+							if (isset ( $post_matches [0] ) && trim ( $post_matches [0] ) != '') {
 								$exec2 = $post_matches [0];
 							}
 						}
 						
 						  
 						// if truncated text
-						if (! stristr ( $item, '</p></span>' ) && wp_automatic_trim( $txtContent ) != '' && ! $is_colored_post) {
+						if (! stristr ( $item, '</p></span>' ) && trim ( $txtContent ) != '' && ! $is_colored_post) {
 							
 							echo '<br>Finding full textual content?';
- 						
-							preg_match ( '! class="_5pbx.*?>(.*?)</div><div class="_3x-2" data-ft!s',wp_automatic_str_replace( '&amp;', '&', $exec2 ), $full_text_matches );
+							
+						 
+							
+							preg_match ( '! class="_5pbx.*?>(.*?)</div><div class="_3x-2" data-ft!s', str_replace ( '&amp;', '&', $exec2 ), $full_text_matches );
 							
 						 
 							
@@ -947,7 +905,7 @@
 								echo '<br>Facebook asked for Capatcha when trying to load the full content. Proxies may be needed to get the full post content';
 							}
 							
-							if (isset ( $full_text_matches [1] ) && wp_automatic_trim( $full_text_matches [1] ) != '') {
+							if (isset ( $full_text_matches [1] ) && trim ( $full_text_matches [1] ) != '') {
 								echo '<--found-1';
 								
 								// remove image emoji
@@ -967,7 +925,7 @@
 								echo '<-- possible new UI... ';
 								  
 	
-								if(isset($full_text_matches[1]) && wp_automatic_trim($full_text_matches[1]) != '' ){
+								if(isset($full_text_matches[1]) && trim($full_text_matches[1]) != '' ){
 									echo '<--found- NEW UI';
 									
 									
@@ -991,7 +949,7 @@
 									//"story":{"is_text_only_story":true,"message":{"delight_ranges":[],"image_ranges":[],"inline_style_ranges":[],"aggregated_ranges":[],"ranges":[],"color_ranges":[],"text":" // group for some users
 									preg_match('!"story":.*?"message".*?"text":"(.*?)"}!s', $exec2, $full_text_matches );
 									
-									if(wp_automatic_trim($full_text_matches [1]) != ''){
+									if(trim($full_text_matches [1]) != ''){
 									
 										
 										$txtContent = wp_automatic_fix_json_part( $full_text_matches [1] ) .'<br>' ;
@@ -1007,9 +965,9 @@
 								
  								
 								// data-ft="&#123;&quot;tn&quot;:&quot;K&quot;&#125;">
-								preg_match ( '!data-ft="&#123;&quot;tn&quot;:&quot;K&quot;&#125;">(.*?)</div>!s',wp_automatic_str_replace( '&amp;', '&', $exec2 ), $full_text_matches );
+								preg_match ( '!data-ft="&#123;&quot;tn&quot;:&quot;K&quot;&#125;">(.*?)</div>!s', str_replace ( '&amp;', '&', $exec2 ), $full_text_matches );
 								
-								if (isset ( $full_text_matches [1] ) && wp_automatic_trim( $full_text_matches [1] ) != '') {
+								if (isset ( $full_text_matches [1] ) && trim ( $full_text_matches [1] ) != '') {
 									echo '<--found-2';
 									
 									// remove image emoji
@@ -1051,7 +1009,7 @@
 							
 							$possible_full = implode ( '', $p_bracket );
 							
-							if (wp_automatic_trim( $possible_full ) != '') {
+							if (trim ( $possible_full ) != '') {
 								// remove image emoji
 								$possible_full = preg_replace ( '{<img class="\w*?" height="16".*?>}s', '', $possible_full );
 								
@@ -1065,7 +1023,7 @@
 
 						}
 						
-						$content =wp_automatic_str_replace( 'See Translation', '', $content );
+						$content = str_replace ( 'See Translation', '', $content );
 						
 						// remove recent photos widget from sidebar
 						$exec2 = preg_replace ( '{<ul class="_5ks4.*?ul>}s', '', $exec2 );
@@ -1074,7 +1032,7 @@
 						$full_imgs_srcs = array (); // ini
 						                            
 						// empty attachement removal
-						$exec2 =wp_automatic_str_replace( 'attachments_info:{}', '', $exec2 );
+						$exec2 = str_replace ( 'attachments_info:{}', '', $exec2 );
 						
 	 					
 						
@@ -1210,7 +1168,7 @@
 							$title = $linkTitle = isset ( $linkTMatches [1] ) ? $linkTMatches [1] : '';
 							
 							// <h3 style="text-align: right" class="fg eu fh" dir="rtl">سب سے زیادہ جعلی لائسنس کے جعلی امتحانات شاہد خاقان کے زمانے میں پاس کئے گئے،دھماکہ خیز انکشافات</h3>
-							if (wp_automatic_trim( $title ) == '') {
+							if (trim ( $title ) == '') {
 								preg_match ( '!<h3 style="text-align: right" class="[^<]*?" dir="rtl">([^<]*?)</h3>!s', $item, $linkTMatches );
 								$title = $linkTitle = $linkTMatches [1];
 							}
@@ -1222,8 +1180,8 @@
 								$title = '';
 							
 							// get image url
-							if (isset ( $all_imgs [0] ) && wp_automatic_trim( $all_imgs [0] ) != '')
-								$imgsrc = $link_img =wp_automatic_str_replace( '&amp;', '&', $all_imgs [0] );
+							if (isset ( $all_imgs [0] ) && trim ( $all_imgs [0] ) != '')
+								$imgsrc = $link_img = str_replace ( '&amp;', '&', $all_imgs [0] );
 							
 							if (stristr ( $link_img, 'url=' ) && ! stristr ( $link_img, 'fbcdn.net' )) {
 								$link_img_prts = explode ( 'url=', $link_img );
@@ -1236,12 +1194,12 @@
 								
 								// get the image from the loaded page
 								preg_match ( '{<img class="scaledImageFit.*?src="(.*?)"}s', $exec2, $scaled_matches );
-								if (isset ( $scaled_matches [1] ) && wp_automatic_trim( $scaled_matches [1] ) != '') {
-									$imgsrc = $link_img =wp_automatic_str_replace( '&amp;', '&', $scaled_matches [1] );
+								if (isset ( $scaled_matches [1] ) && trim ( $scaled_matches [1] ) != '') {
+									$imgsrc = $link_img = str_replace ( '&amp;', '&', $scaled_matches [1] );
 								}
 							}
 							
-							if (wp_automatic_trim( $link_img ) != '') {
+							if (trim ( $link_img ) != '') {
 								
 								if (stristr ( $link_img, '<img' )) {
 									$content .= '<p><a href="' . $link . '">' . $link_img . '</a> </p>';
@@ -1256,7 +1214,7 @@
 							// description is no more existing getting it _6m7 _3bt9
 							
 							preg_match ( '{_6m7 _3bt9">(.*?)</div>}s', $exec2, $description_matches );
-							if (isset ( $description_matches [1] ) && wp_automatic_trim( $description_matches [1] ) != '') {
+							if (isset ( $description_matches [1] ) && trim ( $description_matches [1] ) != '') {
 								
 								$txtContent .= $description_matches [1];
 								if (! in_array ( 'OPT_FB_TXT_SKIP', $camp_opt ))
@@ -1297,17 +1255,17 @@
 								// vid title
 								
 								// fix aria-label="Verified Page"
-								$item =wp_automatic_str_replace( 'role="img" aria-label=', '', $item );
+								$item = str_replace ( 'role="img" aria-label=', '', $item );
 								preg_match ( '{aria-label="(.*?)"}s', $item, $vid_title_match );
 								// $title = $vid_title_match [1];
 								
-								$watch = wp_automatic_trim( get_option ( 'wp_automatic_fb_w', '' ) );
-								$watch_video = wp_automatic_trim( get_option ( 'wp_automatic_fb_wv', '' ) );
+								$watch = trim ( get_option ( 'wp_automatic_fb_w', '' ) );
+								$watch_video = trim ( get_option ( 'wp_automatic_fb_wv', '' ) );
 								
-								$watch = (wp_automatic_trim( $watch ) != '') ? $watch : 'Watch';
-								$watch_video = (wp_automatic_trim( $watch_video ) != '') ? $watch_video : 'Watch video';
+								$watch = (trim ( $watch ) != '') ? $watch : 'Watch';
+								$watch_video = (trim ( $watch_video ) != '') ? $watch_video : 'Watch video';
 								
-								// $title =wp_automatic_str_replace( $watch_video, '', $title );
+								// $title = str_replace ( $watch_video, '', $title );
 								// $title = preg_replace ( '{^' . $watch . '}', '', $title );
 								
 								echo '<br>Video title:' . $title;
@@ -1329,10 +1287,10 @@
 									preg_match( "!background: url\('(.*?)'!"  , $item , $matches_bg_img );
 									
 									
-									$matches_bg_img[1] = wp_automatic_str_replace( '\3a' , ':' , $matches_bg_img[1]);
-									$matches_bg_img[1] = wp_automatic_str_replace( '\3d' , '=' , $matches_bg_img[1]);
-									$matches_bg_img[1] = wp_automatic_str_replace( '\26' , '&' , $matches_bg_img[1]);
-									$matches_bg_img[1] = wp_automatic_str_replace(' ' , '', $matches_bg_img[1]);
+									$matches_bg_img[1] = str_replace( '\3a' , ':' , $matches_bg_img[1]);
+									$matches_bg_img[1] = str_replace( '\3d' , '=' , $matches_bg_img[1]);
+									$matches_bg_img[1] = str_replace( '\26' , '&' , $matches_bg_img[1]);
+									$matches_bg_img[1] = str_replace(' ' , '', $matches_bg_img[1]);
 									 
 									$the_vid_img_raw = $matches_bg_img[1] ;
 									
@@ -1340,7 +1298,7 @@
 									$the_vid_img_raw = $imgMatch [0];
 								}
 								
-								$link_img =wp_automatic_str_replace( '\/', '/', $the_vid_img_raw );
+								$link_img = str_replace ( '\/', '/', $the_vid_img_raw );
 								
 								echo '<br>Video img:' . $link_img;
 								
@@ -1425,15 +1383,15 @@
 								
 								preg_match ( '{<div class="_30q-" style="background-image: url\((.*?)\)}s', $exec2, $full_img_matches );
 								
-								if (isset ( $full_img_matches [1] ) && wp_automatic_trim( $full_img_matches [1] ) != '') {
-									$imgsrc = $link_img =wp_automatic_str_replace( '&amp;', '&', $full_img_matches [1] );
+								if (isset ( $full_img_matches [1] ) && trim ( $full_img_matches [1] ) != '') {
+									$imgsrc = $link_img = str_replace ( '&amp;', '&', $full_img_matches [1] );
 									$content = '<img   title="' . $title . '" src="' . $link_img . '" /></a><br>' . $content;
 								}
 							} elseif (isset ( $all_imgs [0] )) {
 								preg_match ( '{<img src="(.*?)".*?>}', $all_imgs [0], $imgMatch );
 								
-								if (isset ( $imgMatch [1] ) && wp_automatic_trim( $imgMatch [1] ) != '') {
-									$imgsrc = $link_img =wp_automatic_str_replace( '&amp;', '&', $imgMatch [1] );
+								if (isset ( $imgMatch [1] ) && trim ( $imgMatch [1] ) != '') {
+									$imgsrc = $link_img = str_replace ( '&amp;', '&', $imgMatch [1] );
 									$content = '<img   title="' . $title . '" src="' . $link_img . '" /></a><br>' . $content;
 								}
 							}
@@ -1481,8 +1439,8 @@
 							
 							 
 							
-							if (isset ( $scaled_matches [1] ) && wp_automatic_trim( $scaled_matches [1] ) != '') {
-								$imgsrc = $link_img =wp_automatic_str_replace( '\/', '/', $scaled_matches [1] );
+							if (isset ( $scaled_matches [1] ) && trim ( $scaled_matches [1] ) != '') {
+								$imgsrc = $link_img = str_replace ( '\/', '/', $scaled_matches [1] );
 								$content = '<img   title="' . $title . '" src="' . $link_img . '" /></a><br>' . $content;
 							
 							 
@@ -1493,17 +1451,15 @@
 							preg_match ( '!<h3 class="\w{2} \w{2} \w{2}">([^<]+?)</h3>!s', $item, $title_matches );
 							$title = $title_matches [1];
 							
-							if (wp_automatic_trim( $content ) == '')
+							if (trim ( $content ) == '')
 								$content = $title;
 							
 							preg_match ( '{<img class="scaledImageFit.*?src="(.*?)"}s', $exec2, $scaled_matches );
-							if (isset ( $scaled_matches [1] ) && wp_automatic_trim( $scaled_matches [1] ) != '') {
-								$imgsrc = $link_img =wp_automatic_str_replace( '&amp;', '&', $scaled_matches [1] );
+							if (isset ( $scaled_matches [1] ) && trim ( $scaled_matches [1] ) != '') {
+								$imgsrc = $link_img = str_replace ( '&amp;', '&', $scaled_matches [1] );
 								$content = '<img   title="' . $title . '" src="' . $link_img . '" /></a><br>' . $content;
 							}
 						} elseif ($type == 'photo') {
-
-						
 							
 							if (count ( $full_imgs_srcs ) > 0) {
 								
@@ -1520,16 +1476,16 @@
 								// small sized images
 								$content = $content . implode ( '', $all_imgs );
 							}
-
+							
 							preg_match ( '{src="(.*?)"}', $content, $src_matches );
 							
-							if (isset ( $src_matches [1] ) && wp_automatic_trim( $src_matches [1] ) != '') {
-								$imgsrc =wp_automatic_str_replace( '&amp;', '&', $src_matches [1] );
+							if (isset ( $src_matches [1] ) && trim ( $src_matches [1] ) != '') {
+								$imgsrc = str_replace ( '&amp;', '&', $src_matches [1] );
 							}
 						}
 						
 						// check if title exits or generate it
-						if (wp_automatic_trim( $title ) == '' && in_array ( 'OPT_GENERATE_FB_TITLE', $camp_opt )) {
+						if (trim ( $title ) == '' && in_array ( 'OPT_GENERATE_FB_TITLE', $camp_opt )) {
 							
 							echo '<br>No title generating...';
 							
@@ -1538,12 +1494,12 @@
 							}
 							
 							// line breaks for title generation stop at line breaks
-							$tempContent =wp_automatic_str_replace( '</p><p>', "\n", $txtContent );
-							$tempContent =wp_automatic_str_replace( 'See Translation', '', $tempContent );
-							$tempContent =wp_automatic_str_replace( '<br />', "\n", $tempContent );
-							$tempContent =wp_automatic_str_replace( '<br >', "\n", $tempContent );
-							$tempContent =wp_automatic_str_replace( '<br>', "\n", $tempContent );
-							$tempContent =wp_automatic_str_replace( '<br/>', "\n", $tempContent );
+							$tempContent = str_replace ( '</p><p>', "\n", $txtContent );
+							$tempContent = str_replace ( 'See Translation', '', $tempContent );
+							$tempContent = str_replace ( '<br />', "\n", $tempContent );
+							$tempContent = str_replace ( '<br >', "\n", $tempContent );
+							$tempContent = str_replace ( '<br>', "\n", $tempContent );
+							$tempContent = str_replace ( '<br/>', "\n", $tempContent );
 							
 							$tempContent = $this->removeEmoji ( strip_tags ( strip_shortcodes ( $tempContent ) ) );
 							
@@ -1561,19 +1517,19 @@
 								if (in_array ( 'OPT_GENERATE_FB_RETURN', $camp_opt ) && stristr ( $newTitle, "\n" )) {
 									
 									$suggestedTitle = preg_replace ( "{\n.*}", '', $newTitle );
-									if (wp_automatic_trim( $suggestedTitle ) != '') {
-										$newTitle = wp_automatic_trim( $suggestedTitle );
+									if (trim ( $suggestedTitle ) != '') {
+										$newTitle = trim ( $suggestedTitle );
 										
 										if (in_array ( 'OPT_FB_STRIP_TITLE', $camp_opt )) {
 											$before_title_removal = $content;
-											$content =wp_automatic_str_replace( $suggestedTitle . "<br />", '', $content );
+											$content = str_replace ( $suggestedTitle . "<br />", '', $content );
 											
 											if ($content == $before_title_removal) {
-												$content =wp_automatic_str_replace( '<p>' . $suggestedTitle . "</p>", '', $content );
+												$content = str_replace ( '<p>' . $suggestedTitle . "</p>", '', $content );
 											}
 											
 											if ($content == $before_title_removal) {
-												$content =wp_automatic_str_replace( $suggestedTitle, '', $content );
+												$content = str_replace ( $suggestedTitle, '', $content );
 											}
 										}
 									}
@@ -1584,7 +1540,7 @@
 								echo '<br>mb_str is not installed !!!';
 							}
 							
-							if (wp_automatic_trim( $newTitle ) == '') {
+							if (trim ( $newTitle ) == '') {
 								echo '<- Empty title';
 							} else {
 								
@@ -1598,13 +1554,13 @@
 							}
 						}
 						
-						if (wp_automatic_trim( $title ) == '' && in_array ( 'OPT_GENERATE_FB_TITLE_DEFAULT', $camp_opt )) {
+						if (trim ( $title ) == '' && in_array ( 'OPT_GENERATE_FB_TITLE_DEFAULT', $camp_opt )) {
 							
 							 $title = $camp_general['cg_fb_title_default'];
 							 echo '<-- Using default title:' . $title;
 						}
 						
-						if (wp_automatic_trim( $title ) == '' && in_array ( 'OPT_FB_TITLE_SKIP', $camp_opt )) {
+						if (trim ( $title ) == '' && in_array ( 'OPT_FB_TITLE_SKIP', $camp_opt )) {
 							echo '<-- No title skiping.';
 							continue;
 						}
@@ -1621,13 +1577,13 @@
 							$i = 0;
 							foreach ( $founds as $found ) {
 								
-								$found =wp_automatic_str_replace( '"', '', $found );
+								$found = str_replace ( '"', '', $found );
 								$link = $links [$i];
 								
 								$link_parts = explode ( '&h', $link );
 								$link = $link_parts [0];
 								
-								$content =wp_automatic_str_replace( $found, urldecode ( $link ), $content );
+								$content = str_replace ( $found, urldecode ( $link ), $content );
 								
 								$i ++;
 							}
@@ -1651,29 +1607,27 @@
 									
 									$found_img_link = urldecode ( $found_imgs_links [$i] );
 									
-									$content =wp_automatic_str_replace( $found_img, $found_img_link . "\"", $content );
+									$content = str_replace ( $found_img, $found_img_link . "\"", $content );
 									
 									$imgsrc = $found_img_link;
 								}
 							} else {
 								
-								$content =wp_automatic_str_replace( '&w=130', '&w=650', $content );
-								$content =wp_automatic_str_replace( '&h=130', '&h=650', $content );
+								$content = str_replace ( '&w=130', '&w=650', $content );
+								$content = str_replace ( '&h=130', '&h=650', $content );
 								
-								$imgsrc =wp_automatic_str_replace( '&w=130', '&w=650', $imgsrc );
-								$imgsrc =wp_automatic_str_replace( '&h=130', '&h=650', $imgsrc );
+								$imgsrc = str_replace ( '&w=130', '&w=650', $imgsrc );
+								$imgsrc = str_replace ( '&h=130', '&h=650', $imgsrc );
 							}
 						}
 						
-						
-
 						// small images check s130x130
 						if (0 && stristr ( $content, '130x130' ) || 0 && $type == 'photo') {
 							echo '<br>Small images found extracting full images..';
 							
 							preg_match_all ( '{"https://[^"]*?\w130x130/(.*?)\..*?"}', $content, $matches );
 							
-							$small_imgs_srcs =wp_automatic_str_replace( '"', '', $matches [0] );
+							$small_imgs_srcs = str_replace ( '"', '', $matches [0] );
 							$small_imgs_ids = $matches [1];
 							
 							// remove _o or _n
@@ -1685,7 +1639,7 @@
 							// get oritinal page
 							$x = 'error';
 							curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-							curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( html_entity_decode ( $url ) ) );
+							curl_setopt ( $this->ch, CURLOPT_URL, trim ( html_entity_decode ( $url ) ) );
 							$exec = $this->curl_exec_follow ( $this->ch );
 							$x = curl_error ( $this->ch );
 							
@@ -1717,12 +1671,12 @@
 									unset ( $large_imgs_matches_ajax );
 									preg_match ( '{src=(https%3A%2F%2F[^&]*?' . $small_imgs_id . '.*?)&}', $exec, $large_imgs_matches_ajax );
 									
-									if (wp_automatic_trim( $large_imgs_matches [1] ) != '') {
+									if (trim ( $large_imgs_matches [1] ) != '') {
 										
 										$replace_img = $large_imgs_matches [1];
 										
 										// check if there is a larger ajaxify image or not
-										if (isset ( $large_imgs_matches_ajax [1] ) && wp_automatic_trim( $large_imgs_matches_ajax [1] ) != '') {
+										if (isset ( $large_imgs_matches_ajax [1] ) && trim ( $large_imgs_matches_ajax [1] ) != '') {
 											$replace_img = urldecode ( $large_imgs_matches_ajax [1] );
 										}
 										
@@ -1736,9 +1690,9 @@
 										// echo ' Replacing '.$small_imgs_srcs[$i] . ' with '.$replace_img;
 										if (stristr ( $content, $small_imgs_id )) {
 											
-											$content =wp_automatic_str_replace( $small_imgs_srcs [$i], $replace_img, $content );
+											$content = str_replace ( $small_imgs_srcs [$i], $replace_img, $content );
 										} else {
-											$content =wp_automatic_str_replace( '<!--reset_images-->', '<img class="wp_automatic_fb_img" src="' . $replace_img . '"/><!--reset_images-->', $content );
+											$content = str_replace ( '<!--reset_images-->', '<img class="wp_automatic_fb_img" src="' . $replace_img . '"/><!--reset_images-->', $content );
 										}
 									}
 									
@@ -1752,8 +1706,8 @@
 									
 									$vid_img = $vid_img_match [1];
 									
-									if (wp_automatic_trim( $vid_img ) != '') {
-										$content =wp_automatic_str_replace( $item->picture, $vid_img, $content );
+									if (trim ( $vid_img ) != '') {
+										$content = str_replace ( $item->picture, $vid_img, $content );
 										echo '-> success';
 									} else {
 										echo '-> failed';
@@ -1765,11 +1719,11 @@
 						}
 						
 						// fix links of facebook short /
-						// $content = wp_automatic_str_replace('href="/', 'href="https://facebook.com/', $content);
+						// $content = str_replace('href="/', 'href="https://facebook.com/', $content);
 						$content = preg_replace ( '{href="/(\w)}', 'href="https://facebook.com/$1', $content );
 						
 						// change img class
-						$content =wp_automatic_str_replace( 'class="img"', 'class="wp_automatic_fb_img"', $content );
+						$content = str_replace ( 'class="img"', 'class="wp_automatic_fb_img"', $content );
 						
 						// skip if no image
 						if (in_array ( 'OPT_FB_IMG_SKIP', $camp_opt )) {
@@ -1797,7 +1751,7 @@
 							if (stristr ( $exec2, '"latitude"' )) {
 								
 								// ,"latitude":-7.4464878707658e-12,"longitude":9.0949470177293e-13,
-								preg_match ( '{"latitude":(.*?),"longitude":(.*?),}', $exec2, $loc_matches );
+								preg_match ( '{"latitude":(.*?),"longitude":(.*?)\}}', $exec2, $loc_matches );
 								 
 								if (isset ( $loc_matches [1] ) && isset ( $loc_matches [2] )) {
 									$lat = $loc_matches [1];
@@ -1825,7 +1779,7 @@
 							preg_match ( '!"start_timestamp":(.*?),"end_timestamp":(\d*)}!', $exec2, $date_matches );
 							
 						  
-							if (isset ( $date_matches [1] ) && wp_automatic_trim( $date_matches [1] ) != '') {
+							if (isset ( $date_matches [1] ) && trim ( $date_matches [1] ) != '') {
 							 
 								
 								$start_timestamp_no_timezoned = $date_matches [1]; //1604865600
@@ -1838,9 +1792,9 @@
 								//getting timezone "tz_display_name":"EST"
 								preg_match ( '!"tz_display_name":"(.*?)"!', $exec2, $tz_matches );
 								
-								if(isset($tz_matches[1]) && wp_automatic_trim($tz_matches[1]) != ''  ){
+								if(isset($tz_matches[1]) && trim($tz_matches[1]) != ''  ){
 									//found timezone EST
-									$found_timezone = wp_automatic_str_replace('UTC' , 'GMT',  $tz_matches[1]);
+									$found_timezone = str_replace('UTC' , 'GMT',  $tz_matches[1]);
 									$start_date_timezoned = $start_date_timezoned . ' ' . $found_timezone ; //2020-11-08 20:00:00 EST
 								
 								}
@@ -1861,7 +1815,7 @@
 									$end_date_timezoned = $end_date_no_timezoned ; //ini 2020-11-08 20:00:00
 									
 									/*
-									if(isset($tz_matches[1]) && wp_automatic_trim($tz_matches[1]) != '' ){
+									if(isset($tz_matches[1]) && trim($tz_matches[1]) != '' ){
 										//found timezone EST
 										$end_date_timezoned = $end_date_timezoned . ' ' .$found_timezone ; //2020-11-08 20:00:00 EST
 									}
@@ -1892,7 +1846,7 @@
 							
 							preg_match ( '!"address":{"street":"(.*?)"},"city":{"contextual_name":"(.*?)",!', $exec2, $address_matches );
 							
-							if (isset ( $address_matches [1] ) && wp_automatic_trim( $address_matches [1] ) != '') {
+							if (isset ( $address_matches [1] ) && trim ( $address_matches [1] ) != '') {
 								$place_address = wp_automatic_fix_json_part($address_matches [1]) . '<br>' . wp_automatic_fix_json_part($address_matches [2]) ;
 							}else{
 								
@@ -1904,19 +1858,19 @@
 							
 							//place street "address":{"street":"Tanta-Elhelw st. behind Kassem Amein"}
 							preg_match ( '{"street":"(.*?)"}', $exec2, $street_matches );
-							$ret ['place_street'] = (isset($street_matches[1]) && wp_automatic_trim($street_matches[1]) != '' ) ?  wp_automatic_fix_json_part($street_matches[1]) : '';
+							$ret ['place_street'] = (isset($street_matches[1]) && trim($street_matches[1]) != '' ) ?  wp_automatic_fix_json_part($street_matches[1]) : '';
 	
 							//"city":{"contextual_name":"Tanta"
 							preg_match ( '!"city":{"contextual_name":"(.*?)"!', $exec2, $city_matches );
-							$ret ['place_city'] = (isset($city_matches[1]) && wp_automatic_trim($city_matches[1]) != '' ) ? wp_automatic_fix_json_part( $city_matches[1]) : '';
+							$ret ['place_city'] = (isset($city_matches[1]) && trim($city_matches[1]) != '' ) ? wp_automatic_fix_json_part( $city_matches[1]) : '';
 							
 							//"event_connected_users_going":{"count":1}
 							preg_match ( '!"event_connected_users_going":{"count":(.*?)}!', $exec2, $going_matches );
-							$ret ['going_count'] = (isset($going_matches[1]) && wp_automatic_trim($going_matches[1]) != '' ) ?  $going_matches[1] : '';
+							$ret ['going_count'] = (isset($going_matches[1]) && trim($going_matches[1]) != '' ) ?  $going_matches[1] : '';
 							
 							//"event_connected_users_interested":{"count":2}
 							preg_match ( '!"event_connected_users_interested":{"count":(.*?)}!', $exec2, $going_matches );
-							$ret ['interested_count'] = (isset($going_matches[1]) && wp_automatic_trim($going_matches[1]) != '' ) ?  $going_matches[1] : '';
+							$ret ['interested_count'] = (isset($going_matches[1]) && trim($going_matches[1]) != '' ) ?  $going_matches[1] : '';
 							
 							//no more available tags
 							$ret ['place_email'] = '';
@@ -1934,7 +1888,7 @@
 							preg_match ( '{"i18n_reaction_count":"(.*?)"}s', $exec2, $likes_count_matches );
 							 
 							if (isset ( $likes_count_matches [1] ) ) {
-								$item_likes =wp_automatic_str_replace( ',', '', $likes_count_matches [1] );
+								$item_likes = str_replace ( ',', '', $likes_count_matches [1] );
 							}
 							
 							$ret ['original_title'] = $title;
@@ -1949,7 +1903,7 @@
 							preg_match ( '!"actors":\[{"__typename":"\w*?","name":"(.*?)",!', $exec2, $from_matches );
 							
 							$from_name = '';
-							if(isset($from_matches[1]) && wp_automatic_trim($from_matches[1]) != '' ){
+							if(isset($from_matches[1]) && trim($from_matches[1]) != '' ){
 								$from_name = wp_automatic_fix_json_part( $from_matches[1] );
 							}else{
 								
@@ -1969,13 +1923,13 @@
 								
 								preg_match ( '{sharer_id=(.*?)&}s', $exec2, $from_matches );
 								
-								if (isset ( $from_matches [1] ) && wp_automatic_trim( $from_matches [1] ) != '') {
+								if (isset ( $from_matches [1] ) && trim ( $from_matches [1] ) != '') {
 									$sharer_id = $from_matches [1];
 								}
 								
 								// from_name ownerName:"Gamal M. Elkomy"
 								preg_match ( '{ownerName:"(.*?)"}s', $exec2, $from_name_matches );
-								if (isset ( $from_name_matches [1] ) && wp_automatic_trim( $from_name_matches [1] ) != '') {
+								if (isset ( $from_name_matches [1] ) && trim ( $from_name_matches [1] ) != '') {
 									$ret ['from_name'] = $from_name_matches [1];
 								}
 							} else {
@@ -1983,7 +1937,7 @@
 								// closed group content_owner_id_new":"100002936112728"
 								preg_match ( '{content_owner_id_new.*?(\d+)}s', $item, $from_matches2 );
 								
-								if (isset ( $from_matches2 [1] ) && wp_automatic_trim( $from_matches2 [1] ) != '') {
+								if (isset ( $from_matches2 [1] ) && trim ( $from_matches2 [1] ) != '') {
 									$sharer_id = $from_matches2 [1];
 								}
 							}
@@ -2012,7 +1966,7 @@
 							$ret ['shares_count'] = $shares_count;
 							
 							// no title
-							if (wp_automatic_trim( $title ) == '')
+							if (trim ( $title ) == '')
 								$ret ['original_title'] = '(notitle)';
 							
 							// embed code
@@ -2064,14 +2018,13 @@
 								echo '<br>Comments found to extract using edges context';
 								
 								// edges:[{node .........,cursor:"AQHRJpdJxCiEwoRdtdydeisnvpjtTxJ9wk1_OAMIFGwB5ylEL1Wl2fidayVd8mErMcU2Sul_ftHtFzFoCRI_3cFGSg"}]
-								// edges:[{node .........,cursor":null}]  
-								preg_match_all ( '{"edges":\[\{"node":\{"id"[^<]*,"cursor":.*?\}\]}s', $exec2_raw, $comment_part_matches );
+								preg_match_all ( '{"edges":\[\{"node":\{"id"[^<]*,"cursor":".*?"\}\]}s', $exec2_raw, $comment_part_matches );
 								 
 								$comment_part_matches = $comment_part_matches [0];
 								
 							 
 								
-								if (isset ( $comment_part_matches [0] ) && wp_automatic_trim( $comment_part_matches [0] ) != '') {
+								if (isset ( $comment_part_matches [0] ) && trim ( $comment_part_matches [0] ) != '') {
 									
 									$correct_comment_part = '{' . $comment_part_matches [0] . '}';
 									//	$correct_comment_part = preg_replace ( '/(\s*?{\s*?|\s*?,\s*?)([\'"])?([a-zA-Z0-9_]+)([\'"])?:/', '$1"$3":', $correct_comment_part );
@@ -2094,7 +2047,7 @@
 											 
 											if (stristr ( $single_comment->legacy_token, $single_id )) {
 												
-												$commment_txt = isset($single_comment->url) ? $single_comment->url : '';
+												$commment_txt = $single_comment->url;
 												
 												$a_comment ['text'] = @$single_comment->body->text;
 												
@@ -2104,7 +2057,7 @@
 														
 														$imgURI = $single_comment->attachments [0]->media->image->uri;
 														
-														if (wp_automatic_trim( $imgURI ) != '') {
+														if (trim ( $imgURI ) != '') {
 															$a_comment ['text'] .= '<br><img src="' . $imgURI . '"/>';
 														}
 													}
@@ -2114,7 +2067,7 @@
 												$a_comment ['author_id'] = $single_comment->author->id;
 												$a_comment ['author_name'] = $single_comment->author->name;
 												
-												if (wp_automatic_trim( $a_comment ['text'] ) != '')
+												if (trim ( $a_comment ['text'] ) != '')
 													$all_the_comments [] = $a_comment;
 											}
 										}
@@ -2156,14 +2109,13 @@
 						 
 						if ( stristr (   $list_exec_raw , '"see_more_cards_id\",\"href\"' ) || stristr ( $list_exec_raw, 'm_more_item\",\"href' ) || stristr ( $list_exec_raw, 'profile\\\\\\/timeline\\\\\\/stream' ) || (stristr ( $exec, 'serialized_cursor' ) && $cg_fb_from == 'events') || ($cg_fb_source == 'group' && stristr($list_exec_raw , "/groups/$cg_fb_page_id?bac" ) ) ) {
 						
-							
 							if( $cg_fb_source == 'group' && stristr($list_exec_raw , "/groups/$cg_fb_page_id?bac" )){
 							 
 								//<a href="/groups/168889943173228?bacr=1612364339%3A3904622029599982%3A3904622029599982%2C0%2C0%3A7%3AKw%3D%3D&amp;multi_permalinks&amp;refid=18"><span>See Mor
 								echo '<br>Pagination case#0 groups';
 								preg_match ( '{<a href="(/groups/' . $cg_fb_page_id . '\?bacr.*?)"><span>}s', $exec, $next_page_matches );
 								 
-							}elseif (( stristr ( $exec, 'serialized_cursor' ) && $cg_fb_from == 'events')) {
+						}elseif (( stristr ( $exec, 'serialized_cursor' ) && $cg_fb_from == 'events')) {
 	
 									// <a href="/DuplexRooftopVenuePrague?v=events&amp;is_past&amp;serialized_cursor=AQHRbC1iSbVP7ovwPg2wTaw5UAntzEpVELbhs73QLHTkfFLA6biRLa8kZiUjo0VJWvnM8-1mPKTORyPdaim_hkPYNw&amp;has_more=1"><span>See More Events
 								echo '<br>Pagination case#1 events';
@@ -2177,7 +2129,7 @@
 								
 								$possible_pagination_url = wp_automatic_fix_json_part(stripslashes($next_page_matches[1] ));
 								
-								if(wp_automatic_trim($possible_pagination_url) != ''){
+								if(trim($possible_pagination_url) != ''){
 									$next_page_matches[1] = $possible_pagination_url;
 								}
 								
@@ -2191,7 +2143,7 @@
 								
 								$possible_pagination_url = wp_automatic_fix_json_part(stripslashes($next_page_matches[1] ));
 								
-								if(wp_automatic_trim($possible_pagination_url) != ''){
+								if(trim($possible_pagination_url) != ''){
 									$next_page_matches[1] = $possible_pagination_url;
 								}
 								
@@ -2206,7 +2158,7 @@
 							
 								$possible_pagination_url = wp_automatic_fix_json_part(stripslashes($next_page_matches[1] ));
 								
-								if(wp_automatic_trim($possible_pagination_url) != ''){
+								if(trim($possible_pagination_url) != ''){
 									$next_page_matches[1] = $possible_pagination_url;
 								}
 								
@@ -2217,7 +2169,7 @@
 								echo '<br>Found old posts on current list of posts, lets set the pointer to first page again';
 								delete_post_meta ( $camp->camp_id, 'nextPageUrl' );
 								delete_post_meta ( $camp->camp_id, 'wp_automatic_fb_checked_years' );
-							} elseif ( isset ( $next_page_matches [1] ) && wp_automatic_trim( $next_page_matches [1] ) != '' ) {
+							} elseif ( isset ( $next_page_matches [1] ) && trim( $next_page_matches [1] ) != '' ) {
 								
 								// show more link exists
 								if($cg_fb_from == 'events' || $cg_fb_source == 'group' ){

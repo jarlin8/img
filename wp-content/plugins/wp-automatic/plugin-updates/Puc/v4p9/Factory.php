@@ -50,7 +50,7 @@ if ( !class_exists('Puc_v4p9_Factory', false) ):
 				throw new RuntimeException(sprintf(
 					'The update checker cannot determine if "%s" is a plugin or a theme. ' .
 					'This is a bug. Please contact the PUC developer.',
-					wp_automatic_htmlentities($fullPath)
+					htmlentities($fullPath)
 				));
 			}
 
@@ -72,9 +72,9 @@ if ( !class_exists('Puc_v4p9_Factory', false) ):
 				trigger_error(
 					sprintf(
 						'PUC %s does not support updates for %ss %s',
-						wp_automatic_htmlentities(self::$latestCompatibleVersion),
+						htmlentities(self::$latestCompatibleVersion),
 						strtolower($type),
-						$service ? ('hosted on ' . wp_automatic_htmlentities($service)) : 'using JSON metadata'
+						$service ? ('hosted on ' . htmlentities($service)) : 'using JSON metadata'
 					),
 					E_USER_ERROR
 				);
@@ -90,8 +90,8 @@ if ( !class_exists('Puc_v4p9_Factory', false) ):
 				if ( $apiClass === null ) {
 					trigger_error(sprintf(
 						'PUC %s does not support %s',
-						wp_automatic_htmlentities(self::$latestCompatibleVersion),
-						wp_automatic_htmlentities($service)
+						htmlentities(self::$latestCompatibleVersion),
+						htmlentities($service)
 					), E_USER_ERROR);
 					return null;
 				}
@@ -120,7 +120,7 @@ if ( !class_exists('Puc_v4p9_Factory', false) ):
 			if ( function_exists('wp_normalize_path') ) {
 				return wp_normalize_path($path);
 			}
-			$path = wp_automatic_str_replace('\\', '/', $path);
+			$path = str_replace('\\', '/', $path);
 			$path = preg_replace('|(?<=.)/+|', '/', $path);
 			if ( substr($path, 1, 1) === ':' ) {
 				$path = ucfirst($path);

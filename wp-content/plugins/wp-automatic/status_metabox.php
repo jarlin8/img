@@ -48,11 +48,11 @@ if (count($rows) == 0 ) {
 			
 			<?php 
 			
-			$wp_automatic_secret = wp_automatic_trim(get_option('wp_automatic_cron_secret'));
-			if(wp_automatic_trim($wp_automatic_secret) == '') $wp_automatic_secret = 'cron';
+			$wp_automatic_secret = trim(get_option('wp_automatic_cron_secret'));
+			if(trim($wp_automatic_secret) == '') $wp_automatic_secret = 'cron';
 			
 			$cronUrl = home_url('?wp_automatic='.$wp_automatic_secret.'&id='.$post_id);
-			$cronUrl = wp_automatic_str_replace('http:', '', $cronUrl);
+			$cronUrl = str_replace('http:', '', $cronUrl);
 			
 			?>
 			
@@ -65,7 +65,7 @@ if (count($rows) == 0 ) {
 		</div>
 		<div class="campaign_detail">
 			<strong>Last Post</strong><br>
-			<?php   echo '<div id="last_post">'. wp_automatic_str_replace('New post posted:','',$lastpost) .'</div>' ?>
+			<?php   echo '<div id="last_post">'. str_replace('New post posted:','',$lastpost) .'</div>' ?>
 		</div>
 		
 		<div class="clear"></div>

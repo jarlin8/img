@@ -47,7 +47,7 @@ class Spintax {
 				
 				//replacing the set with the random part
 				if($replace_similar ){
-					$html = wp_automatic_str_replace($spintaxed_with_brackets[$i],  $random_part , $html );
+					$html = str_replace($spintaxed_with_brackets[$i],  $random_part , $html );
 				}else{
 					$html = $this->str_replace_first($spintaxed_with_brackets[$i],  $random_part , $html );
 				}

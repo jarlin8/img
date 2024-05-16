@@ -42,7 +42,7 @@ curl_setopt($ch,CURLOPT_HTTPHEADER,array('Authorization: Basic '.$hash));
 $x='error';
 $url='https://api.ebay.com/buy/browse/v1/item_summary/search?q=drone&limit=3';
 curl_setopt($ch, CURLOPT_HTTPGET, 1);
-curl_setopt($ch, CURLOPT_URL, wp_automatic_trim($url));
+curl_setopt($ch, CURLOPT_URL, trim($url));
 
 curl_setopt($ch,CURLOPT_HTTPHEADER, array( 'Authorization:Bearer '.$access_token));
 

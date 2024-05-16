@@ -266,6 +266,27 @@ if (!class_exists('XmlExportTaxonomy')) {
                     wp_all_export_write_article($article, $element_name, pmxe_filter($combineMultipleFieldsValue, $fieldSnipped));
 
                 } else {
+                    // Run addons export field hooks
+                    $addons = XmlExportEngine::get_addons();
+                    $addonFieldOptions = maybe_unserialize($fieldOptions);
+
+                    if (in_array($fieldType, $addons)) {
+                        $article = apply_filters(
+                            "pmxe_{$fieldType}_addon_export_field",
+                            $article,
+                            $addonFieldOptions,
+                            $exportOptions,
+                            $ID,
+                            $term,
+                            $term->term_id,
+                            $xmlWriter,
+                            $element_name,
+                            $element_name_ns,
+                            $fieldSnipped,
+                            $preview
+                        );
+                    }
+
                     switch ($fieldType) {
                         case 'term_id':
                             wp_all_export_write_article($article, $element_name, apply_filters('pmxe_term_id', pmxe_filter($term->term_id, $fieldSnipped), $term->term_id));

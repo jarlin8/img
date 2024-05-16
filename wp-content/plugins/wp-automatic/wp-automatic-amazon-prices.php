@@ -66,11 +66,6 @@ function wp_automatic_amazon_price_update($pid, $using_api) {
 	
 	// getting details from amazon
 	echo ' ASIN:' . $product_asin;
-
-	// echo if is woo product
-	if ($isWooProduct) {
-		echo ' - Woo Product';
-	}
 	
 	// curl ini
 	$ch = curl_init ();
@@ -92,7 +87,7 @@ function wp_automatic_amazon_price_update($pid, $using_api) {
 		
 		try {
 			
-			$obj = new wp_automatic_AmazonProductAPI ( wp_automatic_trim( $amazonPublic ), wp_automatic_trim( $amazonSecret ), wp_automatic_trim( $amazonAid ), $region );
+			$obj = new wp_automatic_AmazonProductAPI ( trim ( $amazonPublic ), trim ( $amazonSecret ), trim ( $amazonAid ), $region );
 			$obj->ch = $ch;
 			
 			$result = $obj->getItemByAsin ( $product_asin );
@@ -123,7 +118,7 @@ function wp_automatic_amazon_price_update($pid, $using_api) {
 			// current price
 			$price = '';
 			$price = $Item->Offers->Listings [0]->Price->DisplayAmount;
-			$price = wp_automatic_trim( preg_replace ( '{\(.*?\)}', '', $price ) );
+			$price = trim ( preg_replace ( '{\(.*?\)}', '', $price ) );
 			$price_numeric = $Item->Offers->Listings [0]->Price->Amount;
 			
 			// list price
@@ -131,15 +126,15 @@ function wp_automatic_amazon_price_update($pid, $using_api) {
 			
 			if (isset ( $Item->Offers->Listings [0]->Price->Savings )) {
 				$ListPrice = $Item->Offers->Listings [0]->Price->Savings->Amount + $price_numeric;
-				$ListPrice =wp_automatic_str_replace( $price_numeric, $ListPrice, $price );
+				$ListPrice = str_replace ( $price_numeric, $ListPrice, $price );
 			}
 			
-			if (wp_automatic_trim( $ListPrice ) == '') {
+			if (trim ( $ListPrice ) == '') {
 				$ListPrice = $price;
 			}
 			
 			//out of stock?
-			if(wp_automatic_trim($price) == ''){
+			if(trim($price) == ''){
 				echo '<br>We got the product but not the price, obviousely out of stock';
 				$out_of_stock = true;
 			}
@@ -186,7 +181,7 @@ function wp_automatic_amazon_price_update($pid, $using_api) {
 	
 	
 	// update price
-	if (wp_automatic_trim( $price ) != '') {
+	if (trim ( $price ) != '') {
 		
 		//nice, we got a price from amazon which means this product is online and is in stock already, if it was out of stock, return it to stock 
 		
@@ -214,11 +209,6 @@ function wp_automatic_amazon_price_update($pid, $using_api) {
 				
 				$thousandSeparator = ',';
 				
-				//if $region is es or de or fr or it, set the thousand separator to .
-				if ($region == 'es' || $region == 'de' || $region == 'fr' || $region == 'it') {
-					$thousandSeparator = '.';
-				}
- 
 				// woo sousands separator
 				if (class_exists ( 'WooCommerce' )) {
 					$woocommerce_price_thousand_sep = get_option ( 'woocommerce_price_thousand_sep', '' );
@@ -230,26 +220,17 @@ function wp_automatic_amazon_price_update($pid, $using_api) {
 				}
 				
 				// fixing listPrice
-				$price_no_commas =wp_automatic_str_replace( $thousandSeparator, '', $ListPrice );
+				$price_no_commas = str_replace ( $thousandSeparator, '', $ListPrice );
 				preg_match ( '{\d.*\d}is', ($price_no_commas), $price_matches );
 				update_post_meta ( $pid, '_regular_price', $price_matches [0] );
 				;
 				
 				// fixing sell price
-				$price_no_commas =wp_automatic_str_replace( $thousandSeparator, '', $price );
+				$price_no_commas = str_replace ( $thousandSeparator, '', $price );
 				preg_match ( '{\d.*\d}is', ($price_no_commas), $price_matches );
 				update_post_meta ( $pid, '_price', $price_matches [0] );
 				update_post_meta ( $pid, '_sale_price', $price_matches [0] );
-				
-				// get _sale_price and _regular_price and if they are equal, delete the _sale_price fix ticket:23246
-				$regular_price = get_post_meta( $pid, '_regular_price', true );
-				$sale_price = get_post_meta( $pid, '_sale_price', true );
-				if( wp_automatic_trim($regular_price) != '' && wp_automatic_trim($sale_price) != '' && $regular_price == $sale_price ){
-					echo '<br>deleting _sale_price as it is equal to _regular_price';
-					delete_post_meta( $pid, '_sale_price' );
-				}
-
-
+				;
 			}
 		} else {
 			

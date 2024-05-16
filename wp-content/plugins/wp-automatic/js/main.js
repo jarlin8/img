@@ -461,22 +461,6 @@ jQuery(document).ready(function () {
       var inputs = jQuery('input[name="cg_rd_page"]').validator({
         effect: "labelMate",
       });
-    
-    } else if (jQuery("#camp_type").val() == "telegram") {
-      jQuery('input[name="cg_te_page"]').attr("required", "required");
-      jQuery('textarea[name="camp_keys"]').removeAttr("required");
-      var inputs = jQuery('input[name="cg_te_page"]').validator({
-        effect: "labelMate",
-      });
-
-    } else if (jQuery("#camp_type").val() == "Rumble") {
-      jQuery('input[name="cg_rm_page"]').attr("required", "required");
-      jQuery('textarea[name="camp_keys"]').removeAttr("required");
-      var inputs = jQuery('input[name="cg_rm_page"]').validator({
-        effect: "labelMate",
-      });
-
-    
     } else {
       jQuery('textarea[name="feeds"]').removeAttr("required");
       jQuery('textarea[name="camp_keys"]').attr("required", "required");
@@ -523,15 +507,7 @@ jQuery(document).ready(function () {
           '" >' +
           value[0] +
           "</abbr>";
-      
-        //add the supported tag to the tags metabox ul.supported_tags as <li><strong>value[0]</strong>:value[1] </li>
-        jQuery("#supported_tags").append(
-          "<li><strong>" + value[0] + "</strong>: " + value[1] + "</li>"
-        );
-      
-       });
-
-      
+      });
 
       // additional custom fields tags
       supportedText2 =
@@ -541,13 +517,7 @@ jQuery(document).ready(function () {
       // fixed tags for all campaigns content only
       supportedText =
         supportedText +
-        ', <abbr title="Retruns the title words as hashtags. e.g: if the title is hello world, it will return #hello #world" >[title_words_as_hashtags]</abbr>, <abbr title="Retruns the title words as slug so if the title is H" >[title_words_as_hashtags]</abbr>, <abbr title="Return the current timestamp" >[now]</abbr>' + ', <abbr title="Retruns the title words as slug. e.g: if the title is hello world, it will return hello-world" >[title_words_as_slug]</abbr>' ;
-
-
-      // fixed tags for all campaigns content only add to the tags metabox
-      jQuery("#supported_tags").append(
-        "<li><strong>[title_words_as_hashtags]</strong>: Returns the title words as hashtags. e.g: if the title is hello world, it will return #hello #world</li><li><strong>[now]</strong>: Return the current timestamp</li><li><strong>[title_words_as_slug]</strong>: Returns the title words as slug. e.g: if the title is hello world, it will return hello-world</li>"
-      );
+        ', <abbr title="Retruns the title words as hashtags. e.g: if the title is hello world, it will return #hello #world" >[title_words_as_hashtags]</abbr>, <abbr title="Return the current timestamp" >[now]</abbr>';
 
       jQuery(".supportedTags").html("supported Tags: " + supportedText);
       jQuery(".supportedTags2").html("supported Tags: " + supportedText2);
@@ -642,8 +612,6 @@ jQuery(document).ready(function () {
       },
 
       error: function (one, two, three) {
-
- 
         var four =
           ' If this error persists, please visit the plugin settings page and enable the option named "Disable register_shutdown_function". This could be a solution';
 
@@ -652,11 +620,8 @@ jQuery(document).ready(function () {
         jQuery("#wp-automatic-welcome-panel").remove();
         jQuery("#status-meta-boxes .inside").append(
           '<div style="display:none;margin-top:0;padding-top:10px;" dir="ltr" class="wp-automatic-welcome-panel" id="wp-automatic-welcome-panel"> ' +
-            "Status: " + one.status + "<br>" +
             two +
             " " +
-            "responseText: " + one.responseText + "<br>" +
-
             three +
             " " +
             four +
@@ -804,8 +769,8 @@ jQuery(document).ready(function () {
     return false;
   });
 
-  // fetch yt user playlists, removed from v > 3.70
-  jQuery("#yt_playlist_update_OLD").click(function () {
+  // fetch yt user playlists
+  jQuery("#yt_playlist_update").click(function () {
     jQuery(".spinner-playlist").show();
     jQuery.ajax({
       url: ajaxurl,
@@ -840,7 +805,7 @@ jQuery(document).ready(function () {
   });
 
   // Specify playlist trigger update
-  jQuery("#wp_automatic_playlist_opt_OLD").click(function () {
+  jQuery("#wp_automatic_playlist_opt").click(function () {
     if (jQuery(this).prop("checked") == true) {
       jQuery("#yt_playlist_update").trigger("click");
 
@@ -1256,30 +1221,4 @@ jQuery(document).ready(function () {
 
     Deslider(this, "#" + field_name, false);
   });
-
-  //when adding a list of URLs to post from them manualy, pick first URL, set it for the visual selector 
-  var $textarea = jQuery("textarea[name='cg_multi_posts_list']");
-  var $resultField = jQuery("input[name='cg_ml_example_2']");
-
-  // result field 2 cg_ml_example
-  var $resultField2 = jQuery("input[name='cg_ml_example']");
-
-  
-  // Attach an event listener to the textarea for 'paste' and 'input' events
-  $textarea.on('paste input', function() {
-      // Get the textarea value and split it by new lines
-      var textareaValue = $textarea.val();
-      var lines = textareaValue.split('\n');
-      
-      //if checkbox OPT_MULTI_FIXED_LIST is checked, set the first URL to the visual selector
-      if (jQuery('input[value="OPT_MULTI_FIXED_LIST"]').prop("checked") == true) {
-      
-        // Trim the first value and set it as the value of the result field
-        var trimmedValue = lines.length > 0 ? jQuery.trim(lines[0]) : '';
-        $resultField.val(trimmedValue);
-        $resultField2.val(trimmedValue);
-
-      }
-  });
-
 });

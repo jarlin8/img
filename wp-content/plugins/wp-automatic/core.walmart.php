@@ -22,12 +22,12 @@ Class WpAutomaticWalmart extends wp_automatic{
 		$apiKey = get_option('wp_automatic_wm_api','');
 		$lsPublisherId = get_option('wp_automatic_wm_ir_publisher','');
 		
-		if(wp_automatic_trim($apiKey) == ''){
+		if(trim($apiKey) == ''){
 			  echo '<br><span style="color:red">Walmart API key is required !. Please visit the plugin settings page and add it.</span>';
 			exit;
 		}
 		
-		if(wp_automatic_trim($lsPublisherId) == ''){
+		if(trim($lsPublisherId) == ''){
 			echo '<br><span style="color:red">Walmart Affiliate Publisher ID was not added. Please visit the plugin settings page and add it if you want to make commisions.</span>';
 		}
 		
@@ -90,9 +90,9 @@ Class WpAutomaticWalmart extends wp_automatic{
 		//cat
 		if(in_array('OPT_WM_CAT', $camp_opt)){
 			
-			$cg_wm_cat = wp_automatic_trim($camp_general['cg_wm_cat']);
+			$cg_wm_cat = trim($camp_general['cg_wm_cat']);
 			
-			if(wp_automatic_trim($cg_wm_cat) != ''){
+			if(trim($cg_wm_cat) != ''){
 				$parms['categoryId'] = $cg_wm_cat;
 			}
 			
@@ -101,9 +101,9 @@ Class WpAutomaticWalmart extends wp_automatic{
 		//sort
 		if(in_array('OPT_WM_ORDER', $camp_opt)){
 			
-			$cg_wm_sort = wp_automatic_trim( $camp_general['cg_wm_sort'] ) ;
+			$cg_wm_sort = trim( $camp_general['cg_wm_sort'] ) ;
 			
-			if(wp_automatic_trim($cg_wm_sort) != ''){
+			if(trim($cg_wm_sort) != ''){
 				$parms['sort'] = $cg_wm_sort;
 				
 				//asc or desc
@@ -119,8 +119,8 @@ Class WpAutomaticWalmart extends wp_automatic{
 		//price range
 		if(in_array('OPT_WM_RANGE', $camp_opt)){
 			
-			$cg_wm_price_from =wp_automatic_trim( $camp_general['cg_wm_price_from'] );
-			$cg_wm_price_to   = wp_automatic_trim( $camp_general['cg_wm_price_to'] );
+			$cg_wm_price_from =trim( $camp_general['cg_wm_price_from'] );
+			$cg_wm_price_to   = trim( $camp_general['cg_wm_price_to'] );
 			
 			if( $cg_wm_price_from != '' && $cg_wm_price_to != '' && is_numeric($cg_wm_price_from) && is_numeric($cg_wm_price_to) ){
 				$parms['facet'] = 'on';
@@ -274,12 +274,12 @@ Class WpAutomaticWalmart extends wp_automatic{
 
 		foreach ( $keywords as $keyword ) {
 
-			$keyword = wp_automatic_trim($keyword);
+			$keyword = trim($keyword);
 
 			//update last keyword
-			update_post_meta($camp->camp_id, 'last_keyword', wp_automatic_trim($keyword));
+			update_post_meta($camp->camp_id, 'last_keyword', trim($keyword));
 
-			if (wp_automatic_trim( $keyword ) != '') {
+			if (trim ( $keyword ) != '') {
 
 				// getting links from the db for that keyword
 				$query = "select * from {$this->wp_prefix}automatic_general where item_type=  'wm_{$camp->camp_id}_$keyword' ";
@@ -342,10 +342,10 @@ Class WpAutomaticWalmart extends wp_automatic{
 					  echo '<br>Found Link:'.$temp['item_url'];
 						
 					// empty item_description fix
-					if(wp_automatic_trim($temp['item_description']) == '') $temp['item_description'] = $temp['item_title'];
+					if(trim($temp['item_description']) == '') $temp['item_description'] = $temp['item_title'];
 						
 					// Item img html
-					if(wp_automatic_trim($temp['item_img']) != ''){
+					if(trim($temp['item_img']) != ''){
 						$temp['item_img_html'] = '<img src="'.$temp['item_img'].'" />';
 					}else{
 						$temp['item_img_html'] = '';
@@ -354,7 +354,7 @@ Class WpAutomaticWalmart extends wp_automatic{
 					//imgs html
 					$cg_wm_full_img_t = @$camp_general['cg_wm_full_img_t'];
 					
-					if(wp_automatic_trim($cg_wm_full_img_t) == ''){
+					if(trim($cg_wm_full_img_t) == ''){
 						$cg_wm_full_img_t = '<img src="[img_src]" class="wp_automatic_gallery" />';
 					}
 					
@@ -367,10 +367,10 @@ Class WpAutomaticWalmart extends wp_automatic{
 					
 					foreach($allImages as $singleImage){
 						
-						if(wp_automatic_trim($singleImage) != ''){
+						if(trim($singleImage) != ''){
 						
 							$singleImageHtml = $cg_wm_full_img_t;
-							$singleImageHtml = wp_automatic_str_replace('[img_src]', $singleImage, $singleImageHtml);
+							$singleImageHtml = str_replace('[img_src]', $singleImage, $singleImageHtml);
 							$allImages_html.= $singleImageHtml;
 						}
 					}
@@ -399,7 +399,7 @@ Class WpAutomaticWalmart extends wp_automatic{
 					$temp['item_description'] = html_entity_decode($temp['item_description']);
 					
 					//item_list_price
-					if(wp_automatic_trim($temp['item_list_price']) == '') $temp['item_list_price']= $temp['item_price']; 
+					if(trim($temp['item_list_price']) == '') $temp['item_list_price']= $temp['item_price']; 
 					
 					return $temp;
 				} else {

@@ -554,6 +554,7 @@ if($is_rapid_addon_export) {
                 <?php
                 $uploads = wp_upload_dir();
                 $functions = $uploads['basedir'] . DIRECTORY_SEPARATOR . WP_ALL_EXPORT_UPLOADS_BASE_DIRECTORY . DIRECTORY_SEPARATOR . 'functions.php';
+                $functions = apply_filters( 'wp_all_export_functions_file_path', $functions );
                 $functions_content = file_get_contents($functions);
                 ?>
 

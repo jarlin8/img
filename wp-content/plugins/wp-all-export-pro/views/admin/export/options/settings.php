@@ -70,6 +70,22 @@ if (!defined('ABSPATH')) {
                                                name="enable_real_time_exports"
                                                value="1" <?php echo $post['enable_real_time_exports'] ? 'checked="checked"' : '' ?> />
                                         <label for="enable_real_time_exports"><?php esc_html_e('Export each ' . esc_html($display_cpt_name) . ' in real time as they are ' . esc_html($display_verb), 'wp_all_export_plugin') ?></label>
+                                        <span>
+
+                                        <?php
+                                        if (isset($post['xml_template_type']) && $post['xml_template_type'] == XmlExportEngine::EXPORT_TYPE_GOOLE_MERCHANTS) { ?>
+                                            <a href="#help" class="wpallexport-help"
+                                            title="<?php esc_html_e('This feature is not available for GMC exports.', 'wp_all_export_plugin'); ?>"
+                                            >?</a>
+                                        <?php } else if ('shop_customer' === $cpt_name) { ?>
+                                            <a href="#help" class="wpallexport-help"
+                                            title="<?php esc_html_e('This feature is not available for customer exports. A Users export with user role filter should be used instead.', 'wp_all_export_plugin'); ?>"
+                                            >?</a>
+                                        <?php } else { ?>
+
+                                        <?php } ?>
+
+                                        </span>
 
                                     </div>
 
@@ -112,11 +128,11 @@ if (!defined('ABSPATH')) {
                                     <a href="#help" class="wpallexport-help"
                                         <?php
                                         if (in_array('users', $post['cpt']) || ($post['export_type'] === 'advanced' && $post['wp_query_selector'] === 'wp_user_query')) { ?>
-                                            title="<?php esc_html_e('This feature it not available for user exports.', 'wp_all_export_plugin'); ?>"
+                                            title="<?php esc_html_e('This feature is not available for user exports.', 'wp_all_export_plugin'); ?>"
                                         <?php } else if (in_array('taxonomies', $post['cpt'])) { ?>
-                                            title="<?php esc_html_e('This feature it not available for taxonomies exports.', 'wp_all_export_plugin'); ?>"
+                                            title="<?php esc_html_e('This feature is not available for taxonomies exports.', 'wp_all_export_plugin'); ?>"
                                         <?php } else if (in_array('shop_customer', $post['cpt'])) { ?>
-                                            title="<?php esc_html_e('This feature it not available for customer exports.', 'wp_all_export_plugin'); ?>"
+                                            title="<?php esc_html_e('This feature is not available for customer exports.', 'wp_all_export_plugin'); ?>"
                                         <?php } else { ?>
                                             title="<?php esc_html_e('If re-run, this export will only include records that have been modified since last export run.', 'wp_all_export_plugin'); ?>"
                                         <?php } ?>
@@ -143,10 +159,10 @@ if (!defined('ABSPATH')) {
                                 <input type="hidden" name="include_bom" value="0"/>
                                 <input type="checkbox" id="include_bom" name="include_bom"
                                        value="1" <?php echo $post['include_bom'] ? 'checked="checked"' : '' ?> />
-                                <label for="include_bom"><?php esc_html_e('Include BOM in export file', 'wp_all_export_plugin') ?></label>
+                                <label for="include_bom"><?php esc_html_e('Include BOM to enable non-ASCII characters in Excel', 'wp_all_export_plugin') ?></label>
                                 <span>
                                     <a href="#help" class="wpallexport-help"
-                                       title="<?php esc_html_e('The BOM will help some programs like Microsoft Excel read your export file if it includes non-English characters.', 'wp_all_export_plugin'); ?>">?</a>
+                                       title="<?php esc_html_e('The BOM will help some programs like Microsoft Excel read your export file if it contains non-ASCII characters. These can include curly quotation marks or non-English characters such as umlauts.', 'wp_all_export_plugin'); ?>">?</a>
                                 </span>
                             </div>
                             <div class="wpallexport-no-realtime-options <?php if ($post['enable_real_time_exports']) { ?> wpae-hidden<?php } ?>" >

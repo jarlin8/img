@@ -81,9 +81,9 @@ foreach ( $post_types as $post_type ) {
 } // foreach post type
 
 //default tax if no tax is already saved
-if( ! isset($camp_general['cg_camp_tax']) || wp_automatic_trim($camp_general['cg_camp_tax']) == '' ){
+if( ! isset($camp_general['cg_camp_tax']) || trim($camp_general['cg_camp_tax']) == '' ){
 	
-	if(isset($hierarchical_tax) && wp_automatic_trim($hierarchical_tax) != '')
+	if(isset($hierarchical_tax) && trim($hierarchical_tax) != '')
 		$camp_general['cg_camp_tax'] = $hierarchical_tax;
 }
 
@@ -106,7 +106,7 @@ if( ! isset($camp_general['cg_camp_tax']) || wp_automatic_trim($camp_general['cg
 
 						<div id="keyword_to_cat" class="field f_100">
 							<label for="field6"> Keyword|categoryId (one per line) </label>
-							<textarea name="cg_keyword_cat"><?php   echo wp_automatic_htmlentities($camp_general['cg_keyword_cat'],ENT_COMPAT, 'UTF-8' )  ?></textarea>
+							<textarea name="cg_keyword_cat"><?php   echo htmlentities($camp_general['cg_keyword_cat'],ENT_COMPAT, 'UTF-8' )  ?></textarea>
 							
 							<div class="option clearfix">
 							   <input   name="camp_options[]"  value="OPT_KEYWORD_TTL" type="checkbox">
@@ -218,7 +218,7 @@ if( ! isset($camp_general['cg_camp_tax']) || wp_automatic_trim($camp_general['cg
 		               <label for="field6">
 		                    Keyword|tag (one per line)
 		               </label>
-		               <textarea name="cg_keyword_tag" ><?php   echo wp_automatic_htmlentities($camp_general['cg_keyword_tag'] ,ENT_COMPAT, 'UTF-8' )  ?></textarea>
+		               <textarea name="cg_keyword_tag" ><?php   echo htmlentities($camp_general['cg_keyword_tag'] ,ENT_COMPAT, 'UTF-8' )  ?></textarea>
 		           	
 		           		<div class="option clearfix">
 							   <input   name="camp_options[]"  value="OPT_KEYWORD_TTL_TAG" type="checkbox">

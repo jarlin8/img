@@ -273,7 +273,7 @@ class WooCommerce {
 
 		$variants = [];
 		foreach ( $variations as $variation ) {
-			$variants[] = $this->get_variant_data( $variation );
+			$variants[] = $this->get_variant_data( $variation, $product );
 		}
 
 		$this->add_varies_by( $entity );
@@ -301,16 +301,17 @@ class WooCommerce {
 	/**
 	 * Get Variant data.
 	 *
-	 * @param Object $variation Variation Object.
+	 * @param Object     $variation Variation Object.
+	 * @param WC_Product $product   Product Object.
 	 *
 	 * @since 3.0.57
 	 */
-	private function get_variant_data( $variation ) {
+	private function get_variant_data( $variation, $product ) {
 		$variant = [
 			'@type'       => 'Product',
 			'sku'         => $variation->get_sku(),
 			'name'        => $variation->get_name(),
-			'description' => wp_strip_all_tags( $variation->get_description() ),
+			'description' => wp_strip_all_tags( $this->get_variant_description( $variation, $product ), true ),
 			'image'       => wp_get_attachment_image_url( $variation->get_image_id() ),
 		];
 
@@ -319,6 +320,22 @@ class WooCommerce {
 		$this->add_variable_gtin( $variation->get_id(), $variant );
 
 		return $variant;
+	}
+
+	/**
+	 * Get Variant description.
+	 *
+	 * @param Object     $variation Variation Object.
+	 * @param WC_Product $product   Product Object.
+	 *
+	 * @since 3.0.61
+	 */
+	private function get_variant_description( $variation, $product ) {
+		if ( $variation->get_description() ) {
+			return $variation->get_description();
+		}
+
+		return $product->get_short_description() ? $product->get_short_description() : $product->get_description();
 	}
 
 	/**
@@ -386,7 +403,7 @@ class WooCommerce {
 
 		$entity['offers'] = [
 			'@type'           => 'Offer',
-			'description'     => wp_strip_all_tags( $variation->get_description() ),
+			'description'     => ! empty( $entity['description'] ) ? $entity['description'] : '',
 			'price'           => wc_get_price_to_display( $variation ),
 			'priceCurrency'   => get_woocommerce_currency(),
 			'availability'    => 'outofstock' === $variation->get_stock_status() ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
@@ -413,9 +430,13 @@ class WooCommerce {
 			if ( ! $value ) {
 				continue;
 			}
-			$key             = str_replace( 'pa_', '', $key );
-			$variant[ $key ] = $value;
 
+			$key = str_replace( 'pa_', '', $key );
+			if ( ! in_array( $key, [ 'color', 'size', 'material', 'pattern', 'weight' ], true ) ) {
+				continue;
+			}
+
+			$variant[ $key ]   = $value;
 			$this->varies_by[] = $key;
 		}
 	}

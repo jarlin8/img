@@ -348,7 +348,7 @@ function pmxe_wp_loaded() {
     /* Check if cron is manualy, then execute export */
     $cron_job_key = PMXE_Plugin::getInstance()->getOption('cron_job_key');
 
-    if ( ! empty($cron_job_key) and ! empty($_GET['export_id']) and ! empty($_GET['export_key']) and $_GET['export_key'] == $cron_job_key and !empty($_GET['action']) and in_array($_GET['action'], array('processing', 'trigger'))) {
+    if ( ! empty($cron_job_key) and ! empty($_GET['export_id']) and ! empty($_GET['export_key']) and $_GET['export_key'] == $cron_job_key and !empty($_GET['action']) and in_array($_GET['action'], array('processing', 'trigger', 'cancel'))) {
         pmxe_set_max_execution_time();
         $logger = function($m) {
             echo "<p>$m</p>\\n";
@@ -370,6 +370,15 @@ function pmxe_wp_loaded() {
             foreach ($ids as $id) { if (empty($id)) continue;
 
                 $export->getById($id);
+
+                if($export->isEmpty()) {
+                    wp_send_json([
+                        'status' => 404,
+                        'message' => 'Export not found.'
+                    ]);
+
+                    wp_die();
+                }
 
                 $cpt = $export->options['cpt'];
                 if(!is_array($cpt)) {
@@ -420,8 +429,21 @@ function pmxe_wp_loaded() {
                 }
 
                 if ( ! $export->isEmpty() ){
-
                     switch ($_GET['action']) {
+
+                        case 'cancel':
+                            $export->set(array(
+                                'canceled' => 1,
+                                'triggered' => 0,
+                                'executing' => 0,
+                                'processing' => 0,
+                            ))->save();
+
+                            wp_send_json(array(
+                                'status'     => 403,
+                                'message'    => sprintf(esc_html__('Export #%s canceled.', 'wp_all_export_plugin'), $id)
+                            ));
+                            break;
 
                         case 'trigger':
 
@@ -534,7 +556,7 @@ function pmxe_wp_loaded() {
             $export->getById(intval($_GET['export_id']));
         }
 
-        if ( (isset($_GET['security_token']) && $_GET['security_token'] == substr(md5($cron_job_key . $_GET['export_id']), 0, 16)) || (isset($_GET['security_key']) && $_GET['security_key'] === $export->options['security_token']) )
+        if ( (isset($_GET['security_token']) && $_GET['security_token'] == substr(md5($cron_job_key . $_GET['export_id']), 0, 16)) || (isset($_GET['security_key']) && isset($export->options['security_token']) && $_GET['security_key'] === $export->options['security_token']) )
         {
             $export = new PMXE_Export_Record();
 

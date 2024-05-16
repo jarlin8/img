@@ -22,7 +22,7 @@ if ( !class_exists('Puc_v4p9_DebugBar_PluginExtension', false) ):
 			$info = $this->updateChecker->requestInfo();
 			if ( $info !== null ) {
 				echo 'Successfully retrieved plugin info from the metadata URL:';
-				echo '<pre>', wp_automatic_htmlentities(print_r($info, true)), '</pre>';
+				echo '<pre>', htmlentities(print_r($info, true)), '</pre>';
 			} else {
 				echo 'Failed to retrieve plugin info from the metadata URL.';
 			}

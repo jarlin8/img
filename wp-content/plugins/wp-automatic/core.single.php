@@ -14,7 +14,7 @@ class WpAutomaticSingle extends wp_automatic {
 		$temp = array ();
 		
 		// source url
-		$cg_sn_source = wp_automatic_trim( $camp_general ['cg_sn_source'] );
+		$cg_sn_source = trim ( $camp_general ['cg_sn_source'] );
 		
 		echo '<br>Source URL:' . $cg_sn_source;
 		
@@ -26,11 +26,11 @@ class WpAutomaticSingle extends wp_automatic {
 		
 		// get the whole html
 		curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-		curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( html_entity_decode ( $cg_sn_source ) ) );
+		curl_setopt ( $this->ch, CURLOPT_URL, trim ( html_entity_decode ( $cg_sn_source ) ) );
 		
 		$cg_sn_cookie = $camp_general ['cg_sn_cookie'];
 		
-		if (wp_automatic_trim( $cg_sn_cookie ) != '') {
+		if (trim ( $cg_sn_cookie ) != '') {
 			$headers [] = "Cookie: $cg_sn_cookie ";
 			curl_setopt ( $this->ch, CURLOPT_HTTPHEADER, $headers );
 		}
@@ -70,7 +70,7 @@ class WpAutomaticSingle extends wp_automatic {
 		
 		$x = curl_error ( $this->ch );
 		
-		if (wp_automatic_trim( $original_cont ) == '') {
+		if (trim ( $original_cont ) == '') {
 			echo '<br>Failed to load the content from the source ' . $x;
 			return false;
 		}
@@ -120,7 +120,7 @@ class WpAutomaticSingle extends wp_automatic {
 		} elseif ($cg_sn_ttl_method == 'regex') {
 			
 			$cg_sn_regex = $camp_general ['cg_sn_regex'];
-			echo '<br>Extracting content by REGEX : ' . wp_automatic_htmlentities ( stripslashes ( $cg_sn_regex [0] ) );
+			echo '<br>Extracting content by REGEX : ' . htmlentities ( stripslashes ( $cg_sn_regex [0] ) );
 			$titleMatchs = $wpAutomaticDom->getContentByRegex ( stripslashes ( $cg_sn_regex [0] ) );
 			if (isset ( $titleMatchs [0] ) && $titleMatchs [0] != '') {
 				$title = $titleMatchs [0];
@@ -132,10 +132,10 @@ class WpAutomaticSingle extends wp_automatic {
 		if (is_array ( $title ))
 			$title = $title [0];
 		
-		print_r ( '<br>Found Title:' . wp_automatic_trim( strip_tags ( $title ) ) );
+		print_r ( '<br>Found Title:' . trim ( strip_tags ( $title ) ) );
 		$temp ['original_title'] = $title;
 		
-		if (wp_automatic_trim( $title ) == '') {
+		if (trim ( $title ) == '') {
 			
 			echo '<br><span style="color:red">Error: No title found, post will not get added. Please revise the extraction rules</span>';
 		}
@@ -212,13 +212,13 @@ class WpAutomaticSingle extends wp_automatic {
 				
 				$content = $this->strip_unwanted ( $content, $camp_opt, $camp_general );
 				
-				if (wp_automatic_trim( $content ) != '') {
+				if (trim ( $content ) != '') {
 					$finalContent .= $content . "\n";
 				}
 				
 				$rule_num = $i + 1;
 				$temp ['rule_' . $rule_num] = $content;
-				$temp ['rule_' . $rule_num . '_plain'] = wp_automatic_trim( strip_tags ( $content ) );
+				$temp ['rule_' . $rule_num . '_plain'] = trim ( strip_tags ( $content ) );
 				
 				$i ++;
 			}
@@ -229,7 +229,7 @@ class WpAutomaticSingle extends wp_automatic {
 			$i = 0;
 			foreach ( $cg_sn_cnt_regex as $cg_sn_cnt_regex_s ) {
 				
-				echo '<br>Extracting content by REGEX : ' . wp_automatic_htmlentities ( stripslashes ( $cg_sn_cnt_regex_s ) );
+				echo '<br>Extracting content by REGEX : ' . htmlentities ( stripslashes ( $cg_sn_cnt_regex_s ) );
 				
 				$content = $wpAutomaticDom->getContentByRegex ( stripslashes ( $cg_sn_cnt_regex_s ) );
 				$content = $content [0];
@@ -238,13 +238,13 @@ class WpAutomaticSingle extends wp_automatic {
 				
 				$content = $this->strip_unwanted ( $content, $camp_opt, $camp_general );
 				
-				if (wp_automatic_trim( $content ) != '') {
+				if (trim ( $content ) != '') {
 					$finalContent .= $content . "\n";
 				}
 				
 				$rule_num = $i + 1;
 				$temp ['rule_' . $rule_num] = $content;
-				$temp ['rule_' . $rule_num . '_plain'] = wp_automatic_trim( strip_tags ( $content ) );
+				$temp ['rule_' . $rule_num . '_plain'] = trim ( strip_tags ( $content ) );
 				
 				$i ++;
 			}
@@ -254,7 +254,7 @@ class WpAutomaticSingle extends wp_automatic {
 		
 		$temp ['matched_content'] = $finalContent;
 		
-		$temp ['matched_content_plain'] = wp_automatic_trim( strip_tags ( $finalContent ) );
+		$temp ['matched_content_plain'] = trim ( strip_tags ( $finalContent ) );
 		$temp ['source_link'] = $cg_sn_source;
 		
 		return $temp;
@@ -283,7 +283,7 @@ class WpAutomaticSingle extends wp_automatic {
 			
 			$possibleCharSet = isset ( $possibleCharSet [0] ) ? $possibleCharSet [0] : '';
 			
-			if (wp_automatic_trim( $possibleCharSet ) == '')
+			if (trim ( $possibleCharSet ) == '')
 				$possibleCharSet = 'UTF-8';
 			
 			// overwrite to utf if already utf-8
@@ -308,12 +308,12 @@ class WpAutomaticSingle extends wp_automatic {
 				
 				echo '<br> - ' . $cg_selector [$i] . ' = "' . $cg_selector_data_single . '" ';
 				
-				if (wp_automatic_trim( $cg_selector_data_single ) != '') {
+				if (trim ( $cg_selector_data_single ) != '') {
 					
 					if ($cg_selector [$i] == 'class') {
-						$query_final = '//*[contains(attribute::class, "' . wp_automatic_trim( $cg_selector_data_single ) . '")]';
+						$query_final = '//*[contains(attribute::class, "' . trim ( $cg_selector_data_single ) . '")]';
 					} elseif ($cg_selector [$i] == 'id') {
-						$query_final = "//*[@id='" . wp_automatic_trim( $cg_selector_data_single ) . "']";
+						$query_final = "//*[@id='" . trim ( $cg_selector_data_single ) . "']";
 					}
 					
 					$countBefore = $this->chars_count ( $html_to_count );
@@ -333,7 +333,7 @@ class WpAutomaticSingle extends wp_automatic {
 			}
 			
 			$contentAfterReplacement = $final_doc->saveHTML ( $final_doc->documentElement );
-			$contentAfterReplacement =wp_automatic_str_replace( array (
+			$contentAfterReplacement = str_replace ( array (
 					'<html>',
 					'</html>',
 					'<body>',
@@ -342,7 +342,7 @@ class WpAutomaticSingle extends wp_automatic {
 			), '', $contentAfterReplacement );
 			$contentAfterReplacement = preg_replace ( '{<head>.*?</head>}', '', $contentAfterReplacement );
 			
-			$content = wp_automatic_trim( $contentAfterReplacement );
+			$content = trim ( $contentAfterReplacement );
 		}
 		
 		// Stripping content using REGEX
@@ -355,16 +355,16 @@ class WpAutomaticSingle extends wp_automatic {
 			$cg_post_strip = array_filter ( $cg_post_strip );
 			
 			foreach ( $cg_post_strip as $strip_pattern ) {
-				if (wp_automatic_trim( $strip_pattern ) != '') {
+				if (trim ( $strip_pattern ) != '') {
 					
 					// $strip_pattern ='<img[^>]+\\>';
 					
-					echo '<br>Stripping:' . wp_automatic_htmlentities ( $strip_pattern );
-					$current_content = preg_replace ( '{' . wp_automatic_trim( $strip_pattern ) . '}is', '', $current_content );
+					echo '<br>Stripping:' . htmlentities ( $strip_pattern );
+					$current_content = preg_replace ( '{' . trim ( $strip_pattern ) . '}is', '', $current_content );
 				}
 			}
 			
-			if (wp_automatic_trim( $current_content ) != '') {
+			if (trim ( $current_content ) != '') {
 				$content = $current_content;
 			}
 		} // end regex replace
@@ -374,7 +374,7 @@ class WpAutomaticSingle extends wp_automatic {
 			
 			echo '<br>Stripping html tags...';
 			
-			$cg_allowed_tags = wp_automatic_trim( $camp_general ['cg_allowed_tags'] );
+			$cg_allowed_tags = trim ( $camp_general ['cg_allowed_tags'] );
 			
 			if (! stristr ( $cg_allowed_tags, '<script' )) {
 				$content = preg_replace ( '{<script.*?script>}s', '', $content );

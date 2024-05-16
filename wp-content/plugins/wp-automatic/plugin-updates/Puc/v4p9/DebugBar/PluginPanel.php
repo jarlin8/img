@@ -9,7 +9,7 @@ if ( !class_exists('Puc_v4p9_DebugBar_PluginPanel', false) ):
 		protected $updateChecker;
 
 		protected function displayConfigHeader() {
-			$this->row('Plugin file', wp_automatic_htmlentities($this->updateChecker->pluginFile));
+			$this->row('Plugin file', htmlentities($this->updateChecker->pluginFile));
 			parent::displayConfigHeader();
 		}
 

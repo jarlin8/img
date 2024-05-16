@@ -32,10 +32,6 @@ function wp_automatic_post_edit_form_tag() {
 		//tutorial metabox
 		add_meta_box( 'tutorial-meta-box', 'Tutorial', 'wp_automatic_tutorial_meta_boxe', 'wp_automatic', 'side', 'low' );
 		
-		//Supported tags metabox
-		add_meta_box( 'supported-tags-meta-box', 'Supported tags', 'wp_automatic_supported_tags_meta_boxe', 'wp_automatic', 'side', 'low' );
-
-
 		add_meta_box( 'categories-meta-boxes', 'Categories & Tags', 'wp_automatic_cats_meta_boxes', 'wp_automatic', 'normal', 'low' );
 		add_meta_box( 'filters-meta-boxes', 'Posts filters', 'wp_automatic_filters_meta_boxes', 'wp_automatic', 'normal', 'low' );
 		add_meta_box( 'tbs-meta-boxes', 'Rewriting, Translation & Multi-language', 'wp_automatic_tbs_meta_boxes', 'wp_automatic', 'normal', 'low' );
@@ -57,10 +53,6 @@ function wp_automatic_posted_meta_boxe(){
 
 function wp_automatic_tutorial_meta_boxe(){
 	require_once('metabox_tutorials.php');
-}
-
-function wp_automatic_supported_tags_meta_boxe(){
-	require_once('metabox_supported_tags.php');
 }
 
 function wp_automatic_actions_meta_boxe(){
@@ -136,13 +128,7 @@ if( ! array_key_exists('camp_post_every',$_POST)) return false;
 
 // INI Vars
 $camp_post_every = $_POST['camp_post_every'];
-
-//replace single quote by quote fix:22891
-$_POST['camp_keywords'] = wp_automatic_str_replace("'", "ʼ", $_POST['camp_keywords'] );
-$_POST['camp_keywords'] = wp_automatic_str_replace("\ʼ", "ʼ", $_POST['camp_keywords'] );
-
 $camp_keywords=addslashes($_POST['camp_keywords']);
-
 @$camp_cb_category=addslashes($_POST['camp_cb_category']);
 @$camp_replace_link=addslashes($_POST['camp_replace_link']);
 @$camp_add_star=addslashes($_POST['camp_add_star']);
@@ -192,7 +178,7 @@ if(isset($_POST['camp_post_custom_v'])){
 }
 
 // If not a valid save ignore 
-if ( (wp_automatic_trim($camp_keywords) == '' && !( $camp_type =='Feeds' ||  $camp_type =='Spintax' ||  $camp_type =='Facebook' || $camp_type =='Craigslist' || $camp_type =='Reddit' || $camp_type =='Single' || $camp_type =='Multi' || $camp_type =='telegram' || $camp_type =='Rumble' ) )  || ($camp_type == 'Feeds' && wp_automatic_trim($feeds) == '')   ) return false;
+if ( (trim($camp_keywords) == '' && !( $camp_type =='Feeds' ||  $camp_type =='Spintax' ||  $camp_type =='Facebook' || $camp_type =='Craigslist' || $camp_type =='Reddit' || $camp_type =='Single' || $camp_type =='Multi') )  || ($camp_type == 'Feeds' && trim($feeds) == '')  ) return false;
 
 
 // adding keywords to the table
@@ -221,10 +207,9 @@ if(count($keywords) > 0){
 	//loping keywords
 	foreach($keywords as $keyword){
 		
-		$keyword = wp_automatic_trim($keyword);
+		$keyword = trim($keyword);
 		
-		if( wp_automatic_trim($keyword) != ''){
-
+		if( trim($keyword) != ''){
 			
 			$query="INSERT IGNORE  INTO {$prefix}automatic_keywords(keyword_name,keyword_camp) values('$keyword','$post_id')";
 			@$wpdb->query($query);
@@ -254,7 +239,7 @@ foreach($_POST as $key=>$value){
 }
 
 
-//$camp_general['cg_eb_full_img_t'] = wp_automatic_htmlentities($camp_general['cg_eb_full_img_t']);
+//$camp_general['cg_eb_full_img_t'] = htmlentities($camp_general['cg_eb_full_img_t']);
 $camp_general = base64_encode(serialize($camp_general));
 
 
@@ -272,9 +257,9 @@ $feeds=explode("\n",$feeds);
 
 foreach($feeds as $feed){
  
- 	if( wp_automatic_trim($feed) != ''){
+ 	if( trim($feed) != ''){
 			//appending 
-			$feed=wp_automatic_trim($feed);
+			$feed=trim($feed);
 			$feed=addslashes($feed);
 			
 			

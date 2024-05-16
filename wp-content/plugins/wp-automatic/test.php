@@ -30,7 +30,7 @@ ALTER TABLE `{$prefix}automatic_youtube_links` ADD INDEX(`link_keyword`);" ;
 	$que=explode(';',$querys);
 	
 	foreach($que  as $query){
-		if(wp_automatic_trim($query)!=''){
+		if(trim($query)!=''){
 			$resval = $wpdb->query($query);
 		}
 	}

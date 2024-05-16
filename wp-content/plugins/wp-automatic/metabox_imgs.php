@@ -212,24 +212,6 @@ global $camp_post_category;
 
 						</div>
 
-						<div class="option clearfix">
-
-							<input data-controls="classic_editor_gallery_template" name="camp_options[]" value="OPT_FEED_GALLERY_OLD" type="checkbox"> 
-							<span class="option-title"> Use the old classic editor format (by default, the block editor format is used) </span> <br>
-
-							<div id="classic_editor_gallery_template"  class="field f_100">
-							<label>
-		                    Gallery shortcode template  
-							</label>
-							
-								<input placeholder="<?php echo  wp_automatic_htmlentities('[gallery ids="{attachments}"]') ;?>"  value="<?php    echo wp_automatic_htmlentities(@$camp_general['cg_classic_gallery_template'],ENT_COMPAT, 'UTF-8')   ?>"  name="cg_classic_gallery_template" type="text">
-								
-								<div class="description">This is how the plugin will build gallery shortcode<br><br>Default: <?php echo  wp_automatic_htmlentities('[gallery ids="{attachments}"]') ;?><br>Example: [gallery link="file" columns="5" size="large" ids="{attachments}"]</div>
-		               
-							</div>
-
-						</div>
-
 						<div class="description">*By default, the gallery will be added to the top of the post content and if you want to change the location, add the tag [the_gallery] anywhere in the "Post text template" above.<br><br>*Tip: if you want all galleries on your site to display a lightbox (user clicks the thumbnail to view a larger sized image), just install <a target="_blank" href="https://wordpress.org/plugins/gallery-lightbox-slider/">this free plugin</a></div>
 
 					</div>

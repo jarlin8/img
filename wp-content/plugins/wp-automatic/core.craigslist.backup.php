@@ -18,7 +18,7 @@ class WpAutomaticCraigslist extends wp_automatic {
 		$camp_general = array_map ( 'wp_automatic_stripslashes', $camp_general );
 		
 		// items url
-		$cg_cl_page = wp_automatic_trim( $camp_general ['cg_cl_page'] );
+		$cg_cl_page = trim ( $camp_general ['cg_cl_page'] );
 		
 		// verify valid link
 		if (! (stristr ( $cg_cl_page, 'http' ) && stristr ( $cg_cl_page, 'craigslist.org' ))) {
@@ -90,14 +90,14 @@ class WpAutomaticCraigslist extends wp_automatic {
 		$x = 'error';
 		$url = $api_url;
 		curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-		curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $url ) );
+		curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
 		$exec = curl_exec ( $this->ch );
 		$x = curl_error ( $this->ch );
 		
 		 
 		
 		// error check
-		if (wp_automatic_trim( $x ) != '') {
+		if (trim ( $x ) != '') {
 			echo '<br>Curl error:' . $x;
 			return false;
 		}
@@ -166,7 +166,7 @@ class WpAutomaticCraigslist extends wp_automatic {
 			$item ['item_img'] = '';
 			$item ['item_imgs'] = '';
 			$imgs_arr = array ();
-			if (isset ( $ImgMatchs_arr [0] ) && wp_automatic_trim( $ImgMatchs_arr [0] ) != '') {
+			if (isset ( $ImgMatchs_arr [0] ) && trim ( $ImgMatchs_arr [0] ) != '') {
 				$item ['item_img'] = $this->craigslist_get_img_url ( $ImgMatchs_arr [0] );
 				
 				foreach ( $ImgMatchs_arr as $ImgMatchs_arr_s ) {
@@ -186,7 +186,7 @@ class WpAutomaticCraigslist extends wp_automatic {
 			
 			// <span class="result-hood"> (Broomfield )</span>
 			preg_match ( '!class="result-hood">(.*?)<!', $itemTxt, $hoodMatchs );
-			$item ['item_hood'] = wp_automatic_trim( $hoodMatchs [1] ) != '(  )' ? $hoodMatchs [1] : '';
+			$item ['item_hood'] = trim ( $hoodMatchs [1] ) != '(  )' ? $hoodMatchs [1] : '';
 			
 			print_r ( $item );
 			exit ();
@@ -196,7 +196,7 @@ class WpAutomaticCraigslist extends wp_automatic {
 			echo '<li> Link:' . $item_link;
 			
 			// No image skip
-			if (wp_automatic_trim( $item ['item_img'] ) == '' && in_array ( 'OPT_CL_IMG', $camp_opt )) {
+			if (trim ( $item ['item_img'] ) == '' && in_array ( 'OPT_CL_IMG', $camp_opt )) {
 				echo '<- No image skip';
 				continue;
 			}
@@ -238,12 +238,12 @@ class WpAutomaticCraigslist extends wp_automatic {
 		
 		foreach ( $keywords as $keyword ) {
 			
-			$keyword = wp_automatic_trim( $keyword );
+			$keyword = trim ( $keyword );
 			
 			// update last keyword
-			update_post_meta ( $camp->camp_id, 'last_keyword', wp_automatic_trim( $keyword ) );
+			update_post_meta ( $camp->camp_id, 'last_keyword', trim ( $keyword ) );
 			
-			if (wp_automatic_trim( $keyword ) != '') {
+			if (trim ( $keyword ) != '') {
 				
 				// getting links from the db for that keyword
 				$query = "select * from {$this->wp_prefix}automatic_general where item_type=  'cl_{$camp->camp_id}_$keyword' ";
@@ -311,9 +311,9 @@ class WpAutomaticCraigslist extends wp_automatic {
 					// getting full description
 					
 					// getting full image
-					if (wp_automatic_trim( $temp ['item_img'] ) != '') {
+					if (trim ( $temp ['item_img'] ) != '') {
 						
-						$fullImg =wp_automatic_str_replace( '300x300', '600x450', $temp ['item_img'] );
+						$fullImg = str_replace ( '300x300', '600x450', $temp ['item_img'] );
 						echo '<br>Full Image:' . $fullImg;
 						
 						$temp ['item_img'] = $fullImg;
@@ -321,7 +321,7 @@ class WpAutomaticCraigslist extends wp_automatic {
 					
 					// Img shortcode
 					$temp ['item_img_html'] = '';
-					if (wp_automatic_trim( $temp ['item_img'] ) != '') {
+					if (trim ( $temp ['item_img'] ) != '') {
 						$temp ['item_img_html'] = '<img src="' . $temp ['item_img'] . '" />';
 					}
 					
@@ -355,7 +355,7 @@ class WpAutomaticCraigslist extends wp_automatic {
 					// curl get
 					$x = 'error';
 					curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-					curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $url ) );
+					curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
 					$exec = curl_exec ( $this->ch );
 					$x = curl_error ( $this->ch );
 					
@@ -377,12 +377,12 @@ class WpAutomaticCraigslist extends wp_automatic {
 						$bodyMatchs = preg_replace ( '!<div class="print-qrcode.*?div>!s', '', $bodyMatchs );
 						$bodyMatchs = preg_replace ( '!<div class="print-information.*?div>!s', '', $bodyMatchs );
 						
-						if (wp_automatic_trim( $bodyMatchs ) != '') {
+						if (trim ( $bodyMatchs ) != '') {
 							echo '<-- Found with length of:' . strlen ( $bodyMatchs );
-							$temp ['item_description'] = wp_automatic_trim( $bodyMatchs );
+							$temp ['item_description'] = trim ( $bodyMatchs );
 							
 							// remove show contact info
-							$temp ['item_description'] =wp_automatic_str_replace( 'show contact info', '', $temp ['item_description'] );
+							$temp ['item_description'] = str_replace ( 'show contact info', '', $temp ['item_description'] );
 						} else {
 							echo '<-- not able to find the description';
 						}
@@ -415,7 +415,7 @@ class WpAutomaticCraigslist extends wp_automatic {
 					
 					// gallery html
 					$cg_cl_full_img_t = @$camp_general ['cg_cl_full_img_t'];
-					if (wp_automatic_trim( $cg_cl_full_img_t ) == '') {
+					if (trim ( $cg_cl_full_img_t ) == '') {
 						$cg_cl_full_img_t = '<img src="[img_src]" class="wp_automatic_gallery" />';
 					}
 					
@@ -429,7 +429,7 @@ class WpAutomaticCraigslist extends wp_automatic {
 					foreach ( $allImages as $singleImage ) {
 						
 						$singleImageHtml = $cg_cl_full_img_t;
-						$singleImageHtml =wp_automatic_str_replace( '[img_src]', $singleImage, $singleImageHtml );
+						$singleImageHtml = str_replace ( '[img_src]', $singleImage, $singleImageHtml );
 						$allImages_html .= $singleImageHtml;
 					}
 					
@@ -441,7 +441,7 @@ class WpAutomaticCraigslist extends wp_automatic {
 					// numeric price
 					$price_raw = $temp ['item_price'];
 					
-					$price_raw =wp_automatic_str_replace( ',', '', $price_raw );
+					$price_raw = str_replace ( ',', '', $price_raw );
 					
 					// numeric price
 					preg_match ( '{\d[.*\d]*}is', $price_raw, $price_matches );
@@ -479,7 +479,7 @@ class WpAutomaticCraigslist extends wp_automatic {
 		// split /search/
 		$url_parts = explode ( '/search/', $url );
 		$domain = $url_parts [0];
-		$domain = wp_automatic_str_replace(array('https://','http://','www.'), '', $domain);
+		$domain = str_replace(array('https://','http://','www.'), '', $domain);
 		
 		$path_plus_params = $url_parts [1];
 		

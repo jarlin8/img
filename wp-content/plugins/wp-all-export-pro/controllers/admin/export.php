@@ -81,6 +81,9 @@ class PMXE_Admin_Export extends PMXE_Controller_Admin
      */
     public function index_action()
     {
+	    if ($this->input->post('is_submitted')) {
+		    check_admin_referer('choose-cpt', '_wpnonce_choose-cpt');
+	    }
 
         $this->onlyAllowAdmin();
 
@@ -137,6 +140,7 @@ class PMXE_Admin_Export extends PMXE_Controller_Admin
             PMXE_Plugin::$session->set('created_at_version', $post['created_at_version']);
 
             if (!empty($post['auto_generate'])) {
+                PMXE_Plugin::$session->set('auto_generate', 1);
                 $auto_generate = XmlCsvExport::auto_genetate_export_fields($post, $this->errors);
 
                 foreach ($auto_generate as $key => $value) {
@@ -152,15 +156,13 @@ class PMXE_Admin_Export extends PMXE_Controller_Admin
 
         if ($this->input->post('is_submitted') and !$this->errors->get_error_codes()) {
 
-            check_admin_referer('choose-cpt', '_wpnonce_choose-cpt');
-
             PMXE_Plugin::$session->save_data();
 
             if (!empty($post['auto_generate'])) {
-                wp_redirect(esc_url_raw(add_query_arg('action', 'options', $this->baseUrl)));
+                wp_redirect(esc_url_raw(add_query_arg(['action' => 'options','_wpnonce_options' => wp_create_nonce('options')], $this->baseUrl)));
                 die();
             } else {
-                wp_redirect(esc_url_raw(add_query_arg('action', 'template', $this->baseUrl)));
+                wp_redirect(esc_url_raw(add_query_arg(['action' => 'template','_wpnonce_template' => wp_create_nonce('template')], $this->baseUrl)));
                 die();
             }
 
@@ -174,6 +176,9 @@ class PMXE_Admin_Export extends PMXE_Controller_Admin
      */
     public function template_action()
     {
+
+	    check_admin_referer( 'template', '_wpnonce_template' );
+
 
         $this->onlyAllowAdmin();
 
@@ -237,7 +242,6 @@ class PMXE_Admin_Export extends PMXE_Controller_Admin
             }
 
         } elseif ($this->input->post('is_submitted')) {
-            check_admin_referer('template', '_wpnonce_template');
 
             if (empty($post['cc_type'][0]) && !in_array($post['xml_template_type'], array('custom', 'XmlGoogleMerchants'))) {
                 $this->errors->add('form-validation', esc_html__('You haven\'t selected any columns for export.', 'wp_all_export_plugin'));
@@ -304,7 +308,7 @@ class PMXE_Admin_Export extends PMXE_Controller_Admin
                         PMXE_Plugin::$session->set($key, $value);
                     }
                     PMXE_Plugin::$session->save_data();
-                    wp_redirect(esc_url_raw(add_query_arg('action', 'options', $this->baseUrl)));
+                    wp_redirect(esc_url_raw(add_query_arg(['action' => 'options','_wpnonce_options' => wp_create_nonce('options')], $this->baseUrl)));
                     die();
                 } else {
                     $this->data['export']->set(array('options' => $post, 'settings_update_on' => date('Y-m-d H:i:s')))->save();
@@ -319,7 +323,7 @@ class PMXE_Admin_Export extends PMXE_Controller_Admin
                         wp_redirect(esc_url_raw(add_query_arg(array('page' => 'pmxe-admin-export', 'id' => $this->data['export']->id, 'action' => 'process') + array_intersect_key($_GET, array_flip($this->baseUrlParamNames)), admin_url('admin.php'))));
 
                     } else {
-                        wp_redirect(esc_url_raw(add_query_arg(array('page' => 'pmxe-admin-manage', 'pmxe_nt' => urlencode(__('Options updated', 'pmxi_plugin'))) + array_intersect_key($_GET, array_flip($this->baseUrlParamNames)), admin_url('admin.php'))));
+	                    wp_redirect(esc_url_raw(add_query_arg(array('page' => 'pmxe-admin-manage', 'pmxe_nt' => urlencode(__('Options updated', 'pmxi_plugin')),'_wpnonce_options' => wp_create_nonce('options')) + array_intersect_key($_GET, array_flip($this->baseUrlParamNames)), admin_url('admin.php'))));
                     }
                     die();
                 }
@@ -364,6 +368,8 @@ class PMXE_Admin_Export extends PMXE_Controller_Admin
      */
     public function options_action()
     {
+	    check_admin_referer( 'options', '_wpnonce_options' );
+
         $this->onlyAllowAdmin();
 
         $default = PMXE_Plugin::get_default_import_options();
@@ -439,7 +445,10 @@ class PMXE_Admin_Export extends PMXE_Controller_Admin
 
         if ($this->input->post('is_submitted')) {
 
-            check_admin_referer('options', '_wpnonce_options');
+            $auto_generate = PMXE_Plugin::$session->get('auto_generate', false);
+            if( $auto_generate ) {
+                $post['order_item_per_row'] = 0;
+            }
 
             if ($post['is_generate_templates'] and '' == $post['template_name']) {
                 $friendly_name = $this->getFriendlyName($post);

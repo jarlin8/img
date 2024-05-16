@@ -18,7 +18,7 @@ class AtefFullContent{
 		$doc = preg_match('{<body.*</body>}s', $doc , $bodyMatchs );
 		$docBody = $bodyMatchs[0];
 		
-		if(wp_automatic_trim($docBody) == ''){
+		if(trim($docBody) == ''){
 			$this->echoDebug('No Body Found ... skiping');
 			return false;
 		}

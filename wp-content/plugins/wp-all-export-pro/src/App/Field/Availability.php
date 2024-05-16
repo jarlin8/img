@@ -7,9 +7,9 @@ class Availability extends Field
 {
     const SECTION = 'availabilityPrice';
 
-    const IN_STOCK = 'in stock';
+    const IN_STOCK = 'in_stock';
 
-    const OUT_OF_STOCK = 'out of stock';
+    const OUT_OF_STOCK = 'out_of_stock';
 
     public function getValue($snippetData)
     {

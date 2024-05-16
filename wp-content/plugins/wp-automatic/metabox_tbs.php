@@ -74,18 +74,9 @@ global $camp_translate_to_2;
 	                    $y_langs_c = array(  "no" , "auto" , "az","ml","sq","mt","am","mk","en","mi","ar	","mr","hy","mhr","af","mn","eu","de","ba","ne","be	","bn","pa","my","pap","bg","fa","bs","pl","cy","pt","hu","ro","vi","ru","ht","ceb","gl","sr","nl","si","mrj","sk","el","sl","ka","sw","gu","su","da","tg","he","th","yi","tl","id","ta","ga","tt","it","te","is","tr","es","udm","kk","uz","kn","uk","ca","ur","ky","fi","zh","fr","ko","hi","xh","hr","km","cs","lo","sv","la","gd","lv","et","lt","eo","lb","jv","mg","ja","ms" );
 	                    
 	                    //Deepl
-	                    $d_langs = array( "---" ,"Auto-Detect" , 'Bulgarian', 'Czech', 'Danish', 'German', 'Greek', 'English', 
-						'Spanish', 'Estonian', 'Finnish', 'French', 'Hungarian', 'Indonesian', 
-						'Italian', 'Japanese', 'Korean', 'Lithuanian', 'Latvian', 'Norwegian (Bokmål)', 
-						'Dutch', 'Polish', 'Portuguese (all Portuguese varieties mixed)', 'Romanian', 
-						'Russian', 'Slovak', 'Slovenian', 'Swedish', 'Turkish', 'Ukrainian', 'Chinese');
+	                    $d_langs = array( "---" ,"Auto-Detect" , "English","German","French","Spanish","Portuguese", "Portuguese PT" , "Portuguese BR" ,  "Italian","Dutch","Polish","Russian" , "Japanese" , "Chinese" , "Bulgarian","Czech","Danish","Greek","Estonian","Finnish","Hungarian","Lithuanian","Latvian","Romanian","Slovak","Slovenian","Swedish");
+	                    $d_langs_c= array('no', 'auto' , "EN","DE","FR","ES","PT",   "PT-PT" , "PT-BR", "IT","NL","PL","RU" , "JA" , "ZH", "BG","CS","DA","EL","ET","FI","HU","LT","LV","RO","SK","SL","SV" );
 	                    
-						$d_langs_c= array('no', 'auto' , 'BG', 'CS', 'DA', 'DE', 'EL', 'EN', 'ES', 'ET', 'FI', 'FR', 
-						'HU', 'ID', 'IT', 'JA', 'KO', 'LT', 'LV', 'NB', 'NL', 'PL', 
-						'PT', 'RO', 'RU', 'SK', 'SL', 'SV', 'TR', 'UK', 'ZH' );
-	                    
-
-
                     ?>
                     
                     <input name="camp_options[]" id="translate_option" value="OPT_TRANSLATE" type="checkbox">

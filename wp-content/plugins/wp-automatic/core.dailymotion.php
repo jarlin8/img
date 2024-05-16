@@ -11,7 +11,7 @@ Class WpAutomaticDailyMotion extends wp_automatic{
 	 */
 	function DailyMotion_fetch_items($keyword, $camp) {
 
-		$keyword = wp_automatic_trim($keyword);
+		$keyword = trim($keyword);
 		
 		  echo "<br>so I should now get some items from DailyMotion for keyword:".$keyword ;
 
@@ -73,27 +73,27 @@ Class WpAutomaticDailyMotion extends wp_automatic{
 		}
 		
 		//specific owner / playlist
-		if( in_array('OPT_DM_PLAYLIST', $camp_opt)  && wp_automatic_trim($camp_general['cg_dm_playlist']) != '' ){
+		if( in_array('OPT_DM_PLAYLIST', $camp_opt)  && trim($camp_general['cg_dm_playlist']) != '' ){
 			
-			$cg_dm_playlist_txt = wp_automatic_trim($camp_general['cg_dm_playlist']);
+			$cg_dm_playlist_txt = trim($camp_general['cg_dm_playlist']);
 			$filter[]= 'playlist='. $cg_dm_playlist_txt;
 			
 		}elseif(in_array('OPT_DM_USER', $camp_opt)){
 			$cg_dm_user = $camp_general['cg_dm_user'];
-			if(wp_automatic_trim($cg_dm_user) != ''){
-				$filter[]= 'owner='.wp_automatic_trim($cg_dm_user);
+			if(trim($cg_dm_user) != ''){
+				$filter[]= 'owner='.trim($cg_dm_user);
 			}
 		}
 		
 		//date filter 
-		if(wp_automatic_trim($this->minimum_post_timestamp) != '' &&  $this->minimum_post_timestamp_camp == $camp->camp_id ){
-			$filter[]= 'created_after='.wp_automatic_trim($this->minimum_post_timestamp);
+		if(trim($this->minimum_post_timestamp) != '' &&  $this->minimum_post_timestamp_camp == $camp->camp_id ){
+			$filter[]= 'created_after='.trim($this->minimum_post_timestamp);
 		}
 		
 		//country filter 
 		if(in_array('OPT_DM_LIMIT_CTRY', $camp_opt)){
 			
-			$cg_dm_ctr = wp_automatic_trim($camp_general['cg_dm_ctr']);
+			$cg_dm_ctr = trim($camp_general['cg_dm_ctr']);
 			
 			if($cg_dm_ctr != ''){
 				$filter[] = 'country='.$cg_dm_ctr;
@@ -104,7 +104,7 @@ Class WpAutomaticDailyMotion extends wp_automatic{
 		//lang filter
 		if(in_array('OPT_DM_LIMIT_LANG', $camp_opt)){
 			
-			$cg_dm_lang = wp_automatic_trim($camp_general['cg_dm_lang']);
+			$cg_dm_lang = trim($camp_general['cg_dm_lang']);
 
 			if($cg_dm_lang != ''){
 				$filter[] = 'detected_language='.$cg_dm_lang;
@@ -114,7 +114,7 @@ Class WpAutomaticDailyMotion extends wp_automatic{
 		
 		//channel filter
 		if(in_array('OPT_DM_LIMIT_CHANNEL', $camp_opt)){
-			$cg_dm_channel = wp_automatic_trim($camp_general['cg_dm_channel']);
+			$cg_dm_channel = trim($camp_general['cg_dm_channel']);
 			
 			if($cg_dm_channel != ''){
 				$filter[] = 'channel='.$cg_dm_channel;
@@ -246,12 +246,12 @@ Class WpAutomaticDailyMotion extends wp_automatic{
 
 		foreach ( $keywords as $keyword ) {
 				
-			$keyword = wp_automatic_trim($keyword);
+			$keyword = trim($keyword);
 
 			//update last keyword
-			update_post_meta($camp->camp_id, 'last_keyword', wp_automatic_trim($keyword));
+			update_post_meta($camp->camp_id, 'last_keyword', trim($keyword));
 				
-			if (wp_automatic_trim( $keyword ) != '') {
+			if (trim ( $keyword ) != '') {
 
 				// getting links from the db for that keyword
 				$query = "select * from {$this->wp_prefix}automatic_general where item_type=  'dm_{$camp->camp_id}_$keyword' ";
@@ -336,8 +336,8 @@ Class WpAutomaticDailyMotion extends wp_automatic{
 					$vid_width  = 560;
 					$vid_height = 315;
 					
-					if(wp_automatic_trim($camp_general['cg_dm_width']) != '' ) $vid_width = wp_automatic_trim($camp_general['cg_dm_width']) ; 
-					if(wp_automatic_trim($camp_general['cg_dm_height']) != '' ) $vid_height = wp_automatic_trim($camp_general['cg_dm_height']) ;
+					if(trim($camp_general['cg_dm_width']) != '' ) $vid_width = trim($camp_general['cg_dm_width']) ; 
+					if(trim($camp_general['cg_dm_height']) != '' ) $vid_height = trim($camp_general['cg_dm_height']) ;
 					
 					//additional paramters i.e ?autoPlay=1
 					$additionalParams = '';

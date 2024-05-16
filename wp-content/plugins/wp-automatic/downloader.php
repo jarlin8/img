@@ -12,7 +12,7 @@ function curl_exec_follow( &$ch){
 		
 		if($info['http_code'] == 301 ||  $info['http_code'] == 302  ||  $info['http_code'] == 307 ){
 				
-			curl_setopt($ch, CURLOPT_URL, wp_automatic_trim($info['redirect_url']));
+			curl_setopt($ch, CURLOPT_URL, trim($info['redirect_url']));
 			$exec=curl_exec($ch);
 				
 		}else{
@@ -30,12 +30,12 @@ function curl_exec_follow( &$ch){
 }
 
 $link=$_GET['link'];//urldecode();
-    $link=wp_automatic_str_replace('httpz','http',$link);
+    $link=str_replace('httpz','http',$link);
     //$link='http://ointmentdirectory.info/%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%81%E0%B8%AA%E0%B8%94%E0%B8%87%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%99%E0%B8%B4%E0%B9%88%E0%B8%87-%E0%B8%97%E0%B8%AD%E0%B8%94%E0%B8%9B%E0%B8%A5%E0%B8%B2%E0%B9%80%E0%B8%9E';
     //  echo $link ;
     //exit ;
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, wp_automatic_trim($link));
+    curl_setopt($ch, CURLOPT_URL, trim($link));
     curl_setopt($ch, CURLOPT_HEADER, 1);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
@@ -55,7 +55,7 @@ $link=$_GET['link'];//urldecode();
     
      
 	$original_link=$curlinfo['url'];
-	$original_link=wp_automatic_str_replace("?hop=zzzzz",'',$original_link);
+	$original_link=str_replace("?hop=zzzzz",'',$original_link);
 	$res['link']=$original_link;
 	
 	//get the title
@@ -84,7 +84,7 @@ $link=$_GET['link'];//urldecode();
 	{
 		$textContent = $tag->textContent;
 	
-		if(wp_automatic_trim($textContent) == '' || strlen($textContent) < 25 || stristr($textContent, 'HTTP') || stristr($textContent, '$')) continue;
+		if(trim($textContent) == '' || strlen($textContent) < 25 || stristr($textContent, 'HTTP') || stristr($textContent, '$')) continue;
 		$ret[] = $textContent;
 		
 	}

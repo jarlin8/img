@@ -95,7 +95,7 @@ class wp_automatic_AmazonProductAPI {
 	{
 		@$err = $response->Error->Message;
 		
-		if (wp_automatic_trim( $err ) != '') {
+		if (trim ( $err ) != '') {
 			
 			throw new Exception ( '<br>' . $err );
 			return false;
@@ -110,7 +110,7 @@ class wp_automatic_AmazonProductAPI {
 			{
 				// print_r($response);
 				$err = @$response->Items->Request->Errors->Error->Message;
-				if (wp_automatic_trim( $err ) != '') {
+				if (trim ( $err ) != '') {
 					
 					echo '<br><b>Amazon Error</b>:' . $err;
 				}
@@ -265,7 +265,7 @@ class wp_automatic_AmazonProductAPI {
 		$exec = curl_exec ( $this->ch );
 		
 		// empty response
-		if (wp_automatic_trim( $exec ) == '') {
+		if (trim ( $exec ) == '') {
 			echo '<br>Request we issued to Amazon did not return any data ' . $x;
 			return array ();
 		}
@@ -367,7 +367,7 @@ class wp_automatic_AmazonProductAPI {
 		$x = curl_error ( $this->ch );
 		
 		// empty response
-		if (wp_automatic_trim( $exec ) == '') {
+		if (trim ( $exec ) == '') {
 			throw new Exception ( 'Request we issued to Amazon did not return any data ' . $x );
 		}
 		
@@ -412,14 +412,14 @@ class wp_automatic_AmazonProductAPI {
 		$x = 'error';
 		$url = $moreUrl;
 		curl_setopt ( $ch, CURLOPT_HTTPGET, 1 );
-		curl_setopt ( $ch, CURLOPT_URL, wp_automatic_trim( $url ) );
+		curl_setopt ( $ch, CURLOPT_URL, trim ( $url ) );
 		curl_setopt ( $ch, CURLOPT_ENCODING, "" );
 		
 		$exec = curl_exec ( $ch );
 		$x = curl_error ( $ch );
 		
 		// validate reply
-		if (wp_automatic_trim( $exec ) == '') {
+		if (trim ( $exec ) == '') {
 			throw new Exception ( 'Empty reply from Amazon with possible curl error ' . $x );
 		}
 		

@@ -22,7 +22,7 @@ class ShippingHeight extends Field
 
                 $shippingHeight = $product->get_height();
                 if(is_numeric($shippingHeight)) {
-                    $height = wc_get_dimension($shippingHeight, $currentUnit, $toUnit);
+                    $height = wc_get_dimension($shippingHeight, $toUnit, $currentUnit);
                 } else {
                     $height = $shippingHeight;
                 }

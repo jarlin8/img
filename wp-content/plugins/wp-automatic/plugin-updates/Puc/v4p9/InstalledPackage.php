@@ -65,7 +65,7 @@ if ( !class_exists('Puc_v4p9_InstalledPackage', false) ):
 			//WordPress only looks at the first 8 KiB of the file, so we do the same.
 			$content = substr($content, 0, 8192);
 			//Normalize line endings.
-			$content = wp_automatic_str_replace("\r", "\n", $content);
+			$content = str_replace("\r", "\n", $content);
 
 			$headers = $this->getHeaderNames();
 			$results = array();

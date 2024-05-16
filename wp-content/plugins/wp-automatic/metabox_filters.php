@@ -213,7 +213,7 @@ global $camp_post_execlude;
 						 		 		 				
 						 		 		 				
 						 		 		 				<td  style="padding-right:10px;width:130px;vertical-align: top;" >
-						 		 		 				 		<input  class="no-unify"  value="<?php  echo wp_automatic_htmlentities( $cg_criteria_skip_field ,ENT_COMPAT, 'UTF-8') ?>" name="cg_criteria_skip_fields[]" type="text">
+						 		 		 				 		<input  class="no-unify"  value="<?php  echo htmlentities( $cg_criteria_skip_field ,ENT_COMPAT, 'UTF-8') ?>" name="cg_criteria_skip_fields[]" type="text">
 						 		 		 				</td>
 						 		 		 				
 							 		 		 				<td style="padding-right:8px; vertical-align: top;">
@@ -228,7 +228,7 @@ global $camp_post_execlude;
 							 		 		 				</td>
 						
 						 		 		 				<td  style="padding-right:10px;width:130px" >
-						 		 		 						<textarea style="height:70px" class="no-unify" name="cg_criteria_skip_values[]" ><?php  echo wp_automatic_htmlentities( $cg_criteria_skip_values[$i] ,ENT_COMPAT, 'UTF-8')  ?></textarea>
+						 		 		 						<textarea style="height:70px" class="no-unify" name="cg_criteria_skip_values[]" ><?php  echo htmlentities( $cg_criteria_skip_values[$i] ,ENT_COMPAT, 'UTF-8')  ?></textarea>
 						 		 		 				
 						 		 		 				</td>
 						 		 		 				
@@ -345,7 +345,7 @@ global $camp_post_execlude;
 						 		 		 				
 						 		 		 				
 						 		 		 				<td  style="padding-right:10px;width:130px;vertical-align: top;" >
-						 		 		 				 		<input  class="no-unify"  value="<?php  echo wp_automatic_htmlentities( $cg_criteria_skip_field_must ,ENT_COMPAT, 'UTF-8') ?>" name="cg_criteria_skip_fields_must[]" type="text">
+						 		 		 				 		<input  class="no-unify"  value="<?php  echo htmlentities( $cg_criteria_skip_field_must ,ENT_COMPAT, 'UTF-8') ?>" name="cg_criteria_skip_fields_must[]" type="text">
 						 		 		 				</td>
 						 		 		 				
 							 		 		 				<td style="padding-right:8px; vertical-align: top;">
@@ -360,7 +360,7 @@ global $camp_post_execlude;
 							 		 		 				</td>
 						
 						 		 		 				<td  style="padding-right:10px;width:130px" >
-						 		 		 						<textarea style="height:70px" class="no-unify" name="cg_criteria_skip_values_must[]" ><?php  echo wp_automatic_htmlentities( $cg_criteria_skip_values_must[$i] ,ENT_COMPAT, 'UTF-8')  ?></textarea>
+						 		 		 						<textarea style="height:70px" class="no-unify" name="cg_criteria_skip_values_must[]" ><?php  echo htmlentities( $cg_criteria_skip_values_must[$i] ,ENT_COMPAT, 'UTF-8')  ?></textarea>
 						 		 		 				
 						 		 		 				</td>
 						 		 		 				

@@ -220,7 +220,7 @@ if ( !class_exists('Puc_v4p9_Plugin_Ui', false) ):
 					$details = $this->formatManualCheckErrors(get_site_transient($this->manualCheckErrorTransient));
 					delete_site_transient($this->manualCheckErrorTransient);
 				} else {
-					$message = sprintf(__('Unknown update checker status "%s"', 'plugin-update-checker'), wp_automatic_htmlentities($status));
+					$message = sprintf(__('Unknown update checker status "%s"', 'plugin-update-checker'), htmlentities($status));
 					$noticeClass = 'error notice-error';
 				}
 				printf(

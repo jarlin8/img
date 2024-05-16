@@ -124,7 +124,7 @@ function wp_automatic_bulk_callback(){
 		}
 		
 		foreach($keywords as $keyword){
-			delete_post_meta( $id ,  '_' . md5(wp_automatic_trim($keyword))  );
+			delete_post_meta( $id ,  '_' . md5(trim($keyword))  );
 		}
 
 		echo 'Reactivated';
@@ -146,10 +146,10 @@ function wp_automatic_yt_playlists_callback() {
 	$ret['data'] = '';
 	
 	//user channerl
-	$user = wp_automatic_trim($_POST['user']);
+	$user = trim($_POST['user']);
 	
 	//if empty user
-	if(wp_automatic_trim($user) == ''){
+	if(trim($user) == ''){
 		$ret['message'] = 'empty user';
 		print_r(json_encode($ret));
 		die();
@@ -170,8 +170,8 @@ function wp_automatic_yt_playlists_callback() {
 		$wp_automatic_yt_tocken = wp_automatic_single_item('wp_automatic_yt_tocken');
 		
 		
-		//$url="https://www.googleapis.com/youtube/v3/search?part=snippet&type=playlist&key=".wp_automatic_trim($wp_automatic_yt_tocken)."&maxResults=50&channelId=".wp_automatic_trim($user);
-		$url="https://www.googleapis.com/youtube/v3/playlists?part=snippet&key=".wp_automatic_trim($wp_automatic_yt_tocken)."&maxResults=50&channelId=".wp_automatic_trim($user);
+		//$url="https://www.googleapis.com/youtube/v3/search?part=snippet&type=playlist&key=".trim($wp_automatic_yt_tocken)."&maxResults=50&channelId=".trim($user);
+		$url="https://www.googleapis.com/youtube/v3/playlists?part=snippet&key=".trim($wp_automatic_yt_tocken)."&maxResults=50&channelId=".trim($user);
 
  		
 		//page token
@@ -194,12 +194,12 @@ function wp_automatic_yt_playlists_callback() {
 		//curl get
 		$x='error';
 	 	curl_setopt($ch, CURLOPT_HTTPGET, 1);
-		curl_setopt($ch, CURLOPT_URL, wp_automatic_trim($url));
+		curl_setopt($ch, CURLOPT_URL, trim($url));
 	 	$exec=curl_exec($ch);
 		$x=curl_error($ch);
 	 
 		//if no response back
-		if(wp_automatic_trim($exec) == ''){
+		if(trim($exec) == ''){
 			$ret['message'] = 'Empty response from YT '.$x;
 			print_r(json_encode($ret));
 			die();
@@ -272,10 +272,10 @@ function wp_automatic_dm_playlists_callback() {
 	$ret['data'] = '';
 
 	//user channel
-	$user = wp_automatic_trim($_POST['user']);
+	$user = trim($_POST['user']);
 
 	//if empty user
-	if(wp_automatic_trim($user) == ''){
+	if(trim($user) == ''){
 		$ret['message'] = 'empty user';
 		print_r(json_encode($ret));
 		die();
@@ -292,7 +292,7 @@ function wp_automatic_dm_playlists_callback() {
 
 	  
 		//https://api.dailymotion.com/playlists?owner=Dakar&limit=100
-		$url="https://api.dailymotion.com/playlists?limit=100&owner=".wp_automatic_trim($user);
+		$url="https://api.dailymotion.com/playlists?limit=100&owner=".trim($user);
 
  
 		//curl ini
@@ -309,12 +309,12 @@ function wp_automatic_dm_playlists_callback() {
 		//curl get
 		$x='error';
 		curl_setopt($ch, CURLOPT_HTTPGET, 1);
-		curl_setopt($ch, CURLOPT_URL, wp_automatic_trim($url));
+		curl_setopt($ch, CURLOPT_URL, trim($url));
 		$exec=curl_exec($ch);
 		$x=curl_error($ch);
 
 		//if no response back
-		if(wp_automatic_trim($exec) == ''){
+		if(trim($exec) == ''){
 			$ret['message'] = 'Empty response from YT '.$x;
 			print_r(json_encode($ret));
 			die();
@@ -381,7 +381,7 @@ function more_posted_posts_callback() {
 	$rows=$wpdb->get_results($query);
 	
 	foreach ($rows as $row){
-		  echo '<div class="posted_itm">'. wp_automatic_str_replace('New post posted:','',$row->data) .'<br>on <small>'.$row->date .'</small><br></div>';
+		  echo '<div class="posted_itm">'. str_replace('New post posted:','',$row->data) .'<br>on <small>'.$row->date .'</small><br></div>';
 	} 
 	
 	
@@ -400,7 +400,7 @@ function wp_automatic_campaign_duplicate_callback() {
 
 	$camp_id = $matches[1];
 	
-	if(wp_automatic_trim($camp_id) != '' && is_numeric($camp_id)){
+	if(trim($camp_id) != '' && is_numeric($camp_id)){
 
 		//insert post 
 		$post['post_title'] = $title;
@@ -460,7 +460,7 @@ function wp_automatic_iframe_callback() {
 			
 			$url_pts = explode("\n" , $url);
 			 
-			$rss =fetch_feed(wp_automatic_trim($url_pts[0]));
+			$rss =fetch_feed(trim($url_pts[0]));
 			
 			if (! is_wp_error ( $rss )){
 				$maxitems = $rss->get_item_quantity ();
@@ -496,8 +496,8 @@ function wp_automatic_iframe_callback() {
  		curl_setopt($ch, CURLOPT_ENCODING , "");
 		
 		// set the cookie
-		//if(wp_automatic_trim($cookie) != '')   
-		//curl_setopt($ch,CURLOPT_HTTPHEADER,'Cookie: '.wp_automatic_trim($cookie));
+		//if(trim($cookie) != '')   
+		//curl_setopt($ch,CURLOPT_HTTPHEADER,'Cookie: '.trim($cookie));
 
 		$headers[] = "Cookie: $cookie ";
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -513,7 +513,7 @@ function wp_automatic_iframe_callback() {
 			$wp_automatic_apify_key = get_option('wp_automatic_apify_key','');
 			
 			require_once 'inc/class.apify.php';
-			$apify = new ValvePress_APIFY( $wp_automatic_apify_key ,html_entity_decode(wp_automatic_trim($url)) , $ch );
+			$apify = new ValvePress_APIFY( $wp_automatic_apify_key ,html_entity_decode(trim($url)) , $ch );
 			
 			try {
 				
@@ -526,7 +526,7 @@ function wp_automatic_iframe_callback() {
 				//curl get
 				$x='error';
 				curl_setopt($ch, CURLOPT_HTTPGET, 1);
-				curl_setopt($ch, CURLOPT_URL, html_entity_decode(wp_automatic_trim($url)));
+				curl_setopt($ch, CURLOPT_URL, html_entity_decode(trim($url)));
 				$content=curl_exec($ch);
 				$x=curl_error($ch);
 				
@@ -540,17 +540,17 @@ function wp_automatic_iframe_callback() {
 			//curl get
 			$x='error';
 			curl_setopt($ch, CURLOPT_HTTPGET, 1);
-			curl_setopt($ch, CURLOPT_URL, html_entity_decode(wp_automatic_trim($url)));
+			curl_setopt($ch, CURLOPT_URL, html_entity_decode(trim($url)));
 			$content=curl_exec($ch);
 			$x=curl_error($ch);
 			
 		}
 		
-		if(wp_automatic_trim($x) != ''){
+		if(trim($x) != ''){
 			echo 'Problem loading URL: '. $x;
 		}
 		 
-		if (  wp_automatic_trim($content) == '' ) {
+		if (  trim($content) == '' ) {
 			header('404 Not Found');
 			exit();
 		}
@@ -565,8 +565,8 @@ function wp_automatic_iframe_callback() {
 	
 		
 		//fix href="//
-		$content = wp_automatic_str_replace('src="//', 'src="https://', $content);
-		$content = wp_automatic_str_replace('href="//', 'href="https://', $content);
+		$content = str_replace('src="//', 'src="https://', $content);
+		$content = str_replace('href="//', 'href="https://', $content);
 		
 		//fix this form <link href="App_Themes/Site_Blue/bootstrap.css"
 		//$content = preg_replace( '{href="([a-g]|[i-z])}is' , "href=\"/$1" , $content);
@@ -584,7 +584,7 @@ function wp_automatic_iframe_callback() {
 			//strip scripts $res['cont'] = preg_replace('{<script.*?script>}s', '', $res['cont']);
 			$beforeJS = $content;
 			$content = preg_replace('{<script.*?</script>}s', '', $content);
-			if(wp_automatic_trim($content) == '') $content = $beforeJS; //sometimes replace returns NULL ticket #7848
+			if(trim($content) == '') $content = $beforeJS; //sometimes replace returns NULL ticket #7848
 		 
 		
 		echo $content."<style>

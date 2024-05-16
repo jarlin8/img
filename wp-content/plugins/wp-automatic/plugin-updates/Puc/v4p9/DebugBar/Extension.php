@@ -64,7 +64,7 @@ if ( !class_exists('Puc_v4p9_DebugBar_Extension', false) ):
 			$update = $this->updateChecker->checkForUpdates();
 			if ( $update !== null ) {
 				echo "An update is available:";
-				echo '<pre>', wp_automatic_htmlentities(print_r($update, true)), '</pre>';
+				echo '<pre>', htmlentities(print_r($update, true)), '</pre>';
 			} else {
 				echo 'No updates found.';
 			}

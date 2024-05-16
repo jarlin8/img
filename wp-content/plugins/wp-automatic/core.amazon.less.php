@@ -26,20 +26,20 @@ class WpAutomaticAmazon extends wp_automatic {
 		$keywords = explode ( ',', $camp->camp_keywords );
 		
 		// default cat
-		if (wp_automatic_trim( $camp->camp_amazon_cat ) == '') {
+		if (trim ( $camp->camp_amazon_cat ) == '') {
 			$camp->camp_amazon_cat = 'All';
 		}
 		
 		foreach ( $keywords as $keyword ) {
 			
-			$keyword = wp_automatic_trim( $keyword );
+			$keyword = trim ( $keyword );
 			
-			if (wp_automatic_trim( $keyword ) != '') {
-				$keyword = wp_automatic_trim( $keyword );
+			if (trim ( $keyword ) != '') {
+				$keyword = trim ( $keyword );
 				echo ('<hr><b>Processing Keyword:</b> "' . $keyword . '"');
 				
 				// update last keyword
-				update_post_meta ( $camp->camp_id, 'last_keyword', wp_automatic_trim( $keyword ) );
+				update_post_meta ( $camp->camp_id, 'last_keyword', trim ( $keyword ) );
 				
 				// ASIN hack
 				// getting links from the db for that keyword
@@ -132,15 +132,15 @@ class WpAutomaticAmazon extends wp_automatic {
 								$cookie_content =   $this->cookie_content('wp_automatic_amazon') ;
 								
 								//delete the cookie if not contining needed session and ubid
-								if( stristr($cookie_content  , wp_automatic_trim($camp_general['cg_am_session'])) && stristr($cookie_content  , wp_automatic_trim($camp_general['cg_am_ubid'])) ){
+								if( stristr($cookie_content  , trim($camp_general['cg_am_session'])) && stristr($cookie_content  , trim($camp_general['cg_am_ubid'])) ){
 									echo '<br>Current cookieJar contains the needed session-id and ubid, approving it';
 								}else{
 									echo '<br>Deleting currrent cookieJar for setting the new session and ubid';
 									$this->cookie_delete('wp_automatic_amazon') ;
 									
 									if ( isset($camp_general['cg_am_session']) &&  $camp_general['cg_am_session'] != ''  &&  $camp_general['cg_am_ubid'] != '' ){
-										$obj->session_id = wp_automatic_trim($camp_general['cg_am_session']);
-										$obj->session_ubid = wp_automatic_trim($camp_general['cg_am_ubid']);
+										$obj->session_id = trim($camp_general['cg_am_session']);
+										$obj->session_ubid = trim($camp_general['cg_am_ubid']);
 									}
 								
 								}
@@ -153,6 +153,7 @@ class WpAutomaticAmazon extends wp_automatic {
 							// hack link_desc contains the slug Designer-Teenitor-Painting-Manicure-Rhinestones i.e https://amazon.com/slug/dp/asin
 							$item = $obj->getItemByAsin ( $asin, $t_row->link_desc );
 							 
+							 
 						
 						} catch ( Exception $e ) {
 							echo '<br>Amazon error:' . $e->getMessage ();
@@ -161,11 +162,11 @@ class WpAutomaticAmazon extends wp_automatic {
 						if ($obj->update_agent_required)
 							$this->update_user_agent ();
 						
-						if (isset ( $item ['link_title'] ) && wp_automatic_trim( $item ['item_price'] ) == '') {
+						if (isset ( $item ['link_title'] ) && trim ( $item ['item_price'] ) == '') {
 							echo '<-- Can not find price, let us delete this product and try next run ';
 						}
 						
-						if (isset ( $item ['link_title'] ) && wp_automatic_trim( $item ['item_price'] ) != '') {
+						if (isset ( $item ['link_title'] ) && trim ( $item ['item_price'] ) != '') {
 							
 							echo " Link : <a href=\"{$item['item_link']}\">{$item['link_title']}</a> <br>";
 							
@@ -225,7 +226,7 @@ class WpAutomaticAmazon extends wp_automatic {
 							
 							// review url
 							$review = $item ['item_reviews'];
-							$review =wp_automatic_str_replace( 'atefpro', $amazonAid, $review );
+							$review = str_replace ( 'atefpro', $amazonAid, $review );
 							
 							// building the item
 							$t_row->link_url = $linkUrl;
@@ -261,9 +262,9 @@ class WpAutomaticAmazon extends wp_automatic {
 					 * //fix commas and dots for es
 					 * if($camp->camp_amazon_region == 'es' || $camp->camp_amazon_region == 'de' || $camp->camp_amazon_region == 'fr' || $camp->camp_amazon_region == 'it' ){
 					 *
-					 * $ret->link_price = wp_automatic_str_replace(',','*',$ret->link_price);
-					 * $ret->link_price = wp_automatic_str_replace('.',',',$ret->link_price);
-					 * $ret->link_price = wp_automatic_str_replace('*','.',$ret->link_price);
+					 * $ret->link_price = str_replace(',','*',$ret->link_price);
+					 * $ret->link_price = str_replace('.',',',$ret->link_price);
+					 * $ret->link_price = str_replace('*','.',$ret->link_price);
 					 *
 					 * }
 					 */
@@ -284,11 +285,7 @@ class WpAutomaticAmazon extends wp_automatic {
 					$offer_title = $ret->link_title;
 					
 					$temp ['product_author'] = '';
-					
-					//if not set product_brand set it to empty
-				
-					if(!isset($temp ['product_brand'])) $temp ['product_brand'] = '';
-					
+					$temp ['product_brand'] = '';
 					$temp ['product_isbn'] = '';
 					
 					if (stristr ( $offer_title, '**' )) {
@@ -308,15 +305,13 @@ class WpAutomaticAmazon extends wp_automatic {
 							$temp ['product_upc'] = '';
 						}
 					}
-
-					
 					
 					$offer_desc = $ret->link_desc;
 					
-					$offer_desc =wp_automatic_str_replace( 'View larger.', '', $offer_desc );
+					$offer_desc = str_replace ( 'View larger.', '', $offer_desc );
 					
 					$offer_url = $ret->link_url . '?tag=' . $amazonAid;
-					$offer_price = wp_automatic_trim( $ret->link_price );
+					$offer_price = trim ( $ret->link_price );
 					$offer_img = $ret->link_img;
 					
 					$temp ['offer_title'] = $offer_title;
@@ -335,18 +330,10 @@ class WpAutomaticAmazon extends wp_automatic {
 					$temp ['price_currency'] = '$';
 					
 					if(isset($item['item_cats'])) $temp['item_cats'] = $item['item_cats'];
- 
-
-					//product_brand
-					if(isset($item['item_brand'])) $temp['product_brand'] = $item['item_brand'];
-
-					//product_author
-					if(isset($item['product_author'])) $temp['product_author'] = $item['product_author'];
-
-					 
+					
 					// increasing expiration date of the review
 					$ret->link_review = preg_replace ( '{exp\=20\d\d}', 'exp=2030', $ret->link_review );
-					$ret->link_review =wp_automatic_str_replace( 'http://', '//', $ret->link_review );
+					$ret->link_review = str_replace ( 'http://', '//', $ret->link_review );
 					
 					$temp ['review_link'] ='';
 					$temp ['review_iframe'] = '';
@@ -368,11 +355,11 @@ class WpAutomaticAmazon extends wp_automatic {
 						foreach ( $enc_parms_arr as $param ) {
 							
 							if (stristr ( $param, 'creativeASIN' )) {
-								$asin =wp_automatic_str_replace( 'creativeASIN=', '', $param );
+								$asin = str_replace ( 'creativeASIN=', '', $param );
 							} elseif (stristr ( $param, 'tag=' )) {
-								$tag =wp_automatic_str_replace( 'tag=', '', $param );
+								$tag = str_replace ( 'tag=', '', $param );
 							} elseif (stristr ( $param, 'SubscriptionId' )) {
-								$subscription =wp_automatic_str_replace( 'SubscriptionId=', '', $param );
+								$subscription = str_replace ( 'SubscriptionId=', '', $param );
 							}
 						}
 					} else {
@@ -391,7 +378,7 @@ class WpAutomaticAmazon extends wp_automatic {
 					$temp ['chart_url'] = $chart_url;
 					
 					// price extraction
-					if (wp_automatic_trim( $ret->link_price ) != '') {
+					if (trim ( $ret->link_price ) != '') {
 						
 						$thousandSeparator = ',';
 						
@@ -410,31 +397,22 @@ class WpAutomaticAmazon extends wp_automatic {
 							}
 						}
 						
-						//print the price including the currency
 						echo '<br>Returned Price:' . $ret->link_price;
 						
-						// good we have a price,lets remove the thusand separator 
-						$price_no_commas =wp_automatic_str_replace( $thousandSeparator, '', $offer_price );
 						
-						// extract the numeric part from the price with currency
+						
+						// good we have a price
+						$price_no_commas = str_replace ( $thousandSeparator, '', $offer_price );
+						
 						preg_match ( '{\d.*\d}is', ($price_no_commas), $price_matches );
 						
-						// set the numeric part of the price
 						$temp ['price_numeric'] = $price_matches [0];
+						$temp ['price_currency'] = str_replace ( $price_matches [0], '', $offer_price );
 						
-						// set the currency part of the price by removing the numeric part from the price with currency
-						$temp ['price_currency'] =wp_automatic_str_replace( $price_matches [0], '', $offer_price );
-						
-						// fixing sale price by removing the thousand separator and extracting the numeric part
-						$price_no_commas =wp_automatic_str_replace( $thousandSeparator, '', $salePrice );
-						
-						// extract the numeric part from the price with currency
+						// fixing listPrice
+						$price_no_commas = str_replace ( $thousandSeparator, '', $salePrice );
 						preg_match ( '{\d.*\d}is', ($price_no_commas), $price_matches );
-						
-						// set the numeric part of the price
 						$temp ['list_price_numeric'] = $price_matches [0];
-					
-					
 					}
 					
 					$this->used_keyword = $ret->link_keyword;
@@ -464,7 +442,7 @@ class WpAutomaticAmazon extends wp_automatic {
 					
 				 
 					
-					if (wp_automatic_trim( $cg_am_full_img_t ) == '') {
+					if (trim ( $cg_am_full_img_t ) == '') {
 						$cg_am_full_img_t = '<img src="[img_src]" class="wp_automatic_gallery" />';
 					}
 					
@@ -476,7 +454,7 @@ class WpAutomaticAmazon extends wp_automatic {
 					foreach ( $allImages as $singleImage ) {
 						
 						$singleImageHtml = $cg_am_full_img_t;
-						$singleImageHtml =wp_automatic_str_replace( '[img_src]', $singleImage, $singleImageHtml );
+						$singleImageHtml = str_replace ( '[img_src]', $singleImage, $singleImageHtml );
 						$allImages_html .= $singleImageHtml;
 					}
 					
@@ -490,9 +468,9 @@ class WpAutomaticAmazon extends wp_automatic {
 					}
 					
 					// no price
-					if (wp_automatic_trim( $temp ['product_price'] ) == '')
+					if (trim ( $temp ['product_price'] ) == '')
 						$temp ['product_price'] = $temp ['price_numeric'];
-					if (wp_automatic_trim( $temp ['product_list_price'] ) == '')
+					if (trim ( $temp ['product_list_price'] ) == '')
 						$temp ['product_list_price'] = $temp ['price_numeric'];
 					
 					if(isset($item['item_details'])){
@@ -505,11 +483,10 @@ class WpAutomaticAmazon extends wp_automatic {
 					if(isset($item['item_rating'])) $temp['item_rating'] = $item['item_rating'];
  					
 					//original categories to set 
-					if(in_array( 'OPT_AMAZON_CATS' ,  $camp_opt) && isset( $temp['item_cats'] )  && wp_automatic_trim($temp['item_cats']) != '' ){
+					if(in_array( 'OPT_AMAZON_CATS' ,  $camp_opt) && isset( $temp['item_cats'] )  && trim($temp['item_cats']) != '' ){
 						echo '<br>Original categories to be set: ' . $temp['item_cats'];
-						$temp['cats'] = $temp['categories_to_set'] = wp_automatic_str_replace(',' , ' -' , $temp['item_cats']) ;
+						$temp['cats'] = $temp['categories_to_set'] = str_replace(',' , ' -' , $temp['item_cats']) ;
 					}
-					
 					 
 					return $temp;
 				} else {
@@ -574,25 +551,25 @@ class WpAutomaticAmazon extends wp_automatic {
 			
 			echo '<br>Scrapping Amazon page ' . $scrapePage . ' for new items.';
 			
-			if (wp_automatic_trim( $moreUrl ) == '') {
+			if (trim ( $moreUrl ) == '') {
 				
 				// custom URL
-				if (in_array ( 'OPT_AMAZON_CUSTOM', $camp_opt ) && wp_automatic_trim( $camp_general ['cg_am_custom_urls'] ) != '') {
+				if (in_array ( 'OPT_AMAZON_CUSTOM', $camp_opt ) && trim ( $camp_general ['cg_am_custom_urls'] ) != '') {
 					
 					$cg_am_custom_urls = $camp_general ['cg_am_custom_urls'];
 					
 					if (! in_array ( 'OPT_AM_NO_KEYS', $camp_opt )) {
 						
-						$keyword_enc = urlencode ( wp_automatic_trim( $keyword ) );
-						$moreUrl =wp_automatic_str_replace( '[keyword]', $keyword_enc, $cg_am_custom_urls );
+						$keyword_enc = urlencode ( trim ( $keyword ) );
+						$moreUrl = str_replace ( '[keyword]', $keyword_enc, $cg_am_custom_urls );
 					} else {
 						$moreUrl = $cg_am_custom_urls;
 					}
 				} else {
 					if ($scrapePage == 1) {
 						
-						$moreUrl = "https://www.amazon.{$camp->camp_amazon_region}/s?k=" . urlencode ( wp_automatic_trim( $keyword ) ) . "&ref=nb_sb_noss_2";
-						$moreUrl = "https://www.amazon.{$camp->camp_amazon_region}/s/ref=nb_sb_noss_2?url=search-alias%3Daps&field-keywords=" . urlencode ( wp_automatic_trim( $keyword ) );
+						$moreUrl = "https://www.amazon.{$camp->camp_amazon_region}/s?k=" . urlencode ( trim ( $keyword ) ) . "&ref=nb_sb_noss_2";
+						$moreUrl = "https://www.amazon.{$camp->camp_amazon_region}/s/ref=nb_sb_noss_2?url=search-alias%3Daps&field-keywords=" . urlencode ( trim ( $keyword ) );
 					} else {
 						
 						// next pages, get the qid https://www.amazon.com/s?k=timtam&page=2&qid=1586957596&ref=sr_pg_2
@@ -603,8 +580,8 @@ class WpAutomaticAmazon extends wp_automatic {
 						if (! is_numeric ( $qid ) || $qid < 10)
 							$qid = 1569443499;
 						
-						// $moreUrl = "https://www.amazon.{$camp->camp_amazon_region}/s?k=" . urlencode( wp_automatic_trim($keyword) ) . "&qid=1569443499&ref=sr_pg_2";
-						$moreUrl = "https://www.amazon.{$camp->camp_amazon_region}/s?k=" . urlencode ( wp_automatic_trim( $keyword ) ) . "&page=$scrapePage&qid=$qid&ref=sr_pg_$scrapePage";
+						// $moreUrl = "https://www.amazon.{$camp->camp_amazon_region}/s?k=" . urlencode( trim($keyword) ) . "&qid=1569443499&ref=sr_pg_2";
+						$moreUrl = "https://www.amazon.{$camp->camp_amazon_region}/s?k=" . urlencode ( trim ( $keyword ) ) . "&page=$scrapePage&qid=$qid&ref=sr_pg_$scrapePage";
 					}
 				}
 			}
@@ -625,11 +602,11 @@ class WpAutomaticAmazon extends wp_automatic {
 				$cg_am_min = $camp_general ['cg_am_min'];
 				$cg_am_max = $camp_general ['cg_am_max'];
 				
-				if (wp_automatic_trim( $cg_am_min ) != '' && is_numeric ( $cg_am_min )) {
+				if (trim ( $cg_am_min ) != '' && is_numeric ( $cg_am_min )) {
 					$scrapeURL .= '&low-price=' . $cg_am_min / 100;
 				}
 				
-				if (wp_automatic_trim( $cg_am_max ) != '' && is_numeric ( $cg_am_max )) {
+				if (trim ( $cg_am_max ) != '' && is_numeric ( $cg_am_max )) {
 					$scrapeURL .= '&high-price=' . $cg_am_max / 100;
 				}
 			} else {
@@ -641,7 +618,7 @@ class WpAutomaticAmazon extends wp_automatic {
 			
 			// sort
 			if (in_array ( 'OPT_AM_ORDER', $camp_opt )) {
-				$cg_am_order = wp_automatic_trim( $camp_general ['cg_am_order'] );
+				$cg_am_order = trim ( $camp_general ['cg_am_order'] );
 				if ($cg_am_order != '')
 					$scrapeURL .= '&sort=' . $cg_am_order;
 			}
@@ -660,15 +637,15 @@ class WpAutomaticAmazon extends wp_automatic {
 					$cookie_content =   $this->cookie_content('wp_automatic_amazon') ;
 					 
 					//delete the cookie if not contining needed session and ubid
-					if( stristr($cookie_content  , wp_automatic_trim($camp_general['cg_am_session'])) && stristr($cookie_content  , wp_automatic_trim($camp_general['cg_am_ubid'])) ){
+					if( stristr($cookie_content  , trim($camp_general['cg_am_session'])) && stristr($cookie_content  , trim($camp_general['cg_am_ubid'])) ){
 						echo '<br>Current cookieJar contains the needed session-id and ubid, approving it';
 					}else{
 						echo '<br>Deleting currrent cookieJar for setting the new session and ubid';
 						$this->cookie_delete('wp_automatic_amazon') ;
 						
 						if ( isset($camp_general['cg_am_session']) &&  $camp_general['cg_am_session'] != ''  &&  $camp_general['cg_am_ubid'] != '' ){
-							$obj->session_id = wp_automatic_trim($camp_general['cg_am_session']);
-							$obj->session_ubid = wp_automatic_trim($camp_general['cg_am_ubid']);
+							$obj->session_id = trim($camp_general['cg_am_session']);
+							$obj->session_ubid = trim($camp_general['cg_am_ubid']);
 							
 						}
 					
@@ -785,7 +762,7 @@ class WpAutomaticAmazon extends wp_automatic {
 	}
 	function get_user_agent() {
 		
-		$agent = wp_automatic_trim(get_option ( 'wp_automatic_amazon_agent', '' ));
+		$agent = trim(get_option ( 'wp_automatic_amazon_agent', '' ));
 		
 	 	if(  $agent  == '' || $agent == 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36'){
 			echo '<br>Generating new agent';

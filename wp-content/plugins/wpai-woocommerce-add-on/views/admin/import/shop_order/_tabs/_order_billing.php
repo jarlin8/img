@@ -129,7 +129,7 @@
 												</div>
 											</td>
 											<td>
-												<label><?php _e('State/Country', PMWI_Plugin::TEXT_DOMAIN); ?></label>
+												<label><?php _e('State/County', PMWI_Plugin::TEXT_DOMAIN); ?></label>
 												<div class="clear">
 													<input type="text" class="rad4" name="pmwi_order[guest_billing_state]" style="" value="<?php echo esc_attr($post['pmwi_order']['guest_billing_state']) ?>"/>
 												</div>
@@ -226,7 +226,7 @@
 								</div>
 							</td>
 							<td>																		
-								<label><?php _e('State/Country', PMWI_Plugin::TEXT_DOMAIN); ?></label>
+								<label><?php _e('State/County', PMWI_Plugin::TEXT_DOMAIN); ?></label>
 								<div class="clear">
 									<input type="text" class="rad4" name="pmwi_order[billing_state]" style="" value="<?php echo esc_attr($post['pmwi_order']['billing_state']) ?>"/>							
 								</div>

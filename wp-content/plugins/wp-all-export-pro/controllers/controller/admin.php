@@ -60,7 +60,7 @@ abstract class PMXE_Controller_Admin extends PMXE_Controller {
 			wp_enqueue_style('pmxe-admin-style-wp-3.8', PMXE_ROOT_URL . '/static/css/admin-wp-3.8.css', array('media-views'));
 		}
 
-		if ( version_compare(get_bloginfo('version'), '4.4') >= 0 ){			
+		if ( version_compare(get_bloginfo('version'), '4.4') >= 0 ){
 			wp_enqueue_style('pmxe-admin-style-wp-4.4', PMXE_ROOT_URL . '/static/css/admin-wp-4.4.css', array('media-views'));
 		}
 
@@ -101,6 +101,9 @@ abstract class PMXE_Controller_Admin extends PMXE_Controller {
 	    }
 
         wp_localize_script('jquery', 'wpae_cm_settings', $cm_settings);
+
+        // Addons
+        wp_localize_script('jquery', 'wpae_addons', \XmlExportEngine::get_addons());
     }
 
 	/**

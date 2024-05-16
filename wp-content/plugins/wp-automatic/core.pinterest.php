@@ -19,16 +19,13 @@ function pinterest_get_post($camp){
 	//looping keywords
 	foreach ( $keywords as $keyword ) {
 			
-		$keyword = wp_automatic_trim($keyword);
-
-		//report processing keyword keyword
-		  echo '<br>Processing keyword: ' . $keyword;
+		$keyword = trim($keyword);
 
 		//update last keyword
-		update_post_meta($camp->camp_id, 'last_keyword', wp_automatic_trim($keyword));
+		update_post_meta($camp->camp_id, 'last_keyword', trim($keyword));
 
 		//when valid keyword
-		if (wp_automatic_trim( $keyword ) != '') {
+		if (trim ( $keyword ) != '') {
 
 			//record current used keyword
 			$this->used_keyword=$keyword;
@@ -89,7 +86,7 @@ function pinterest_get_post($camp){
 				$temp = unserialize ( base64_decode($ret->item_data ));
 					
 				//generating title for pinterest
-				if( wp_automatic_trim($temp['pin_title']) == '' ){
+				if( trim($temp['pin_title']) == '' ){
 						
 					if(in_array('OPT_PT_AUTO_TITLE', $camp_opt)){
 
@@ -109,7 +106,7 @@ function pinterest_get_post($camp){
 					}
 					
 					
-					if( wp_automatic_trim($temp['pin_title']) == '' ){
+					if( trim($temp['pin_title']) == '' ){
 							
 						$temp['pin_title'] = '(notitle)';
 							
@@ -137,7 +134,7 @@ function pinterest_get_post($camp){
 				}
 					
 				//fix tags links
-				$temp['pin_description'] = wp_automatic_str_replace('<a href="/', '<a href="https://pinterest.com/', $temp['pin_description'] );
+				$temp['pin_description'] = str_replace('<a href="/', '<a href="https://pinterest.com/', $temp['pin_description'] );
 
 					
 
@@ -237,7 +234,7 @@ function pinterest_fetch_items($keyword,$camp){
 				//not first page get the bookmark
 				$wp_pinterest_bookmark = get_post_meta ($camp->camp_id,'wp_pinterest_bookmark'.md5($keyword),1);
 					
-				if(wp_automatic_trim($wp_pinterest_bookmark) == ''){
+				if(trim($wp_pinterest_bookmark) == ''){
 					  echo '<br>No Bookmark';
 					$url ="https://www.pinterest.com/resource/UserPinsResource/get/?source_url=%2Fwelkerpatrick%2Fpins%2F&data=%7B%22options%22%3A%7B%22username%22%3A%22welkerpatrick%22%7D%2C%22context%22%3A%7B%7D%7D&module_path=App()%3EUserProfilePage(resource%3DUserResource(username%3Dwelkerpatrick))%3EUserInfoBar(tab%3Dpins%2C+spinner%3D%5Bobject+Object%5D%2C+resource%3DUserResource(username%3Dwelkerpatrick%2C+invite_code%3Dnull))&_=1430667298559";
 				}else{
@@ -248,23 +245,23 @@ function pinterest_fetch_items($keyword,$camp){
 			}
 
 			//replace username
-			$url = wp_automatic_str_replace( 'welkerpatrick', $author, $url);
+			$url = str_replace( 'welkerpatrick', $author, $url);
 
 		}else{
 
 			//board id
 			$wp_pinterest_board_id = get_post_meta($camp->camp_id,'wp_pinterest_board_id', 1);
 
-			if(wp_automatic_trim($wp_pinterest_board_id) == ''){
+			if(trim($wp_pinterest_board_id) == ''){
 					
 				//must get board id from it's page
 				//curl get
 				$x='error';
-				$url='https://api.pinterest.com/v3/pidgets/boards/'.wp_automatic_trim($author).'/pins/';
+				$url='https://api.pinterest.com/v3/pidgets/boards/'.trim($author).'/pins/';
 				
 				  echo '<br>Board id Link:'.$url;
 				curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-				curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($url));
+				curl_setopt($this->ch, CURLOPT_URL, trim($url));
 				$exec=curl_exec($this->ch);
 				$x=curl_error($this->ch);
 				
@@ -294,7 +291,7 @@ function pinterest_fetch_items($keyword,$camp){
 			}else{
 				$wp_pinterest_bookmark = get_post_meta ($camp->camp_id,'wp_pinterest_bookmark'.md5($keyword),1);
 					
-				if(wp_automatic_trim($wp_pinterest_bookmark) == ''){
+				if(trim($wp_pinterest_bookmark) == ''){
 					$url ="https://www.pinterest.com/resource/BoardFeedResource/get/?source_url=%2Fwelkerpatrick%2Frecipes%2F&data=%7B%22options%22%3A%7B%22board_id%22%3A%221266774834151486%22%2C%22board_url%22%3A%22%2Fwelkerpatrick%2Frecipes%2F%22%2C%22board_layout%22%3A%22default%22%2C%22prepend%22%3Atrue%2C%22page_size%22%3Anull%2C%22access%22%3A%5B%5D%7D%2C%22context%22%3A%7B%7D%7D&module_path=App()%3EUserProfilePage(resource%3DUserResource(username%3Dwelkerpatrick))%3EUserProfileContent(resource%3DUserResource(username%3Dwelkerpatrick))%3EUserBoards()%3EGrid(resource%3DProfileBoardsResource(username%3Dwelkerpatrick))%3EGridItems(resource%3DProfileBoardsResource(username%3Dwelkerpatrick))%3EBoard(show_board_context%3Dfalse%2C+show_user_icon%3Dfalse%2C+view_type%3DboardCoverImage%2C+component_type%3D1%2C+resource%3DBoardResource(board_id%3D1266774834151486))&_=1430694254166";
 				}else{
 					  echo '<br>Bookmark:'.$wp_pinterest_bookmark;
@@ -305,7 +302,7 @@ function pinterest_fetch_items($keyword,$camp){
 			}
 
 			//replacing board id
-			$url = wp_automatic_str_replace('1266774834151486', $wp_pinterest_board_id, $url);
+			$url = str_replace('1266774834151486', $wp_pinterest_board_id, $url);
 
 		}
 			
@@ -323,7 +320,7 @@ function pinterest_fetch_items($keyword,$camp){
 			//not first page get the bookmark
 			$wp_pinterest_bookmark = get_post_meta ($camp->camp_id,'wp_pinterest_bookmark'.md5($keyword),1);
 				
-			if(wp_automatic_trim($wp_pinterest_bookmark) == ''){
+			if(trim($wp_pinterest_bookmark) == ''){
 				  echo '<br>No Bookmark';
 				$url ="https://www.pinterest.com/resource/BaseSearchResource/get/?source_url=%2Fsearch%2Fpins%2F%3Fq%3Darabian&data=%7B%22options%22%3A%7B%22restrict%22%3Anull%2C%22scope%22%3A%22pins%22%2C%22constraint_string%22%3Anull%2C%22show_scope_selector%22%3Atrue%2C%22query%22%3A%22arabian%22%7D%2C%22context%22%3A%7B%7D%2C%22module%22%3A%7B%22name%22%3A%22SearchPage%22%2C%22options%22%3A%7B%22restrict%22%3Anull%2C%22scope%22%3A%22pins%22%2C%22constraint_string%22%3Anull%2C%22show_scope_selector%22%3Atrue%2C%22query%22%3A%22arabian%22%7D%7D%2C%22render_type%22%3A1%2C%22error_strategy%22%3A0%7D&module_path=App()%3EHeader()%3ESearchForm()%3ETypeaheadField(enable_recent_queries%3Dtrue%2C+support_guided_search%3Dtrue%2C+resource_name%3DAdvancedTypeaheadResource%2C+name%3Dq%2C+tags%3Dautocomplete%2C+class_name%3DbuttonOnRight%2C+type%3Dtokenized%2C+prefetch_on_focus%3Dtrue%2C+value%3D%22%22%2C+input_log_element_type%3D227%2C+hide_tokens_on_focus%3Dundefined%2C+support_advanced_typeahead%3Dfalse%2C+view_type%3Dguided%2C+populate_on_result_highlight%3Dtrue%2C+search_delay%3D0%2C+search_on_focus%3Dtrue%2C+placeholder%3DDiscover%2C+show_remove_all%3Dtrue)&_=1430685210358";
 			}else{
@@ -334,14 +331,14 @@ function pinterest_fetch_items($keyword,$camp){
 		}
 			
 		//replace keyword
-		$url = wp_automatic_str_replace('arabian', urlencode($keyword), $url);
+		$url = str_replace('arabian', urlencode($keyword), $url);
 	}
 
 	//report url
 	  echo '<br>Pinterest url:<abbr title="'.$url.'">'.substr($url, 0,50).'...</abbr> ';
 		
 	curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-	curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($url));
+	curl_setopt($this->ch, CURLOPT_URL, trim($url));
 	curl_setopt($this->ch, CURLOPT_ENCODING , "");
 	$exec=curl_exec($this->ch);
 	$x=curl_error($this->ch);
@@ -409,9 +406,7 @@ function pinterest_fetch_items($keyword,$camp){
 			$itm['pin_domain'] = $pin->domain;
 			$itm['pin_link'] = $pin->link;
 			
-			 
-
-			$itm['repin_count'] = ''; //removed from v > 3.70
+			$itm['repin_count'] = $pin->repin_count;
 			$pin_img = current( (Array)$pin->images );
 			
 			if(isset($pin->images->orig->url)) $pin_img = $pin->images->orig;
@@ -420,21 +415,8 @@ function pinterest_fetch_items($keyword,$camp){
 			$itm['pin_img'] = $pin_img->url ;
 			$itm['pin_img_width'] = $pin_img->width;
 			$itm['pin_img_height'] = $pin_img->height;
-			
-			$itm['pin_description'] = '';
-			
-			//from description html if exists
-			if( isset($pin->description_html) ){
-				$itm['pin_description'] = html_entity_decode($pin->description_html);
-			}
-			
-			
-			//description from rich_summary->display_description if exists
-			if( isset($pin->rich_summary->display_description) ){
-				$itm['pin_description'] = $pin->rich_summary->display_description;
-			}
-			
-	  
+			$itm['pin_description'] = html_entity_decode($pin->description_html);
+			$itm['pin_board_id'] = $pin->board->id;
 			$itm['pin_board_url'] = 'https://'. $pin_host . $pin->board->url;
 			$itm['pin_board_name'] = $pin->board->name;
 			$itm['pin_pinner_username'] = $pin->pinner->username;
@@ -442,13 +424,13 @@ function pinterest_fetch_items($keyword,$camp){
 			$itm['pin_pinner_id'] = $pin->pinner->id;
 			$itm['pin_title'] = is_string( $pin->title) ?  $pin->title : '' ;
 			 
-			if( wp_automatic_trim( $itm['pin_title'] ) == '' ){
+			if( trim( $itm['pin_title'] ) == '' ){
 				
-				if( isset($pin->grid_title) && wp_automatic_trim($pin->grid_title) != '' ){
+				if( isset($pin->grid_title) && trim($pin->grid_title) != '' ){
 					
 					$itm['pin_title'] = $pin->grid_title;
 					
-				}elseif(  isset($pin->rich_summary->display_name) && wp_automatic_trim($pin->rich_summary->display_name) != ''  ){
+				}elseif(  isset($pin->rich_summary->display_name) && trim($pin->rich_summary->display_name) != ''  ){
 
 					$itm['pin_title'] = $pin->rich_summary->display_name;
 				
@@ -457,13 +439,13 @@ function pinterest_fetch_items($keyword,$camp){
 			}
 			
 			//empty title 
-			if( in_array('OPT_PT_TITLE_SKIP', $camp_opt) && wp_automatic_trim($itm['pin_title']) == '' && wp_automatic_trim($itm['pin_description']) == '' ){
+			if( in_array('OPT_PT_TITLE_SKIP', $camp_opt) && trim($itm['pin_title']) == '' && trim($itm['pin_description']) == '' ){
 				echo '<-- Empty title skipping.';
 				continue;
 			}
 			
 			if(stristr($itm['pin_title'] , '&#')) $itm['pin_title'] = html_entity_decode($itm['pin_title'] , ENT_QUOTES);
-			if(stristr($itm['pin_description'] , '&#')) $itm['pin_description'] =  wp_automatic_htmlspecialchars_decode($itm['pin_description'], ENT_QUOTES);
+			if(stristr($itm['pin_description'] , '&#')) $itm['pin_description'] =  htmlspecialchars_decode($itm['pin_description'], ENT_QUOTES);
 			 	
 			
 			 
