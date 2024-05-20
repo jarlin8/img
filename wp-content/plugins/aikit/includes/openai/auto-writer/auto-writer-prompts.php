@@ -43,6 +43,69 @@ const AIKIT_AUTO_GENERATOR_PROMPTS = [
 
         ]
     ],
+    'th' => [
+        'prompts' => [
+            'article-title' => "สร้างชื่อเรื่องสำหรับบทความที่พูดถึงหัวข้อต่อไปนี้:\n[[description]]\nบทความจะประกอบด้วยส่วนต่อไปนี้:\n[[section-headlines]]\n\nชื่อเรื่อง:",
+            'article-title-with-seo-keywords' => "สร้างชื่อเรื่องสำหรับบทความที่พูดถึงหัวข้อต่อไปนี้:\n[[description]]\nบทความจะประกอบด้วยส่วนต่อไปนี้:\n[[section-headlines]]\nพยายามใช้คำสำคัญ SEO ต่อไปนี้เมื่อเป็นไปได้: [[keywords]]\n\nชื่อเรื่อง:",
+            'article-intro' =>
+                "เขียนบทนำสำหรับบทความที่พูดถึงหัวข้อต่อไปนี้:\n[[description]]\nบทความประกอบด้วยส่วนต่อไปนี้:\n[[section-headlines]]\n\nบทนำ:",
+            'article-intro-with-seo-keywords' => "เขียนบทนำสำหรับบทความที่พูดถึงหัวข้อต่อไปนี้:\n[[description]]\nบทความประกอบด้วยส่วนต่อไปนี้:\n[[section-headlines]]\nพยายามใช้คำสำคัญ SEO ต่อไปนี้เมื่อเป็นไปได้: [[keywords]]\n\nบทนำ:",
+            'section-headlines' =>
+                "แนะนำรายการ [[number-of-headlines]] หัวข้อของส่วนที่เป็นไปได้สำหรับบทความที่จะพูดถึงหัวข้อต่อไปนี้:\n[[description]]\n\nหัวข้อของส่วน:",
+            'section-headlines-with-seo-keywords' =>
+                "แนะนำรายการ [[number-of-headlines]] หัวข้อของส่วนที่เป็นไปได้สำหรับบทความที่จะพูดถึงหัวข้อต่อไปนี้:\n[[description]]\nพยายามใช้คำสำคัญ SEO ต่อไปนี้เมื่อเป็นไปได้: [[keywords]]\n\nหัวข้อของส่วน:",
+            'section' =>
+                "ฉันกำลังเขียนบทความเกี่ยวกับหัวข้อต่อไปนี้:\n[[description]]\n\nเป็นส่วนหนึ่งของบทความนี้ โปรดเขียนส่วนข้อความที่พูดถึง: [[section-headline]]\n\nส่วนข้อความโดยไม่มีชื่อเรื่อง:",
+            'section-with-seo-keywords' =>
+                "ฉันกำลังเขียนบทความเกี่ยวกับหัวข้อต่อไปนี้:\n[[description]]\n\nเป็นส่วนหนึ่งของบทความนี้ โปรดเขียนส่วนข้อความที่พูดถึง: [[section-headline]]\n\nพยายามใช้คำสำคัญ SEO ต่อไปนี้เมื่อเป็นไปได้: [[keywords]]\n\nส่วนข้อความโดยไม่มีชื่อเรื่อง:",
+            'article-conclusion' =>
+                "เขียนสรุปสำหรับบทความที่พูดถึงหัวข้อต่อไปนี้:\n[[description]]\nบทความประกอบด้วยส่วนต่อไปนี้:\n[[section-headlines]]\n\nสรุปบทความ:",
+            'article-conclusion-with-seo-keywords' =>
+                "เขียนสรุปสำหรับบทความที่พูดถึงหัวข้อต่อไปนี้:\n[[description]]\nบทความประกอบด้วยส่วนต่อไปนี้:\n[[section-headlines]]\nพยายามใช้คำสำคัญ SEO ต่อไปนี้เมื่อเป็นไปได้: [[keywords]]\n\nสรุปบทความ:",
+            'image' =>
+                "อธิบายภาพที่เหมาะที่สุดสำหรับข้อความนี้:\n\n [[text]]\n\n---\nคำอธิบายภาพที่สร้างสรรค์ในประโยคหนึ่ง 6 คำ:",
+            'section-summary' =>
+                "เขียนสรุปสั้นสำหรับข้อความส่วนต่อไปนี้ของบทความ:\n[[section]]\n\nสรุปส่วน:",
+            'section-summary-with-seo-keywords' =>
+                "เขียนสรุปสั้นสำหรับข้อความส่วนต่อไปนี้ของบทความ:\n[[section]]\nพยายามใช้คำสำคัญ SEO ต่อไปนี้เมื่อเป็นไปได้: [[keywords]]\n\nสรุปส่วน:",
+            'tldr' =>
+                "เขียน TL;DR สำหรับข้อความต่อไปนี้:\n[[text]]\n\nTL;DR:",
+            'tldr-with-seo-keywords' =>
+                "เขียน TL;DR สำหรับข้อความต่อไปนี้:\n[[text]]\nพยายามใช้คำสำคัญ SEO ต่อไปนี้เมื่อเป็นไปได้: [[keywords]]\n\nTL;DR:",
+        ]
+    ],
+    'he' => [
+        'prompts' => [
+            'article-title' => "כותרת למאמר על הנושא הבא:\n[[description]]\nהמאמר יכלול את הסעיפים הבאים:\n[[section-headlines]]\n\nכותרת:",
+            'article-title-with-seo-keywords' => "כותרת למאמר על הנושא הבא:\n[[description]]\nהמאמר יכלול את הסעיפים הבאים:\n[[section-headlines]]\nנסה להשתמש במילות המפתח של SEO הבאות כשזה אפשרי: [[keywords]]\n\nכותרת:",
+            'article-intro' =>
+                "כותרת למאמר על הנושא הבא:\n[[description]]\nהמאמר יכלול את הסעיפים הבאים:\n[[section-headlines]]\n\nכותרת:",
+            'article-intro-with-seo-keywords' =>
+                "כותרת למאמר על הנושא הבא:\n[[description]]\nהמאמר יכלול את הסעיפים הבאים:\n[[section-headlines]]\nנסה להשתמש במילות המפתח של SEO הבאות כשזה אפשרי: [[keywords]]\n\nכותרת:",
+            'section-headlines' =>
+                "רשימה של [[number-of-headlines]] כותרות סעיפים אפשריות למאמר על הנושא הבא:\n[[description]]\n\nכותרות סעיפים:",
+            'section-headlines-with-seo-keywords' =>
+                "רשימה של [[number-of-headlines]] כותרות סעיפים אפשריות למאמר על הנושא הבא:\n[[description]]\nנסה להשתמש במילות המפתח של SEO הבאות כשזה אפשרי: [[keywords]]\n\nכותרות סעיפים:",
+            'section' =>
+                "אני כותב מאמר על הנושא הבא:\n[[description]]\n\nכחלק מהמאמר הזה, כתוב סעיף טקסט שמדבר על הבא: [[section-headline]]\n\nגוף הסעיף ללא הכותרת:",
+            'section-with-seo-keywords' =>
+                "אני כותב מאמר על הנושא הבא:\n[[description]]\n\nכחלק מהמאמר הזה, כתוב סעיף טקסט שמדבר על הבא: [[section-headline]]\n\nנסה להשתמש במילות המפתח של SEO הבאות כשזה אפשרי: [[keywords]]\n\nגוף הסעיף ללא הכותרת:",
+            'article-conclusion' =>
+                "כותרת למאמר על הנושא הבא:\n[[description]]\nהמאמר יכלול את הסעיפים הבאים:\n[[section-headlines]]\n\nכותרת:",
+            'article-conclusion-with-seo-keywords' =>
+                "כותרת למאמר על הנושא הבא:\n[[description]]\nהמאמר יכלול את הסעיפים הבאים:\n[[section-headlines]]\nנסה להשתמש במילות המפתח של SEO הבאות כשזה אפשרי: [[keywords]]\n\nכותרת:",
+            'image' =>
+                "תאר תמונה שתתאים בצורה הטובה ביותר לטקסט הזה:\n\n [[text]]\n\n---\nתיאור תמונה יצירתי במשפט אחד של 6 מילים:\n",
+            'section-summary' =>
+                "כותרת למאמר על הנושא הבא:\n[[description]]\nהמאמר יכלול את הסעיפים הבאים:\n[[section-headlines]]\n\nכותרת:",
+            'section-summary-with-seo-keywords' =>
+                "כותרת למאמר על הנושא הבא:\n[[description]]\nהמאמר יכלול את הסעיפים הבאים:\n[[section-headlines]]\nנסה להשתמש במילות המפתח של SEO הבאות כשזה אפשרי: [[keywords]]\n\nכותרת:",
+            'tldr' =>
+                "כותרת למאמר על הנושא הבא:\n[[description]]\nהמאמר יכלול את הסעיפים הבאים:\n[[section-headlines]]\n\nכותרת:",
+            'tldr-with-seo-keywords' =>
+                "כותרת למאמר על הנושא הבא:\n[[description]]\nהמאמר יכלול את הסעיפים הבאים:\n[[section-headlines]]\nנסה להשתמש במילות המפתח של SEO הבאות כשזה אפשרי: [[keywords]]\n\nכותרת:",
+        ],
+    ],
     'lt' => [
         'prompts' => [
             'article-title' =>
@@ -1063,5 +1126,105 @@ const AIKIT_AUTO_GENERATOR_PROMPTS = [
             'tldr-with-seo-keywords' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
 
         ],
-    ]
+    ],
+    'ca' => [
+        'prompts' => [
+            'article-title' => "Genera un títol per a un article que tracta el següent tema:\n[[description]]\nL'article inclourà les següents seccions:\n[[section-headlines]]\n\nTítol:",
+            'article-title-with-seo-keywords' => "Genera un títol per a un article que tracta el següent tema:\n[[description]]\nL'article inclourà les següents seccions:\n[[section-headlines]]\nIntenta utilitzar les següents paraules clau SEO quan sigui possible: [[keywords]]\n\nTítol:",
+            'article-intro' =>
+                "Escriu una introducció per a un article que tracta el següent tema:\n[[description]]\nL'article inclou les següents seccions:\n[[section-headlines]]\n\nIntroducció a l'article:",
+            'article-intro-with-seo-keywords' =>
+                "Escriu una introducció per a un article que tracta el següent tema:\n[[description]]\nL'article inclou les següents seccions:\n[[section-headlines]]\nIntenta utilitzar les següents paraules clau SEO quan sigui possible: [[keywords]]\n\nIntroducció a l'article:",
+            'section-headlines' =>
+                "Suggeriu una llista de [[number-of-headlines]] possibles titulars de seccions per a un article que tractarà el següent tema:\n[[description]]\n\nTitulars de secció:",
+
+            'section-headlines-with-seo-keywords' =>
+                "Suggeriu una llista de [[number-of-headlines]] possibles titulars de seccions per a un article que tractarà el següent tema:\n[[description]]\nIntenta utilitzar les següents paraules clau SEO quan sigui possible: [[keywords]]\n\nTitulars de secció:",
+
+            'section' =>
+                "Estic escrivint un article sobre el següent tema:\n[[description]]\n\nCom a part d'aquest article, escriu una secció de text que tracti el següent: [[section-headline]]\n\nCos de la secció sense el títol:",
+
+            'section-with-seo-keywords' =>
+                "Estic escrivint un article sobre el següent tema:\n[[description]]\n\nCom a part d'aquest article, escriu una secció de text que tracti el següent: [[section-headline]]\nIntenta utilitzar les següents paraules clau SEO quan sigui possible: [[keywords]]\n\nCos de la secció sense el títol:",
+
+            'article-conclusion' => 'Escriu una conclusió per a un article que tracta el següent tema:\n[[description]]\nL\'article inclou les següents seccions:\n[[section-headlines]]\n\nConclusió de l\'article:',
+
+            'article-conclusion-with-seo-keywords' => 'Escriu una conclusió per a un article que tracta el següent tema:\n[[description]]\nL\'article inclou les següents seccions:\n[[section-headlines]]\nIntenta utilitzar les següents paraules clau SEO quan sigui possible: [[keywords]]\n\nConclusió de l\'article:',
+
+            'image' =>
+                "Descriu una imatge que encaixi millor amb aquest text:\n\n [[text]]\n\n---\nDescripció creativa de la imatge en una frase de 6 paraules:",
+
+            'section-summary' => 'Escriu un resum breu de la secció següent per a l\'article:\n[[section]]\n\nResum de la secció:',
+
+            'section-summary-with-seo-keywords' => 'Escriu un resum breu de la secció següent per a l\'article:\n[[section]]\nIntenta utilitzar les següents paraules clau SEO quan sigui possible: [[keywords]]\n\nResum de la secció:',
+
+            'tldr' => 'Escriu un TL;DR per al següent text:\n[[text]]\n\nTL;DR:',
+
+            'tldr-with-seo-keywords' => 'Escriu un TL;DR per al següent text:\n[[text]]\nIntenta utilitzar les següents paraules clau SEO quan sigui possible: [[keywords]]\n\nTL;DR:',
+        ]
+    ],
+    'hr' => [
+        'prompts' => [
+            'article-title' => "Generirajte naslov za članak koji raspravlja o sljedećoj temi:\n[[description]]\nČlanak će uključivati sljedeće odjeljke:\n[[section-headlines]]\n\nNaslov:",
+            'article-title-with-seo-keywords' => "Generirajte naslov za članak koji raspravlja o sljedećoj temi:\n[[description]]\nČlanak će uključivati sljedeće odjeljke:\n[[section-headlines]]\nPokušajte koristiti sljedeće SEO ključne riječi kad god je to moguće: [[keywords]]\n\nNaslov:",
+            'article-intro' =>
+                "Napišite uvod za članak koji raspravlja o sljedećoj temi:\n[[description]]\nČlanak uključuje sljedeće odjeljke:\n[[section-headlines]]\n\nUvod u članak:",
+            'article-intro-with-seo-keywords' =>
+                "Napišite uvod za članak koji raspravlja o sljedećoj temi:\n[[description]]\nČlanak uključuje sljedeće odjeljke:\n[[section-headlines]]\nPokušajte koristiti sljedeće SEO ključne riječi kad god je to moguće: [[keywords]]\n\nUvod u članak:",
+            'section-headlines' =>
+                "Predložite popis od [[number-of-headlines]] mogućih naslova odjeljaka za članak koji će pokriti sljedeću temu:\n[[description]]\n\nNaslovi odjeljaka:",
+            'section-headlines-with-seo-keywords' =>
+                "Predložite popis od [[number-of-headlines]] mogućih naslova odjeljaka za članak koji će pokriti sljedeću temu:\n[[description]]\nPokušajte koristiti sljedeće SEO ključne riječi kad god je to moguće: [[keywords]]\n\nNaslovi odjeljaka:",
+            'section' =>
+                "Pišem članak o sljedećoj temi:\n[[description]]\n\nKao dio ovog članka napišite tekstualni odjeljak koji raspravlja o sljedećem: [[section-headline]]\n\nTijelo odjeljka bez naslova:",
+            'section-with-seo-keywords' =>
+                "Pišem članak o sljedećoj temi:\n[[description]]\n\nKao dio ovog članka napišite tekstualni odjeljak koji raspravlja o sljedećem: [[section-headline]]\n\nPokušajte koristiti sljedeće SEO ključne riječi kad god je to moguće: [[keywords]]\n\nTijelo odjeljka bez naslova:",
+            'article-conclusion' =>
+                "Napišite zaključak za članak koji raspravlja o sljedećoj temi:\n[[description]]\nČlanak uključuje sljedeće odjeljke:\n[[section-headlines]]\n\nZaključak članka:",
+            'article-conclusion-with-seo-keywords' =>
+                "Napišite zaključak za članak koji raspravlja o sljedećoj temi:\n[[description]]\nČlanak uključuje sljedeće odjeljke:\n[[section-headlines]]\nPokušajte koristiti sljedeće SEO ključne riječi kad god je to moguće: [[keywords]]\n\nZaključak članka:",
+            'image' =>
+                "Opišite sliku koja bi najbolje odgovarala ovom tekstu:\n\n [[text]]\n\n---\nKreativan opis slike u jednoj rečenici od 6 riječi:\n",
+            'section-summary' =>
+                "Napišite kratki sažetak odjeljka za sljedeći tekst odjeljka članka:\n[[section]]\n\nSažetak odjeljka:",
+            'section-summary-with-seo-keywords' =>
+                "Napišite kratki sažetak odjeljka za sljedeći tekst odjeljka članka:\n[[section]]\nPokušajte koristiti sljedeće SEO ključne riječi kad god je to moguće: [[keywords]]\n\nSažetak odjeljka:",
+            'tldr' =>
+                "Napišite TL;DR za sljedeći tekst:\n[[text]]\n\nTL;DR:",
+            'tldr-with-seo-keywords' =>
+                "Napišite TL;DR za sljedeći tekst:\n[[text]]\nPokušajte koristiti sljedeće SEO ključne riječi kad god je to moguće: [[keywords]]\n\nTL;DR:",
+        ],
+    ],
+    'uk' => [
+        'prompts' => [
+            'article-title' => "Згенеруйте заголовок для статті, яка обговорює наступну тему:\n[[description]]\nСтаття буде містити наступні розділи:\n[[section-headlines]]\n\nЗаголовок:",
+            'article-title-with-seo-keywords' => "Згенеруйте заголовок для статті, яка обговорює наступну тему:\n[[description]]\nСтаття буде містити наступні розділи:\n[[section-headlines]]\nСпробуйте використовувати наступні ключові слова SEO, якщо це можливо: [[keywords]]\n\nЗаголовок:",
+            'article-intro' =>
+                "Напишіть вступ для статті, яка обговорює наступну тему:\n[[description]]\nСтаття містить наступні розділи:\n[[section-headlines]]\n\nВступ до статті:",
+            'article-intro-with-seo-keywords' =>
+                "Напишіть вступ для статті, яка обговорює наступну тему:\n[[description]]\nСтаття містить наступні розділи:\n[[section-headlines]]\nСпробуйте використовувати наступні ключові слова SEO, якщо це можливо: [[keywords]]\n\nВступ до статті:",
+            'section-headlines' =>
+                "Запропонуйте список з [[number-of-headlines]] можливих заголовків розділів для статті, яка буде охоплювати наступну тему:\n[[description]]\n\nЗаголовки розділів:",
+            'section-headlines-with-seo-keywords' =>
+                "Запропонуйте список з [[number-of-headlines]] можливих заголовків розділів для статті, яка буде охоплювати наступну тему:\n[[description]]\nСпробуйте використовувати наступні ключові слова SEO, якщо це можливо: [[keywords]]\n\nЗаголовки розділів:",
+            'section' =>
+                "Я пишу статтю про наступну тему:\n[[description]]\n\nВ рамках цієї статті напишіть текстовий розділ, який обговорює наступне: [[section-headline]]\n\nТіло розділу без заголовка:",
+            'section-with-seo-keywords' =>
+                "Я пишу статтю про наступну тему:\n[[description]]\n\nВ рамках цієї статті напишіть текстовий розділ, який обговорює наступне: [[section-headline]]\n\nСпробуйте використовувати наступні ключові слова SEO, якщо це можливо: [[keywords]]\n\nТіло розділу без заголовка:",
+            'article-conclusion' =>
+                "Напишіть висновок для статті, яка обговорює наступну тему:\n[[description]]\nСтаття містить наступні розділи:\n[[section-headlines]]\n\nВисновок статті:",
+            'article-conclusion-with-seo-keywords' =>
+                "Напишіть висновок для статті, яка обговорює наступну тему:\n[[description]]\nСтаття містить наступні розділи:\n[[section-headlines]]\nСпробуйте використовувати наступні ключові слова SEO, якщо це можливо: [[keywords]]\n\nВисновок статті:",
+            'image' =>
+                "Опишіть зображення, яке найкраще підходить для цього тексту:\n\n [[text]]\n\n---\nКреативний опис зображення в одному реченні з 6 слів:\n",
+            'section-summary' =>
+                "Напишіть короткий огляд розділу для наступного тексту розділу статті:\n[[section]]\n\nОгляд розділу:",
+            'section-summary-with-seo-keywords' =>
+                "Напишіть короткий огляд розділу для наступного тексту розділу статті:\n[[section]]\nСпробуйте використовувати наступні ключові слова SEO, якщо це можливо: [[keywords]]\n\nОгляд розділу:",
+            'tldr' =>
+                "Напишіть TL;DR для наступного тексту:\n[[text]]\n\nTL;DR:",
+            'tldr-with-seo-keywords' =>
+                "Напишіть TL;DR для наступного тексту:\n[[text]]\nСпробуйте використовувати наступні ключові слова SEO, якщо це можливо: [[keywords]]\n\nTL;DR:",
+        ],
+    ],
 ];

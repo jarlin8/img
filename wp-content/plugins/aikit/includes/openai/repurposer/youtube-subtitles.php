@@ -1,5 +1,7 @@
 <?php
 
+use AIKit\Dependencies\duzun\hQuery;
+
 class AIKIT_Youtube_Subtitle_Reader {
 
     // singleton
@@ -10,6 +12,20 @@ class AIKIT_Youtube_Subtitle_Reader {
             self::$instance = new AIKIT_Youtube_Subtitle_Reader();
         }
         return self::$instance;
+    }
+
+    public function get_video_title($url)
+    {
+        try {
+            $page_content = file_get_contents($url);
+            $doc = hQuery::fromHTML($page_content);
+
+            $title = $doc->find('title')->text();
+        } catch (\Throwable $e) {
+            $title = '';
+        }
+
+        return str_replace(' - YouTube', '', $title);
     }
 
     public function get_subtitles($url) {

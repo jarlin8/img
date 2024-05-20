@@ -39,7 +39,7 @@ function wp_automatic_rating_notice() {
 	
 	$wp_automatic_rating = get_option ( 'wp_deandev_automatic_rating', '' );
 	
-	if (trim ( $wp_automatic_rating ) == '') {
+	if (wp_automatic_trim( $wp_automatic_rating ) == '') {
 		
 		// get count of successful posts
 		global $wpdb;

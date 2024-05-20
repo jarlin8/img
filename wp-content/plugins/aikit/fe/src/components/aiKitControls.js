@@ -239,7 +239,7 @@ function getAllBlockContentsRecursively(blockClientIds, selectionStart, selectio
     return content;
 }
 
-async function doAutocompleteRequest(requestType, text, selectedLanguage) {
+async function doAutocompleteRequest(requestType, text, selectedLanguage, context) {
     const siteUrl = aikit.siteUrl
     const nonce = aikit.nonce
     const response = await fetch(siteUrl + "/?rest_route=/aikit/openai/v1/autocomplete&type=" + requestType, {
@@ -250,6 +250,7 @@ async function doAutocompleteRequest(requestType, text, selectedLanguage) {
         },
         body: JSON.stringify({
             text: text,
+            context: context,
             language: selectedLanguage,
         })
     }).catch(async error => {
@@ -266,10 +267,10 @@ async function doAutocompleteRequest(requestType, text, selectedLanguage) {
     return data.text
 }
 
-async function doImageGenerationRequest(imageCount, imageSize, text, selectedLanguage) {
+async function doImageGenerationRequest(imageCount, imageSize, text, selectedLanguage, generator) {
     const siteUrl = aikit.siteUrl
     const nonce = aikit.nonce
-    const response = await fetch(siteUrl + "/?rest_route=/aikit/openai/v1/generate-images&count=" + imageCount + "&size=" + imageSize, {
+    const response = await fetch(siteUrl + "/?rest_route=/aikit/" + generator + "/v1/generate-images&count=" + imageCount + "&size=" + imageSize, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -294,11 +295,16 @@ async function doImageGenerationRequest(imageCount, imageSize, text, selectedLan
 }
 
 
-async function autocomplete(requestType, autocompleteBlock, selectedText) {
+async function autocomplete(requestType, autocompleteBlock, selectedText, textBefore = '', textAfter = '') {
     let autocompletedText = '';
     let selectedLanguage = aikit.selectedLanguage;
+    let postTitle = wp.data.select('core/editor').getEditedPostAttribute('title');
     try {
-        autocompletedText = await doAutocompleteRequest(requestType, selectedText, selectedLanguage);
+        autocompletedText = await doAutocompleteRequest(requestType, selectedText, selectedLanguage, {
+            postTitle: postTitle,
+            textBeforeSelection: textBefore,
+            textAfterSelection: textAfter,
+        });
     } catch (error) {
         // remove the block
         await wp.data.dispatch('core/block-editor').removeBlocks(autocompleteBlock.clientId);
@@ -321,13 +327,13 @@ async function autocomplete(requestType, autocompleteBlock, selectedText) {
     wp.data.dispatch('core/block-editor').updateBlock(autocompleteBlock.clientId, attributes);
 }
 
-async function generateImages(imageCount, imageSize, autocompleteBlock, selectedText) {
+async function generateImages(imageCount, imageSize, autocompleteBlock, selectedText, generator = "openai") {
     let selectedLanguage = aikit.selectedLanguage;
     let result = {
         images: [],
     };
     try {
-        result = await doImageGenerationRequest(imageCount, imageSize, selectedText, selectedLanguage);
+        result = await doImageGenerationRequest(imageCount, imageSize, selectedText, selectedLanguage, generator);
     } catch (error) {
         // remove the block
         await wp.data.dispatch('core/block-editor').removeBlocks(autocompleteBlock.clientId);
@@ -421,20 +427,40 @@ export default createHigherOrderComponent( ( BlockEdit ) => {
             });
         });
 
-        // just to that these are included in the translations
+        // just so that these are included in the translations
         let smallImageTitle = __("small image(s)", "aikit");
         let mediumImageTitle = __("medium image(s)", "aikit");
         let largeImageTitle = __("large image(s)", "aikit");
+        let xlargeLandscapeImageTitle = __("x large (landscape) image(s)", "aikit");
+        let xlargePortraitImageTitle = __("large (portrait) image(s)", "aikit");
+        let dalle = __("DALL·E", "aikit");
+        let stableDiffusion = __("Stable Diffusion", "aikit");
 
         let imageGenerationOptions = [];
         for (let size in aikit.imageGenerationOptions.sizes) {
             let resolution = aikit.imageGenerationOptions.sizes[size];
             for (let count of aikit.imageGenerationOptions.counts) {
                 imageGenerationOptions.push({
-                    title: count + ' x ' + __(size + " image(s)", "aikit") + ' (' + resolution + ')',
+                    title: "[" + dalle + "] " + count + ' x ' + __(size + " image(s)", "aikit") + ' (' + resolution + ')',
                     count: count,
                     size: size,
+                    generator: "openai",
                 });
+            }
+        }
+
+        // if isStabilityAIKeySet is true, then add the stability options
+        if (aikit.isStabilityAIKeySet) {
+            for (let size in aikit.imageGenerationOptions.stabilityAISizes) {
+                let resolution = aikit.imageGenerationOptions.stabilityAISizes[size];
+                for (let count of aikit.imageGenerationOptions.stabilityAICounts) {
+                    imageGenerationOptions.push({
+                        title: "[" + stableDiffusion + "] " + count + ' x ' + __(size + " image(s)", "aikit") + ' (' + resolution + ')',
+                        count: count,
+                        size: size,
+                        generator: "stability-ai",
+                    });
+                }
             }
         }
 
@@ -462,8 +488,24 @@ export default createHigherOrderComponent( ( BlockEdit ) => {
                                         if (autocompleteType.requiresTextSelection) {
                                             const selectedText = getSelectedText();
                                             if (selectedText) {
+
+                                                let startSelectionBlock =  wp.data.select( 'core/block-editor' ).getSelectionStart();
+                                                let endSelectionBlock =  wp.data.select( 'core/block-editor' ).getSelectionEnd();
+
+                                                // Get the blocks
+                                                let startBlock = wp.data.select('core/block-editor').getBlock(startSelectionBlock.clientId);
+                                                let endBlock = wp.data.select('core/block-editor').getBlock(endSelectionBlock.clientId);
+
+                                                // Get the text of the blocks
+                                                let startBlockText = startBlock.attributes.content;
+                                                let endBlockText = endBlock.attributes.content;
+
+                                                // Get the text before and after the selection
+                                                let textBeforeSelection = startBlockText.slice(0, startSelectionBlock.offset);
+                                                let textAfterSelection = endBlockText.slice(endSelectionBlock.offset + 1);
+
                                                 const block = await createBlockForAutocompletion(placement);
-                                                await autocomplete( autocompleteType.operationId, block, selectedText);
+                                                await autocomplete( autocompleteType.operationId, block, selectedText, textBeforeSelection, textAfterSelection);
                                             }
                                         } else {
                                             const block = await createBlockForAutocompletion(placement);
@@ -495,7 +537,7 @@ export default createHigherOrderComponent( ( BlockEdit ) => {
                                         const selectedText = getSelectedText();
                                         if (selectedText) {
                                             const block = await createBlockForAutocompletion(placement);
-                                            await generateImages( imageGenerationOption.count, imageGenerationOption.size, block, selectedText);
+                                            await generateImages( imageGenerationOption.count, imageGenerationOption.size, block, selectedText, imageGenerationOption.generator);
                                         }
                                     },
                                 };

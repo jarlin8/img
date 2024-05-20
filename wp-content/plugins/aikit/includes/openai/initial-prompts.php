@@ -10,6 +10,22 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Write a paragraph on this',
                 'prompt' => "Write a paragraph on this topic:\n\n[[text]]\n\n----\nWritten paragraph:\n",
             ],
+            'th' => [
+                'menuTitle' => 'เขียนย่อหน้าเกี่ยวกับนี้',
+                'prompt' => "เขียนย่อหน้าเกี่ยวกับเรื่องนี้:\n\n[[text]]\n\n----\nย่อหน้าที่เขียน:\n",
+            ],
+            'he' => [
+                'menuTitle' => 'כתוב פסקה על זה',
+                'prompt' => "כתוב פסקה על נושא זה:\n\n[[text]]\n\n----\nפסקה שכתבת:\n",
+            ],
+            'uk' => [
+                'menuTitle' => 'Напишіть абзац на цю тему',
+                'prompt' => "Напишіть абзац на цю тему:\n\n[[text]]\n\n----\nНаписаний абзац:\n",
+            ],
+            'hr' => [
+                'menuTitle' => 'Napišite odlomak o ovome',
+                'prompt' => "Napišite odlomak o ovom predmetu:\n\n[[text]]\n\n----\nNapisani odlomak:\n",
+            ],
             'de' => [
                 'menuTitle' => 'Schreibe einen Absatz darüber',
                 'prompt' => "Schreibe einen Absatz zu diesem Thema:\n\n[[text]]\n\n----\nGeschriebener Absatz:\n",
@@ -130,6 +146,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Parašykite apie tai',
                 'prompt' => "Parašykite apie šią temą:\n\n[[text]]\n\n----\nParašytas parašas:\n",
             ],
+            'ca' => [
+                'menuTitle' => 'Escriviu un paràgraf sobre això',
+                'prompt' => "Escriviu un paràgraf sobre aquest tema:\n\n[[text]]\n\n----\nParàgraf escrit:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -146,6 +166,22 @@ const AIKIT_INITIAL_PROMPTS = [
             'en' => [
                 'menuTitle' => 'Continue this text',
                 'prompt' => "Continue this text:\n\n[[text]]\n\n----\nContinued text:\n",
+            ],
+            'th' => [
+                'menuTitle' => 'ดำเนินการเขียนข้อความนี้ต่อ',
+                'prompt' => "ดำเนินการเขียนข้อความนี้ต่อ:\n\n[[text]]\n\n----\nข้อความที่ดำเนินการต่อ:\n",
+            ],
+            'he' => [
+                'menuTitle' => 'המשך טקסט זה',
+                'prompt' => "המשך טקסט זה:\n\n[[text]]\n\n----\nטקסט ממשיך:\n",
+            ],
+            'uk' => [
+                'menuTitle' => 'Продовжуйте цей текст',
+                'prompt' => "Продовжуйте цей текст:\n\n[[text]]\n\n----\nПродовжений текст:\n",
+            ],
+            'hr' => [
+                'menuTitle' => 'Nastavite ovaj tekst',
+                'prompt' => "Nastavite ovaj tekst:\n\n[[text]]\n\n----\nNastavljeni tekst:\n",
             ],
             'de' => [
                 'menuTitle' => 'Text fortsetzen',
@@ -267,6 +303,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Tęsti šį tekstą',
                 'prompt' => "Tęsti šį tekstą:\n\n[[text]]\n\n----\nTęstinis tekstas:\n",
             ],
+            'ca' => [
+                'menuTitle' => 'Continua aquest text',
+                'prompt' => "Continua aquest text:\n\n[[text]]\n\n----\nText continuat:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -284,6 +324,22 @@ const AIKIT_INITIAL_PROMPTS = [
             'en' => [
                 'menuTitle' => 'Generate ideas on this',
                 'prompt' => "Generate a few ideas on that as bullet points:\n\n[[text]]\n\n----\nGenerated ideas in bullet points:\n",
+            ],
+            'th' => [
+                'menuTitle' => 'สร้างความคิดเกี่ยวกับนี้',
+                'prompt' => "สร้างความคิดเกี่ยวกับเรื่องนั้นเป็นข้อความ:\n\n[[text]]\n\n----\nความคิดที่สร้างขึ้นเป็นข้อความ:\n",
+            ],
+            'he' => [
+                'menuTitle' => 'צור רעיונות על זה',
+                'prompt' => "צור כמה רעיונות על זה כנקודות:\n\n[[text]]\n\n----\nרעיונות שנוצרו בנקודות:\n",
+            ],
+            'uk' => [
+                'menuTitle' => 'Згенеруйте ідеї на цю тему',
+                'prompt' => "Згенеруйте кілька ідей на цю тему у вигляді пунктів:\n\n[[text]]\n\n----\nЗгенеровані ідеї у вигляді пунктів:\n",
+            ],
+            'hr' => [
+                'menuTitle' => 'Generirajte ideje o ovome',
+                'prompt' => "Generirajte nekoliko ideja o tome kao točke:\n\n[[text]]\n\n----\nGenerirane ideje u točkama:\n",
             ],
             'de' => [
                 'menuTitle' => 'Generiere Ideen zu diesem Thema',
@@ -405,6 +461,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Sukurti idėjas apie tai',
                 'prompt' => "Sukurkite kelias idėjas apie tai kaip taškus:\n\n[[text]]\n\n----\nSukurtos kaip taškai idėjos:\n",
             ],
+            'ca' => [
+                'menuTitle' => 'Genera idees sobre això',
+                'prompt' => "Genera algunes idees sobre això com a punts:\n\n[[text]]\n\n----\nIdees generades com a punts:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -421,6 +481,22 @@ const AIKIT_INITIAL_PROMPTS = [
             'en' => [
                 'menuTitle' => 'Write an article about this',
                 'prompt' => "Write a complete article about this:\n\n[[text]]\n\n----\nWritten article:\n",
+            ],
+            'th' => [
+                'menuTitle' => 'เขียนบทความเกี่ยวกับนี้',
+                'prompt' => "เขียนบทความเต็มเกี่ยวกับเรื่องนี้:\n\n[[text]]\n\n----\nบทความที่เขียน:\n",
+            ],
+            'he' => [
+                'menuTitle' => 'כתוב מאמר על זה',
+                'prompt' => "כתוב מאמר מלא על זה:\n\n[[text]]\n\n----\nמאמר שנכתב:\n",
+            ],
+            'hr' => [
+                'menuTitle' => 'Napišite članak o ovome',
+                'prompt' => "Napišite potpuni članak o ovome:\n\n[[text]]\n\n----\nNapisani članak:\n",
+            ],
+            'uk' => [
+                'menuTitle' => 'Напишіть статтю про це',
+                'prompt' => "Напишіть повну статтю про це:\n\n[[text]]\n\n----\nНаписана стаття:\n",
             ],
             'de' => [
                 'menuTitle' => 'Schreibe einen Artikel über das',
@@ -542,6 +618,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Parašykite straipsnį apie tai',
                 'prompt' => "Parašykite pilną straipsnį apie tai:\n\n[[text]]\n\n----\nParašytas straipsnis:\n",
             ],
+            'ca' => [
+                'menuTitle' => 'Escriviu un article sobre això',
+                'prompt' => "Escriviu un article complet sobre això:\n\n[[text]]\n\n----\nArticle escrit:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -558,6 +638,22 @@ const AIKIT_INITIAL_PROMPTS = [
             'en' => [
                 'menuTitle' => 'Generate a TL;DR',
                 'prompt' => "Generate a TL;DR of this text:\n\n[[text]]\n\n----\nTL;DR:\n",
+            ],
+            'th' => [
+                'menuTitle' => 'สร้าง TL;DR',
+                'prompt' => "สร้าง TL;DR ของข้อความนี้:\n\n[[text]]\n\n----\nTL;DR:\n",
+            ],
+            'he' => [
+                'menuTitle' => 'צור TL;DR',
+                'prompt' => "צור TL;DR של טקסט זה:\n\n[[text]]\n\n----\nTL;DR:\n",
+            ],
+            'hr' => [
+                'menuTitle' => 'Generirajte TL;DR',
+                'prompt' => "Generirajte TL;DR ovog teksta:\n\n[[text]]\n\n----\nTL;DR:\n",
+            ],
+            'uk' => [
+                'menuTitle' => 'Згенеруйте TL;DR',
+                'prompt' => "Згенеруйте TL;DR цього тексту:\n\n[[text]]\n\n----\nTL;DR:\n",
             ],
             'de' => [
                 'menuTitle' => 'Erstelle einen TL;DR',
@@ -679,6 +775,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Sukurti TL;DR',
                 'prompt' => "Sukurkite TL;DR šiam tekstui:\n\n[[text]]\n\n----\nTL;DR:\n",
             ],
+            'ca' => [
+                'menuTitle' => 'Genera un TL;DR',
+                'prompt' => "Genera un TL;DR per aquest text:\n\n[[text]]\n\n----\nTL;DR:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -695,6 +795,22 @@ const AIKIT_INITIAL_PROMPTS = [
             'en' => [
                 'menuTitle' => 'Summarize',
                 'prompt' => "Summarize this text:\n\n[[text]]\n\n----\nSummary:\n",
+            ],
+            'th' => [
+                'menuTitle' => 'สรุป',
+                'prompt' => "สรุปข้อความนี้:\n\n[[text]]\n\n----\nสรุป:\n",
+            ],
+            'he' => [
+                'menuTitle' => 'סכם',
+                'prompt' => "סכם את הטקסט הזה:\n\n[[text]]\n\n----\nסיכום:\n",
+            ],
+            'hr' => [
+                'menuTitle' => 'Sažmi',
+                'prompt' => "Sažmi ovaj tekst:\n\n[[text]]\n\n----\nSažetak:\n",
+            ],
+            'uk' => [
+                'menuTitle' => 'Узагальнити',
+                'prompt' => "Узагальнити цей текст:\n\n[[text]]\n\n----\nУзагальнення:\n",
             ],
             'de' => [
                 'menuTitle' => 'Zusammenfassen',
@@ -816,6 +932,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Santrauka',
                 'prompt' => "Santrauka šį tekstą:\n\n[[text]]\n\n----\nSantrauka:\n",
             ],
+            'ca' => [
+                'menuTitle' => 'Resum',
+                'prompt' => "Resumiu aquest text:\n\n[[text]]\n\n----\nResum:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -832,6 +952,22 @@ const AIKIT_INITIAL_PROMPTS = [
             'en' => [
                 'menuTitle' => 'Summarize (concise)',
                 'prompt' => "Summarize this text in a concise way:\n\n[[text]]\n\n----\nConcise Summary:\n",
+            ],
+            'th' => [
+                'menuTitle' => 'สรุป (กระชับ)',
+                'prompt' => "สรุปข้อความนี้ในรูปแบบกระชับ:\n\n[[text]]\n\n----\nสรุปกระชับ:\n",
+            ],
+            'he' => [
+                'menuTitle' => 'סכם (מצומצם)',
+                'prompt' => "סכם את הטקסט הזה בצורה מצומצמת:\n\n[[text]]\n\n----\nסיכום מצומצם:\n",
+            ],
+            'hr' => [
+                'menuTitle' => 'Sažmi (koncizno)',
+                'prompt' => "Sažmi ovaj tekst na koncizan način:\n\n[[text]]\n\n----\nKoncizan sažetak:\n",
+            ],
+            'uk' => [
+                'menuTitle' => 'Узагальнити (конкретно)',
+                'prompt' => "Узагальнити цей текст у конкретному вигляді:\n\n[[text]]\n\n----\nКонкретне узагальнення:\n",
             ],
             'de' => [
                 'menuTitle' => 'Zusammenfassen (kompakt)',
@@ -953,6 +1089,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Santrauka (sutrumpinta)',
                 'prompt' => "Sutrumpinkite šį tekstą:\n\n[[text]]\n\n----\nSantrauka:\n",
             ],
+            'ca' => [
+                'menuTitle' => 'Resum (concís)',
+                'prompt' => "Resumiu aquest text de manera concisa:\n\n[[text]]\n\n----\nResum concís:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -970,6 +1110,22 @@ const AIKIT_INITIAL_PROMPTS = [
             'en' => [
                 'menuTitle' => 'Summarize (bullet points)',
                 'prompt' => "Summarize this text into bullet points:\n\n[[text]]\n\n----\nSummary:\n",
+            ],
+            'th' => [
+                'menuTitle' => 'สรุป (ข้อความ)',
+                'prompt' => "สรุปข้อความนี้เป็นข้อความ:\n\n[[text]]\n\n----\nสรุป:\n",
+            ],
+            'he' => [
+                'menuTitle' => 'סכם (נקודות)',
+                'prompt' => "סכם את הטקסט הזה בנקודות:\n\n[[text]]\n\n----\nסיכום:\n",
+            ],
+            'hr' => [
+                'menuTitle' => 'Sažmi (točke)',
+                'prompt' => "Sažmi ovaj tekst u točke:\n\n[[text]]\n\n----\nSažetak:\n",
+            ],
+            'uk' => [
+                'menuTitle' => 'Узагальнити (маркери)',
+                'prompt' => "Узагальнити цей текст у вигляді маркерів:\n\n[[text]]\n\n----\nУзагальнення:\n",
             ],
             'de' => [
                 'menuTitle' => 'Zusammenfassen (Aufzählungszeichen)',
@@ -1091,6 +1247,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Santrauka (taškai)',
                 'prompt' => "Santraukite šį tekstą taškais:\n\n[[text]]\n\n----\nSantrauka:\n",
             ],
+            'ca' => [
+                'menuTitle' => 'Resum (punts)',
+                'prompt' => "Resumiu aquest text en punts:\n\n[[text]]\n\n----\nResum:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -1107,6 +1267,22 @@ const AIKIT_INITIAL_PROMPTS = [
             'en' => [
                 'menuTitle' => 'Paraphrase',
                 'prompt' => "Paraphrase this text:\n\n[[text]]\n\n----\nParaphrased text:\n",
+            ],
+            'th' => [
+                'menuTitle' => 'เพิ่มเติม',
+                'prompt' => "เพิ่มเติมข้อความนี้:\n\n[[text]]\n\n----\nข้อความที่เพิ่มเติม:\n",
+            ],
+            'he' => [
+                'menuTitle' => 'פרפרזה',
+                'prompt' => "פרפרז את הטקסט הזה:\n\n[[text]]\n\n----\nטקסט מפורפרז:\n",
+            ],
+            'hr' => [
+                'menuTitle' => 'Parafrazirati',
+                'prompt' => "Parafrazirajte ovaj tekst:\n\n[[text]]\n\n----\nParafrazirani tekst:\n",
+            ],
+            'uk' => [
+                'menuTitle' => 'Перефразувати',
+                'prompt' => "Перефразуйте цей текст:\n\n[[text]]\n\n----\nПерефразований текст:\n",
             ],
             'de' => [
                 'menuTitle' => 'Paraphrasieren',
@@ -1228,6 +1404,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Paragrafas',
                 'prompt' => "Paragrafuokite šį tekstą:\n\n[[text]]\n\n----\nParagrafuotas tekstas:\n",
             ],
+            'ca' => [
+                'menuTitle' => 'Paràgraf',
+                'prompt' => "Paràfrasi aquest text:\n\n[[text]]\n\n----\nText paràfrasat:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -1244,6 +1424,22 @@ const AIKIT_INITIAL_PROMPTS = [
             'en' => [
                 'menuTitle' => 'Paraphrase (sarcastic)',
                 'prompt' => "Paraphrase this text in a sarcastic way:\n\n[[text]]\n\n----\nParaphrased sarcastic text:\n",
+            ],
+            'th' => [
+                'menuTitle' => 'เพิ่มเติม (เยาะเย้ย)',
+                'prompt' => "เพิ่มเติมข้อความนี้ในลักษณะเยาะเย้ย:\n\n[[text]]\n\n----\nข้อความเยาะเย้ยที่เพิ่มเติม:\n",
+            ],
+            'he' => [
+                'menuTitle' => 'פרפרזה (סרקסטי)',
+                'prompt' => "פרפרז את הטקסט הזה בצורה סרקסטית:\n\n[[text]]\n\n----\nטקסט סרקסטי מפורפרז:\n",
+            ],
+            'hr' => [
+                'menuTitle' => 'Parafrazirati (sarkastično)',
+                'prompt' => "Parafrazirajte ovaj tekst na sarkastičan način:\n\n[[text]]\n\n----\nParafrazirani sarkastični tekst:\n",
+            ],
+            'uk' => [
+                'menuTitle' => 'Перефразувати (саркастично)',
+                'prompt' => "Перефразуйте цей текст саркастичним чином:\n\n[[text]]\n\n----\nПерефразований саркастичний текст:\n",
             ],
             'de' => [
                 'menuTitle' => 'Paraphrasieren (sarkastisch)',
@@ -1365,6 +1561,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Parafrazuoti (sarkastiskai)',
                 'prompt' => "Parafrazuokite šį tekstą sarkastiskai:\n\n[[text]]\n\n----\nSarkastiskai parafrazuotas tekstas:\n",
             ],
+            'ca' => [
+                'menuTitle' => 'Paràfrasi (sarcastic)',
+                'prompt' => "Paràfrasi aquest text de manera sarcàstica:\n\n[[text]]\n\n----\nText paràfrasat sarcàsticament:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -1381,6 +1581,22 @@ const AIKIT_INITIAL_PROMPTS = [
             'en' => [
                 'menuTitle' => 'Paraphrase (humorous)',
                 'prompt' => "Paraphrase this text in a humorous way:\n\n[[text]]\n\n----\nParaphrased humorous text:\n",
+            ],
+            'th' => [
+                'menuTitle' => 'เพิ่มเติม (ตลก)',
+                'prompt' => "เพิ่มเติมข้อความนี้ในลักษณะตลก:\n\n[[text]]\n\n----\nข้อความตลกที่เพิ่มเติม:\n",
+            ],
+            'he' => [
+                'menuTitle' => 'פרפרזה (הומוריסטי)',
+                'prompt' => "פרפרז את הטקסט הזה בצורה הומוריסטית:\n\n[[text]]\n\n----\nטקסט הומוריסטי מפורפרז:\n",
+            ],
+            'hr' => [
+                'menuTitle' => 'Parafrazirati (humoristično)',
+                'prompt' => "Parafrazirajte ovaj tekst na humorističan način:\n\n[[text]]\n\n----\nParafrazirani humoristični tekst:\n",
+            ],
+            'uk' => [
+                'menuTitle' => 'Перефразувати (гумористично)',
+                'prompt' => "Перефразуйте цей текст гумористичним чином:\n\n[[text]]\n\n----\nПерефразований гумористичний текст:\n",
             ],
             'de' => [
                 'menuTitle' => 'Paraphrasieren (humorvoll)',
@@ -1502,6 +1718,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Parafrazė (humor)',
                 'prompt' => "Parafrazuokite šį tekstą humoristiniu būdu:\n\n[[text]]\n\n----\nHumoristinė parafraza:\n",
             ],
+            'ca' => [
+                'menuTitle' => 'Paràfrasi (humor)',
+                'prompt' => "Paràfrasi aquest text d'una manera humorística:\n\n[[text]]\n\n----\nParàfrasi humorística:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -1518,6 +1738,22 @@ const AIKIT_INITIAL_PROMPTS = [
             'en' => [
                 'menuTitle' => 'Generate subtitle',
                 'prompt' => "Generate a title for this text:\n\n[[text]]\n\n----\nTitle:\n",
+            ],
+            'th' => [
+                'menuTitle' => 'สร้างคำบรรยาย',
+                'prompt' => "สร้างชื่อเรื่องสำหรับข้อความนี้:\n\n[[text]]\n\n----\nชื่อเรื่อง:\n",
+            ],
+            'he' => [
+                'menuTitle' => 'צור כתוביות',
+                'prompt' => "צור כותרת עבור טקסט זה:\n\n[[text]]\n\n----\nכותרת:\n",
+            ],
+            'hr' => [
+                'menuTitle' => 'Generiraj naslov',
+                'prompt' => "Generirajte naslov za ovaj tekst:\n\n[[text]]\n\n----\nNaslov:\n",
+            ],
+            'uk' => [
+                'menuTitle' => 'Згенерувати підзаголовок',
+                'prompt' => "Згенеруйте заголовок для цього тексту:\n\n[[text]]\n\n----\nЗаголовок:\n",
             ],
             'de' => [
                 'menuTitle' => 'Untertitel generieren',
@@ -1639,6 +1875,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Generuoti subtitrus',
                 'prompt' => "Generuoti pavadinimą šiam tekstui:\n\n[[text]]\n\n----\nPavadinimas:\n",
             ],
+            'ca' => [
+                'menuTitle' => 'Genera subtítols',
+                'prompt' => "Genera un títol per aquest text:\n\n[[text]]\n\n----\nTítol:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -1655,6 +1895,22 @@ const AIKIT_INITIAL_PROMPTS = [
             'en' => [
                 'menuTitle' => 'Turn into advertisement',
                 'prompt' => "Turn the following text into a creative advertisement:\n\n[[text]]\n\n----\nAdvertisement:\n",
+            ],
+            'th' => [
+                'menuTitle' => 'แปลงเป็นโฆษณา',
+                'prompt' => "แปลงข้อความต่อไปนี้เป็นโฆษณาที่สร้างสรรค์:\n\n[[text]]\n\n----\nโฆษณา:\n",
+            ],
+            'he' => [
+                'menuTitle' => 'המר לפרסומת',
+                'prompt' => "המר את הטקסט הבא לפרסומת יצירתית:\n\n[[text]]\n\n----\nפרסומת:\n",
+            ],
+            'hr' => [
+                'menuTitle' => 'Pretvoriti u oglas',
+                'prompt' => "Pretvorite sljedeći tekst u kreativni oglas:\n\n[[text]]\n\n----\nOglas:\n",
+            ],
+            'uk' => [
+                'menuTitle' => 'Перетворити на рекламу',
+                'prompt' => "Перетворіть наступний текст на креативну рекламу:\n\n[[text]]\n\n----\nРеклама:\n",
             ],
             'de' => [
                 'menuTitle' => 'In Werbung umwandeln',
@@ -1775,7 +2031,11 @@ const AIKIT_INITIAL_PROMPTS = [
             'lt' => [
                 'menuTitle' => 'Pervesti į reklamą',
                 'prompt' => "Pervesti šį tekstą į kūrybingą reklamą:\n\n[[text]]\n\n----\nReklama:\n",
-            ]
+            ],
+            'ca' => [
+                'menuTitle' => 'Convertir en anunci',
+                'prompt' => "Converteix el següent text en un anunci creatiu:\n\n[[text]]\n\n----\nAnunci:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -1792,6 +2052,22 @@ const AIKIT_INITIAL_PROMPTS = [
             'en' => [
                 'menuTitle' => 'Explain to a 5 years old kid',
                 'prompt' => "Explain this to a 5 years old kid:\n\n[[text]]\n\n----\nExplanation:\n",
+            ],
+            'th' => [
+                'menuTitle' => 'อธิบายให้เด็กอายุ 5 ปี',
+                'prompt' => "อธิบายสิ่งนี้ให้เด็กอายุ 5 ปี:\n\n[[text]]\n\n----\nอธิบาย:\n",
+            ],
+            'he' => [
+                'menuTitle' => 'הסבר לילד בן 5',
+                'prompt' => "הסבר את הטקסט הבא לילד בן 5:\n\n[[text]]\n\n----\nהסבר:\n",
+            ],
+            'hr' => [
+                'menuTitle' => 'Objasnite 5-godišnjem djetetu',
+                'prompt' => "Objasnite ovo 5-godišnjem djetetu:\n\n[[text]]\n\n----\nObjašnjenje:\n",
+            ],
+            'uk' => [
+                'menuTitle' => 'Поясніть 5-річному дитині',
+                'prompt' => "Поясніть це 5-річному дитині:\n\n[[text]]\n\n----\nПояснення:\n",
             ],
             'de' => [
                 'menuTitle' => 'Erkläre einem 5-jährigen Kind',
@@ -1913,6 +2189,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Paaiškinkite 5 metų vaikui',
                 'prompt' => "Paaiškinkite tai 5 metų vaikui:\n\n[[text]]\n\n----\nPaaiškinimas:\n",
             ],
+            'ca' => [
+                'menuTitle' => 'Explica-ho a un nen de 5 anys',
+                'prompt' => "Explica-ho a un nen de 5 anys:\n\n[[text]]\n\n----\nExplicació:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -1929,6 +2209,22 @@ const AIKIT_INITIAL_PROMPTS = [
             'en' => [
                 'menuTitle' => 'Find a matching quote',
                 'prompt' => "Find a matching quote for the following text:\n\n[[text]]\n\n----\nMatching quote:\n",
+            ],
+            'th' => [
+                'menuTitle' => 'ค้นหาคำพูดที่ตรงกัน',
+                'prompt' => "ค้นหาคำพูดที่ตรงกันกับข้อความต่อไปนี้:\n\n[[text]]\n\n----\nคำพูดที่ตรงกัน:\n",
+            ],
+            'he' => [
+                'menuTitle' => 'מצא ציטוט תואם',
+                'prompt' => "מצא ציטוט תואם לטקסט הבא:\n\n[[text]]\n\n----\nציטוט תואם:\n",
+            ],
+            'hr' => [
+                'menuTitle' => 'Pronađite odgovarajući citat',
+                'prompt' => "Pronađite odgovarajući citat za sljedeći tekst:\n\n[[text]]\n\n----\nOdgovarajući citat:\n",
+            ],
+            'uk' => [
+                'menuTitle' => 'Знайти відповідний цитату',
+                'prompt' => "Знайти відповідний цитату для наступного тексту:\n\n[[text]]\n\n----\nВідповідний цитату:\n",
             ],
             'de' => [
                 'menuTitle' => 'Finde einen passenden Zitat',
@@ -2050,6 +2346,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Rasti atitinkantį citatą',
                 'prompt' => "Rasti atitinkantį citatą šiam tekstui:\n\n[[text]]\n\n----\nAtitinkantis citatas:\n",
             ],
+            'ca' => [
+                'menuTitle' => 'Troba una cita que coincideixi',
+                'prompt' => "Troba una cita que coincideixi amb el següent text:\n\n[[text]]\n\n----\nCita que coincideixi:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -2066,6 +2366,22 @@ const AIKIT_INITIAL_PROMPTS = [
             'en' => [
                 'menuTitle' => 'Generate image idea',
                 'prompt' => "Describe an image that would match this text:\n\n[[text]]\n\n----\nImage description:\n",
+            ],
+            'th' => [
+                'menuTitle' => 'สร้างไอเดียภาพ',
+                'prompt' => "อธิบายภาพที่จะตรงกับข้อความนี้:\n\n[[text]]\n\n----\nคำอธิบายภาพ:\n",
+            ],
+            'he' => [
+                'menuTitle' => 'צור רעיון תמונה',
+                'prompt' => "תאר תמונה שתתאים לטקסט הבא:\n\n[[text]]\n\n----\nתיאור תמונה:\n",
+            ],
+            'hr' => [
+                'menuTitle' => 'Generiraj ideju slike',
+                'prompt' => "Opišite sliku koja bi odgovarala ovom tekstu:\n\n[[text]]\n\n----\nOpis slike:\n",
+            ],
+            'uk' => [
+                'menuTitle' => 'Згенеруйте ідею зображення',
+                'prompt' => "Опишіть зображення, яке відповідало б цьому тексту:\n\n[[text]]\n\n----\nОпис зображення:\n",
             ],
             'de' => [
                 'menuTitle' => 'Generiere Bildidee',
@@ -2185,6 +2501,10 @@ const AIKIT_INITIAL_PROMPTS = [
             ],
             'lt' => [
                 'menuTitle' => 'Sukurti paveikslėlio idėją',
+                'prompt' => "Describe an image that would match this text:\n\n[[text]]\n\n----\nImage description:\n",
+            ],
+            'ca' => [
+                'menuTitle' => 'Genera una idea d\'imatge',
                 'prompt' => "Describe an image that would match this text:\n\n[[text]]\n\n----\nImage description:\n",
             ],
         ],

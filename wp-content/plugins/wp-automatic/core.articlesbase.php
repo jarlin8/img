@@ -54,7 +54,7 @@ function article_base_getlinks($keyword, $camp) {
 	  echo '<br>Trying to call AB for new links start from result:' . $page;
 	
 	// Keyword encoded
-	$keywordenc = urlencode ( 'site:articlesbase.com '. trim($keyword)   );
+	$keywordenc = urlencode ( 'site:articlesbase.com '. wp_automatic_trim($keyword)   );
 	 	
 	// Bing Link
 	$curlurl="https://www.bing.com/search?q=$keywordenc&PC=U316&FORM=CHROMN&count=50&first=$page";
@@ -65,14 +65,14 @@ function article_base_getlinks($keyword, $camp) {
 	// Curl Get
 	$x='error';
 	curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-	curl_setopt($this->ch, CURLOPT_URL, trim($curlurl));
+	curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($curlurl));
 	$exec=$this->curl_exec_follow($this->ch);
 	$x=curl_error($this->ch);
 	  
 	
 	   
 	//no content and 302 header exists
-	if(trim($exec) == ''){
+	if(wp_automatic_trim($exec) == ''){
 		  echo '<br>Empty results from Bing page';
 		return false;
 	}
@@ -194,13 +194,13 @@ function articlebase_get_post($camp) {
 
 	foreach ( $keywords as $keyword ) {
 			
-		$keyword = trim($keyword);
+		$keyword = wp_automatic_trim($keyword);
 			
-		if (trim ( $keyword ) != '') {
+		if (wp_automatic_trim( $keyword ) != '') {
 				
 				
 			//update last keyword
-			update_post_meta($camp->camp_id, 'last_keyword', trim($keyword));
+			update_post_meta($camp->camp_id, 'last_keyword', wp_automatic_trim($keyword));
 
 			// check if keyword exhausted to skip
 			$query = "select * from {$this->wp_prefix}automatic_articles_keys where keyword = '$keyword' and camp_id='$camp->camp_id'";
@@ -234,7 +234,7 @@ function articlebase_get_post($camp) {
 					$this->db->query ( $query );
 						
 					// processing page and getting content
-					$url = htmlspecialchars_decode($link->link) ;
+					$url = wp_automatic_htmlspecialchars_decode($link->link) ;
 
 					$title = $link->title;
 
@@ -245,7 +245,7 @@ function articlebase_get_post($camp) {
 					$binglink =  "http://webcache.googleusercontent.com/search?q=cache:".urlencode($url);
 
 					curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-					curl_setopt ( $this->ch, CURLOPT_URL, trim (  ( $binglink ) ) );
+					curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim(  ( $binglink ) ) );
 					curl_setopt ( $this->ch, CURLOPT_REFERER, 'http://ezinearticles.com' );
 					$exec = curl_exec ( $this->ch );
 					$x = curl_error($this->ch);
@@ -265,7 +265,7 @@ function articlebase_get_post($camp) {
 						$cacheLink ='';
 						$cacheToken = $link->bing_cache;
 						
-						if(trim($cacheToken) != '' && stristr($cacheToken, '|')){
+						if(wp_automatic_trim($cacheToken) != '' && stristr($cacheToken, '|')){
 							
 							$cacheTokenParms = explode( '|' , $cacheToken );
 							
@@ -273,7 +273,7 @@ function articlebase_get_post($camp) {
 							$cacheTokenParam1 = $cacheTokenParms[2];
 							$cacheTokenParam2 = $cacheTokenParms[3];
 							
-							if(trim($cacheTokenParam1) != '' && trim($cacheTokenParam1) != ''){
+							if(wp_automatic_trim($cacheTokenParam1) != '' && wp_automatic_trim($cacheTokenParam1) != ''){
 								
 								$cacheLink = "http://cc.bingj.com/cache.aspx?d=$cacheTokenParam1&mkt=en-US&setlang=en-US&w=$cacheTokenParam2";
 								
@@ -284,11 +284,11 @@ function articlebase_get_post($camp) {
 						}
 						 
 						
-						if(trim($cacheLink) != ''){
+						if(wp_automatic_trim($cacheLink) != ''){
 							
 							  echo '<br>Google cache failed Loading from Bing cache<br> Link:'.$cacheLink;
 							
-							curl_setopt ( $this->ch, CURLOPT_URL, trim (  $cacheLink  ) );
+							curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim(  $cacheLink  ) );
 							$exec = curl_exec ( $this->ch );
 							
 							if(stristr($exec,'About the Author')){
@@ -305,7 +305,7 @@ function articlebase_get_post($camp) {
 							
 							// Direct call
 							  echo '<br>Bing cache didnot return valid result direct call to ArticleBase '.$x;
-							curl_setopt ( $this->ch, CURLOPT_URL, trim (  ( urldecode( $url ) ) ) );
+							curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim(  ( urldecode( $url ) ) ) );
 							curl_setopt ( $this->ch, CURLOPT_REFERER, 'http://ezinearticles.com' );
 							$exec = curl_exec ( $this->ch );
 	
@@ -333,7 +333,7 @@ function articlebase_get_post($camp) {
 					// Cleaning content 
 					$articleContentClean = preg_replace("{<script.*?script>}s", '', $articleContentRaw);
 					$articleContentClean = preg_replace("{<div.*?\s</div>}s", '', $articleContentClean);
-					$cont = trim($articleContentClean);
+					$cont = wp_automatic_trim($articleContentClean);
 
 					// get the title <title>Make Money With Google Profit Kits Exposed - Don't Get Ripped Off!</title>
 					@preg_match_all ( "{<title>(.*?)</title>}", $exec, $matches, PREG_PATTERN_ORDER );
@@ -358,7 +358,7 @@ function articlebase_get_post($camp) {
 					$ret ['author_link'] = $author_link;
 					$ret ['matched_content'] = $cont;
 					$this->used_keyword=$link->keyword;
-					if( trim($ret['cont']) == '' )   echo ' exec:'.$exec;
+					if( wp_automatic_trim($ret['cont']) == '' )   echo ' exec:'.$exec;
 						
 						
 					return $ret;

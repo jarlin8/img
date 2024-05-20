@@ -8,6 +8,7 @@ class Spintax {
  	//spin 
 	function spin($html,$replace_similar = false){
 		
+		 
  		
 		for($i = 0 ;$i < 4 ; $i++){
 			
@@ -28,16 +29,18 @@ class Spintax {
 	
 		preg_match_all('{\{([^{}]*?)\}}s', $html, $matches);
 	
-		$spintaxed_with_brackets = $matches[0];
-		
-		//print_r($spintaxed_with_brackets);
-		 
-		
+		$spintaxed_with_brackets = $matches[0];		 
 		$spintaxed_without_brackets = $matches[1];
-	
+
+ 
+
 		$i = 0;
 		foreach( $spintaxed_without_brackets as $set){
 			
+				if(! stristr($set, '|')){
+					continue;
+				}
+
 				//valid set let's explode to parts
 				$parts = explode('|', $set);
 				$random = rand(0,count($parts) -1);
@@ -47,7 +50,7 @@ class Spintax {
 				
 				//replacing the set with the random part
 				if($replace_similar ){
-					$html = str_replace($spintaxed_with_brackets[$i],  $random_part , $html );
+					$html = wp_automatic_str_replace($spintaxed_with_brackets[$i],  $random_part , $html );
 				}else{
 					$html = $this->str_replace_first($spintaxed_with_brackets[$i],  $random_part , $html );
 				}

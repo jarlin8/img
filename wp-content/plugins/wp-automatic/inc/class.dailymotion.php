@@ -35,7 +35,7 @@ class wpAutomatic_DailyMotion{
 		$x='error';
 		 
 		curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-		curl_setopt($this->ch, CURLOPT_URL, trim($url));
+		curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($url));
 		 
 		$exec=curl_exec($this->ch);
 		$x=curl_error($this->ch);
@@ -65,7 +65,7 @@ class wpAutomatic_DailyMotion{
 	 */
 	private function validateResponse(&$exec){
 		
-		if (trim($exec) == ''){
+		if (wp_automatic_trim($exec) == ''){
 			throw new Exception('Empty reply from the source with possible curl error '.$x);
 		}
 		

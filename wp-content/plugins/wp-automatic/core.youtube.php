@@ -11,9 +11,9 @@
 			echo "<br>so I should now get some links from youtube for keyword :" . $keyword;
 			
 			// check if there is an api key added
-			$wp_automatic_yt_tocken = trim ( wp_automatic_single_item ( 'wp_automatic_yt_tocken', '' ) );
+			$wp_automatic_yt_tocken = wp_automatic_trim( wp_automatic_single_item ( 'wp_automatic_yt_tocken', '' ) );
 			
-			if (trim ( $wp_automatic_yt_tocken ) == '') {
+			if (wp_automatic_trim( $wp_automatic_yt_tocken ) == '') {
 				echo '<br>Youtube API key is required, please visit settings page and add it';
 				return false;
 			}
@@ -73,13 +73,13 @@
 				$criteria .= '&category=' . $cat;
 			
 			// base url
-			$search_url = "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&key=" . trim ( $wp_automatic_yt_tocken ) . "&maxResults=50";
+			$search_url = "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&key=" . wp_automatic_trim( $wp_automatic_yt_tocken ) . "&maxResults=50";
 			
 			$naked_search_url = $search_url; // minimal version of the search query
 			                                 
 			// keyword add
-			if (trim ( $keyword ) != '*') {
-				$search_url = $search_url . '&q=' . urlencode ( trim ( $keyword ) );
+			if (wp_automatic_trim( $keyword ) != '*') {
+				$search_url = $search_url . '&q=' . urlencode ( wp_automatic_trim( $keyword ) );
 			}
 			
 			if (in_array ( 'OPT_YT_DATE', $camp_opt )) {
@@ -116,7 +116,7 @@
 			// published before
 			if (in_array ( 'OPT_YT_BEFORE', $camp_opt )) {
 				if (stristr ( $camp_general ['cg_yt_before'], '-' )) {
-					$search_url .= "&publishedBefore=" . trim ( $camp_general ['cg_yt_before'] ) . 'T00:00:00Z';
+					$search_url .= "&publishedBefore=" . wp_automatic_trim( $camp_general ['cg_yt_before'] ) . 'T00:00:00Z';
 				}
 			}
 			
@@ -127,37 +127,37 @@
 			
 			// license
 			$cg_yt_license = $camp_general ['cg_yt_license'];
-			if (trim ( $cg_yt_license ) != '' && $cg_yt_license != 'any') {
+			if (wp_automatic_trim( $cg_yt_license ) != '' && $cg_yt_license != 'any') {
 				$search_url .= "&videoLicense=" . $cg_yt_license;
 			}
 			
 			// cg_yt_type
 			$cg_yt_type = $camp_general ['cg_yt_type'];
-			if (trim ( $cg_yt_type ) != '' && $cg_yt_type != 'any') {
+			if (wp_automatic_trim( $cg_yt_type ) != '' && $cg_yt_type != 'any') {
 				$search_url .= "&videoType=" . $cg_yt_type;
 			}
 			
 			// videoDuration
 			$cg_yt_duration = $camp_general ['cg_yt_duration'];
-			if (trim ( $cg_yt_duration ) != '' && $cg_yt_duration != 'any') {
+			if (wp_automatic_trim( $cg_yt_duration ) != '' && $cg_yt_duration != 'any') {
 				$search_url .= "&videoDuration=" . $cg_yt_duration;
 			}
 			
 			// videoDefinition
 			$cg_yt_definition = $camp_general ['cg_yt_definition'];
-			if (trim ( $cg_yt_definition ) != '' && $cg_yt_definition != 'any') {
+			if (wp_automatic_trim( $cg_yt_definition ) != '' && $cg_yt_definition != 'any') {
 				$search_url .= "&videoDefinition=" . $cg_yt_definition;
 			}
 			
 			// safeSearch
 			$cg_yt_safe = $camp_general ['cg_yt_safe'];
-			if (trim ( $cg_yt_safe ) != '' && $cg_yt_safe != 'moderate') {
+			if (wp_automatic_trim( $cg_yt_safe ) != '' && $cg_yt_safe != 'moderate') {
 				$search_url .= "&safeSearch=" . $cg_yt_safe;
 			}
 			
 			// order
 			$camp_youtube_order = $camp->camp_youtube_order;
-			if (trim ( $camp_youtube_order ) == 'published')
+			if (wp_automatic_trim( $camp_youtube_order ) == 'published')
 				$camp_youtube_order = 'date';
 			
 			if ($camp_youtube_order != 'relevance')
@@ -165,29 +165,29 @@
 			
 			// videoCategoryId
 			$videoCategoryId = $camp->camp_youtube_cat;
-			if (trim ( $videoCategoryId ) != 'All' && is_numeric ( $videoCategoryId )) {
+			if (wp_automatic_trim( $videoCategoryId ) != 'All' && is_numeric ( $videoCategoryId )) {
 				$search_url .= "&videoCategoryId=" . $videoCategoryId;
 			}
 			
 			// regionCode
-			if (in_array ( 'OPT_YT_LIMIT_CTRY', $camp_opt ) && trim ( $camp_general ['cg_yt_ctr'] ) != '') {
-				$search_url .= "&regionCode=" . trim ( $camp_general ['cg_yt_ctr'] );
+			if (in_array ( 'OPT_YT_LIMIT_CTRY', $camp_opt ) && wp_automatic_trim( $camp_general ['cg_yt_ctr'] ) != '') {
+				$search_url .= "&regionCode=" . wp_automatic_trim( $camp_general ['cg_yt_ctr'] );
 			}
 			
 			// relevanceLanguage
-			if (in_array ( 'OPT_YT_LIMIT_LANG', $camp_opt ) && trim ( $camp_general ['cg_yt_lang'] ) != '') {
-				$search_url .= "&relevanceLanguage=" . trim ( $camp_general ['cg_yt_lang'] );
+			if (in_array ( 'OPT_YT_LIMIT_LANG', $camp_opt ) && wp_automatic_trim( $camp_general ['cg_yt_lang'] ) != '') {
+				$search_url .= "&relevanceLanguage=" . wp_automatic_trim( $camp_general ['cg_yt_lang'] );
 			}
 			
 			if (in_array ( 'OPT_YT_USER', $camp_opt )) {
 				echo '<br>Fetching vids for specific User/Channel ' . $camp->camp_yt_user;
 				
-				$camp_yt_user = trim ( $camp->camp_yt_user );
+				$camp_yt_user = wp_automatic_trim( $camp->camp_yt_user );
 				
 				//https://www.youtube.com/channel/UCRrW0ddrbFnJCbyZqHHv4KQ
 				if(  stristr( $camp_yt_user , 'https' ) && stristr($camp_yt_user, '/channel') ){
-					$camp_yt_user = trim(str_replace('https://www.youtube.com/channel/', '', $camp_yt_user));
-					$camp_yt_user = str_replace('/' , '' , $camp_yt_user ) ;
+					$camp_yt_user = wp_automatic_trim(wp_automatic_str_replace('https://www.youtube.com/channel/', '', $camp_yt_user));
+					$camp_yt_user = wp_automatic_str_replace('/' , '' , $camp_yt_user ) ;
 				}
 				
 				//https://www.youtube.com/c/HolyCulture
@@ -204,11 +204,11 @@
 					
 					echo '<br>Playlistifying....';
 					
-					$channel_playlist_key_name = 'wp_automatic_playlist_id_' . md5 ( trim ( $camp_yt_user ) );
+					$channel_playlist_key_name = 'wp_automatic_playlist_id_' . md5 ( wp_automatic_trim( $camp_yt_user ) );
 					$channel_playlist_id = get_post_meta ( $camp->camp_id, $channel_playlist_key_name, true );
 					
 					// grab playlist ID for firt time
-					if (trim ( $channel_playlist_id ) == '') {
+					if (wp_automatic_trim( $channel_playlist_id ) == '') {
 						
 						// get the ID from YT for first time
 						$playlist_api_url = "https://www.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=" . $camp_yt_user . "&key=" . $wp_automatic_yt_tocken;
@@ -217,7 +217,7 @@
 						
 						// curl get
 						curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-						curl_setopt ( $this->ch, CURLOPT_URL, trim ( $playlist_api_url ) );
+						curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $playlist_api_url ) );
 						$exec = curl_exec ( $this->ch );
 						
 						if (stristr ( $exec, '{' )) {
@@ -232,34 +232,52 @@
 						}
 					} // first playlist
 					
-					if (trim ( $channel_playlist_id ) != '') {
+					if (wp_automatic_trim( $channel_playlist_id ) != '') {
 						// nice we have the uploads playlist lets playlistify now
 						$camp_opt [] = 'OPT_YT_PLAYLIST';
 						$camp_general ['cg_yt_playlist'] = $channel_playlist_id;
 					}
 				}
 				
-				// check if playlist
-				if (in_array ( 'OPT_YT_PLAYLIST', $camp_opt )) {
-					echo '<br>Specific Playlist:' . $camp_general ['cg_yt_playlist'];
+				 
 					
-					$part = "snippet";
-					
-					if (in_array ( 'OPT_YT_DATE', $camp_opt )) {
-						$part = "snippet,contentDetails";
-					}
-					
-					$search_url = "https://www.googleapis.com/youtube/v3/playlistItems?part={$part}&playlistId=" . $camp_general ['cg_yt_playlist'] . "&key=" . trim ( $wp_automatic_yt_tocken ) . "&maxResults=50";
-				} else {
-					
-					$search_url .= "&channelId=" . ($camp_yt_user);
-				}
+				$search_url .= "&channelId=" . ($camp_yt_user);
+				 
 			} elseif (in_array ( 'YT_ID', $camp_opt )) {
 				
 				// post by ID
-				$search_url = 'https://www.googleapis.com/youtube/v3/videos?key=' . $wp_automatic_yt_tocken . '&part=snippet&id=' . urlencode ( trim ( $keyword ) );
+				$search_url = 'https://www.googleapis.com/youtube/v3/videos?key=' . $wp_automatic_yt_tocken . '&part=snippet&id=' . urlencode ( wp_automatic_trim( $keyword ) );
 			} else {
 				// no user just search
+			}
+
+			// check if playlist
+			if (in_array ( 'OPT_YT_PLAYLIST', $camp_opt )) {
+				echo '<br>Specific Playlist:' . $camp_general ['cg_yt_playlist'];
+				
+				$part = "snippet";
+				
+				if (in_array ( 'OPT_YT_DATE', $camp_opt )) {
+					$part = "snippet,contentDetails";
+				}
+
+				//playlist id 
+				$playlistID = wp_automatic_trim( $camp_general ['cg_yt_playlist'] );
+
+				//if playlistID contains a playlist url, convert it to a playlist id
+				if( stristr($playlistID , 'https://www.youtube.com/playlist?list=') ){
+					$playlistID = wp_automatic_str_replace('https://www.youtube.com/playlist?list=' , '' , $playlistID);
+
+					//remove any other params
+					$playlistID = explode('&' , $playlistID);
+					$playlistID = $playlistID[0];
+
+					echo '<br>Converted playlist url to id:' . $playlistID;
+
+
+				}
+				
+				$search_url = "https://www.googleapis.com/youtube/v3/playlistItems?part={$part}&playlistId=" . $playlistID . "&key=" . wp_automatic_trim( $wp_automatic_yt_tocken ) . "&maxResults=50";
 			}
 			
 			// check nextpagetoken 
@@ -268,7 +286,7 @@
 			
 			if (in_array ( 'OPT_YT_CACHE', $camp_opt )) {
 				
-				if (trim ( $nextPageToken ) != '') {
+				if (wp_automatic_trim( $nextPageToken ) != '') {
 					echo '<br>nextPageToken:' . $nextPageToken;
 					$search_url .= '&pageToken=' . $nextPageToken;
 				} else {
@@ -290,7 +308,7 @@
 			
 			// process request
 			curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-			curl_setopt ( $this->ch, CURLOPT_URL, trim ( $search_url ) );
+			curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $search_url ) );
 			$exec = curl_exec ( $this->ch );
 			
 			$x = curl_error ( $this->ch );
@@ -322,7 +340,7 @@
 			
 	
 			// check nextpage token
-			if (isset ( $json_exec->nextPageToken ) && trim ( $json_exec->nextPageToken ) != '') {
+			if (isset ( $json_exec->nextPageToken ) && wp_automatic_trim( $json_exec->nextPageToken ) != '') {
 				$newnextPageToken = $json_exec->nextPageToken;
 				echo '<br>New page token:' . $newnextPageToken;
 				update_post_meta ( $camp->camp_id, 'wp_automatic_yt_nt_' . md5 ( $keyword ), $newnextPageToken );
@@ -396,10 +414,10 @@
 				$link_img = $itm->snippet->thumbnails->high->url;
 				
 				// get largest size
-				// $link_img = str_replace('hqdefault', 'hqdefault', $link_img);
+				// $link_img = wp_automatic_str_replace('hqdefault', 'hqdefault', $link_img);
 				
 				// get item title
-				$link_title = addslashes ( htmlspecialchars_decode($itm->snippet->title , ENT_QUOTES) );
+				$link_title = addslashes ( wp_automatic_htmlspecialchars_decode($itm->snippet->title , ENT_QUOTES) );
  
 				
 				// Skip private videos
@@ -417,6 +435,8 @@
 					echo '<li>' . $link_title . '<-- Live video, skipping...' . '</li>';
 					continue;
 				}
+
+				
 				
 				// get item description
 				$link_desc = addslashes ( $itm->snippet->description );
@@ -457,6 +477,44 @@
 					echo '<-- Execluded';
 					continue;
 				}
+
+				//validate shorts 
+				if( in_array( 'OPT_YT_SHORT_SKIP' , $camp_opt )  ){
+					
+					echo '<br>Checking if short video: ' . $vid_id;
+
+					$is_short = $this->is_short($vid_id); 					 
+
+					if($is_short){
+						echo '<-- Short video, skipping...';
+						
+						//exclude
+						$this->link_execlude($camp->camp_id, $link_url);
+						
+						continue;
+					}
+
+ 					 
+				}
+
+				//only import shorts OPT_YT_SHORT_ONLY
+				if( in_array( 'OPT_YT_SHORT_ONLY' , $camp_opt )  ){
+					
+					echo '<br>Checking if short video: ' . $vid_id;
+
+					$is_short = $this->is_short($vid_id); 					 
+
+					if(!$is_short){
+						echo '<-- Not a short video, skipping...';
+						
+						//exclude
+						$this->link_execlude($camp->camp_id, $link_url);
+						
+						continue;
+					}
+
+ 					 
+				}
 				
 				// check if older than minimum date
 				if ((in_array ( 'OPT_YT_DATE', $camp_opt ) && in_array ( 'OPT_YT_PLAYLIST', $camp_opt )) || in_array ( 'OPT_YT_DATE_T', $camp_opt )) {
@@ -483,7 +541,7 @@
 					if($ins){
 						echo '<-- inserted';
 					}else{
-						echo '<-- not inserted ' . $wpdb->last_error;
+						echo '<-- not inserted ' . $this->db->last_error;
 					}
 					
 				} else {
@@ -509,14 +567,14 @@
 			
 			foreach ( $keywords as $keyword ) {
 				
-				$keyword = trim ( $keyword );
+				$keyword = wp_automatic_trim( $keyword );
 				
-				if (trim ( $keyword ) != '') {
+				if (wp_automatic_trim( $keyword ) != '') {
 					
 					echo '<br>Keyword:' . $keyword;
 					
 					// update last keyword
-					update_post_meta ( $camp->camp_id, 'last_keyword', trim ( $keyword ) );
+					update_post_meta ( $camp->camp_id, 'last_keyword', wp_automatic_trim( $keyword ) );
 					
 					// getting links from the db for that keyword
 					$query = "select * from {$this->wp_prefix}automatic_youtube_links where link_keyword='{$camp->camp_id}_$keyword' ";
@@ -541,7 +599,7 @@
 						
 						$t_row = $res [$i];
 						$t_link_url = $t_row->link_url;
-						$t_link_url_http = str_replace ( 'https', 'http', $t_link_url );
+						$t_link_url_http =wp_automatic_str_replace( 'https', 'http', $t_link_url );
 						
 						if ($this->is_duplicate ( $t_link_url ) || $this->is_duplicate ( $t_link_url_http )) {
 							
@@ -571,21 +629,21 @@
 						$vid_id = $temp_ex [1];
 						
 						// set used url
-						$this->used_link = trim ( $ret->link_url );
+						$this->used_link = wp_automatic_trim( $ret->link_url );
 						
-						$temp ['vid_title'] = trim ( $ret->link_title );
-						$temp ['vid_url'] = trim ( $ret->link_url );
-						$temp ['source_link'] = trim ( $ret->link_url );
-						$temp ['vid_time'] = trim ( $ret->link_time );
+						$temp ['vid_title'] = wp_automatic_trim( $ret->link_title );
+						$temp ['vid_url'] = wp_automatic_trim( $ret->link_url );
+						$temp ['source_link'] = wp_automatic_trim( $ret->link_url );
+						$temp ['vid_time'] = wp_automatic_trim( $ret->link_time );
 						
-						$temp ['vid_author'] = trim ( $ret->link_author );
+						$temp ['vid_author'] = wp_automatic_trim( $ret->link_author );
 						
 						// generate player
 						$width = $camp_general ['cg_yt_width'];
 						$height = $camp_general ['cg_yt_height'];
-						if (trim ( $width ) == '')
+						if (wp_automatic_trim( $width ) == '')
 							$width = 580;
-						if (trim ( $height ) == '')
+						if (wp_automatic_trim( $height ) == '')
 							$height = 385;
 						
 						$embedsrc = "https://www.youtube.com/embed/" . $vid_id;
@@ -619,7 +677,7 @@
 						// lang
 						if (in_array ( 'OPT_YT_PLAYER_LANG', $camp_opt )) {
 							
-							$plang = trim ( $camp_general ['cg_yt_plang'] );
+							$plang = wp_automatic_trim( $camp_general ['cg_yt_plang'] );
 							
 							if (stristr ( $embedsrc, '?' )) {
 								$embedsrc .= '&hl=' . $plang;
@@ -655,8 +713,8 @@
 						$get_vid_details_parts = array ();
 						
 						// statistics part
-						$temp ['vid_views'] = trim ( $ret->link_views );
-						$temp ['vid_rating'] = trim ( $ret->link_rating );
+						$temp ['vid_views'] = wp_automatic_trim( $ret->link_views );
+						$temp ['vid_rating'] = wp_automatic_trim( $ret->link_rating );
 						
 						// general
 						$general = unserialize ( base64_decode ( $ret->link_general ) );
@@ -679,7 +737,7 @@
 						}
 						
 						// contentdetails part
-						$temp ['vid_duration'] = trim ( $ret->link_duration );
+						$temp ['vid_duration'] = wp_automatic_trim( $ret->link_duration );
 						
 						if (stristr ( $camp_post_content, 'vid_duration' ) || class_exists ( 'Cactus_video' )) {
 							$get_vid_details = true;
@@ -687,7 +745,7 @@
 						}
 						
 						// snippet part full content
-						$temp ['vid_desc'] = trim ( $ret->link_desc );
+						$temp ['vid_desc'] = wp_automatic_trim( $ret->link_desc );
 						
 						// if full description from youtube or tags let's get them
 						if (in_array ( 'OPT_YT_FULL_CNT', $camp_opt ) || (in_array ( 'OPT_YT_PLAYLIST', $camp_opt )) || in_array ( 'OPT_YT_TAG', $camp_opt ) ) {
@@ -704,7 +762,7 @@
 							echo '<br>Getting more details from youtube for the vid..';
 							
 							// token
-							$wp_automatic_yt_tocken = trim ( wp_automatic_single_item ( 'wp_automatic_yt_tocken' ) );
+							$wp_automatic_yt_tocken = wp_automatic_trim( wp_automatic_single_item ( 'wp_automatic_yt_tocken' ) );
 							
 							// curl get
 							$x = 'error';
@@ -713,7 +771,7 @@
 							echo '<br>yt link:' . $ccurl;
 							
 							curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-							curl_setopt ( $this->ch, CURLOPT_URL, trim ( $ccurl ) );
+							curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $ccurl ) );
 							$exec = curl_exec ( $this->ch );
 							$x = curl_error ( $this->ch );
 							
@@ -758,21 +816,10 @@
 									$temp ['vid_views'] = $theItem->statistics->viewCount;
 									
 									$likeCount = $theItem->statistics->likeCount;
-									$dislikeCount = $theItem->statistics->dislikeCount;
-	
-									if(	$likeCount + $dislikeCount  !== 0){
-										$rating = $likeCount / ($likeCount + $dislikeCount);
-										$rating = $rating * 5;
-										$rating = number_format ( $rating, 2 );
-								}else{
-									$rating = '';
-								}
-									
-									
-									
-									$temp ['vid_rating'] = $rating;
+								  
+									$temp ['vid_rating'] = '';
 									$temp ['vid_likes'] = $theItem->statistics->likeCount;
-									$temp ['vid_dislikes'] = $theItem->statistics->dislikeCount;
+									 
 								}
 								
 								//vid_tags
@@ -787,9 +834,9 @@
 							}
 						}
 						
-						$temp ['vid_img'] = trim ( $ret->link_img );
+						$temp ['vid_img'] = wp_automatic_trim( $ret->link_img );
 						
-						$temp ['vid_id'] = trim ( $vid_id );
+						$temp ['vid_id'] = wp_automatic_trim( $vid_id );
 						$this->used_keyword = $ret->link_keyword;
 						
 						// if vid_image contains markup extract the source only
@@ -848,11 +895,28 @@
 
 								$result = $this->get_video_transcript($temp['vid_id']);
 
-								$temp['transcript'] = $result['text'];
-
+								
 								//report success and charlength of $temp['transcript'] 
-								echo '<br>Transcript got successfully with a length of ' . strlen($temp['transcript']) . ' chars';
+								echo '<br>Transcript got successfully with a length of ' . strlen( $result['text'] ) . ' chars';
 
+								//if option OPT_YT_TRUNCATE is enabled, truncate the returned transcript to length of chars from cg_yt_truncate
+								if(in_array('OPT_YT_TRUNCATE' , $camp_opt)){
+									echo '<br>Truncating transcript to ' . $camp_general['cg_yt_truncate'] . ' chars';
+									
+									//if mb_substr is available use it, otherwise use substr
+									if(function_exists('mb_substr')){
+										$temp['transcript'] = mb_substr($result['text'] , 0 , $camp_general['cg_yt_truncate']);
+									}else{
+										$temp['transcript'] = substr($result['text'] , 0 , $camp_general['cg_yt_truncate']);
+									}
+									
+									
+								
+								
+								}else{
+									$temp['transcript'] = $result['text'];
+								}
+ 
 
 								//$result['sentences'] contains an array of sentences and every sentence has time and text, lets iterate the sentences, concatinate time to the text and add a new line
 								foreach($result['sentences'] as $sentence){
@@ -890,7 +954,7 @@
 			//cached?
 			$cached = get_post_meta($this->currentCampID , $md5 , true);
 			
-			if(trim($cached) != '') {
+			if(wp_automatic_trim($cached) != '') {
 				
 				echo '<--cached:' . $cached;
 				
@@ -903,9 +967,9 @@
 			
 			//curl get
 			$x='error';
-			$url=trim($user);
+			$url=wp_automatic_trim($user);
 			curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-			curl_setopt($this->ch, CURLOPT_URL, trim($url));
+			curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($url));
 			
 			//set SOCS cookie for youtube ask for cookies
 			$cookies = 'SOCS=CAISNQgDEitib3FfaWRlbnRpdHlmcm9udGVuZHVpc2VydmVyXzIwMjMwMjI4LjA2X3AwGgJlbiACGgYIgJSKoAY;';
@@ -921,7 +985,7 @@
 
 			preg_match('!"externalId":"(.*?)"!', $exec , $id_matches);
 			
-			if(isset($id_matches[1]) && trim($id_matches[1]) != '' ) {
+			if(isset($id_matches[1]) && wp_automatic_trim($id_matches[1]) != '' ) {
 				
 				//cache and return
 				update_post_meta($this->currentCampID , $md5  , $id_matches[1] ); 
@@ -946,18 +1010,154 @@
 			 
 			echo '<br>Getting transcript for video ID: '.$video_id;
 			
-			//use api_call function to get the transcript from remote server using method getTranscript and try catch
-			try{
-				$transcript = $this->api_call('getTranscript', array('videoId' => $video_id));
+			 //build video URL 
+			 $video_url = 'https://www.youtube.com/watch?v='.$video_id;
 
-				return $transcript;
+			 //get the video page
+			 echo '<br>Getting video page to grab transcript URL: '.$video_url;
+			 curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
+			 curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $video_url ) );
+			 $exec = curl_exec ( $this->ch );
 
-			}catch(Exception $e){
-				throw new Exception('Error getting transcript: '.$e->getMessage());
+			 //report response code and page size 
+			 $cuinfo = curl_getinfo($this->ch);
+			 echo '<br>Video page returned ' . $cuinfo['size_download'] . ' request code: '. $cuinfo['http_code'];
+						
+
+			 //check if captionTracks":[{"baseUrl":" exists and if not throw an exception
+			 if(!stristr($exec, 'captionTracks":[{"baseUrl":"')){
+			 	throw new Exception('Did not find caption URL inside returned page content');
+			 }
+
+			 //extract the caption URL
+			 preg_match('!"captionTracks":\[\{"baseUrl":"(.*?)"!', $exec , $matches);
+
+			//if no match throw an exception
+			if(!isset($matches[1]) || wp_automatic_trim($matches[1]) == ''){
+				throw new Exception('Did not find caption URL inside returned page content case #2');
 			}
 
+			//decode the URL
+			$json = '{"caption_url":"'.$matches[1].'"}';
+
+			//decode the json
+			$caption = json_decode($json , true);
+
+			//get the caption URL
+			$caption_url = $caption['caption_url'];
+
+			//report the caption URL
+			echo '<br>Found caption URL: '.$caption_url;
+
+			//get the caption content
+			curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
+			curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $caption_url ) );
+
+			$exec = curl_exec ( $this->ch );
+
+			//report response code and page size
+			$cuinfo = curl_getinfo($this->ch);
+
+			echo '<br>Caption returned ' . $cuinfo['size_download'] . ' request code: '. $cuinfo['http_code'];
+
 			
+			//check if the returned content is a valid transcript
+			if(!stristr($exec, '</text>')){
+				throw new Exception('Did not find valid transcript inside returned caption content');
+			}
+
+			 
+			//extract the transcript
+			preg_match_all('!<text start="(.*?)" dur="(.*?)">(.*?)</text>!s', $exec , $matches);
+
+			//if no matches throw an exception
+			if(!isset($matches[3]) || count($matches[3]) == 0){
+				throw new Exception('Could not extract transcript from caption content');
+			}
+
+			//init the transcript
+			$transcript = '';
+			$sentences = array();
+
+			//iterate the matches and build the transcript
+			foreach($matches[3] as $text){
+				
+				//add the text to the transcript
+				$transcript .= $text . "\n";
+
+				//init the sentence
+				$sentence['text'] = $text;
+				$sentence['time'] = $matches[1][0];
+
+				//add the sentence to the sentences array
+				$sentences[] = $sentence;
+
+			}
+
+			//decode the transcript
+			$transcript = html_entity_decode($transcript, ENT_QUOTES);
+
+			//replace &#39; with '
+			$transcript = str_replace('&#39;', "'", $transcript);
+
+			//Fix the transcript by replacing new lines with spaces
+			$transcript = str_replace("\n", " ", $transcript); 
+			$transcript = preg_replace('/\xA0/u', ' ', $transcript); 
+			$transcript = preg_replace('/\s+/u', ' ', $transcript); 
+ 
+			//return the transcript
+			$result['text'] = $transcript;
+
+			//return the sentences
+			$result['sentences'] = $sentences;
+
+			//return the transcript
+			return $result;
 			
+		}
+
+		//is short a function to take the video ID and check if this is a short or not 
+		//it does a HEAD request to the short URL https://www.youtube.com/shorts/v8VW1n1dtFU
+		function is_short($video_id){
+			
+			//short url
+			$short_url = 'https://www.youtube.com/shorts/'.$video_id;
+			
+			 //cu ini 
+			 $ch = curl_init();
+
+			 //set url
+			 curl_setopt($ch, CURLOPT_URL, $short_url);
+
+			 //return the transfer as a string
+			 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+			 //set request type to HEAD
+			 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD');
+
+			 //set timeout
+			 curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
+			 //execute curl
+			 $result = curl_exec($ch);
+
+			 //get info
+			 $info = curl_getinfo($ch);
+
+			 
+
+			 //close curl
+			 curl_close($ch);
+
+			 //if http_code is 200 then its a short
+			 if($info['http_code'] == 200){
+			 	echo '<br>Short video found';
+			 	return true;
+			 }else{
+				echo '<br>Status code: '.$info['http_code'] . ' not a short';
+				return false;
+			 }
+
 		}
 		
 	}

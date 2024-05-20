@@ -294,10 +294,21 @@ jQuery(document).ready(function () {
     }
   });
 
+  //if a deslider of the keywordbox empty the value of the field 
+  //deslider of field box has the attribute data-controls-r and set to empty
+  //note when the data-controls-r is not set to empty, it is not related to keywords box
   jQuery("input[data-controls-r]").change(function () {
-    if (!jQuery(this).prop("checked") == true) {
-      if (jQuery("#field111").val() == "*") {
-        jQuery("#field111").val("");
+
+    //get the value of the data-controls-r attribute
+    var field_value = jQuery(this).attr("data-controls-r");
+
+    //if the value is empty, it is related to the keyword box
+    if(field_value.trim() == ""){ 
+    
+      if (!jQuery(this).prop("checked") == true    ) {
+        if (jQuery("#field111").val() == "*") {
+          jQuery("#field111").val("");
+        }
       }
     }
   });
@@ -461,6 +472,22 @@ jQuery(document).ready(function () {
       var inputs = jQuery('input[name="cg_rd_page"]').validator({
         effect: "labelMate",
       });
+    
+    } else if (jQuery("#camp_type").val() == "telegram") {
+      jQuery('input[name="cg_te_page"]').attr("required", "required");
+      jQuery('textarea[name="camp_keys"]').removeAttr("required");
+      var inputs = jQuery('input[name="cg_te_page"]').validator({
+        effect: "labelMate",
+      });
+
+    } else if (jQuery("#camp_type").val() == "Rumble") {
+      jQuery('input[name="cg_rm_page"]').attr("required", "required");
+      jQuery('textarea[name="camp_keys"]').removeAttr("required");
+      var inputs = jQuery('input[name="cg_rm_page"]').validator({
+        effect: "labelMate",
+      });
+
+    
     } else {
       jQuery('textarea[name="feeds"]').removeAttr("required");
       jQuery('textarea[name="camp_keys"]').attr("required", "required");
@@ -507,17 +534,41 @@ jQuery(document).ready(function () {
           '" >' +
           value[0] +
           "</abbr>";
-      });
+      
+        //add the supported tag to the tags metabox ul.supported_tags as <li><strong>value[0]</strong>:value[1] </li>
+        jQuery("#supported_tags").append(
+          "<li><strong>" + value[0] + "</strong>: " + value[1] + "</li>"
+        );
+      
+       });
+
+      
 
       // additional custom fields tags
       supportedText2 =
         supportedText +
         ' , <abbr title="Random number between two values. e.g, [rand_1_3] will be replaced by either 1,2 or 3" >[rand_num1_num2]</abbr> , <abbr title="src url of the chosen image at the source to be a featured image" >[featured_img_source]</abbr> , <abbr title="src url of the featured image after setting it" >[featured_img_local_source]</abbr>, <abbr title="ID the featured image after setting it" >[featured_img_id]</abbr>';
 
+      // add to supportedText2 the [post_title] tag which returns the final generated post title inserted in the post title field
+      supportedText2 = supportedText2 + ' , <abbr title="Generated Post title which will be inserted as the post title" >[post_title]</abbr>';
+
+      // add the post_content tag
+      supportedText2 = supportedText2 + ' , <abbr title="Generated Post content which will be inserted as the post content" >[post_content]</abbr>';
+
+      // add the [inline_link] tag which is the inline link found in the post content 
+      supportedText2 = supportedText2 + ' , <abbr title="Inline link found in the post content" >[inline_link]</abbr>';
+
+
       // fixed tags for all campaigns content only
       supportedText =
         supportedText +
-        ', <abbr title="Retruns the title words as hashtags. e.g: if the title is hello world, it will return #hello #world" >[title_words_as_hashtags]</abbr>, <abbr title="Return the current timestamp" >[now]</abbr>';
+        ', <abbr title="Retruns the title words as hashtags. e.g: if the title is hello world, it will return #hello #world" >[title_words_as_hashtags]</abbr>, <abbr title="Retruns the title words as slug so if the title is H" >[title_words_as_hashtags]</abbr>, <abbr title="Return the current timestamp" >[now]</abbr>' + ', <abbr title="Retruns the title words as slug. e.g: if the title is hello world, it will return hello-world" >[title_words_as_slug]</abbr>' ;
+
+
+      // fixed tags for all campaigns content only add to the tags metabox
+      jQuery("#supported_tags").append(
+        "<li><strong>[title_words_as_hashtags]</strong>: Returns the title words as hashtags. e.g: if the title is hello world, it will return #hello #world</li><li><strong>[now]</strong>: Return the current timestamp</li><li><strong>[title_words_as_slug]</strong>: Returns the title words as slug. e.g: if the title is hello world, it will return hello-world</li>"
+      );
 
       jQuery(".supportedTags").html("supported Tags: " + supportedText);
       jQuery(".supportedTags2").html("supported Tags: " + supportedText2);
@@ -612,6 +663,8 @@ jQuery(document).ready(function () {
       },
 
       error: function (one, two, three) {
+
+ 
         var four =
           ' If this error persists, please visit the plugin settings page and enable the option named "Disable register_shutdown_function". This could be a solution';
 
@@ -620,8 +673,11 @@ jQuery(document).ready(function () {
         jQuery("#wp-automatic-welcome-panel").remove();
         jQuery("#status-meta-boxes .inside").append(
           '<div style="display:none;margin-top:0;padding-top:10px;" dir="ltr" class="wp-automatic-welcome-panel" id="wp-automatic-welcome-panel"> ' +
+            "Status: " + one.status + "<br>" +
             two +
             " " +
+            "responseText: " + one.responseText + "<br>" +
+
             three +
             " " +
             four +
@@ -697,6 +753,7 @@ jQuery(document).ready(function () {
             action: "wp_automatic_reactivate_key",
             id: jQuery(this).attr("data-id"),
             key: dataKey,
+            nonce: jQuery(this).attr("data-nonce"),
           },
 
           success: function (data) {
@@ -718,6 +775,9 @@ jQuery(document).ready(function () {
       var dataFunction = jQuery(this).attr("data-function");
       var dataData = jQuery(this).attr("data-data");
 
+      //nonce
+      var dataNonce = jQuery(this).attr("data-nonce");
+
       jQuery(".spinner_" + dataKey).show();
 
       jQuery.ajax({
@@ -729,6 +789,7 @@ jQuery(document).ready(function () {
           id: dataKey,
           function: dataFunction,
           data: dataData,
+          nonce: dataNonce,
         },
 
         success: function (data) {
@@ -757,6 +818,7 @@ jQuery(document).ready(function () {
           action: "wp_automatic_bulk",
           id: dataCamp,
           key: datakey,
+          nonce: jQuery(this).attr("data-nonce"),
         },
 
         success: function (data) {
@@ -769,9 +831,13 @@ jQuery(document).ready(function () {
     return false;
   });
 
-  // fetch yt user playlists
-  jQuery("#yt_playlist_update").click(function () {
+  // fetch yt user playlists, removed from v > 3.70
+  jQuery("#yt_playlist_update_OLD").click(function () {
     jQuery(".spinner-playlist").show();
+
+    //nonce id wp_automatic_nonce_field
+    var dataNonce = jQuery("#wp_automatic_nonce_field").val();
+
     jQuery.ajax({
       url: ajaxurl,
       type: "POST",
@@ -781,6 +847,7 @@ jQuery(document).ready(function () {
         action: "wp_automatic_yt_playlists",
         user: jQuery("#camp_yt_user").val(),
         pid: jQuery("#wp_automatic_post_id").val(),
+        nonce: dataNonce,
       },
 
       success: function (data) {
@@ -805,7 +872,7 @@ jQuery(document).ready(function () {
   });
 
   // Specify playlist trigger update
-  jQuery("#wp_automatic_playlist_opt").click(function () {
+  jQuery("#wp_automatic_playlist_opt_OLD").click(function () {
     if (jQuery(this).prop("checked") == true) {
       jQuery("#yt_playlist_update").trigger("click");
 
@@ -825,6 +892,10 @@ jQuery(document).ready(function () {
   // fetch dm user playlists
   jQuery("#dm_playlist_update").click(function () {
     jQuery(".spinner-dmplaylist").show();
+
+    //nonce id wp_automatic_nonce_field
+    var dataNonce = jQuery("#wp_automatic_nonce_field").val();
+
     jQuery.ajax({
       url: ajaxurl,
       type: "POST",
@@ -880,6 +951,9 @@ jQuery(document).ready(function () {
     // show spinner
     jQuery(".spinner-more_posted_posts").addClass("is-active");
 
+    //nonce id wp_automatic_nonce_field
+    var dataNonce = jQuery("#wp_automatic_nonce_field").val();
+
     jQuery.ajax({
       url: ajaxurl,
       type: "POST",
@@ -888,6 +962,7 @@ jQuery(document).ready(function () {
         action: "wp_automatic_more_posted_posts",
         camp: jQuery(this).attr("data-camp"),
         page: jQuery(this).data("page"),
+        nonce: dataNonce,
       },
 
       success: function (data) {
@@ -1016,7 +1091,8 @@ jQuery(document).ready(function () {
         "?action=wp_automatic_iframe&address=" +
         encodeURIComponent(mySrc) +
         "&theCookie=" +
-        encodeURIComponent(theCookie);
+        encodeURIComponent(theCookie) +
+        "&nonce=" + jQuery("#wp_automatic_nonce_field").val();
 
       // Encoding
       if (jQuery('input[value="OPT_FEED_ENCODING"]').prop("checked") == true) {
@@ -1037,6 +1113,17 @@ jQuery(document).ready(function () {
         var wait_for = jQuery('input[name="cg_apify_wait_for_single"]').val();
         if (wait_for != "") {
           iframeUrl = iframeUrl + "&wait_for=" + wait_for;
+        }
+
+        //read initial cookies field cg_ml_cookie
+        var initial_cookies = jQuery('input[name="cg_ml_cookie"]').val();
+
+        if (initial_cookies != "") {
+
+          //url encode the initial cookies
+          initial_cookies = encodeURIComponent(initial_cookies);
+
+          iframeUrl = iframeUrl + "&initial_cookies=" + initial_cookies;
         }
 
       } else if (which == "cg_ml_lnk_visual[]") {
@@ -1221,4 +1308,30 @@ jQuery(document).ready(function () {
 
     Deslider(this, "#" + field_name, false);
   });
+
+  //when adding a list of URLs to post from them manualy, pick first URL, set it for the visual selector 
+  var $textarea = jQuery("textarea[name='cg_multi_posts_list']");
+  var $resultField = jQuery("input[name='cg_ml_example_2']");
+
+  // result field 2 cg_ml_example
+  var $resultField2 = jQuery("input[name='cg_ml_example']");
+
+  
+  // Attach an event listener to the textarea for 'paste' and 'input' events
+  $textarea.on('paste input', function() {
+      // Get the textarea value and split it by new lines
+      var textareaValue = $textarea.val();
+      var lines = textareaValue.split('\n');
+      
+      //if checkbox OPT_MULTI_FIXED_LIST is checked, set the first URL to the visual selector
+      if (jQuery('input[value="OPT_MULTI_FIXED_LIST"]').prop("checked") == true) {
+      
+        // Trim the first value and set it as the value of the result field
+        var trimmedValue = lines.length > 0 ? jQuery.trim(lines[0]) : '';
+        $resultField.val(trimmedValue);
+        $resultField2.val(trimmedValue);
+
+      }
+  });
+
 });

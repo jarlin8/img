@@ -24,7 +24,7 @@ class AIKIT_Auto_Writer_Form
         $post_status = 'draft',
         $articles = 1,
         $sections_per_article = 3,
-        $max_section_length = 800,
+        $max_section_length = 700,
         $include_outline = false,
         $include_featured_image = false,
         $include_section_images = false,
@@ -34,8 +34,16 @@ class AIKIT_Auto_Writer_Form
         $id = 0,
         $generation_interval = 'hourly',
         $generator_status = false,
-        $max_runs = 0
+        $max_runs = 0,
+        $type = 'single-topic',
+        $strategy = 'random',
+        $selected_model = null
     ) {
+        if ($selected_model === null) {
+            $preferred_model = get_option('aikit_setting_openai_model');
+            $selected_model = !empty($preferred_model) ? $preferred_model : 'gpt-3.5-turbo';
+        }
+
         $post_types = get_post_types( array( 'public' => true ), 'objects');
         $selected_language = aikit_get_language_used();
         $languages = AIKit_Admin::instance()->get_languages();
@@ -56,6 +64,8 @@ class AIKIT_Auto_Writer_Form
             'scheduled Successfully.' => esc_html__( 'scheduled Successfully.', 'aikit' ),
             'AI Auto Writer' => esc_html__( 'AI Auto Writer', 'aikit' ),
         ];
+
+        $models = aikit_rest_openai_get_available_models('text', true);
 
         ?>
         <form id="aikit-auto-writer-form" action="<?php echo get_site_url(); ?>/?rest_route=/aikit/auto-writer/v1/write" method="post">
@@ -80,11 +90,43 @@ class AIKIT_Auto_Writer_Form
                 </div>
             </div>
             <?php } ?>
+            <div class="row mb-1">
+                <div class="col">
+                    <span><?php echo esc_html__( 'Type', 'aikit' ); ?>:</span>
+                    <span class="ms-3">
+                        <input type="radio" id="aikit-auto-writer-type-single-topic" name="aikit-auto-writer-type" value="single-topic" <?php echo $type === 'single-topic' ? 'checked' : ''; ?>>
+                        <label for="aikit-auto-writer-type-single-topic"><?php echo esc_html__( 'Single Topic', 'aikit' ); ?></label>
+                    </span>
+                    <span class="ms-3">
+                        <input type="radio" id="aikit-auto-writer-type-multiple-topics" name="aikit-auto-writer-type" value="multiple-topics" <?php echo $type === 'multiple-topics' ? 'checked' : ''; ?>>
+                        <label for="aikit-auto-writer-type-multiple-topics"><?php echo esc_html__( 'Multiple Topics', 'aikit' ); ?></label>
+                    </span>
+                    <p class="mt-1 ms-1">
+                        <small><?php echo esc_html__( 'If you have multiple topics that you want to write about, select "Multiple Topics". In this case you will need to enter the topics in the "Topics" field below, one topic per line, then AIKit will choose a random topic from the list for each article it generates. This is useful when you want to add variety to your content, particularly for scheduled generations.', 'aikit' ); ?></small>
+                    </p>
+                </div>
+            </div>
+            <div class="row mb-1 aikit-autowriter-strategy" style="<?php echo $type === 'single-topic' ? 'display: none' : ''; ?>">
+                <div class="col">
+                    <span><?php echo esc_html__( 'Strategy', 'aikit' ); ?>:</span>
+                    <span class="ms-3">
+                        <input type="radio" id="aikit-auto-writer-strategy-random" name="aikit-auto-writer-strategy" value="random" <?php echo $strategy === 'random' ? 'checked' : ''; ?>>
+                        <label for="aikit-auto-writer-strategy-random"><?php echo esc_html__( 'Random', 'aikit' ); ?></label>
+                    </span>
+                    <span class="ms-3">
+                        <input type="radio" id="aikit-auto-writer-strategy-once" name="aikit-auto-writer-strategy" value="once" <?php echo $strategy === 'once' ? 'checked' : ''; ?>>
+                        <label for="aikit-auto-writer-strategy-once"><?php echo esc_html__( 'Visit every topic once', 'aikit' ); ?></label>
+                    </span>
+                    <p class="mt-1 ms-1">
+                        <small><?php echo esc_html__( 'If you have multiple topics that you want to write about, you can choose to have AIKit visit each topic once, or choose "Random" to have AIKit choose a random topic from the list for each article it generates.', 'aikit' ); ?></small>
+                    </p>
+                </div>
+            </div>
             <div class="row mb-2">
                 <div class="col">
                     <div class="form-floating">
                         <textarea data-validation-message="<?php echo esc_html__( 'Please enter a brief description of the topic you want to write about.', 'aikit' ); ?>" class="form-control" placeholder="<?php echo esc_html__( 'Please enter a brief description of the topic you want to write about.', 'aikit' ); ?>" id="aikit-auto-writer-topic" name="aikit-auto-writer-topic" minlength="1"><?php echo esc_html( $description ); ?></textarea>
-                        <label for="aikit-auto-writer-topic"><?php echo esc_html__( 'Write a brief description of the topic you want to write about...', 'aikit' ); ?></label>
+                        <label for="aikit-auto-writer-topic"><?php echo esc_html__( 'Write a brief description of the topic you want to write about, or one topic description per line if you have multiple topics...', 'aikit' ); ?></label>
                     </div>
                 </div>
             </div>
@@ -109,6 +151,16 @@ class AIKIT_Auto_Writer_Form
             <div class="row mb-2 justify-content-md-center">
                 <div class="col">
                     <div class="form-floating">
+                        <select class="form-select" id="aikit-auto-writer-model" name="aikit-auto-writer-model">
+                            <?php foreach ($models as $model) { ?>
+                                <option value="<?php echo esc_attr($model ); ?>" <?php echo $selected_model === $model ? 'selected' : ''; ?>><?php echo esc_html( $model ); ?></option>
+                            <?php } ?>
+                        </select>
+                        <label for="aikit-auto-writer-model"><?php echo esc_html__( 'Model', 'aikit' ); ?></label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating">
                         <select class="form-select" id="aikit-auto-writer-post-type" name="aikit-auto-writer-post-type">
                             <?php foreach ($post_types as $type) { ?>
                                 <option value="<?php echo esc_attr( $type->name ); ?>" <?php echo $type->name === $post_type ? 'selected' : ''; ?>><?php echo esc_html( $type->labels->singular_name ); ?></option>
@@ -121,7 +173,7 @@ class AIKIT_Auto_Writer_Form
                     <div class="form-floating">
                         <select class="form-select" id="aikit-auto-writer-post-category" name="aikit-auto-writer-post-category">
                             <?php foreach (get_categories(['hide_empty' => false]) as $category) { ?>
-                                <option value="<?php echo esc_attr( $category->term_id ); ?>" <?php echo $category->term_id === $post_category ? 'selected' : ''; ?>><?php echo esc_html( $category->name ); ?></option>
+                                <option value="<?php echo esc_attr( $category->term_id ); ?>" <?php echo $category->term_id == $post_category ? 'selected' : ''; ?>><?php echo esc_html( $category->name ); ?></option>
                             <?php } ?>
                         </select>
                         <label for="aikit-auto-writer-post-category"><?php echo esc_html__( 'Post category', 'aikit' ); ?></label>
@@ -169,7 +221,7 @@ class AIKIT_Auto_Writer_Form
                     </div>
                     <div class="d-inline m-2 ">
                         <label for="aikit-auto-writer-words-per-section" class="aikit-auto-writer"><?php echo esc_html__( 'Maximum words per section: ', 'aikit' ); ?></label>
-                        <input type="number" id="aikit-auto-writer-words-per-section" name="aikit-auto-writer-words-per-section" min="100" max="3000" step="1" value="<?php echo esc_attr( $max_section_length ); ?>">
+                        <input type="number" id="aikit-auto-writer-words-per-section" name="aikit-auto-writer-words-per-section" min="500" max="3000" step="1" value="<?php echo esc_attr( $max_section_length ); ?>">
                     </div>
                 </div>
             </div>
@@ -246,6 +298,7 @@ class AIKIT_Auto_Writer_Form
                 </div>
             </div>
 
+            <p class="ps-2"><?php echo esc_html__( 'If you like to edit the prompts used by the AI, click on the accordion below.', 'aikit' ); ?></p>
             <div class="accordion accordion-flush" id="aikit-auto-writer-prompts">
                 <div class="accordion-item">
                     <h2 class="accordion-header">
@@ -256,7 +309,8 @@ class AIKIT_Auto_Writer_Form
                     <div id="aikit-auto-writer-prompts-pane" class="accordion-collapse collapse">
                         <div class="accordion-body">
                             <?php
-                            $prompts = !empty($prompts) ? $prompts : $this->get_prompts();
+                            $saved_prompts = $this->get_saved_prompts();
+                            $prompts = !empty($prompts) ? $prompts : (!empty($saved_prompts) ? $saved_prompts : $this->get_prompts());
 
                             foreach ($prompts as $id => $prompt) {
                                 // get all the placeholders in the prompt (e.g. [[noun]]) and list them
@@ -275,6 +329,17 @@ class AIKIT_Auto_Writer_Form
                                 echo '</div>';
                             }
                             ?>
+                            <div class="row mt-3 mb-3">
+                                <div class="col">
+                                    <input type="checkbox" class="form-check-input" id="aikit-auto-writer-save-prompts" name="aikit-auto-writer-save-prompts">
+                                    <label class="form-check-label aikit-auto-writer" for="aikit-auto-writer-save-prompts"><?php echo esc_html__( 'Save prompts for future use (for currently-selected language).', 'aikit' ); ?></label>
+                                </div>
+                            </div>
+                            <div class="row mt-3 mb-3">
+                                <div class="col">
+                                    <a id="aikit-auto-writer-reset-prompts" data-confirm-message="<?php echo __('Are you sure you want to reset saved prompts?', 'aikit') ?>" class="btn btn-outline-dark" type="button" href="<?php echo get_site_url(); ?>/?rest_route=/aikit/auto-writer/v1/reset-prompts"><i class="bi bi-arrow-repeat me-2"></i><?php echo esc_html__( 'Reset prompts to default', 'aikit' ); ?></a>
+                                </div>
+                            </div>
                             <p class="aikit-auto-writer-placeholder-descriptions">
                                 <?php echo esc_html__( 'You can use the following placeholders in your prompts:', 'aikit' ); ?>
                             </p>
@@ -302,13 +367,34 @@ class AIKIT_Auto_Writer_Form
         <?php
     }
 
-    private function render_intervals($selected = null)
+    public function intervals($interval = null, $show_once = true)
     {
-        $available_intervals = [
+        $intervals =  [
+            'every30mins' => esc_html__( 'Every 30 minutes', 'aikit' ),
             'hourly' => esc_html__( 'Hourly', 'aikit' ),
             'twicedaily' => esc_html__( 'Twice daily', 'aikit' ),
             'daily' => esc_html__( 'Daily', 'aikit' ),
+            'everyotherday' => esc_html__( 'Every other day', 'aikit' ),
+            'twiceweekly' => esc_html__( 'Twice weekly', 'aikit' ),
+            'weekly' => esc_html__( 'Weekly', 'aikit' ),
+            'fortnightly' => esc_html__( 'Fortnightly', 'aikit' ),
+            'monthly' => esc_html__( 'Monthly', 'aikit' ),
         ];
+
+        if ($show_once) {
+            $intervals['once'] = esc_html__( 'Once', 'aikit' );
+        }
+
+        if ($interval) {
+            return $intervals[$interval];
+        }
+
+        return $intervals;
+    }
+
+    private function render_intervals($selected = null)
+    {
+        $available_intervals = $this->intervals(null, false);
 
         ?>
             <div class="form-floating">
@@ -327,5 +413,18 @@ class AIKIT_Auto_Writer_Form
         $lang = get_option('aikit_setting_openai_language', 'en');
 
         return AIKIT_AUTO_GENERATOR_PROMPTS[$lang]['prompts'];
+    }
+
+    private function get_saved_prompts()
+    {
+        $lang = get_option('aikit_setting_openai_language', 'en');
+
+        $prompts = get_option('aikit_auto_writer_prompts_' . $lang);
+
+        if (empty($prompts)) {
+            return [];
+        }
+
+        return json_decode($prompts, true);
     }
 }

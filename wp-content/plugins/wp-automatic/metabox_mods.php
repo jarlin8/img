@@ -30,7 +30,7 @@ global $camp_replace_link;
 		               <label for="field6">
 		                    Search|Replace one per line
 		               </label>
-		               <textarea name="cg_regex_replace" ><?php   echo htmlentities($camp_general['cg_regex_replace'],ENT_COMPAT, 'UTF-8' )  ?></textarea>
+		               <textarea name="cg_regex_replace" ><?php   echo wp_automatic_htmlentities($camp_general['cg_regex_replace'],ENT_COMPAT, 'UTF-8' )  ?></textarea>
 		            
 		            	
 		            	<br>
@@ -147,7 +147,7 @@ global $camp_replace_link;
 		                <input value="<?php   echo @$camp_general['cg_content_limit']   ?>" max="20000" min="0" name="cg_content_limit" id="fieldlimit" required="required" class="ttw-range range"
                type="range">
                
-               			 
+               			<div class="field f_100">TIP: if you want to get the content before truncation, use the tag [cont] in the post template or the custom fields section</div> 
 		               
 		            </div>
 		            
@@ -196,13 +196,29 @@ global $camp_replace_link;
                </div>
 		 </div>      
 		 
-          <div class="field f_100" >
+        <div class="field f_100" >
 		               <input name="camp_options[]"    value="OPT_REMOVE_EMOJI" type="checkbox">
 		                    <span class="option-title">
 							 	Delete emojis from the post content (if your wp_posts table is not utf8mp4 encoded, emojis cause post insertion failure) 
 		                    </span>
 		            	
-		   </div>
+		</div>
+
+		<div class="field f_100" >
+		               <input name="camp_options[]"    value="OPT_REMOVE_IMAGES" type="checkbox">
+		                    <span class="option-title">
+							 	Remove all images from the post content 
+		                    </span>
+		            	
+		</div>
+
+		<!-- remove consequent <br> tags option -->
+		<div class="field f_100" >
+		               <input name="camp_options[]"    value="OPT_REMOVE_CONSEQ_BR" type="checkbox">
+		                    <span class="option-title">
+							 	Remove consequent br tags from the post content 
+		                    </span>
+		</div>
 		
 		<div class="clear"></div>
 	</div>

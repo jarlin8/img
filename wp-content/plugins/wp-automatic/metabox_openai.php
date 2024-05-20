@@ -74,10 +74,23 @@ global $camp_post_category;
                             Model
                         </label>
                         
-                        <!-- model selection field gpt3.5-turbo, gpt-4-turbo-preview -->
+                        <!-- model selection field gpt3.5-turbo, 	gpt-4, gpt-4-0314, gpt-4-32k, gpt-4-32k-0314, gpt-3.5-turbo, gpt-3.5-turbo-0301 -->
                         <select name="cg_openai_model">
-                            <option value="gpt-3.5-turbo" <?php echo isset($camp_general['cg_openai_model']) && $camp_general['cg_openai_model'] == 'gpt-3.5-turbo' ? 'selected' : '' ?>>gpt-3.5-turbo</option>
-                            <option value="gpt-4-turbo-preview" <?php echo isset($camp_general['cg_openai_model']) && $camp_general['cg_openai_model'] == 'gpt-4-turbo-preview' ? 'selected' : '' ?>>gpt-4-turbo-preview</option>
+                            <option value="gpt-3.5-turbo" <?php echo isset($camp_general['cg_openai_model']) && $camp_general['cg_openai_model'] == 'gpt-3.5-turbo' ? 'selected' : '' ?>>gpt-3.5-turbo (latest) (gpt-3.5-turbo-0125)</option>
+                            <option value="gpt-3.5-turbo-1106" <?php echo isset($camp_general['cg_openai_model']) && $camp_general['cg_openai_model'] == 'gpt-3.5-turbo-1106' ? 'selected' : '' ?>>gpt-3.5-turbo-1106 (old)</option>
+                            <option value="gpt-3.5-turbo-16k" <?php echo isset($camp_general['cg_openai_model']) && $camp_general['cg_openai_model'] == 'gpt-3.5-turbo-16k' ? 'selected' : '' ?>>gpt-3.5-turbo-16k (old)</option>
+                            <option value="gpt-3.5-turbo-0613" <?php echo isset($camp_general['cg_openai_model']) && $camp_general['cg_openai_model'] == 'gpt-3.5-turbo-0613' ? 'selected' : '' ?>>gpt-3.5-turbo-0613 (old)</option>
+                            <option value="gpt-3.5-turbo-0301" <?php echo isset($camp_general['cg_openai_model']) && $camp_general['cg_openai_model'] == 'gpt-3.5-turbo-0301' ? 'selected' : '' ?>>gpt-3.5-turbo-0301 (old)</option>
+                            <option value="gpt-4o" <?php echo isset($camp_general['cg_openai_model']) && $camp_general['cg_openai_model'] == 'gpt-4o' ? 'selected' : '' ?>>gpt-4o (128k) (NEW)</option>
+                            <option value="gpt-4" <?php echo isset($camp_general['cg_openai_model']) && $camp_general['cg_openai_model'] == 'gpt-4' ? 'selected' : '' ?>>gpt-4</option>
+                            <option value="gpt-4-0314" <?php echo isset($camp_general['cg_openai_model']) && $camp_general['cg_openai_model'] == 'gpt-4-0314' ? 'selected' : '' ?>>gpt-4-0314</option>
+                            <option value="gpt-4-32k" <?php echo isset($camp_general['cg_openai_model']) && $camp_general['cg_openai_model'] == 'gpt-4-32k' ? 'selected' : '' ?>>gpt-4-32k</option>
+                            <option value="gpt-4-32k-0314" <?php echo isset($camp_general['cg_openai_model']) && $camp_general['cg_openai_model'] == 'gpt-4-32k-0314' ? 'selected' : '' ?>>gpt-4-32k-0314</option>
+                            <option value="gpt-4-1106-preview" <?php echo isset($camp_general['cg_openai_model']) && $camp_general['cg_openai_model'] == 'gpt-4-1106-preview' ? 'selected' : '' ?>>gpt-4-1106-preview (old) (128k)</option>
+                            <option value="gpt-4-turbo" <?php echo isset($camp_general['cg_openai_model']) && $camp_general['cg_openai_model'] == 'gpt-4-turbo' ? 'selected' : '' ?>>gpt-4-turbo (latest) (points to gpt-4-turbo-2024-04-09) (128k)</option>
+                            <option value="gpt-4-turbo-preview" <?php echo isset($camp_general['cg_openai_model']) && $camp_general['cg_openai_model'] == 'gpt-4-turbo-preview' ? 'selected' : '' ?>>gpt-4-turbo-preview  (latest) (128k)</option>
+                            <option value="gpt-4-0125-preview" <?php echo isset($camp_general['cg_openai_model']) && $camp_general['cg_openai_model'] == 'gpt-4-0125-preview' ? 'selected' : '' ?>>gpt-4-0125-preview (latest) (128k)</option>
+                       
                         </select>
                         <div class="description">Model 3.5-turbo is the fastest, cheapest model, other models are not avialble for everyone they are in limited beta so if you did not apply on the waitlist and get access already, do not pick any of them.</div>
 
@@ -85,12 +98,14 @@ global $camp_post_category;
 
                         <!-- temprature field -->                        
                         <label for="field6">
-                            Temperature (Optional)
+                            Temperature (Optional)(Dangerous)
                         </label>
                         <input name="cg_openai_temp" value="<?php echo isset($camp_general['cg_openai_temp']) ?  $camp_general['cg_openai_temp']: '' ?>" type="text">
-                        <div class="description">What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. Defaults to 1</div>
+                        <div class="description">What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. Defaults to 1<br><br>Tests showed that setting this value to something high makes the request processing time go from 30 seconds to more than 5 minutes, better leave as-is.</div>
                         
                         <br>
+
+                        
 
                         <!-- top_p field -->
                         <label for="field6">
@@ -117,7 +132,25 @@ We generally recommend altering this or temperature but not both. Defaults to 1.
                         <input name="cg_openai_frequency_penalty" value="<?php echo isset($camp_general['cg_openai_frequency_penalty']) ?  $camp_general['cg_openai_frequency_penalty']: '' ?>" type="text">
                         <div class="description">Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim. Defaults to 0.</div>
 
+                        <!-- Fine tuned model -->
+                        <br>
+                        <label>
+                            Fine tuned model (Optional)
+                        </label>
+                        <input name="cg_openai_fine_tuned_model" value="<?php echo isset($camp_general['cg_openai_fine_tuned_model']) ?  $camp_general['cg_openai_fine_tuned_model']: '' ?>" type="text">
+                        <div class="description">If you have a fine tuned model, you can use it here, if you do not have one, leave this field empty.</div>
 
+                        <!-- Dalle 3 image size select Must be one of 1024x1024, 1792x1024, or 1024x1792 -->
+                        <br>
+                        <label>
+                            Dalle 3 image size (Optional)
+                        </label>
+                        <select name="cg_openai_dalle_image_size">
+                            <option value="1024x1024" <?php echo isset($camp_general['cg_openai_dalle_image_size']) && $camp_general['cg_openai_dalle_image_size'] == '1024x1024' ? 'selected' : '' ?>>1024x1024</option>
+                            <option value="1792x1024" <?php echo isset($camp_general['cg_openai_dalle_image_size']) && $camp_general['cg_openai_dalle_image_size'] == '1792x1024' ? 'selected' : '' ?>>1792x1024</option>
+                            <option value="1024x1792" <?php echo isset($camp_general['cg_openai_dalle_image_size']) && $camp_general['cg_openai_dalle_image_size'] == '1024x1792' ? 'selected' : '' ?>>1024x1792</option>
+                        </select>
+                        
 
                     </div>
                      

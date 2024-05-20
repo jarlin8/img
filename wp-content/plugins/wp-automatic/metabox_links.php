@@ -86,6 +86,14 @@ global $camp_post_category;
 				</div>
 			</div>
 
+			<!-- do not remember excluded links -->
+			<div class="field f_100">
+				<div class="option clearfix">
+					<input   name="camp_options[]" value="OPT_LINK_NOEXCLUDE" type="checkbox"> <span class="option-title">  Do not remember excluded links <br>(by default, the plugin cache excluded links not to check them again) 
+					</span> <br>
+
+					</div>
+			</div>
 
 			<div class="field f_100">
 				<div class="option clearfix">

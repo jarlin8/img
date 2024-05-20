@@ -20,7 +20,7 @@ function craigslist_fetch_items($keyword, $camp) {
 	$camp_general=array_map('wp_automatic_stripslashes', $camp_general);
 	
 	// items url
-	$cg_cl_page = trim( $camp_general['cg_cl_page'] );
+	$cg_cl_page = wp_automatic_trim( $camp_general['cg_cl_page'] );
 	
 	// verify valid link
 	if(  !( stristr($cg_cl_page, 'http') && stristr($cg_cl_page, 'craigslist.org') ) ){
@@ -97,14 +97,14 @@ function craigslist_fetch_items($keyword, $camp) {
 	$x = 'error';
 	$url = $cg_cl_page;
 	curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-	curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
+	curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $url ) );
 	$exec = curl_exec ( $this->ch );
 	$x = curl_error ( $this->ch );
 	
-
+	 
 	
 	// error check
-	if(trim($x) != ''){
+	if(wp_automatic_trim($x) != ''){
 		  echo '<br>Curl error:'.$x;
 		return false;
 	} 
@@ -124,7 +124,8 @@ function craigslist_fetch_items($keyword, $camp) {
 	// load items from feed txt
 	// Matching items <a href="https://denver.craigslist.org/clt/d/littleton-rattan-handmade-tray/7354151791.html" data-id="7354151791" class="result-title hdrl
 	  
-	preg_match_all('!<li class="result-row"(.*?)</li>!s', $exec , $itmsMatchs );
+	//class cl-static-search-result
+	preg_match_all('!<li class="cl-static-search-result"(.*?)</li>!s', $exec , $itmsMatchs );
 	
 	$allItms = $itmsMatchs[0]; 
   	
@@ -151,18 +152,30 @@ function craigslist_fetch_items($keyword, $camp) {
 	
 	$i=0;
 	foreach ( $allItms as $itemTxt ) {
- 		
+
+		//item example 
+		/*
+		<li class="cl-static-search-result" title="Searching for a domme mistress">
+            <a href="https://cairo.craigslist.org/atq/d/searching-for-domme-mistress/7737552165.html">
+                <div class="title">Searching for a domme mistress</div>
+
+                <div class="details">
+                    <div class="price">£5,000</div>
+                    <div class="location">
+                        Cairo
+                    </div>
+                </div>
+            </a>
+        </li>
+ 		*/
+
 		//get link,title
-		preg_match('{<a href="(https[^"]*?)" data-id="(\d*?)" class="result-title.*?>(.*?)</a>}', $itemTxt , $s_itmsMatchs );
-		 
-		$item['item_title'] = $s_itmsMatchs[3];
-		$item['item_description'] = $s_itmsMatchs[3];
-		$item_link = $item['item_link'] = $s_itmsMatchs[1];
-		 
+		preg_match('{<a href="(.*?)"(.*?)<div class="title">(.*?)</div>}s', $itemTxt , $s_itmsMatchs );
 		
-		// match date
-		preg_match('{datetime\="(.*?)"}s', $itemTxt , $lnkMatchs );
-		$item['item_date'] = $lnkMatchs[1];
+		$item['item_title'] =  wp_automatic_trim($s_itmsMatchs[3]);
+		$item['item_description'] =  wp_automatic_trim($s_itmsMatchs[3]);
+		$item_link = $item['item_link'] =  wp_automatic_trim($s_itmsMatchs[1]);
+		  
 		
 		// match img class="result-image gallery" data-ids="3:00S0S_ab4BTXotjaDz_0ak07K,3:00t0t_3slUtPhwD4Pz_0ak07K,3:00B0B_cTk1cEIBxSLz_0ai07I,3:00i0i_5seooMVgQhlz_0ak07K,3:00a0a_4QmgpcccJZiz_0ak07K"
 		preg_match('{result-image gallery" data-ids\="(.*?)"}s', $itemTxt , $ImgMatchs );
@@ -172,7 +185,7 @@ function craigslist_fetch_items($keyword, $camp) {
 		$item['item_img'] ='';
 		$item['item_imgs'] ='';
 		$imgs_arr = array();
-		if(isset($ImgMatchs_arr[0])  && trim($ImgMatchs_arr[0]) !=''  ){
+		if(isset($ImgMatchs_arr[0])  && wp_automatic_trim($ImgMatchs_arr[0]) !=''  ){
 			$item['item_img'] = $this->craigslist_get_img_url($ImgMatchs_arr[0] );
 		
 			
@@ -187,20 +200,27 @@ function craigslist_fetch_items($keyword, $camp) {
 		$ex = preg_match('{(\d*?)\.html}', $item['item_link'] , $allMatchs );
 		$id = $allMatchs[1];
 		
-		//get price <span class="result-price">$20</span>
-		preg_match( '!class="result-price">(.*?)<!' , $itemTxt , $priceMatchs  );
+		//get price  <div class="price">£5,000</div>
+		preg_match('{<div class="price">(.*?)</div>}s', $itemTxt , $priceMatchs );
 		$item['item_price'] =  $priceMatchs[1];
 		 
-		//<span class="result-hood"> (Broomfield  )</span>
-		preg_match( '!class="result-hood">(.*?)<!' , $itemTxt , $hoodMatchs  );
-		$item['item_hood'] =  trim($hoodMatchs[1]) != '(  )' ?  $hoodMatchs[1] : '';
+		//hood 
+		/*
+		<div class="location">
+                        queens
+                    </div>
+					*/
+		
+		preg_match ('{<div class="location">(.*?)</div>}s', $itemTxt , $hoodMatchs );					
+		$item['item_hood'] =  wp_automatic_trim($hoodMatchs[1]) != '(  )' ?  $hoodMatchs[1] : '';
+
 		 
 		$data = ( base64_encode( serialize ( $item ) ) );
 		
 		echo '<li> Link:'.$item_link;
 		
 		// No image skip
-		if( trim($item['item_img']) == '' && in_array('OPT_CL_IMG', $camp_opt) ){
+		if( wp_automatic_trim($item['item_img']) == '' && in_array('OPT_CL_IMG', $camp_opt) ){
 			  echo '<- No image skip';
 			continue;
 		}
@@ -243,12 +263,12 @@ function craigslist_get_post($camp) {
  	
 	foreach ( $keywords as $keyword ) {
 			
-		$keyword = trim($keyword);
+		$keyword = wp_automatic_trim($keyword);
 
 		//update last keyword
-		update_post_meta($camp->camp_id, 'last_keyword', trim($keyword));
+		update_post_meta($camp->camp_id, 'last_keyword', wp_automatic_trim($keyword));
 			
-		if (trim ( $keyword ) != '') {
+		if (wp_automatic_trim( $keyword ) != '') {
 
 			// getting links from the db for that keyword
 			$query = "select * from {$this->wp_prefix}automatic_general where item_type=  'cl_{$camp->camp_id}_$keyword' ";
@@ -319,20 +339,16 @@ function craigslist_get_post($camp) {
 				// getting full description
 				 
 				// getting full image
-				if(trim($temp['item_img']) != '' ){
+				if(wp_automatic_trim($temp['item_img']) != '' ){
 					
-					$fullImg = str_replace('300x300', '600x450', $temp['item_img'] );
+					$fullImg = wp_automatic_str_replace('300x300', '600x450', $temp['item_img'] );
 					  echo '<br>Full Image:'.$fullImg;
 				
 					$temp['item_img'] = $fullImg; 
 				
 				}
 				
-				// Img shortcode
-				$temp['item_img_html'] = '';
-				if(trim($temp['item_img']) !=''){
-					$temp['item_img_html'] = '<img src="'.$temp['item_img'].'" />';
-				}
+				
 				
 				// update the link status to 1
 				$query = "delete from {$this->wp_prefix}automatic_general where id={$ret->id}";
@@ -364,7 +380,7 @@ function craigslist_get_post($camp) {
 				//curl get
 				$x='error';
 				curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-				curl_setopt($this->ch, CURLOPT_URL, trim($url));
+				curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($url));
 				$exec=curl_exec($this->ch);
 				$x=curl_error($this->ch);
 				
@@ -386,12 +402,12 @@ function craigslist_get_post($camp) {
 					$bodyMatchs = preg_replace('!<div class="print-qrcode.*?div>!s', '', $bodyMatchs);
 					$bodyMatchs = preg_replace('!<div class="print-information.*?div>!s', '', $bodyMatchs);
 					
-					if(trim($bodyMatchs) != ''){
+					if(wp_automatic_trim($bodyMatchs) != ''){
 						echo '<-- Found with length of:' . strlen($bodyMatchs);
-						$temp['item_description'] = trim($bodyMatchs) ;
+						$temp['item_description'] = wp_automatic_trim($bodyMatchs) ;
 						
 						//remove show contact info
-						$temp['item_description'] = str_replace('show contact info' , '' , $temp['item_description'] );
+						$temp['item_description'] = wp_automatic_str_replace('show contact info' , '' , $temp['item_description'] );
 						
 					}else{
 						echo '<-- not able to find the description';
@@ -407,6 +423,27 @@ function craigslist_get_post($camp) {
 					$temp['item_location_longitude'] = $latMatchs[2];
 					$temp['item_location'] =  $latMatchs[1] . ',' . $latMatchs[2];
 					
+					//time  <time class="date timeago" datetime="2024-04-07T09:36:54-0400">
+					preg_match( '!datetime="(.*?)"!' , $exec , $timeMatchs);
+					$temp['item_date'] = $timeMatchs[1];
+
+					//item img 	<meta property="og:image" content="https://images.craigslist.org/01515_aACMTIiZ8Rc_0gI0pO_600x450.jpg">
+					preg_match( '!"og:image" content="(.*?)"!s' , $exec , $imgMatchs);
+					$temp['item_img'] = isset($imgMatchs[1]) ? $imgMatchs[1] : '';
+
+					// Img shortcode
+					$temp['item_img_html'] = '';
+					if(wp_automatic_trim($temp['item_img']) !=''){
+						$temp['item_img_html'] = '<img src="'.$temp['item_img'].'" />';
+					}
+
+					//item imgs "url":"https://images.craigslist.org/01515_aACMTIiZ8Rc_0gI0pO_600x450.jpg"
+					preg_match_all( '!"url":"(https://images.craigslist.org/.*?)"!s' , $exec , $imgMatchs);
+					$imgMatchs = isset($imgMatchs[1]) ? $imgMatchs[1] : array();
+
+					$temp['item_imgs'] = implode(',' , $imgMatchs);	
+
+
 					//attributes <p class="attrgroup">\s*<span
 					preg_match_all( '!<p class="attrgroup">\s*(<span.*?)</p>!s' , $exec , $attrMatchs);
 					$attrMatchs = $attrMatchs[1];
@@ -426,7 +463,7 @@ function craigslist_get_post($camp) {
 				
 				//gallery html 
 				$cg_cl_full_img_t = @$camp_general['cg_cl_full_img_t'];
-				if (trim ( $cg_cl_full_img_t ) == '') {
+				if (wp_automatic_trim( $cg_cl_full_img_t ) == '') {
 					$cg_cl_full_img_t = '<img src="[img_src]" class="wp_automatic_gallery" />';
 				}
 				
@@ -440,7 +477,7 @@ function craigslist_get_post($camp) {
 				foreach ( $allImages as $singleImage ) {
 					
 					$singleImageHtml = $cg_cl_full_img_t;
-					$singleImageHtml = str_replace ( '[img_src]', $singleImage, $singleImageHtml );
+					$singleImageHtml =wp_automatic_str_replace( '[img_src]', $singleImage, $singleImageHtml );
 					$allImages_html .= $singleImageHtml;
 				}
 				
@@ -452,7 +489,7 @@ function craigslist_get_post($camp) {
 				//numeric price
 				$price_raw = $temp['item_price'] ;
 				
-				$price_raw=str_replace(',' , '' , $price_raw);
+				$price_raw=wp_automatic_str_replace(',' , '' , $price_raw);
 				
 				//numeric price
 				preg_match ( '{\d[.*\d]*}is', $price_raw , $price_matches );

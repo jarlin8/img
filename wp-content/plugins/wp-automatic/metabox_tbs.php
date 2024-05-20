@@ -29,13 +29,16 @@ global $camp_translate_to_2;
 			<div id="field1zz-container" class="field f_100">
                
 			 
-			 <div class="option clearfix">
+			   <div class="option clearfix">
                     <input data-controls="wp_automatic_spin_title" name="camp_options[]" id="field2-1" value="OPT_TBS" type="checkbox">
                     <span class="option-title">
-							Spin Posted Content using "the best spinner" <i>(require <a target="_blank" href="https://paykstrt.com/10313/57123">the best spinner</a> account)</i> 
+							Spin Posted Content using "the best spinner" <i>(require <a target="_blank" href="https://rapidapi.com/thebestspinnerapi/api/thebestspinnerapi">the best spinner</a> API Key)</i> 
                     </span>
                     <br>
                </div>
+
+			   
+			   
                
                <div id="wp_automatic_spin_title"  class="field f_100">
                
@@ -50,8 +53,7 @@ global $camp_translate_to_2;
                </div>
                
 		 	</div>
-		
-		
+ 		
 			<div id="translate_post" class="field f_100">
                <div class="option clearfix">
                     
@@ -74,9 +76,11 @@ global $camp_translate_to_2;
 	                    $y_langs_c = array(  "no" , "auto" , "az","ml","sq","mt","am","mk","en","mi","ar	","mr","hy","mhr","af","mn","eu","de","ba","ne","be	","bn","pa","my","pap","bg","fa","bs","pl","cy","pt","hu","ro","vi","ru","ht","ceb","gl","sr","nl","si","mrj","sk","el","sl","ka","sw","gu","su","da","tg","he","th","yi","tl","id","ta","ga","tt","it","te","is","tr","es","udm","kk","uz","kn","uk","ca","ur","ky","fi","zh","fr","ko","hi","xh","hr","km","cs","lo","sv","la","gd","lv","et","lt","eo","lb","jv","mg","ja","ms" );
 	                    
 	                    //Deepl
-	                    $d_langs = array( "---" ,"Auto-Detect" , "English","German","French","Spanish","Portuguese", "Portuguese PT" , "Portuguese BR" ,  "Italian","Dutch","Polish","Russian" , "Japanese" , "Chinese" , "Bulgarian","Czech","Danish","Greek","Estonian","Finnish","Hungarian","Lithuanian","Latvian","Romanian","Slovak","Slovenian","Swedish");
-	                    $d_langs_c= array('no', 'auto' , "EN","DE","FR","ES","PT",   "PT-PT" , "PT-BR", "IT","NL","PL","RU" , "JA" , "ZH", "BG","CS","DA","EL","ET","FI","HU","LT","LV","RO","SK","SL","SV" );
+	                    $d_langs = array( "---" , "Auto-Detect",  "Bulgarian",  "Czech",  "Danish",  "German",  "Greek",  "English (British)",  "English (American)",  "Spanish",  "Estonian",  "Finnish",  "French",  "Hungarian",  "Indonesian",  "Italian",  "Japanese",  "Korean",  "Lithuanian",  "Latvian",  "Norwegian",  "Dutch",  "Polish",  "Portuguese (Brazilian)",  "Portuguese (European)",  "Romanian",  "Russian",  "Slovak",  "Slovenian",  "Swedish",  "Turkish",  "Ukrainian",  "Chinese (simplified)");
+						$d_langs_c= array("no",    "auto",    "BG",    "CS",    "DA",    "DE",    "EL",    "EN-GB",    "EN-US",    "ES",    "ET",    "FI",    "FR",    "HU",    "ID",    "IT",    "JA",    "KO",    "LT",    "LV",    "NB",    "NL",    "PL",    "PT-BR",    "PT-PT",    "RO",    "RU",    "SK",    "SL",    "SV",    "TR",    "UK",    "ZH" );
 	                    
+
+
                     ?>
                     
                     <input name="camp_options[]" id="translate_option" value="OPT_TRANSLATE" type="checkbox">

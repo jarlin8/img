@@ -20,6 +20,20 @@ class AIKit_Admin {
 
     private $repurposer;
 
+    private $comments;
+
+    private $rss;
+
+    private $chatbot;
+
+    private $chatbot_settings;
+
+    private $fine_tuner;
+
+    private $embeddings;
+
+    private $text_to_speech;
+
     /**
      * Main AIKit_Admin Instance.
      *
@@ -157,6 +171,26 @@ class AIKit_Admin {
                     'translatedName' => __('Lithuanian', 'aikit') . ' (Lietuvių)',
                     'name' => 'Lietuvių',
                 ],
+                'ca' => [
+                    'translatedName' => __('Catalan', 'aikit') . ' (Català)',
+                    'name' => 'Català',
+                ],
+                'hr' => [
+                    'translatedName' => __('Croatian', 'aikit') . ' (Hrvatski)',
+                    'name' => 'Hrvatski',
+                ],
+                'uk' => [
+                    'translatedName' => __('Ukrainian', 'aikit') . ' (Українська)',
+                    'name' => 'Українська',
+                ],
+                'he' => [
+                    'translatedName' => __('Hebrew', 'aikit') . ' (עברית)',
+                    'name' => 'עברית',
+                ],
+                'th' => [
+                    'translatedName' => __('Thai', 'aikit') . ' (ไทย)',
+                    'name' => 'ไทย',
+                ],
             ];
         }
         return self::$_instance;
@@ -170,6 +204,13 @@ class AIKit_Admin {
         $this->export_import_manager = AIKit_Import_Export_Manager::get_instance($this->prompt_manager);
         $this->auto_writer = AIKIT_Auto_Writer::get_instance();
         $this->repurposer = AIKit_Repurposer::get_instance();
+        $this->rss = AIKit_RSS::get_instance();
+        $this->chatbot = AIKit_Chatbot::get_instance();
+        $this->chatbot_settings  = AIKit_Chatbot_Settings::get_instance();
+        $this->fine_tuner = AIKit_Fine_Tuner::get_instance();
+        $this->embeddings = AIKIT_Embeddings::get_instance();
+        $this->text_to_speech = AIKIT_Text_To_Speech::get_instance();
+        $this->comments = AIKit_Comments::get_instance();
         $this->init();
     }
 
@@ -178,8 +219,34 @@ class AIKit_Admin {
      */
     public function init() {
         add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
         add_action( 'admin_enqueue_scripts', array( $this->auto_writer, 'enqueue_scripts' ) );
         add_action( 'admin_enqueue_scripts', array( $this->repurposer, 'enqueue_scripts' ) );
+        add_action( 'admin_enqueue_scripts', array( $this->rss, 'enqueue_scripts' ) );
+        add_action( 'admin_enqueue_scripts', array( $this->chatbot_settings, 'enqueue_scripts' ) );
+        add_action( 'admin_enqueue_scripts', array( $this->fine_tuner, 'enqueue_scripts' ) );
+        add_action( 'admin_enqueue_scripts', array( $this->embeddings, 'enqueue_scripts' ) );
+        add_action( 'admin_enqueue_scripts', array( $this->text_to_speech, 'enqueue_scripts' ) );
+        add_action( 'admin_enqueue_scripts', array( $this->comments, 'enqueue_scripts' ) );
+
+        $this->chatbot->init();
+    }
+
+    public function enqueue_scripts($hook)
+    {
+        if ( 'aikit_page_aikit' !== $hook && 'toplevel_page_aikit' !== $hook) {
+            return;
+        }
+
+        $version = aikit_get_plugin_version();
+        if ($version === false) {
+            $version = rand( 1, 10000000 );
+        }
+
+        wp_enqueue_style( 'aikit_bootstrap_css', plugins_url( 'css/bootstrap.min.css', __FILE__ ), array(), $version );
+        wp_enqueue_style( 'aikit_bootstrap_icons_css', plugins_url( 'css/bootstrap-icons.css', __FILE__ ), array(), $version );
+
+        wp_enqueue_script( 'aikit_bootstrap_js', plugins_url('js/bootstrap.bundle.min.js', __FILE__ ), array(), $version );
     }
 
     public function get_languages ()
@@ -195,25 +262,16 @@ class AIKit_Admin {
         ###['aikit-menu']
 
         add_menu_page(
-            esc_html__('AIKit Settings', 'aikit'),
+            esc_html__('AIKit Writer', 'aikit'),
             esc_html__('AIKit', 'aikit'),
-            'manage_options',
-            'aikit',
-            array( $this, 'options_page' ),
+            'edit_posts',
+            'aikit_auto_writer',
+            array( $this->auto_writer, 'render_auto_writer' ),
             AIKIT_LOGO_BASE64,
         );
 
         add_submenu_page(
-            'aikit',
-            esc_html__('AIKit Settings', 'aikit'),
-            esc_html__('Settings', 'aikit'),
-            'manage_options',
-            'aikit',
-            array( $this, 'options_page' )
-        );
-
-        add_submenu_page(
-            'aikit',
+            'aikit_auto_writer',
             esc_html__('Auto Writer', 'aikit'),
             esc_html__('Auto Writer', 'aikit'),
             'edit_posts',
@@ -222,7 +280,7 @@ class AIKit_Admin {
         );
 
         add_submenu_page(
-            'aikit',
+            'aikit_auto_writer',
             esc_html__('Scheduler', 'aikit'),
             esc_html__('Scheduler', 'aikit'),
             'edit_posts',
@@ -231,7 +289,7 @@ class AIKit_Admin {
         );
 
         add_submenu_page(
-            'aikit',
+            'aikit_auto_writer',
             esc_html__('Repurpose', 'aikit'),
             esc_html__('Repurpose', 'aikit'),
             'edit_posts',
@@ -240,16 +298,79 @@ class AIKit_Admin {
         );
 
         add_submenu_page(
-                'aikit',
-            esc_html__('Add/Edit Prompts', 'aikit'),
-            esc_html__('Prompts', 'aikit'),
+            'aikit_auto_writer',
+            esc_html__('AI Comments', 'aikit'),
+            esc_html__('AI Comments', 'aikit'),
+            'edit_posts',
+            'aikit_comments',
+            array( $this->comments, 'render' )
+        );
+
+        add_submenu_page(
+            'aikit_auto_writer',
+            esc_html__('RSS', 'aikit'),
+            esc_html__('RSS', 'aikit'),
+            'edit_posts',
+            'aikit_rss',
+            array( $this->rss, 'render' )
+        );
+
+        add_submenu_page(
+            'aikit_auto_writer',
+            esc_html__('Embeddings', 'aikit'),
+            esc_html__('Embeddings', 'aikit'),
+            'manage_options',
+            'aikit_embeddings',
+            array( $this->embeddings, 'render' )
+        );
+
+        add_submenu_page(
+            'aikit_auto_writer',
+            esc_html__('Chatbot', 'aikit'),
+            esc_html__('Chatbot', 'aikit'),
+            'manage_options',
+            'aikit_chatbot',
+            array( $this->chatbot_settings, 'render' )
+        );
+
+        add_submenu_page(
+            'aikit_auto_writer',
+            esc_html__('Fine-tune Models', 'aikit'),
+            esc_html__('Fine-tune Models', 'aikit'),
+            'manage_options',
+            'aikit_fine_tune',
+            array( $this->fine_tuner, 'render' )
+        );
+
+        add_submenu_page(
+            'aikit_auto_writer',
+            esc_html__('Text to Speech', 'aikit'),
+            esc_html__('Text to Speech', 'aikit'),
+            'manage_options',
+            'aikit_text_to_speech',
+            array( $this->text_to_speech, 'render' )
+        );
+
+        add_submenu_page(
+                'aikit_auto_writer',
+            esc_html__('Add/Edit AI Menu Prompts', 'aikit'),
+            esc_html__('AI Menu Prompts', 'aikit'),
             'edit_posts',
             'aikit_prompts',
             array( $this, 'prompts_page' )
         );
 
         add_submenu_page(
+            'aikit_auto_writer',
+            esc_html__('AIKit Settings', 'aikit'),
+            esc_html__('Settings', 'aikit'),
+            'manage_options',
             'aikit',
+            array( $this, 'options_page' )
+        );
+
+        add_submenu_page(
+            'aikit_auto_writer',
             esc_html__('Export/Import Settings', 'aikit'),
             esc_html__('Export/Import Settings', 'aikit'),
             'manage_options',
@@ -262,15 +383,79 @@ class AIKit_Admin {
      * Options page callback.
      */
     public function options_page() {
+
+        $audio_player_message = get_option('aikit_setting_audio_player_message');
         ?>
         <div class="wrap">
             <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-            <form action="options.php" method="post">
+            <form action="options.php" method="post" id="aikit-settings-form">
                 <?php
                 // output security fields for the registered setting "aikit_options"
                 settings_fields( 'aikit_options' );
+
+                ?>
+                <ul class="nav nav-tabs" id="aikit-settings-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="openai-tab" data-bs-toggle="tab" data-bs-target="#openai-tab-pane" type="button" role="tab" aria-controls="openai-tab-pane" aria-selected="true"><i class="bi bi-robot"></i> <?php echo esc_html__( 'OpenAI', 'aikit' ); ?></button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="stabilityai-tab" data-bs-toggle="tab" data-bs-target="#stabilityai-tab-pane" type="button" role="tab" aria-controls="stabilityai-tab-pane" aria-selected="false"><i class="bi bi-card-image"></i> <?php echo esc_html__( 'StabilityAI', 'aikit' ); ?></button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="elevenlabs-tab" data-bs-toggle="tab" data-bs-target="#elevenlabs-tab-pane" type="button" role="tab" aria-controls="elevenlabs-tab-pane" aria-selected="false"><i class="bi bi-mic-fill"></i> <?php echo esc_html__( 'Eleven Labs', 'aikit' ); ?></button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="qdrant-tab" data-bs-toggle="tab" data-bs-target="#qdrant-tab-pane" type="button" role="tab" aria-controls="qdrant-tab-pane" aria-selected="false"><i class="bi bi-chat-dots-fill"></i> <?php echo esc_html__( 'Qdrant', 'aikit' ); ?></button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="rapidapi-tab" data-bs-toggle="tab" data-bs-target="#rapidapi-tab-pane" type="button" role="tab" aria-controls="rapidapi-tab-pane" aria-selected="false"><i class="bi bi-youtube"></i> <?php echo esc_html__( 'Rapid API', 'aikit' ); ?></button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="image-generation-tab" data-bs-toggle="tab" data-bs-target="#image-generation-tab-pane" type="button" role="tab" aria-controls="image-generation-tab-pane" aria-selected="false"><i class="bi bi-brush-fill"></i> <?php echo esc_html__( 'Image Generation', 'aikit' ); ?></button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="tts-tab" data-bs-toggle="tab" data-bs-target="#tts-tab-pane" type="button" role="tab" aria-controls="tts-tab-pane" aria-selected="false"><i class="bi bi-soundwave"></i> <?php echo esc_html__( 'Text-to-Speech', 'aikit' ); ?></button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="general-tab" data-bs-toggle="tab" data-bs-target="#general-tab-pane" type="button" role="tab" aria-controls="general-tab-pane" aria-selected="false"><i class="bi bi-gear-fill"></i> <?php echo esc_html__( 'General', 'aikit' ); ?></button>
+                    </li>
+                </ul>
+                <div class="tab-content aikit-tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="openai-tab-pane" role="tabpanel" aria-labelledby="openai-tab" tabindex="0">
+                        <?php do_settings_sections( 'aikit_openai_settings' ); ?>
+                        <?php do_settings_sections( 'aikit_openai_settings_text' ); ?>
+                        <?php do_settings_sections( 'aikit_openai_settings_image' ); ?>
+                        <?php do_settings_sections( 'aikit_openai_settings_tts' ); ?>
+                    </div>
+                    <div class="tab-pane fade" id="stabilityai-tab-pane" role="tabpanel" aria-labelledby="stabilityai-tab" tabindex="0">
+                        <?php do_settings_sections( 'aikit_stabilityai_settings' ); ?>
+                    </div>
+                    <div class="tab-pane fade" id="rapidapi-tab-pane" role="tabpanel" aria-labelledby="rapidapi-tab" tabindex="0">
+                        <?php do_settings_sections( 'aikit_rapidapi_settings' ); ?>
+                    </div>
+                    <div class="tab-pane fade" id="qdrant-tab-pane" role="tabpanel" aria-labelledby="qdrant-tab" tabindex="0">
+                        <?php do_settings_sections( 'aikit_qdrant_settings' ); ?>
+                    </div>
+                    <div class="tab-pane fade" id="elevenlabs-tab-pane" role="tabpanel" aria-labelledby="elevenlabs-tab" tabindex="0">
+                        <?php do_settings_sections( 'aikit_elevenlabs_settings' ); ?>
+                    </div>
+                    <div class="tab-pane fade" id="image-generation-tab-pane" role="tabpanel" aria-labelledby="image-generation-tab" tabindex="0">
+                        <?php do_settings_sections( 'aikit_image_generation_settings' ); ?>
+                    </div>
+                    <div class="tab-pane fade" id="tts-tab-pane" role="tabpanel" aria-labelledby="tts-tab" tabindex="0">
+                        <?php do_settings_sections( 'aikit_tts_generation_settings' ); ?>
+                        <h5 class="audio-player-preview"><?php echo esc_html__( 'Audio Player Preview:', 'aikit' ); ?></h5>
+                        <span class="aikit-audio-player-message" style="text-align: center; align-content: center; width: 100%; margin-left: 20px; font-size: 14px;"><?php echo esc_html($audio_player_message) ?></span>
+                        <?php echo $this->text_to_speech->generate_audio_player_preview_iframe(); ?>
+                    </div>
+                    <div class="tab-pane fade" id="general-tab-pane" role="tabpanel" aria-labelledby="general-tab" tabindex="0">
+                        <?php do_settings_sections( 'aikit_general_settings' ); ?>
+                    </div>
+                </div>
+
+                <?php
                 // output setting sections and their fields
-                do_settings_sections( 'aikit' );
+
                 // output save settings button
                 submit_button( esc_html__( 'Save Settings', 'aikit' ) );
                 ?>
@@ -383,7 +568,6 @@ class AIKit_Admin {
             <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
             <form action="" method="post" id="aikit-prompts-form">
                 <?php
-//                // output security fields for the registered setting "aikit_options"
                 settings_fields( 'aikit_prompts' );
 
                 $defaultLanguage = aikit_get_language_used();
@@ -548,6 +732,10 @@ class AIKit_Admin {
                                                     <?php echo esc_html__( 'If this prompt requires text selection, the phrase', 'aikit' ); ?>
                                                     <code>[[text]]</code>
                                                     <?php echo esc_html__( 'will be replaced by the selected text before doing the request. Make sure to include it in your prompt.', 'aikit' ); ?>
+                                                    <?php echo esc_html__( 'You can also add', 'aikit' ); ?>
+                                                    <code>[[post_title]]</code>, <code>[[text_before]]</code>, <code>[[text_after]]</code>
+                                                    <?php echo esc_html__( 'to include the title of the post, the text before the selected text or the text after the selected text in the prompt to give AI more context of what you write about.', 'aikit' ); ?>
+
                                                 </div>
                                             </div>
 
@@ -706,6 +894,9 @@ class AIKit_Admin {
                                         <?php echo esc_html__( 'If this prompt requires text selection, the phrase', 'aikit' ); ?>
                                         <code>[[text]]</code>
                                         <?php echo esc_html__( 'will be replaced by the selected text before doing the request. Make sure to include it in your prompt.', 'aikit' ); ?>
+                                        <?php echo esc_html__( 'You can also add', 'aikit' ); ?>
+                                        <code>[[post_title]]</code>, <code>[[text_before]]</code>, <code>[[text_after]]</code>
+                                        <?php echo esc_html__( 'to include the title of the post, the text before the selected text or the text after the selected text in the prompt to give AI more context of what you write about.', 'aikit' ); ?>
                                     </div>
                                 </div>
 
@@ -729,10 +920,31 @@ class AIKit_Admin {
     public function register_settings() {
 
         add_settings_section(
+            'aikit_settings_section_openai_text',
+            '<i class="bi bi-pencil-square"></i> ' .esc_html__( 'Text Generation Settings', 'aikit' ),
+            array ($this, 'aikit_settings_section_openai_text_callback'),
+            'aikit_openai_settings_text'
+        );
+
+        add_settings_section(
+            'aikit_settings_section_openai_image',
+            '<i class="bi bi-card-image"></i> ' . esc_html__( 'Image Generation Settings', 'aikit' ),
+            array ($this, 'aikit_settings_section_openai_image_callback'),
+            'aikit_openai_settings_image'
+        );
+
+        add_settings_section(
+            'aikit_settings_section_openai_tts',
+            '<i class="bi bi-megaphone"></i> ' . esc_html__( 'Text-to-Speech Generation Settings', 'aikit' ),
+            array ($this, 'aikit_settings_section_openai_tts_callback'),
+            'aikit_openai_settings_tts'
+        );
+
+        add_settings_section(
             'aikit_settings_section_openai',
-            esc_html__( 'OpenAI Settings', 'aikit' ),
+            '<i class="bi bi-key"></i> ' . esc_html__( 'OpenAI Settings', 'aikit' ),
             array ($this, 'aikit_settings_section_openai_callback'),
-            'aikit'
+            'aikit_openai_settings'
         );
 
         // OpenAI Key
@@ -742,10 +954,17 @@ class AIKit_Admin {
             'aikit_settings_openai_key',
             esc_html__( 'OpenAI Key', 'aikit' ),
             array ($this, 'aikit_settings_openai_key_callback'),
-            'aikit',
+            'aikit_openai_settings',
             'aikit_settings_section_openai'
         );
 
+        /// RapidAPI settings
+        add_settings_section(
+            'aikit_settings_section_rapidapi',
+            esc_html__( 'RapidAPI Settings', 'aikit' ),
+            false,
+            'aikit_rapidapi_settings'
+        );
         // RapidAPI key
         register_setting('aikit_options', 'aikit_setting_rapidapi_key');
 
@@ -753,8 +972,19 @@ class AIKit_Admin {
             'aikit_settings_rapidapi_key',
             esc_html__( 'Rapid API Key', 'aikit' ),
             array ($this, 'aikit_settings_rapidapi_key_callback'),
-            'aikit',
-            'aikit_settings_section_openai'
+            'aikit_rapidapi_settings',
+            'aikit_settings_section_rapidapi'
+        );
+
+        // OpenAI Model
+        register_setting('aikit_options', 'aikit_setting_openai_model');
+
+        add_settings_field(
+            'aikit_settings_openai_model',
+            esc_html__( 'Text Generation Model', 'aikit' ),
+            array ($this, 'aikit_settings_openai_model_callback'),
+            'aikit_openai_settings_text',
+            'aikit_settings_section_openai_text'
         );
 
         // OpenAI Language used for content generation
@@ -764,19 +994,18 @@ class AIKit_Admin {
             'aikit_settings_openai_language',
             esc_html__( 'Language for text generation', 'aikit' ),
             array ($this, 'aikit_settings_openai_language_callback'),
-            'aikit',
-            'aikit_settings_section_openai'
+            'aikit_openai_settings_text',
+            'aikit_settings_section_openai_text'
         );
 
-        // OpenAI Model
-        register_setting('aikit_options', 'aikit_setting_openai_model');
-
+        // OpenAI system message
+        register_setting('aikit_options', 'aikit_setting_openai_system_message');
         add_settings_field(
-            'aikit_settings_openai_model',
-            esc_html__( 'OpenAI Preferred Model', 'aikit' ),
-            array ($this, 'aikit_settings_openai_model_callback'),
-            'aikit',
-            'aikit_settings_section_openai'
+            'aikit_settings_openai_system_message',
+            esc_html__( 'OpenAI System Message', 'aikit' ),
+            array ($this, 'aikit_settings_openai_system_message_callback'),
+            'aikit_openai_settings_text',
+            'aikit_settings_section_openai_text'
         );
 
         // OpenAI Max Tokens Multiplier
@@ -786,93 +1015,783 @@ class AIKit_Admin {
             'aikit_settings_openai_max_tokens_multiplier',
             esc_html__( 'Max Tokens Multiplier (text length)', 'aikit' ),
             array ($this, 'aikit_settings_openai_max_tokens_multiplier_callback'),
-            'aikit',
-            'aikit_settings_section_openai'
+            'aikit_openai_settings_text',
+            'aikit_settings_section_openai_text'
         );
 
-        // Autocompleted text background color
-        register_setting('aikit_options', 'aikit_setting_autocompleted_text_background_color');
+        // Prompt stop sequence
+        register_setting('aikit_options', 'aikit_setting_prompt_stop_sequence');
 
         add_settings_field(
-            'aikit_settings_autocompleted_text_background_color',
-            esc_html__( 'Autocompleted Text Background Color', 'aikit' ),
-            array ($this, 'aikit_settings_autocompleted_text_background_color_callback'),
-            'aikit',
-            'aikit_settings_section_openai'
+            'aikit_settings_prompt_stop_sequence',
+            esc_html__( 'Prompt Stop Sequence', 'aikit' ),
+            array ($this, 'aikit_settings_prompt_stop_sequence_callback'),
+            'aikit_openai_settings_text',
+            'aikit_settings_section_openai_text'
+        );
+
+        // Completion stop sequence
+        register_setting('aikit_options', 'aikit_setting_completion_stop_sequence');
+
+        add_settings_field(
+            'aikit_settings_completion_stop_sequence',
+            esc_html__( 'Completion Stop Sequence', 'aikit' ),
+            array ($this, 'aikit_settings_completion_stop_sequence_callback'),
+            'aikit_openai_settings_text',
+            'aikit_settings_section_openai_text'
+        );
+
+        register_setting('aikit_options', 'aikit_setting_openai_image_model');
+
+        add_settings_field(
+            'aikit_settings_openai_image_model',
+            esc_html__( 'Image Generation Model', 'aikit' ),
+            array ($this, 'aikit_settings_openai_image_model_callback'),
+            'aikit_openai_settings_image',
+            'aikit_settings_section_openai_image'
+        );
+
+        register_setting('aikit_options', 'aikit_setting_openai_image_quality');
+
+        add_settings_field(
+            'aikit_settings_openai_image_quality',
+            esc_html__( 'Image Preferred Quality', 'aikit' ),
+            array ($this, 'aikit_settings_openai_image_quality_callback'),
+            'aikit_openai_settings_image',
+            'aikit_settings_section_openai_image'
+        );
+
+        register_setting('aikit_options', 'aikit_setting_openai_image_style');
+
+        add_settings_field(
+            'aikit_settings_openai_image_style',
+            esc_html__( 'Image Preferred Style', 'aikit' ),
+            array ($this, 'aikit_settings_openai_image_style_callback'),
+            'aikit_openai_settings_image',
+            'aikit_settings_section_openai_image'
+        );
+
+
+        register_setting('aikit_options', 'aikit_setting_openai_tts_model');
+        add_settings_field(
+            'aikit_settings_openai_tts_model',
+            esc_html__( 'Text-to-Speech Generation Model', 'aikit' ),
+            array ($this, 'aikit_settings_openai_tts_model_callback'),
+            'aikit_openai_settings_tts',
+            'aikit_settings_section_openai_tts'
+        );
+
+        register_setting('aikit_options', 'aikit_setting_openai_tts_voice');
+        add_settings_field(
+            'aikit_settings_openai_tts_voice',
+            esc_html__( 'Text-to-Speech Voice', 'aikit' ),
+            array ($this, 'aikit_settings_openai_tts_voice_callback'),
+            'aikit_openai_settings_tts',
+            'aikit_settings_section_openai_tts'
+        );
+
+//        // Autocompleted text background color
+//        register_setting('aikit_options', 'aikit_setting_autocompleted_text_background_color');
+//
+//        add_settings_field(
+//            'aikit_settings_autocompleted_text_background_color',
+//            esc_html__( 'Autocompleted Text Background Color', 'aikit' ),
+//            array ($this, 'aikit_settings_autocompleted_text_background_color_callback'),
+//            'aikit_openai_settings',
+//            'aikit_settings_section_openai'
+//        );
+
+        ///////////////////////////////
+        // General settings
+        ///////////////////////////////
+        add_settings_section(
+            'aikit_settings_section_general',
+            esc_html__( 'General Settings', 'aikit' ),
+            false,
+            'aikit_general_settings'
         );
 
         // Elementor support
         register_setting('aikit_options', 'aikit_setting_elementor_supported');
-
         add_settings_field(
             'aikit_settings_elementor_supported',
             esc_html__( 'Elementor support', 'aikit' ),
             array ($this, 'aikit_settings_elementor_supported_callback'),
-            'aikit',
-            'aikit_settings_section_openai'
+            'aikit_general_settings',
+            'aikit_settings_section_general'
         );
 
-	    // Image sizes
-	    register_setting('aikit_options', 'aikit_setting_images_size_small');
-	    add_settings_field(
-		    'aikit_setting_images_size_small',
-		    esc_html__( 'Image sizes available', 'aikit' ),
-		    array ($this, 'aikit_setting_images_size_small_callback'),
-		    'aikit',
-		    'aikit_settings_section_openai'
-	    );
+        ///////////////////////////////
+        // StabilityAI settings
+        ///////////////////////////////
+        add_settings_section(
+            'aikit_settings_section_stabilityai',
+            esc_html__( 'StabilityAI Settings', 'aikit' ),
+            array ($this, 'aikit_settings_section_stabilityai_callback'),
+            'aikit_stabilityai_settings'
+        );
 
-	    register_setting('aikit_options', 'aikit_setting_images_size_medium');
-	    add_settings_field(
-		    'aikit_setting_images_size_medium',
-		    '',
-		    array ($this, 'aikit_setting_images_size_medium_callback'),
-		    'aikit',
-		    'aikit_settings_section_openai'
-	    );
-
-	    register_setting('aikit_options', 'aikit_setting_images_size_large');
-	    add_settings_field(
-		    'aikit_setting_images_size_large',
-		    '',
-		    array ($this, 'aikit_setting_images_size_large_callback'),
-		    'aikit',
-		    'aikit_settings_section_openai'
-	    );
-
-	    // Image counts for each size
-	    register_setting('aikit_options', 'aikit_setting_images_counts');
-	    add_settings_field(
-		    'aikit_setting_images_counts',
-		    esc_html__( 'Image counts for each size', 'aikit' ),
-		    array ($this, 'aikit_setting_images_counts_callback'),
-		    'aikit',
-		    'aikit_settings_section_openai'
-	    );
-
-	    // Image generation styles
-	    register_setting('aikit_options', 'aikit_setting_images_styles');
-	    add_settings_field(
-		    'aikit_setting_images_styles',
-		    esc_html__( 'Image generation styles', 'aikit' ),
-		    array ($this, 'aikit_setting_images_styles_callback'),
-		    'aikit',
-		    'aikit_settings_section_openai'
-	    );
-
-        // OpenAI system message
-        register_setting('aikit_options', 'aikit_setting_openai_system_message');
+        // key
+        register_setting('aikit_options', 'aikit_setting_stabilityai_key');
         add_settings_field(
-            'aikit_settings_openai_system_message',
-            esc_html__( 'OpenAI System Message', 'aikit' ),
-            array ($this, 'aikit_settings_openai_system_message_callback'),
-            'aikit',
-            'aikit_settings_section_openai'
+            'aikit_settings_stabilityai_key',
+            esc_html__( 'StabilityAI Key', 'aikit' ),
+            array ($this, 'aikit_settings_stabilityai_key_callback'),
+            'aikit_stabilityai_settings',
+            'aikit_settings_section_stabilityai'
         );
+
+        // default engine
+        register_setting('aikit_options', 'aikit_setting_stabilityai_default_engine');
+        add_settings_field(
+            'aikit_settings_stabilityai_default_engine',
+            esc_html__( 'StabilityAI Default Engine', 'aikit' ),
+            array ($this, 'aikit_settings_stabilityai_default_engine_callback'),
+            'aikit_stabilityai_settings',
+            'aikit_settings_section_stabilityai'
+        );
+
+        // default sampler
+        register_setting('aikit_options', 'aikit_setting_stabilityai_default_sampler');
+        add_settings_field(
+            'aikit_settings_stabilityai_default_sampler',
+            esc_html__( 'StabilityAI Default Sampler', 'aikit' ),
+            array ($this, 'aikit_settings_stabilityai_default_sampler_callback'),
+            'aikit_stabilityai_settings',
+            'aikit_settings_section_stabilityai'
+        );
+
+        // default steps
+        register_setting('aikit_options', 'aikit_setting_stabilityai_default_steps');
+        add_settings_field(
+            'aikit_settings_stabilityai_default_steps',
+            esc_html__( 'StabilityAI Default Steps', 'aikit' ),
+            array ($this, 'aikit_settings_stabilityai_default_steps_callback'),
+            'aikit_stabilityai_settings',
+            'aikit_settings_section_stabilityai'
+        );
+
+        // default cfg scale
+        register_setting('aikit_options', 'aikit_setting_stabilityai_default_cfg_scale');
+        add_settings_field(
+            'aikit_settings_stabilityai_default_cfg_scale',
+            esc_html__( 'StabilityAI Default Cfg Scale', 'aikit' ),
+            array ($this, 'aikit_settings_stabilityai_default_cfg_scale_callback'),
+            'aikit_stabilityai_settings',
+            'aikit_settings_section_stabilityai'
+        );
+
+        // default seed
+        register_setting('aikit_options', 'aikit_setting_stabilityai_default_seed');
+        add_settings_field(
+            'aikit_settings_stabilityai_default_seed',
+            esc_html__( 'StabilityAI Default Seed', 'aikit' ),
+            array ($this, 'aikit_settings_stabilityai_default_seed_callback'),
+            'aikit_stabilityai_settings',
+            'aikit_settings_section_stabilityai'
+        );
+
+        ///////////////////////////////
+        // Text-to-Speech generation settings
+        ///////////////////////////////
+        add_settings_section(
+            'aikit_settings_section_tts_generation',
+            esc_html__( 'Text-to-Speech Settings', 'aikit' ),
+            array ($this, 'aikit_settings_section_tts_callback'),
+            'aikit_tts_generation_settings'
+        );
+
+        // default TTS API
+        register_setting('aikit_options', 'aikit_setting_default_tts_api');
+        add_settings_field(
+            'aikit_setting_default_tts_api',
+            esc_html__( 'Default Text-to-Speech API', 'aikit' ),
+            array ($this, 'aikit_setting_default_tts_api_callback'),
+            'aikit_tts_generation_settings',
+            'aikit_settings_section_tts_generation'
+        );
+
+        // Audio Player primary color
+        register_setting('aikit_options', 'aikit_setting_audio_player_primary_color');
+        add_settings_field(
+            'aikit_setting_audio_player_primary_color',
+            esc_html__( 'Audio Player Primary Color', 'aikit' ),
+            array ($this, 'aikit_setting_audio_player_primary_color_callback'),
+            'aikit_tts_generation_settings',
+            'aikit_settings_section_tts_generation'
+        );
+
+        // Audio Player secondary color
+        register_setting('aikit_options', 'aikit_setting_audio_player_secondary_color');
+        add_settings_field(
+            'aikit_setting_audio_player_secondary_color',
+            esc_html__( 'Audio Player Secondary Color', 'aikit' ),
+            array ($this, 'aikit_setting_audio_player_secondary_color_callback'),
+            'aikit_tts_generation_settings',
+            'aikit_settings_section_tts_generation'
+        );
+
+        // Audio Player message
+        register_setting('aikit_options', 'aikit_setting_audio_player_message');
+        add_settings_field(
+            'aikit_setting_audio_player_message',
+            esc_html__( 'Audio Player Message', 'aikit' ),
+            array ($this, 'aikit_setting_audio_player_message_callback'),
+            'aikit_tts_generation_settings',
+            'aikit_settings_section_tts_generation'
+        );
+
+        ///////////////////////////////
+        // Image generation settings
+        ///////////////////////////////
+        add_settings_section(
+            'aikit_settings_section_image_generation',
+            esc_html__( 'Image Generation Settings', 'aikit' ),
+            array ($this, 'aikit_settings_section_image_generation_callback'),
+            'aikit_image_generation_settings'
+        );
+
+        // default image generation API
+        register_setting('aikit_options', 'aikit_setting_default_image_generation_api');
+        add_settings_field(
+            'aikit_setting_default_image_generation_api',
+            esc_html__( 'Default Image Generation API', 'aikit' ),
+            array ($this, 'aikit_setting_default_image_generation_api_callback'),
+            'aikit_image_generation_settings',
+            'aikit_settings_section_image_generation'
+        );
+
+        // Image sizes
+        register_setting('aikit_options', 'aikit_setting_images_size_small');
+        add_settings_field(
+            'aikit_setting_images_size_small',
+            esc_html__( 'Image sizes available', 'aikit' ),
+            array ($this, 'aikit_setting_images_size_small_callback'),
+            'aikit_image_generation_settings',
+            'aikit_settings_section_image_generation'
+        );
+
+        register_setting('aikit_options', 'aikit_setting_images_size_medium');
+        add_settings_field(
+            'aikit_setting_images_size_medium',
+            '',
+            array ($this, 'aikit_setting_images_size_medium_callback'),
+            'aikit_image_generation_settings',
+            'aikit_settings_section_image_generation'
+        );
+
+        register_setting('aikit_options', 'aikit_setting_images_size_large');
+        add_settings_field(
+            'aikit_setting_images_size_large',
+            '',
+            array ($this, 'aikit_setting_images_size_large_callback'),
+            'aikit_image_generation_settings',
+            'aikit_settings_section_image_generation'
+        );
+
+        register_setting('aikit_options', 'aikit_setting_images_size_xlarge_1344x768');
+        add_settings_field(
+            'aikit_setting_images_size_xlarge_1344x768',
+            '',
+            array ($this, 'aikit_setting_images_size_xlarge_1344x768_callback'),
+            'aikit_image_generation_settings',
+            'aikit_settings_section_image_generation'
+        );
+
+        register_setting('aikit_options', 'aikit_setting_images_size_xlarge_1792x1024');
+        add_settings_field(
+            'aikit_setting_images_size_xlarge_1792x1024',
+            '',
+            array ($this, 'aikit_setting_images_size_xlarge_1792x1024_callback'),
+            'aikit_image_generation_settings',
+            'aikit_settings_section_image_generation'
+        );
+
+        register_setting('aikit_options', 'aikit_setting_images_size_xlarge_1024x1792');
+        add_settings_field(
+            'aikit_setting_images_size_xlarge_1024x1792',
+            '',
+            array ($this, 'aikit_setting_images_size_xlarge_1024x1792_callback'),
+            'aikit_image_generation_settings',
+            'aikit_settings_section_image_generation'
+        );
+
+        // Image counts for each size
+        register_setting('aikit_options', 'aikit_setting_images_counts');
+        add_settings_field(
+            'aikit_setting_images_counts',
+            esc_html__( 'Image counts for each size', 'aikit' ),
+            array ($this, 'aikit_setting_images_counts_callback'),
+            'aikit_image_generation_settings',
+            'aikit_settings_section_image_generation'
+        );
+
+        // Image generation styles
+        register_setting('aikit_options', 'aikit_setting_images_styles');
+        add_settings_field(
+            'aikit_setting_images_styles',
+            esc_html__( 'Image generation styles', 'aikit' ),
+            array ($this, 'aikit_setting_images_styles_callback'),
+            'aikit_image_generation_settings',
+            'aikit_settings_section_image_generation'
+        );
+
+        //////////////////////////////////
+        /// Qdrant settings
+        //////////////////////////////////
+        add_settings_section(
+            'aikit_settings_section_qdrant',
+            esc_html__( 'Qdrant Settings (Embeddings)', 'aikit' ),
+            array ($this, 'aikit_settings_section_qdrant_callback'),
+            'aikit_qdrant_settings'
+        );
+
+        // Qdrant host
+        register_setting('aikit_options', 'aikit_setting_qdrant_host');
+        add_settings_field(
+            'aikit_setting_qdrant_host',
+            esc_html__( 'Qdrant Host (Cluster URL)', 'aikit' ),
+            array ($this, 'aikit_setting_qdrant_host_callback'),
+            'aikit_qdrant_settings',
+            'aikit_settings_section_qdrant'
+        );
+
+        // Qdrant API key
+        register_setting('aikit_options', 'aikit_setting_qdrant_api_key');
+        add_settings_field(
+            'aikit_setting_qdrant_api_key',
+            esc_html__( 'Qdrant API Key', 'aikit' ),
+            array ($this, 'aikit_setting_qdrant_api_key_callback'),
+            'aikit_qdrant_settings',
+            'aikit_settings_section_qdrant'
+        );
+
+        //////////////////////////////////
+        /// ElevenLabs settings
+        //////////////////////////////////
+
+        add_settings_section(
+            'aikit_settings_section_elevenlabs',
+            esc_html__( 'Eleven Labs Settings', 'aikit' ),
+            array ($this, 'aikit_settings_section_elevenlabs_callback'),
+            'aikit_elevenlabs_settings'
+        );
+
+        // ElevenLabs API key
+        register_setting('aikit_options', 'aikit_setting_elevenlabs_api_key');
+        add_settings_field(
+            'aikit_setting_elevenlabs_api_key',
+            esc_html__( 'Eleven Labs API Key', 'aikit' ),
+            array ($this, 'aikit_setting_elevenlabs_api_key_callback'),
+            'aikit_elevenlabs_settings',
+            'aikit_settings_section_elevenlabs'
+        );
+
+        // Model
+        register_setting('aikit_options', 'aikit_setting_elevenlabs_model');
+        add_settings_field(
+            'aikit_setting_elevenlabs_model',
+            esc_html__( 'Eleven Labs Model', 'aikit' ),
+            array ($this, 'aikit_setting_elevenlabs_model_callback'),
+            'aikit_elevenlabs_settings',
+            'aikit_settings_section_elevenlabs'
+        );
+
+        // Voice
+        register_setting('aikit_options', 'aikit_setting_elevenlabs_voice');
+        add_settings_field(
+            'aikit_setting_elevenlabs_voice',
+            esc_html__( 'Eleven Labs Voice', 'aikit' ),
+            array ($this, 'aikit_setting_elevenlabs_voice_callback'),
+            'aikit_elevenlabs_settings',
+            'aikit_settings_section_elevenlabs'
+        );
+
+    }
+
+    function aikit_settings_section_tts_callback () {
+        echo '<p>' . esc_html__( 'These settings are used for text-to-speech generation and audio player customization.', 'aikit' ) . '</p>';
+    }
+
+    function aikit_settings_section_openai_text_callback() {
+        echo '<p> ' . esc_html__( 'These settings are used for text generation.', 'aikit' ) . '</p>';
+
+    }
+
+    function aikit_settings_section_openai_image_callback() {
+        echo '<p>' . esc_html__( 'These settings are used for image generation.', 'aikit' ) . '</p>';
+
+    }
+
+    function aikit_settings_section_openai_tts_callback() {
+        echo '<p>' . esc_html__( 'These settings are used for text-to-speech generation.', 'aikit' ) . '</p>';
+    }
+
+    function aikit_setting_default_tts_api_callback() {
+        $setting = get_option('aikit_setting_default_tts_api');
+        ?>
+            <div class="mb-2">
+                <input type="radio" id="aikit_setting_default_tts_api_elevenlabs" name="aikit_setting_default_tts_api" value="elevenlabs" <?php checked( $setting, 'elevenlabs' ); ?>>
+                <label for="aikit_setting_default_tts_api_elevenlabs"><?php esc_html_e('Eleven Labs', 'aikit'); ?></label><br>
+            </div>
+            <div class="mb-2">
+                <input type="radio" id="aikit_setting_default_tts_api_openai" name="aikit_setting_default_tts_api" value="openai" <?php checked( $setting, 'openai' ); ?>>
+                <label for="aikit_setting_default_tts_api_openai"><?php esc_html_e('OpenAI', 'aikit'); ?></label><br>
+            </div>
+
+            <p>
+                <?php esc_html_e('This is the default API that will be used for text-to-speech generation.', 'aikit'); ?>
+            </p>
+        <?php
+    }
+
+    function aikit_settings_openai_tts_model_callback() {
+        $setting = get_option('aikit_setting_openai_tts_model');
+
+        $models = $this->aikit_openai_get_tts_models();
+        ?>
+            <select id="aikit_setting_openai_tts_model" name="aikit_setting_openai_tts_model">
+                <?php
+                foreach ($models as $model) {
+                    ?>
+                    <option value="<?php echo esc_attr( $model ); ?>" <?php selected( $setting, $model ); ?>><?php echo esc_html( $model ); ?></option>
+                    <?php
+                }
+                ?>
+            </select>
+            <p>
+                <?php esc_html_e('This is the OpenAI model that will be used to generate the audio.', 'aikit'); ?>
+            </p>
+        <?php
+    }
+
+    function aikit_settings_openai_tts_voice_callback()
+    {
+        $setting = get_option('aikit_setting_openai_tts_voice');
+
+        $voices = $this->aikit_openai_get_tts_voices();
+        ?>
+            <select id="aikit_setting_openai_tts_voice" name="aikit_setting_openai_tts_voice">
+                <?php
+                foreach ($voices as $voice) {
+                    ?>
+                    <option value="<?php echo esc_attr( $voice ); ?>" <?php selected( $setting, $voice ); ?>><?php echo esc_html( $voice ); ?></option>
+                    <?php
+                }
+                ?>
+            </select>
+            <p>
+                <?php esc_html_e('This is the OpenAI voice that will be used to generate the audio. For easier selection you can listen to the voices here:', 'aikit'); ?> <a href="https://platform.openai.com/docs/guides/text-to-speech/voice-options" target="_blank">https://platform.openai.com/docs/guides/text-to-speech/voice-options</a>
+            </p>
+        <?php
+
+    }
+
+    function aikit_openai_get_tts_voices()
+    {
+        return [
+            'alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'
+        ];
+    }
+
+    function aikit_openai_get_tts_models() {
+        $default_models = ['tts-1-hd', 'tts-1'];
+
+        $models = aikit_rest_openai_get_available_models('tts');
+
+        return $models === false ? $default_models : $models;
+    }
+
+
+    function aikit_settings_openai_image_quality_callback() {
+        $setting = get_option('aikit_setting_openai_image_quality');
+        ?>
+            <select id="aikit_setting_openai_image_quality" name="aikit_setting_openai_image_quality">
+                <option value="sd" <?php selected( $setting, 'sd' ); ?>><?php echo esc_html__( 'Standard definition', 'aikit' ); ?></option>
+                <option value="hd" <?php selected( $setting, 'hd' ); ?>><?php echo esc_html__( 'High Definition', 'aikit' ); ?></option>
+            </select>
+            <p>
+                <small>
+                    <?php esc_html_e('Currently only "dalle.e 3" model supports high definition image generation.', 'aikit'); ?>
+                </small>
+            </p>
+        <?php
+    }
+
+    function aikit_settings_openai_image_style_callback () {
+        $setting = get_option('aikit_setting_openai_image_style');
+        ?>
+            <select id="aikit_setting_openai_image_style" name="aikit_setting_openai_image_style">
+                <option value="natural" <?php selected( $setting, 'natural' ); ?>><?php echo esc_html__( 'Natural', 'aikit' ); ?></option>
+                <option value="vivid" <?php selected( $setting, 'vivid' ); ?>><?php echo esc_html__( 'Vivid', 'aikit' ); ?></option>
+            </select>
+            <p>
+                <small>
+                    <?php esc_html_e('Currently only "dalle.e 3" model supports image styles.', 'aikit'); ?>
+                </small>
+            </p>
+        <?php
+    }
+
+    function aikit_setting_elevenlabs_model_callback() {
+        $setting = get_option('aikit_setting_elevenlabs_model');
+
+        $models = aikit_elevenlabs_get_models();
+        ?>
+            <select id="aikit_setting_elevenlabs_model" name="aikit_setting_elevenlabs_model">
+                <?php
+                foreach ($models as $id => $name) {
+                    ?>
+                    <option value="<?php echo esc_attr( $id ); ?>" <?php selected( $setting, $id ); ?>><?php echo esc_html( $name ); ?></option>
+                    <?php
+                }
+                ?>
+            </select>
+            <p>
+                <?php esc_html_e('This is the Eleven Labs model that will be used to generate the audio.', 'aikit'); ?>
+            </p>
+        <?php
+    }
+
+    function aikit_setting_elevenlabs_voice_callback () {
+        $setting = get_option('aikit_setting_elevenlabs_voice');
+
+        $voices = aikit_elevenlabs_get_voices();
+        ?>
+            <select id="aikit_setting_elevenlabs_voice" name="aikit_setting_elevenlabs_voice">
+                <?php
+                foreach ($voices as $id => $name) {
+                    ?>
+                    <option value="<?php echo esc_attr( $id ); ?>" <?php selected( $setting, $id ); ?>><?php echo esc_html( $name ); ?></option>
+                    <?php
+                }
+                ?>
+            </select>
+            <p>
+                <?php esc_html_e('This is the Eleven Labs voice that will be used to generate the audio. Please try available voices ', 'aikit'); echo '<a href="https://elevenlabs.io/speech-synthesis" target="_blank">' . esc_html__( 'here', 'aikit' ) . '</a>'; ?>.
+            </p>
+        <?php
+    }
+
+    function aikit_setting_audio_player_primary_color_callback() {
+        $setting = get_option('aikit_setting_audio_player_primary_color');
+        ?>
+            <input type="color" id="aikit_setting_audio_player_primary_color" name="aikit_setting_audio_player_primary_color" value="<?php echo isset( $setting ) ? esc_attr( $setting ) : ''; ?>" />
+            <p>
+                <?php esc_html_e('This is the primary color of the audio player.', 'aikit'); ?>
+            </p>
+        <?php
+    }
+
+    function aikit_setting_audio_player_secondary_color_callback() {
+        $setting = get_option('aikit_setting_audio_player_secondary_color');
+        ?>
+            <input type="color" id="aikit_setting_audio_player_secondary_color" name="aikit_setting_audio_player_secondary_color" value="<?php echo isset( $setting ) ? esc_attr( $setting ) : ''; ?>" />
+            <p>
+                <?php esc_html_e('This is the secondary color of the audio player.', 'aikit'); ?>
+            </p>
+        <?php
+    }
+
+    function aikit_setting_audio_player_message_callback() {
+        $setting = get_option('aikit_setting_audio_player_message');
+        ?>
+            <input size="100" type="text" id="aikit_setting_audio_player_message" name="aikit_setting_audio_player_message" value="<?php echo isset( $setting ) ? esc_attr( $setting ) : ''; ?>" />
+            <p>
+                <?php esc_html_e('This is the message that will be displayed in the audio player.', 'aikit'); ?>
+            </p>
+        <?php
+    }
+
+    function aikit_settings_section_elevenlabs_callback() {
+        echo '<p id="aikit-elevenlabs-settings">' . '<a href="https://eleven-labs.com/" target="_blank">Eleven Labs</a> '  . esc_html__( 'provides one of the best and human-like AI text-to-speech and voice cloning services.', 'aikit' ) . '</p>';
+    }
+
+    function aikit_setting_elevenlabs_api_key_callback() {
+        $setting = get_option('aikit_setting_elevenlabs_api_key');
+        ?>
+            <input size="100" type="text" id="aikit_setting_elevenlabs_api_key" name="aikit_setting_elevenlabs_api_key" value="<?php echo isset( $setting ) ? esc_attr( $setting ) : ''; ?>" />
+            <p>
+                <?php esc_html_e('You can get your ElevenLabs API key from your ', 'aikit'); echo '<a href="https://elevenlabs.io/" target="_blank">' . esc_html__( 'Eleven Labs account', 'aikit' ) . '</a>'; ?>.
+            </p>
+        <?php
+    }
+
+    function aikit_settings_section_qdrant_callback() {
+        echo '<p id="aikit-qdrant-settings">' . '<a href="https://qdrant.io/" target="_blank">Qdrant</a> '  . esc_html__( 'is a vector search engine. It is used to store and query embeddings, which allow you to do similarity search and can be used along with AIKit Chatbot to efficiently answer your users\' questions around your product or services.', 'aikit' ) . '</p>';
+    }
+
+    function aikit_setting_qdrant_host_callback() {
+        $setting = get_option('aikit_setting_qdrant_host');
+        ?>
+            <input size="100" type="text" id="aikit_setting_qdrant_host" name="aikit_setting_qdrant_host" value="<?php echo isset( $setting ) ? esc_attr( $setting ) : ''; ?>" />
+            <p>
+                <?php esc_html_e('You can get your Qdrant host address from your ', 'aikit'); echo '<a href="https://cloud.qdrant.io/" target="_blank">' . esc_html__( 'Qdrant account', 'aikit' ) . '</a>'; ?>.
+            </p>
+        <?php
+    }
+
+    function aikit_setting_qdrant_api_key_callback() {
+        $setting = get_option('aikit_setting_qdrant_api_key');
+        ?>
+            <input size="100" type="text" id="aikit_setting_qdrant_api_key" name="aikit_setting_qdrant_api_key" value="<?php echo isset( $setting ) ? esc_attr( $setting ) : ''; ?>" />
+            <p>
+                <?php esc_html_e('You can get your API key from your ', 'aikit'); echo '<a href="https://cloud.qdrant.io/" target="_blank">' . esc_html__( 'Qdrant account', 'aikit' ) . '</a>'; ?>.
+                <?php esc_html_e('Leave empty if you are using a hosted instance with no API key.', 'aikit'); ?>
+            </p>
+        <?php
+    }
+
+    function aikit_setting_default_image_generation_api_callback() {
+        $setting = get_option('aikit_setting_default_image_generation_api');
+        ?>
+            <div class="mb-2">
+                <input type="radio" id="aikit_setting_image_generation_api_openai" name="aikit_setting_default_image_generation_api" value="openai" <?php checked( $setting, 'openai' ); ?>>
+                <label for="aikit_setting_image_generation_api_openai"><?php esc_html_e('OpenAI', 'aikit'); ?> - DALL.E </label><br>
+            </div>
+            <div class="mb-2">
+                <input type="radio" id="aikit_setting_image_generation_api_stabilityai" name="aikit_setting_default_image_generation_api" value="stability-ai" <?php checked( $setting, 'stability-ai' ); ?>>
+                <label for="aikit_setting_image_generation_api_stabilityai"><?php esc_html_e('Stability.ai', 'aikit'); ?> (Stable Diffusion)</label><br>
+            </div>
+
+        <p>
+            <small>
+            <?php echo esc_html__('Select the default image generation API. This is the image generation API that will be used in the background jobs like auto writer and repurposing jobs.', 'aikit'); ?>
+            </small>
+        </p>
+
+        <?php
+    }
+
+    function aikit_settings_section_image_generation_callback() {
+        echo '<p>' . esc_html__('Here you can adjust general settings for image generation.', 'aikit') .'</p>';
+    }
+
+    function aikit_settings_section_stabilityai_callback() {
+        echo '<p><a target="_blank" href="https://stability.ai/">' . esc_html__('Stability.ai') . '</a> ' . esc_html__('is a Stable Diffusion based AI image generator. It is a great alternative to OpenAI for image generation. Here you can adjust the settings for the StabilityAI.', 'aikit') .'</p>';
+    }
+
+    function aikit_settings_stabilityai_key_callback() {
+        $setting = get_option('aikit_setting_stabilityai_key');
+        ?>
+            <input size="100" type="text" name="aikit_setting_stabilityai_key" value="<?php echo esc_attr($setting); ?>" />
+            <p>
+                <small>
+                <?php echo esc_html__('Please enter your StabilityAI key here. You can get your key from the StabilityAI website.', 'aikit'); ?>
+                </small>
+            </p>
+        <?php
+    }
+
+    function aikit_settings_stabilityai_default_engine_callback() {
+        $value = get_option('aikit_setting_stabilityai_default_engine');
+
+        ?>
+        <select name="aikit_setting_stabilityai_default_engine">
+            <option value="stable-diffusion-v1-6" <?php selected('stable-diffusion-v1-6', $value, true); ?>><?php echo esc_html( 'Stable Diffusion v1.6' ); ?></option>
+            <option value="stable-diffusion-xl-1024-v1-0" <?php selected('stable-diffusion-xl-1024-v1-0', $value, true); ?>><?php echo esc_html( 'Stable Diffusion XL v1.0' ); ?></option>
+            <option value="stable-diffusion-xl-1024-v0-9" <?php selected('stable-diffusion-xl-1024-v0-9', $value, true); ?>><?php echo esc_html( 'Stable Diffusion XL v0.9' ); ?></option>
+            <option value="stable-diffusion-xl-beta-v2-2-2" <?php selected('stable-diffusion-xl-beta-v2-2-2', $value, true); ?>><?php echo esc_html( 'Stable Diffusion v2.2.2-XL Beta' ); ?></option>
+        </select>
+        <p>
+            <small>
+                <?php
+                echo esc_html__('The default model that will be used when generating an image using Stability.ai.', 'aikit');
+                ?>
+            </small>
+        </p>
+        <?php
+    }
+
+    function aikit_settings_stabilityai_default_sampler_callback() {
+        $value = get_option('aikit_setting_stabilityai_default_sampler');
+        ?>
+        <select name="aikit_setting_stabilityai_default_sampler">
+            <option value="DDIM" <?php selected('DDIM', $value, true); ?>><?php echo esc_html( 'DDIM' ); ?></option>
+            <option value="DDPM" <?php selected('DDPM', $value, true); ?>><?php echo esc_html( 'DDPM'); ?></option>
+            <option value="K_DPMPP_2M" <?php selected('K_DPMPP_2M', $value, true); ?>><?php echo esc_html( 'K_DPMPP_2M'); ?></option>
+            <option value="K_DPMPP_2S_ANCESTRAL" <?php selected('K_DPMPP_2S_ANCESTRAL', $value, true); ?>><?php echo esc_html( 'K_DPMPP_2S_ANCESTRAL'); ?></option>
+            <option value="K_DPM_2" <?php selected('K_DPM_2', $value, true); ?>><?php echo esc_html__( 'K_DPM_2'); ?></option>
+            <option value="K_DPM_2_ANCESTRAL" <?php selected('K_DPM_2_ANCESTRAL', $value, true); ?>><?php echo esc_html( 'K_DPM_2_ANCESTRAL'); ?></option>
+            <option value="K_EULER" <?php selected('K_EULER', $value, true); ?>><?php echo esc_html( 'K_EULER'); ?></option>
+            <option value="K_EULER_ANCESTRAL" <?php selected('K_EULER_ANCESTRAL', $value, true); ?>><?php echo esc_html( 'K_EULER_ANCESTRAL' ); ?></option>
+            <option value="K_HEUN" <?php selected('K_HEUN', $value, true); ?>><?php echo esc_html( 'K_HEUN'); ?></option>
+            <option value="K_LMS" <?php selected('K_LMS', $value, true); ?>><?php echo esc_html( 'K_LMS' ); ?></option>
+        </select>
+        <p>
+            <small>
+                <?php
+                echo esc_html__('A sampler determines how the image is "calculated". A sampler processes an input (prompt) to produce an output (image). Since these samplers are different mathematically, they will produce difference results for the same prompt.', 'aikit');
+                ?>
+            </small>
+        </p>
+        <?php
+    }
+
+    function aikit_settings_stabilityai_default_steps_callback() {
+        $value = get_option('aikit_setting_stabilityai_default_steps');
+        ?>
+        <input type="number" step="1" min="10" max="150" name="aikit_setting_stabilityai_default_steps" value="<?php echo $value; ?>" />
+        <p>
+            <small>
+                <?php
+                echo esc_html__("Generation steps control how many times the image is sampled. Increasing the number of steps might give you better results, up to a point where there're diminishing returns. More steps would also cost you more.", 'aikit');
+                ?>
+            </small>
+        </p>
+        <?php
+    }
+
+    function aikit_settings_stabilityai_default_cfg_scale_callback() {
+        $setting = get_option('aikit_setting_stabilityai_default_cfg_scale');
+        ?>
+            <input size="100" type="number" min="0" max="35" name="aikit_setting_stabilityai_default_cfg_scale" value="<?php echo esc_attr($setting); ?>" />
+            <p>
+                <small>
+                <?php echo esc_html__("Prompt strength (CFG scale) controls how much the final image will adhere to your prompt. Lower values would give the model more \"creativity\", while higher values will produce a final image that's close to your prompt.", 'aikit'); ?>
+                </small>
+            </p>
+        <?php
+    }
+
+    function aikit_settings_stabilityai_default_seed_callback() {
+        $setting = get_option('aikit_setting_stabilityai_default_seed');
+        ?>
+            <input size="100" type="number" min="0" max="4294967295" name="aikit_setting_stabilityai_default_seed" value="<?php echo esc_attr($setting); ?>" />
+            <p>
+                <small>
+                <?php echo esc_html__('Seed is a number used to initialize the image generation. Using a certain seed with same settings will produce the same image. "0" means a random seed will be used everytime.', 'aikit'); ?>
+                </small>
+            </p>
+        <?php
     }
 
     function aikit_settings_section_openai_callback() {
         echo '<p>' . esc_html__('Adjust the plugin to your needs by editing the settings here.', 'aikit') .'</p>';
+    }
+
+    function aikit_settings_prompt_stop_sequence_callback() {
+        $setting = get_option('aikit_setting_prompt_stop_sequence');
+        ?>
+            <input size="100" type="text" name="aikit_setting_prompt_stop_sequence" value="<?php echo esc_attr($setting); ?>" />
+            <p>
+                <small>
+                <?php echo esc_html__('Please set this only if you are using a fine-tuned model. Leave empty if you are using any of the built-in models. Prompt stop sequence is used to mark the stop of the prompt.', 'aikit'); ?>
+                </small>
+            </p>
+        <?php
+    }
+
+    function aikit_settings_completion_stop_sequence_callback() {
+        $setting = get_option('aikit_setting_completion_stop_sequence');
+        ?>
+            <input size="100" type="text" name="aikit_setting_completion_stop_sequence" value="<?php echo esc_attr($setting); ?>" />
+            <p>
+                <small>
+                <?php echo esc_html__('Please set this only if you are using a fine-tuned model. Leave empty if you are using any of the built-in models. Completion stop sequence is used to mark the stop of the completion.', 'aikit'); ?>
+                </small>
+            </p>
+        <?php
     }
 
     function aikit_settings_rapidapi_key_callback() {
@@ -983,7 +1902,7 @@ class AIKit_Admin {
 
         ?>
             <input type="checkbox" id="aikit_setting_images_size_small" name="aikit_setting_images_size_small" value="1" <?php checked(1, $setting, true); ?>>
-            <label for="aikit_setting_images_size_small"><?php echo esc_html__('Small', 'aikit'); ?> (256x256)</label>
+            <label for="aikit_setting_images_size_small"><?php echo esc_html__('Small', 'aikit'); ?> (256x256) - <?php echo esc_html__('Only available for Dall.e 2', 'aikit'); ?></label>
         <p>
             <small>
                 <?php
@@ -1001,7 +1920,7 @@ class AIKit_Admin {
         ?>
 
             <input type="checkbox" id="aikit_setting_images_size_medium" name="aikit_setting_images_size_medium" value="1" <?php checked(1, $setting, true); ?>>
-            <label for="aikit_setting_images_size_medium"><?php echo esc_html__('Medium', 'aikit'); ?> (512x512)</label>
+            <label for="aikit_setting_images_size_medium"><?php echo esc_html__('Medium', 'aikit'); ?> (512x512) - <?php echo esc_html__('Only available for Dall.e 2 & Stable Diffusion', 'aikit'); ?></label>
 
         <p>
             <small>
@@ -1019,7 +1938,7 @@ class AIKit_Admin {
         ?>
 
             <input type="checkbox" id="aikit_setting_images_size_large" name="aikit_setting_images_size_large" value="1" <?php checked(1, $setting, true); ?>>
-            <label for="aikit_setting_images_size_large"><?php echo esc_html__('Large', 'aikit'); ?> (1024x1204)</label>
+            <label for="aikit_setting_images_size_large"><?php echo esc_html__('Large', 'aikit'); ?> (1024x1204) - <?php echo esc_html__('Available for all Dall.e & Stable Diffusion models.', 'aikit'); ?></label>
 
         <p>
             <small>
@@ -1032,12 +1951,69 @@ class AIKit_Admin {
         <?php
     }
 
+    function aikit_setting_images_size_xlarge_1792x1024_callback() {
+        $setting = get_option('aikit_setting_images_size_xlarge_1792x1024');
+
+        ?>
+
+        <input type="checkbox" id="aikit_setting_images_size_xlarge_1792x1024" name="aikit_setting_images_size_xlarge_1792x1024" value="1" <?php checked(1, $setting, true); ?>>
+        <label for="aikit_setting_images_size_xlarge_1792x1024"><?php echo esc_html__(' X Large', 'aikit'); ?> (1792x1024) - <?php echo esc_html__('Only available for Dall.e 3', 'aikit'); ?></label>
+
+        <p>
+            <small>
+                <?php
+                echo esc_html__('If you want to have the option to generate x large images (landscape) in the AI image generation menu, check this box.', 'aikit');
+                ?>
+            </small>
+
+        </p>
+        <?php
+    }
+
+    function aikit_setting_images_size_xlarge_1024x1792_callback() {
+        $setting = get_option('aikit_setting_images_size_xlarge_1024x1792');
+
+        ?>
+
+        <input type="checkbox" id="aikit_setting_images_size_xlarge_1024x1792" name="aikit_setting_images_size_xlarge_1024x1792" value="1" <?php checked(1, $setting, true); ?>>
+        <label for="aikit_setting_images_size_xlarge_1024x1792"><?php echo esc_html__(' X Large', 'aikit'); ?> (1024x1792) - <?php echo esc_html__('Only available for Dall.e 3', 'aikit'); ?></label>
+
+        <p>
+            <small>
+                <?php
+                echo esc_html__('If you want to have the option to generate x large images (portrait) in the AI image generation menu, check this box.', 'aikit');
+                ?>
+            </small>
+
+        </p>
+        <?php
+    }
+
+    function aikit_setting_images_size_xlarge_1344x768_callback() {
+        $setting = get_option('aikit_setting_images_size_xlarge_1344x768');
+
+        ?>
+
+        <input type="checkbox" id="aikit_setting_images_size_xlarge_1344x768" name="aikit_setting_images_size_xlarge_1344x768" value="1" <?php checked(1, $setting, true); ?>>
+        <label for="aikit_setting_images_size_xlarge_1344x768"><?php echo esc_html__(' X Large', 'aikit'); ?> (1344x768) - <?php echo esc_html__('Only available for Stable Diffusion "SDXL" model', 'aikit'); ?></label>
+
+        <p>
+            <small>
+                <?php
+                echo esc_html__('If you want to have the option to generate x large images (portrait) in the AI image generation menu, check this box.', 'aikit');
+                ?>
+            </small>
+
+        </p>
+        <?php
+    }
+
     function aikit_settings_openai_key_callback() {
         // get the value of the setting we've registered with register_setting()
         $setting = get_option('aikit_setting_openai_key');
         // output the field
-        if (isset($setting) && !empty($setting)) {
-            $fetchedModels = aikit_rest_openai_get_available_models($setting);
+        if (!empty($setting)) {
+            $fetchedModels = aikit_rest_openai_get_available_models('text', false, true);
             if ($fetchedModels === false) {
                 update_option('aikit_setting_openai_key_valid', false);
                 // show a notice to the user that the key is invalid
@@ -1101,25 +2077,43 @@ class AIKit_Admin {
         <?php
     }
 
+    function aikit_settings_openai_image_model_callback () {
+        $setting = get_option('aikit_setting_openai_image_model');
+
+        $models = $this->aikit_get_image_models();
+
+        ?>
+        <select name="aikit_setting_openai_image_model">
+            <?php foreach ($models as $model) { ?>
+                <option value="<?php echo esc_html__($model, 'aikit'); ?>" <?php echo $setting == $model ? 'selected' : ''; ?>><?php echo esc_html__($model, 'aikit'); ?></option>
+            <?php }
+            ?>
+        </select>
+        <p>
+            <small>
+                <?php
+                echo esc_html__('"Dall.e 3" is currently the most capable image generation model.', 'aikit');
+
+                echo esc_html__(' For more information, see ', 'aikit') . '<a href="https://platform.openai.com/docs/models" target="_blank">https://platform.openai.com/docs/models</a>.';
+                ?>
+            </small>
+        </p>
+        <?php
+    }
+
+    function aikit_get_image_models () {
+        $default_models = ['dall-e-2', 'dall-e-3'];
+
+        $models = aikit_rest_openai_get_available_models('images');
+
+        return $models === false ? $default_models : array_unique(array_merge($models, $default_models));
+    }
+
     function aikit_settings_openai_model_callback() {
         // get the value of the setting we've registered with register_setting()
         $setting = get_option('aikit_setting_openai_model');
 
-        $defaultModels = [
-            'gpt-3.5-turbo',
-            'gpt-3.5-turbo-0301',
-            'text-davinci-003',
-            'text-curie-001',
-            'text-babbage-001',
-            'text-ada-001',
-            'text-davinci-001',
-            'davinci',
-            'davinci-instruct-beta',
-            'curie-instruct-beta',
-            'curie',
-            'babbage',
-            'ada',
-        ];
+        $defaultModels = aikit_get_default_model_list();
 
         $fetchedModels = get_option('aikit_setting_openai_available_models');
         if ($fetchedModels === false) {
@@ -1138,9 +2132,9 @@ class AIKit_Admin {
         <p>
             <small>
                 <?php
-                echo esc_html__('Some models are more capable than others. For example, the davinci model is more capable than the ada model, which is more capable than the babbage model, and so on. The davinci model is the most capable model, but it is also the most expensive model. The ada model is the least capable model, but it is also the least expensive model.', 'aikit');
+                echo esc_html__('Some models are more capable than others. For example, the "gpt-3.5-turbo" model provides good balance between cost and value right now.', 'aikit');
 
-                echo esc_html__(' For more information, see ', 'aikit') . '<a href="https://beta.openai.com/docs/models/gpt-3" target="_blank">https://beta.openai.com/docs/models/gpt-3</a>.';
+                echo esc_html__(' For more information, see ', 'aikit') . '<a href="https://platform.openai.com/docs/models" target="_blank">https://platform.openai.com/docs/models</a>.';
                 ?>
             </small>
         </p>
@@ -1219,7 +2213,7 @@ add_filter( 'nonce_life', function () {
 } );
 
 function aikit_enqueue_admin_scripts( $hook ) {
-    if ( 'toplevel_page_aikit' != $hook && 'plugins.php' != $hook && 'aikit_page_aikit_prompts' != $hook ) {
+    if ( 'aikit_page_aikit' != $hook && 'plugins.php' != $hook && 'aikit_page_aikit_prompts' != $hook ) {
         return;
     }
 
@@ -1232,12 +2226,12 @@ function aikit_enqueue_admin_scripts( $hook ) {
 
         wp_enqueue_script( 'aikit_jquery_js', rtrim(plugin_dir_url( __FILE__ ), '/') . '/js/jquery-3.6.0.min.js', array(), $version );
         wp_enqueue_script( 'aikit_jquery_ui_js', rtrim(plugin_dir_url( __FILE__ ), '/') . '/js/jquery-ui.min.js', array(), $version );
-        wp_enqueue_script( 'aikit_prompts', plugins_url( 'js/prompts.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
+        wp_enqueue_script( 'aikit_prompts', plugins_url( 'js/prompts.js', __FILE__ ), array( 'jquery' ), $version, true );
         wp_enqueue_script( 'aikit_icons', rtrim(plugin_dir_url( __FILE__ ), '/') . '/../fe/src/icons.js',  array(), $version );
         wp_enqueue_style( 'aikit_jquery_ui_css', rtrim(plugin_dir_url( __FILE__ ), '/') . '/css/jquery-ui.min.css', array(), $version );
         wp_enqueue_style( 'aikit_prompts_css', rtrim(plugin_dir_url( __FILE__ ), '/') . '/css/prompts.css', array(), $version );
-        wp_enqueue_style( 'aikit_bootstrap_css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css', array(), $version );
-        wp_enqueue_style( 'aikit_bootstrap_js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js', array(), $version );
+        wp_enqueue_style( 'aikit_bootstrap_css', rtrim(plugin_dir_url( __FILE__ ), '/') . '/css/bootstrap.min.css', array(), $version );
+        wp_enqueue_style( 'aikit_bootstrap_js', rtrim(plugin_dir_url( __FILE__ ), '/') . '/js/bootstrap.bundle.min.js', array(), $version );
 
         return;
     }

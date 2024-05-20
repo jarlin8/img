@@ -110,7 +110,7 @@
 			$x='error';
 			$url=$feedURL;
 			curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-			curl_setopt($this->ch, CURLOPT_URL, trim($url));
+			curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($url));
 			$exec=curl_exec($this->ch);
 			$x=curl_error($this->ch);
 			 
@@ -147,7 +147,7 @@
 				
 				//geting duration
 				$time_txt = $aux[1];
-				$time_txt = trim( preg_replace('{More.*}s', '', $time_txt) );
+				$time_txt = wp_automatic_trim( preg_replace('{More.*}s', '', $time_txt) );
 				$info[$i]['duration'] = $time_txt;
 				
 				@$aux2 = explode("More",$aux[1]);
@@ -192,7 +192,7 @@
 				$feedURL = 'http://gdata.youtube.com/feeds/base/users/'.$user.'/uploads?client=ytapi-youtube-search&v=2&'.$criteria;
 			}
 			
-			if( trim(urldecode($palavra))  != '*' && $playlist == false){
+			if( wp_automatic_trim(urldecode($palavra))  != '*' && $playlist == false){
 				$feedURL = $feedURL.= '&q='.$palavra; 	
 			}	  
 			
@@ -203,7 +203,7 @@
 			$x='error';
 			$url=$feedURL;
 			curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-			curl_setopt($this->ch, CURLOPT_URL, trim($url));
+			curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($url));
 			$exec=curl_exec($this->ch);
 			$x=curl_error($this->ch);
 			
@@ -235,7 +235,7 @@
 				
 				//geting duration
 				$time_txt = $aux[1];
-				$time_txt = trim( preg_replace('{More.*}s', '', $time_txt) );
+				$time_txt = wp_automatic_trim( preg_replace('{More.*}s', '', $time_txt) );
 				$info[$i]['duration'] = $time_txt;
 				
 				@$aux2 = explode("More",$aux[1]);
@@ -263,8 +263,8 @@
 		public function player($width,$height)
 		{
 			$this->url2id();
-			if(trim($width) == '') $width=480;
-			if(trim($height) == '') $height=385;
+			if(wp_automatic_trim($width) == '') $width=480;
+			if(wp_automatic_trim($height) == '') $height=385;
 			//return  '<object width="'.$width.'" height="'.$height.'"><param name="movie" value="http://www.youtube.com/v/'.$this->id.'&fs=1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/'.$this->id.'&fs=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="'.$width.'" height="'.$height.'"></embed></object>';
 			return  '<iframe width="'.$width.'" height="'.$height.'" src="//www.youtube.com/embed/'.$this->id.'" frameborder="0" allowfullscreen></iframe>';
 		}

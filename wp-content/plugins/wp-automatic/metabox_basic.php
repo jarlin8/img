@@ -15,6 +15,8 @@ global $camp_post_type;
 global $camp_post_custom_k;
 global $camp_post_custom_v;
 
+$wp_automatic_options = get_option('wp_automatic_options',array() );
+
 
 
 
@@ -34,8 +36,16 @@ global $camp_post_custom_v;
                  <select name="camp_post_type" id="field1zzz">
    		
    				  <?php 
-   				  $post_types = get_post_types(array('public' => true));
-									
+   				  
+				  	//if option OPT_PRIVATE is set on the plugin settings page then show private post types as well
+					 if(in_array('OPT_PRIVATE',$wp_automatic_options) ){
+						$post_types = get_post_types();
+					}else{
+				 
+				 	 	$post_types = get_post_types(array('public' => true));
+					
+					}
+					
 					foreach($post_types as $post_type){
  
 				  	   echo  '<option value="'.$post_type.'"';
@@ -231,17 +241,20 @@ global $camp_post_custom_v;
 		                 <button style="float:right" id="custom_new">+</button>
 		               
 		               <?php 
-		               	if(is_array($camp_post_custom_k) & count($camp_post_custom_k) >0 ){
+
+
+
+		               	if(is_array($camp_post_custom_k) && count($camp_post_custom_k) >0 ){
 		             		 
 $in=0;
 $added=0;
 foreach($camp_post_custom_k as $k){
-	if(trim($k) != ''){
+	if(wp_automatic_trim($k) != ''){
 	$added=1;
 
 	?>
 		                <div  class="custom_field_wrap">Field Name <input style="width:100px" value="<?php   echo $k ?>" name="camp_post_custom_k[]" class="no-unify"> 
-		                 value <input style="width:200px" value="<?php   echo htmlentities($camp_post_custom_v[$in],ENT_COMPAT, 'UTF-8') ;?>" name="camp_post_custom_v[]" class="no-unify"><br>   </div>
+		                 value <input style="width:200px" value="<?php   echo wp_automatic_htmlentities($camp_post_custom_v[$in],ENT_COMPAT, 'UTF-8') ;?>" name="camp_post_custom_v[]" class="no-unify"><br>   </div>
 	
 	<?php 
 	}
@@ -275,7 +288,7 @@ if($added == 0){
 			            
 			            <?php if ( class_exists( 'WooCommerce' ) ) {
 			            		
-			            		echo '<br><br>*Set the field name to "woo_gallery" if you want to set a product gallery from a rule that contains images <br><br>*Set the field name to "_price" if you want to set product price to an extracted value';
+			            		echo '<br><br>*Set the field name to "woo_gallery" if you want to set a product gallery from a rule that contains images <br><br>*Set the field name to "_regular_price" if you want to set product price to an extracted value<br><br>*Set the field name to "_sale_price" if you want to set product sale price to an extracted value';
 			            	
 								//echo instructions to set the field name to attribute_attributeName to set a product attribute
 								echo '<br><br>*Set the field name to "attribute_attributeName" if you want to set a product attribute to an extracted value ex: attribute_brand will set the brand attribute to the set value';

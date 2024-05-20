@@ -3,8 +3,8 @@
 /**
  * Plugin Name:       AIKit
  * Plugin URI:        https://getaikit.com
- * Description:       AIKit is your WordPress AI assistant, powered by OpenAI's GPT-3 & DALL.E 2.
- * Version:           3.14.0
+ * Description:       AIKit is your WordPress AI assistant, powered by OpenAI's GPT, DALL.E & StabilityAI's Stable Diffusion.
+ * Version:           4.16.2
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Domain Path:       /languages
@@ -12,17 +12,42 @@
 
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/includes/constants.php';
+require __DIR__ . '/includes/page.php';
+require __DIR__ . '/includes/string-processing.php';
+require __DIR__ . '/includes/openai/tokenization/merges.php';
+require __DIR__ . '/includes/openai/tokenization/vocab.php';
+require __DIR__ . '/includes/openai/tokenization/config.php';
+require __DIR__ . '/includes/openai/tokenization/tokenizer.php';
 require __DIR__ . '/includes/openai/prompt-manager.php';
 require __DIR__ . '/includes/openai/initial-prompts.php';
 require __DIR__ . '/includes/import-export.php';
+require __DIR__ . '/includes/openai/chatbot/chatbot-settings.php';
+require __DIR__ . '/includes/openai/chatbot/chatbot.php';
+require __DIR__ . '/includes/openai/embeddings/common.php';
+require __DIR__ . '/includes/openai/embeddings/embeddings-local-connector.php';
+require __DIR__ . '/includes/openai/embeddings/embeddings-qdrant-connector.php';
+require __DIR__ . '/includes/openai/embeddings/embeddings-connector.php';
+require __DIR__ . '/includes/openai/embeddings/embeddings.php';
+require __DIR__ . '/includes/openai/fine-tuner/fine-tune-job-builder.php';
+require __DIR__ . '/includes/openai/post-finder.php';
+require __DIR__ . '/includes/openai/fine-tuner/fine-tuner.php';
 require __DIR__ . '/includes/openai/auto-writer/auto-writer-form.php';
 require __DIR__ . '/includes/openai/auto-writer/auto-writer-prompts.php';
 require __DIR__ . '/includes/openai/auto-writer/auto-writer.php';
 require __DIR__ . '/includes/openai/repurposer/youtube-subtitles.php';
 require __DIR__ . '/includes/openai/repurposer/repurposer-prompts.php';
 require __DIR__ . '/includes/openai/repurposer/repurposer.php';
+require __DIR__ . '/includes/openai/rss/rss.php';
+require __DIR__ . '/includes/openai/comments/comments-prompts.php';
+require __DIR__ . '/includes/openai/comments/comments.php';
+require __DIR__ . '/includes/elevenlabs/audio-player.php';
+require __DIR__ . '/includes/tts/text-to-speech.php';
+require __DIR__ . '/includes/elevenlabs/requests.php';
 require __DIR__ . '/includes/admin.php';
+require __DIR__ . '/includes/common.php';
 require __DIR__ . '/includes/openai/requests.php';
+require __DIR__ . '/includes/stabilityai/utils.php';
+require __DIR__ . '/includes/stabilityai/requests.php';
 
 
 function aikit_block_assets( $hook ) {
@@ -39,6 +64,9 @@ add_action( 'enqueue_block_assets', 'aikit_block_assets' );
 
 
 add_action( 'init', 'aikit_load_textdomain' );
+
+$aikit_tss = AIKIT_Text_To_Speech::get_instance(); // to initialize the hooks
+$aikit_comments = AIKIT_Comments::get_instance(); // to initialize the hooks
 
 function aikit_load_textdomain() {
     if ( ! is_admin() ) {
@@ -107,8 +135,26 @@ function aikit_init() {
         $auto_writer->do_db_migration();
         $repurposer = AIKIT_Repurposer::get_instance();
         $repurposer->do_db_migration();
+        $rss = AIKIT_RSS::get_instance();
+        $rss->do_db_migration();
+        $fine_tuner = AIKIT_Fine_Tuner::get_instance();
+        $fine_tuner->do_db_migration();
+        $embeddings = AIKIT_Embeddings::get_instance();
+        $embeddings->do_db_migration();
+        $chat = AIKIT_Chatbot::get_instance();
+        $chat->do_db_migration();
+        $tts = AIKIT_Text_To_Speech::get_instance();
+        $tts->do_db_migration();
+        $comments = AIKIT_Comments::get_instance();
+        $comments->do_db_migration();
+
         $auto_writer->activate_scheduler();
         $repurposer->activate_scheduler();
+        $rss->activate_scheduler();
+        $fine_tuner->activate_scheduler();
+        $embeddings->activate_scheduler();
+        $tts->activate_scheduler();
+        $comments->activate_scheduler();
         update_option('aikit_plugin_version', aikit_get_plugin_version());
     }
 }
@@ -124,6 +170,12 @@ function aikit_uninstall() {
     delete_option( 'aikit_setting_openai_key_valid' );
     delete_option( 'aikit_setting_openai_language' );
     delete_option( 'aikit_setting_openai_model' );
+    delete_option( 'aikit_setting_openai_image_model' );
+    delete_option( 'aikit_setting_openai_image_quality' );
+    delete_option( 'aikit_setting_openai_image_style' );
+    delete_option( 'aikit_setting_openai_tts_voice' );
+    delete_option( 'aikit_setting_default_tts_api' );
+    delete_option( 'aikit_setting_openai_tts_model' );
     delete_option( 'aikit_setting_openai_available_models' );
     delete_option( 'aikit_setting_autocompleted_text_background_color' );
     delete_option( 'aikit_setting_openai_max_tokens_multiplier' );
@@ -134,6 +186,37 @@ function aikit_uninstall() {
     delete_option( 'aikit_setting_images_styles' );
     delete_option( 'aikit_setting_elementor_supported' );
     delete_option( 'aikit_setting_openai_system_message' );
+    delete_option( 'aikit_setting_prompt_stop_sequence' );
+    delete_option( 'aikit_setting_completion_stop_sequence' );
+    delete_option( 'aikit_setting_chatbot_enabled' );
+    delete_option( 'aikit_setting_chatbot_default_view' );
+    delete_option( 'aikit_setting_chatbot_model' );
+    delete_option( 'aikit_setting_chatbot_show_on' );
+    delete_option( 'aikit_setting_chatbot_context' );
+    delete_option( 'aikit_setting_chatbot_is_page_content_aware' );
+    delete_option( 'aikit_setting_chatbot_max_response_tokens' );
+    delete_option( 'aikit_setting_chatbot_show_only_for_roles' );
+    delete_option( 'aikit_setting_chatbot_appearance_title' );
+    delete_option( 'aikit_setting_chatbot_appearance_input_placeholder' );
+    delete_option( 'aikit_setting_chatbot_appearance_start_message' );
+    delete_option( 'aikit_setting_chatbot_appearance_width' );
+    delete_option( 'aikit_setting_chatbot_appearance_main_color' );
+    delete_option( 'aikit_setting_chatbot_appearance_title_color' );
+    delete_option( 'aikit_setting_chatbot_appearance_ai_message_bubble_color' );
+    delete_option( 'aikit_setting_chatbot_appearance_ai_message_text_color' );
+    delete_option( 'aikit_setting_chatbot_appearance_user_message_bubble_color' );
+    delete_option( 'aikit_setting_chatbot_appearance_user_message_text_color' );
+    delete_option( 'aikit_setting_stabilityai_default_engine' );
+    delete_option( 'aikit_setting_stabilityai_default_sampler' );
+    delete_option( 'aikit_setting_stabilityai_default_steps' );
+    delete_option( 'aikit_setting_stabilityai_default_cfg_scale' );
+    delete_option( 'aikit_setting_stabilityai_default_seed' );
+    delete_option( 'aikit_setting_qdrant_host' );
+    delete_option( 'aikit_setting_qdrant_api_key' );
+    delete_option( 'aikit_setting_chatbot_use_embeddings' );
+    delete_option( 'aikit_setting_chatbot_embeddings_answer_formulation_prompt' );
+    delete_option( 'aikit_setting_chatbot_selected_embedding' );
+
 
     delete_option( 'aikit_prompts' );
 
@@ -148,6 +231,21 @@ function aikit_uninstall() {
 
     $repurposer = AIKIT_Repurposer::get_instance();
     $repurposer->deactivate_scheduler();
+
+    $rss = AIKIT_RSS::get_instance();
+    $rss->deactivate_scheduler();
+
+    $fine_tuner = AIKIT_Fine_Tuner::get_instance();
+    $fine_tuner->deactivate_scheduler();
+
+    $embeddings = AIKIT_Embeddings::get_instance();
+    $embeddings->deactivate_scheduler();
+
+    $tts = AIKIT_Text_To_Speech::get_instance();
+    $tts->deactivate_scheduler();
+
+    $comments = AIKIT_Comments::get_instance();
+    $comments->deactivate_scheduler();
 }
 
 register_deactivation_hook(
@@ -160,6 +258,16 @@ function aikit_on_deactivation() {
     $auto_writer->deactivate_scheduler();
     $repurposer = AIKIT_Repurposer::get_instance();
     $repurposer->deactivate_scheduler();
+    $rss = AIKIT_RSS::get_instance();
+    $rss->deactivate_scheduler();
+    $fine_tuner = AIKIT_Fine_Tuner::get_instance();
+    $fine_tuner->deactivate_scheduler();
+    $embeddings = AIKIT_Embeddings::get_instance();
+    $embeddings->deactivate_scheduler();
+    $tts = AIKIT_Text_To_Speech::get_instance();
+    $tts->deactivate_scheduler();
+    $comments = AIKIT_Comments::get_instance();
+    $comments->deactivate_scheduler();
 }
 
 register_activation_hook(
@@ -173,6 +281,16 @@ function aikit_on_activation() {
     $auto_writer->activate_scheduler();
     $repurposer = AIKIT_Repurposer::get_instance();
     $repurposer->activate_scheduler();
+    $rss = AIKIT_RSS::get_instance();
+    $rss->activate_scheduler();
+    $fine_tuner = AIKIT_Fine_Tuner::get_instance();
+    $fine_tuner->activate_scheduler();
+    $embeddings = AIKIT_Embeddings::get_instance();
+    $embeddings->activate_scheduler();
+    $tts = AIKIT_Text_To_Speech::get_instance();
+    $tts->activate_scheduler();
+    $comments = AIKIT_Comments::get_instance();
+    $comments->activate_scheduler();
 }
 
 function aikit_set_default_settings () {
@@ -204,6 +322,154 @@ function aikit_set_default_settings () {
     if (get_option('aikit_setting_elementor_supported') === false) {
         update_option('aikit_setting_elementor_supported', AIKIT_DEFAULT_SETTING_ELEMENTOR_SUPPORTED);
     }
+
+    if (get_option('aikit_setting_chatbot_enabled') === false) {
+        update_option('aikit_setting_chatbot_enabled', AIKIT_DEFAULT_SETTING_CHATBOT_ENABLED);
+    }
+
+    if (get_option('aikit_setting_chatbot_voice_enabled') === false) {
+        update_option('aikit_setting_chatbot_voice_enabled', AIKIT_DEFAULT_SETTING_CHATBOT_VOICE_ENABLED);
+    }
+
+    if (get_option('aikit_setting_chatbot_default_view') === false) {
+        update_option('aikit_setting_chatbot_default_view', AIKIT_DEFAULT_SETTING_DEFAULT_VIEW);
+    }
+
+    if (get_option('aikit_setting_chatbot_model') === false) {
+        update_option('aikit_setting_chatbot_model', AIKIT_DEFAULT_SETTING_CHATBOT_MODEL);
+    }
+
+    if (get_option('aikit_setting_chatbot_show_on') === false) {
+        update_option('aikit_setting_chatbot_show_on', AIKIT_DEFAULT_SETTING_CHATBOT_SHOW_ON);
+    }
+
+    if (get_option('aikit_setting_chatbot_context') === false) {
+        update_option('aikit_setting_chatbot_context', AIKIT_DEFAULT_SETTING_CHATBOT_CONTEXT);
+    }
+
+    if (get_option('aikit_setting_chatbot_is_page_content_aware') === false) {
+        update_option('aikit_setting_chatbot_is_page_content_aware', AIKIT_DEFAULT_SETTING_CHATBOT_IS_PAGE_CONTENT_AWARE);
+    }
+
+    if (get_option('aikit_setting_chatbot_max_response_tokens') === false) {
+        update_option('aikit_setting_chatbot_max_response_tokens', AIKIT_DEFAULT_SETTING_CHATBOT_MAX_RESPONSE_TOKENS);
+    }
+
+    if (get_option('aikit_setting_chatbot_show_only_for_roles') === false) {
+        update_option('aikit_setting_chatbot_show_only_for_roles', AIKIT_DEFAULT_SETTING_CHATBOT_SHOW_ONLY_FOR_ROLES);
+    }
+
+    if (get_option('aikit_setting_chatbot_appearance_title') === false) {
+        update_option('aikit_setting_chatbot_appearance_title', AIKIT_DEFAULT_SETTING_CHATBOT_APPEARANCE_TITLE);
+    }
+
+    if (get_option('aikit_setting_chatbot_appearance_input_placeholder') === false) {
+        update_option('aikit_setting_chatbot_appearance_input_placeholder', AIKIT_DEFAULT_SETTING_CHATBOT_APPEARANCE_INPUT_PLACEHOLDER);
+    }
+
+    if (get_option('aikit_setting_chatbot_appearance_start_message') === false) {
+        update_option('aikit_setting_chatbot_appearance_start_message', AIKIT_DEFAULT_SETTING_CHATBOT_APPEARANCE_START_MESSAGE);
+    }
+
+    if (get_option('aikit_setting_chatbot_appearance_main_color') === false) {
+        update_option('aikit_setting_chatbot_appearance_main_color', AIKIT_DEFAULT_SETTING_CHATBOT_APPEARANCE_MAIN_COLOR);
+    }
+
+    if (get_option('aikit_setting_chatbot_appearance_secondary_color') === false) {
+        update_option('aikit_setting_chatbot_appearance_secondary_color', AIKIT_DEFAULT_SETTING_CHATBOT_APPEARANCE_SECONDARY_COLOR);
+    }
+
+    if (get_option('aikit_setting_chatbot_appearance_title_color') === false) {
+        update_option('aikit_setting_chatbot_appearance_title_color', AIKIT_DEFAULT_SETTING_CHATBOT_APPEARANCE_TITLE_COLOR);
+    }
+
+    if (get_option('aikit_setting_chatbot_appearance_ai_message_bubble_color') === false) {
+        update_option('aikit_setting_chatbot_appearance_ai_message_bubble_color', AIKIT_DEFAULT_SETTING_CHATBOT_APPEARANCE_AI_MESSAGE_BUBBLE_COLOR);
+    }
+
+    if (get_option('aikit_setting_chatbot_appearance_ai_message_text_color') === false) {
+        update_option('aikit_setting_chatbot_appearance_ai_message_text_color', AIKIT_DEFAULT_SETTING_CHATBOT_APPEARANCE_AI_MESSAGE_TEXT_COLOR);
+    }
+
+    if (get_option('aikit_setting_chatbot_appearance_user_message_bubble_color') === false) {
+        update_option('aikit_setting_chatbot_appearance_user_message_bubble_color', AIKIT_DEFAULT_SETTING_CHATBOT_APPEARANCE_USER_MESSAGE_BUBBLE_COLOR);
+    }
+
+    if (get_option('aikit_setting_chatbot_appearance_user_message_text_color') === false) {
+        update_option('aikit_setting_chatbot_appearance_user_message_text_color', AIKIT_DEFAULT_SETTING_CHATBOT_APPEARANCE_USER_MESSAGE_TEXT_COLOR);
+    }
+
+    if (get_option('aikit_setting_stabilityai_default_engine') === false) {
+        update_option('aikit_setting_stabilityai_default_engine', AIKIT_DEFAULT_SETTING_STABILITYAI_ENGINE);
+    }
+
+    if (get_option('aikit_setting_stabilityai_default_sampler') === false) {
+        update_option('aikit_setting_stabilityai_default_sampler', AIKIT_DEFAULT_SETTING_STABILITYAI_SAMPLER);
+    }
+
+    if (get_option('aikit_setting_stabilityai_default_steps') === false) {
+        update_option('aikit_setting_stabilityai_default_steps', AIKIT_DEFAULT_SETTING_STABILITYAI_STEPS);
+    }
+
+    if (get_option('aikit_setting_stabilityai_default_cfg_scale') === false) {
+        update_option('aikit_setting_stabilityai_default_cfg_scale', AIKIT_DEFAULT_SETTING_STABILITYAI_CFG_SCALE);
+    }
+
+    if (get_option('aikit_setting_stabilityai_default_seed') === false) {
+        update_option('aikit_setting_stabilityai_default_seed', AIKIT_DEFAULT_SETTING_STABILITYAI_SEED);
+    }
+
+    if (get_option('aikit_setting_default_image_generation_api') === false) {
+        update_option('aikit_setting_default_image_generation_api', AIKIT_DEFAULT_SETTING_IMAGE_GENERATION_API);
+    }
+
+    if (get_option('aikit_setting_chatbot_use_embeddings') === false) {
+        update_option('aikit_setting_chatbot_use_embeddings', AIKIT_DEFAULT_SETTING_CHATBOT_USE_EMBEDDINGS);
+    }
+
+    if (get_option('aikit_setting_chatbot_embeddings_answer_formulation_prompt') === false) {
+        update_option('aikit_setting_chatbot_embeddings_answer_formulation_prompt', AIKIT_DEFAULT_SETTING_CHATBOT_EMBEDDINGS_ANSWER_FORMULATION_PROMPT);
+    }
+
+    if (get_option('aikit_setting_chatbot_log_messages') === false) {
+        update_option('aikit_setting_chatbot_log_messages', AIKIT_DEFAULT_SETTING_CHATBOT_LOG_MESSAGES);
+    }
+
+    if (get_option('aikit_setting_audio_player_primary_color') === false) {
+        update_option('aikit_setting_audio_player_primary_color', AIKIT_DEFAULT_SETTING_AUDIO_PLAYER_PRIMARY_COLOR);
+    }
+
+    if (get_option('aikit_setting_audio_player_secondary_color') === false) {
+        update_option('aikit_setting_audio_player_secondary_color', AIKIT_DEFAULT_SETTING_AUDIO_PLAYER_SECONDARY_COLOR);
+    }
+
+    if (get_option('aikit_setting_audio_player_message') === false) {
+        update_option('aikit_setting_audio_player_message', AIKIT_DEFAULT_SETTING_AUDIO_PLAYER_MESSAGE);
+    }
+
+    if (get_option('aikit_setting_openai_image_model') === false) {
+        update_option('aikit_setting_openai_image_model', AIKIT_DEFAULT_SETTING_OPENAI_IMAGE_MODEL);
+    }
+
+    if (get_option('aikit_setting_openai_image_quality') === false) {
+        update_option('aikit_setting_openai_image_quality', AIKIT_DEFAULT_SETTING_OPENAI_IMAGE_QUALITY);
+    }
+
+    if (get_option('aikit_setting_openai_image_style') === false) {
+        update_option('aikit_setting_openai_image_style', AIKIT_DEFAULT_SETTING_OPENAI_IMAGE_STYLE);
+    }
+
+    if (get_option('aikit_setting_openai_tts_model') === false) {
+        update_option('aikit_setting_openai_tts_model', AIKIT_DEFAULT_SETTING_OPENAI_TTS_MODEL);
+    }
+
+    if (get_option('aikit_setting_openai_tts_voice') === false) {
+        update_option('aikit_setting_openai_tts_voice', AIKIT_DEFAULT_SETTING_OPENAI_TTS_VOICE);
+    }
+
+    if (get_option('aikit_setting_default_tts_api') === false) {
+        update_option('aikit_setting_default_tts_api', AIKIT_DEFAULT_SETTING_DEFAULT_TTS_API);
+    }
 }
 
 function aikit_add_inline_js_object () {
@@ -232,6 +498,21 @@ function aikit_build_plugin_js_config() {
         $availableSizes['large'] = '1024x1024';
     }
 
+    if (get_option('aikit_setting_images_size_xlarge_1792x1024')) {
+        $availableSizes['xlarge landscape'] = '1792x1024';
+    }
+
+    if (get_option('aikit_setting_images_size_xlarge_1344x768')) {
+        $availableSizes['xlarge landscape '] = '1344x768';
+    }
+
+    if (get_option('aikit_setting_images_size_xlarge_1024x1792')) {
+        $availableSizes['xlarge portrait'] = '1024x1792';
+    }
+
+    $stabilityAIKey = get_option( 'aikit_setting_stabilityai_key' );
+    $stabilityAIModel = get_option( 'aikit_setting_stabilityai_default_engine' );
+
     $nonce = wp_create_nonce('wp_rest' );
     $aiKitScriptVars = array(
         'nonce'  =>  $nonce,
@@ -239,15 +520,21 @@ function aikit_build_plugin_js_config() {
         'pluginUrl' => plugin_dir_url( __FILE__ ),
         'autocompletedTextBackgroundColor' => get_option('aikit_setting_autocompleted_text_background_color'),
         'isOpenAIKeyValid' => $isOpenAIKeyValid,
+        'isStabilityAIKeySet' => !empty($stabilityAIKey),
         'selectedLanguage' => $selectedLanguage,
         'prompts' => AIKit_Prompt_Manager::get_instance()->get_prompts_for_frontend($selectedLanguage),
         'imageGenerationOptions' => [
-            'counts' => explode(',', get_option('aikit_setting_images_counts')),
-            'sizes' => $availableSizes,
+            'counts' => aikit_openai_get_model_allowed_image_generation_counts(),
+            'sizes' => array_intersect_key($availableSizes, aikit_openai_get_model_allowed_resolutions()),
+            'stabilityAISizes' => array_intersect_key(
+                $availableSizes,
+                aikit_stability_ai_get_model_allowed_resolutions($stabilityAIModel),
+            ),
+            'stabilityAICounts' => explode(',', get_option('aikit_setting_images_counts')),
         ],
     );
 
-    $aiKitScriptVars['isOpenAIKeyValid'] = true;
+    ###['openai-key-valid']
 
     return $aiKitScriptVars;
 }
@@ -288,7 +575,7 @@ add_filter('mce_css', 'aikit_classic_mce_css');
 function aikit_classic_mce_plugin($plugin_array) {
     global $pagenow;
 
-    if ($pagenow == 'post.php' || $pagenow == 'post-new.php') {
+    if ($pagenow == 'post.php' || $pagenow == 'post-new.php' || $pagenow == 'edit-tags.php' || $pagenow == 'term.php') {
 	    $plugin_array['aikit_classic'] = plugins_url('includes/js/classic.js', __FILE__);
     }
 
@@ -304,9 +591,17 @@ function aikit_classic_mce_inline_script() {
 
     if ($pagenow !== 'post.php' &&
         $pagenow !== 'post-new.php' &&
+        $pagenow !== 'edit-tags.php' &&
+        $pagenow !== 'term.php' &&
         !(isset($_GET['page']) && $_GET['page'] === 'aikit_auto_writer') &&
         !(isset($_GET['page']) && $_GET['page'] === 'aikit_scheduler') &&
-        !(isset($_GET['page']) && $_GET['page'] === 'aikit_repurpose')
+        !(isset($_GET['page']) && $_GET['page'] === 'aikit_repurpose') &&
+        !(isset($_GET['page']) && $_GET['page'] === 'aikit_rss') &&
+        !(isset($_GET['page']) && $_GET['page'] === 'aikit_chatbot') &&
+        !(isset($_GET['page']) && $_GET['page'] === 'aikit_fine_tune') &&
+        !(isset($_GET['page']) && $_GET['page'] === 'aikit_embeddings') &&
+        !(isset($_GET['page']) && $_GET['page'] === 'aikit_text_to_speech') &&
+        !(isset($_GET['page']) && $_GET['page'] === 'aikit_comments')
     ) {
         return;
     }
@@ -319,7 +614,7 @@ add_action('admin_enqueue_scripts', 'aikit_classic_mce_enqueue_scripts');
 function aikit_classic_mce_enqueue_scripts() {
     global $pagenow;
 
-    if ($pagenow !== 'post.php' && $pagenow !== 'post-new.php' ) {
+    if ($pagenow !== 'post.php' && $pagenow !== 'post-new.php' && $pagenow !== 'edit-tags.php' && $pagenow !== 'term.php') {
         return;
     }
 
@@ -369,7 +664,33 @@ function aikit_register_custom_cron_schedules( $schedules ) {
         'display'  => __( 'Every 5 Minutes' ),
     );
 
+    $schedules['every_10_minutes'] = array(
+        'interval' => 60 * 10,
+        'display'  => __( 'Every 10 Minutes' ),
+    );
+
     return $schedules;
+}
+
+function aikit_date($date)
+{
+    if (!is_numeric($date)) {
+        $date = strtotime($date);
+    }
+
+    $format = get_option('time_format') . ' ' . get_option('date_format');
+
+    return wp_date($format, $date);
+}
+
+function aikit_reconnect_db_if_needed()
+{
+    global $wpdb;
+
+    // for servers with tight mysql connection time
+    if (!$wpdb->check_connection()) {
+        $wpdb->db_connect();
+    }
 }
 
 ###['admin-notice']

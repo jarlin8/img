@@ -237,7 +237,7 @@ function getAllBlockContentsRecursively(blockClientIds, selectionStart, selectio
   return content;
 }
 
-async function doAutocompleteRequest(requestType, text, selectedLanguage) {
+async function doAutocompleteRequest(requestType, text, selectedLanguage, context) {
   const siteUrl = aikit.siteUrl;
   const nonce = aikit.nonce;
   const response = await fetch(siteUrl + "/?rest_route=/aikit/openai/v1/autocomplete&type=" + requestType, {
@@ -248,6 +248,7 @@ async function doAutocompleteRequest(requestType, text, selectedLanguage) {
     },
     body: JSON.stringify({
       text: text,
+      context: context,
       language: selectedLanguage
     })
   }).catch(async error => {
@@ -263,10 +264,10 @@ async function doAutocompleteRequest(requestType, text, selectedLanguage) {
   return data.text;
 }
 
-async function doImageGenerationRequest(imageCount, imageSize, text, selectedLanguage) {
+async function doImageGenerationRequest(imageCount, imageSize, text, selectedLanguage, generator) {
   const siteUrl = aikit.siteUrl;
   const nonce = aikit.nonce;
-  const response = await fetch(siteUrl + "/?rest_route=/aikit/openai/v1/generate-images&count=" + imageCount + "&size=" + imageSize, {
+  const response = await fetch(siteUrl + "/?rest_route=/aikit/" + generator + "/v1/generate-images&count=" + imageCount + "&size=" + imageSize, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -290,11 +291,18 @@ async function doImageGenerationRequest(imageCount, imageSize, text, selectedLan
 }
 
 async function autocomplete(requestType, autocompleteBlock, selectedText) {
+  let textBefore = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+  let textAfter = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : '';
   let autocompletedText = '';
   let selectedLanguage = aikit.selectedLanguage;
+  let postTitle = wp.data.select('core/editor').getEditedPostAttribute('title');
 
   try {
-    autocompletedText = await doAutocompleteRequest(requestType, selectedText, selectedLanguage);
+    autocompletedText = await doAutocompleteRequest(requestType, selectedText, selectedLanguage, {
+      postTitle: postTitle,
+      textBeforeSelection: textBefore,
+      textAfterSelection: textAfter
+    });
   } catch (error) {
     // remove the block
     await wp.data.dispatch('core/block-editor').removeBlocks(autocompleteBlock.clientId);
@@ -317,13 +325,14 @@ async function autocomplete(requestType, autocompleteBlock, selectedText) {
 }
 
 async function generateImages(imageCount, imageSize, autocompleteBlock, selectedText) {
+  let generator = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : "openai";
   let selectedLanguage = aikit.selectedLanguage;
   let result = {
     images: []
   };
 
   try {
-    result = await doImageGenerationRequest(imageCount, imageSize, selectedText, selectedLanguage);
+    result = await doImageGenerationRequest(imageCount, imageSize, selectedText, selectedLanguage, generator);
   } catch (error) {
     // remove the block
     await wp.data.dispatch('core/block-editor').removeBlocks(autocompleteBlock.clientId);
@@ -413,13 +422,21 @@ async function generateImages(imageCount, imageSize, autocompleteBlock, selected
         icon: aikit.prompts[operationId].icon,
         generatedTextPlacement: aikit.prompts[operationId].generatedTextPlacement
       });
-    }); // just to that these are included in the translations
+    }); // just so that these are included in the translations
 
     let smallImageTitle = (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)("small image(s)", "aikit");
 
     let mediumImageTitle = (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)("medium image(s)", "aikit");
 
     let largeImageTitle = (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)("large image(s)", "aikit");
+
+    let xlargeLandscapeImageTitle = (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)("x large (landscape) image(s)", "aikit");
+
+    let xlargePortraitImageTitle = (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)("large (portrait) image(s)", "aikit");
+
+    let dalle = (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)("DALL·E", "aikit");
+
+    let stableDiffusion = (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)("Stable Diffusion", "aikit");
 
     let imageGenerationOptions = [];
 
@@ -428,10 +445,27 @@ async function generateImages(imageCount, imageSize, autocompleteBlock, selected
 
       for (let count of aikit.imageGenerationOptions.counts) {
         imageGenerationOptions.push({
-          title: count + ' x ' + (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)(size + " image(s)", "aikit") + ' (' + resolution + ')',
+          title: "[" + dalle + "] " + count + ' x ' + (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)(size + " image(s)", "aikit") + ' (' + resolution + ')',
           count: count,
-          size: size
+          size: size,
+          generator: "openai"
         });
+      }
+    } // if isStabilityAIKeySet is true, then add the stability options
+
+
+    if (aikit.isStabilityAIKeySet) {
+      for (let size in aikit.imageGenerationOptions.stabilityAISizes) {
+        let resolution = aikit.imageGenerationOptions.stabilityAISizes[size];
+
+        for (let count of aikit.imageGenerationOptions.stabilityAICounts) {
+          imageGenerationOptions.push({
+            title: "[" + stableDiffusion + "] " + count + ' x ' + (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)(size + " image(s)", "aikit") + ' (' + resolution + ')',
+            count: count,
+            size: size,
+            generator: "stability-ai"
+          });
+        }
       }
     }
 
@@ -456,8 +490,19 @@ async function generateImages(imageCount, imageSize, autocompleteBlock, selected
               const selectedText = getSelectedText();
 
               if (selectedText) {
+                let startSelectionBlock = wp.data.select('core/block-editor').getSelectionStart();
+                let endSelectionBlock = wp.data.select('core/block-editor').getSelectionEnd(); // Get the blocks
+
+                let startBlock = wp.data.select('core/block-editor').getBlock(startSelectionBlock.clientId);
+                let endBlock = wp.data.select('core/block-editor').getBlock(endSelectionBlock.clientId); // Get the text of the blocks
+
+                let startBlockText = startBlock.attributes.content;
+                let endBlockText = endBlock.attributes.content; // Get the text before and after the selection
+
+                let textBeforeSelection = startBlockText.slice(0, startSelectionBlock.offset);
+                let textAfterSelection = endBlockText.slice(endSelectionBlock.offset + 1);
                 const block = await createBlockForAutocompletion(placement);
-                await autocomplete(autocompleteType.operationId, block, selectedText);
+                await autocomplete(autocompleteType.operationId, block, selectedText, textBeforeSelection, textAfterSelection);
               }
             } else {
               const block = await createBlockForAutocompletion(placement);
@@ -484,7 +529,7 @@ async function generateImages(imageCount, imageSize, autocompleteBlock, selected
 
             if (selectedText) {
               const block = await createBlockForAutocompletion(placement);
-              await generateImages(imageGenerationOption.count, imageGenerationOption.size, block, selectedText);
+              await generateImages(imageGenerationOption.count, imageGenerationOption.size, block, selectedText, imageGenerationOption.generator);
             }
           }
         };
@@ -701,6 +746,51 @@ icons.largeImage = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElem
   },
   transform: "matrix(.98497 0 0 .98497 49.178 -9.552)"
 }));
+icons["xlarge landscapeImage"] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("svg", {
+  xmlns: "http://www.w3.org/2000/svg",
+  fillRule: "evenodd",
+  strokeLinejoin: "round",
+  strokeMiterlimit: "2",
+  clipRule: "evenodd",
+  viewBox: "0 0 1024 1024"
+}, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("path", {
+  d: "M41.106 75.092c0-15.253 12.367-27.62 27.62-27.62H234.45c15.255 0 27.621 12.367 27.621 27.62 0 15.255-12.366 27.621-27.621 27.621H96.347v138.103c0 15.255-12.366 27.621-27.621 27.621-15.253 0-27.62-12.366-27.62-27.621V75.092zM952.588 47.472c15.252 0 27.62 12.367 27.62 27.62v165.724c0 15.255-12.368 27.621-27.62 27.621-15.253 0-27.621-12.366-27.621-27.621V102.713H786.864c-15.253 0-27.621-12.366-27.621-27.621 0-15.253 12.368-27.62 27.621-27.62h165.724zM68.726 986.574c-15.253 0-27.62-12.368-27.62-27.62V793.23c0-15.253 12.367-27.621 27.62-27.621 15.255 0 27.621 12.368 27.621 27.621v138.103H234.45c15.255 0 27.621 12.368 27.621 27.621 0 15.252-12.366 27.62-27.621 27.62H68.726zM980.208 958.954c0 15.252-12.368 27.62-27.62 27.62H786.864c-15.253 0-27.621-12.368-27.621-27.62 0-15.253 12.368-27.621 27.621-27.621h138.103V793.23c0-15.253 12.368-27.621 27.621-27.621 15.252 0 27.62 12.368 27.62 27.621v165.724z"
+}), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("g", null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("text", {
+  x: "248.765",
+  y: "833.107",
+  fontFamily: "'ArialRoundedMTBold', 'Arial Rounded MT Bold', sans-serif",
+  fontSize: "900"
+}, "X")));
+icons["xlarge landscape Image"] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("svg", {
+  xmlns: "http://www.w3.org/2000/svg",
+  fillRule: "evenodd",
+  strokeLinejoin: "round",
+  strokeMiterlimit: "2",
+  clipRule: "evenodd",
+  viewBox: "0 0 1024 1024"
+}, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("path", {
+  d: "M41.106 75.092c0-15.253 12.367-27.62 27.62-27.62H234.45c15.255 0 27.621 12.367 27.621 27.62 0 15.255-12.366 27.621-27.621 27.621H96.347v138.103c0 15.255-12.366 27.621-27.621 27.621-15.253 0-27.62-12.366-27.62-27.621V75.092zM952.588 47.472c15.252 0 27.62 12.367 27.62 27.62v165.724c0 15.255-12.368 27.621-27.62 27.621-15.253 0-27.621-12.366-27.621-27.621V102.713H786.864c-15.253 0-27.621-12.366-27.621-27.621 0-15.253 12.368-27.62 27.621-27.62h165.724zM68.726 986.574c-15.253 0-27.62-12.368-27.62-27.62V793.23c0-15.253 12.367-27.621 27.62-27.621 15.255 0 27.621 12.368 27.621 27.621v138.103H234.45c15.255 0 27.621 12.368 27.621 27.621 0 15.252-12.366 27.62-27.621 27.62H68.726zM980.208 958.954c0 15.252-12.368 27.62-27.62 27.62H786.864c-15.253 0-27.621-12.368-27.621-27.62 0-15.253 12.368-27.621 27.621-27.621h138.103V793.23c0-15.253 12.368-27.621 27.621-27.621 15.252 0 27.62 12.368 27.62 27.621v165.724z"
+}), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("g", null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("text", {
+  x: "248.765",
+  y: "833.107",
+  fontFamily: "'ArialRoundedMTBold', 'Arial Rounded MT Bold', sans-serif",
+  fontSize: "900"
+}, "X")));
+icons["xlarge portraitImage"] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("svg", {
+  xmlns: "http://www.w3.org/2000/svg",
+  fillRule: "evenodd",
+  strokeLinejoin: "round",
+  strokeMiterlimit: "2",
+  clipRule: "evenodd",
+  viewBox: "0 0 1024 1024"
+}, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("path", {
+  d: "M41.106 75.092c0-15.253 12.367-27.62 27.62-27.62H234.45c15.255 0 27.621 12.367 27.621 27.62 0 15.255-12.366 27.621-27.621 27.621H96.347v138.103c0 15.255-12.366 27.621-27.621 27.621-15.253 0-27.62-12.366-27.62-27.621V75.092zM952.588 47.472c15.252 0 27.62 12.367 27.62 27.62v165.724c0 15.255-12.368 27.621-27.62 27.621-15.253 0-27.621-12.366-27.621-27.621V102.713H786.864c-15.253 0-27.621-12.366-27.621-27.621 0-15.253 12.368-27.62 27.621-27.62h165.724zM68.726 986.574c-15.253 0-27.62-12.368-27.62-27.62V793.23c0-15.253 12.367-27.621 27.62-27.621 15.255 0 27.621 12.368 27.621 27.621v138.103H234.45c15.255 0 27.621 12.368 27.621 27.621 0 15.252-12.366 27.62-27.621 27.62H68.726zM980.208 958.954c0 15.252-12.368 27.62-27.62 27.62H786.864c-15.253 0-27.621-12.368-27.621-27.62 0-15.253 12.368-27.621 27.621-27.621h138.103V793.23c0-15.253 12.368-27.621 27.621-27.621 15.252 0 27.62 12.368 27.62 27.621v165.724z"
+}), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("g", null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("text", {
+  x: "248.765",
+  y: "833.107",
+  fontFamily: "'ArialRoundedMTBold', 'Arial Rounded MT Bold', sans-serif",
+  fontSize: "900"
+}, "X")));
 icons.troll = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("svg", {
   width: "24",
   height: "24",

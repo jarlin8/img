@@ -458,7 +458,7 @@ class sxmldom_simple_html_dom_node
     {
         $ret = $this->innertext();
         $ret = str_ireplace('<![CDATA[', '', $ret);
-        $ret = str_replace(']]>', '', $ret);
+        $ret = wp_automatic_str_replace(']]>', '', $ret);
         return $ret;
     }
 
@@ -681,7 +681,7 @@ class sxmldom_simple_html_dom_node
 // farther study is required to determine of this should be documented or removed.
 //        $pattern = "/([\w-:\*]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[@?(!?[\w-]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?([\/, ]+)/is";
         $pattern = "/([\w-:\*]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[@?(!?[\w-:]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?([\/, ]+)/is";
-        preg_match_all($pattern, trim($selector_string).' ', $matches, PREG_SET_ORDER);
+        preg_match_all($pattern, wp_automatic_trim($selector_string).' ', $matches, PREG_SET_ORDER);
         if (is_object($debugObject)) {$debugObject->debugLog(2, "Matches Array: ", $matches);}
 
         $selectors = array();
@@ -692,7 +692,7 @@ class sxmldom_simple_html_dom_node
         
         
         foreach ($matches as $m) {
-            $m[0] = trim($m[0]);
+            $m[0] = wp_automatic_trim($m[0]);
             if ($m[0]==='' || $m[0]==='/' || $m[0]==='//') continue;
             // for browser generated xpath
             if ($m[1]==='tbody') continue;
@@ -710,7 +710,7 @@ class sxmldom_simple_html_dom_node
             if (isset($key[0]) && $key[0]==='!') {$key=substr($key, 1); $no_key=true;}
 
             $result[] = array($tag, $key, $val, $exp, $no_key);
-            if (trim($m[7])===',') {
+            if (wp_automatic_trim($m[7])===',') {
                 $selectors[] = $result;
                 $result = array();
             }
@@ -1145,8 +1145,8 @@ class sxmldom_simple_html_dom
 
         //before we save the string as the doc...  strip out the \r \n's if we are told to.
         if ($stripRN) {
-            $str = str_replace("\r", " ", $str);
-            $str = str_replace("\n", " ", $str);
+            $str = wp_automatic_str_replace("\r", " ", $str);
+            $str = wp_automatic_str_replace("\n", " ", $str);
 
             // set the length of content since we have changed it.
             $this->size = strlen($str);
@@ -1518,11 +1518,11 @@ class sxmldom_simple_html_dom
                 $node->attr[$name] = $this->restore_noise($this->copy_until($this->token_attr));
         }
         // PaperG: Attributes should not have \r or \n in them, that counts as html whitespace.
-        $node->attr[$name] = str_replace("\r", "", $node->attr[$name]);
-        $node->attr[$name] = str_replace("\n", "", $node->attr[$name]);
+        $node->attr[$name] = wp_automatic_str_replace("\r", "", $node->attr[$name]);
+        $node->attr[$name] = wp_automatic_str_replace("\n", "", $node->attr[$name]);
         // PaperG: If this is a "class" selector, lets get rid of the preceeding and trailing space since some people leave it in the multi class case.
         if ($name == "class") {
-            $node->attr[$name] = trim($node->attr[$name]);
+            $node->attr[$name] = wp_automatic_trim($node->attr[$name]);
         }
     }
 

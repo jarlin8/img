@@ -19,13 +19,13 @@ global $camp_post_content;
 
 
 			<div id="field6-container" class="field f_100">
-				<label for="field6"> Post title template </label> <input value="<?php   echo htmlentities($camp_post_title)  ?>" name="camp_post_title" id="field6" required="required" type="text">
+				<label for="field6"> Post title template </label> <input value="<?php   echo wp_automatic_htmlentities($camp_post_title)  ?>" name="camp_post_title" id="field6" required="required" type="text">
 			</div>
 
 			<div id="field11-container" class="field f_100">
 				<label for="field11"> Post text template <i>(spintax enabled, like {awesome|amazing|Great})</i>
 				</label>
-				<textarea required="required" rows="5" cols="20" name="camp_post_content" id="field11"><?php echo htmlentities($camp_post_content ,ENT_COMPAT, 'UTF-8')     ?></textarea>
+				<textarea required="required" rows="5" cols="20" name="camp_post_content" id="field11"><?php echo wp_automatic_htmlentities($camp_post_content ,ENT_COMPAT, 'UTF-8')     ?></textarea>
 				<div class="supportedTags description "></div>
 			</div>
 			
@@ -69,7 +69,17 @@ global $camp_post_content;
 					   <input value="<?php   echo @$camp_general['cg_custom_slug']  ?>" name="cg_custom_slug"    type="text">
 		            	 
 		            
-		            <div class="description">For example, [original_title] TEST</div>	 
+		          		<div class="description">For example, [original_title] TEST<br><br>Example2: [post_title] TEST <-- uses the final post title</div>	
+						
+						<br><br>
+						
+						<label>
+		                    Max number of words
+		               </label>
+		               
+					   <input value="<?php   echo @$camp_general['cg_custom_slug_word_limit']  ?>" name="cg_custom_slug_word_limit"    type="text">
+		            	  
+		          		<div class="description">For example, 5 .Leave empty for no specific limit</div>	
 		             	
 		            </div>
 		            

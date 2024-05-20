@@ -148,6 +148,35 @@ global $camp_post_category;
 
 						</div>
 
+						<!-- Option for generating a featured image using dalle 3-->
+						<div class="option clearfix">
+							<input data-controls="wp_automatic_dalle3" name="camp_options[]" value="OPT_DALLE" type="checkbox"> <span class="option-title"> Set a featured image from OpenAI DALL·E 3 for a specific prompt </span> <br>
+
+							<div class="field f_100" id="wp_automatic_dalle3">
+								
+								
+								<div id="wp_automatic_dalle3_keyword" class="field f_100">
+									<label> Prompt for the generation </label> <input value="<?php echo @$camp_general['cg_dalle3_prompt'] ?>" name="cg_dalle3_prompt" placeholder= "generate a featured image for a post that is titled:[post_title]" type="text">
+									<div class="description">If this post was generated with a keyword or post title, you can use [keyword] or [post_title] tags in this box to substitute with the corresponding values<br><br>Default: generate a featured image for a post that is titled:[post_title]<br><br>Warning: This is a premium feature which will only work if you added a payment method and added credit to your API account on OpenAI.</div>
+								</div>
+
+								<div class="field f_100">
+
+									<div class="option clearfix">
+										<input name="camp_options[]" value="OPT_DALLE_FORCE" type="checkbox"> <span class="option-title"> Force using dalle 3 images and ignore source found images (By default, dalle 3 image if no image found to set) </span>
+									</div>
+
+									<div class="option clearfix">
+										<input name="camp_options[]" value="OPT_DALLE_ALT" type="checkbox"> <span class="option-title"> Set the keyword used to get this image as the featured image alt </span>
+									</div>
+
+								</div>
+
+							</div>
+						</div>
+						<!-- End of option for generating a featured image using dalle 3-->
+
+
 					</div>
 
 				</div>
@@ -209,6 +238,34 @@ global $camp_post_category;
 						<div class="option clearfix">
 
 							<input name="camp_options[]" value="OPT_FEED_GALLERY_LIMIT" type="checkbox"> <span class="option-title"> Add the gallery even if there is only one image available </span> <br>
+
+						</div>
+
+						<!-- OPT_FEED_GALLERY_LINK_MEDIA -->
+						<div class="option clearfix">
+							<input name="camp_options[]" value="OPT_FEED_GALLERY_LINK_MEDIA" type="checkbox"> <span class="option-title"> Link the gallery images to the media file </span> <br>
+						</div>
+
+						<!-- OPT_FEED_GALLERY_LINK_POST -->
+						<div class="option clearfix">
+							<input name="camp_options[]" value="OPT_FEED_GALLERY_LINK_POST" type="checkbox"> <span class="option-title"> Link the gallery images to attatchment page </span> <br>
+						</div>
+
+						<div class="option clearfix">
+
+							<input data-controls="classic_editor_gallery_template" name="camp_options[]" value="OPT_FEED_GALLERY_OLD" type="checkbox"> 
+							<span class="option-title"> Use the old classic editor format (by default, the block editor format is used) </span> <br>
+
+							<div id="classic_editor_gallery_template"  class="field f_100">
+							<label>
+		                    Gallery shortcode template  
+							</label>
+							
+								<input placeholder="<?php echo  wp_automatic_htmlentities('[gallery ids="{attachments}"]') ;?>"  value="<?php    echo wp_automatic_htmlentities(@$camp_general['cg_classic_gallery_template'],ENT_COMPAT, 'UTF-8')   ?>"  name="cg_classic_gallery_template" type="text">
+								
+								<div class="description">This is how the plugin will build gallery shortcode<br><br>Default: <?php echo  wp_automatic_htmlentities('[gallery ids="{attachments}"]') ;?><br>Example: [gallery link="file" columns="5" size="large" ids="{attachments}"]</div>
+		               
+							</div>
 
 						</div>
 

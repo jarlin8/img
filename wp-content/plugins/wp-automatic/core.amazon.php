@@ -21,20 +21,20 @@ class WpAutomaticAmazon extends wp_automatic {
 		$keywords = explode ( ',', $camp->camp_keywords );
 		
 		// default cat
-		if (trim ( $camp->camp_amazon_cat ) == '') {
+		if (wp_automatic_trim( $camp->camp_amazon_cat ) == '') {
 			$camp->camp_amazon_cat = 'All';
 		}
 		
 		foreach ( $keywords as $keyword ) {
 			
-			$keyword = trim ( $keyword );
+			$keyword = wp_automatic_trim( $keyword );
 			
-			if (trim ( $keyword ) != '') {
-				$keyword = trim ( $keyword );
+			if (wp_automatic_trim( $keyword ) != '') {
+				$keyword = wp_automatic_trim( $keyword );
 				echo ('<hr><b>Processing Keyword:</b> "' . $keyword . '"');
 				
 				// update last keyword
-				update_post_meta ( $camp->camp_id, 'last_keyword', trim ( $keyword ) );
+				update_post_meta ( $camp->camp_id, 'last_keyword', wp_automatic_trim( $keyword ) );
 				
 				// getting links from the db for that keyword
 				$query = "select * from {$this->wp_prefix}automatic_amazon_links where link_keyword='{$camp->camp_id}_$keyword' ";
@@ -104,7 +104,7 @@ class WpAutomaticAmazon extends wp_automatic {
 						$amazonPublic = get_option ( 'wp_amazonpin_abk', '' );
 						$amazonSecret = get_option ( 'wp_amazonpin_apvtk', '' );
 						
-						$obj = new wp_automatic_AmazonProductAPI ( trim ( $amazonPublic ), trim ( $amazonSecret ), trim ( $amazonAid ), $camp->camp_amazon_region );
+						$obj = new wp_automatic_AmazonProductAPI ( wp_automatic_trim( $amazonPublic ), wp_automatic_trim( $amazonSecret ), wp_automatic_trim( $amazonAid ), $camp->camp_amazon_region );
 						$obj->ch = $this->ch;
 						
 						try {
@@ -170,7 +170,7 @@ class WpAutomaticAmazon extends wp_automatic {
 							// current price
 							$price = '';
 							$price = $Item->Offers->Listings[0]->Price->DisplayAmount;
-							$price = trim (preg_replace( '{\(.*?\)}' , '' , $price ) );
+							$price = wp_automatic_trim(preg_replace( '{\(.*?\)}' , '' , $price ) );
 							$price_numeric = $Item->Offers->Listings[0]->Price->Amount;
 							$last_price = $price_numeric * 100;
 							
@@ -179,11 +179,11 @@ class WpAutomaticAmazon extends wp_automatic {
 							
 							if(isset( $Item->Offers->Listings[0]->Price->Savings )){
 								$ListPrice = $Item->Offers->Listings[0]->Price->Savings->Amount + $price_numeric;
-								$ListPrice = str_replace( $price_numeric , $ListPrice , $price );
+								$ListPrice = wp_automatic_str_replace( $price_numeric , $ListPrice , $price );
 								
 							}
 							
-							if (trim ( $ListPrice ) == '') {
+							if (wp_automatic_trim( $ListPrice ) == '') {
 								$ListPrice = $price;
 							}
 							
@@ -198,7 +198,7 @@ class WpAutomaticAmazon extends wp_automatic {
 							
 							// Checking for an image set
 							
-							if (trim ( $imgurl ) != '') {
+							if (wp_automatic_trim( $imgurl ) != '') {
 								
 								$imgs = array();
 								
@@ -273,9 +273,9 @@ class WpAutomaticAmazon extends wp_automatic {
 					 * //fix commas and dots for es
 					 * if($camp->camp_amazon_region == 'es' || $camp->camp_amazon_region == 'de' || $camp->camp_amazon_region == 'fr' || $camp->camp_amazon_region == 'it' ){
 					 *
-					 * $ret->link_price = str_replace(',','*',$ret->link_price);
-					 * $ret->link_price = str_replace('.',',',$ret->link_price);
-					 * $ret->link_price = str_replace('*','.',$ret->link_price);
+					 * $ret->link_price = wp_automatic_str_replace(',','*',$ret->link_price);
+					 * $ret->link_price = wp_automatic_str_replace('.',',',$ret->link_price);
+					 * $ret->link_price = wp_automatic_str_replace('*','.',$ret->link_price);
 					 *
 					 * }
 					 */
@@ -319,13 +319,13 @@ class WpAutomaticAmazon extends wp_automatic {
 					
 					$offer_desc = $ret->link_desc;
 					
-					$offer_desc = str_replace ( 'View larger.', '', $offer_desc );
+					$offer_desc =wp_automatic_str_replace( 'View larger.', '', $offer_desc );
 					
 					$offer_url = $ret->link_url;
 					
 					$temp ['source_link'] = $offer_url;
 					
-					$offer_price = trim ( $ret->link_price );
+					$offer_price = wp_automatic_trim( $ret->link_price );
 					$offer_img = $ret->link_img;
 					
 					if (! stristr ( $offer_url, 'tag' )) {
@@ -348,7 +348,7 @@ class WpAutomaticAmazon extends wp_automatic {
 					
 					// increasing expiration date of the review
 					$ret->link_review = preg_replace ( '{exp\=20\d\d}', 'exp=2030', $ret->link_review );
-					$ret->link_review = str_replace ( 'http://', '//', $ret->link_review );
+					$ret->link_review =wp_automatic_str_replace( 'http://', '//', $ret->link_review );
 					
 					$temp ['review_link'] = '';
 					$temp ['review_iframe'] = '';
@@ -368,11 +368,11 @@ class WpAutomaticAmazon extends wp_automatic {
 						foreach ( $enc_parms_arr as $param ) {
 							
 							if (stristr ( $param, 'creativeASIN' )) {
-								$asin = str_replace ( 'creativeASIN=', '', $param );
+								$asin =wp_automatic_str_replace( 'creativeASIN=', '', $param );
 							} elseif (stristr ( $param, 'tag=' )) {
-								$tag = str_replace ( 'tag=', '', $param );
+								$tag =wp_automatic_str_replace( 'tag=', '', $param );
 							} elseif (stristr ( $param, 'SubscriptionId' )) {
-								$subscription = str_replace ( 'SubscriptionId=', '', $param );
+								$subscription =wp_automatic_str_replace( 'SubscriptionId=', '', $param );
 							}
 						}
 					} else {
@@ -393,7 +393,7 @@ class WpAutomaticAmazon extends wp_automatic {
 					$temp ['chart_url'] = $chart_url;
 					
 					// price extraction
-					if (trim ( $ret->link_price ) != '') {
+					if (wp_automatic_trim( $ret->link_price ) != '') {
 						
 						$thousandSeparator = ',';
 						
@@ -415,14 +415,14 @@ class WpAutomaticAmazon extends wp_automatic {
 						echo '<br>Returned Price:' . $ret->link_price;
 						
 						// good we have a price
-						$price_no_commas = str_replace ( $thousandSeparator, '', $offer_price );
+						$price_no_commas =wp_automatic_str_replace( $thousandSeparator, '', $offer_price );
 						preg_match ( '{\d.*\d}is', ($price_no_commas), $price_matches );
 						
 						$temp ['price_numeric'] = $price_matches [0];
-						$temp ['price_currency'] = str_replace ( $price_matches [0], '', $offer_price );
+						$temp ['price_currency'] =wp_automatic_str_replace( $price_matches [0], '', $offer_price );
 						
 						// fixing listPrice
-						$price_no_commas = str_replace ( $thousandSeparator, '', $salePrice );
+						$price_no_commas =wp_automatic_str_replace( $thousandSeparator, '', $salePrice );
 						preg_match ( '{\d.*\d}is', ($price_no_commas), $price_matches );
 						$temp ['list_price_numeric'] = $price_matches [0];
 					}
@@ -466,7 +466,7 @@ class WpAutomaticAmazon extends wp_automatic {
 					
 					
 					
-					if (trim ( $cg_am_full_img_t ) == '') {
+					if (wp_automatic_trim( $cg_am_full_img_t ) == '') {
 						$cg_am_full_img_t = '<img src="[img_src]" class="wp_automatic_gallery" />';
 					}
 					
@@ -478,7 +478,7 @@ class WpAutomaticAmazon extends wp_automatic {
 					foreach ( $allImages as $singleImage ) {
 						
 						$singleImageHtml = $cg_am_full_img_t;
-						$singleImageHtml = str_replace ( '[img_src]', $singleImage, $singleImageHtml );
+						$singleImageHtml =wp_automatic_str_replace( '[img_src]', $singleImage, $singleImageHtml );
 						$allImages_html .= $singleImageHtml;
 					}
 					
@@ -492,9 +492,9 @@ class WpAutomaticAmazon extends wp_automatic {
 					}
 					
 					// no price
-					if (trim ( $temp ['product_price'] ) == '')
+					if (wp_automatic_trim( $temp ['product_price'] ) == '')
 						$temp ['product_price'] = $temp ['price_numeric'];
-					if (trim ( $temp ['product_list_price'] ) == '')
+					if (wp_automatic_trim( $temp ['product_list_price'] ) == '')
 						$temp ['product_list_price'] = $temp ['price_numeric'];
 					
 					return $temp;
@@ -525,7 +525,7 @@ class WpAutomaticAmazon extends wp_automatic {
 		$amazonSecret = get_option ( 'wp_amazonpin_apvtk', '' );
 		$amazonAid = get_option ( 'wp_amazonpin_aaid', '' );
 		
-		if (trim ( $amazonPublic ) == '' || trim ( $amazonSecret ) == '' || trim ( $amazonAid ) == '') {
+		if (wp_automatic_trim( $amazonPublic ) == '' || wp_automatic_trim( $amazonSecret ) == '' || wp_automatic_trim( $amazonAid ) == '') {
 			$this->log ( 'Error', 'Amazon Public Key,Private Key and associate id required visit settings and add them' );
 			echo '<br>Amazon Public Key,Private Key and associate id required visit settings and add them';
 			return false;
@@ -602,7 +602,7 @@ class WpAutomaticAmazon extends wp_automatic {
 		
 		// amazon
 		
-		$obj = new wp_automatic_AmazonProductAPI ( trim ( $amazonPublic ), trim ( $amazonSecret ), trim ( $amazonAid ), $camp->camp_amazon_region );
+		$obj = new wp_automatic_AmazonProductAPI ( wp_automatic_trim( $amazonPublic ), wp_automatic_trim( $amazonSecret ), wp_automatic_trim( $amazonAid ), $camp->camp_amazon_region );
 		$obj->ch = $this->ch;
 		
 		try {
@@ -611,7 +611,7 @@ class WpAutomaticAmazon extends wp_automatic {
 			$additionalParm = array ();
 			
 			// node param
-			if (in_array ( 'OPT_AMAZON_NODE', $camp_opt ) & trim ( $camp_general ['cg_am_node'] ) != '') {
+			if (in_array ( 'OPT_AMAZON_NODE', $camp_opt ) & wp_automatic_trim( $camp_general ['cg_am_node'] ) != '') {
 				echo '<br>Specific node : ' . $camp_general ['cg_am_node'];
 				$additionalParm ['BrowseNodeId'] = $camp_general ['cg_am_node'];
 			}
@@ -677,7 +677,7 @@ class WpAutomaticAmazon extends wp_automatic {
 					$locParts2 = explode ( '&', $locParts [1] );
 					$finalMore = $locParts2 [0];
 					
-					if (trim ( $finalMore ) != '')
+					if (wp_automatic_trim( $finalMore ) != '')
 						$moreUrl = urldecode ( $finalMore );
 				}
 				
@@ -761,7 +761,7 @@ class WpAutomaticAmazon extends wp_automatic {
 					// current price
 					$price = '';
 					$price = $Item->Offers->Listings[0]->Price->DisplayAmount;
-					$price = trim (preg_replace( '{\(.*?\)}' , '' , $price ) );
+					$price = wp_automatic_trim(preg_replace( '{\(.*?\)}' , '' , $price ) );
 					$price_numeric = $Item->Offers->Listings[0]->Price->Amount;
 					$last_price = $price_numeric * 100;
 					
@@ -770,11 +770,11 @@ class WpAutomaticAmazon extends wp_automatic {
 					
 					if(isset( $Item->Offers->Listings[0]->Price->Savings )){
 						$ListPrice = $Item->Offers->Listings[0]->Price->Savings->Amount + $price_numeric;  
-						$ListPrice = str_replace( $price_numeric , $ListPrice , $price );
+						$ListPrice = wp_automatic_str_replace( $price_numeric , $ListPrice , $price );
 						
 					}
 					
-					if (trim ( $ListPrice ) == '') {
+					if (wp_automatic_trim( $ListPrice ) == '') {
 						$ListPrice = $price;
 					}
 					
@@ -789,7 +789,7 @@ class WpAutomaticAmazon extends wp_automatic {
 					
 					// Checking for an image set
 					
-					if (trim ( $imgurl ) != '') {
+					if (wp_automatic_trim( $imgurl ) != '') {
 					
 						$imgs = array();
 						

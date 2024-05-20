@@ -28,7 +28,7 @@ class WpAutomaticFeeds extends wp_automatic {
 		foreach ( $feeds as $feed ) {
 			
 			if ($n == 3) {
-				$max = ( int ) trim ( get_option ( 'wp_automatic_feed_max', 3 ) );
+				$max = ( int ) wp_automatic_trim( get_option ( 'wp_automatic_feed_max', 3 ) );
 			}
 			
 			if ($n == $max) {
@@ -36,22 +36,22 @@ class WpAutomaticFeeds extends wp_automatic {
 				break;
 			}
 			
-			if (trim ( $feed ) != '') {
+			if (wp_automatic_trim( $feed ) != '') {
 				
 				// fix //feeds
-				if (! stristr ( $feed, 'http' ) && preg_match ( '{^//}', trim ( $feed ) )) {
+				if (! stristr ( $feed, 'http' ) && preg_match ( '{^//}', wp_automatic_trim( $feed ) )) {
 					$feed = 'http:' . $feed;
 				}
 				
 				// process feed
 				echo '<b><br><br>Processing Feed:</b> ' . $feed;
 				
-				update_post_meta ( $camp->camp_id, 'last_feed', trim ( $feed ) );
+				update_post_meta ( $camp->camp_id, 'last_feed', wp_automatic_trim( $feed ) );
 				
 				$cont = $this->feed_process_link ( $feed, $camp );
 				$n ++;
 				
-				if (isset ( $cont ['cont'] ) && trim ( $cont ['cont'] ) != '') {
+				if (isset ( $cont ['cont'] ) && wp_automatic_trim( $cont ['cont'] ) != '') {
 					return $cont;
 				}
 			}
@@ -190,7 +190,7 @@ class WpAutomaticFeeds extends wp_automatic {
 		$lastFirstFeedUrl = get_post_meta ( $camp->camp_id, $feedMd5 . '_lastFirstFeedUrl', 1 );
 		
 		// check last time adition
-		$feed = trim ( $feed );
+		$feed = wp_automatic_trim( $feed );
 		$myfeed = addslashes ( $feed );
 		
 		// removed @ v3.24
@@ -261,9 +261,9 @@ class WpAutomaticFeeds extends wp_automatic {
 		// Trim returned feed content because some feed add empty spaces before feed content
 		if (! function_exists ( 'wp_automatic_trim_feed_content' )) {
 			function wp_automatic_trim_feed_content($args) {
-				$args ['body'] = trim ( $args ['body'] );
+				$args ['body'] = wp_automatic_trim( $args ['body'] );
 				
-				// $args['body'] = preg_replace('{article/(\d+?)/}' , "article/$1wpp/", trim($args['body']) ) ;
+				// $args['body'] = preg_replace('{article/(\d+?)/}' , "article/$1wpp/", wp_automatic_trim($args['body']) ) ;
 				
 				return $args;
 			}
@@ -285,30 +285,33 @@ class WpAutomaticFeeds extends wp_automatic {
 		// If proxified download the feed content to a test file for
 		// exclude multipage scraper as it is already a local feed /wp-content/uploads/277d7822fe5662e66d660a42eaae4910_837.xml
 		$localFeed = '';
+
 		if ($this->isProxified && ! (stristr ( $feed, '.xml' ) && stristr ( $feed, 'wp-content' ))) {
 			// downloading the feed content
 			// print_r( $this->download_file
 			$downloadedFileUrl = $this->download_file ( $feed, '.html' );
+
+			echo '<br>Using a proxy, trying to download the feed to a local file...';
 			
-			if (trim ( $downloadedFileUrl ) != '') {
+			if (wp_automatic_trim( $downloadedFileUrl ) != '') {
 				echo '<br>Feed downloaded using a proxy ' . $downloadedFileUrl;
-				$localFeed = $downloadedFileUrl . '?key=' . md5 ( trim ( $feed ) );
+				$localFeed = $downloadedFileUrl . '?key=' . md5 ( wp_automatic_trim( $feed ) );
+			}else{
+				echo '<br>Feed download failed, using the direct URL instead';
 			}
 		}
+
 		
 		// fix ssl verification
 		add_filter ( 'https_ssl_verify', '__return_false' );
 		
 		// Fetch feed content
-		if (trim ( $localFeed ) == '') {
+		if (wp_automatic_trim( $localFeed ) == '') {
 		
 			timer_start ();
 			$rss = fetch_feed ( stripslashes ( $feed ) );
 			echo '<br>Time taken to load the feed from the source:' . timer_stop ();
-
-			
-		 
-		
+   
 		} else {
 			echo '<br>Loaded locally';
 			$rss = fetch_feed ( $localFeed );
@@ -316,13 +319,69 @@ class WpAutomaticFeeds extends wp_automatic {
 			//log that the feed was loaded locally
 			wp_automatic_log_new('Feed' , 'Feed loaded locally');
 		}
+
+		//if $rss->status_code is set, echo 
+		if(isset($rss->status_code)){
+			echo '<br>HTTP code: ' . $rss->status_code;
+		}
+
+		//if rss is a wordpress error and the feed URL contains wp-content/uploads and .xml then build then get the content of the local file from the uploads folder and build the rss object manually
+		if(   stristr($feed, 'wp-content/uploads') && stristr($feed, '.xml') &&   is_wp_error($rss)  ){
+			
+
+			//report loading file by URL failed, tring to build the rss object manually
+			echo '<br>Failed to load the feed by URL, tring to build the rss object manually';
+
+			//get the local file content from the uploads folder not using the URL
+			
+			//1 get the file name 
+			$feed_file_name = basename($feed);
+
+			//remove any parameters from the file name
+			$feed_file_name = explode('?', $feed_file_name);
+			$feed_file_name = $feed_file_name[0];
+
+			//2 get the uploads folder path
+			$upload_dir = wp_upload_dir();
+
+			//3 get the file path
+			$local_file_path = $upload_dir['basedir'] . '/' . $feed_file_name;
+
+			//4 get the file content
+			$local_file_content = file_get_contents($local_file_path);
+
+			//if file content contains <rss then it is a valid rss file
+			if(  stristr($local_file_content, '<rss')){
+				echo '<br>File content contains rss then it is a valid rss file, building the feed object manually';
+				
+				//build the rss object manually
+				$rss = new SimplePie();
+				
+				// Set the feed content
+				$rss->set_raw_data( $local_file_content );
+				
+				// Initialize the feed
+				$rss->init();
+			
+			
+			}else{
+				echo '<br>File content does not contain rss then it is not a valid rss file, deleting...';
+
+				//delete the file
+				unlink($local_file_path);
+
+			}			
+
+			 
+			
+		}
 		
 		// Remove added filter
 		remove_filter ( 'http_response', 'wp_automatic_trim_feed_content' );
 		
 		if (! is_wp_error ( $rss )) { // Checks that the object is created correctly
 			
-			if (trim ( $rss->raw_data ) == '') {
+			if (wp_automatic_trim( $rss->raw_data ) == '') {
 				echo '<br>Feed was loaded from cache';
 			} else {
 				echo '<br>Feed was freshly loaded from the source';
@@ -330,6 +389,18 @@ class WpAutomaticFeeds extends wp_automatic {
 			
 			// Figure out how many total items there are, but limit it to 5.
 			$maxitems = @$rss->get_item_quantity ();
+
+			//fix 404 code may return site posts as some sites display a feed on 404 pages ticket:23627
+			//so if the code is 404 and there is posts, set the maxitems to 0
+			//also delete the cached file URL to force a fresh load next time wp_automatic_cache meta
+			if($rss->status_code == 404 && $maxitems > 0 && stristr($feed, 'wp-content/uploads') ){
+				echo '<br>Feed status code is 404 and contains posts, setting maxitems to 0 and deleting the cached file URL to force a fresh load next time';
+				
+				//delete the cached file URL to force a fresh load next time
+				delete_post_meta($camp->camp_id, 'wp_automatic_cache');
+
+				$maxitems = 0;
+			}
 			
 			echo '<br>Feed contains ' . $maxitems . ' posts';
 			
@@ -353,6 +424,13 @@ class WpAutomaticFeeds extends wp_automatic {
 				
 				//error message inside a span with color red
 				$error_string = '<br><span style="color:red">403 error: This page maybe protected by cloudflare, Check <a href="https://valvepress.com/how-to-import-from-rss-feeds-protected-with-cloudflare/" target="blank"> THIS TUTURIAL</a> on how to import from this site</span>';
+				
+				//if local feed i.e the url contains wp-content/uploads and .xml then overwite error message to 403 error, your server is not able to load links exists on your domain, please refer to your hosting support and ask them to correct this issue, ask them why this feed URL [include URL] is not loading from the server
+				if(stristr($feed, 'wp-content/uploads') && stristr($feed, '.xml')){
+					$error_string = '<br><span style="color:red">403 error: Your server is not able to load links exists on your domain, please refer to your hosting support and ask them to correct this issue, ask them why this URL '. $feed .' is not loading when the server load it while works normally on the browser.</span>';
+				}
+				
+				
 				echo $error_string;
 				
 			}else{
@@ -382,7 +460,7 @@ class WpAutomaticFeeds extends wp_automatic {
 			
 			$url = esc_url ( $item->get_permalink () );
 			
-			if (trim ( $url ) == '') {
+			if (wp_automatic_trim( $url ) == '') {
 				echo '<br>Feed item does not contain a URL, what a bad feed, will use a fake URL';
 				$url = md5 ( $item->get_title () );
 			}
@@ -419,7 +497,7 @@ class WpAutomaticFeeds extends wp_automatic {
 				preg_match ( '{url\=(.*?)[&]}', $url, $urlMatches );
 				$correctUrl = $urlMatches [1];
 				
-				if (trim ( $correctUrl ) != '') {
+				if (wp_automatic_trim( $correctUrl ) != '') {
 					$url = $correctUrl;
 				}
 			}
@@ -440,7 +518,11 @@ class WpAutomaticFeeds extends wp_automatic {
 							
 							// still no new links stop checking now
 							echo '<br>First url in the feed:' . $url;
-							echo '<br>This link was the same as the last time we did not find new links so ... skipping till new posts get added <a href="#" class="wp_automatic_ajax" data-action="wp_automatic_ajax" data-function="forget_lastFirstFeedUrl" data-data="' . $feedMd5 . '" data-camp="' . $camp->camp_id . '" >Forget this fact Now</a>.';
+
+							//generate nonce wp_automatic_ajax
+							$nonce = wp_create_nonce( 'wp_automatic_ajax' );
+
+							echo '<br>This link was the same as the last time we did not find new links so ... skipping till new posts get added <a href="#" class="wp_automatic_ajax" data-action="wp_automatic_ajax" data-nonce="'. $nonce .'" data-function="forget_lastFirstFeedUrl" data-data="' . $feedMd5 . '" data-camp="' . $camp->camp_id . '" >Forget this fact Now</a>.';
 							
 							
 							return false;
@@ -463,7 +545,7 @@ class WpAutomaticFeeds extends wp_automatic {
 			// one more link, increase index2
 			$i2 ++;
 			
-			if (trim ( $url ) == '') {
+			if (wp_automatic_trim( $url ) == '') {
 				echo '<br>item have no url skipping';
 				continue;
 			}
@@ -474,12 +556,12 @@ class WpAutomaticFeeds extends wp_automatic {
 			// post date
 			$wpdate = $item->get_date ( "" );
 			
-			if( trim($wpdate) != '' ) echo '<br>- Published: ' . $wpdate;
+			if( wp_automatic_trim($wpdate) != '' ) echo '<br>- Published: ' . $wpdate;
 			
-			if(trim($wpdate) != ''){
+			if(wp_automatic_trim($wpdate) != ''){
 				
 				//IST fix timesofindia
-				$wpdate = str_replace(' IST', ' +05:30', $wpdate);
+				$wpdate = wp_automatic_str_replace(' IST', ' +05:30', $wpdate);
 				
 				$wpdate = date ( "Y-m-d H:i:s", strtotime($wpdate)) ;
 				echo ' == ' . $wpdate . ' GMT';
@@ -495,14 +577,14 @@ class WpAutomaticFeeds extends wp_automatic {
 			$cat_str = '';
 			if (isset ( $cats )) {
 				foreach ( $cats as $cat ) {
-					if (trim ( $cat_str ) != '')
+					if (wp_automatic_trim( $cat_str ) != '')
 						$cat_str .= ',';
 					$cat_str .= $cat->term;
 				}
 			}
 			
 			// fix empty titles
-			if (trim ( $item->get_title () ) == '') {
+			if (wp_automatic_trim( $item->get_title () ) == '') {
 				echo '<--Empty title skipping';
 				continue;
 			}
@@ -536,7 +618,7 @@ class WpAutomaticFeeds extends wp_automatic {
 
 			foreach ( $enclosures as $enclosure ) {
 				
-				if (trim ( $enclosure->type ) != '') {
+				if (wp_automatic_trim( $enclosure->type ) != '') {
 					
 					$enclosure_link = $enclosure->link;
 					
@@ -557,8 +639,8 @@ class WpAutomaticFeeds extends wp_automatic {
 				$title = strip_tags ( $item->get_title () );
 				
 				// fix &apos;
-				$title = str_replace ( '&amp;apos;', "'", $title );
-				$title = str_replace ( '&apos;', "'", $title );
+				$title =wp_automatic_str_replace( '&amp;apos;', "'", $title );
+				$title =wp_automatic_str_replace( '&apos;', "'", $title );
 				
 				// check if there is a post published with the same title
 				if (in_array ( 'OPT_FEED_TITLE_SKIP', $camp_opt )) {
@@ -578,28 +660,31 @@ class WpAutomaticFeeds extends wp_automatic {
 				$html = $this->convert_single_quotes ( $html );
 				
 				$postAuthor = $item->get_author ();
-				@$authorName = $postAuthor->name;
+				$authorName = isset($postAuthor->name) ? $postAuthor->name : '';
 				
-				if (trim ( $authorName ) == '') {
-					@$authorName = $postAuthor->email;
+				if (wp_automatic_trim( $authorName ) == '') {
+					$authorName = isset($postAuthor->email) ? $postAuthor->email : '';
 				}
 				
-				if (trim ( $authorName ) == '') {
-					@$authorName = $postAuthor->link;
+				if (wp_automatic_trim( $authorName ) == '') {
+					@$authorName = isset($postAuthor->link) ? $postAuthor->link : '';
 				}
 				
 				$res ['author'] = $authorName;
-				@$res ['author_link'] = $postAuthor->link;
+				$res ['author_link'] = isset($postAuthor->link) ? $postAuthor->link : '';
 				
 				// source domain
 				$res ['source_domain'] = $parse_url = parse_url ( $url, PHP_URL_HOST );
 				
 				// encoded URL
 				$res ['source_url_encoded'] = urlencode ( $url );
+
+				// decode URL
+				$res ['source_url_decoded'] = urldecode ( $url );
 				
 				// If empty content make content = title
-				if (trim ( $html ) == '') {
-					if (trim ( $title ) != '')
+				if (wp_automatic_trim( $html ) == '') {
+					if (wp_automatic_trim( $title ) != '')
 						$html = $title;
 				}
 				
@@ -614,7 +699,13 @@ class WpAutomaticFeeds extends wp_automatic {
 				$res ['matched_content'] = $html;
 				$res ['source_link'] = $url;
 				$res ['publish_date'] = $publish_date;
-				$res ['wpdate'] = $wpdate;
+				
+				// if feed variable does not contain getpocket add set the date
+				if (! stristr ( $feed, 'getpocket' )) {
+					$res ['wpdate'] = $wpdate;
+				}
+ 
+			
 				$res ['cats'] = $cat_str;
 				$res ['tags'] = '';
 				$res ['enclosure_link'] = isset ( $enclosure_link ) ? $enclosure_link : '';
@@ -632,7 +723,7 @@ class WpAutomaticFeeds extends wp_automatic {
 				
 				$res ['attributes'] = $arr;
 				 
-				$og_title_enabled = in_array ( 'OPT_FEED_OG_TTL', $camp_opt ) || (isset ( $camp_general ['cg_ml_ttl_method'] ) && trim ( $camp_general ['cg_ml_ttl_method'] ) != 'auto');
+				$og_title_enabled = in_array ( 'OPT_FEED_OG_TTL', $camp_opt ) || (isset ( $camp_general ['cg_ml_ttl_method'] ) && wp_automatic_trim( $camp_general ['cg_ml_ttl_method'] ) != 'auto');
 				
 				// original meta description, add the regex extraction rule and activate the specific part to custom field method if not enabled 
 				if(in_array('OPT_ORIGINAL_META_DESC', $camp_opt)){
@@ -645,7 +736,7 @@ class WpAutomaticFeeds extends wp_automatic {
 						
 					}
 					
-					$seo_field_name =  class_exists('WPSEO_Options') ?   '_yoast_wpseo_metadesc' : '_yoast_wpseo_metadesc' ;
+					$seo_field_name =  class_exists('WPSEO_Options') ?   '_yoast_wpseo_metadesc' : 'rank_math_description' ;
 					
 					$camp_general ['cg_part_to_field'] .= "\n" . 'regex|<meta name="description" content="(.*?)"|' . $seo_field_name ; 
 					
@@ -659,7 +750,7 @@ class WpAutomaticFeeds extends wp_automatic {
 					// get content
 					$x = 'error';
 					curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-					curl_setopt ( $this->ch, CURLOPT_URL, trim ( html_entity_decode ( $url ) ) );
+					curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( html_entity_decode ( $url ) ) );
 					
 					// encoding
 					if (in_array ( 'OPT_FEED_ENCODING', $camp_opt )) {
@@ -672,65 +763,129 @@ class WpAutomaticFeeds extends wp_automatic {
 					
 					
 					
-					if (trim ( $cg_sn_cookie ) != '') {
+					if (wp_automatic_trim( $cg_sn_cookie ) != '') {
 						$headers [] = "Cookie: $cg_sn_cookie ";
 						curl_setopt ( $this->ch, CURLOPT_HTTPHEADER, $headers );
 					}
 					
-					// Source page html
-					timer_start ();
-					
-					
-					if( in_array('OPT_FEED_APIFY' , $camp_opt) ){
-						
-						echo '<br>Loading the content using APIFY.COM service....';
-						
-						$wp_automatic_apify_key = get_option('wp_automatic_apify_key','');
-						
-						require_once 'inc/class.apify.php';
-						$apify = new ValvePress_APIFY( $wp_automatic_apify_key , html_entity_decode ( $url ) , $this->ch );
-					 
-						try {
 
-							// cg_apify_wait_for_single
-							$cg_apify_wait_for_single = isset($camp_general['cg_apify_wait_for_single']) ? $camp_general['cg_apify_wait_for_single'] : 0;
+					$first_page_index = 1;
+					$last_max_page_index = 10;
 
-							//report 
-							echo '<br>Waiting for '.$cg_apify_wait_for_single.' mill seconds after loading the content...';
+					//loop from first page to last page and increment the page index by 1 each time
+					$all_pages_original_content = '';
+					for($i = $first_page_index + 1;$i <= $last_max_page_index;$i++){
 
-							$apify_content = $apify->apify($cg_apify_wait_for_single);
-							$original_cont = $apify_content;
+						// Source page html
+						timer_start ();
+						
+						
+						if( in_array('OPT_FEED_APIFY' , $camp_opt) ){
 							
-						 
+							echo '<br>Loading the content using APIFY.COM service....';
 							
-						} catch (Exception $e) {
-							echo '<br>Error:' . $e->getMessage () . ' ....loading the post content directly';
+							$wp_automatic_apify_key = get_option('wp_automatic_apify_key','');
+							
+							require_once 'inc/class.apify.php';
+							$apify = new ValvePress_APIFY( $wp_automatic_apify_key , html_entity_decode ( $url ) , $this->ch );
+						
+							try {
+
+								// cg_apify_wait_for_single
+								$cg_apify_wait_for_single = isset($camp_general['cg_apify_wait_for_single']) ? $camp_general['cg_apify_wait_for_single'] : 0;
+
+								//report 
+								echo '<br>Waiting for '.$cg_apify_wait_for_single.' mill seconds after loading the content...';
+
+								$apify_content = $apify->apify($cg_apify_wait_for_single,$cg_sn_cookie);
+								$original_cont = $apify_content;
+								
+							
+								
+							} catch (Exception $e) {
+								echo '<br>Error:' . $e->getMessage () . ' ....loading the post content directly';
+								$original_cont = $this->curl_exec_follow ( $this->ch );
+							}
+							
+							
+							
+						}elseif(in_array('OPT_FEED_NORED' , $camp_opt)){
+							$original_cont = curl_exec ( $this->ch );
+						}else{
 							$original_cont = $this->curl_exec_follow ( $this->ch );
 						}
-						 
 						
+						$x = curl_error ( $this->ch );
 						
-					}elseif(in_array('OPT_FEED_NORED' , $camp_opt)){
-						$original_cont = curl_exec ( $this->ch );
-					}else{
-						$original_cont = $this->curl_exec_follow ( $this->ch );
-					}
-					
+						echo ' <--' . strlen ( $original_cont ) . ' chars returned in ' . timer_stop () . ' seconds';
 					 
-				 
-					
-					$x = curl_error ( $this->ch );
-					
-				  
-					echo ' <--' . strlen ( $original_cont ) . ' chars returned in ' . timer_stop () . ' seconds';
-					 
+						//append the returned content to all_pages_original_content
+						$all_pages_original_content .= $original_cont;
+
+
+						//if option OPT_FEED_MULTI_PAGE is enabled, check if the content contains the next part of page URL
+						if(in_array('OPT_FEED_MULTI_PAGE' , $camp_opt)){
+							
+							//get the next page URL
+							$cg_multi_paged_link = $camp_general['cg_multi_paged_link'];
+
+							//if empty, set to default which is [current_page]/[page_number]
+							if(wp_automatic_trim($cg_multi_paged_link) == ''){
+								$cg_multi_paged_link = '[current_page]/[page_number]';
+							}
+
+							//remove the last slash from the URL
+							$url= rtrim($url, '/');
+
+							//replace [current_page] with the current url 
+							$cg_multi_paged_link = wp_automatic_str_replace('[current_page]', $url, $cg_multi_paged_link);
+
+							//replace [page_number] with the current page number
+							$cg_feed_next_page = wp_automatic_str_replace('[page_number]', $i, $cg_multi_paged_link);
+
+   
+							//if next page URL is not empty
+							if(wp_automatic_trim($cg_feed_next_page) != ''){
+								
+								//if the content contains the next page URL
+								if(stristr($original_cont, $cg_feed_next_page)){
+									
+									//report the next page URL found
+									echo '<br>Next page URL found: '.$cg_feed_next_page;
+
+									//set the curl URL to the next page URL
+									curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( html_entity_decode ( $cg_feed_next_page ) ) );
+									 
+								}else{
+									//report next page URL is not found and stop the loop
+									echo '<br>Next page URL is not found: '. $cg_feed_next_page;
+
+									break;
+								}
+								
+							}else{
+								//report next page URL is not found and stop the loop
+								echo '<br>Next page URL is not found: '. $cg_feed_next_page;
+
+								break;
+							}
+							
+						}else{
+							//stop the loop
+							break;
+						}
+
+
+					}	
+
+
 					// copy of the original content for later use that is unmodified
-					$original_cont_raw = $original_cont;
+					$original_cont_raw = $original_cont = $all_pages_original_content;
 					 
 					// converting encoding
 					if (in_array ( 'OPT_FEED_CONVERT_ENC', $camp_opt )) {
 						echo '<br>Converting encoding from ' . $camp_general ['cg_feed_encoding'] . ' to utf-8';
-						$original_cont = iconv ( trim ( $camp_general ['cg_feed_encoding'] ) . '//IGNORE', "UTF-8//IGNORE", $original_cont );
+						$original_cont = iconv ( wp_automatic_trim( $camp_general ['cg_feed_encoding'] ) . '//IGNORE', "UTF-8//IGNORE", $original_cont );
 					}
 				 
 					// fix single quote used instead of regular quote
@@ -752,7 +907,9 @@ class WpAutomaticFeeds extends wp_automatic {
  
 						// xpath example //p[contains(., "payroll")]
 						foreach($cg_post_strip_by_words as $cg_post_strip_by_word){
-							$camp_general['cg_feed_visual_strip'][] = '//p[contains(., "'.trim($cg_post_strip_by_word).'")]';
+							$camp_general['cg_feed_visual_strip'][] = '//p[contains(., "'.wp_automatic_trim($cg_post_strip_by_word).'")]';
+							$camp_general['cg_feed_visual_strip'][] = '//p/span[contains(., "'.wp_automatic_trim($cg_post_strip_by_word).'")]';
+							$camp_general['cg_feed_visual_strip'][] = '//p/a[contains(., "'.wp_automatic_trim($cg_post_strip_by_word).'")]';
 						}
  
 					}
@@ -785,7 +942,7 @@ class WpAutomaticFeeds extends wp_automatic {
 					// fix lazy loading
 					if (in_array ( 'OPT_FEED_LAZY', $camp_opt )) {
 						
-						$cg_feed_lazy = trim ( $camp_general ['cg_feed_lazy'] );
+						$cg_feed_lazy = wp_automatic_trim( $camp_general ['cg_feed_lazy'] );
 						
 						if ($cg_feed_lazy == '')
 							$cg_feed_lazy = 'data-src';
@@ -799,15 +956,23 @@ class WpAutomaticFeeds extends wp_automatic {
 							if (stristr ( $imgMatch, $cg_feed_lazy )) {
 								
 								$newImg = $imgMatch;
-								$newImg = str_replace ( ' src=', ' bad-src=', $newImg );
+								$newImg =wp_automatic_str_replace( ' src=', ' bad-src=', $newImg );
 								$newImg = preg_replace ( '{ bad-src=[\'|"].*?["|\'] }s', ' ', $newImg );
-								$newImg = str_replace ( $cg_feed_lazy, 'src', $newImg );
-								$original_cont = str_replace ( $imgMatch, $newImg, $original_cont );
+								$newImg =wp_automatic_str_replace( $cg_feed_lazy, 'src', $newImg );
+								$original_cont =wp_automatic_str_replace( $imgMatch, $newImg, $original_cont );
 							}
 						}
 					} else {
 						$original_cont = $this->lazy_loading_auto_fix ( $original_cont );
 					}
+
+					//if option OPT_FEED_LAZY_NOSCRIPT_DISABLE is not enabled
+					if (!in_array('OPT_FEED_LAZY_NOSCRIPT_DISABLE', $camp_opt)) {
+						// fix <noscript><img lazy loading
+						$original_cont = $this->fix_noscript_lazy_loading ( $original_cont );
+					}
+
+					
 					
 					// fix images
 					$original_cont = wp_automatic_fix_relative_paths ( $original_cont, $url );
@@ -821,7 +986,7 @@ class WpAutomaticFeeds extends wp_automatic {
 					
 					echo '<br>Finding original date... ';
 
-					$cg_original_time_regex = isset( $camp_general ['cg_original_time_regex'] )  ? trim ( $camp_general ['cg_original_time_regex'] ) : '';
+					$cg_original_time_regex = isset( $camp_general ['cg_original_time_regex'] )  ? wp_automatic_trim( $camp_general ['cg_original_time_regex'] ) : '';
 					
 					// if regex is empty use default
 					if ($cg_original_time_regex == '') {
@@ -831,7 +996,7 @@ class WpAutomaticFeeds extends wp_automatic {
 					preg_match("!{$cg_original_time_regex}!s", $original_cont, $date_matches );
 					
 					//timestamp instead  data-time="1649495312">A
-					if (isset ( $date_matches [0] ) && trim ( $date_matches [0] ) != '') {
+					if (isset ( $date_matches [0] ) && wp_automatic_trim( $date_matches [0] ) != '') {
 						// nice found
 						$found_date = $date_matches [0];
 						echo ' match found:'. $found_date;
@@ -839,7 +1004,7 @@ class WpAutomaticFeeds extends wp_automatic {
 						//not found lets find timestamp 
 						preg_match('!"(1\d{9})"!' , $original_cont , $timestamp_matches );
 						
-						if(isset($timestamp_matches[1]) && trim($timestamp_matches[1]) != ''){
+						if(isset($timestamp_matches[1]) && wp_automatic_trim($timestamp_matches[1]) != ''){
 							echo ' Found possible timestamp:'.$timestamp_matches[1];
 						
 							$possible_date = date ( "Y-m-d H:i:s", $timestamp_matches[1] );
@@ -847,6 +1012,17 @@ class WpAutomaticFeeds extends wp_automatic {
 								echo ' approving:' . $possible_date;
 								$found_date = $possible_date;
 							}
+						}else{
+
+							//extract using format 2023-03-25 08:57:07
+							preg_match('!20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}!' , $original_cont , $date_matches );
+
+							if(isset($date_matches[0]) && wp_automatic_trim($date_matches[0]) != ''){
+								echo ' Found possible date:'.$date_matches[0];
+								$found_date = $date_matches[0];
+							}
+
+
 						}
 						 
 						
@@ -916,6 +1092,9 @@ class WpAutomaticFeeds extends wp_automatic {
 					// test url
 					// $url ="http://news.jarm.com/view/75431";
 					
+					//copy of the original content to restore after extraction as the auto-detct method will modify and remove scripts
+					$original_cont_snapshot = $original_cont;
+
 					// get scripts
 					$postponedScripts = array ();
 					preg_match_all ( '{<script.*?</script>}s', $original_cont, $scriptMatchs );
@@ -926,7 +1105,7 @@ class WpAutomaticFeeds extends wp_automatic {
 							$postponedScripts [] = $singleScript;
 						}
 						
-						$original_cont = str_replace ( $singleScript, '', $original_cont );
+						$original_cont =wp_automatic_str_replace( $singleScript, '', $original_cont );
 					}
 					
 					$x = curl_error ( $this->ch );
@@ -935,6 +1114,12 @@ class WpAutomaticFeeds extends wp_automatic {
 					// Redability instantiate
 					require_once 'inc/wp_automatic_readability/wp_automatic_Readability.php';
 					$wp_automatic_Readability = new wp_automatic_Readability ( $original_cont, $url );
+
+					//restore the original content snapshot
+					$original_cont = $original_cont_snapshot;
+
+					//destroy the snapshot
+					unset($original_cont_snapshot);
 				 
 
 					$wp_automatic_Readability->debug = false;
@@ -962,8 +1147,8 @@ class WpAutomaticFeeds extends wp_automatic {
 						
 						foreach ( $iframesFound as $iframeFound ) {
 							
-							$correctIframe = str_replace ( '/>', '></iframe>', $iframeFound );
-							$content = str_replace ( $iframeFound, $correctIframe, $content );
+							$correctIframe =wp_automatic_str_replace( '/>', '></iframe>', $iframeFound );
+							$content =wp_automatic_str_replace( $iframeFound, $correctIframe, $content );
 						}
 						
 						// add postponed scripts
@@ -1003,7 +1188,7 @@ class WpAutomaticFeeds extends wp_automatic {
 							
 							if (strlen ( $title_word ) > 3) {
 								
-								if (! in_array ( $title_word, $nocompare ) && preg_match ( '/\b' . preg_quote ( trim ( $title_word ), '/' ) . '\b/ui', $content )) {
+								if (! in_array ( $title_word, $nocompare ) && preg_match ( '/\b' . preg_quote ( wp_automatic_trim( $title_word ), '/' ) . '\b/ui', $content )) {
 									echo '<br>Title word ' . $title_word . ' exists on the content, approving.';
 								 
 									// echo $content;
@@ -1015,7 +1200,7 @@ class WpAutomaticFeeds extends wp_automatic {
 							}
 						}
 						
-						if (trim ( $valid ) != '') {
+						if (wp_automatic_trim( $valid ) != '') {
 							
 							$res ['cont'] = $content;
 							$res ['matched_content'] = $content;
@@ -1027,13 +1212,14 @@ class WpAutomaticFeeds extends wp_automatic {
 							}
 							
 							// let's find og:image may be the content we got has no image
+							// rumble format <meta property=og:image content=https://sp.rmbl.ws/s8/1/c/_/c/y/c_cyk.qR4e-small--DEATH-DELETE-ANOTHER-DAY-O.jpg>
 							preg_match ( '{<meta[^<]*?property=["|\']og:image["|\'][^<]*?>}s', $html, $plain_og_matches );
 							
 							if (isset ( $plain_og_matches [0] ) && @stristr ( $plain_og_matches [0], 'og:image' )) {
 								preg_match ( '{content=["|\'](.*?)["|\']}s', $plain_og_matches [0], $matches );
 								$og_img = $matches [1];
 								
-								if (trim ( $og_img ) != '') {
+								if (wp_automatic_trim( $og_img ) != '') {
 									
 									$res ['og_img'] = $og_img;
 								}
@@ -1108,15 +1294,15 @@ class WpAutomaticFeeds extends wp_automatic {
 							$res ['rule_' . $rule_num] = $extract;
 							$res ['rule_' . $rule_num . '_plain'] = strip_tags ( $extract );
 							
-							if (trim ( $extract ) == '') {
+							if (wp_automatic_trim( $extract ) == '') {
 								echo '<br>Nothing found to extract for this rule';
 							} else {
 								echo ' <-- ' . strlen ( $extract ) . ' chars extracted';
-								$wholeFound = (trim ( $wholeFound ) == '') ? $extract : $wholeFound . '<br>' . $extract;
+								$wholeFound = (wp_automatic_trim( $wholeFound ) == '') ? $extract : $wholeFound . '<br>' . $extract;
 							}
 							$i ++;
 						}
-						if (trim ( $wholeFound ) != '') {
+						if (wp_automatic_trim( $wholeFound ) != '') {
 							$res ['cont'] = $wholeFound;
 							$res ['matched_content'] = $wholeFound;
 						}
@@ -1136,15 +1322,15 @@ class WpAutomaticFeeds extends wp_automatic {
 						
 						$cg_feed_custom_regex_single = html_entity_decode ( $cg_feed_custom_regex_single );
 						
-						if (trim ( $cg_feed_custom_regex_single ) != '') {
+						if (wp_automatic_trim( $cg_feed_custom_regex_single ) != '') {
 							
 							$finalmatch2 = ''; // all content found using this REGEX rule
 							
 							// we have a regex
-							echo '<br>Regex :' . htmlspecialchars ( $cg_feed_custom_regex_single );
+							echo '<br>Regex :' . wp_automatic_htmlspecialchars ( $cg_feed_custom_regex_single );
 							
 							// extracting
-							if (trim ( $original_cont ) != '') {
+							if (wp_automatic_trim( $original_cont ) != '') {
 								preg_match_all ( '!' . $cg_feed_custom_regex_single . '!is', $original_cont, $matchregex );
 								$c = 0;
 								
@@ -1156,7 +1342,7 @@ class WpAutomaticFeeds extends wp_automatic {
 									
 									foreach ( $matchregex [$i] as $newmatch ) {
 										  
-										if (trim ( $newmatch ) != '') { //good we have a new extraction
+										if (wp_automatic_trim( $newmatch ) != '') { //good we have a new extraction
 									
 											//json part to fix?  "(.*?)" 
 											if (stristr($cg_feed_custom_regex_single , '"(.*?)' )){
@@ -1164,7 +1350,7 @@ class WpAutomaticFeeds extends wp_automatic {
 												$suggestedFixedContent = wp_automatic_fix_json_part($newmatch);
 												
 												//overwriting
-												if(trim($suggestedFixedContent) != ''){
+												if(wp_automatic_trim($suggestedFixedContent) != ''){
 													echo '<-- Fix success overwriting ';
 													$newmatch = $suggestedFixedContent;
 												}
@@ -1175,7 +1361,7 @@ class WpAutomaticFeeds extends wp_automatic {
 											
 											 
 											// update the final match for all found extraction from all rules
-											if (trim ( $finalmatch2 ) != '') {
+											if (wp_automatic_trim( $finalmatch2 ) != '') {
 												$finalmatch2 .= '<br>' . $newmatch;
 												
 											} else {
@@ -1183,7 +1369,7 @@ class WpAutomaticFeeds extends wp_automatic {
 												 
 											}
 											
-											if (trim ( $finalmatch ) != '') {
+											if (wp_automatic_trim( $finalmatch ) != '') {
 												$finalmatch .= '<br>' . $newmatch;
 												
 											} else {
@@ -1217,7 +1403,7 @@ class WpAutomaticFeeds extends wp_automatic {
 						
 					} // foreach rule
 					
-					if (trim ( $finalmatch ) != '') {
+					if (wp_automatic_trim( $finalmatch ) != '') {
 						// overwirte
 						echo '<br>' . strlen ( $finalmatch ) . ' chars extracted using REGEX';
 						$res ['cont'] = $finalmatch;
@@ -1233,7 +1419,7 @@ class WpAutomaticFeeds extends wp_automatic {
 
 					$possible_title = $this->extract_title_auto($title,$original_cont);
 
-					if(trim($possible_title) != ''){
+					if(wp_automatic_trim($possible_title) != ''){
 						echo '<-- Good title found';  
 						$res['title'] = $title = $possible_title;
 					}else{
@@ -1246,7 +1432,7 @@ class WpAutomaticFeeds extends wp_automatic {
 				$redirect = '';
 				$redirect = curl_getinfo ( $this->ch, CURLINFO_EFFECTIVE_URL );
 				
-				if (trim ( $redirect ) != '') {
+				if (wp_automatic_trim( $redirect ) != '') {
 					$res ['redirect_url'] = $redirect;
 				} else {
 					$res ['redirect_url'] = $res ['source_link'];
@@ -1271,7 +1457,7 @@ class WpAutomaticFeeds extends wp_automatic {
 					
 					$possibleCharSet = isset ( $possibleCharSet [0] ) ? $possibleCharSet [0] : '';
 					
-					if (trim ( $possibleCharSet ) == '')
+					if (wp_automatic_trim( $possibleCharSet ) == '')
 						$possibleCharSet = 'UTF-8';
 					
 					// overwrite to utf if already utf-8
@@ -1296,12 +1482,12 @@ class WpAutomaticFeeds extends wp_automatic {
 						
 						echo '<br> - ' . $cg_selector [$i] . ' = "' . $cg_selector_data_single . '" ';
 						
-						if (trim ( $cg_selector_data_single ) != '') {
+						if (wp_automatic_trim( $cg_selector_data_single ) != '') {
 							
 							if ($cg_selector [$i] == 'class') {
-								$query_final = '//*[contains(attribute::class, "' . trim ( $cg_selector_data_single ) . '")]';
+								$query_final = '//*[contains(attribute::class, "' . wp_automatic_trim( $cg_selector_data_single ) . '")]';
 							} elseif ($cg_selector [$i] == 'id') {
-								$query_final = "//*[@id='" . trim ( $cg_selector_data_single ) . "']";
+								$query_final = "//*[@id='" . wp_automatic_trim( $cg_selector_data_single ) . "']";
 							}
 							
 							$countBefore = $this->chars_count ( $html_to_count );
@@ -1321,7 +1507,7 @@ class WpAutomaticFeeds extends wp_automatic {
 					}
 					
 					$contentAfterReplacement = $final_doc->saveHTML ( $final_doc->documentElement );
-					$contentAfterReplacement = str_replace ( array (
+					$contentAfterReplacement =wp_automatic_str_replace( array (
 							'<html>',
 							'</html>',
 							'<body>',
@@ -1330,7 +1516,7 @@ class WpAutomaticFeeds extends wp_automatic {
 					), '', $contentAfterReplacement );
 					$contentAfterReplacement = preg_replace ( '{<head>.*?</head>}', '', $contentAfterReplacement );
 					
-					$res ['cont'] = trim ( $contentAfterReplacement );
+					$res ['cont'] = wp_automatic_trim( $contentAfterReplacement );
 					
 					// overwirte
 					$res ['matched_content'] = $res ['cont'];
@@ -1346,21 +1532,21 @@ class WpAutomaticFeeds extends wp_automatic {
 					$cg_post_strip = array_filter ( $cg_post_strip );
 					
 					foreach ( $cg_post_strip as $strip_pattern ) {
-						if (trim ( $strip_pattern ) != '') {
+						if (wp_automatic_trim( $strip_pattern ) != '') {
 							
 							// $strip_pattern ='<img[^>]+\\>';
 							
-							echo '<br>Stripping using REGEX:' . htmlentities ( $strip_pattern );
+							echo '<br>Stripping using REGEX:' . wp_automatic_htmlentities ( $strip_pattern );
 							
 							$countBefore = $this->chars_count ( $current_content );
 							
-							$current_content = preg_replace ( '{' . trim ( $strip_pattern ) . '}is', '', $current_content );
+							$current_content = preg_replace ( '{' . wp_automatic_trim( $strip_pattern ) . '}is', '', $current_content );
 							
 							// replacing in rules
 							$i = 1;
 							while ( isset ( $res ["rule_$i"] ) ) {
 								
-								$res ["rule_$i"] = preg_replace ( '{' . trim ( $strip_pattern ) . '}is', '', $res ["rule_$i"] );
+								$res ["rule_$i"] = preg_replace ( '{' . wp_automatic_trim( $strip_pattern ) . '}is', '', $res ["rule_$i"] );
 								$i ++;
 							}
 							
@@ -1368,16 +1554,16 @@ class WpAutomaticFeeds extends wp_automatic {
 							
 							echo ' <-- ' . ($countBefore - $countAfter) . ' chars removed';
 							
-							$current_title = preg_replace ( '{' . trim ( $strip_pattern ) . '}is', '', $current_title );
+							$current_title = preg_replace ( '{' . wp_automatic_trim( $strip_pattern ) . '}is', '', $current_title );
 						}
 					}
 					
-					if (trim ( $current_content ) != '') {
+					if (wp_automatic_trim( $current_content ) != '') {
 						$res ['matched_content'] = $current_content;
 						$res ['cont'] = $current_content;
 					}
 					
-					if (trim ( $current_title ) != '') {
+					if (wp_automatic_trim( $current_title ) != '') {
 						$res ['matched_title'] = $current_title;
 						$res ['original_title'] = $current_title;
 						$res ['title'] = $current_title;
@@ -1414,7 +1600,7 @@ class WpAutomaticFeeds extends wp_automatic {
 					
 					echo '<br>Stripping html tags...';
 					
-					$cg_allowed_tags = trim ( $camp_general ['cg_allowed_tags'] );
+					$cg_allowed_tags = wp_automatic_trim( $camp_general ['cg_allowed_tags'] );
 					
 					if (! stristr ( $cg_allowed_tags, '<script' )) {
 						$res ['matched_content'] = preg_replace ( '{<script.*?script>}s', '', $res ['matched_content'] );
@@ -1433,7 +1619,7 @@ class WpAutomaticFeeds extends wp_automatic {
 				// MUST CONTENT
 				if (in_array ( 'OPT_MUST_CONTENT', $camp_opt )) {
 					
-					if (trim ( $res ['cont'] ) == '') {
+					if (wp_automatic_trim( $res ['cont'] ) == '') {
 						echo '<--No content excluding';
 						$this->link_execlude ( $camp->camp_id, $original_url );
 						continue;
@@ -1445,7 +1631,7 @@ class WpAutomaticFeeds extends wp_automatic {
 					
 					$contentTextual = preg_replace ( '{<script.*?script>}s', '', $res ['cont'] );
 					$contentTextual = strip_tags ( $contentTextual );
-					$contentTextual = str_replace ( ' ', '', $contentTextual );
+					$contentTextual =wp_automatic_str_replace( ' ', '', $contentTextual );
 					
 					if (function_exists ( 'mb_strlen' )) {
 						$contentLength = mb_strlen ( $contentTextual );
@@ -1486,8 +1672,8 @@ class WpAutomaticFeeds extends wp_automatic {
 					
 					// php 5.3 and lower convert &nbsp; to invalid charchters that broke everything
 					
-					$res ['original_title'] = str_replace ( '&nbsp;', ' ', $res ['original_title'] );
-					$res ['matched_content'] = str_replace ( '&nbsp;', ' ', $res ['matched_content'] );
+					$res ['original_title'] =wp_automatic_str_replace( '&nbsp;', ' ', $res ['original_title'] );
+					$res ['matched_content'] =wp_automatic_str_replace( '&nbsp;', ' ', $res ['matched_content'] );
 					
 					$res ['original_title'] = html_entity_decode ( $res ['original_title'], ENT_QUOTES | ENT_HTML401 );
 					$res ['title'] = html_entity_decode ( $res ['title'], ENT_QUOTES | ENT_HTML401 );
@@ -1507,13 +1693,18 @@ class WpAutomaticFeeds extends wp_automatic {
 				$res ['matched_content'] = $res ['cont'];
 				
 				// meta tags
+				$found_tags_count = 0;
 				if (in_array ( 'OPT_ORIGINAL_META', $camp_opt )) {
+
+					// echo 
+					echo '<br>Extracting original post meta tags ';
 					
 					// extract all metas
 					preg_match_all ( '{<meta.*?>}s', $original_cont, $metaMatches );
 					
 					$allMeta = $metaMatches [0];
-					
+					 
+
 					foreach ( $allMeta as $singleMeta ) {
 						
 						if (stristr ( $singleMeta, 'keywords' )) {
@@ -1523,18 +1714,48 @@ class WpAutomaticFeeds extends wp_automatic {
 								preg_match_all ( '{content[\s]?=[\s]?[\'"](.*?)[\'"]}s', $singleMeta, $realTagsMatches );
 								$realTagsMatches = $realTagsMatches [1];
 								
-								if (trim ( $realTagsMatches [0] ) != '') {
+								if (wp_automatic_trim( $realTagsMatches [0] ) != '') {
 									
 									echo '<br>Meta tags:' . $realTagsMatches [0];
 									$res ['tags'] = $realTagsMatches [0];
+
+									$found_tags_count++;
 								}
 							}
 						}
 					}
+
+					////if count < 1 then try to get Scheme keywords "keywords":["keyword1","keyword2","keyword3"]
+					if($found_tags_count < 1){
+						echo '<br>No tags found in meta tags, Trying to get keywords from Schema...';
+						
+						//preg match "keywords":["keyword1","keyword2","keyword3"]
+						preg_match ( '{keywords":\[(.*?)\]}s', $original_cont_raw, $schemeKeywordsMatches );
+						 
+						//if not empty $schemeKeywordsMatches [1]
+						if( ! empty($schemeKeywordsMatches [1]) ){
+							
+							//keywords found
+							$schemeKeywordsMatches = $schemeKeywordsMatches [1];
+	
+							//remove quotes from keywords
+							$schemeKeywordsMatches = wp_automatic_str_replace('"', '', $schemeKeywordsMatches);
+
+							//reported found keywords
+							echo '<br>Keywords found in Schema: ' . ( $schemeKeywordsMatches);
+
+							//set the tags
+							$res ['tags'] = $schemeKeywordsMatches;
+							
+						}else{
+							echo '<br>No keywords found in Schema';
+						}
+ 
+					}
 				}
 				
 				// Extract cats from original source
-				if (in_array ( 'OPT_ORIGINAL_CATS', $camp_opt ) && trim ( $camp_general ['cg_feed_custom_id_cat'] ) != '') {
+				if (in_array ( 'OPT_ORIGINAL_CATS', $camp_opt ) && wp_automatic_trim( $camp_general ['cg_feed_custom_id_cat'] ) != '') {
 					
 					echo '<br>Extracting original post categories ';
 					
@@ -1559,6 +1780,14 @@ class WpAutomaticFeeds extends wp_automatic {
 						} elseif ($cg_selector_cat == 'id') {
 							$extract = $wpAutomaticDom->getContentByID ( $cg_selecotr_data_cat, $inner );
 						} elseif ($cg_selector_cat == 'xpath') {
+
+							//if cg_selecotr_data_cat ends with /a/span then remove the /span from the end of the xpath using REGEX
+							if(preg_match('{/span$}' , $cg_selecotr_data_cat)){
+								echo '<br>Removing /span from the end of the xpath for category link extraction...';
+								$cg_selecotr_data_cat = preg_replace('{/span$}' , '' , $cg_selecotr_data_cat);
+							}
+
+
 							$extract = $wpAutomaticDom->getContentByXPath ( stripslashes ( $cg_selecotr_data_cat ), $inner );
 						}
 						
@@ -1571,7 +1800,7 @@ class WpAutomaticFeeds extends wp_automatic {
 							}
 						}
 						
-						if (trim ( $extract ) == '') {
+						if (wp_automatic_trim( $extract ) == '') {
 							echo '<br>Nothing found to extract for this category rule';
 						} else {
 							echo '<br>Cat Rule extracted ' . strlen ( $extract ) . ' charchters ';
@@ -1583,12 +1812,12 @@ class WpAutomaticFeeds extends wp_automatic {
 								$cat_founds = array_map ( 'strip_tags', $cats_founds );
 								
 								if(in_array('OPT_ORIGINAL_CATS_REPLACE' , $camp_opt)){
-									$post_cat_replace = trim($camp_general['cg_cat_replace']);
+									$post_cat_replace = wp_automatic_trim($camp_general['cg_cat_replace']);
 									$post_cat_replace_arr =  array_filter( explode("\n" , $post_cat_replace ) );
 									
 									foreach($post_cat_replace_arr as $post_cat_replace_arr_single){
 										if(stristr( $post_cat_replace_arr_single , '|')){
-											$post_cat_replace_arr_single = trim($post_cat_replace_arr_single);
+											$post_cat_replace_arr_single = wp_automatic_trim($post_cat_replace_arr_single);
 											$post_cat_replace_arr_single_arr = explode('|' , $post_cat_replace_arr_single);
 											echo '<br>Replacing ' . $post_cat_replace_arr_single_arr[0] . ' with ' . $post_cat_replace_arr_single_arr[1] . ' in found categories...';
 											 
@@ -1596,7 +1825,7 @@ class WpAutomaticFeeds extends wp_automatic {
 												
 												if(stristr($val, ';')) $val = html_entity_decode($val);
 												
-												if(trim($val) == trim($post_cat_replace_arr_single_arr[0])){
+												if(wp_automatic_trim($val) == wp_automatic_trim($post_cat_replace_arr_single_arr[0])){
 													$cat_founds[$key] = $post_cat_replace_arr_single_arr[1];
 													echo '<-- found';
 												}
@@ -1612,13 +1841,15 @@ class WpAutomaticFeeds extends wp_automatic {
 								
 								echo ' found cats:' . $cats_str;
 								$res ['cats'] = $cats_str;
+							}else{
+								echo '<-- No links found';
 							}
 						}
 					}
 				}
 				
 				// Extract tags from original source
-				if (in_array ( 'OPT_ORIGINAL_TAGS', $camp_opt ) && trim ( $camp_general ['cg_feed_custom_id_tag'] ) != ''  && trim($original_cont) != '') {
+				if (in_array ( 'OPT_ORIGINAL_TAGS', $camp_opt ) && wp_automatic_trim( $camp_general ['cg_feed_custom_id_tag'] ) != ''  && wp_automatic_trim($original_cont) != '') {
 					
 					echo '<br>Extracting original post tags ';
 					
@@ -1655,7 +1886,7 @@ class WpAutomaticFeeds extends wp_automatic {
 							}
 						}
 						
-						if (trim ( $extract ) == '') {
+						if (wp_automatic_trim( $extract ) == '') {
 							echo '<br>Nothing found to extract for this tag rule';
 						} else {
 							echo '<br>Tag Rule extracted ' . strlen ( $extract ) . ' charchters ';
@@ -1675,7 +1906,7 @@ class WpAutomaticFeeds extends wp_automatic {
 								{
  
 									// replace tags
-									if (trim($camp_general['cg_tag_replace']) != '')
+									if (wp_automatic_trim($camp_general['cg_tag_replace']) != '')
 									{
 
 										$post_tag_replace_arr = explode("\n", $camp_general['cg_tag_replace']);
@@ -1686,19 +1917,19 @@ class WpAutomaticFeeds extends wp_automatic {
 										foreach ($post_tag_replace_arr as $post_tag_replace)
 										{
 
-											$post_tag_replace = trim($post_tag_replace);
+											$post_tag_replace = wp_automatic_trim($post_tag_replace);
 
-											if (trim($post_tag_replace) != '')
+											if (wp_automatic_trim($post_tag_replace) != '')
 											{
 
 												$post_tag_replace_arr = explode('|', $post_tag_replace);
 
-												$tag_from = trim($post_tag_replace_arr[0]);
-												$tag_to = trim($post_tag_replace_arr[1]);
+												$tag_from = wp_automatic_trim($post_tag_replace_arr[0]);
+												$tag_to = wp_automatic_trim($post_tag_replace_arr[1]);
 
 												echo '<br> - Replacing tag ' . $tag_from . ' with ' . $tag_to;
   
-												$tags_founds = str_replace($tag_from, $tag_to, $tags_founds);
+												$tags_founds = wp_automatic_str_replace($tag_from, $tag_to, $tags_founds);
 											}
 										}
 									}
@@ -1718,7 +1949,7 @@ class WpAutomaticFeeds extends wp_automatic {
 				} // extract tags
 				  
 				// extract author from original source
-				if (in_array ( 'OPT_ORIGINAL_AUTHOR', $camp_opt ) && trim ( $camp_general ['cg_feed_custom_id_author'] ) != '') {
+				if (in_array ( 'OPT_ORIGINAL_AUTHOR', $camp_opt ) && wp_automatic_trim( $camp_general ['cg_feed_custom_id_author'] ) != '') {
 					
 					echo '<br>Extracting original post author ';
 					
@@ -1758,7 +1989,7 @@ class WpAutomaticFeeds extends wp_automatic {
 						}
 						
 						// Validate returned author
-						if (trim ( $extract ) == '') {
+						if (wp_automatic_trim( $extract ) == '') {
 							echo '<br>Nothing found to extract for this author rule';
 						} else {
 							echo '<br>author Rule extracted ' . strlen ( $extract ) . ' charchters ';
@@ -1786,7 +2017,7 @@ class WpAutomaticFeeds extends wp_automatic {
 					}
 				} elseif (in_array ( 'OPT_ORIGINAL_AUTHOR', $camp_opt )) {
 					
-					if (trim ( $res ['author'] ) == '') {
+					if (wp_automatic_trim( $res ['author'] ) == '') {
 						
 						echo '<br>You did not set a specific config to Extract Author, The plugin will try to auto-detect... ';
 
@@ -1797,7 +2028,7 @@ class WpAutomaticFeeds extends wp_automatic {
 							$author_str = $this->extract_author_auto ( $original_cont );
 						}
 
-						if (trim ( $author_str ) != '') {
+						if (wp_automatic_trim( $author_str ) != '') {
 							echo '<br>Auto detected author:' . $author_str;
 							$res ['author'] = $author_str;
 						}else{
@@ -1827,12 +2058,12 @@ class WpAutomaticFeeds extends wp_automatic {
 					echo '<br>Specific Part to custom field extraction';
 					
 					// Load rules
-					$cg_part_to_field = trim ( html_entity_decode ( $camp_general ['cg_part_to_field'] ) );
+					$cg_part_to_field = wp_automatic_trim( html_entity_decode ( $camp_general ['cg_part_to_field'] ) );
 					$cg_part_to_field_parts = explode ( "\n", $cg_part_to_field );
 					
 					// Process rules
 					foreach ( $cg_part_to_field_parts as $cg_part_to_field_part ) {
-						echo '<br>Rule:' . htmlentities ( $cg_part_to_field_part );
+						echo '<br>Rule:' . wp_automatic_htmlentities ( $cg_part_to_field_part );
 						
 						// Validate format |
 						if (! stristr ( $cg_part_to_field_part, '|' )) {
@@ -1846,15 +2077,15 @@ class WpAutomaticFeeds extends wp_automatic {
 						
 						//case regex with | used as alternatives
 						if(count($rule_parts) > 3 && $rule_parts [0] == 'regex'   ){
-							$rule_method = trim ( $rule_parts [0] ); //first thing
+							$rule_method = wp_automatic_trim( $rule_parts [0] ); //first thing
 							
-							$rule_field = trim(end($rule_parts));
+							$rule_field = wp_automatic_trim(end($rule_parts));
 							
 							// case |1 for the single value instead of many
-							if(trim($rule_field) == 1){
+							if(wp_automatic_trim($rule_field) == 1){
 								$rule_single = 1;
 								array_pop($rule_parts); // remove the 1 from the array
-								$rule_field = trim(end($rule_parts)); // field name is now the last child
+								$rule_field = wp_automatic_trim(end($rule_parts)); // field name is now the last child
 							}
 							
 							
@@ -1866,12 +2097,12 @@ class WpAutomaticFeeds extends wp_automatic {
 							$rule_value = implode('|' , $rule_value_parts  );
 							
 						}else{
-							$rule_method = trim ( $rule_parts [0] );
-							$rule_value = trim ( $rule_parts [1] );
-							$rule_field = trim ( $rule_parts [2] );
+							$rule_method = wp_automatic_trim( $rule_parts [0] );
+							$rule_value = wp_automatic_trim( $rule_parts [1] );
+							$rule_field = wp_automatic_trim( $rule_parts [2] );
 						
 							//set single or all
-							if(isset($rule_parts [3]) && trim($rule_parts [3]) == 1)  $rule_single = 1;
+							if(isset($rule_parts [3]) && wp_automatic_trim($rule_parts [3]) == 1)  $rule_single = 1;
 							
 						}
 						
@@ -1879,7 +2110,7 @@ class WpAutomaticFeeds extends wp_automatic {
 						
 						
 						// Validate rule
-						if (trim ( $rule_method ) == '' || trim ( $rule_value ) == '' || trim ( $rule_field ) == '') {
+						if (wp_automatic_trim( $rule_method ) == '' || wp_automatic_trim( $rule_value ) == '' || wp_automatic_trim( $rule_field ) == '') {
 							echo '<- Wrong format...';
 							continue;
 						}
@@ -1938,7 +2169,7 @@ class WpAutomaticFeeds extends wp_automatic {
 							}
 							
 							// Store field to be added
-							if (trim ( $rule_result ) != '') {
+							if (wp_automatic_trim( $rule_result ) != '') {
 								echo ' <--' . $this->chars_count ( $rule_result ) . ' chars extracted';
 								
 								if ($rule_field == 'categories') {
@@ -1962,7 +2193,7 @@ class WpAutomaticFeeds extends wp_automatic {
 							 
 						 	
 							// Match
-							preg_match_all ( '{' . trim ( $rule_value ) . '}is', $original_cont, $matchregex );
+							preg_match_all ( '{' . wp_automatic_trim( $rule_value ) . '}is', $original_cont, $matchregex );
 						 
 						 
 						 
@@ -1996,7 +2227,7 @@ class WpAutomaticFeeds extends wp_automatic {
 									$suggestedFixedContent = wp_automatic_fix_json_part($newmatch);
 									
 									//overwriting
-									if(trim($suggestedFixedContent) != ''){
+									if(wp_automatic_trim($suggestedFixedContent) != ''){
 										echo '<-- Fix success overwriting ';
 										$newmatch = $suggestedFixedContent;
 									}
@@ -2006,9 +2237,9 @@ class WpAutomaticFeeds extends wp_automatic {
 								}
 								
 
-								if (trim ( $newmatch ) != '') {
+								if (wp_automatic_trim( $newmatch ) != '') {
 									
-									if (trim ( $finalmatch ) == '') {
+									if (wp_automatic_trim( $finalmatch ) == '') {
 										$finalmatch .= '' . $newmatch;
 									} else {
 										
@@ -2023,7 +2254,7 @@ class WpAutomaticFeeds extends wp_automatic {
 							}
 							
 							// Store field to be added
-							if (trim ( $finalmatch ) != '') {
+							if (wp_automatic_trim( $finalmatch ) != '') {
 								
 								echo ' <--' . $this->chars_count ( $finalmatch ) . ' chars extracted';
 								
@@ -2076,7 +2307,7 @@ class WpAutomaticFeeds extends wp_automatic {
 					// let's find og:image
 					
 					// if no http
-					$original_cont = str_replace ( 'content="//', 'content="http://', $original_cont );
+					$original_cont =wp_automatic_str_replace( 'content="//', 'content="http://', $original_cont );
 					
 					echo '<br>Extracting og:image...';
 					
@@ -2087,11 +2318,11 @@ class WpAutomaticFeeds extends wp_automatic {
 						preg_match ( '{content=["|\'](.*?)["|\']}s', $plain_og_matches [0], $matches );
 						$og_img = $matches [1];
 						
-						if (trim ( $og_img ) != '') {
+						if (wp_automatic_trim( $og_img ) != '') {
 							
 							$og_img_short = preg_replace ( '{http://.*?/}', '', $og_img );
 							echo $og_img_short;
-							if (trim ( $og_img_short ) == '') {
+							if (wp_automatic_trim( $og_img_short ) == '') {
 								$og_img_short = $og_img;
 							}
 							
@@ -2115,10 +2346,24 @@ class WpAutomaticFeeds extends wp_automatic {
 								$res ['og_img'] = 'https:' . $og_img;
 							}
 							
-							$res ['og_img'] = trim($res ['og_img'] );
+							$res ['og_img'] = wp_automatic_trim($res ['og_img'] );
 							$res ['og_alt'] = $foundAlt;
 							$currentOgImage = $og_img;
 						}
+					
+					}elseif(stristr($original_cont, '<meta property=og:image content=')){
+						
+						//rumble form <meta property=og:image content=https://sp.rmbl.ws/s8/1/c/_/c/y/c_cyk.qR4e-small--DEATH-DELETE-ANOTHER-DAY-O.jpg>	
+						preg_match ( '{<meta property=og:image content=([^\s]*?)>}s', $original_cont, $plain_og_matches );
+
+						//if is set $plain_og_matches[1] and contains http and does not contain a space or a quote or a bracket, set it as og_img
+						if(isset($plain_og_matches[1]) && stristr($plain_og_matches[1], 'http') && !stristr($plain_og_matches[1], ' ') && !stristr($plain_og_matches[1], '"') && !stristr($plain_og_matches[1], '\'') && !stristr($plain_og_matches[1], '<') && !stristr($plain_og_matches[1], '>') ){
+							$res ['og_img'] = $plain_og_matches[1];
+							$res ['og_alt'] = '';
+							$og_alt = '';
+						}
+						 
+
 					}else{
 
 
@@ -2154,12 +2399,18 @@ class WpAutomaticFeeds extends wp_automatic {
 					$res ['cont'] .= '<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>';
 				}
 				
-				// fix instagram.com embeds
-				if (stristr ( $res ['cont'], 'instagram.com' ) && ! stristr ( $res ['cont'], 'platform.instagram' )) {
+				// fix instagram.com embeds <script async src="//www.instagram.com/embed.js"></script>
+				if (stristr ( $res ['cont'], 'instagram.com' ) && ! stristr ( $res ['cont'], 'instagram.com/embed.js' )) {
 					echo '<br>Possible Instagram embeds found without JS. adding JS';
-					$res ['cont'] .= '<script async defer src="https://platform.instagram.com/en_US/embeds.js"></script>';
+					$res ['cont'] .= '<script async src="//www.instagram.com/embed.js"></script>';
 				}
 				
+				// fix tiktok embeds <script async src="//www.tiktok.com/embed.js"></script>
+				if (stristr ( $res ['cont'], 'tiktok.com' ) && ! stristr ( $res ['cont'], 'tiktok.com/embed.js' )) {
+					echo '<br>Possible Tiktok embeds found without JS. adding JS';
+					$res ['cont'] .= '<script async src="//www.tiktok.com/embed.js"></script>';
+				}
+
 				// fix youtube no height embeds
 				if (stristr ( $res ['cont'], 'youtube.com/embed' )) {
 					
@@ -2175,7 +2426,7 @@ class WpAutomaticFeeds extends wp_automatic {
 							
 							echo '<br>Youtube video embed format changed to WordPress for video :' . $yt_matches_ids [$i];
 							
-							$res ['cont'] = str_replace ( $embed, '[embed]https://www.youtube.com/watch?v=' . $yt_matches_ids [$i] . '[/embed]', $res ['cont'] );
+							$res ['cont'] =wp_automatic_str_replace( $embed, '[embed]https://www.youtube.com/watch?v=' . $yt_matches_ids [$i] . '[/embed]', $res ['cont'] );
 							
 							$i ++;
 						}
@@ -2184,7 +2435,7 @@ class WpAutomaticFeeds extends wp_automatic {
 
 				
 				// check if image or not
-				if (in_array ( 'OPT_MUST_IMAGE', $camp_opt ) && ! stristr ( $res ['cont'], '<img' ) && trim ( $currentOgImage ) == '') {
+				if (in_array ( 'OPT_MUST_IMAGE', $camp_opt ) && ! stristr ( $res ['cont'], '<img' ) && wp_automatic_trim( $currentOgImage ) == '') {
 					
 					echo '<br>Post contains no images skipping it ...';
 					
@@ -2193,7 +2444,7 @@ class WpAutomaticFeeds extends wp_automatic {
 				} else {
 					
 					// og image fix
-					if (isset ( $res ['og_img'] ) && trim ( $res ['og_img'] ) != '') {
+					if (isset ( $res ['og_img'] ) && wp_automatic_trim( $res ['og_img'] ) != '') {
 						
 						$og_img = $res ['og_img'];
 
@@ -2208,7 +2459,7 @@ class WpAutomaticFeeds extends wp_automatic {
 								
 								// no domain at all
 								$og_img = '/' . $og_img;
-								$og_img = str_replace ( '//', '/', $og_img );
+								$og_img =wp_automatic_str_replace( '//', '/', $og_img );
 								$og_img = 'http://' . $host . $og_img;
 								$res ['og_img'] = $og_img;
 							}
@@ -2216,7 +2467,7 @@ class WpAutomaticFeeds extends wp_automatic {
 					}
 					
 					// og title or custom title extraction method
-					if (in_array ( 'OPT_FEED_OG_TTL', $camp_opt ) || (isset ( $camp_general ['cg_ml_ttl_method'] ) && trim ( $camp_general ['cg_ml_ttl_method'] ) != 'auto')) {
+					if (in_array ( 'OPT_FEED_OG_TTL', $camp_opt ) || (isset ( $camp_general ['cg_ml_ttl_method'] ) && wp_automatic_trim( $camp_general ['cg_ml_ttl_method'] ) != 'auto')) {
 						
 						if (in_array ( 'OPT_FEED_OG_TTL', $camp_opt )) {
 							// let's find og:title may be the content we got has no 
@@ -2227,10 +2478,10 @@ class WpAutomaticFeeds extends wp_automatic {
 								
 								$og_ttl = $matches [1];
 								
-								echo '<br>og:title:' . html_entity_decode ( htmlspecialchars_decode ( $og_ttl ) );
+								echo '<br>og:title:' . html_entity_decode ( wp_automatic_htmlspecialchars_decode ( $og_ttl ) );
 								
-								if (trim ( $og_ttl ) != '') {
-									$og_ttl = htmlspecialchars_decode ( $og_ttl, ENT_QUOTES );
+								if (wp_automatic_trim( $og_ttl ) != '') {
+									$og_ttl = wp_automatic_htmlspecialchars_decode ( $og_ttl, ENT_QUOTES );
 									$res ['title'] = html_entity_decode ( $og_ttl );
 								}
 							} // If og:title
@@ -2249,7 +2500,7 @@ class WpAutomaticFeeds extends wp_automatic {
 								$cg_ml_visual = $camp_general ['cg_ml_visual'];
 								$path = isset ( $cg_ml_visual [0] ) ? $cg_ml_visual [0] : '';
 								
-								if (trim ( $path ) == '') {
+								if (wp_automatic_trim( $path ) == '') {
 									echo '<br>No path found for pagination, please set the extraction rule for pagination if you want to make use of pagination.';
 								}
 								
@@ -2318,7 +2569,7 @@ class WpAutomaticFeeds extends wp_automatic {
 								$i = 0;
 								foreach ( $cg_ml_regex as $cg_ml_regex_s ) {
 									
-									echo '<br>Extracting content by REGEX : ' . htmlspecialchars ( html_entity_decode  ( $cg_ml_regex_s ) );
+									echo '<br>Extracting content by REGEX : ' . wp_automatic_htmlspecialchars ( html_entity_decode  ( $cg_ml_regex_s ) );
 									
 									$content = $wpAutomaticDom->getContentByRegex ( html_entity_decode ( $cg_ml_regex_s ) );
 									
@@ -2326,7 +2577,7 @@ class WpAutomaticFeeds extends wp_automatic {
 									
 									echo '<-- ' . strlen ( $content ) . ' chars';
 									
-									if (trim ( $content ) != '') {
+									if (wp_automatic_trim( $content ) != '') {
 										$finalContent .= $content . "\n";
 									}
 									
@@ -2336,14 +2587,14 @@ class WpAutomaticFeeds extends wp_automatic {
 						}
 						
 						//set title from extraction if available
-						if(isset($finalContent) && trim($finalContent) != ''){
+						if(isset($finalContent) && wp_automatic_trim($finalContent) != ''){
 							if(! in_array('OPT_FEED_NO_DECODE', $camp_opt)){
 								$possibleTitle = '';
-								if (trim ( $finalContent ) != '') {
+								if (wp_automatic_trim( $finalContent ) != '') {
 									$possibleTitle = strip_tags ( $finalContent );
 								}
 								
-								if (trim ( $possibleTitle ) != '') {
+								if (wp_automatic_trim( $possibleTitle ) != '') {
 									$res ['original_title'] = html_entity_decode ( $possibleTitle, ENT_QUOTES | ENT_HTML401 );
 									$res ['title'] = html_entity_decode ( $possibleTitle, ENT_QUOTES | ENT_HTML401 );
 								}
@@ -2395,7 +2646,7 @@ class WpAutomaticFeeds extends wp_automatic {
 			
 			preg_match('!<h1.*?>(.*?)</h1>!', $cont, $title_matchs);
 			
-			if( trim($title_matchs[1]) != ''){
+			if( wp_automatic_trim($title_matchs[1]) != ''){
 				$title = $title_matchs[1];
 				echo 'H1:'. $title;
 				return $title;
@@ -2407,7 +2658,7 @@ class WpAutomaticFeeds extends wp_automatic {
 		if(stristr($cont, '<title>')){
 			preg_match('!<title>(.*?)</title>!', $cont, $title_matchs);
 		
-			if( trim($title_matchs[1]) != ''){
+			if( wp_automatic_trim($title_matchs[1]) != ''){
 				$title = $title_matchs[1];
 				echo 'title tag:'. $title;
 				return $title;
@@ -2419,7 +2670,7 @@ class WpAutomaticFeeds extends wp_automatic {
 		if(stristr($cont, 'og:title')){
 			preg_match('!og:title" content="(.*?)"!', $cont, $title_matchs);
 			
-			if( trim($title_matchs[1]) != ''){
+			if( wp_automatic_trim($title_matchs[1]) != ''){
 				$title = $title_matchs[1];
 				
 				echo 'og:title:'. $title;
@@ -2442,7 +2693,7 @@ class WpAutomaticFeeds extends wp_automatic {
 		if(stristr($cont, '<meta name="author"')){
 			preg_match('!<meta name="author" content="(.*?)"!', $cont, $author_matchs);
 	
-			if( trim($author_matchs[1]) != ''){
+			if( wp_automatic_trim($author_matchs[1]) != ''){
 				$author = $author_matchs[1];
 				echo 'author meta:'. $author;
 				return $author;
@@ -2522,7 +2773,7 @@ class WpAutomaticFeeds extends wp_automatic {
 			try{
 				$newUrl = $this->api_call('googleNewsLinkExtractor', array('googleNewsLink' => $url));
 
-				if(trim($newUrl) != ''){
+				if(wp_automatic_trim($newUrl) != ''){
 					$link = $url = $newUrl;
 
 					echo ' <span style="color:green">[new]</span>';

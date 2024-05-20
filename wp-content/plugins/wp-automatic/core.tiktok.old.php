@@ -17,13 +17,13 @@ class WpAutomatictiktok extends wp_automatic {
 		// looping keywords
 		foreach ( $keywords as $keyword ) {
 			
-			$keyword = trim ( $keyword );
+			$keyword = wp_automatic_trim( $keyword );
 			
 			// update last keyword
-			update_post_meta ( $camp->camp_id, 'last_keyword', trim ( $keyword ) );
+			update_post_meta ( $camp->camp_id, 'last_keyword', wp_automatic_trim( $keyword ) );
 			
 			// when valid keyword
-			if (trim ( $keyword ) != '') {
+			if (wp_automatic_trim( $keyword ) != '') {
 				
 				// record current used keyword
 				$this->used_keyword = $keyword;
@@ -107,7 +107,7 @@ class WpAutomatictiktok extends wp_automatic {
 					
 					
 					// generating title
-					if (@trim ( $temp ['item_title'] ) == '') {
+					if (@wp_automatic_trim( $temp ['item_title'] ) == '') {
 						
 						if (in_array ( 'OPT_IT_AUTO_TITLE', $camp_opt )) {
 							
@@ -191,7 +191,7 @@ class WpAutomatictiktok extends wp_automatic {
 						//"originCover":"https:/
 						preg_match ( '!"originCover":"(.*?)"!' ,  $exec , $matches);
 						
-						if(isset($matches[1]) && trim($matches[1]) != '' ){
+						if(isset($matches[1]) && wp_automatic_trim($matches[1]) != '' ){
 							echo '<-- found cover pic';
 							$temp ['item_img'] = wp_automatic_fix_json_part( $matches[1] );
 						}else{
@@ -201,7 +201,7 @@ class WpAutomatictiktok extends wp_automatic {
 						//"avatarThumb"
 						preg_match ( '!"avatarThumb":"(.*?)"!' ,  $exec , $matches);
 						
-						if(isset($matches[1]) && trim($matches[1]) != '' ){
+						if(isset($matches[1]) && wp_automatic_trim($matches[1]) != '' ){
 							echo '<-- found profile pic';
 							$temp ['item_user_profile_pic'] = wp_automatic_fix_json_part( $matches[1] );
 						}else{
@@ -293,7 +293,7 @@ class WpAutomatictiktok extends wp_automatic {
 					// not first page get the bookmark
 					$wp_tiktok_next_max_id = get_post_meta ( $camp->camp_id, 'wp_tiktok_next_max_id' . md5 ( $keyword ), 1 );
 					
-					if (trim ( $wp_tiktok_next_max_id ) == '') {
+					if (wp_automatic_trim( $wp_tiktok_next_max_id ) == '') {
 						echo '<br>No new page max id';
 						$wp_tiktok_next_max_id = 0;
 					} else {
@@ -310,7 +310,7 @@ class WpAutomatictiktok extends wp_automatic {
 				// if specific user posting
 				if (in_array ( 'OPT_TT_USER', $camp_opt )) {
 					
-					$cg_tt_user = trim ( $camp_general ['cg_tt_user'] );
+					$cg_tt_user = wp_automatic_trim( $camp_general ['cg_tt_user'] );
 					echo '<br>Specific user:' . $cg_tt_user;
 					$qkeyword_md5 = '__' . md5($cg_tt_user);
 					
@@ -319,7 +319,7 @@ class WpAutomatictiktok extends wp_automatic {
 					$challenge_id = get_post_meta( $camp->camp_id ,  $qkeyword_md5 , true );
 					
 					//get challenge if empty
-					if(trim($challenge_id) == '' ){
+					if(wp_automatic_trim($challenge_id) == '' ){
 						//get the challenge
 						echo '<br>Getting the challenge ID for the user.... ' ;
 						
@@ -327,7 +327,7 @@ class WpAutomatictiktok extends wp_automatic {
 						$x='error';
 						$url='https://www.tiktok.com/@' .$cg_tt_user ;
 						curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-						curl_setopt($this->ch, CURLOPT_URL, trim($url));
+						curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($url));
 						$exec=curl_exec($this->ch);
 						  
 						//tiktok-verify-page
@@ -345,7 +345,7 @@ class WpAutomatictiktok extends wp_automatic {
 						//"secUid":"MS4wLjABAAAAb6sufevCrDdNOnNRH7uwM_esGiD5sfScJxGfEQBsDyW6K10YJcwlvGR-lzqMBidP"
 						preg_match('!"secUid":"(.*?)"!' , $exec , $challenges_found);
 						
-						if(isset($challenges_found[1]) && trim($challenges_found[1]) != ''){
+						if(isset($challenges_found[1]) && wp_automatic_trim($challenges_found[1]) != ''){
 							add_post_meta( $camp->camp_id ,  $qkeyword_md5 , $challenges_found[1] );
 							$challenge_id = $challenges_found[1];
 							echo '<-- Found:' . $challenge_id;
@@ -368,14 +368,14 @@ class WpAutomatictiktok extends wp_automatic {
 				} else {
 					
 					// prepare keyword
-					$qkeyword = trim(str_replace ( ' ', '', $keyword ));
-					$qkeyword = str_replace ( '#', '', $qkeyword );
+					$qkeyword = wp_automatic_trim(str_replace ( ' ', '', $keyword ));
+					$qkeyword =wp_automatic_str_replace( '#', '', $qkeyword );
 					$qkeyword_md5 = '__' . md5($qkeyword);
 					
 					$challenge_id = get_post_meta( $camp->camp_id ,  $qkeyword_md5 , true );
 					 
 					//get challenge if empty 
-					if(trim($challenge_id) == '' ){
+					if(wp_automatic_trim($challenge_id) == '' ){
 						//get the challenge
 						
 						echo '<br>Getting the challenge ID for the term.... ' ;
@@ -384,7 +384,7 @@ class WpAutomatictiktok extends wp_automatic {
 						$x='error';
 						$url='https://www.tiktok.com/tag/' .$qkeyword ;
 						curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-						curl_setopt($this->ch, CURLOPT_URL, trim($url));
+						curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($url));
 						$exec=curl_exec($this->ch);
 						 
 						preg_match('!challenge/detail/(\d*)!' , $exec , $challenges_found);
@@ -407,7 +407,7 @@ class WpAutomatictiktok extends wp_automatic {
 				echo '<br>Loading:' . $tik_url;
 				$x='error';
 				curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-				curl_setopt($this->ch, CURLOPT_URL, trim($tik_url));
+				curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($tik_url));
 				$exec=curl_exec($this->ch);
 				$x=curl_error($this->ch);
 				

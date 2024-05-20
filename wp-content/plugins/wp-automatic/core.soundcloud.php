@@ -13,7 +13,7 @@ class WpAutomaticSoundCloud extends wp_automatic {
 		$wp_automatic_sc_client = $this->get_soundcloud_key ();
 		
 		// If no API setup Don't post
-		if (trim ( $wp_automatic_sc_client ) == '') {
+		if (wp_automatic_trim( $wp_automatic_sc_client ) == '') {
 			echo '<br>SoundCloud API key is required,please visit the settings page and add it';
 			return false;
 		}
@@ -26,13 +26,13 @@ class WpAutomaticSoundCloud extends wp_automatic {
 		// looping keywords
 		foreach ( $keywords as $keyword ) {
 			
-			$keyword = trim ( $keyword );
+			$keyword = wp_automatic_trim( $keyword );
 			
 			// update last keyword
-			update_post_meta ( $camp->camp_id, 'last_keyword', trim ( $keyword ) );
+			update_post_meta ( $camp->camp_id, 'last_keyword', wp_automatic_trim( $keyword ) );
 			
 			// when valid keyword
-			if (trim ( $keyword ) != '') {
+			if (wp_automatic_trim( $keyword ) != '') {
 				
 				// record current used keyword
 				$this->used_keyword = $keyword;
@@ -207,14 +207,14 @@ class WpAutomaticSoundCloud extends wp_automatic {
 					echo '<br>Loading:' . $possible_url;
 					
 					curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-					curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
+					curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $url ) );
 					$exec = curl_exec ( $this->ch );
 					$x = curl_error ( $this->ch );
 					
 					// "soundcloud://users:42301153" "soundcloud://playlists:64167521"
 					preg_match ( '!"soundcloud://' . $cg_sc_user_playlist . 's:(.*?)"!' , $exec, $found_possible_user_matches );
 					
-					if (isset ( $found_possible_user_matches [1] ) && trim ( $found_possible_user_matches[1] ) != '') {
+					if (isset ( $found_possible_user_matches [1] ) && wp_automatic_trim( $found_possible_user_matches[1] ) != '') {
 						echo '<br>Found Numeric ID:' . $found_possible_user_matches [1];
 						update_post_meta ( $camp->camp_id, $md5_author, $found_possible_user_matches [1] );
 						$author = $found_possible_user_matches [1];
@@ -228,27 +228,27 @@ class WpAutomaticSoundCloud extends wp_automatic {
 				
 				
 				
-				$url = "http://api-v2.soundcloud.com/users/" . trim ( $author ) . "/tracks";
+				$url = "http://api-v2.soundcloud.com/users/" . wp_automatic_trim( $author ) . "/tracks";
 				
 				// pagination URL
-				$pagination_url = get_post_meta ( $camp->camp_id, 'wp_automatic_' . trim ( $author ) . '_next', true );
+				$pagination_url = get_post_meta ( $camp->camp_id, 'wp_automatic_' . wp_automatic_trim( $author ) . '_next', true );
 				
 				echo '<br>Pagination found:' . $pagination_url;
 				
-				if (trim ( $pagination_url ) != '' && in_array ( 'OPT_SC_CACHE', $camp_opt ))
+				if (wp_automatic_trim( $pagination_url ) != '' && in_array ( 'OPT_SC_CACHE', $camp_opt ))
 					$url = $pagination_url;
 			} else {
 				
-				$url = "http://api-v2.soundcloud.com/playlists/" . trim ( $author ) . '?representation=full';
+				$url = "http://api-v2.soundcloud.com/playlists/" . wp_automatic_trim( $author ) . '?representation=full';
 			}
 		} else {
 			
 			if (in_array ( 'OPT_SC_TAG_SEARCH', $camp_opt )) {
-				$url = "https://api-v2.soundcloud.com/search/tracks?q=&filter.genre_or_tag=" . urlencode ( trim ( $keyword ) ) . "&sort=popular&app_version=1607422960&app_locale=en";
+				$url = "https://api-v2.soundcloud.com/search/tracks?q=&filter.genre_or_tag=" . urlencode ( wp_automatic_trim( $keyword ) ) . "&sort=popular&app_version=1607422960&app_locale=en";
 			} else {
 				
-				$url = "http://api.soundcloud.com/tracks/?q=" . urlencode ( trim ( $keyword ) );
-				$url = "https://api-v2.soundcloud.com/search/tracks?q=" . urlencode ( trim ( $keyword ) ) . "&facet=genre&app_version=1606721975&app_locale=en";
+				$url = "http://api.soundcloud.com/tracks/?q=" . urlencode ( wp_automatic_trim( $keyword ) );
+				$url = "https://api-v2.soundcloud.com/search/tracks?q=" . urlencode ( wp_automatic_trim( $keyword ) ) . "&facet=genre&app_version=1606721975&app_locale=en";
 			}
 		}
 		
@@ -256,9 +256,9 @@ class WpAutomaticSoundCloud extends wp_automatic {
 		
 		// authentication
 		if (stristr ( $url, '?' )) {
-			$url = $url . '&client_id=' . trim ( $wp_automatic_sc_client );
+			$url = $url . '&client_id=' . wp_automatic_trim( $wp_automatic_sc_client );
 		} else {
-			$url = $url . '?client_id=' . trim ( $wp_automatic_sc_client );
+			$url = $url . '?client_id=' . wp_automatic_trim( $wp_automatic_sc_client );
 		}
 		
 		// pagination
@@ -284,7 +284,7 @@ class WpAutomaticSoundCloud extends wp_automatic {
 		echo '<br>SoundCloud url:' . $url;
 		 
 		curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-		curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
+		curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $url ) );
 		curl_setopt ( $this->ch, CURLOPT_ENCODING, "" );
 		$exec = curl_exec ( $this->ch );
 		$x = curl_error ( $this->ch );
@@ -318,12 +318,12 @@ class WpAutomaticSoundCloud extends wp_automatic {
 					
 					// curl get
 					$x = 'error';
-					$url = 'https://api-v2.soundcloud.com/tracks?ids=' . urlencode ( $playlist_tracks_ids ) . '&client_id=' . trim ( $wp_automatic_sc_client );
+					$url = 'https://api-v2.soundcloud.com/tracks?ids=' . urlencode ( $playlist_tracks_ids ) . '&client_id=' . wp_automatic_trim( $wp_automatic_sc_client );
 					
 					echo '<br>Tracks list Call:' . $url;
 					
 					curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-					curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
+					curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $url ) );
 					$exec = curl_exec ( $this->ch );
 					$x = curl_error ( $this->ch );
 					
@@ -359,7 +359,7 @@ class WpAutomaticSoundCloud extends wp_automatic {
 				$itm ['item_likes_count'] = $item->likes_count;
 				$itm ['item_purchase_url'] = $item->purchase_url;
 				$itm ['item_thumbnail'] = $item->artwork_url;
-				$itm ['item_thumbnail'] = str_replace ( '-large', '-t500x500', $itm ['item_thumbnail'] );
+				$itm ['item_thumbnail'] =wp_automatic_str_replace( '-large', '-t500x500', $itm ['item_thumbnail'] );
 				$itm ['item_comment_count'] = $item->comment_count;
 				$itm ['item_title'] = $item->title;
 				$itm ['item_description'] = $item->description;
@@ -374,11 +374,11 @@ class WpAutomaticSoundCloud extends wp_automatic {
 				$itm ['item_user_id'] = $item->user_id;
 				$itm ['item_user_link'] = $item->user->permalink_url;
 				$itm ['item_user_thumbnail'] = $item->user->avatar_url;
-				$itm ['item_user_thumbnail'] = str_replace ( '-large', '-t500x500', $itm ['item_user_thumbnail'] );
+				$itm ['item_user_thumbnail'] =wp_automatic_str_replace( '-large', '-t500x500', $itm ['item_user_thumbnail'] );
 				$itm ['item_user_username'] = $item->user->username;
 				$itm ['item_download_url'] = isset($item->download_url) ? $item->download_url : '';
 				
-				if (trim ( $itm ['item_download_url'] ) != '') {
+				if (wp_automatic_trim( $itm ['item_download_url'] ) != '') {
 					$itm ['item_download_url'] = $itm ['item_download_url'] . '?client_id=376f225bf427445fc4bfb6b99b72e0bf';
 				}
 				
@@ -406,9 +406,9 @@ class WpAutomaticSoundCloud extends wp_automatic {
 			
 			// pagination URL
 			if (in_array ( 'OPT_SC_USER', $camp_opt ) && $cg_sc_user_playlist == 'user') {
-				if (isset ( $arr->next_href ) && trim ( $arr->next_href ) != '') {
+				if (isset ( $arr->next_href ) && wp_automatic_trim( $arr->next_href ) != '') {
 					echo '<br>Next page URL:' . $arr->next_href;
-					update_post_meta ( $camp->camp_id, 'wp_automatic_' . trim ( $author ) . '_next', $arr->next_href );
+					update_post_meta ( $camp->camp_id, 'wp_automatic_' . wp_automatic_trim( $author ) . '_next', $arr->next_href );
 				}
 			}
 			
@@ -419,8 +419,8 @@ class WpAutomaticSoundCloud extends wp_automatic {
 				if (in_array ( 'OPT_SC_USER', $camp_opt ) && $cg_sc_user_playlist == 'user') {
 					
 					// delete next page for user if no next page available
-					if ((! isset ( $arr->next_href ) || trim ( $arr->next_href ) == '')) {
-						delete_post_meta ( $camp->camp_id, 'wp_automatic_' . trim ( $author ) . '_next' );
+					if ((! isset ( $arr->next_href ) || wp_automatic_trim( $arr->next_href ) == '')) {
+						delete_post_meta ( $camp->camp_id, 'wp_automatic_' . wp_automatic_trim( $author ) . '_next' );
 						
 						echo '<br>Keyword have no more sounds deactivating...';
 						$query = "update {$this->wp_prefix}automatic_keywords set keyword_start = -1 where keyword_id=$kid ";

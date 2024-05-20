@@ -26,14 +26,14 @@ class wpAutomaticDom {
 			
 			$possibleCharSet = isset($possibleCharSet[0]) ? $possibleCharSet[0] : '';
 		 
-			if(trim($possibleCharSet) == '') $possibleCharSet = 'UTF-8';
+			if(wp_automatic_trim($possibleCharSet) == '') $possibleCharSet = 'UTF-8';
 			
 			$charSetMeta = '<meta http-equiv="content-type" content="text/html; charset=' . $possibleCharSet . '"/>';
 			
 			if(stristr($html, '<head>')){
-				$html = str_replace('<head>', '<head>'.$charSetMeta, $html);
+				$html = wp_automatic_str_replace('<head>', '<head>'.$charSetMeta, $html);
 			}else{
-				$html = str_replace('</head>', $charSetMeta . '/<head>', $html);
+				$html = wp_automatic_str_replace('</head>', $charSetMeta . '/<head>', $html);
 			}
 			 
 			 
@@ -51,7 +51,7 @@ class wpAutomaticDom {
 			
 			if(! stristr($allTablesOpenMatchesTwoSingle, '<tbody') && ! stristr($allTablesOpenMatchesTwoSingle, '<thead')){
 				//fix this
-				$html = str_replace($allTablesOpenMatchesTwoSingle, $allTablesOpenMatchesOne[$i].'<tbody>'.$allTablesOpenMatchesAfter[$i], $html);
+				$html = wp_automatic_str_replace($allTablesOpenMatchesTwoSingle, $allTablesOpenMatchesOne[$i].'<tbody>'.$allTablesOpenMatchesAfter[$i], $html);
 			} 
 			
 			$i++;
@@ -66,7 +66,7 @@ class wpAutomaticDom {
 		foreach ( $allTablesCloseMatchesBoth as $allTablesCloseMatchesBothSingle ){
 			
 			if( ! stristr($allTablesCloseMatchesBothSingle, 'tbody') && ! stristr($allTablesCloseMatchesBothSingle, 'tfoot')){
-				$html = str_replace($allTablesCloseMatchesBothSingle, $allTablesCloseMatchesPre[$i].'</tbody>'.$allTablesCloseMatchesAfter[$i], $html ) ;
+				$html = wp_automatic_str_replace($allTablesCloseMatchesBothSingle, $allTablesCloseMatchesPre[$i].'</tbody>'.$allTablesCloseMatchesAfter[$i], $html ) ;
 			}
 			
 			$i++;
@@ -99,7 +99,20 @@ class wpAutomaticDom {
 		
 		// xPath object
 		$xpathObj = new DOMXPath($this->doc);
+
+		//if xpath contains substring- then use evaluate instead of query
+		if(stristr($xpath, 'substring')){
+			$xpathMatches = @$xpathObj->evaluate("$xpath");
+			
+			//if the result is a string then return it
+			if(is_string($xpathMatches)) return array($xpathMatches);
+		
+		}
+		
+		//get the matches using the query
 		$xpathMatches = @$xpathObj->query("$xpath");
+
+
  
 		
 		$allMatchs= array();
@@ -124,12 +137,17 @@ class wpAutomaticDom {
 		   	 $matchHtml =  $this->doc->saveHTML($element);
 		   }
 
+		    
 		   //if $matchHtml starts with href=" then remove it and the next "
-		   if(preg_match('{^href="([^"]+?)"}', $matchHtml)){
+		   if(preg_match('{^\s?href\="([^"]+?)"}', $matchHtml)){
 			echo '<br><- href= found removing it';
 		   	$matchHtml = preg_replace('{href="([^"]+?)"}', '$1', $matchHtml);
+
+			//trim
+			$matchHtml = wp_automatic_trim($matchHtml);
+
 		   }
-			
+ 
 			$allMatchs[] = $matchHtml;
 			
 		}
@@ -180,7 +198,7 @@ class wpAutomaticDom {
 	 */
 	function getContentByClass($className,$inner=true){
 		 
-		$className = trim($className) ;
+		$className = wp_automatic_trim($className) ;
 		$XPath= '//*[contains(concat (" ", normalize-space(@class), " "), " '.$className.' ")]';
 		return $this->getContentByXPath($XPath,$inner) ;
 	}
@@ -191,7 +209,7 @@ class wpAutomaticDom {
 	 * @return string[]
 	 */
 	function getContentByID($id,$inner=true){
-		$id=trim($id);
+		$id=wp_automatic_trim($id);
 		$XPath = "//*[@id='$id']" ;
 		return $this->getContentByXPath($XPath,$inner) ;
 	}	
@@ -206,12 +224,12 @@ class wpAutomaticDom {
 		preg_match('{<title>(.*?)</title>}s', $this->html,$titleMatchs);
 		$possibleTitle = isset($titleMatchs[1]) ?  $titleMatchs[1] : '' ;
 		
-		if(trim($possibleTitle) != '' ) return trim($possibleTitle); 
+		if(wp_automatic_trim($possibleTitle) != '' ) return wp_automatic_trim($possibleTitle); 
 		
 		//get from h1
 		preg_match('{<h1.*?>(.*?)</h1>}s', $this->html,$titleMatchs);
 		$possibleTitle = $titleMatchs[1];
-		if(trim($possibleTitle) != '' ) return trim($possibleTitle);
+		if(wp_automatic_trim($possibleTitle) != '' ) return wp_automatic_trim($possibleTitle);
 		
 		//default empty
 		return '';
@@ -242,8 +260,8 @@ class wpAutomaticDom {
 			
 			foreach ($iframesFound as $iframeFound){
 				
-				$correctIframe  = str_replace('/>','></iframe>',$iframeFound);
-				$content = str_replace($iframeFound, $correctIframe, $content);
+				$correctIframe  = wp_automatic_str_replace('/>','></iframe>',$iframeFound);
+				$content = wp_automatic_str_replace($iframeFound, $correctIframe, $content);
 				
 			}
 			
@@ -285,7 +303,7 @@ class wpAutomaticDom {
 		
 		
 		//refine the xpath and find the a tag
-		$xpath = trim($xpath);
+		$xpath = wp_automatic_trim($xpath);
 		if(! stristr($xpath, '/a/') &&  ! preg_match('{/a$}',$xpath)  &&  ! stristr($xpath, '/a[') ){
 			throw new Exception('Provided XPath does not contain the a tag');
 		}else{
@@ -428,18 +446,25 @@ class wpAutomaticDom {
 	function removeElementsByXPath($xpathArr){
 		$xpathObj = new DOMXPath($this->doc);
 		foreach ($xpathArr as $xpath){
-			
-			var_dump($xpath);
 
-			echo '<br>Removing element by XPath: '.$xpath;
+			echo '<br>Removing element by XPath: '. wp_automatic_htmlentities($xpath);
 			
 			$xpathMatches = @$xpathObj->query("$xpath");
 
-			echo ' <--Found '.count($xpathMatches).' matches';
-
+	 
+			$i=0;
 			foreach ($xpathMatches as $match){
 				$match->parentNode->removeChild($match);
+				echo '<- 1 Removed';
+				$i++;
 			}
+
+			//if i is 0, then the xpath did not match anything, report 
+			if($i == 0){
+				echo '<-- no match found';
+			}
+
+
 		}
 		return $this->doc->saveHTML();
 	}

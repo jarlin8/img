@@ -1,14 +1,14 @@
 "use strict";
 
-$( function() {
+jQuery( function(jQuery) {
 
-    $( "#aiKitPromptsSubmit" ).click( function() {
+    jQuery( "#aiKitPromptsSubmit" ).click( function() {
         aiKitOnPromptsSubmit();
     });
 
-    $('#aikit-add-prompt').on('click', function() {
+    jQuery('#aikit-add-prompt').on('click', function() {
         // get the group-template and clone it
-        let group = $('.group-template').clone();
+        let group = jQuery('.group-template').clone();
         group.removeClass('group-template').addClass('group');
 
         // generate a unique id
@@ -16,97 +16,97 @@ $( function() {
 
         // replace the __PROMPT_KEY__ with the unique id all the way down the tree in name and id attributes
         group.find('[name*="__PROMPT_KEY__"]').each(function() {
-            $(this).attr('name', $(this).attr('name').replace('__PROMPT_KEY__', id));
+            jQuery(this).attr('name', jQuery(this).attr('name').replace('__PROMPT_KEY__', id));
         });
         group.find('[id*="__PROMPT_KEY__"]').each(function() {
-            $(this).attr('id', $(this).attr('id').replace('__PROMPT_KEY__', id));
+            jQuery(this).attr('id', jQuery(this).attr('id').replace('__PROMPT_KEY__', id));
         });
 
         // also replace the __PROMPT_KEY__ in href attributes
         group.find('[href*="__PROMPT_KEY__"]').each(function() {
-            $(this).attr('href', $(this).attr('href').replace('__PROMPT_KEY__', id));
+            jQuery(this).attr('href', jQuery(this).attr('href').replace('__PROMPT_KEY__', id));
         });
 
         // also replace the __PROMPT_KEY__ in for attributes
         group.find('[for*="__PROMPT_KEY__"]').each(function() {
-            $(this).attr('for', $(this).attr('for').replace('__PROMPT_KEY__', id));
+            jQuery(this).attr('for', jQuery(this).attr('for').replace('__PROMPT_KEY__', id));
         });
 
         // add the group to the page aikit-prompts-accordion
-        $('#aikit-prompts-accordion').append(group);
+        jQuery('#aikit-prompts-accordion').append(group);
         // refresh the accordion
-        $('#aikit-prompts-accordion').accordion('refresh');
+        jQuery('#aikit-prompts-accordion').accordion('refresh');
 
         //scroll to the new group
-        $('html, body').animate({
+        jQuery('html, body').animate({
             scrollTop: group.offset().top
         }, 100);
 
-        $(group).find( ".tabs" ).tabs();
+        jQuery(group).find( ".tabs" ).tabs();
 
         // expand the new group in the accordion
         group.find('.aikit-prompt-accordion-header').click();
     });
 
     // change to include all future elements
-    $('body').on('click', '.text-length-card', function() {
-    // $( ".text-length-card" ).click( function() {
+    jQuery('body').on('click', '.text-length-card', function() {
+    // jQuery( ".text-length-card" ).click( function() {
         // only if the input is not disabled
-        if ( !$( this ).find( "input" ).is( ":disabled" ) ) {
-            $( this ).find( "input" ).prop( "checked", true );
+        if ( !jQuery( this ).find( "input" ).is( ":disabled" ) ) {
+            jQuery( this ).find( "input" ).prop( "checked", true );
         }
     });
 
-    $('body').on('input', '.menu-title-input', function() {
-    // $(".menu-title-input").on("input", function() {
+    jQuery('body').on('input', '.menu-title-input', function() {
+    // jQuery(".menu-title-input").on("input", function() {
         // update the title of the accordion as we type
-        $(this).parents(".group").first().find(".aikit-prompt-accordion-header").text($(this).val());
+        jQuery(this).parents(".group").first().find(".aikit-prompt-accordion-header").text(jQuery(this).val());
     });
 
-    $('body').on('click', '.requires-text-selection-input', function() {
-    // $( ".requires-text-selection-input" ).click( function() {
-        aikitEnableOrDisableTextLengthCards($( this ));
+    jQuery('body').on('click', '.requires-text-selection-input', function() {
+    // jQuery( ".requires-text-selection-input" ).click( function() {
+        aikitEnableOrDisableTextLengthCards(jQuery( this ));
     });
 
-    $( ".requires-text-selection-input" ).each( function() {
-        aikitEnableOrDisableTextLengthCards($( this ));
+    jQuery( ".requires-text-selection-input" ).each( function() {
+        aikitEnableOrDisableTextLengthCards(jQuery( this ));
     });
 
-    $('body').on('input', '.aikit-slider', function() {
-    // $('.aikit-slider').on('input', function() {
-        let value = $(this).val();
-        $(this).parent().parent().find('.slider-value').text(value + 'x');
+    jQuery('body').on('input', '.aikit-slider', function() {
+    // jQuery('.aikit-slider').on('input', function() {
+        let value = jQuery(this).val();
+        jQuery(this).parent().parent().find('.slider-value').text(value + 'x');
     });
 
-    $('.aikit-slider').each(function() {
-        let value = $(this).val();
-        $(this).parent().parent().find('.slider-value').text(value + 'x');
+    jQuery('.aikit-slider').each(function() {
+        let value = jQuery(this).val();
+        jQuery(this).parent().parent().find('.slider-value').text(value + 'x');
     });
 
-    $("#aikit-reset-prompts").click( function() {
-        let message = $(this).data('confirm-message');
+    jQuery("#aikit-reset-prompts").click( function() {
+        let message = jQuery(this).data('confirm-message');
         if (confirm(message)) {
-            $("#aikit-prompts-form").append('<input type="hidden" name="reset" value="1">');
+            jQuery("#aikit-prompts-form").append('<input type="hidden" name="reset" value="1">');
             // remove all inputs except the reset input
-            $("#aikit-prompts-form").find("input:not([name='reset'])").remove();
-            $("form#aikit-prompts-form")[0].submit();
+            jQuery("#aikit-prompts-form").find("input:not([name='reset'])").remove();
+            jQuery("form#aikit-prompts-form")[0].submit();
         }
 
         return false;
     });
 
-    $('body').on('click', '.aikit-remove-prompt', function(event) {
-    // $('.aikit-remove-prompt').click( function() {
-        let message = $(this).data('confirm-message');
+    jQuery('body').on('click', '.aikit-remove-prompt', function(event) {
+    // jQuery('.aikit-remove-prompt').click( function() {
+        let message = jQuery(this).data('confirm-message');
         if (confirm(message)) {
-            $(this).parent().parent().remove();
+            jQuery(this).parent().parent().remove();
         }
 
         event.stopPropagation();
         return false;
     });
 
-    $( "#aikit-prompts-accordion" )
+    jQuery( "#aikit-prompts-accordion" )
         .accordion({
             header: "> div > h3",
             heightStyle: "content",
@@ -121,28 +121,28 @@ $( function() {
                 ui.item.children( "h3" ).triggerHandler( "focusout" );
 
                 // Refresh accordion to handle new order
-                $( this ).accordion( "refresh" );
+                jQuery( this ).accordion( "refresh" );
             }
         });
 
-    $( ".tabs" ).tabs();
+    jQuery( ".tabs" ).tabs();
 } );
 
 function aikitEnableOrDisableTextLengthCards( requiresTextSelectionInput ) {
-    if ( ! $(requiresTextSelectionInput).is( ":checked" ) ) {
-        $( requiresTextSelectionInput ).parents( ".group" ).first().find( ".relative-card" )
+    if ( ! jQuery(requiresTextSelectionInput).is( ":checked" ) ) {
+        jQuery( requiresTextSelectionInput ).parents( ".group" ).first().find( ".relative-card" )
             .find( "input[type=\"radio\"]" )
             .prop( "checked", false );
 
-        $( requiresTextSelectionInput ).parents( ".group" ).first().find( ".relative-card" )
+        jQuery( requiresTextSelectionInput ).parents( ".group" ).first().find( ".relative-card" )
             .find( "input" )
             .prop( "disabled", true );
 
-        $( requiresTextSelectionInput ).parents( ".group" ).first().find( ".fixed-card" )
+        jQuery( requiresTextSelectionInput ).parents( ".group" ).first().find( ".fixed-card" )
             .find( "input[type=\"radio\"]" )
             .prop( "checked", true );
     } else {
-        $( requiresTextSelectionInput ).parents( ".group" ).first().find( ".relative-card" )
+        jQuery( requiresTextSelectionInput ).parents( ".group" ).first().find( ".relative-card" )
             .find( "input" )
             .prop( "disabled", false );
     }
@@ -186,7 +186,7 @@ function aiKitOnPromptsSubmit () {
     let jsonString = JSON.stringify(data.prompts || {});
 
     // submit the form using ajax
-    $.ajax({
+    jQuery.ajax({
         type: "POST",
         url: window.location.href,
         data: {

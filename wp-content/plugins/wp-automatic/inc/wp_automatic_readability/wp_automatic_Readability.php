@@ -92,7 +92,7 @@ class wp_automatic_Readability
 		'divToPElements' => '/<(a|blockquote|dl|div|img|ol|p|pre|table|ul)/i',
 		'replaceBrs' => '/(<br[^>]*>[ \n\r\t]*){2,}/i',
 		'replaceFonts' => '/<(\/?)font[^>]*>/i',
-		// 'trimRe' => '/^\s+|\s+$/g', // PHP has trim()
+		// 'trimRe' => '/^\s+|\s+$/g', // PHP has wp_automatic_trim()
 		'normalize' => '/\s{2,}/',
 		'killBreaks' => '/(<br\s*\/?>(\s|&nbsp;?)*){1,}/',
 		'video' => '!//(player\.|www\.)?(youtube|youtube-nocookie|vimeo|viddler|w\.soundcloud)\.com!i',
@@ -119,22 +119,31 @@ class wp_automatic_Readability
 		$html = preg_replace($this->regexps['replaceBrs'], '</p><p>', $html);
 		$html = preg_replace($this->regexps['replaceFonts'], '<$1span>', $html);
 		
+			
+			//removing starting from 31 Jan 2024
+			//restored on 26 Feb 2024 cause importing non latin characters like arabic returned gibberish
+			//on 15 May 2024 replaced with wp_automatic_mb_convert_encoding as a possible solution to the warning of deprecation
 			if(function_exists('mb_convert_encoding')){
 				
 				$enc = mb_detect_encoding($html);
 				
-				if(trim($enc) != ''){
-					$html = mb_convert_encoding($html, 'HTML-ENTITIES', "UTF-8");
+				if(wp_automatic_trim($enc) != ''){
+					//$html = mb_convert_encoding($html, 'HTML-ENTITIES', "UTF-8");
+					$html = wp_automatic_mb_convert_encoding($html);
 				}
 			}
 		
 			
-		if (trim($html) == '') $html = '<html></html>';
+		if (wp_automatic_trim($html) == '') $html = '<html></html>';
 		if ($parser=='html5lib' && ($this->dom = HTML5_Parser::parse($html))) {
 			// all good
 		} else {
 			$this->dom = new DOMDocument();
 			$this->dom->preserveWhiteSpace = false;
+			
+			// on 15 May 2024 added 
+			//https://stackoverflow.com/questions/1148928/disable-warnings-when-loading-non-well-formed-html-by-domdocument-php
+			libxml_use_internal_errors(true);
 			@$this->dom->loadHTML($html);
 		}
 		$this->dom->registerNodeClass('DOMElement', 'wp_automatic_JSLikeHTMLElement');
@@ -288,7 +297,7 @@ class wp_automatic_Readability
 			}
 		}
 
-		$curTitle = trim($curTitle);
+		$curTitle = wp_automatic_trim($curTitle);
 
 		if (count(explode(' ', $curTitle)) <= 4) {
 			$curTitle = $origTitle;
@@ -872,7 +881,7 @@ class wp_automatic_Readability
 			return '';
 		}
 
-		$textContent = trim($e->textContent);
+		$textContent = wp_automatic_trim($e->textContent);
 
 		if ($normalizeSpaces) {
 			return preg_replace($this->regexps['normalize'], ' ', $textContent);

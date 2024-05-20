@@ -45,7 +45,7 @@ function article_base_getlinks($keyword, $camp) {
 		$page = 0;
 	 
 	}else{
-		$page = str_replace('1994', '', $page);
+		$page = wp_automatic_str_replace('1994', '', $page);
 		 
 	}
 	
@@ -54,9 +54,9 @@ function article_base_getlinks($keyword, $camp) {
 	$startIndex = 1 + 10 * $page;
 	
 		echo '<br>Trying to call EA for new links start from page:' . $page;
-		//$keywordenc = urlencode ( 'site:ezinearticles.com '. trim($keyword). ' inurl:"id"'   );
-		//$keywordenc = urlencode ( trim($keyword). ' inurl:"id"'   );
-		$keywordenc = urlencode ( trim($keyword)   );
+		//$keywordenc = urlencode ( 'site:ezinearticles.com '. wp_automatic_trim($keyword). ' inurl:"id"'   );
+		//$keywordenc = urlencode ( wp_automatic_trim($keyword). ' inurl:"id"'   );
+		$keywordenc = urlencode ( wp_automatic_trim($keyword)   );
 		
 		
 		 
@@ -65,7 +65,7 @@ function article_base_getlinks($keyword, $camp) {
 		 //verify Google custom search key existence
 		$wp_automatic_search_key = get_option('wp_automatic_search_key','');
 		
-		if(trim($wp_automatic_search_key) == ''){
+		if(wp_automatic_trim($wp_automatic_search_key) == ''){
 			echo '<br><span style="color:red" >Google custom search API key is required. Please visit the plugin settings page and add it inside EzineArticles settings box</span>';
 			return false;
 		}
@@ -83,7 +83,7 @@ function article_base_getlinks($keyword, $camp) {
 		$validWorkingKey = '';
 		foreach ($wp_rankie_googlecustom_keys as $current_key){
 			
-			if(trim($current_key) != ''){
+			if(wp_automatic_trim($current_key) != ''){
 				
 				//check if key is disabled or not
 				$current_keyMd5 = md5($current_key);
@@ -100,7 +100,7 @@ function article_base_getlinks($keyword, $camp) {
 			
 		}
 		
-		if(trim($validWorkingKey) == ''){
+		if(wp_automatic_trim($validWorkingKey) == ''){
 			echo '<br><span style="color:red" >Custom search API keys reached its daily search requests limit, we will try again after one hour. each key gives us 100 daily search request.</b>';
 			return false;
 		}else{
@@ -112,7 +112,7 @@ function article_base_getlinks($keyword, $camp) {
 		
 		$wp_rankie_ezmlm_gl = 'google.com';
 		
-		$url ="https://www.googleapis.com/customsearch/v1?key=" . urlencode(  trim($validWorkingKey) ) . "&cx=" . urlencode(  trim($wp_rankie_googlecustom_id) ) . "&q=".$keywordenc.'&googlehost='.urlencode($wp_rankie_ezmlm_gl).'&start='.$startIndex;
+		$url ="https://www.googleapis.com/customsearch/v1?key=" . urlencode(  wp_automatic_trim($validWorkingKey) ) . "&cx=" . urlencode(  wp_automatic_trim($wp_rankie_googlecustom_id) ) . "&q=".$keywordenc.'&googlehost='.urlencode($wp_rankie_ezmlm_gl).'&start='.$startIndex;
 		
 		//date limit 
 		if(in_array('OPT_ARTICLES_DATE' , $camp_opt )){
@@ -143,12 +143,12 @@ function article_base_getlinks($keyword, $camp) {
 		 //curl get
 		 $x='error';
 		 curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-		 curl_setopt($this->ch, CURLOPT_URL, trim($url));
+		 curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($url));
 		 $exec=curl_exec($this->ch);
 		 $x=curl_error($this->ch);
 	 	 
 		 //validate a reply
-		 if(trim($exec) == ''){
+		 if(wp_automatic_trim($exec) == ''){
 		 	echo '<br>Empty reply from Google search API with possible cURL error '.$x;
 		 	return false;
 		 }
@@ -304,13 +304,13 @@ function articlebase_get_post($camp) {
 
 	foreach ( $keywords as $keyword ) {
 			
-		$keyword = trim($keyword);
+		$keyword = wp_automatic_trim($keyword);
 			
-		if (trim ( $keyword ) != '') {
+		if (wp_automatic_trim( $keyword ) != '') {
 				
 				
 			//update last keyword
-			update_post_meta($camp->camp_id, 'last_keyword', trim($keyword));
+			update_post_meta($camp->camp_id, 'last_keyword', wp_automatic_trim($keyword));
 
 			// check if keyword exhausted to skip
 			$query = "select * from {$this->wp_prefix}automatic_articles_keys where keyword = '$keyword' and camp_id='$camp->camp_id'";
@@ -368,7 +368,7 @@ function articlebase_get_post($camp) {
 					
 					
 					curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-					curl_setopt ( $this->ch, CURLOPT_URL, trim (  ( $binglink ) ) );
+					curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim(  ( $binglink ) ) );
 					curl_setopt ( $this->ch, CURLOPT_REFERER, 'http://ezinearticles.com' );
 					$exec = curl_exec ( $this->ch );
 					$x = curl_error($this->ch);
@@ -384,7 +384,7 @@ function articlebase_get_post($camp) {
 						
 						echo '<br>Cache link:'.$cacheLink;
 						
-						curl_setopt ( $this->ch, CURLOPT_URL, trim (  ( $cacheLink ) ) );
+						curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim(  ( $cacheLink ) ) );
 						curl_setopt ( $this->ch, CURLOPT_REFERER, 'http:/bing.com' );
 						$exec = curl_exec ( $this->ch );
 						$x = curl_error($this->ch);
@@ -424,9 +424,9 @@ function articlebase_get_post($camp) {
 							$cacheLoadSuccess = true;
 							
 							// pre Gtranslate adaption
-							$exec = str_replace( 'article-content>','article-content">',$exec);
-							$exec = str_replace('<div id=article-resource', '<div id="article-resource', $exec);
-							$exec = str_replace('rel=author', 'rel="author', $exec);
+							$exec = wp_automatic_str_replace( 'article-content>','article-content">',$exec);
+							$exec = wp_automatic_str_replace('<div id=article-resource', '<div id="article-resource', $exec);
+							$exec = wp_automatic_str_replace('rel=author', 'rel="author', $exec);
 							
 						} 
 						 	
@@ -434,7 +434,7 @@ function articlebase_get_post($camp) {
 							
 							// Direct call
 							  echo '<br>Google cache didnot return valid result direct call to ezine '.$x;
-							curl_setopt ( $this->ch, CURLOPT_URL, trim (  ( urldecode( $url ) ) ) );
+							curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim(  ( urldecode( $url ) ) ) );
 							curl_setopt ( $this->ch, CURLOPT_REFERER, 'http://ezinearticles.com' );
 							$exec = curl_exec ( $this->ch );
 							 
@@ -468,7 +468,7 @@ function articlebase_get_post($camp) {
 					$cont =   $newarr [0];
 					
 					//remove last closing </div>
-					$cont = preg_replace('{</div>$}s', '', trim($cont));
+					$cont = preg_replace('{</div>$}s', '', wp_automatic_trim($cont));
 
 					//striping js
 					$cont = preg_replace('{<script.*?script>}s', '', $cont);
@@ -489,7 +489,7 @@ function articlebase_get_post($camp) {
 					$author_link =  $matches [1] [0];
 					
 					// remove "
-					$author_link = str_replace('"', '', $author_link);
+					$author_link = wp_automatic_str_replace('"', '', $author_link);
 					
 					// fix from translation url
 					if (stristr($author_link, 'translate')){
@@ -506,7 +506,7 @@ function articlebase_get_post($camp) {
 						$author_link = 'http://ezinearticles.com' . $author_link;
 					}
 					
-					$author_name = trim ( $matches [2] [0] );
+					$author_name = wp_automatic_trim( $matches [2] [0] );
 						
 					$ret ['cont'] = $cont;
 					$ret ['title'] = $title;
@@ -516,7 +516,7 @@ function articlebase_get_post($camp) {
 					$ret ['author_link'] = $author_link;
 					$ret ['matched_content'] = $cont;
 					$this->used_keyword=$link->keyword;
-					if( trim($ret['cont']) == '' )   echo ' exec:'.$exec;
+					if( wp_automatic_trim($ret['cont']) == '' )   echo ' exec:'.$exec;
 						
 						
 					return $ret;

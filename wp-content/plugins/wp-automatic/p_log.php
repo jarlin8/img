@@ -1,9 +1,7 @@
 <?php 
 
 function gm_log(){
-	
- 
-	
+	 
 	//print_r($_POST);
 	global $wpdb;
 	$prefix=$wpdb->prefix;
@@ -146,6 +144,7 @@ function gm_log(){
 					class="button-secondary" id="post-query-submit" name="submit">
 			</div>
 
+			<p>Current server time: <?php echo date('Y-m-d H:i:s');  ?> </p>
 
 
 
@@ -196,7 +195,7 @@ function gm_log(){
 				
 				if(stristr($displayTitle , '></a')   ){
 				
-					$displayTitle = str_replace('><', '> (no title)<', $displayTitle);
+					$displayTitle = wp_automatic_str_replace('><', '> (no title)<', $displayTitle);
 
 				
 				}
@@ -210,26 +209,6 @@ function gm_log(){
 			</tbody>
 		</table>
 
-</div>
-<div style="padding-top: 20px">
-	</form>
-	<form method="POST" action="<?php   echo $csv ?>">
-		<div class="alignleft actions">
-			<input type="hidden" name="q" value="<?php   echo $query ?>">
-			<?php
-			global $current_user;
-			//get_currentuserinfo();
-			wp_get_current_user();
-
-			?>
-			<input type="hidden" name="auth"
-				value="<?php   echo $current_user->user_pass ?>"> <input type="hidden"
-				name="integ"
-				value="<?php   echo md5( $query.$current_user->user_pass) ?>"> <input
-				type="submit" value="Download CSV Report for shown results"
-				class="button-secondary" id="post-query-submit" name="submit">
-		</div>
-	</form>
 </div>
 
 

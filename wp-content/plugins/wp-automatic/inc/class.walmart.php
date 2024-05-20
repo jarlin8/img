@@ -11,7 +11,7 @@ class wpAutomaticWallMart{
 		$this->ch = $ch;
 		$this->apiKey = $apiKey;
 		
-		if(trim($lsPublisherId) == '') $lsPublisherId = 1804192 ;
+		if(wp_automatic_trim($lsPublisherId) == '') $lsPublisherId = 1804192 ;
 		
 		$this->lsPublisherId = $lsPublisherId;
 		
@@ -22,7 +22,7 @@ class wpAutomaticWallMart{
 		//http://api.walmartlabs.com/v1/search?apiKey={apiKey}&lsPublisherId={Your LinkShare Publisher Id}&query=ipod
 
 		// Encoded keyword
-		$keywordEnc= urlencode( trim($keyword) );
+		$keywordEnc= urlencode( wp_automatic_trim($keyword) );
 		
 		// Search URL 
 		$wallMartUrl = "http://api.walmartlabs.com/v1/search?apiKey={$this->apiKey}&publisherId={$this->lsPublisherId}&query=$keywordEnc&responseGroup=full";
@@ -30,21 +30,21 @@ class wpAutomaticWallMart{
 		// Additional Parms
 		foreach ($parms as $key=>$value){
 			
-			$wallMartUrl.= '&'.trim($key) .'='.trim (urlencode($value));
+			$wallMartUrl.= '&'.wp_automatic_trim($key) .'='.wp_automatic_trim(urlencode($value));
 			
 		}
 		
-		  echo '<br>'.str_replace($this->apiKey, '[key]', $wallMartUrl) ;
+		  echo '<br>'.wp_automatic_str_replace($this->apiKey, '[key]', $wallMartUrl) ;
 		
 		// Execute
 		$x='error';
 		curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-		curl_setopt($this->ch, CURLOPT_URL, trim($wallMartUrl));
+		curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($wallMartUrl));
 		$exec=curl_exec($this->ch);
 		$x=curl_error($this->ch);
 		
 		//validate reply
-		if(trim($exec) == ''){
+		if(wp_automatic_trim($exec) == ''){
 			throw new Exception('Empty response from Walmart with possible curl error '.$x);
 		}
 		

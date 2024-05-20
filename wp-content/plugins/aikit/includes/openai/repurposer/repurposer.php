@@ -14,6 +14,8 @@ class AIKIT_Repurposer
     /** @var AIKIT_Youtube_Subtitle_Reader|null  */
     private $youtube_subtitle_reader;
 
+    private $tokenizer = null;
+
     // singleton
     private static $instance = null;
 
@@ -51,22 +53,175 @@ class AIKIT_Repurposer
                     return is_user_logged_in() && current_user_can( 'edit_posts' );
                 }
             ));
+
+            register_rest_route( 'aikit/repurposer/v1', '/deactivate-all', array(
+                'methods' => 'POST',
+                'callback' => array($this, 'deactivate_all_jobs'),
+                'permission_callback' => function () {
+                    return is_user_logged_in() && current_user_can( 'edit_posts' );
+                }
+            ));
+
+            register_rest_route( 'aikit/repurposer/v1', '/deactivate', array(
+                'methods' => 'POST',
+                'callback' => array($this, 'deactivate_job'),
+                'permission_callback' => function () {
+                    return is_user_logged_in() && current_user_can( 'edit_posts' );
+                }
+            ));
+
+            register_rest_route( 'aikit/repurposer/v1', '/activate-all', array(
+                'methods' => 'POST',
+                'callback' => array($this, 'activate_all_jobs'),
+                'permission_callback' => function () {
+                    return is_user_logged_in() && current_user_can( 'edit_posts' );
+                }
+            ));
+
+            register_rest_route( 'aikit/repurposer/v1', '/activate', array(
+                'methods' => 'POST',
+                'callback' => array($this, 'activate_job'),
+                'permission_callback' => function () {
+                    return is_user_logged_in() && current_user_can( 'edit_posts' );
+                }
+            ));
+
+            register_rest_route( 'aikit/repurposer/v1', '/delete-all', array(
+                'methods' => 'POST',
+                'callback' => array($this, 'delete_all_jobs'),
+                'permission_callback' => function () {
+                    return is_user_logged_in() && current_user_can( 'edit_posts' );
+                }
+            ));
+
+            register_rest_route( 'aikit/repurposer/v1', '/reset-prompts', array(
+                'methods' => 'POST',
+                'callback' => array($this, 'reset_prompts'),
+                'permission_callback' => function () {
+                    return is_user_logged_in() && current_user_can( 'edit_posts' );
+                }
+            ));
         });
 
         add_action('aikit_repurposer', array($this, 'execute'));
         $this->youtube_subtitle_reader = AIKIT_Youtube_Subtitle_Reader::get_instance();
+        $this->tokenizer = AIKIT_Gpt3Tokenizer::getInstance();
+    }
+
+    public function reset_prompts($data)
+    {
+        $lang = get_option('aikit_setting_openai_language', 'en');
+        delete_option('aikit_repurposer_prompts_' . $lang);
+
+        return new WP_REST_Response(array(
+            'success' => true,
+        ));
     }
 
     public function activate_scheduler()
     {
         if (! wp_next_scheduled ( 'aikit_repurposer')) {
-            wp_schedule_event( time(), 'every_5_minutes', 'aikit_repurposer');
+            wp_schedule_event( time(), 'every_10_minutes', 'aikit_repurposer');
         }
     }
 
     public function deactivate_scheduler()
     {
         wp_clear_scheduled_hook('aikit_repurposer');
+    }
+
+    public function deactivate_job($data) {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . self::TABLE_NAME;
+
+        $job_id = $data['id'];
+
+        $wpdb->update(
+            $table_name,
+            array(
+                'is_active' => 0,
+            ),
+            array('id' => $job_id)
+        );
+
+        return new WP_REST_Response(array(
+            'success' => true,
+        ));
+    }
+
+    public function activate_job($data) {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . self::TABLE_NAME;
+
+        $job_id = $data['id'];
+
+        $wpdb->update(
+            $table_name,
+            array(
+                'is_active' => 1,
+            ),
+            array('id' => $job_id)
+        );
+
+        return new WP_REST_Response(array(
+            'success' => true,
+        ));
+    }
+
+    public function deactivate_all_jobs($data)
+    {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . self::TABLE_NAME;
+
+        $wpdb->update(
+            $table_name,
+            array(
+                'is_active' => 0,
+            ),
+            array('is_active' => 1)
+        );
+
+        return new WP_REST_Response(array(
+            'success' => true,
+        ));
+    }
+
+    public function delete_all_jobs($data){
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . self::TABLE_NAME;
+
+        $wpdb->query("DELETE FROM $table_name WHERE 1=1");
+
+        // delete post meta for all posts
+        $wpdb->query("DELETE FROM $wpdb->postmeta WHERE meta_key = '" . self::POST_META_AIKIT_REPURPOSED . "'");
+        $wpdb->query("DELETE FROM $wpdb->postmeta WHERE meta_key = '" . self::POST_META_AIKIT_REPURPOSER_JOB_ID . "'");
+
+        return new WP_REST_Response(array(
+            'success' => true,
+        ));
+    }
+
+    public function activate_all_jobs($data)
+    {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . self::TABLE_NAME;
+
+        $wpdb->update(
+            $table_name,
+            array(
+                'is_active' => 1,
+            ),
+            array('is_active' => 0)
+        );
+
+        return new WP_REST_Response(array(
+            'success' => true,
+        ));
     }
 
     public function delete_job($data)
@@ -84,6 +239,9 @@ class AIKIT_Repurposer
             )
         );
 
+        // delete post meta POST_META_AIKIT_REPURPOSED & POST_META_AIKIT_REPURPOSER_JOB_ID
+        $wpdb->query("DELETE FROM $wpdb->postmeta WHERE meta_key = '" . self::POST_META_AIKIT_REPURPOSED . "' OR meta_key = '" . self::POST_META_AIKIT_REPURPOSER_JOB_ID . "'");
+
         return new WP_REST_Response(array(
             'success' => true,
         ));
@@ -96,10 +254,24 @@ class AIKIT_Repurposer
         $table_name = $wpdb->prefix . self::TABLE_NAME;
 
         $jobs = $wpdb->get_results(
-            "SELECT * FROM $table_name WHERE is_active = 1 and finished_at IS NULL AND is_running = 0 AND error_count < 5"
+            "SELECT * FROM $table_name WHERE is_active = 1 and finished_at IS NULL AND (start_date <= NOW() OR start_date IS NULL) AND is_running = 0 AND error_count < 1000"
         );
 
         foreach ($jobs as $job) {
+
+            $count = $wpdb->get_var(
+                "SELECT COUNT(*) FROM $wpdb->postmeta WHERE meta_key = '" . self::POST_META_AIKIT_REPURPOSER_JOB_ID . "' AND meta_value = " . $job->id
+            );
+
+            // one more check to avoid some weird bug that allowed the job even though it was finished
+            if ($count >= $job->number_of_articles) {
+                continue;
+            }
+
+            $number_of_articles = $job->number_of_articles - $count;
+
+            $should_keep_running = true;
+
             $wpdb->update(
                 $table_name,
                 array(
@@ -109,55 +281,74 @@ class AIKIT_Repurposer
             );
 
             $extracted_text = '';
+            $extracted_title = '';
             try {
                 if ($job->extracted_text == null || $job->extracted_text == '') {
-                    $extracted_text = $this->get_url_content($job->job_url);
+                    $url_content = $this->get_url_content($job->job_url);
+                    $extracted_text = $url_content['content'];
+                    $extracted_title = $url_content['title'];
                 } else {
                     $extracted_text = $job->extracted_text;
+                    $extracted_title = $job->extracted_title;
                 }
 
-                $result = $this->process_job($job, $extracted_text);
+                $result = $this->process_job($job, $extracted_text, $extracted_title, $number_of_articles);
 
             } catch (\Throwable $th) {
                 $result = [
                     'success' => false,
                     'message' => $th->getMessage(),
+                    'date' => current_time('mysql', true),
                 ];
+
+                // if message contains 429 then we should stop the job
+                if (strpos($th->getMessage(), '429') !== false) {
+                    $should_keep_running = false;
+                }
             }
+
+            $logs = json_decode($job->logs, true);
+
+            $entity = array(
+                'is_running' => 0,
+                'extracted_text' => $extracted_text,
+                'extracted_title' => $extracted_title,
+                'logs' => json_encode(array_merge($logs, array($result))),
+            );
 
             $error_count = $job->error_count;
             if (!$result['success']) {
-                $error_count++;
+                $entity['error_count'] = $error_count + 1;
+            } else {
+                $entity['finished_at'] = current_time('mysql', true);
             }
 
             // store the content in the job
+            aikit_reconnect_db_if_needed();
 
             $wpdb->update(
                 $table_name,
-                array(
-                    'is_running' => 0,
-                    'extracted_text' => $extracted_text,
-                    'logs' => json_encode([$result]),
-                    'error_count' => $error_count,
-                    'finished_at' => current_time('mysql'),
-                ),
+                $entity,
                 array('id' => $job->id)
             );
 
+            if (!$should_keep_running) {
+                break;
+            }
         }
     }
 
-    private function process_job($job, $extracted_text)
+    private function process_job($job, $extracted_text, $extracted_title, $number_of_articles)
     {
         $post_type = $job->output_post_type;
         $post_category = $job->output_post_category;
         $post_status = $job->output_post_status;
         $post_author = $job->output_post_author;
         $keywords = $job->keywords ?? '';
-        $number_of_articles = $job->number_of_articles;
         $include_featured_image = $job->include_featured_image == 1;
         $prompts = json_decode($job->prompts, true);
         $temperature = 0.7;
+        $model = $job->model ?? get_option('aikit_setting_openai_model');
 
         if (empty(trim($extracted_text))) {
             return [
@@ -184,31 +375,42 @@ class AIKIT_Repurposer
                     continue;
                 }
 
-                $estimated_chunk_tokens = $this->estimate_number_of_tokens($chunk);
+                $estimated_chunk_tokens = $this->count_number_of_tokens($chunk);
                 $generated_chunk = aikit_openai_text_generation_request(
                     $this->build_prompt($prompts['text-generation' . $prompt_name_suffix], array(
                             'text' => $chunk,
                             'keywords' => $keywords,
                         )
-                    ), $estimated_chunk_tokens * 1.5, $temperature);
+                    ), intval($estimated_chunk_tokens * 1.5), $temperature, $model);
 
                 $result_content = $this->add_text($result_content, $generated_chunk);
 
-                $summaries_of_all_chunks_array[] = aikit_openai_text_generation_request(
-                    $this->build_prompt($prompts['summary'], array(
-                            'text' => $generated_chunk,
-                        )
-                    ), 250, $temperature);
+                if (empty($extracted_title)) {
+                    $summaries_of_all_chunks_array[] = aikit_openai_text_generation_request(
+                        $this->build_prompt($prompts['summary'], array(
+                                'text' => $generated_chunk,
+                            )
+                        ), 250, $temperature, $model);
+                }
             }
 
             $summaries_of_all_chunks = implode("\n", $summaries_of_all_chunks_array);
 
-            $title = aikit_openai_text_generation_request(
-                $this->build_prompt($prompts['title' . $prompt_name_suffix], array(
-                        'summaries' => $summaries_of_all_chunks,
-                        'keywords' => $keywords,
-                    )
-                ), 250, $temperature);
+            if (empty($extracted_title)) {
+                $title = aikit_openai_text_generation_request(
+                    $this->build_prompt($prompts['title' . $prompt_name_suffix], array(
+                            'summaries' => $summaries_of_all_chunks,
+                            'keywords' => $keywords,
+                        )
+                    ), 60, $temperature, $model);
+            } else {
+                $title = aikit_openai_text_generation_request(
+                    $this->build_prompt($prompts['title' . $prompt_name_suffix], array(
+                            'summaries' => $extracted_text,
+                            'keywords' => $keywords,
+                        )
+                    ), 60, $temperature, $model);
+            }
 
             $title = $this->clean_title($title);
 
@@ -221,16 +423,18 @@ class AIKIT_Repurposer
                 'post_category' => array($post_category)
             );
 
+            aikit_reconnect_db_if_needed();
+
             $post_id = wp_insert_post($post);
 
             if ($include_featured_image) {
                 $featured_image = aikit_openai_text_generation_request(
                     $this->build_prompt($prompts['image'], array(
-                            'summaries' => $summaries_of_all_chunks,
+                            'text' => $title,
                         )
-                    ), 250, $temperature);
+                    ), 250, $temperature, $model);
 
-                $images = aikit_openai_image_generation_request($featured_image);
+                $images = aikit_image_generation_request($featured_image);
                 if (count($images) > 0) {
                     set_post_thumbnail($post_id, $images[0]['id']);
                 }
@@ -281,8 +485,8 @@ class AIKIT_Repurposer
         return $content;
     }
 
-    private function estimate_number_of_tokens ($text) {
-        return intval(aikit_calculate_word_count_utf8($text) * 2);
+    private function count_number_of_tokens ($text) {
+        return $this->tokenizer->count($text);
     }
 
     private function build_prompt($prompt, $keyValueArray)
@@ -296,10 +500,15 @@ class AIKIT_Repurposer
 
     private function get_url_content($url)
     {
-        $doc = hQuery::fromUrl($url, [
-            'Accept' => 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8',
-            'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.64',
-        ]);
+        try {
+            $doc = hQuery::fromUrl($url, [
+                'Accept' => 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8',
+                'Accept-Encoding' => 'gzip, deflate, br',
+                'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.64',
+            ]);
+        } catch (Throwable $e) {
+            $doc = hQuery::fromHTML(file_get_contents($url));
+        }
 
         if (!$doc) {
             throw new Exception('Could not load URL, probably does not exist.');
@@ -311,15 +520,34 @@ class AIKIT_Repurposer
         foreach ($elements as $element) {
             // if paragraph, add 2 new lines
             if ($element->nodeName == 'p') {
-                $text .= str_replace("\n", ' ', $element->text());
+                $text .= trim(str_replace("\n", ' ', $element->text()));
                 $text .= "\n\n";
             } else {
-                $text .= $element->text();
+                $text .= trim($element->text());
                 $text .= "\n";
             }
         }
 
-        return $text;
+        // get the title. Try first with h1
+        $title = $doc->find('h1');
+        $title_text = '';
+        if (count($title) > 0 && !empty($title[0]->text())) {
+            $title_text = $title[0]->text();
+        } else {
+            // if no h1, try with title tag
+            $title = $doc->find('title');
+            if (count($title) > 0 && !empty($title[0]->text())) {
+                $title_text = $title[0]->text();
+            }
+        }
+
+        // double spaces to single spaces (not including new lines)
+        $text = preg_replace('/[ ]{2,}|[\t]/', ' ', $text);
+
+        return [
+            'content' => $text,
+            'title' => $title_text,
+        ];
     }
 
     public function extract_text($data)
@@ -334,11 +562,15 @@ class AIKIT_Repurposer
 
         try {
             $job_type = $data['job_type'];
+            $title = '';
 
             if ($job_type == self::JOB_TYPE_URL) {
-                $content = $this->get_url_content($url);
+                $url_content = $this->get_url_content($url);
+                $content = $url_content['content'];
+                $title = $url_content['title'];
             } else {
                 $content = $this->youtube_subtitle_reader->get_subtitles($url);
+                $title = $this->youtube_subtitle_reader->get_video_title($url);
             }
         } catch (\Throwable $e) {
             return new WP_REST_Response([
@@ -349,6 +581,7 @@ class AIKIT_Repurposer
 
         return new WP_REST_Response([
             'content' => $content,
+            'title' => $title,
         ], 200);
     }
 
@@ -368,7 +601,7 @@ class AIKIT_Repurposer
         ], 200);
     }
 
-    public function add_job($data)
+    public function add_job($data, $rss_job_id = null)
     {
         global $wpdb;
 
@@ -386,13 +619,26 @@ class AIKIT_Repurposer
             'output_post_author' => get_current_user_id(),
             'output_post_category' => $data['post_category'],
             'prompts' => json_encode($data['prompts']),
-            'date_created' => current_time( 'mysql' ),
-            'date_modified' => current_time( 'mysql' ),
+            'date_created' => current_time( 'mysql', true ),
+            'date_modified' => current_time( 'mysql', true ),
+            'model' => $data['model'] ?? null,
             'logs' => '[]',
         );
 
+        if ($rss_job_id != null) {
+            $entity['rss_job_id'] = $rss_job_id;
+        }
+
+        if (isset($data['start_date'])) {
+            $entity['start_date'] = $data['start_date'];
+        }
+
         if (isset($data['extracted_text']) && !empty(trim($data['extracted_text']))) {
             $entity['extracted_text'] = $data['extracted_text'];
+        }
+
+        if (isset($data['extracted_title']) && !empty(trim($data['extracted_title']))) {
+            $entity['extracted_title'] = $data['extracted_title'];
         }
 
         $result = $wpdb->insert(
@@ -400,7 +646,27 @@ class AIKIT_Repurposer
             $entity
         );
 
+        if ($data['save_prompts']) {
+            $selected_language = aikit_get_language_used();
+            update_option('aikit_repurposer_prompts_' . $selected_language, json_encode($data['prompts']));
+        }
+
         return $result === false ? false : $wpdb->insert_id;
+    }
+
+    public function delete_rss_repurpose_jobs($rss_job_id)
+    {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . self::TABLE_NAME;
+
+        $wpdb->delete(
+            $table_name,
+            array(
+                'rss_job_id' => $rss_job_id,
+                'finished_at' => null,
+            )
+        );
     }
 
     public function render()
@@ -414,9 +680,10 @@ class AIKIT_Repurposer
             <p>
                 <?php echo esc_html__( 'AIKit repurposing jobs allow you to automatically create new posts out of existing content.', 'aikit' ); ?>
                 <?php echo esc_html__( 'Please review and edit before publishing for best results. This is not a substitute for human editing, but a drafting aid. Happy writing!', 'aikit' ); ?>
+                <a href="#" class="aikit-top-hidden-toggle  btn btn-outline-secondary btn-sm"><i class="bi bi-info-lg"></i> <?php echo esc_html__( 'How to setup?', 'aikit' ); ?></a>
             </p>
 
-            <p>
+            <p class="aikit-top-hidden-note">
                 <strong><?php echo esc_html__( 'Note:', 'aikit' ); ?></strong>
                 <?php echo esc_html__('AIKit repurposing jobs run in the background as scheduled jobs.', 'aikit'); ?>
                 <?php echo esc_html__( 'By default, WordPress scheduled jobs only run when someone visits your site. To ensure that your repurposing jobs run even if nobody visits your site, you can set up a cron job on your server to call the WordPress cron system at regular intervals. Please ask your host provider to do that for you. Here is the cron job definition:', 'aikit' ); ?>
@@ -474,6 +741,14 @@ class AIKIT_Repurposer
             'Repurpose job' => esc_html__( 'Repurpose job', 'aikit' ),
             'created Successfully.' => esc_html__( 'created Successfully.', 'aikit' ),
         ];
+
+        $models = aikit_rest_openai_get_available_models('text', true);
+
+        $selected_model = $job !== null ? $job->model : null;
+        if ($selected_model === null) {
+            $preferred_model = get_option('aikit_setting_openai_model');
+            $selected_model = !empty($preferred_model) ? $preferred_model : 'gpt-3.5-turbo';
+        }
 
         ?>
         <form id="aikit-repurposer-form" action="<?php echo get_site_url(); ?>/?rest_route=/aikit/repurposer/v1/repurpose" method="post">
@@ -544,6 +819,12 @@ class AIKIT_Repurposer
                             <?php echo esc_html__( 'Try to combine the text related to the same topic into one paragraph for better results.', 'aikit' ); ?>
                         </small>
                         <div class="form-floating">
+                            <input type="text" class="form-control" id="aikit-repurposer-extracted-title" placeholder="<?php echo esc_html__( 'Extracted title', 'aikit' ); ?>" />
+                            <label for="aikit-repurposer-extracted-title"><?php echo esc_html__( 'Extracted title', 'aikit' ); ?></label>
+                        </div>
+                    </div>
+                    <div class="col mt-2">
+                        <div class="form-floating">
                             <textarea class="form-control" id="aikit-repurposer-extracted-text" placeholder="<?php echo esc_html__( 'Extracted text', 'aikit' ); ?>" data-validation-message="<?php echo esc_html__( 'Extracted text', 'aikit' ); ?>"></textarea>
                             <label for="aikit-repurposer-extracted-text"><?php echo esc_html__( 'Extracted text', 'aikit' ); ?></label>
                         </div>
@@ -553,10 +834,20 @@ class AIKIT_Repurposer
             <?php } ?>
 
             <div class="row mb-2">
-                <div class="col-9">
+                <div class="col-6">
                     <div class="form-floating">
                         <input type="text" class="form-control" id="aikit-repurposer-seo-keywords" placeholder="<?php echo esc_html__( 'SEO keywords to focus on (comma-separated)', 'aikit' ); ?>" value="<?php echo $is_view ? $job->keywords : ''; ?>" <?php echo $is_view ? 'disabled' : ''; ?>/>
                         <label for="aikit-repurposer-seo-keywords"><?php echo esc_html__( 'SEO keywords to focus on (comma-separated)', 'aikit' ); ?></label>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="form-floating">
+                        <select class="form-select" id="aikit-repurposer-model" name="aikit-repurposer-model" <?php echo $is_view ? 'disabled' : ''; ?>>
+                            <?php foreach ($models as $model) { ?>
+                                <option value="<?php echo esc_attr( $model ); ?>" <?php echo $selected_model == $model ? 'selected' : ''; ?>><?php echo esc_html( $model ); ?></option>
+                            <?php } ?>
+                        </select>
+                        <label for="aikit-repurposer-model"><?php echo esc_html__( 'Model', 'aikit' ); ?></label>
                     </div>
                 </div>
                 <div class="col pt-3">
@@ -612,6 +903,7 @@ class AIKIT_Repurposer
             </div>
             <?php } ?>
 
+            <p class="ps-2"><?php echo esc_html__( 'If you like to edit the prompts used by the AI, click on the accordion below.', 'aikit' ); ?></p>
             <div class="accordion accordion-flush" id="aikit-auto-writer-prompts">
                 <div class="accordion-item">
                     <h2 class="accordion-header">
@@ -622,7 +914,8 @@ class AIKIT_Repurposer
                     <div id="aikit-auto-writer-prompts-pane" class="accordion-collapse collapse">
                         <div class="accordion-body">
                             <?php
-                            $prompts = $is_view ? json_decode($job->prompts) : $this->get_prompts();
+                            $saved_prompts = $this->get_saved_prompts();
+                            $prompts = $is_view ? json_decode($job->prompts) : (!empty($saved_prompts) ? $saved_prompts : $this->get_prompts());
 
                             foreach ($prompts as $id => $prompt) {
                                 // get all the placeholders in the prompt (e.g. [[noun]]) and list them
@@ -641,6 +934,17 @@ class AIKIT_Repurposer
                                 echo '</div>';
                             }
                             ?>
+                            <div class="row mt-3 mb-3">
+                                <div class="col">
+                                    <input type="checkbox" class="form-check-input" id="aikit-repurposer-save-prompts" name="aikit-repurposer-save-prompts">
+                                    <label class="form-check-label" for="aikit-repurposer-save-prompts"><?php echo esc_html__( 'Save prompts for future use (for currently-selected language).', 'aikit' ); ?></label>
+                                </div>
+                            </div>
+                            <div class="row mt-3 mb-3">
+                                <div class="col">
+                                    <a id="aikit-repurposer-reset-prompts" data-confirm-message="<?php echo __('Are you sure you want to reset saved prompts?', 'aikit') ?>" class="btn btn-outline-dark" type="button" href="<?php echo get_site_url(); ?>/?rest_route=/aikit/repurposer/v1/reset-prompts"><i class="bi bi-arrow-repeat me-2"></i><?php echo esc_html__( 'Reset prompts to default', 'aikit' ); ?></a>
+                                </div>
+                            </div>
                             <p class="aikit-repurposer-placeholder-descriptions">
                                 <?php echo esc_html__( 'You can use the following placeholders in your prompts:', 'aikit' ); ?>
                             </p>
@@ -665,25 +969,46 @@ class AIKIT_Repurposer
 
     private function render_listing_tab()
     {
+        // get all jobs from DB
+        global $wpdb;
+        $table_name = $wpdb->prefix . self::TABLE_NAME;
+
+        $total_jobs = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
+
+        $deactivate_all_url = get_site_url() . '/?rest_route=/aikit/repurposer/v1/deactivate-all';
+        $activate_all_url = get_site_url() . '/?rest_route=/aikit/repurposer/v1/activate-all';
+        $delete_all_url = get_site_url() . '/?rest_route=/aikit/repurposer/v1/delete-all';
+
+        ?>
+        <div id="aikit-repurposer-jobs">
+            <?php if ($total_jobs > 0) { ?>
+            <div class="row mb-2 float-end">
+                <div class="col">
+                    <button data-confirm-message="<?php echo esc_html__('Are you sure you want to activate all jobs?', 'aikit') ?>" id="aikit-repurposer-activate-all" class="btn btn-sm btn-outline-primary ms-2" type="button" href="<?php echo $activate_all_url ?>"><i class="bi bi-play-fill" ></i> <?php echo esc_html__( 'Activate all', 'aikit' ); ?></button>
+                    <button data-confirm-message="<?php echo esc_html__('Are you sure you want to deactivate all jobs?', 'aikit') ?>" id="aikit-repurposer-deactivate-all" class="btn btn-sm btn-outline-primary ms-2" type="button" href="<?php echo $deactivate_all_url ?>"><i class="bi bi-pause-fill" ></i> <?php echo esc_html__( 'Deactivate all', 'aikit' ); ?></button>
+                    <button data-confirm-message="<?php echo esc_html__('Are you sure you want to delete all jobs?', 'aikit') ?>" id="aikit-repurposer-delete-all" class="btn btn-sm btn-outline-danger ms-2" type="button" href="<?php echo $delete_all_url ?>"><i class="bi bi-trash3-fill"></i> <?php echo esc_html__( 'Delete all', 'aikit' ); ?></button>
+                </div>
+            </div>
+            <?php } ?>
+        <?php
         $paged = isset($_GET['paged']) ? intval($_GET['paged']) : 1;
         $per_page = 25;
-        $html = '<table class="table" id="aikit-repurposer-jobs">
+        $html = '<table class="table" >
             <thead>
             <tr>
                 <th scope="col">' . esc_html__('URL', 'aikit') . '</th>
                 <th scope="col">' . esc_html__('Job Type', 'aikit') . '</th>
                 <th scope="col">' . esc_html__('Keywords', 'aikit') . '</th>
+                <th scope="col">' . esc_html__('RSS Parent Job', 'aikit') . '</th>
+                <th scope="col">' . esc_html__('Status', 'aikit') . '</th>
                 <th scope="col">' . esc_html__('Done', 'aikit') . '</th>
+                <th scope="col">' . esc_html__('Is running', 'aikit') . '</th>
                 <th scope="col">' . esc_html__('Had errors', 'aikit') . '</th>
                 <th scope="col">' . esc_html__('Date created', 'aikit') . '</th>               
                 <th scope="col">' . esc_html__('Actions', 'aikit') . '</th>
             </tr>
             </thead>
             <tbody>';
-
-        // get all jobs from DB
-        global $wpdb;
-        $table_name = $wpdb->prefix . self::TABLE_NAME;
 
         // prepared statement to prevent SQL injection with pagination
         $jobs = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_name ORDER BY id DESC LIMIT %d, %d", ($paged - 1) * $per_page, $per_page));
@@ -697,26 +1022,28 @@ class AIKIT_Repurposer
         $page_url = get_admin_url() . 'admin.php?page=aikit_repurpose&action=jobs';
         $delete_url = get_site_url() . '/?rest_route=/aikit/repurposer/v1/delete';
 
-        $date_format = get_option('time_format') . ' ' . get_option('date_format');
-
         foreach ($jobs as $job) {
             $current_page_url = $page_url . '&job_id=' . $job->id;
+            $start_date = $job->start_date !== null ? aikit_date($job->start_date) : '';
             $html .= '<tr>
                 <td>' . '<a href="' . $current_page_url . '">' . esc_html($job->job_url) . '</a></td>
                 <td>' . strtoupper($job->job_type) . '</td>
                 <td>' . (empty($job->keywords) ? '-' : $job->keywords) . '</td>
-                <td>' . ($job->finished_at !== null ? ('<span class="badge badge-pill badge-dark aikit-badge-active">' . __('Yes', 'aikit')) : ('<span class="badge badge-pill badge-dark aikit-badge-inactive">' . __('No', 'aikit'))) . '</span></td>
-                <td>' . ($job->error_count > 0 ? ('<span class="badge text-bg-danger aikit-badge-danger">' . __('Yes', 'aikit')) : ('<span class="badge badge-pill badge-dark aikit-badge-success">' . __('No', 'aikit'))) . '</span></td>
-                <td>' . (empty($job->date_created) ? '-' : date($date_format, strtotime($job->date_created))) . '</td>               
+                <td>' . (empty($job->rss_job_id) ? '-' : '<span class="badge badge-pill bg-light "><a href="' . get_admin_url() . 'admin.php?page=aikit_rss&action=jobs&job_id=' . $job->rss_job_id . '">#' . $job->rss_job_id . '</a></span>') . '</td>
+                <td>' . ($job->is_active ? ('<span class="badge badge-pill badge-dark aikit-badge-active">' . __('Active', 'aikit') . '</span>') : ('<span class="badge badge-pill badge-dark aikit-badge-inactive">' . __('Inactive', 'aikit') . '</span>')) . '</td>
+                <td>' . ($job->finished_at !== null ? ('<span class="badge badge-pill badge-dark aikit-badge-active">' . __('Yes', 'aikit') . '</span>') : ('<span class="badge badge-pill badge-dark aikit-badge-inactive">' . __('No', 'aikit') . '</span><br/><small>' . $start_date . '</small>')) . '</td>
+                <td>' . ($job->is_running ? ('<span class="badge badge-pill badge-dark aikit-badge-active">' . __('Yes', 'aikit') . '</span>') : ('<span class="badge badge-pill badge-dark aikit-badge-inactive">' . __('No', 'aikit') . '</span>')) . '</td>
+                <td>' . ($job->error_count > 0 && $job->finished_at === null ? ('<span class="badge text-bg-danger aikit-badge-danger">' . __('Yes', 'aikit')) : ('' . __('-', 'aikit'))) . '</td>
+                <td>' . (empty($job->date_created) ? '-' : aikit_date($job->date_created)) . '</td>               
                 <td>
                     <a href="' . $page_url . '&job_id=' . $job->id . '" title="' . __('View', 'aikit') . '" class="aikit-repurposer-action" data-id="' . $job->id . '"><i class="bi bi-eye-fill"></i></a>
                     <a href="' . $delete_url . '" title="' . __('Delete', 'aikit') . '" class="aikit-repurposer-jobs-delete aikit-repurposer-action" data-confirm-message="' . __('Are you sure you want to delete this repurposing job?', 'aikit') . '" data-id="' . $job->id . '"><i class="bi bi-trash-fill"></i></a>
+                    <a href="' . get_site_url() . '/?rest_route=/aikit/repurposer/v1/' . ($job->is_active ? 'deactivate' : 'activate') . '&id=' . $job->id . '" title="' . ($job->is_active ? __('Pause', 'aikit') : __('Resume', 'aikit')) . '" class="aikit-repurposer-job-' . ($job->is_active ? 'deactivate' : 'activate') . ' aikit-repurposer-action" data-id="' . $job->id . '"><i class="bi bi-' . ($job->is_active ? 'pause-fill' : 'play-fill') . '"></i></a>
                 </td>
             </tr>';
         }
 
         // pagination
-        $total_jobs = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
         $total_pages = ceil($total_jobs / $per_page);
         $html .= '<tr>
             <td colspan="7">';
@@ -749,7 +1076,8 @@ class AIKIT_Repurposer
             </tr>';
         $html .= '</tbody>
         
-        </table>';
+        </table>
+        </div>';
 
         echo $html;
     }
@@ -773,6 +1101,8 @@ class AIKIT_Repurposer
         $logs = json_decode($job->logs, true);
         $generated_posts = $this->get_generated_posts_by_job_id($id);
 
+        $logsCount = count($logs) == 0 ? '' : ' (' . count($logs) . ')';
+
         ?>
         <div class="aikit-repurposer-view">
             <?php
@@ -786,7 +1116,7 @@ class AIKIT_Repurposer
                     <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#aikit-repurposer-tabs-extracted-texts" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true"><?php echo esc_html__( 'Extracted text', 'aikit' ); ?></button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#aikit-repurposer-tabs-logs" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false"><?php echo esc_html__( 'Logs', 'aikit' ); ?></button>
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#aikit-repurposer-tabs-logs" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false"><?php echo esc_html__( 'Logs', 'aikit' ) . $logsCount ?></button>
                 </li>
             </ul>
             <div class="tab-content mt-2" id="aikit-repurposer-tab-panes">
@@ -810,7 +1140,7 @@ class AIKIT_Repurposer
                         $html .= '<tr>
                                         <td>'.esc_html($post->post_type).'</td>
                                         <td><a href="'.esc_url(get_permalink($post->ID)).'">'.esc_html($post->post_title).'</a></td>
-                                        <td>'.esc_html($post->post_date).'</td>
+                                        <td>'.esc_html( aikit_date($post->post_date) ).'</td>
                                     </tr>';
                     }
 
@@ -824,12 +1154,20 @@ class AIKIT_Repurposer
                     <?php
 
                     $extracted_text = $job->extracted_text;
+                    $extracted_title = $job->extracted_title;
                     ?>
 
+                    <label for="aikit-repurposer-extracted-title" class="form-label"><?php echo esc_html__( 'Title', 'aikit' ); ?></label>
+                    <input type="text" class="form-control mb-3" value="<?php echo esc_html($extracted_title); ?>" disabled>
+
+                    <label for="aikit-repurposer-extracted-text" class="form-label"><?php echo esc_html__( 'Text', 'aikit' ); ?></label>
                     <textarea class="form-control" rows="10" disabled><?php echo esc_html($extracted_text); ?></textarea>
 
                 </div>
                 <div class="tab-pane fade" id="aikit-repurposer-tabs-logs" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                    <div class="alert alert-success my-4" role="alert">
+                        <?php echo esc_html__( 'API errors can happen due to many reasons (such as API being down or rate limits have been exceeded, etc). In case of errors, do not worry, AIKit will keep retrying the job till it succeeds.', 'aikit' ); ?>
+                    </div>
                     <?php
 
                     if (count($logs) === 0) {
@@ -897,12 +1235,12 @@ class AIKIT_Repurposer
             $version = rand( 1, 10000000 );
         }
 
-        wp_enqueue_style( 'aikit_bootstrap_css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css', array(), $version );
-        wp_enqueue_style( 'aikit_bootstrap_icons_css', 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css', array(), $version );
+        wp_enqueue_style( 'aikit_bootstrap_css', plugins_url( '../../css/bootstrap.min.css', __FILE__ ), array(), $version );
+        wp_enqueue_style( 'aikit_bootstrap_icons_css', plugins_url( '../../css/bootstrap-icons.css', __FILE__ ), array(), $version );
         wp_enqueue_style( 'aikit_repurposer_css', plugins_url( '../../css/repurposer.css', __FILE__ ), array(), $version );
 
-        wp_enqueue_script( 'aikit_bootstrap_js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js', array(), $version );
-        wp_enqueue_script( 'aikit_jquery_ui_js', 'https://code.jquery.com/ui/1.13.2/jquery-ui.min.js', array('jquery'), $version );
+        wp_enqueue_script( 'aikit_bootstrap_js', plugins_url('../../js/bootstrap.bundle.min.js', __FILE__ ), array(), $version );
+        wp_enqueue_script( 'aikit_jquery_ui_js', plugins_url('../../js/jquery-ui.min.js', __FILE__ ), array('jquery'), $version );
         wp_enqueue_script( 'aikit_repurposer_js', plugins_url( '../../js/repurposer.js', __FILE__ ), array( 'jquery' ), array(), $version );
     }
 
@@ -910,12 +1248,15 @@ class AIKIT_Repurposer
     {
         global $wpdb;
 
+        $charset_collate = $wpdb->get_charset_collate();
+
         $table_name = $wpdb->prefix . self::TABLE_NAME;
         $sql = "CREATE TABLE $table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             job_type varchar(255) NOT NULL,
             job_url mediumtext NOT NULL,
             extracted_text TEXT NULL,
+            extracted_title mediumtext DEFAULT NULL,
             output_post_type varchar(255) NOT NULL,
             output_post_status varchar(255) NOT NULL,
             output_post_author mediumint(9) NOT NULL,
@@ -928,11 +1269,14 @@ class AIKIT_Repurposer
             finished_at datetime DEFAULT NULL,
             date_created datetime DEFAULT NULL,
             date_modified datetime DEFAULT NULL,
+            start_date datetime DEFAULT NULL,
             logs TEXT NOT NULL,
             is_running BOOLEAN DEFAULT FALSE,
             error_count mediumint(9) DEFAULT 0,
+            rss_job_id mediumint(9) DEFAULT NULL,
+            model varchar(255) DEFAULT NULL,
             PRIMARY KEY  (id)
-        );";
+        ) $charset_collate;";
 
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
         dbDelta( $sql );
@@ -945,6 +1289,19 @@ class AIKIT_Repurposer
         return AIKIT_REPURPOSER_PROMPTS[$lang]['prompts'];
     }
 
+    private function get_saved_prompts()
+    {
+        $lang = get_option('aikit_setting_openai_language', 'en');
+
+        $prompts = get_option('aikit_repurposer_prompts_' . $lang);
+
+        if (empty($prompts)) {
+            return [];
+        }
+
+        return json_decode($prompts, true);
+    }
+
     private function get_paragraphs($string, $statements_per_paragraph = 5)
     {
         $paragraphs = explode("\n\n", $string);
@@ -953,7 +1310,7 @@ class AIKIT_Repurposer
         foreach ($paragraphs as $paragraph) {
             $word_count = aikit_calculate_word_count_utf8($paragraph);
             if ($word_count > 500) {
-                $split_string = $this->cut_long_string_into_smaller_chunks($paragraph, $statements_per_paragraph);
+                $split_string = aikit_cut_long_string_into_smaller_chunks($paragraph, $statements_per_paragraph);
                 $split_string = str_replace('.', '. ', $split_string);
                 $result = array_merge($result, $split_string);
             } else {
@@ -962,42 +1319,5 @@ class AIKIT_Repurposer
         }
 
         return $result;
-    }
-
-    private function cut_long_string_into_smaller_chunks($string, $statements_per_paragraph = 5) {
-        // Split the string into an array of lines
-        $lines = preg_split('/(\n|\.)\s*/', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
-
-        $chunks = array();
-        $chunk = '';
-        $statement_count = 0;
-
-        // Loop through each line and add it to the current chunk
-        foreach ($lines as $line) {
-            // If the line is empty, skip it
-            if (trim($line) === '') {
-                continue;
-            }
-
-            // Add the line to the current chunk
-            $chunk .= '' . $line;
-
-            // Count the number of statements in the line
-            $statement_count += substr_count($line, '.') + substr_count($line, "\n");
-
-            // If the chunk now has at least 5 statements, add it to the list of chunks
-            if ($statement_count >= $statements_per_paragraph) {
-                $chunks[] = $chunk;
-                $chunk = '';
-                $statement_count = 0;
-            }
-        }
-
-        // If there is a partial chunk remaining, add it to the list of chunks
-        if ($chunk !== '') {
-            $chunks[] = $chunk;
-        }
-
-        return $chunks;
     }
 }

@@ -12,6 +12,24 @@ jQuery(function($) {
         loadPostPage(paged);
     });
 
+    // if value of radio with name=aikit-auto-writer-type changes, if it's multiple-topics, show .aikit-autowriter-strategy
+    $("input[name='aikit-auto-writer-type']").change(function () {
+        if ($(this).val() === 'multiple-topics') {
+            // with animation
+            $(".aikit-autowriter-strategy").show(100);
+        } else {
+            $(".aikit-autowriter-strategy").hide(100);
+        }
+    });
+
+    // trigger change on load
+    $("input[name='aikit-auto-writer-type']:checked").trigger('change');
+
+    $(".aikit-top-hidden-toggle").click(function (event) {
+        event.preventDefault();
+        $(".aikit-top-hidden-note").toggle(100);
+    });
+
     $('#aikit-auto-writer-schedule').on('click', function () {
         toggleScheduleOptions();
         return false;
@@ -23,7 +41,11 @@ jQuery(function($) {
     });
 
     $('#aikit-auto-writer-confirm-schedule').on('click', function () {
-        submitForm($(this), true);
+        let valid = $('#aikit-auto-writer-form').get(0).reportValidity();
+
+        if (valid) {
+            submitForm($(this), true);
+        }
     });
 
     $("#aikit-auto-writer-form").submit(function (event) {
@@ -36,6 +58,8 @@ jQuery(function($) {
         submitForm($(this), true, true);
     });
 
+
+
     $(".aikit-scheduler-generators-delete").on('click', function (event) {
         event.preventDefault();
         if (confirm($(this).data('confirm-message'))) {
@@ -46,6 +70,98 @@ jQuery(function($) {
                 data: JSON.stringify({
                     id: $(this).data('id'),
                 }),
+                dataType: "json",
+                encode: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-WP-Nonce': aikit.nonce,
+                },
+            }).success(function (response) {
+                // refresh the page
+                location.reload();
+            }).fail(function (response) {
+                alert('Error: ' + response.responseText);
+            });
+        }
+    });
+
+    $("#aikit-auto-writer-deactivate-all").click(function (event) {
+        event.preventDefault();
+        if (confirm($(this).data('confirm-message'))) {
+            let deleteUrl = $(this).attr('href');
+            $.ajax({
+                type: "POST",
+                url: deleteUrl,
+                data: JSON.stringify({}),
+                dataType: "json",
+                encode: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-WP-Nonce': aikit.nonce,
+                },
+            }).success(function (response) {
+                // refresh the page
+                location.reload();
+            }).fail(function (response) {
+                alert('Error: ' + response.responseText);
+            });
+        }
+    });
+
+    $("#aikit-auto-writer-delete-all").click(function (event) {
+        event.preventDefault();
+        if (confirm($(this).data('confirm-message'))) {
+            let deleteUrl = $(this).attr('href');
+            $.ajax({
+                type: "POST",
+                url: deleteUrl,
+                data: JSON.stringify({}),
+                dataType: "json",
+                encode: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-WP-Nonce': aikit.nonce,
+                },
+            }).success(function (response) {
+                // refresh the page
+                location.reload();
+            }).fail(function (response) {
+                alert('Error: ' + response.responseText);
+            });
+        }
+    });
+
+    $("#aikit-auto-writer-activate-all").click(function (event) {
+        event.preventDefault();
+        if (confirm($(this).data('confirm-message'))) {
+            let deleteUrl = $(this).attr('href');
+            $.ajax({
+                type: "POST",
+                url: deleteUrl,
+                data: JSON.stringify({}),
+                dataType: "json",
+                encode: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-WP-Nonce': aikit.nonce,
+                },
+            }).success(function (response) {
+                // refresh the page
+                location.reload();
+            }).fail(function (response) {
+                alert('Error: ' + response.responseText);
+            });
+        }
+    });
+
+    $("#aikit-auto-writer-reset-prompts").on('click', function (e) {
+        e.preventDefault();
+        if (confirm($(this).data('confirm-message'))) {
+            let url = $(this).attr('href');
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: JSON.stringify({}),
                 dataType: "json",
                 encode: true,
                 headers: {
@@ -77,16 +193,14 @@ jQuery(function($) {
         // disable the button
         button.prop('disabled', true);
 
-        if (!isScheduled) {
-            $(".aikit-dont-close-page").show();
-        }
-
         let prompts = {};
         $(".aikit-auto-writer-prompt").each(function () {
             prompts[$(this).data('prompt-id')] = $(this).val();
         });
 
         let formData = {
+            type: $("input[name='aikit-auto-writer-type']:checked").val(),
+            strategy: $("input[name='aikit-auto-writer-strategy']:checked").val(),
             topic: $("#aikit-auto-writer-topic").val(),
             include_outline: $("#aikit-auto-writer-include-outline").is(':checked'),
             include_featured_image: $("#aikit-auto-writer-include-featured-image").is(':checked'),
@@ -101,11 +215,16 @@ jQuery(function($) {
             number_of_articles: $("#aikit-auto-writer-articles").val(),
             seo_keywords: $("#aikit-auto-writer-seo-keywords").val(),
             prompts: prompts,
+            model: $("#aikit-auto-writer-model").val(),
+            save_prompts: $("#aikit-auto-writer-save-prompts").is(':checked'),
         };
 
         if (isScheduled) {
             formData.interval = $("#aikit-auto-writer-schedule-interval").val();
             formData.max_runs = $("#aikit-auto-writer-max-runs").val();
+        } else {
+            formData.max_runs = 1;
+            formData.interval = 'once';
         }
 
         if (isEdit) {
@@ -133,30 +252,19 @@ jQuery(function($) {
             button.find('.spinner-border').remove();
             button.prop('disabled', false);
 
-            if (!isScheduled) {
-                refreshPosts($("#aikit-auto-writer-articles").val());
-                $(".aikit-dont-close-page").hide();
-            } else {
-                toggleScheduleOptions();
-
-                if (!isEdit) {
-                    showToast(
-                        translate('Scheduled'),
-                        translate('AI Auto Writer') +
-                        ' <a href="' + response.url + '">' +
-                        translate('scheduled Successfully.') +
-                        '</a>');
-                }
+            if (!isEdit) {
+                showToast(
+                    '<i class="bi bi-check-circle-fill"></i> ' + translate('Scheduled'),
+                    translate('AI Auto Writer') +
+                    ' <a href="' + response.url + '">' +
+                    translate('scheduled Successfully.') +
+                    '</a>');
             }
 
         }).fail(function (response) {
             alert('Error: ' + response.responseText);
             button.find('.spinner-border').remove();
             button.prop('disabled', false);
-
-            if (!isScheduled) {
-                $(".aikit-dont-close-page").hide();
-            }
         });
     }
 
@@ -173,7 +281,7 @@ jQuery(function($) {
     const showToast = function (title, message) {
 
         let container = $('<div class="toast-container position-fixed bottom-0 end-0 p-3">');
-        let toast = $('<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">');
+        let toast = $('<div class="toast text-bg-primary" role="alert" aria-live="assertive" aria-atomic="true">');
         let toastHeader = $('<div class="toast-header">');
         toastHeader.append('<strong class="me-auto">' + title + '</strong>');
         toastHeader.append('<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>');
@@ -186,7 +294,7 @@ jQuery(function($) {
         $('body').append(container);
 
         // show the toast
-        let toastEl = new bootstrap.Toast(toast);
+        let toastEl = new bootstrap.Toast(toast, { delay: 7000 });
         toastEl.show();
     }
 

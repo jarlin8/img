@@ -76,6 +76,10 @@ jQuery( document ).ready(function() {
                         return;
                     }
 
+                    let selectionRange = editor.selection.getRng();
+                    let textBeforeSelection = selectionRange.startContainer.textContent.slice(0, selectionRange.startOffset);
+                    let textAfterSelection = selectionRange.endContainer.textContent.slice(selectionRange.endOffset);
+
                     let dom = tinymce.activeEditor.dom;
                     let $ = tinymce.dom.DomQuery;
 
@@ -87,7 +91,10 @@ jQuery( document ).ready(function() {
 
                     let autocompletedText = '';
                     try {
-                        autocompletedText = await doAutocompleteRequest(operation, selectedText, aikit.selectedLanguage);
+                        autocompletedText = await doAutocompleteRequest(operation, selectedText, aikit.selectedLanguage, {
+                            textBeforeSelection: textBeforeSelection,
+                            textAfterSelection: textAfterSelection,
+                        });
                         autocompletedText = autocompletedText.replace(/\n/g, '<br/>');
                     } catch (error) {
                         // remove the spinner from the editor
@@ -225,45 +232,29 @@ jQuery( document ).ready(function() {
             for (let count of imageGenerationOptions.counts) {
                 console.log(aikit.pluginUrl + 'includes/icons/image-' + size + '.svg')
                 imageMenu.push({
-                    text: count + ' x ' + tinymce.util.I18n.translate(size + ' image(s)') + ' (' + resolution + ')',
+                    text: "[" +  tinymce.util.I18n.translate("DALL·E", "aikit") + "] " + count + ' x ' + tinymce.util.I18n.translate(size + ' image(s)') + ' (' + resolution + ')',
                     image: aikit.pluginUrl + 'includes/icons/image-' + size + '.svg',
                     classes: 'aikit-classic-button',
                     onclick: async function () {
-                        if (isAiKitProperlyConfigured() === false) {
-                            return;
-                        }
-
-                        let selectedText = editor.selection.getContent({format: 'text'});
-                        if (selectedText === '') {
-                            askUserToSelectText();
-
-                            return;
-                        }
-
-                        let dom = tinymce.activeEditor.dom;
-                        let $ = tinymce.dom.DomQuery;
-
-                        const loadingSpinnerId = await addAutocompleteContainer('above');
-                        let spinner = dom.select('#' + loadingSpinnerId);
-
-                        try {
-                            let result = await doImageGenerationRequest(count, size, selectedText, aikit.selectedLanguage);
-                            let imagesHtml = '';
-                            for (let image of result.images) {
-                                let imageElementHtml = '<p><img data-mce-src="' + image.url + '" src="' + image.url + '" class="wp-image-' + image.id + '" width="300"  /></p>';
-                                imagesHtml += imageElementHtml;
-                            }
-
-                            $(spinner).replaceWith(imagesHtml);
-
-                        } catch (error) {
-                            // remove the spinner from the editor
-                            $(spinner).remove();
-
-                            alert('An API error occurred with the following response body: \n\n' + error.message);
-                        }
+                        await onImageGenerationButtonClick(count, size, 'openai');
                     }
                 });
+            }
+        }
+
+        if (aikit.isStabilityAIKeySet) {
+            for (let size in aikit.imageGenerationOptions.stabilityAISizes) {
+                let resolution = aikit.imageGenerationOptions.stabilityAISizes[size];
+                for (let count of aikit.imageGenerationOptions.stabilityAICounts) {
+                    imageMenu.push({
+                        text: "[" +  tinymce.util.I18n.translate("Stable Diffusion", "aikit") + "] " + count + ' x ' + tinymce.util.I18n.translate(size + " image(s)", "aikit") + ' (' + resolution + ')',
+                        image: aikit.pluginUrl + 'includes/icons/image-' + size + '.svg',
+                        classes: 'aikit-classic-button',
+                        onclick: async function () {
+                            await onImageGenerationButtonClick(count, size, 'stability-ai');
+                        }
+                    });
+                }
             }
         }
 
@@ -275,6 +266,42 @@ jQuery( document ).ready(function() {
                 classes: 'aikit-classic-main-button',
                 menu: imageMenu,
             });
+        }
+
+        const onImageGenerationButtonClick = async function (count, size, generator) {
+            if (isAiKitProperlyConfigured() === false) {
+                return;
+            }
+
+            let selectedText = editor.selection.getContent({format: 'text'});
+            if (selectedText === '') {
+                askUserToSelectText();
+
+                return;
+            }
+
+            let dom = tinymce.activeEditor.dom;
+            let $ = tinymce.dom.DomQuery;
+
+            const loadingSpinnerId = await addAutocompleteContainer('above');
+            let spinner = dom.select('#' + loadingSpinnerId);
+
+            try {
+                let result = await doImageGenerationRequest(count, size, selectedText, aikit.selectedLanguage);
+                let imagesHtml = '';
+                for (let image of result.images) {
+                    let imageElementHtml = '<p><img data-mce-src="' + image.url + '" src="' + image.url + '" class="wp-image-' + image.id + '" width="300"  /></p>';
+                    imagesHtml += imageElementHtml;
+                }
+
+                $(spinner).replaceWith(imagesHtml);
+
+            } catch (error) {
+                // remove the spinner from the editor
+                $(spinner).remove();
+
+                alert('An API error occurred with the following response body: \n\n' + error.message);
+            }
         }
 
         const doImageGenerationRequest = async function (imageCount, imageSize, text, selectedLanguage) {

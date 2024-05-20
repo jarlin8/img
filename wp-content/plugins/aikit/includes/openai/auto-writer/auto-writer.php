@@ -47,9 +47,101 @@ class AIKIT_Auto_Writer
                     return is_user_logged_in() && current_user_can( 'edit_posts' );
                 }
             ));
+
+            register_rest_route( 'aikit/auto-writer/v1', '/deactivate-all', array(
+                'methods' => 'POST',
+                'callback' => array($this, 'deactivate_all_jobs'),
+                'permission_callback' => function () {
+                    return is_user_logged_in() && current_user_can( 'edit_posts' );
+                }
+            ));
+
+            register_rest_route( 'aikit/auto-writer/v1', '/activate-all', array(
+                'methods' => 'POST',
+                'callback' => array($this, 'activate_all_jobs'),
+                'permission_callback' => function () {
+                    return is_user_logged_in() && current_user_can( 'edit_posts' );
+                }
+            ));
+
+            register_rest_route( 'aikit/auto-writer/v1', '/delete-all', array(
+                'methods' => 'POST',
+                'callback' => array($this, 'delete_all_jobs'),
+                'permission_callback' => function () {
+                    return is_user_logged_in() && current_user_can( 'edit_posts' );
+                }
+            ));
+
+            register_rest_route( 'aikit/auto-writer/v1', '/reset-prompts', array(
+                'methods' => 'POST',
+                'callback' => array($this, 'reset_prompts'),
+                'permission_callback' => function () {
+                    return is_user_logged_in() && current_user_can( 'edit_posts' );
+                }
+            ));
         });
 
         add_action('aikit_scheduler', array($this, 'execute'));
+    }
+
+    public function reset_prompts($data)
+    {
+        $lang = get_option('aikit_setting_openai_language', 'en');
+        delete_option('aikit_auto_writer_prompts_' . $lang);
+
+        return new WP_REST_Response(array(
+            'success' => true,
+        ));
+    }
+
+    public function deactivate_all_jobs($data)
+    {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . self::TABLE_NAME;
+
+        $wpdb->update(
+            $table_name,
+            array(
+                'is_active' => 0,
+            ),
+            array('is_active' => 1)
+        );
+
+        return new WP_REST_Response(array(
+            'success' => true,
+        ));
+    }
+
+    public function delete_all_jobs($data){
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . self::TABLE_NAME;
+
+        $wpdb->query("DELETE from $table_name where 1=1");
+
+        return new WP_REST_Response(array(
+            'success' => true,
+        ));
+    }
+
+    public function activate_all_jobs($data)
+    {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . self::TABLE_NAME;
+
+        $wpdb->update(
+            $table_name,
+            array(
+                'is_active' => 1,
+            ),
+            array('is_active' => 0)
+        );
+
+        return new WP_REST_Response(array(
+            'success' => true,
+        ));
     }
 
     public function render_auto_writer()
@@ -112,7 +204,7 @@ class AIKIT_Auto_Writer
             $html .= '<tr>
                 <td>'.esc_html( get_post_type_object( get_post_type() )->labels->singular_name).'</td>
                 <td><a target="_blank" href="'.esc_url( get_the_permalink() ).'">'.esc_html( get_the_title() ).'</a></td>
-                <td>'.esc_html( get_the_date() ).'</td>
+                <td>'.esc_html( aikit_date(get_the_date('U')) ).'</td>
             </tr>';
         }
 
@@ -144,21 +236,24 @@ class AIKIT_Auto_Writer
 
     public function handle_request($data)
     {
+        if ($data['save_prompts']) {
+            $selected_language = aikit_get_language_used();
+            update_option('aikit_auto_writer_prompts_' . $selected_language, json_encode($data['prompts']));
+        }
+
         if (isset($data['id'])) {
             return $this->edit_generator($data);
         }
 
-        if (isset($data['scheduled'])) {
-            return $this->add_generator($data);
-        }
-
-        return $this->generate_post($data);
+        return $this->add_generator($data);
     }
 
-    public function generate_post($data)
+    public function generate_post($data, $scheduled_generator_id)
     {
         set_time_limit(0);
 
+        $type = $data['type'] ?? 'single-topic';
+        $strategy = $data['strategy'] ?? 'random';
         $topic = $data['topic'];
         $include_outline = boolval($data['include_outline']);
         $include_featured_image = boolval($data['include_featured_image']);
@@ -176,6 +271,8 @@ class AIKIT_Auto_Writer
         $seo_keywords = $data['seo_keywords'] ?? '';
         $prompts = $data['prompts'];
         $post_author = $data['post_author'] ?? get_current_user_id();
+        $remaining_topics = $data['remaining_topics'] ?? '';
+        $model = $data['model'] ?? get_option('aikit_setting_openai_model');
 
         if (empty(trim($topic))) {
             return new WP_Error('aikit_auto_writer_missing_topic', __('Please enter a topic.', 'aikit'));
@@ -189,6 +286,22 @@ class AIKIT_Auto_Writer
         }
 
         try {
+            // if type is "multiple-topics", select a random topic from the list if strategy is "random"
+            $selected_topic = $topic;
+            if ($type === 'multiple-topics') {
+                if ($strategy === 'random') {
+                    $selected_topic = $this->get_random_topic($topic);
+                } else {
+                    $selected_topic = $this->get_first_topic($remaining_topics);
+                }
+
+                if (empty(trim($selected_topic))) {
+                    return new WP_REST_Response([
+                        'posts' => $resultPosts,
+                    ], 200);
+                }
+            }
+
             for ($i=0; $i < $number_of_articles; $i++) {
 
                 $content = '';
@@ -196,19 +309,19 @@ class AIKIT_Auto_Writer
 
                 $section_headlines = aikit_openai_text_generation_request(
                     $this->build_prompt($prompts['section-headlines' . $prompt_name_suffix], array(
-                            'description' => $topic,
+                            'description' => $selected_topic,
                             'number-of-headlines' => $number_of_sections,
                             'keywords' => $seo_keywords,
                         )
-                    ), 2000, $temperature);
+                    ), 2000, $temperature, $model);
 
                 $article_intro = aikit_openai_text_generation_request(
                     $this->build_prompt($prompts['article-intro' . $prompt_name_suffix], array(
-                            'description' => $topic,
+                            'description' => $selected_topic,
                             'section-headlines' => $section_headlines,
                             'keywords' => $seo_keywords,
                         )
-                    ), 2000, $temperature);
+                    ), 2000, $temperature, $model);
 
                 $content = $this->add_text($content, $article_intro);
                 $generated_segments['article-intro'] = $article_intro;
@@ -226,11 +339,11 @@ class AIKIT_Auto_Writer
 
                 $title = aikit_openai_text_generation_request(
                     $this->build_prompt($prompts['article-title' . $prompt_name_suffix], array(
-                            'description' => $topic,
+                            'description' => $selected_topic,
                             'section-headlines' => implode("\n", $section_headlines),
                             'keywords' => $seo_keywords,
                         )
-                    ), 2000, $temperature
+                    ), 60, $temperature, $model
                 );
 
                 $title = $this->clean_title($title);
@@ -240,11 +353,11 @@ class AIKIT_Auto_Writer
                 foreach ($section_headlines as $headline) {
                     $section_content = aikit_openai_text_generation_request(
                         $this->build_prompt($prompts['section' . $prompt_name_suffix], array(
-                                'description' => $topic,
+                                'description' => $selected_topic,
                                 'section-headline' => $headline,
                                 'keywords' => $seo_keywords,
                             )
-                        ), $section_max_tokens, $temperature);
+                        ), $section_max_tokens, $temperature, $model);
 
                     if ($include_tldr) {
                         $section_summaries[] = aikit_openai_text_generation_request(
@@ -252,7 +365,7 @@ class AIKIT_Auto_Writer
                                     'section' => $section_content,
                                     'keywords' => $seo_keywords,
                                 )
-                            ), 2000, $temperature);
+                            ), 2000, $temperature, $model);
                     }
 
                     $content = $this->add_section_anchor($content, $headline);
@@ -263,10 +376,10 @@ class AIKIT_Auto_Writer
                             $this->build_prompt($prompts['image'], array(
                                     'text' => $section_content,
                                 )
-                            ), 2000, $temperature);
+                            ), 2000, $temperature, $model);
 
-                        $images = aikit_openai_image_generation_request($section_image);
-                        $content = $this->add_images($content, $images);
+                        $images = aikit_image_generation_request($section_image);
+                        $content = $this->add_images($content, $images, $section_image);
                     }
 
                     $content = $this->add_text($content, $section_content);
@@ -276,11 +389,11 @@ class AIKIT_Auto_Writer
                 if ($include_conclusion) {
                     $article_conclusion = aikit_openai_text_generation_request(
                         $this->build_prompt($prompts['article-conclusion' . $prompt_name_suffix], array(
-                                'description' => $topic,
+                                'description' => $selected_topic,
                                 'section-headlines' => implode("\n", $section_headlines),
                                 'keywords' => $seo_keywords,
                             )
-                        ), 2000, $temperature);
+                        ), 2000, $temperature, $model);
 
                     $content = $this->add_text($content, $article_conclusion);
                     $generated_segments['article-conclusion'] = $article_conclusion;
@@ -294,7 +407,7 @@ class AIKIT_Auto_Writer
                                 'text' => $text,
                                 'keywords' => $seo_keywords,
                             )
-                        ), 2000, $temperature);
+                        ), 2000, $temperature, $model);
 
                     $content = $this->prepend_text($content, $tldr_for_all_sections);
                     $generated_segments['tldr'] = $tldr_for_all_sections;
@@ -309,6 +422,8 @@ class AIKIT_Auto_Writer
                     'post_category' => array($post_category)
                 );
 
+                aikit_reconnect_db_if_needed();
+
                 $post_id = wp_insert_post($post);
 
                 if (!$post_id) {
@@ -322,9 +437,9 @@ class AIKIT_Auto_Writer
                         $this->build_prompt($prompts['image'], array(
                                 'text' => $article_intro,
                             )
-                        ), 2000, $temperature);
+                        ), 2000, $temperature, $model);
 
-                    $images = aikit_openai_image_generation_request($featured_image);
+                    $images = aikit_image_generation_request($featured_image);
                     if (count($images) > 0) {
                         set_post_thumbnail($post_id, $images[0]['id']);
                     }
@@ -352,16 +467,53 @@ class AIKIT_Auto_Writer
                 ];
             }
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return new WP_Error( 'openai_error', json_encode([
                 'message' => 'error while calling openai',
                 'responseBody' => $e->getMessage(),
             ]), array( 'status' => 500 ) );
         }
 
+        if ($type === 'multiple-topics' && $strategy === 'once') {
+            // remove the topic from the list
+            $this->update_generator_remaining_topics(
+                $scheduled_generator_id, $this->remove_first_topic($remaining_topics)
+            );
+        }
+
         return new WP_REST_Response([
             'posts' => $resultPosts,
         ], 200);
+    }
+
+    private function get_random_topic ($topics)
+    {
+        $exploded = explode("\n", $topics);
+        $topics = array_map('trim', $exploded);
+        $topics = array_filter($topics);
+
+        return $topics[array_rand($topics)];
+    }
+
+
+    private function get_first_topic($topics)
+    {
+        $exploded = explode("\n", $topics);
+        $topics = array_map('trim', $exploded);
+        $topics = array_filter($topics);
+
+        return $topics[0] ?? '';
+    }
+
+    private function remove_first_topic($topics)
+    {
+        $exploded = explode("\n", $topics);
+        $topics = array_map('trim', $exploded);
+        $topics = array_filter($topics);
+
+        array_shift($topics);
+
+        return implode("\n", $topics);
     }
 
     private function build_prompt($prompt, $keyValueArray)
@@ -373,10 +525,10 @@ class AIKIT_Auto_Writer
         return $prompt;
     }
 
-    private function add_images($content, $images)
+    private function add_images($content, $images, $alt = '')
     {
         foreach ($images as $image) {
-            $content .= '<img src="' . $image['url'] . '" class="wp-image-' . $image['id'] . '" />';
+            $content .= '<img alt="' . $alt . '" src="' . $image['url'] . '" class="wp-image-' . $image['id'] . '" />';
         }
 
         return $content;
@@ -386,7 +538,7 @@ class AIKIT_Auto_Writer
     public function enqueue_scripts($hook)
     {
         // check if the page is not aikit_auto_writer
-        if ( 'aikit_page_aikit_auto_writer' !== $hook && 'aikit_page_aikit_scheduler' !== $hook ) {
+        if ( 'aikit_page_aikit_auto_writer' !== $hook && 'aikit_page_aikit_scheduler' !== $hook && 'toplevel_page_aikit_auto_writer' !== $hook) {
             return;
         }
 
@@ -395,13 +547,13 @@ class AIKIT_Auto_Writer
             $version = rand( 1, 10000000 );
         }
 
-        wp_enqueue_style( 'aikit_bootstrap_css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css', array(), $version );
-        wp_enqueue_style( 'aikit_bootstrap_icons_css', 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css', array(), $version );
+        wp_enqueue_style( 'aikit_bootstrap_css', plugins_url( '../../css/bootstrap.min.css', __FILE__ ), array(), $version );
+        wp_enqueue_style( 'aikit_bootstrap_icons_css', plugins_url( '../../css/bootstrap-icons.css', __FILE__ ), array(), $version );
         wp_enqueue_style( 'aikit_auto_writer_css', plugins_url( '../../css/auto-writer.css', __FILE__ ), array(), $version );
 
-        wp_enqueue_script( 'aikit_bootstrap_js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js', array(), $version );
-        wp_enqueue_script( 'aikit_jquery_ui_js', 'https://code.jquery.com/ui/1.13.2/jquery-ui.min.js', array('jquery'), $version );
-        wp_enqueue_script( 'aikit_auto_writer_js', plugins_url( '../../js/auto-writer.js', __FILE__ ), array( 'jquery' ), array(), $version );
+        wp_enqueue_script( 'aikit_bootstrap_js', plugins_url('../../js/bootstrap.bundle.min.js', __FILE__ ), array(), $version );
+        wp_enqueue_script( 'aikit_jquery_ui_js', plugins_url('../../js/jquery-ui.min.js', __FILE__ ), array('jquery'), $version );
+        wp_enqueue_script( 'aikit_auto_writer_js', plugins_url( '../../js/auto-writer.js', __FILE__ ), array( 'jquery' ), $version );
     }
 
     private function add_outline($content, $section_headlines)
@@ -515,6 +667,7 @@ class AIKIT_Auto_Writer
             'post_author' => get_current_user_id(),
             'post_category' => $data['post_category'],
             'description' => $data['topic'],
+            'remaining_topics' => $data['topic'],
             'keywords' => $data['seo_keywords'],
             'number_of_articles' => $data['number_of_articles'],
             'number_of_sections_per_article' => $data['number_of_sections'],
@@ -526,14 +679,17 @@ class AIKIT_Auto_Writer
             'include_tldr' => $data['include_tldr'],
             'is_active' => true,
             'prompts' => json_encode($data['prompts']),
-            'generation_interval' => $data['interval'],
+            'generation_interval' => $data['interval'] ?? 'hourly',
             'last_generated_at' => null,
             'next_generation_at' => $next_generation_at,
             'date_created' => date("Y-m-d H:i:s"),
             'date_modified' => date("Y-m-d H:i:s"),
             'logs' => '{}',
             'is_running' => false,
-            'max_number_of_runs' => intval($data['max_runs']),
+            'max_number_of_runs' => intval($data['max_runs'] ?? 1),
+            'type' => $data['type'],
+            'strategy' => $data['strategy'],
+            'model' => $data['model'] ?? null,
         ];
 
         $result = $wpdb->insert( $table_name, $entry );
@@ -542,7 +698,7 @@ class AIKIT_Auto_Writer
             return new WP_Error('aikit_auto_writer_schedule_error', __('There was an error scheduling the post generation.', 'aikit'), array('status' => 500));
         }
 
-        $url = admin_url('admin.php?page=aikit_scheduler') . '&id=' . $wpdb->insert_id;
+        $url = admin_url('admin.php?page=aikit_scheduler');
 
         return new WP_REST_Response([
             'message' => __('Post generation scheduled.', 'aikit'),
@@ -562,6 +718,7 @@ class AIKIT_Auto_Writer
             'post_status' => $data['post_status'],
             'post_category' => $data['post_category'],
             'description' => $data['topic'],
+            'remaining_topics' => $data['topic'],
             'keywords' => $data['seo_keywords'],
             'number_of_articles' => $data['number_of_articles'],
             'number_of_sections_per_article' => $data['number_of_sections'],
@@ -576,6 +733,9 @@ class AIKIT_Auto_Writer
             'generation_interval' => $data['interval'],
             'date_modified' => date("Y-m-d H:i:s"),
             'max_number_of_runs' => intval($data['max_runs']),
+            'type' => $data['type'],
+            'strategy' => $data['strategy'],
+            'model' => $data['model'] ?? null,
         ];
 
         $wpdb->update( $table_name, $entry, ['id' => $data['id']] );
@@ -585,10 +745,19 @@ class AIKIT_Auto_Writer
         ], 200);
     }
 
+    private function update_generator_remaining_topics($id, $remaining_topics)
+    {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . self::TABLE_NAME;
+
+        $wpdb->update( $table_name, ['remaining_topics' => $remaining_topics], ['id' => $id] );
+    }
+
     public function activate_scheduler()
     {
         if (! wp_next_scheduled ( 'aikit_scheduler')) {
-            wp_schedule_event( time(), 'every_5_minutes', 'aikit_scheduler');
+            wp_schedule_event( time(), 'every_10_minutes', 'aikit_scheduler');
         }
     }
 
@@ -619,20 +788,44 @@ class AIKIT_Auto_Writer
             <?php echo esc_html__( 'AIKit Scheduled AI Generators', 'aikit' ); ?>
         </h1>
 
-        <p><?php echo esc_html__( 'AIKit Scheduled AI Generators allow you to schedule content to be generated by AI. Please review and edit before publishing for best results. This is not a substitute for human editing, but a drafting aid. Happy writing!', 'aikit' ); ?></p>
         <p>
+            <?php echo esc_html__( 'AIKit Scheduled AI Generators allow you to schedule content to be generated by AI. Please review and edit before publishing for best results. This is not a substitute for human editing, but a drafting aid. Happy writing!', 'aikit' ); ?>
+            <a href="#" class="aikit-top-hidden-toggle  btn btn-outline-secondary btn-sm"><i class="bi bi-info-lg"></i> <?php echo esc_html__( 'How to setup?', 'aikit' ); ?></a>
+        </p>
+        <p class="aikit-top-hidden-note">
             <strong><?php echo esc_html__( 'Note:', 'aikit' ); ?></strong>
             <?php echo esc_html__( 'By default, WordPress scheduled jobs only runs when someone visits your site. To ensure that your scheduled AI generators runs even if nobody visits your site, you can set up a cron job on your server to call the WordPress cron system at regular intervals. Please ask your host provider to do that for you. Here is the cron job definition:', 'aikit' ); ?>
             <code>
                 */5 * * * * curl -I <?php echo $cron_url ?> >/dev/null 2>&1
             </code>
-        </p>
-        <p>
+
+            <br>
+            <br>
+
             <strong><?php echo esc_html__( 'Important:', 'aikit' ); ?></strong>
             <?php echo esc_html__( 'Please consider the rate limits of your OpenAI account when setting up generators in order to avoid errors. You can find the rate limits ', 'aikit' ); ?> <a href="https://platform.openai.com/docs/guides/rate-limits" target="_blank"><?php echo esc_html__( 'here', 'aikit' ); ?></a>.
-            <a href="<?php echo $auto_writer_url?>" data-edit="1" class="btn btn-sm btn-primary d-inline mb-2 me-2 float-end" type="button"><i class="bi bi-save"></i> <?php echo esc_html__( 'Add new', 'aikit' ); ?></a>
         </p>
+        <?php
 
+        global $wpdb;
+        $table_name = $wpdb->prefix . self::TABLE_NAME;
+
+        $total_jobs = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
+        $deactivate_all_url = get_site_url() . '/?rest_route=/aikit/auto-writer/v1/deactivate-all';
+        $activate_all_url = get_site_url() . '/?rest_route=/aikit/auto-writer/v1/activate-all';
+        $delete_all_url = get_site_url() . '/?rest_route=/aikit/auto-writer/v1/delete-all';
+
+        if ($total_jobs > 0) { ?>
+            <div class="row mb-2 float-end">
+                <div class="col">
+                    <button data-confirm-message="<?php echo esc_html__('Are you sure you want to activate all jobs?', 'aikit') ?>" id="aikit-auto-writer-activate-all" class="btn btn-sm btn-outline-primary ms-2" type="button" href="<?php echo $activate_all_url ?>"><i class="bi bi-play-fill" ></i> <?php echo esc_html__( 'Activate all', 'aikit' ); ?></button>
+                    <button data-confirm-message="<?php echo esc_html__('Are you sure you want to deactivate all jobs?', 'aikit') ?>" id="aikit-auto-writer-deactivate-all" class="btn btn-sm btn-outline-primary ms-2" type="button" href="<?php echo $deactivate_all_url ?>"><i class="bi bi-pause-fill" ></i> <?php echo esc_html__( 'Deactivate all', 'aikit' ); ?></button>
+                    <button data-confirm-message="<?php echo esc_html__('Are you sure you want to delete all jobs?', 'aikit') ?>" id="aikit-auto-writer-delete-all" class="btn btn-sm btn-outline-danger ms-2" type="button" href="<?php echo $delete_all_url ?>"><i class="bi bi-trash3-fill"></i> <?php echo esc_html__( 'Delete all', 'aikit' ); ?></button>
+                </div>
+            </div>
+            <?php } ?>
+
+            <a href="<?php echo $auto_writer_url?>" data-edit="1" class="btn btn-sm btn-primary d-inline mb-2 float-end" type="button"><i class="bi bi-save"></i> <?php echo esc_html__( 'Add new', 'aikit' ); ?></a>
         <?php
 
         echo $this->get_ai_generators($_GET['paged'] ?? 1);
@@ -677,11 +870,16 @@ class AIKIT_Auto_Writer
             $generator->id,
             $generator->generation_interval,
             $generator->is_active,
-            $generator->max_number_of_runs
+            $generator->max_number_of_runs,
+            $generator->type,
+            $generator->strategy,
+            $generator->model,
         );
 
         $logs = json_decode($generator->logs, true);
         $generated_posts = $this->get_generated_posts_by_ai_generator_id($id);
+
+        $logsCount = count($logs) == 0 ? '' : ' (' . count($logs) . ')';
 
         ?>
         <ul class="nav nav-tabs mt-3" id="aikit-scheduler-tabs" role="tablist">
@@ -689,7 +887,7 @@ class AIKIT_Auto_Writer
                 <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#aikit-scheduler-tabs-posts" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true"><?php echo esc_html__( 'Generated Posts', 'aikit' ); ?></button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#aikit-scheduler-tabs-logs" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false"><?php echo esc_html__( 'Logs', 'aikit' ); ?></button>
+                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#aikit-scheduler-tabs-logs" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false"><?php echo esc_html__( 'Logs', 'aikit' ) . $logsCount ?> </button>
             </li>
         </ul>
         <div class="tab-content mt-2" id="aikit-scheduler-tab-panes">
@@ -710,10 +908,11 @@ class AIKIT_Auto_Writer
                 }
 
                 foreach ($generated_posts as $post) {
+                    $formatted_date = aikit_date($post->post_date);
                     $html .= '<tr>
                                     <td>'.esc_html($post->post_type).'</td>
                                     <td><a href="'.esc_url(get_permalink($post->ID)).'">'.esc_html($post->post_title).'</a></td>
-                                    <td>'.esc_html($post->post_date).'</td>
+                                    <td>'.esc_html($formatted_date).'</td>
                                 </tr>';
                 }
 
@@ -724,6 +923,10 @@ class AIKIT_Auto_Writer
                 ?>
             </div>
             <div class="tab-pane fade" id="aikit-scheduler-tabs-logs" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                <div class="alert alert-success my-4" role="alert">
+                    <?php echo esc_html__( 'API errors can happen due to many reasons (such as API being down or rate limits have been exceeded, etc). In case of errors, do not worry, AIKit will keep retrying the job till it succeeds.', 'aikit' ); ?>
+                </div>
+
                 <?php
 
                 if (count($logs) === 0) {
@@ -748,15 +951,20 @@ class AIKIT_Auto_Writer
     {
         global $wpdb;
 
+        $charset_collate = $wpdb->get_charset_collate();
+
         $table_name = $wpdb->prefix . self::TABLE_NAME;
         $sql = "CREATE TABLE $table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             generator_version mediumint(9) NOT NULL,
+            type varchar(255) NOT NULL DEFAULT 'single-topic',
+            strategy varchar(255) NOT NULL DEFAULT 'random',
             post_type varchar(255) NOT NULL,
             post_status varchar(255) NOT NULL,
             post_author mediumint(9) NOT NULL,
             post_category mediumint(9) NOT NULL,
             description TEXT NOT NULL,
+            remaining_topics TEXT DEFAULT NULL,
             keywords TEXT DEFAULT NULL,
             number_of_articles mediumint(9) NOT NULL,
             number_of_sections_per_article mediumint(9) NOT NULL,
@@ -777,8 +985,9 @@ class AIKIT_Auto_Writer
             is_running BOOLEAN DEFAULT FALSE,
             max_number_of_runs mediumint(9) DEFAULT 0,
             run_count mediumint(9) DEFAULT 0,
+            model varchar(255) DEFAULT NULL,
             PRIMARY KEY  (id)
-        );";
+        ) $charset_collate;";
 
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
         dbDelta( $sql );
@@ -792,6 +1001,7 @@ class AIKIT_Auto_Writer
         $generators = $wpdb->get_results("SELECT * FROM $table_name WHERE is_active = 1 AND is_running = 0 AND (max_number_of_runs = 0 OR run_count < max_number_of_runs)");
 
         foreach ($generators as $generator) {
+            $should_keep_running = true;
             $now = new DateTime();
             $next_generation_at = new DateTime($generator->next_generation_at);
 
@@ -825,9 +1035,18 @@ class AIKIT_Auto_Writer
                         'prompts' => json_decode($generator->prompts, true),
                         'post_author' => $generator->post_author,
                         'scheduled_generator_id' => $generator->id,
-                    ]);
+                        'type' => $generator->type,
+                        'strategy' => $generator->strategy,
+                        'remaining_topics' => $generator->remaining_topics,
+                        'model' => $generator->model,
+                    ], $generator->id);
 
                 } catch (Throwable $e) {
+                    // if message contains 429 then we should stop the job
+                    if (strpos($e->getMessage(), '429') !== false) {
+                        $should_keep_running = false;
+                    }
+
                     $result = new WP_Error('aikit_auto_writer_error', $e->getMessage());
                 }
 
@@ -836,6 +1055,7 @@ class AIKIT_Auto_Writer
                     'date' => $now->format('Y-m-d H:i:s'),
                 ];
 
+                $is_success = false;
                 if ($result instanceof WP_Error) {
                     $newLogEntry['success'] = false;
                     $newLogEntry['error'] = $result->get_error_message();
@@ -849,6 +1069,7 @@ class AIKIT_Auto_Writer
                         }
                     }
                     $newLogEntry['post_ids'] = $post_ids;
+                    $is_success = true;
                 }
 
                 // make sure only 25 logs are stored
@@ -856,31 +1077,61 @@ class AIKIT_Auto_Writer
                     array_shift($logs);
                 }
 
+                $entry = [
+                    'is_running' => 0,
+                    'last_generated_at' => $now->format('Y-m-d H:i:s'),
+                    'next_generation_at' => $this->calculate_next_generation_date($now->format('Y-m-d H:i:s'), $generator->generation_interval, $is_success),
+                    'logs' => json_encode(array_merge($logs, [$newLogEntry])),
+                ];
+
+                if ($is_success) {
+                    $entry['run_count'] = $generator->run_count + 1;
+                }
+
+                aikit_reconnect_db_if_needed();
+
                 $wpdb->update(
                     $table_name,
-                    [
-                        'is_running' => 0,
-                        'last_generated_at' => $now->format('Y-m-d H:i:s'),
-                        'next_generation_at' => $this->calculate_next_generation_date($now->format('Y-m-d H:i:s'), $generator->generation_interval),
-                        'logs' => json_encode(array_merge($logs, [$newLogEntry])),
-                        'run_count' => $generator->run_count + 1,
-                    ],
+                    $entry,
                     [
                         'id' => $generator->id,
                     ]
                 );
             }
+
+            if (!$should_keep_running) {
+                break;
+            }
         }
     }
 
-    private function calculate_next_generation_date($last_generation_time, $interval)
+    private function calculate_next_generation_date($last_generation_time, $interval, $is_success = true)
     {
+        // if it failed, try again in 10 minutes
+        if (!$is_success) {
+            return date('Y-m-d H:i:s', strtotime($last_generation_time) + (10 * 60));
+        }
+
         $hours_to_add = 1;
 
-        if ($interval === 'twicedaily') {
+        if ($interval === 'every30mins') {
+            $hours_to_add = 0.5;
+        } else if ($interval === 'twicedaily') {
             $hours_to_add = 12;
         } else if ($interval === 'daily') {
             $hours_to_add = 24;
+        } else if ($interval === 'everyotherday') {
+            $hours_to_add = 24 * 2;
+        } else if ($interval === 'twiceweekly') {
+            $hours_to_add = intval(24 * 3.5);
+        } else if ($interval === 'weekly') {
+            $hours_to_add = 24 * 7;
+        } else if ($interval === 'fortnightly') {
+            $hours_to_add = 24 * 14;
+        } else if ($interval === 'monthly') {
+            $hours_to_add = 24 * 30;
+        } else if ($interval === 'once') {
+            return null;
         }
 
         $next_generation_time = strtotime($last_generation_time) + ($hours_to_add * 60 * 60);
@@ -917,7 +1168,7 @@ class AIKIT_Auto_Writer
         $html = '<table class="table" id="aikit-scheduler-generators">
             <thead>
             <tr>
-                <th scope="col">' . esc_html__('Description', 'aikit') . '</th>
+                <th scope="col">' . esc_html__('Topic(s)', 'aikit') . '</th>
                 <th scope="col">' . esc_html__('Keywords', 'aikit') . '</th>
                 <th scope="col">' . esc_html__('Status', 'aikit') . '</th>
                 <th scope="col">' . esc_html__('Interval', 'aikit') . '</th>
@@ -947,17 +1198,28 @@ class AIKIT_Auto_Writer
         $scheduler_page_url = get_admin_url() . 'admin.php?page=aikit_scheduler';
         $delete_url = get_site_url() . '/?rest_route=/aikit/auto-writer/v1/delete-generator';
 
-        $date_format = get_option('time_format') . ' ' . get_option('date_format');
-
         foreach ($generators as $generator) {
             $current_page_url = $scheduler_page_url . '&id=' . $generator->id;
+
+            if ($generator->max_number_of_runs > 0 && $generator->run_count >= $generator->max_number_of_runs) {
+                $next_generation_at = '-';
+            } else {
+                $next_generation_at = (empty($generator->next_generation_at) ? '-' : aikit_date($generator->next_generation_at));
+            }
+
+            // no more than 100 characters
+            $description = $generator->description;
+            if (strlen($description) > 100) {
+                $description = substr($description, 0, 100) . '...';
+            }
+
             $html .= '<tr>
-                <td>' . '<a href="' . $current_page_url . '">' . esc_html($generator->description) . '</a></td>
+                <td>' . '<a href="' . $current_page_url . '">' . esc_html($description) . '</a></td>
                 <td>' . (empty($generator->keywords) ? '-' : $generator->keywords) . '</td>
                 <td>' . ($generator->is_active ? ('<span class="badge badge-pill badge-dark aikit-badge-active">' . __('Active', 'aikit')) : ('<span class="badge badge-pill badge-dark aikit-badge-inactive">' . __('Inactive', 'aikit'))) . '</span></td>
-                <td>' . $generator->generation_interval . '</td>
-                <td>' . (empty($generator->last_generated_at) ? '-' : date($date_format, strtotime($generator->last_generated_at))) . '</td>
-                <td>' . (empty($generator->next_generation_at) ? '-' : date($date_format, strtotime($generator->next_generation_at))) . '</td>
+                <td>' . $this->auto_writer_form->intervals($generator->generation_interval) . '</td>
+                <td>' . (empty($generator->last_generated_at) ? '-' : aikit_date( strtotime($generator->last_generated_at) )) . '</td>
+                <td>' . $next_generation_at . '</td>
                 <td>' . ($generator->is_running ? ('<span class="badge badge-pill badge-dark aikit-badge-active">' . __('Yes', 'aikit')) : ('<span class="badge badge-pill badge-dark aikit-badge-inactive">' . __('No', 'aikit'))) . '</span></td>
                 <td>' . $generator->run_count . '</td>
                 <td>' . ($generator->max_number_of_runs === 0 ? '-' : $generator->max_number_of_runs) . '</td>

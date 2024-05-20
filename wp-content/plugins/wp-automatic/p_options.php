@@ -1,6 +1,6 @@
 <?php
 function gm_setting() {
-	
+ 
 	// license ini
 	$licenseactive = get_option ( 'wp_automatic_license_active', '' );
 	$licenseactive_purchase = get_option ( 'wp_automatic_license_active_purchase', '' ); // purchase code for which the license is active
@@ -14,7 +14,7 @@ function gm_setting() {
 	}
 	
 	// purchase check if not already active or if the purchase code changed
-	if (! empty ( $_POST ['wp_automatic_license'] ) &&  ( trim ( $licenseactive ) == '' || ( $licenseactive_purchase != $_POST['wp_automatic_license'] ) ) ) {
+	if (! empty ( $_POST ['wp_automatic_license'] ) &&  ( wp_automatic_trim( $licenseactive ) == '' || ( $licenseactive_purchase != $_POST['wp_automatic_license'] ) ) ) {
 		
 		// save it
 		update_option ( 'wp_automatic_license', $_POST ['wp_automatic_license'] );
@@ -45,24 +45,31 @@ function gm_setting() {
 		$proxy = false;
 		
 		if ($proxy == false) {
-			$url = 'https://deandev.com/license/index.php?itm=1904470&domain=' . $_SERVER ['HTTP_HOST'] . '&purchase=' . trim ( $_POST ['wp_automatic_license'] ) . $append;
+			$url = 'https://deandev.com/license/index.php?itm=1904470&domain=' . $_SERVER ['HTTP_HOST'] . '&purchase=' . wp_automatic_trim( $_POST ['wp_automatic_license'] ) . $append;
 		} else {
-			$url = 'http://deandev-proxy.appspot.com/license/index.php?itm=1904470&domain=' . $_SERVER ['HTTP_HOST'] . '&purchase=' . trim ( $_POST ['wp_automatic_license'] ) . $append;
+			$url = 'http://deandev-proxy.appspot.com/license/index.php?itm=1904470&domain=' . $_SERVER ['HTTP_HOST'] . '&purchase=' . wp_automatic_trim( $_POST ['wp_automatic_license'] ) . $append;
 		}
+
+		//add version to the url
+		$version = WPAUTOMATIC_VERSION;
+		$url.='&v='.$version;
+		
 		 
 
 		curl_setopt ( $ch, CURLOPT_HTTPGET, 1 );
-		curl_setopt ( $ch, CURLOPT_URL, trim ( $url ) );
+		curl_setopt ( $ch, CURLOPT_URL, wp_automatic_trim( $url ) );
 		$exec = curl_exec ( $ch );
 		$x = curl_error ( $ch );
 		$resback = $exec;
 		
-		if (trim ( $exec ) == '' || ! stristr ( $exec, '{' )) {
+		if (wp_automatic_trim( $exec ) == '' || ! stristr ( $exec, '{' )) {
 			
-			$url = 'http://deandev-proxy.appspot.com/license/index.php?itm=1904470&domain=' . $_SERVER ['HTTP_HOST'] . '&purchase=' . trim ( $_POST ['wp_automatic_license'] ) . $append;
+			$url = 'http://deandev-proxy.appspot.com/license/index.php?itm=1904470&domain=' . $_SERVER ['HTTP_HOST'] . '&purchase=' . wp_automatic_trim( $_POST ['wp_automatic_license'] ) . $append;
 			
+			$url.='&v='.$version;
+
 			curl_setopt ( $ch, CURLOPT_HTTPGET, 1 );
-			curl_setopt ( $ch, CURLOPT_URL, trim ( $url ) );
+			curl_setopt ( $ch, CURLOPT_URL, wp_automatic_trim( $url ) );
 			
 			$exec = curl_exec ( $ch );
 			$resback = $exec;
@@ -70,7 +77,6 @@ function gm_setting() {
 		}
 		
 		$resarr = json_decode ( $resback );
-		$resarr->message = 'success';
 		
 		if (isset ( $resarr->message )) {
 			$wp_automatic_active_message = $resarr->message;
@@ -80,7 +86,7 @@ function gm_setting() {
 			update_option ( 'wp_automatic_license_active_date', time () );
 
 			// update license active for which purchase code
-			update_option ( 'wp_automatic_license_active_purchase', trim ( $_POST ['wp_automatic_license'] ) );
+			update_option ( 'wp_automatic_license_active_purchase', wp_automatic_trim( $_POST ['wp_automatic_license'] ) );
 
 			$licenseactive = get_option ( 'wp_automatic_license_active', '' );
 		} else {
@@ -91,23 +97,31 @@ function gm_setting() {
 	
 	// save values if post requested
 	$updated = '';
-	if (isset ( $_POST ['wp_amazonpin_tw'] ) && current_user_can ( 'administrator' )) {
+	if ( isset($_POST['_wpnonce'])  && isset ( $_POST ['wp_amazonpin_tw'] ) && current_user_can ( 'administrator' )) {
 		
-		// default check
-		if (! isset ( $_POST ['wp_automatic_options'] )) {
-			$_POST ['wp_automatic_options'] = array ();
-		}
-		
-		foreach ( $_POST as $key => $val ) {
-			
-			if (stristr ( $key, 'content' )) {
-				$key = str_replace ( 'content', '', $key );
+
+		//validate nonce  wp_automatic_nonce
+		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'wp_automatic_nonce' ) ) {
+			$updated = '<div class="updated below-h2" id="message"><p>Settings update Failed, Please refresh the page and try again.  </p></div>';
+		}else{
+
+			// default check
+			if (! isset ( $_POST ['wp_automatic_options'] )) {
+				$_POST ['wp_automatic_options'] = array ();
 			}
 			
-			update_option ( $key, $val );
+			foreach ( $_POST as $key => $val ) {
+				
+				if (stristr ( $key, 'content' )) {
+					$key =wp_automatic_str_replace( 'content', '', $key );
+				}
+				
+				update_option ( $key, $val );
+			}
+			
+			$updated = '<div class="updated below-h2" id="message"><p>Settings updated.  </p></div>';
+
 		}
-		
-		$updated = '<div class="updated below-h2" id="message"><p>Settings updated.  </p></div>';
 	}
 	
 	// remove twitter token
@@ -122,7 +136,7 @@ function gm_setting() {
 		}
 	}
 	
-	$dir = WP_PLUGIN_URL . '/' . str_replace ( basename ( __FILE__ ), "", plugin_basename ( __FILE__ ) );
+	$dir = WP_PLUGIN_URL . '/' .wp_automatic_str_replace( basename ( __FILE__ ), "", plugin_basename ( __FILE__ ) );
 	$dir = plugins_url ( '/', __FILE__ );
 	
 	// echo dirname(__FILE__);
@@ -142,7 +156,7 @@ function gm_setting() {
 
 <script type="text/javascript" src="<?php   echo $dir; ?>js/jquery.tools.js"></script>
 <script type="text/javascript" src="<?php   echo $dir; ?>js/jquery.uniform.min.js"></script>
-<script type="text/javascript" src="<?php   echo $dir; ?>js/main.js?ver=5.0.1"></script>
+<script type="text/javascript" src="<?php   echo $dir; ?>js/main.js?ver=5.0.2"></script>
 
 <link href='<?php   echo $dir; ?>css/style.css' rel='stylesheet' type='text/css'>
 <link href='<?php   echo $dir; ?>css/uniform.css' rel='stylesheet' type='text/css'>
@@ -192,6 +206,11 @@ h2 span {
 		<div dir="ltr" id="dashboard-widgets-wrap">
 
 			<form method="post" novalidate="novalidate">
+
+				<!--generated nonce field -->
+				<?php  wp_nonce_field('wp_automatic_nonce')?>  
+				 
+
 				<div class="metabox-holder columns-2 " id="dashboard-widgets">
 
 
@@ -307,10 +326,21 @@ h2 span {
 								</h2>
 								<div class="inside TTWForm main" style="padding-bottom: 14px">
 									<!--start container-->
+									
+									
+									<!-- xman_t cookie -->
 									<div class="field f_100 ">
 										<label> AliExpress xman_t cookie value</label> <input value="<?php   echo get_option( 'wp_automatic_ali_cookie' ) ?>" name="wp_automatic_ali_cookie" type="text">
 										<div class="description">
 											This cookie is used by the plugin to generate the affiliate link, check <a href="https://valvepress.com/how-to-get-xman_t-aliexpress-cookie-for-wp-automatic-affiliate-link-genaration/" target="_blank">this tutorial</a> on how to get it
+										</div>
+									</div>
+
+									<!-- xman_f cookie -->
+									<div class="field f_100 ">
+										<label> AliExpress xman_f cookie value</label> <input value="<?php   echo get_option( 'wp_automatic_ali_cookie_f' ) ?>" name="wp_automatic_ali_cookie_f" type="text">
+										<div class="description">
+											This cookie is used by the plugin to generate the affiliate link, check above tutorial but copy the value of the cookie named xman_f
 										</div>
 									</div>
 									
@@ -340,7 +370,7 @@ h2 span {
 
 							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
-									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/ez.jpg',__FILE__)?>"><span> Ezinearticles settings</span>
+									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/ez.jpg',__FILE__)?>"><span> Custom search settings</span>
 								</h2>
 								<div class="inside TTWForm main" style="padding-bottom: 14px">
 									<!--start container-->
@@ -372,16 +402,13 @@ h2 span {
 									<!--start container-->
 
 									<div id="field285-container" class="field f_100 ">
-										<label for="field285"> <b><a target="blank" href="https://paykstrt.com/10313/57123"> The best spinner </a></b> user name <i>(optional)</i>
+										<label for="field285"> <b><a target="blank" href="https://rapidapi.com/thebestspinnerapi/api/thebestspinnerapi/"> The best spinner </a></b> API key <i>(required)</i>
 										</label> <input value="<?php   echo get_option( 'wp_automatic_tbs' ) ?>" name="wp_automatic_tbs" id="field285" type="text">
+										<div class="description">
+											*You can get the API key from <a target="_blank" href="https://rapidapi.com/thebestspinnerapi/api/thebestspinnerapi/">here</a> check this <a target="_blank" href="https://valvepress.com/how-to-get-thebestspinner-api-key/">tutorial</a> on how to get it
+										</div>
 									</div>
-									<div id="field485-container" class="field f_100 ">
-										<label for="field485"> <b>The best spinner password</b>
-										</label> <input name="wp_automatic_tbs_p" id="field485" type="text" value="<?php   echo get_option( 'wp_automatic_tbs_p' ) ?>">
-									</div>
-
-
-
+									 
 									<div class="field f_100">
 										<label> Protected terms <i>(one/line)(optional)</i>
 										</label>
@@ -391,6 +418,11 @@ h2 span {
 
 										<p>Note: you can always skip spinning parts of the content by wrapping it with the [nospin]part not to spin[/nospin] tags at the post template</p>
 
+									</div>
+
+									<div id="field485-container" class="field f_100 ">
+										<label for="field485"> The best spinner password (optional)(Deprecated)(Leave empty if added API key)
+										</label> <input name="wp_automatic_tbs_p" id="field485" type="text" value="<?php   echo get_option( 'wp_automatic_tbs_p' ) ?>">
 									</div>
 
 
@@ -456,7 +488,7 @@ h2 span {
 									</div>
 
 									<div class="field f_100 ">
-										<label>Marketplace account deletion notification endpoint</label> <input disabled="disabled" value="<?php  $ebay_endpoint = plugins_url( 'ebay_clo.php' , __FILE__ )  ; $ebay_endpoint = str_replace('http:/' , 'https:/', $ebay_endpoint);  echo $ebay_endpoint   ?>" name="wp_automatic_ebay_camp_delete" type="text">
+										<label>Marketplace account deletion notification endpoint</label> <input disabled="disabled" value="<?php  $ebay_endpoint = plugins_url( 'ebay_clo.php' , __FILE__ )  ; $ebay_endpoint = wp_automatic_str_replace('http:/' , 'https:/', $ebay_endpoint);  echo $ebay_endpoint   ?>" name="wp_automatic_ebay_camp_delete" type="text">
 										<div class="description">
 											Check <a target="_blank" href="http://valvepress.com/how-to-setup-ebay-marketplace-account-deletion-closure-for-wp-automatic/">this tutorial</a> on how to setup Marketplace account deletion/closure notification
 										</div>
@@ -665,6 +697,8 @@ h2 span {
 								</div>
 							</div>
 
+
+							
 							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/tw.png',__FILE__)?>"><span> Twitter settings</span>
@@ -673,27 +707,12 @@ h2 span {
 									<!--start container-->
 
 									<div class="field f_100 ">
-										<label>API Key</label> <input value="<?php   echo get_option( 'wp_automatic_tw_consumer' ) ?>" name="wp_automatic_tw_consumer" type="text">
+										<label>BEARER Token</label> <input value="<?php   echo get_option( 'wp_automatic_tw_bearer_token' ) ?>" name="wp_automatic_tw_bearer_token" type="text">
 										<div class="description">
-											Check <a href="http://valvepress.com/how-to-post-from-twitter-to-wordpress-using-wordpress-automatic/" target="_blank">this tutorial</a> on how to get your Key and secret
+											Check <a href="http://valvepress.com/how-to-post-from-twitter-to-wordpress-using-wordpress-automatic/" target="_blank">this tutorial</a> on how to get the bearer token
 										</div>
 									</div>
-
-
-									<div class="field f_100 ">
-										<label>API Key Secret</label> <input value="<?php   echo get_option( 'wp_automatic_tw_secret' ) ?>" name="wp_automatic_tw_secret" type="text">
-
-									</div>
-
-									<div class="field f_100 ">
-										<label>Clean any generated twitter tokens (Tick this if you want to regenerate)</label> <input type="checkbox" name="wp_automatic_opt[]" value="wp_automatic_tw_reset" />
-									</div>
-									
-									<?php
-	
-	?>
-									
-
+									 
 									<div id="form-submit" class="field f_100 clearfix submit" style>
 										<input style="margin-left: 0" value="Save Changes" type="submit">
 									</div>
@@ -702,6 +721,8 @@ h2 span {
 									<div style="clear: both"></div>
 								</div>
 							</div>
+							
+
 
 							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
@@ -908,6 +929,22 @@ h2 span {
 								</div>
 							</div>
 
+							<!-- Google places API key -->
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
+								<h2 class="hndle"> <img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/places.png',__FILE__)?>"><span> Google Places API Key</span> </h2>
+								<div class="inside TTWForm main" style="padding-bottom: 14px"> <!--start container-->
+									<div class="field f_100 ">
+										<label>Google Places API Key</label> <input value="<?php   echo get_option( 'wp_automatic_google_places_key' ) ?>" name="wp_automatic_google_places_key" type="text">
+										<div class="description">
+											Check <a href="https://valvepress.com/how-to-get-google-places-api-key-for-automatic-plugin/" target="_blank">this tutorial</a> on how to get your API token
+										</div>
+									</div>
+									<div id="form-submit" class="field f_100 clearfix submit" style> <input style="margin-left: 0" value="Save Changes" type="submit"> </div>
+									<!--start container-->
+									<div style="clear: both"></div>
+								</div>
+							</div>
+
 							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/openai.png',__FILE__)?>"><span> OpenAI API Settings</span>
@@ -916,9 +953,12 @@ h2 span {
 									<!--start container-->
 
 									<div class="field f_100 ">
-										<label>OpenAI API Key</label> <input value="<?php   echo get_option( 'wp_automatic_openai_key' ) ?>" name="wp_automatic_openai_key" type="text">
+										<label>OpenAI API Key</label> 
+										
+										<textarea name="wp_automatic_openai_key"><?php   echo get_option( 'wp_automatic_openai_key' ) ?></textarea>
 										<div class="description">
-											Check <a href="https://valvepress.com/how-to-find-your-openai-api-key-for-wordpress-automatic-plugin/" target="_blank">this tutorial</a> on how to get your API token
+											*Check <a href="https://valvepress.com/how-to-find-your-openai-api-key-for-wordpress-automatic-plugin/" target="_blank">this tutorial</a> on how to get your API token
+											<br><br>*You can add a single key or a list of keys(one per line) for the plugin to rotate between them
 										</div>
 									</div>
 
@@ -1070,6 +1110,11 @@ h2 span {
 										<textarea rows="5" cols="20" name="wp_automatic_tra_stop"><?php   echo stripslashes( get_option('wp_automatic_tra_stop') )?></textarea>
 										<div class="description">keywords list get protected when the translation option is active in the campaign page</div>
 									</div>
+									<div class="field f_100">
+										<label>Limit categories list in the campaign to these categories IDs</i></label>
+										<textarea rows="5" cols="20" name="wp_automatic_spec_cats"><?php   echo stripslashes( get_option('wp_automatic_spec_cats') )?></textarea>
+										<div class="description">Add a comma seprated list of categories IDs only if you have too many categories and have problems getting all of them loaded when visiting the campaign. ex: 123,456</div>
+									</div>
 
 									<div class="field f_100 ">
 										<label> Google translate char limit</label> <input value="<?php   echo get_option( 'wp_automatic_gtranslate_limit' ) ?>" name="wp_automatic_gtranslate_limit" type="text">
@@ -1102,6 +1147,24 @@ h2 span {
 											<div style="padding-left:25px" class="description"><small>*If this option is enabled, prices updates will not work, used resources will not be reported after campaign/cron run.</small></div>
 										</div>
 										
+									</div>
+
+									<div class="field f_100">
+										<div class="option clearfix">
+											<input name="wp_automatic_options[]" <?php   echo cchecked('wp_automatic_options', 'OPT_NO_FRONT_JS')  ?> value="OPT_NO_FRONT_JS" type="checkbox"> <span class="option-title">Disable front end script and style from Automatic </span>
+											<div style="padding-left:25px" class="description"><small>* When this option is enabled, Gallery for products will not work normally. disable if you do not import galleries like Amazon product galleries</small></div>
+										</div>
+										
+									</div>
+
+									 <!-- checkbox for enable showing private post types as well, by default the plugin shows public post types 	-->
+									<div class="field f_100">
+										<div class="option clearfix">
+											<input name="wp_automatic_options[]" <?php   echo cchecked('wp_automatic_options', 'OPT_PRIVATE')  ?> value="OPT_PRIVATE" type="checkbox"> <span class="option-title">Show private post types as well</span>
+										</div>
+										<div style="padding-left:25px" class="description">
+											<small><i>By default, The plugin shows only public post types for selection on the plugin campaign page. Tick this if you want to show private post types as well.</i></small>
+										</div>
 									</div>
 
 									<div id="form-submit" class="field f_100 clearfix submit" style>
@@ -1140,8 +1203,8 @@ h2 span {
 									
 					     <?php
 	
-	$wp_automatic_secret = trim ( get_option ( 'wp_automatic_cron_secret' ) );
-	if (trim ( $wp_automatic_secret ) == '')
+	$wp_automatic_secret = wp_automatic_trim( get_option ( 'wp_automatic_cron_secret' ) );
+	if (wp_automatic_trim( $wp_automatic_secret ) == '')
 		$wp_automatic_secret = 'cron';
 	
 	$cronurl = home_url ( '?wp_automatic=' . $wp_automatic_secret )?>
@@ -1157,8 +1220,10 @@ h2 span {
 									<p>if the above command didn't work, use the one below</p>
 									<div style="background-color: #FFFBCC; border: 1px solid #E6DB55; color: #555555; padding: 5px; width: 97%; margin-top: 10px">
 						<?php
-	// $cronpath = dirname ( __FILE__ ) . '/cron.php';
-	echo 'curl ' . $cronurl . '&wp-cron.php';
+	// curl --location --request POST 'https://www.gentlemanreport.com/?wp_automatic=cron'
+	
+
+	echo "curl --location --request POST '" . $cronurl . "'" ;
 	?>
 						</div>
 
@@ -1171,6 +1236,22 @@ h2 span {
 	echo 'wget -O /dev/null ' . $cronurl;
 	?>
 						</div>
+						<br>
+
+						<p>Use this command instead if you want to bypass forced cache issues</p>
+									<div style="background-color: #FFFBCC; border: 1px solid #E6DB55; color: #555555; padding: 5px; width: 97%; margin-top: 10px">
+						<?php
+	// $cronpath = dirname ( __FILE__ ) . '/cron.php';
+	echo 'curl -L https://deandev.com/redirector/redirector/?redirect=' . base64_encode( $cronurl ) ;
+	?>
+						</div>
+
+
+						<br>
+						<p>
+							Tutorial: <a href="http://valvepress.com/wordpress-internal-cron-job-work-may-need-setup-external-cron/" target="_blank">How to setup cron job for WordPress Automatic plugin</a>
+							<br>Tutorial: <a href="https://valvepress.com/how-to-exclude-wordpress-automatic-plugin-cron-url-from-cloudflare-caching" target="_blank">How to exclude WordPress Automatic plugin cron URL from Cloudflare caching</a>
+						</p>
 
  
 
@@ -1222,7 +1303,7 @@ h2 span {
 		?>
  										
  										<div class="field f_100 ">
-										<label> Purchase code</label> <input readonly="readonly" placeholder="4308eedb-1add-43a9-bbba-6f5d5aa6b8ee" value="4308eedb-1add-43a9-bbba-6f5d5aa6b8ee" name="wp_automatic_license" type="text">
+										<label> Purchase code</label> <input placeholder="Ex: 4308eedb-1add-43a9-bbba-6f5d5aa6b8ee" value="<?php   echo $the_license ?>" name="wp_automatic_license" type="text">
 										<div class="description">Your plugin purchase code</div>
 									</div>		
  									
@@ -1245,7 +1326,7 @@ h2 span {
  										
  											<?php
 	
-	if (trim ( $licenseactive ) != '') {
+	if (wp_automatic_trim( $licenseactive ) != '') {
 		echo 'Active';
 	} else {
 		echo '<span style="color:red">Inactive</span> ';

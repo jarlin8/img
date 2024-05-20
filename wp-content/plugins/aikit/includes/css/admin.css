@@ -34,10 +34,35 @@
     color: red;
 }
 
+.aikit-tab-content {
+    display: block !important;
+}
+
 .aikit-valid-key {
     color: green;
 }
 
 .aikit-slider {
     width: 400px
+}
+
+#aikit-settings-tabs {
+    margin-top: 10px;
+}
+
+h2 {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+li.nav-item {
+    margin-bottom: 0px !important;
+}
+
+.tab-pane {
+    padding: 10px;
+}
+
+.audio-player-preview {
+    margin-top: 10px;
 }

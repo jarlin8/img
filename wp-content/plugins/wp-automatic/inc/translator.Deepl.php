@@ -33,10 +33,7 @@ class DeeplTranslator{
 	 */
 	
 	function translateText($sourceText , $fromLanguage ,$toLanguage){
-		
-		
- 
-		
+		 
 		//translating
 		$x='error';
 		
@@ -51,10 +48,12 @@ class DeeplTranslator{
 		
 		
 		//formality
-		if( trim($this->fomality) != '' && $this->fomality != 'default'){
+		if( wp_automatic_trim($this->fomality) != '' && $this->fomality != 'default'){
 			$curlurl .= '&formality=' . $this->fomality;
 		}
-			
+
+		//replace EN-US, EN-GB with EN
+		if($fromLanguage == 'EN-US' || $fromLanguage == 'EN-GB') $fromLanguage = 'EN';
 		
 		if($fromLanguage != 'auto') $curlurl.= '&source_lang=' . $fromLanguage ;
 		
@@ -75,7 +74,7 @@ class DeeplTranslator{
 		 
 		
 		// Empty response check
-		if(trim($exec) == ''){
+		if(wp_automatic_trim($exec) == ''){
 			
 			if($cuinfo['http_code'] == 403){
 				throw new Exception('Deepl returned 403 error which could mean your key is incorrect or your subscription is not valid '.$x);

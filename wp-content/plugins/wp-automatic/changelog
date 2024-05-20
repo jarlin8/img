@@ -1,3 +1,236 @@
+Version 3.96.0 (18 May 2024)
+NEW: OpenAI new model gpt-4o added
+NEW: OpenAI Markdown format now get automatically converted to HTML
+
+Version 3.95.0 (15 May 2024)
+NEW: OpenAI model gpt-4-turbo/gpt-4-turbo-2024-04-09 added
+NEW: Option to not remember excluded links
+NEW: AliExpress can now import specific products by product ID
+Fix: Amazon price extraction now works correctly for RTL languages like Arabic
+Fix: AliExpress images back to work after recent changes, downloading images is now required
+Fix: AliExpress now correctly extract the product on some servers
+
+Version 3.94.0 (01 May 2024)
+Fix: Craigslist moduel back to work after changes from the site
+NEW: Amazon option to import amazon product reviews as WooCommerce reviews
+NEW: Amazon new tag [item_summary] to return the AI generated reviews summary 
+NEW: Amazon new tag [item_reviews_text] to return customer reviews list as text
+Fix: Feeds/Multi-scraper now do not auto remove scripts by default for extraction from them by other options
+Fix: Facebook now correctly identify link posts after recent changes from FB
+
+Version 3.93.2 (16 Apr 2024)
+Fix: Feeds/Multi-scraper XPath with @href now remove unnecssary href text
+NEW: Youtube [transcript] tag back to work after recent changes from Youtube
+NEW: Amazon now returns high resolution images
+
+Version 3.93.0 (12 Mar 2024)
+Fix: Facebook module updated to cope with new changes
+Fix: Keyword box now allow double quotes in keywords
+New: Places new tag [item_reviews] to return the reviews 
+
+Version 3.92.1 (1 Mar 2024)
+Fix: UI updated to correct an issue of not able to save when the skip posts older option is enabled
+Fix: Multi-page scraper timeout increased for slow requests
+Fix: Reddit now return the correct HTML content
+
+Version 3.92.1 (27 February 2024)
+Fix: Essential changes made to the plugin, please upgrade to this version asap
+Fix: Feeds/multi-scraper auto-detect method now works for non-latin languages
+Fix: Amazon images extraction back to work for mobile view after recent changes
+Fix: Amazon Price extraction now works for mobile view after recent changes
+
+Version 3.92.0 (23 February 2024)
+Update: GPT 3.5 turbo model updated to the latest version gpt-3.5-turbo-0125 
+NEW: Careejet option to set custom locale code
+
+Version 3.91.0  (13 February 2024)
+NEW: Dalle 3 new option to set size under modify OpenAI parameters 
+NEW: Option to remove consequent br tags from the content
+Fix: AliExpress affiliate link generation now works correctly, a new cookie is now required
+Fix: custom fields tag [featured_img_source] now works when using FIFU plugin
+Fix: Youtube hyperlink inline links now consider utf8 characters
+Fix: Deepl translate source langauge for English now back to work
+Fix: Feeds/multi-scraper extract original meta description now works for Rank Math SEO plugin
+
+
+Version 3.90.0 (28 January 2024)
+NEW: new OpenAI models added gpt-4-0125-preview
+NEW: Google places new option to set the language of the search
+Fix: Facebook import events from groups back to work after recent changes
+Fix: Rmoved Ezinearticles.com as a supported source, site shutdown
+Fix: Translation of tags now works correctly
+
+
+Version 3.89.0 (27 January 2024)
+NEW: New campaign type to import from Google Maps places/business 
+NEW: Youtube option to truncate the transcript to the desired length 
+NEW: APIFY now support cookies for simulating logged in and importing from protected sites with login
+NEW: Updated Deepl supported languages list
+
+Version 3.88.0 (6 January 2024)
+NEW: Dalle 3 support, now you can generate featured image using OpenAI Dalle 3
+NEW: Youtube option to skip shorts 
+NEW: Youtube option to only import shorts
+NEW: Option to disable fixing noscript lazyloading images
+Fix: Tiktok stuck when posting from a specific user when a gallery is found sorted
+
+Version 3.78.0 (28 December 2023)
+Fix: Updated TikTok module to work again after recent changes
+NEW: custom fields tags [post_title] and [post_content]
+NEW: tag [inline_link] to return the inline link found in the content
+NEW: new tutorial on how to increase number of OpenAI articles added to tutorials section
+Fix: Amazon excerpt now removes Price and as of date
+Fix: {} can now be used in the post template, previousely it was removed
+
+Version 3.77.7 (19 December 2023)
+NEW: option to show private post types in the campaign page
+Fix: Facebook broken links when the post is a shared post now sorted
+
+Version 3.77.6 (17 December 2023)
+Fix: Facebook module updated to cope with new changes, now correctly get the post links
+Fix: Reddit module updated to cope with new changes, a session cookie is now required
+NEW: settings page option to set a finite list of categories to display in the campaign page
+Fix: The plugin no more truncate prompt cause new turbo model is 16k token instead of 4k
+
+Version 3.77.5 (3 December 2023)
+Fix: Facebook module imported duplicate posts, now sorted
+NEW: Custom post slug now supports [post_title] to use the final post title 
+Fix: WooCommerce products that are on sale now display on on sale filter
+
+
+Version 3.77.4 (7 December 2023)
+Fix: Facebook group posts import now back to work after recent changes
+NEW: Tutorial aded on how to set post template 
+
+Version 3.77.3 (3 December 2023)
+Fix: Load multi-paged content Feeds/multi-scraper caused the campaign to fail, now sorted
+
+Version 3.77.2 (3 December 2023)
+Fix: Facebook back to work after recent changes from Facebook side
+Fix: Vimeo search index now reset after reaching 10k result
+Fix: Selected categories now get saved correctly
+Improved: Clicbank now uses the new HTTPS affiliate link format 
+
+
+Version 3.77.1 (01 December 2023)
+Fix: Fatal error casued by the previous version sorted out
+
+Version 3.77.0 (30 November 2023)
+Fix: Facebook back to work after recent changes
+Fix: Featured image now get extracted from original content after removal from an OpenAI prompt
+Fix: Amazon now can import book author name
+Fix: eBay all images extraction now back to work
+
+Version 3.76.0 (7 November 2023)
+NEW: upgraded OpenAI 3.5 turbo model to the latest version gpt-3.5-turbo-1106
+NEW: Added new OpenAI model gpt-4-1106-preview
+NEW: Integration with Internal Link Juicer plugin for automatic internal links, a new tutorail added to the tutorials section 
+Fix: Multi-scrper 404 feed error posts now sorted
+Improved: Timeout increased for OpenAI calls to 300 seconds to cope with slow calls
+Fix: Amazon import from best sellers pages now back to work
+Fix: Amazon product price extraction for Electronics now back to work
+Fix: Auto hyperlink keywords now support non latin characters
+
+Version 3.75.0 (19 October 2023)
+NEW: Feeds/multi-page scraper option to import multi-page posts
+NEW: OpenAI option to use a fine tuned model 
+NEW: OpenAI option to remove H1 from the generated content
+NEW: Feeds/multi-scraper now auto fix noscript lazyloding images
+NEW: Feeds/multi-scraper new tag [source_url_decoded] to return the source URL decoded
+NEW: new tag [title_words_as_slug] to return the title words as slug
+NEW: Feeds/multi-scraper campaign can now auto extract tags from source post Schema tags
+Improved: OpenAI campaigns now auto remove unecessary HTML tags like html & body from generated content
+Fix: Amazon will not set the _sale_price if the product is not on sale
+Fix: Multi-scraper campaign now deletes generated .xml containing found links if found empty
+Improved: Campaigns page now do not list all multi-scraper fixed links
+
+
+Version 3.74.1 (12 September 2023)
+NEW: Now you can add multiple OpenAI API keys and the plugin will rotate between them
+NEW: Tiktok option to remove @user from the post content 
+NEW: Tiktok option to remove music used from the post content 
+NEW: Feeds/Multi-scraper can now extract a speicfic part before or after another text (tutorial added)
+NEW: Bulk option to Deactivate and Activate selected campaigns
+Fix: Tiktok now remove music from generated title
+Fix: Amazon price extraction algorithm updated to cope with new changes
+Fix: fix of critical error when loading all campaigns page
+Fix: campaigns processing algorithm updated to correct memory limit issue when too many campaigns
+Improved: Feeds/Multi-scraper category extraction algorithm improved to detect cats in span inside a tags
+Improved: Feeds/Multi-scraper post from specific links now auto fill the first link for visusal selector
+
+Version 3.74.0 (26 August 2023)
+NEW: Telegram support, now you can auto-post from Telegram to WordPress posts
+NEW: Images to Gallery option now can add galleries in Classic old format or Gutenberg blocks
+Fix: Feeds/Multi-scraper now add required JS scripts for Instagram/Tiktok embeds if missing
+Fix: Amazon product features extraction now back to work
+Fix: Multi-scraper can now load items feed even if the server/cloudFlare blocked the request
+Fix: Amazon Post item even if there is already a posted one from another campaign now works
+
+Version 3.73.1 (4 August 2023)
+Fix: AliExpress back to work again after changes from AliExpress side
+NEW: tutorial added on how to auto post recent videos from Youtube channel
+ 
+Version 3.73.0 (27 July 2023)
+Urgent: Google translate back to work after recent change
+NEW: option to trim the post slug to a specific number of words
+NEW: option to remove images from the post content for any campaign type
+Fix: add WooCommerce custom product attribute back to work
+Improved:Adjust numeric tags now considers the numeric value if not already numeric
+Improved: Feeds/Multi-scraper og:image extraction algorithm improved to cover more cases
+NEW: Tutorial added on how to import from Google trends to Multi-scraper campaign
+NEW: [gpt] shortcode now process inner shortcodes inside the prompt
+Fix: Facebook like button in post content now get removed correctly
+Improved: Feeds/multi-scraper remove paragraphs containing specific text now removes it even if inside a span or a tags
+
+Version 3.72.0 (14 June 2023)
+NEW: OpenAI gpt-3.5-turbo model upgraded to gpt-3.5-turbo-0613 which is 25% cheaper
+NEW: OpenAI gpt-3.5-turbo-16k model added for longer size content generation
+
+
+Version 3.71.2 (14 June 2023)
+Fix: license or domain not valid error message with internal cron now sorted
+NEW: Tutorial added to OpenAI module tutorials section on how to increase content size
+
+Version 3.71.1 (8 June 2023)
+NEW: Approve/Exclude post if criteria applies option now can compare two fields like [list_price_numeric] and [price_numeric]
+NEW: added a new tutorial to Amazon campaign tutorials section on how to import on sale products only
+Fix: eBay item description now gets imported correctly after changes from eBay side
+Fix: Undefined variable $source_link error sorted
+Fix: Twitter filter:videos and similar now gets converted to has:videos for backward compatibility
+Fix: Single quote in keywords box now work
+
+Version 3.71.0 (1 June 2023)
+NEW: Youtube post from playlist can now accept playlist URL instead of ID
+Fix: Twitter module back to work using the latest API v2
+Fix: Clickbank module updated to cope with changes from Clickbank side
+Fix: Price update feature now works for amazon.fr
+Fix: Careerjet full job description extraction now back to work
+NEW: Tutorial added to tutorials section on how to post to bbPress forums
+Improved: Youtube campaign UI improved by seprating options to post from playlist and channel
+Improved: FB now can change page type (Legacy/new page experience) without need to create a new campaign
+Improved: Run now button now display errors if any caused the process to fail
+Improved: Auto remove quotes from generated OpenAI titles 
+Improved: OpenAI prompt processing in post template now get cached in case of timeout errors, not repeat the same call
+Fix: Facebook campaigns now download images to the server as FB now expire images links
+Fix: Amazon set product description as excerpt now works for normal post type 
+
+
+Version 3.70.0 (12 May 2023)
+NEW: can now set _regular_price and _sale_price for WooCommerce products on custom fields section
+NEW: Amazon can now overwrite the sale price with the list price on custom fields section
+NEW: Tutorial added on how to import from a specific site in mulitple languagesq
+Fix: OpenAI content now insert br tags instead of new lines
+Fix: Reddit returned an error when processing the campaign, now sorted out
+Fix: AliExpress deleted products now get deleted from the database
+Fix: Auto clean excluded links cache added
+Fix: Timout for slow gpt-4 calls now increased to 5 minutes
+
+Version 3.69.0 (23 March 2023)
+NEW: option to disable plugin front end scripts and styles embeded by default
+NEW: added Korean language to deepl supported languages and updated the list of supported languages
+NEW: Tutorial added to tutorials section on how to set tags using OpenAI API
+Fix: [gpt] shortcode now works on custom fields section alogside with [gpt3] shortcode
+
 Version 3.68.0 (18 March 2023)
 NEW: gpt-4 support, click Modify OpenAI call parameters and pick the model you want to use
 NEW: option for hyperlink specific keywords with specific links to hyperlink once 
@@ -462,6 +695,7 @@ Fix: Facebook new tag original_date_timestamp added
 Fix: Facebook tag place_phone now returns the phone if starts with +
 Fix: Twitter now embed Tweets with GIFs
 Fix: Now back to work with Google news RSS feeds
+
 
 @12 November 2019 v3.46.7
 Fix: Pinterest module back to work after recent changes

@@ -8,6 +8,11 @@ jQuery(function($) {
         submitForm($("#aikit-repurposer-generate"));
     });
 
+    $(".aikit-top-hidden-toggle").click(function (event) {
+        event.preventDefault();
+        $(".aikit-top-hidden-note").toggle(100);
+    });
+
     // on defocus of aikit-repurposer-url, check if it is a valid URL
     $("#aikit-repurposer-url").blur(function () {
         let url = $(this).val();
@@ -54,6 +59,7 @@ jQuery(function($) {
         }).success(function (response) {
             spinner.remove();
             $("#aikit-repurposer-extracted-text").val(response.content);
+            $("#aikit-repurposer-extracted-title").val(response.title);
             $(".aikit-repurposer-extracted-text-container").show(100);
         }).fail(function (response) {
             spinner.remove();
@@ -64,6 +70,121 @@ jQuery(function($) {
     $('.aikit-repurposer-how-to').click(function (event) {
         event.preventDefault();
         $('.aikit-repurposer-how-to-content').toggle(100);
+    });
+
+    $("#aikit-repurposer-activate-all").click(function (event) {
+        event.preventDefault();
+        if (confirm($(this).data('confirm-message'))) {
+            let deleteUrl = $(this).attr('href');
+            $.ajax({
+                type: "POST",
+                url: deleteUrl,
+                data: JSON.stringify({}),
+                dataType: "json",
+                encode: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-WP-Nonce': aikit.nonce,
+                },
+            }).success(function (response) {
+                // refresh the page
+                location.reload();
+            }).fail(function (response) {
+                alert('Error: ' + response.responseText);
+            });
+        }
+    });
+
+    $(".aikit-repurposer-job-activate").on('click', function (event) {
+        event.preventDefault();
+        let deleteUrl = $(this).attr('href');
+        $.ajax({
+            type: "POST",
+            url: deleteUrl,
+            data: JSON.stringify({
+                id: $(this).data('id'),
+            }),
+            dataType: "json",
+            encode: true,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-WP-Nonce': aikit.nonce,
+            },
+        }).success(function (response) {
+            // refresh the page
+            location.reload();
+        }).fail(function (response) {
+            alert('Error: ' + response.responseText);
+        });
+    });
+
+    $(".aikit-repurposer-job-deactivate").on('click', function (event) {
+        event.preventDefault();
+        let deleteUrl = $(this).attr('href');
+        $.ajax({
+            type: "POST",
+            url: deleteUrl,
+            data: JSON.stringify({
+                id: $(this).data('id'),
+            }),
+            dataType: "json",
+            encode: true,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-WP-Nonce': aikit.nonce,
+            },
+        }).success(function (response) {
+            // refresh the page
+            location.reload();
+        }).fail(function (response) {
+            alert('Error: ' + response.responseText);
+        });
+    });
+
+    $("#aikit-repurposer-deactivate-all").click(function (event) {
+        event.preventDefault();
+        if (confirm($(this).data('confirm-message'))) {
+            let deleteUrl = $(this).attr('href');
+            $.ajax({
+                type: "POST",
+                url: deleteUrl,
+                data: JSON.stringify({}),
+                dataType: "json",
+                encode: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-WP-Nonce': aikit.nonce,
+                },
+            }).success(function (response) {
+                // refresh the page
+                location.reload();
+            }).fail(function (response) {
+                alert('Error: ' + response.responseText);
+            });
+        }
+    });
+
+    $("#aikit-repurposer-delete-all").click(function (event) {
+        event.preventDefault();
+        if (confirm($(this).data('confirm-message'))) {
+            let deleteUrl = $(this).attr('href');
+            $.ajax({
+                type: "POST",
+                url: deleteUrl,
+                data: JSON.stringify({}),
+                dataType: "json",
+                encode: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-WP-Nonce': aikit.nonce,
+                },
+            }).success(function (response) {
+                // refresh the page
+                location.reload();
+            }).fail(function (response) {
+                alert('Error: ' + response.responseText);
+            });
+        }
     });
 
     $(".aikit-repurposer-jobs-delete").on('click', function (event) {
@@ -121,11 +242,18 @@ jQuery(function($) {
             post_status: $("#aikit-repurposer-post-status").val(),
             post_category: $("#aikit-repurposer-post-category").val(),
             prompts: prompts,
+            model: $("#aikit-repurposer-model").val(),
+            save_prompts: $("#aikit-repurposer-save-prompts").is(':checked'),
         };
 
         // if aikit-repurposer-extracted-text has text, then send it as well
         if ($("#aikit-repurposer-extracted-text").val() !== '') {
             formData.extracted_text = $("#aikit-repurposer-extracted-text").val();
+        }
+
+        // if aikit-repurposer-extracted-title has text, then send it as well
+        if ($("#aikit-repurposer-extracted-title").val() !== '') {
+            formData.extracted_title = $("#aikit-repurposer-extracted-title").val();
         }
 
         let url = $('#aikit-repurposer-form').attr('action');
@@ -157,6 +285,29 @@ jQuery(function($) {
             button.prop('disabled', false);
         });
     }
+
+    $("#aikit-repurposer-reset-prompts").on('click', function (e) {
+        e.preventDefault();
+        if (confirm($(this).data('confirm-message'))) {
+            let url = $(this).attr('href');
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: JSON.stringify({}),
+                dataType: "json",
+                encode: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-WP-Nonce': aikit.nonce,
+                },
+            }).success(function (response) {
+                // refresh the page
+                location.reload();
+            }).fail(function (response) {
+                alert('Error: ' + response.responseText);
+            });
+        }
+    });
 
     const translate = function (text) {
         let translations = JSON.parse($('#aikit-repurposer-translations').val());

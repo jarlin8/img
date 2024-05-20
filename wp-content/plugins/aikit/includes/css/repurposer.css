@@ -87,7 +87,7 @@ h2 {
 }
 
 .aikit-badge-danger {
-    background-color: #dc3545;
+    background-color: #dc8935;
 }
 
 .aikit-badge-success {
@@ -124,4 +124,19 @@ h1 {
 
 .aikit-repurposer-how-to-content {
     display: none;
+}
+
+.aikit-repurposer-jobs-pagination a {
+    margin: 0 5px;
+}
+
+.aikit-top-hidden-note {
+    display: none;
+}
+
+.aikit-top-hidden-toggle {
+    position: absolute;
+    top: 15px;
+    right: 10px;
+    font-weight: bold;
 }

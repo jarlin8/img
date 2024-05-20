@@ -9,7 +9,7 @@ class WpAutomaticInstagram extends wp_automatic {
 		$this->load_cookie('ig');
 		
 		// sess required
-		$wp_automatic_ig_sess = trim ( get_option ( 'wp_automatic_ig_sess', '' ) );
+		$wp_automatic_ig_sess = wp_automatic_trim( get_option ( 'wp_automatic_ig_sess', '' ) );
 		
 		// ini keywords
 		$camp_opt = unserialize ( $camp->camp_options );
@@ -19,13 +19,13 @@ class WpAutomaticInstagram extends wp_automatic {
 		// looping keywords
 		foreach ( $keywords as $keyword ) {
 			
-			$keyword = trim ( $keyword );
+			$keyword = wp_automatic_trim( $keyword );
 			
 			// update last keyword
-			update_post_meta ( $camp->camp_id, 'last_keyword', trim ( $keyword ) );
+			update_post_meta ( $camp->camp_id, 'last_keyword', wp_automatic_trim( $keyword ) );
 			
 			// when valid keyword
-			if (trim ( $keyword ) != '') {
+			if (wp_automatic_trim( $keyword ) != '') {
 				
 				// record current used keyword
 				$this->used_keyword = $keyword;
@@ -115,7 +115,7 @@ class WpAutomaticInstagram extends wp_automatic {
 					$temp ['item_images'] = '<img src="' . $temp ['item_img'] . '" />';
 					
 					// generating title
-					if (@trim ( $temp ['item_title'] ) == '') {
+					if (@wp_automatic_trim( $temp ['item_title'] ) == '') {
 						
 						if (in_array ( 'OPT_IT_AUTO_TITLE', $camp_opt )) {
 							
@@ -138,7 +138,7 @@ class WpAutomaticInstagram extends wp_automatic {
 								$contentClean = preg_replace ( '{@\S*}', '', $contentClean );
 							}
 							
-							$contentClean  = trim($contentClean);
+							$contentClean  = wp_automatic_trim($contentClean);
 							
 							if (function_exists ( 'mb_substr' )) {
 								$newTitle = (mb_substr ( $contentClean, 0, $cg_it_title_count ));
@@ -150,7 +150,7 @@ class WpAutomaticInstagram extends wp_automatic {
 								
 								$suggestedTitle = preg_replace ( "{\n.*}", '', $newTitle );
 								
-								if( trim($suggestedTitle) != '' ){
+								if( wp_automatic_trim($suggestedTitle) != '' ){
 									$newTitle = $suggestedTitle;
 								}
 								
@@ -247,8 +247,11 @@ class WpAutomaticInstagram extends wp_automatic {
 							
 							
 							// $videoEmbed = ' [video src="' . $vidUrl .'" '.$autoPlay.'] ' ;
-							$videoEmbed = ' <blockquote class="instagram-media" data-instgrm-permalink="' . $temp ['item_url'] . '" data-instgrm-version="8" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">&nbsp;</blockquote> <script async defer src="//www.instagram.com/embed.js"></script> ';
+							//$videoEmbed = ' <blockquote class="instagram-media" data-instgrm-permalink="' . $temp ['item_url'] . '" data-instgrm-version="8" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">&nbsp;</blockquote> <script async defer src="//www.instagram.com/embed.js"></script> ';
 							
+							// new vid embed code <blockquote class="instagram-media"  data-instgrm-permalink="https://www.instagram.com/reel/CupkaXeADGb/" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">&nbsp;</blockquote> <script async src="//www.instagram.com/embed.js"></script>
+							$videoEmbed = '<blockquote class="instagram-media"  data-instgrm-permalink="https://www.instagram.com/reel/' . $temp ['item_id'] . '/" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">&nbsp;</blockquote> <script async src="//www.instagram.com/embed.js"></script>';
+
 							if (in_array ( 'OPT_IT_NO_VID_EMBED', $camp_opt )) {
 							} elseif (in_array ( 'OPT_IT_VID_TOP', $camp_opt )) {
 								$temp ['item_description'] = $videoEmbed . $temp ['item_description'];
@@ -266,7 +269,7 @@ class WpAutomaticInstagram extends wp_automatic {
 							
 							$all_childs_html = '';
 							$img_template = stripslashes ( $camp_general ['cg_it_full_img_t'] );
-							if (trim ( $img_template ) == '')
+							if (wp_automatic_trim( $img_template ) == '')
 								$img_template = '<img src="[img_src]" />';
 							
 							if (isset ( $fullItemDetails->graphql->shortcode_media->edge_sidecar_to_children->edges )) {
@@ -287,14 +290,14 @@ class WpAutomaticInstagram extends wp_automatic {
 									
 									foreach ( $all_childs as $child ) {
 										
-										$all_childs_html .= str_replace ( '[img_src]', $child->node->display_url, $img_template );
+										$all_childs_html .=wp_automatic_str_replace( '[img_src]', $child->node->display_url, $img_template );
 										
 										if (! stristr ( $img_template, '<img ' )) {
 											$all_childs_html .= '<img class="delete" src="' . $child->node->display_url . '" />';
 										}
 									}
 									
-									if (trim ( $all_childs_html ) != '')
+									if (wp_automatic_trim( $all_childs_html ) != '')
 										$temp ['item_images'] = $all_childs_html;
 								}
 							}elseif(isset($fullItemDetails->items)){
@@ -310,7 +313,7 @@ class WpAutomaticInstagram extends wp_automatic {
 									$all_childs = $fullItemDetails->items[0]->carousel_media;
 								}else{
 									
-									if(trim($fullItemDetails->items[0]->image_versions2->candidates[0]->url) != '')
+									if(wp_automatic_trim($fullItemDetails->items[0]->image_versions2->candidates[0]->url) != '')
 									$temp ['item_img'] = $fullItemDetails->items[0]->image_versions2->candidates[0]->url;
 								}
 									$i=0;
@@ -322,7 +325,7 @@ class WpAutomaticInstagram extends wp_automatic {
 										//fresh image
 										if($i == 0 ) $temp ['item_img'] = $img_src_url;
 										
-										$all_childs_html .= str_replace ( '[img_src]', $img_src_url, $img_template );
+										$all_childs_html .=wp_automatic_str_replace( '[img_src]', $img_src_url, $img_template );
 										
 										if (! stristr ( $img_template, '<img ' )) {
 											$all_childs_html .= '<img class="delete" src="' . $img_src_url . '" />';
@@ -334,7 +337,7 @@ class WpAutomaticInstagram extends wp_automatic {
 									
 									
 									if(in_array ( 'OPT_IT_SLIDER', $camp_opt )){
-									if (trim ( $all_childs_html ) != '')
+									if (wp_automatic_trim( $all_childs_html ) != '')
 										$temp ['item_images'] = $all_childs_html;
 									}
 								
@@ -345,14 +348,14 @@ class WpAutomaticInstagram extends wp_automatic {
 						
 						// rebuild item_images if no slider was available
 						$img_template = stripslashes ( $camp_general ['cg_it_full_img_t'] );
-						if (trim ( $img_template ) == '')
+						if (wp_automatic_trim( $img_template ) == '')
 							$img_template = '<img src="[img_src]" />';
 							
-							if(trim($temp ['item_images']) == '')
-							$temp ['item_images'] = str_replace('[img_src]', $temp ['item_img'], $img_template); 
+							if(wp_automatic_trim($temp ['item_images']) == '')
+							$temp ['item_images'] = wp_automatic_str_replace('[img_src]', $temp ['item_img'], $img_template); 
 						
  						
-						if (  (isset ( $fullItemDetails->graphql->shortcode_media->shortcode ) && trim ( $fullItemDetails->graphql->shortcode_media->shortcode ) == $t_data ['item_id']) || isset($fullItemDetails->items[0])   ) {
+						if (  (isset ( $fullItemDetails->graphql->shortcode_media->shortcode ) && wp_automatic_trim( $fullItemDetails->graphql->shortcode_media->shortcode ) == $t_data ['item_id']) || isset($fullItemDetails->items[0])   ) {
 							echo '<-- Valid item details returned from Instagram case items/graph? ';
 							
 							if(isset($fullItemDetails->items[0]) ){
@@ -362,7 +365,7 @@ class WpAutomaticInstagram extends wp_automatic {
 								$temp ['item_user_username'] = $fullItemDetails->items[0]->user->username;
 								$temp ['item_user_profile_pic'] = $fullItemDetails->items[0]->user->profile_pic_url;
 								
-								if (trim ( $fullItemDetails->items[0]->user->full_name ) != '') {
+								if (wp_automatic_trim( $fullItemDetails->items[0]->user->full_name ) != '') {
 									$temp ['item_user_name'] = $fullItemDetails->items[0]->user->full_name;
 								} else {
 									$temp ['item_user_name'] = $fullItemDetails->items[0]->user->username;
@@ -435,7 +438,7 @@ class WpAutomaticInstagram extends wp_automatic {
 								$temp ['item_user_username'] = $fullItemDetails->graphql->shortcode_media->owner->username;
 								$temp ['item_user_profile_pic'] = $fullItemDetails->graphql->shortcode_media->owner->profile_pic_url;
 								
-								if (trim ( $fullItemDetails->graphql->shortcode_media->owner->full_name ) != '') {
+								if (wp_automatic_trim( $fullItemDetails->graphql->shortcode_media->owner->full_name ) != '') {
 									$temp ['item_user_name'] = $fullItemDetails->graphql->shortcode_media->owner->full_name;
 								} else {
 									$temp ['item_user_name'] = $fullItemDetails->graphql->shortcode_media->owner->username;
@@ -508,7 +511,7 @@ class WpAutomaticInstagram extends wp_automatic {
 						echo '<br>Extracting tags';
 						
 						$itemDescription = $temp ['item_description'];
-						$itemDescription = str_replace ( '#', ' #', $itemDescription );
+						$itemDescription =wp_automatic_str_replace( '#', ' #', $itemDescription );
 						$itemDescription = preg_replace ( '{<blockquote.*?blockquote>}', '', $itemDescription );
 						$itemDescription = $itemDescription;
 						$itemDescription = $itemDescription . ' ';
@@ -516,7 +519,7 @@ class WpAutomaticInstagram extends wp_automatic {
 						preg_match_all ( '{#[^#]*?\s}', $itemDescription, $tagMatchs );
 						
 						$temp ['item_tags'] = implode ( ',', $tagMatchs [0] );
-						$temp ['item_tags'] = str_replace ( '#', '', $temp ['item_tags'] );
+						$temp ['item_tags'] =wp_automatic_str_replace( '#', '', $temp ['item_tags'] );
 					}
 					
 					// remove hashtags
@@ -529,7 +532,7 @@ class WpAutomaticInstagram extends wp_automatic {
 					
 					// hide video image
 					if (! in_array ( 'OPT_IT_NO_VID_IMG_HIDE', $camp_opt ) && isset ( $temp ['is_video'] ) && $temp ['is_video'] == 'yes') {
-						$temp ['item_images'] = str_replace ( '<img', '<img style="display:none" ', $temp ['item_images'] );
+						$temp ['item_images'] =wp_automatic_str_replace( '<img', '<img style="display:none" ', $temp ['item_images'] );
 					}
 									
  					
@@ -546,7 +549,7 @@ class WpAutomaticInstagram extends wp_automatic {
 		
 		// report
 		echo "<br>So I should now get some pics from Instagram for keyword :" . $keyword;
-		$wp_automatic_ig_sess = trim ( get_option ( 'wp_automatic_ig_sess', '' ) );
+		$wp_automatic_ig_sess = wp_automatic_trim( get_option ( 'wp_automatic_ig_sess', '' ) );
 		
 		// Instascrpe
 		require_once 'inc/class.instagram.php';
@@ -612,7 +615,7 @@ class WpAutomaticInstagram extends wp_automatic {
 			// not first page get the bookmark
 			$wp_instagram_next_max_id = get_post_meta ( $camp->camp_id, 'wp_instagram_next_max_id' . md5 ( $keyword ), 1 );
 			
-			if (trim ( $wp_instagram_next_max_id ) == '') {
+			if (wp_automatic_trim( $wp_instagram_next_max_id ) == '') {
 				echo '<br>No new page max id';
 				$wp_instagram_next_max_id = 0;
 			} else {
@@ -629,13 +632,13 @@ class WpAutomaticInstagram extends wp_automatic {
 		// if specific user posting
 		if (in_array ( 'OPT_IT_USER', $camp_opt )) {
 			
-			$cg_it_user = trim ( $camp_general ['cg_it_user'] );
+			$cg_it_user = wp_automatic_trim( $camp_general ['cg_it_user'] );
 			echo '<br>Specific user:' . $cg_it_user;
 			
 			// check if is a numeric id or we will need to grap the id
-			$cg_it_user_numeric = get_post_meta ( $camp->camp_id, 'wp_instagram_user_' . trim ( $cg_it_user ), 1 );
+			$cg_it_user_numeric = get_post_meta ( $camp->camp_id, 'wp_instagram_user_' . wp_automatic_trim( $cg_it_user ), 1 );
 			
-			if (trim ( $cg_it_user_numeric ) == '') {
+			if (wp_automatic_trim( $cg_it_user_numeric ) == '') {
 				
 				echo '<br>Getting numeric user ID from Instagram..';
 				
@@ -646,7 +649,7 @@ class WpAutomaticInstagram extends wp_automatic {
 					if (is_numeric ( $cg_it_user_numeric )) {
 						
 						echo '<br>Found the id:' . $cg_it_user_numeric;
-						update_post_meta ( $camp->camp_id, 'wp_instagram_user_' . trim ( $cg_it_user ), $cg_it_user_numeric );
+						update_post_meta ( $camp->camp_id, 'wp_instagram_user_' . wp_automatic_trim( $cg_it_user ), $cg_it_user_numeric );
 					}
 				} catch ( Exception $e ) {
 					
@@ -696,8 +699,8 @@ class WpAutomaticInstagram extends wp_automatic {
 		} else {
 			
 			// prepare keyword
-			$qkeyword = str_replace ( ' ', '', $keyword );
-			$qkeyword = str_replace ( '#', '', $qkeyword );
+			$qkeyword =wp_automatic_str_replace( ' ', '', $keyword );
+			$qkeyword =wp_automatic_str_replace( '#', '', $qkeyword );
 			
 			try {
 				 
@@ -824,7 +827,7 @@ class WpAutomaticInstagram extends wp_automatic {
 					$itm ['video_view_count'] = 0;
 					
 					// if video embed it
-					if (trim ( $item->is_video != '' ) && $item->is_video == 1) {
+					if (wp_automatic_trim( $item->is_video != '' ) && $item->is_video == 1) {
 						
 						// don't post videos filter
 						if (in_array ( 'OPT_IT_NO_VID', $camp_opt )) {
@@ -863,7 +866,7 @@ class WpAutomaticInstagram extends wp_automatic {
 					
 					// full name
 					$itm ['item_user_name'] = '';
-					if (isset ( $item->owner->full_name ) && trim ( $item->owner->full_name ) != '') {
+					if (isset ( $item->owner->full_name ) && wp_automatic_trim( $item->owner->full_name ) != '') {
 						$itm ['item_user_name'] = $item->owner->full_name;
 					} else {
 						$itm ['item_user_name'] = isset ( $item->owner->username ) ? $item->owner->username : '';

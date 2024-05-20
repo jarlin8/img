@@ -1,5 +1,17 @@
 <?php
  
+ //check if wp_verify_nonce exists 
+ if(!function_exists('wp_verify_nonce')){
+ 	die('Permission denied');
+ }
+
+ //validate nonce
+ if (!isset($_GET['_wpnonce']) ||  !wp_verify_nonce($_GET['_wpnonce'], 'wp_automatic_download')) {
+    die('Permission denied');
+}
+
+
+
 function curl_exec_follow( &$ch){
 
 	$max_redir = 3;
@@ -12,7 +24,7 @@ function curl_exec_follow( &$ch){
 		
 		if($info['http_code'] == 301 ||  $info['http_code'] == 302  ||  $info['http_code'] == 307 ){
 				
-			curl_setopt($ch, CURLOPT_URL, trim($info['redirect_url']));
+			curl_setopt($ch, CURLOPT_URL, wp_automatic_trim($info['redirect_url']));
 			$exec=curl_exec($ch);
 				
 		}else{
@@ -30,12 +42,22 @@ function curl_exec_follow( &$ch){
 }
 
 $link=$_GET['link'];//urldecode();
-    $link=str_replace('httpz','http',$link);
+ 
+//verify if link is on form httpz://sweetheatm.FXEXPERTS.hop.clickbank.net using REGEX
+if(preg_match('/httpz:\/\/[a-zA-Z0-9]+\.[a-zA-Z0-9]+\.hop\.clickbank\.net/', $link) != 1){
+	echo json_encode(array('status'=>'error','message'=>'Invalid link'));
+
+	exit;
+
+}
+
+
+    $link=wp_automatic_str_replace('httpz','http',$link);
     //$link='http://ointmentdirectory.info/%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%81%E0%B8%AA%E0%B8%94%E0%B8%87%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%99%E0%B8%B4%E0%B9%88%E0%B8%87-%E0%B8%97%E0%B8%AD%E0%B8%94%E0%B8%9B%E0%B8%A5%E0%B8%B2%E0%B9%80%E0%B8%9E';
     //  echo $link ;
     //exit ;
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, trim($link));
+    curl_setopt($ch, CURLOPT_URL, wp_automatic_trim($link));
     curl_setopt($ch, CURLOPT_HEADER, 1);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
@@ -55,12 +77,17 @@ $link=$_GET['link'];//urldecode();
     
      
 	$original_link=$curlinfo['url'];
-	$original_link=str_replace("?hop=zzzzz",'',$original_link);
+	$original_link=wp_automatic_str_replace("?hop=zzzzz",'',$original_link);
 	$res['link']=$original_link;
 	
 	//get the title
 	preg_match("/<title>(.*?)<\/title>/i",$exec,$matches );
-	$ret=$matches[1];
+	
+	if(isset($matches[1])){
+		$ret=$matches[1];
+	}else{
+		$ret='';
+	}
 
 	$res['title']=$ret;
 	$res['status']='success';
@@ -84,7 +111,7 @@ $link=$_GET['link'];//urldecode();
 	{
 		$textContent = $tag->textContent;
 	
-		if(trim($textContent) == '' || strlen($textContent) < 25 || stristr($textContent, 'HTTP') || stristr($textContent, '$')) continue;
+		if(wp_automatic_trim($textContent) == '' || strlen($textContent) < 25 || stristr($textContent, 'HTTP') || stristr($textContent, '$')) continue;
 		$ret[] = $textContent;
 		
 	}
@@ -94,12 +121,5 @@ $link=$_GET['link'];//urldecode();
 	  echo json_encode($res);
 
 	exit;
-    
-    @unlink('files/temp.html');
-    $cont=curl_exec($ch);
-    //$cont=file_get_contents($link);
-    if (curl_error($ch)){
-    	  echo 'Curl Error:error:'.curl_error($ch);
-    }
-    file_put_contents('files/temp.html',$link.$cont);
+     
 ?>

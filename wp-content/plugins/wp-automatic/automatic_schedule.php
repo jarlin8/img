@@ -21,7 +21,14 @@ function wp_automatic_function() {
 	
   
 	$opt = get_option ( 'wp_automatic_options', array ('OPT_CRON') );
-	if (in_array ( 'OPT_CRON', $opt )) {
+	
+	//log current url $_SERVER['REQUEST_URI']
+	//sanitize url for storage $_SERVER['REQUEST_URI']
+	$sanizied_url = sanitize_text_field($_SERVER['REQUEST_URI']);
+	//wp_automatic_log_new('INTERNAL Cron job URI', $sanizied_url );
+
+	//if opt cron is enabled or URL contains wp_cron.php and wp_automatic is in the URL
+	if (in_array ( 'OPT_CRON', $opt ) || ( stristr($_SERVER['REQUEST_URI'] , 'wp-cron.php') && stristr($_SERVER['REQUEST_URI'] , 'wp_automatic')  )  ) {
 
 		//log cron trigger
 		wp_automatic_log_new('INTERNAL Cron job triggered', 'Cron job just started now..... ');

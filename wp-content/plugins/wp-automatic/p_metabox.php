@@ -49,15 +49,15 @@ $source=array( '[source_link]' , 'will be replaced with the original article sou
 $allowed_tags['Articles']=  array(array('[keyword]','Keyword used to get current item'), array('[matched_content]' ,' will be replaced with the original fetched article content'),array('[original_title]','article title'), array('[author_name]','author name') , array('[author_link]','author link')  ,$ad1,$ad2,$source );
 $allowed_tags['gpt3'] = array(array('[keyword]','Keyword used to get current item'), array('[matched_content]' ,' will be replaced with the original fetched article content'),array('[original_title]','article title') ,$ad1,$ad2,$source );
 $allowed_tags['ArticlesBase']=  array(array('[keyword]','Keyword used to get current item'), array('[matched_content]' ,' will be replaced with the original fetched article content'),array('[original_title]','article title'), array('[author_name]','author name') , array('[author_link]','author link')  ,$ad1,$ad2,$source );
-$allowed_tags['Feeds']= $allowed_tags['Multi'] =  array( array('[matched_content]' ,' will be replaced with the original fetched article content') ,array('[original_title]','title of the post') , array('[author]','Author name if displayed at the feed or extracted using the extract original author option') ,array('[publish_date]','the date when the feed item published'),array('[feed_name]','Title of the feed extracted from the feed content') ,array('[enclosure_link]','Returns the enclosure link of the item in the feed, this could be an image/audio or video link'),array('[og_img]','Only if you used the option to set a featured image from og:img this tag will return the og:image src url'),array('[rule_{ruleNumber}]','Returns the content from the set rule, for example, if you have set two rules to extract the content using REGEX. [rule_1] returns content from the first rule and [rule_2] returns the second rule content and so on...'),array('[rule_{ruleNumber}_plain]','Returns the content from the set rule in plain text after removing all html tags, for example, if you have set two rules to extract the content using REGEX. [rule_1_plain] returns content from the first rule and [rule_2_plain] returns the second rule content and so on... all in plain text'),$ad1,$ad2,$source , array('[redirect_url]','If the source post URL redirects to another URL, this tag will contain the final redirection URL'), array('[source_domain]','Domain name of the source URL') , array('[source_url_encoded]','Encoded source URL to be added as a parameter on a link') , array( '[cats]' , 'Comma spearated list of the post categories as shown on the RSS feed if exist' ) );
-$allowed_tags['Amazon']=array(array('[keyword]','Keyword used to get current item'), array('[product_img]',' will be replaced with the product image src'), array('[product_imgs_html]','Html of all the product images'), array('[product_imgs]','Comma separated list of image srcs of the product'),array('[product_link]',' will be replaced with the product amazon page link'),array('[chart_url]','get replaced by the add to chart link of the product at amazon'),array('[product_list_price]','Product list price without discount') , array('[list_price_numeric]','Numeric value of the list price without currency') ,array('[price_with_discount]','If on sale, the original and new price are displayed.If not, the list price is displayed this tag is rendered on display to represent current price'),array('[price_with_discount_fixed]','If on sale, the original and new price are displayed.If not, the list price is displayed this tag value get generated when the product firstly added. It does not get updated with new price'),array('[product_price]',' Will be replaced with the product price like $32.10 with currency attached if possible Note  some products will not return a price'),array('[price_numeric]','price in a numeric format like 32.10 this price is suitable for woocommerce product price custom field named _price'), array('[price_currency]','The price currency i.e $ or € etc.'), array('[product_desc]',' will be replaced with the original fetched product descreption') , array('[item_details]','Technical product details/table ')  , array('[product_asin]','Product ASIN'), array('[product_upc]','Product Universal Product Code') , array('[product_brand]','Brand of the item if exists'), array('[product_author]','Author of the item if exists') ,array('[price_update_date]','Date and time when the price was updated by the plugin'),array('[item_rating]', 'Rating of the product out of 5') ,array('[item_cats]', 'Categories of the product') ,array('[item_manufacture_description]','Date and time when the price was updated by the plugin') ,$ad1,$ad2,$source);
+$allowed_tags['Feeds']= $allowed_tags['Multi'] =  array( array('[matched_content]' ,' will be replaced with the original fetched article content') ,array('[original_title]','title of the post') , array('[author]','Author name if displayed at the feed or extracted using the extract original author option') ,array('[publish_date]','the date when the feed item published'),array('[feed_name]','Title of the feed extracted from the feed content') ,array('[enclosure_link]','Returns the enclosure link of the item in the feed, this could be an image/audio or video link'),array('[og_img]','Only if you used the option to set a featured image from og:img this tag will return the og:image src url'),array('[rule_{ruleNumber}]','Returns the content from the set rule, for example, if you have set two rules to extract the content using REGEX. [rule_1] returns content from the first rule and [rule_2] returns the second rule content and so on...'),array('[rule_{ruleNumber}_plain]','Returns the content from the set rule in plain text after removing all html tags, for example, if you have set two rules to extract the content using REGEX. [rule_1_plain] returns content from the first rule and [rule_2_plain] returns the second rule content and so on... all in plain text'),$ad1,$ad2,$source , array('[redirect_url]','If the source post URL redirects to another URL, this tag will contain the final redirection URL'), array('[source_domain]','Domain name of the source URL') , array('[source_url_encoded]','Encoded source URL to be added as a parameter on a link') , array('[source_url_decoded]','Decoded source URL, usefull for non latin links like arabic links') , array( '[cats]' , 'Comma spearated list of the post categories as shown on the RSS feed if exist' ) , array( '[tags]' , 'Comma spearated list of the post tags if the option to extract them was enabled' ) );
+$allowed_tags['Amazon']=array(array('[keyword]','Keyword used to get current item'), array('[product_img]',' will be replaced with the product image src'), array('[product_imgs_html]','Html of all the product images'), array('[product_imgs]','Comma separated list of image srcs of the product'),array('[product_link]',' will be replaced with the product amazon page link'),array('[chart_url]','get replaced by the add to chart link of the product at amazon'),array('[product_list_price]','Product list price without discount') , array('[list_price_numeric]','Numeric value of the list price without currency') ,array('[price_with_discount]','If on sale, the original and new price are displayed.If not, the list price is displayed this tag is rendered on display to represent current price'),array('[price_with_discount_fixed]','If on sale, the original and new price are displayed.If not, the list price is displayed this tag value get generated when the product firstly added. It does not get updated with new price'),array('[product_price]',' Will be replaced with the product price like $32.10 with currency attached if possible Note  some products will not return a price'),array('[price_numeric]','price in a numeric format like 32.10 this price is suitable for woocommerce product price custom field named _price'), array('[price_currency]','The price currency i.e $ or € etc.'), array('[product_desc]',' will be replaced with the original fetched product descreption') , array('[item_details]','Technical product details/table ')  , array('[product_asin]','Product ASIN'), array('[product_upc]','Product Universal Product Code') , array('[product_brand]','Brand of the item if exists'), array('[product_author]','Author of the item if exists') , array('[product_summary]','AI generated text of the reviews summary. Customers say') , array('[product_reviews_text]','List of product reviews') ,array('[price_update_date]','Date and time when the price was updated by the plugin'),array('[item_rating]', 'Rating of the product out of 5') ,array('[item_cats]', 'Categories of the product') ,array('[item_manufacture_description]','Date and time when the price was updated by the plugin') ,$ad1,$ad2,$source);
 $allowed_tags['Clickbank']=array( array('[keyword]','Keyword used to get current item'), array('[product_img]',' will be replaced with the product image html') , array('[product_img_src]',' will be replaced with the product image src') , array('[product_link]',' will be replaced with the product sales page with your affiliate link') , array('[product_original_link]',' will be replaced with product sales page link without affiliation')   ,  array('[product_desc]',' will be replaced with the original fetched product descreption'),$ad1,$ad2,$source);
-$allowed_tags['Youtube']=array(array('[keyword]','Keyword used to get current item'), array('[vid_title]','Title of the video') ,array('[vid_player]',' will be replaced with the posted video player embed code') ,array('[vid_id]',' will be replaced with the youtube original vid id'), array('[source_link]',' will be replaced with the youtube original vid link') , array('[vid_img]',' replaced with video thumb img src') , array('[vid_views]',' will be replaced with video views count') , array('[vid_rating]',' will be replaced with stars rating out of 5 of the video') ,  array('[vid_desc]',' will be replaced with the original fetched video descreption') , array('[vid_time]','Video publish timestamp '), array('[vid_date]','Date when the video was published'), array('[vid_duration]','Video duration ') , array('[vid_duration_in_seconds]','Video duration calculated in seconds ') , array('[vid_author]','Video author channel id') , array('[vid_author_title]','Video author title') , array('[vid_likes]','Number of video likes'), array('[vid_dislikes]','Number of video dislikes'),array('[vid_tags]','Video tags comma separated only if the option to post YT tags as tags is active') ,array('[vid_download_url]' , 'Download URL of the video from y2mate.com'), array('[transcript]','Transcript text as paragraphs of the video if available') , array('[transcript_raw]','Transcript as copied from youtube time and sentences like 00:01 hello ') , $ad1,$ad2,$source );
+$allowed_tags['Youtube']=array(array('[keyword]','Keyword used to get current item'), array('[vid_title]','Title of the video') ,array('[vid_player]',' will be replaced with the posted video player embed code') ,array('[vid_id]',' will be replaced with the youtube original vid id'), array('[source_link]',' will be replaced with the youtube original vid link') , array('[vid_img]',' replaced with video thumb img src') , array('[vid_views]',' will be replaced with video views count'),  array('[vid_desc]',' will be replaced with the original fetched video descreption') , array('[vid_time]','Video publish timestamp '), array('[vid_date]','Date when the video was published'), array('[vid_duration]','Video duration ') , array('[vid_duration_in_seconds]','Video duration calculated in seconds ') , array('[vid_author]','Video author channel id') , array('[vid_author_title]','Video author title') , array('[vid_likes]','Number of video likes'), array('[vid_tags]','Video tags comma separated only if the option to post YT tags as tags is active') ,array('[vid_download_url]' , 'Download URL of the video from y2mate.com'), array('[transcript]','Transcript text as paragraphs of the video if available') , array('[transcript_raw]','Transcript as copied from youtube time and sentences like 00:01 hello ') , $ad1,$ad2,$source );
 
 $allowed_tags['Vimeo']=array(array('[keyword]','Keyword used to get current item'),array('[vid_title]','title of the video'),  array('[vid_description]',' will be replaced with the original fetched video descreption'), array('[vid_embed]',' will be replaced with the posted video player embed code') ,array('[vid_id]',' will be replaced with the original vid id'), array('[vid_url]',' will be replaced with the vimeo original vid link') , array('[vid_img]',' replaced with video thumb img src') , array('[vid_views]',' will be replaced with video views count') , array('[vid_likes]',' will be replaced with stars likes number of the video')  , array('[vid_duration]','Video duration in seconds'), array('[vid_duration_readable]','Video duration in  hh:mm:ss format'), array('[vid_width]', 'width of the video player'), array('[vid_height]', 'Height of the video player')  ,  array('[vid_created_time]','Video creation time '),array('[vid_modified_time]', 'last modification date') , array('[vid_author_name]','Video author name '),array('[vid_author_id]','video author id') , array('[vid_author_link]','video author link'), array('[vid_author_picutre]','video author picture src link'),array('[vid_tags]','Tags of the video comma separated')  , $ad1,$ad2 );
 $allowed_tags['Flicker']=array(array('[keyword]','Keyword used to get current item'), array('[img_title]','Image Title'),array('[img_author]','Image author ID'),array('[img_src]','Image Src link'),array('[img_src_s]','small square 75x75') , array('[img_src_q]','large square 150x150') , array('[img_src_t]','thumbnail, 100 on longest side') , array('[img_src_m]','small, 240 on longest side') , array('[img_src_n]','small, 320 on longest side') , array('[img_src_z]','medium 640, 640 on longest side') , array('[img_src_c]','medium 800, 800 on longest side†') , array('[img_src_b]','large, 1024 on longest side ') , array('[img_src_h]','large, 1600 on longest side ') , array('[img_src_k]','large, 2048 on longest side ') , array('[img_src_o]','Original Image uploaded with original size') ,array('[img_link]','Image link on flicker'),array('[img_author_name]','Image author name'),array('[img_description]','Image description'),array('[img_date_posted]','Date when the image posted'),array('[img_date_taken]','Date when the image taken'),array('[img_viewed]','Num of views of the image'),array('[img_tags]','image tags on flicker'),$ad1,$ad2,$source );
 $allowed_tags['eBay']=array(array('[keyword]','Keyword used to get current item'),array('[item_id]','added item id on ebay'),array('[item_title]','item title'),array('[item_desc]','item description'),array('[item_images]','html of all item images'),array('[item_img]','item image http source'),array('[item_link]','item link on ebay'),array('[item_bids]','Number of current bids if applicable'),array('[item_price]','current item price'),array('[item_marketing_price]','Price before discount defaults to price'), array('[item_price_with_discount]','Item price before discount deleted then current price. defaults to item price if no discount') ,array('[item_bin]','item buy it now price if applicable'),array('[item_end_date]','item when the listing ends'), array('[item_seller_username]' , 'Username of the seller') , array('[item_seller_url]' , 'URL of the seller'), array('[item_location]' , 'Location of the item'), array('[item_ships_to]' , 'Item shipping to location'), array('[item_condition]' , 'Condition of the item, New or Used') , array('[item_condition_desc]' , 'Description of the condition as added from the seller') , array('[item_return_policy]' , 'If seller accepts returns'), array('[item_listing_type]' , 'Type of the listing Auction or buy it now'), array('[item_shipping_start]' , 'If seller starts shipping after recieving the payment') , array('[item_subtitle]' , 'Subtitle of the item')  , array('[item_category]' , 'Name of item category') , array('[item_category]' , 'Name of item category') , array('[item_payment]' , 'Available payment method') , array('[item_postal]' , 'Postal code of the item location')  ,$ad1,$ad2,$source );
-$allowed_tags['Pinterest'] = array(array('[pin_id]','Numerical id of the posted pin'),array('[pin_url]','Pin url at pinterest.com'),array('[pin_link]','original page link where the pin image exits *only for pins with link back to the source'),array('[pin_title]','Title of the pin'),array('[pin_description]','Description of the pin'),array('[pin_board_id]','Numeric ID of the board the pin belons to'),array('[pin_board_url]','URL of the matching board'),array('[pin_board_name]','Name of the board the pin belons to'),array('[pin_pinner_username]','Username of the pinner'),array('[pin_pinner_full_name]','Full name of the pinner'),array('[pin_pinner_id]','Numeric ID of the pin pinner'),array('[pin_domain]','Domain for the pin if posted from a url'),array('[repin_count]','Number of repins'),array('[pin_img]','Image src link for the pin image'),array('[pin_img_width]','Width of the pin image'),array('[pin_img_height]','Height of the pin image'),$ad1,$ad2);
+$allowed_tags['Pinterest'] = array(array('[pin_id]','Numerical id of the posted pin'),array('[pin_url]','Pin url at pinterest.com'),array('[pin_link]','original page link where the pin image exits *only for pins with link back to the source'),array('[pin_title]','Title of the pin'),array('[pin_description]','Description of the pin'),array('[pin_board_url]','URL of the matching board'),array('[pin_board_name]','Name of the board the pin belons to'),array('[pin_pinner_username]','Username of the pinner'),array('[pin_pinner_full_name]','Full name of the pinner'),array('[pin_pinner_id]','Numeric ID of the pin pinner'),array('[pin_domain]','Domain for the pin if posted from a url'),array('[repin_count]','Number of repins'),array('[pin_img]','Image src link for the pin image'),array('[pin_img_width]','Width of the pin image'),array('[pin_img_height]','Height of the pin image'),$ad1,$ad2);
 $allowed_tags['Instagram'] = array( array('[item_title]','Instagram image title'), array('[item_embed]','The embed code of the item'), array('[item_vid_embed]','Item vido embed code') , array('[item_id]','The instagram pic id'),array('[item_url]','Instagram pic url'),array('[item_description]','Instagram pic description'),array('[item_img]','Instagram image src'),array('[item_images]','Item images HTML code'),array('[item_img_width]','Width of the instagram image'),array('[item_img_height]','Height of the image'),array('[item_user_id]','Instagram user id'),array('[item_user_username]','Username of the instagram image poster'),array('[item_user_name]','user name of the image poster'),array('[item_user_profile_pic]','Image src of the user pic'),array('[item_created_date]','date when the item created'),array('[item_likes_count]','Likes count of the item'),array('[item_comments_count]','Comments count of the item'),array('[item_tags]','Comma separated list of tags'),array('[item_location_name]','Location name'),array('[item_location_id]','Location ID'),array('[item_location_url]','Location explore link'), array('[video_view_count]','Views count only if the imported item is a video.') ,$ad1,$ad2,$source );
 $allowed_tags['TikTok'] = array(array('[item_id]','Numeric ID of the video'),array('[item_url]','URL of the video'),array('[item_description]','Description of the video'),array('[item_img]','Cover image url of the video'),array('[item_img_width]','Width of the video cover pic'),array('[item_img_height]','height of the video cover pic'),array('[item_user_username]','username of the video uploader'),array('[item_user_name]','Name of the video uploader'),array('[item_tags]','hashtags of the video comma separated'),array('[item_images]',''),array('[item_title]','Title of the video'),array('[item_embed]','Embed code of the video') );
 $allowed_tags['Facebook'] = $allowed_tags['Facebookposts'] = $allowed_tags['Facebookfeed'] = $allowed_tags['Facebooktagged']= array( array('[post_id]','Facebook post ID including page id'), array('[post_id_single]','Facebook post ID single numeric value') , array('[post_embed]','Embed code of the post') ,  array('[original_title]','Post title'), array('[matched_content]','Post content'),array('[from_name]','Username of the post author'),array('[from_id]','ID of the post author'),array('[from_url]','FB url of the post author'),array('[from_thumbnail]','Thumbnail url of the post author'),array('[shares_count]','Shares count'),array('[original_date]','Date of the post'),array('[original_date_timestamp]','Date of the post timestamp format'),array('[external_url]','External url of the shared post. only if the item is actually a shared link on the page'),array('[image_src]','source url of an image at the post if exists'),array('[likes_count]','Number of likes'),array('[vid_embed]','Embed code of the video if exists'),array('[vid_id]','ID of the video if exists'),array('[vid_url]','URL of the video if exists'), array('[item_tags]','Hashtags comma separated if exist.'),$ad1,$ad2,$source );
@@ -88,9 +88,123 @@ $allowed_tags['Walmart'] = array(array('[item_img]','Url of the item image'),arr
 $allowed_tags['Single'] = array( array('[matched_content]','Content extracted from all rules'),array('[matched_content_plain]','Content extracted from all rules in plain text after removing all html tags'),array('[source_link]','Original link of the source content'),array('[rule_{ruleNumber}]','Returns the content from the set rule, for example, if you have set two rules to extract the content using REGEX. [rule_1] returns content from the first rule and [rule_2] returns the second rule content and so on...'),array('[rule_{ruleNumber}_plain]','Returns the content from the set rule in plain text after removing all html tags, for example, if you have set two rules to extract the content using REGEX. [rule_1_plain] returns content from the first rule and [rule_2_plain] returns the second rule content and so on... all in plain text'),$ad1,$ad2);
 $allowed_tags['Careerjet'] = array(array('[item_title]','Job title'),array('[item_description]','Job description'),array('[item_url]','URL of the job'),array('[item_date]','Date when the job was posted'),array('[item_date_timestamp]','Date when the job was posted'),array('[item_locations]','Location of the work'),array('[item_site]','Site of the job'),array('[item_company]','Company of the job'),array('[item_salary]','Salary'),array('[item_salary_min]','Minimum salary'),array('[item_salary_max]','Maximum salary'),array('[item_salary_type]','Salary type'),array('[item_salary_currency_code]','Currency of the sallary') , array( '[item_source_site]'  , 'Name of the source site displayed below the job description') , array('[item_logo_html]' , 'HTML of the logo image if available') , array('[item_logo]' , 'src link of the logo image if available') ) ;
 $allowed_tags['Aliexpress'] = array( array('[item_id]','Numeric ID of the item'),    array('[item_url]','Link to the item'),    array('[item_title]','Title'),    array('[item_rating]','Numeric rating value out of 5'),    array('[item_orders]','Number of current orders'),    array('[item_price_current]','current displayed price'),    array('[item_price_original]','price before sale'),    array('[item_images]','Comma separated list of images URLs'),    array('[item_ship_from]','Location of the item'),    array('[item_delivery_time]','Time taken for delivery'),    array('[item_ship_cost]','Shipping costs'),    array('[item_wish_count]','whishes count'),    array('[item_description_url]','Link for the description iframe'),    array('[item_img]','Product featured image URL'),    array('[item_imgs_html]','HTML of the product images'),    array('[item_image_html]','Featured Image HTML'),    array('[item_description]','Description'), array('[item_price_numeric]','Numeric value for the price'),    array('[item_price_original_numeric]','Numeric value for the item price before sale'), array('[price_with_discount]', 'Price and sale price displayed side by side'), array('[item_affiliate_url]' , 'Affiliate link for the item') );
+$allowed_tags['telegram'] = array(
+    array('[item_img]', 'Src link of the image'),
+    array('[item_type]', 'Type of the item'),
+    array('[item_url]', 'URL of the item'),
+    array('[item_link]', 'Link of the item'),
+    array('[item_id]', 'ID of the item'),
+    array('[item_description]', 'Description of the item'),
+    array('[item_date]', 'Date of the item'),
+    array('[item_views]', 'Number of views'),
+    array('[item_video_link]', 'Link to the video'),
+    array('[item_img_html]', 'HTML for the image'),
+    array('[item_title]', 'Title of the item'),
+    array('[item_embed]', 'Embed code'),
+	array('[item_author]', 'Author name')
+);
 
+ //Places
+ /*
+ add
 
-$gpt_tag = array('[gpt]Prompt[/gpt]', 'Call OpenAI for a prompt and return the result for example [gpt3]Write an article about [original_title] in French[/gpt3]'); 
+  [item_dine_in] => 1
+    [item_formatted_phone_number] => 01 45 48 82 86
+    [item_international_phone_number] => +33 1 45 48 82 86
+    [item_serves_breakfast] => 1
+    [item_takeout] => 1
+    [item_website] => 
+    [item_weekday_text] => Monday: 7:00 AM – 11:30 PM<br>Tuesday: 7:00 AM – 11:30 PM<br>Wednesday: 7:00 AM – 11:30 PM<br>Thursday: 7:00 AM – 11:30 PM<br>Friday: 7:00 AM – 11:30 PM<br>Saturday: 8:00 AM – 11:30 PM<br>Sunday: 9:00 AM – 11:30 PM
+    [item_photos] => https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=AWU5eFh4Ry3qbeD2ZDYtc_e5OWzhtDj_BB2omd2xIlqwXdd-Y7GixojaK_OpdheYDziWkUDR0OCwmO7_mKL8FaCaggYQpWSBcZ3qer1FFW_KvbfwjYUzYMGXRjS5_lkce3lok_HOVKmc0l71XVpviSt-DjDFO6gL0X4PCrTPmjwT9BpFIhQ&key=AIzaSyCgAbY5aH4k-fRnhjcnSPLJr-qh1TXYPfc,https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=AWU5eFhEnUjNpUifjMQ712-i701z_TD1TG7-RDWpgg50Zf5WzTWxHiPkCcWTJh1Slz7FIW1RfiW0f-5JCIAzsvN77PJ6ixi1x7647DgimYt_tSaWwTn_kGGNQdc_1Rny6uzIpq8W7C9v9zYoGhm8IwMkEwmOGcJONP9L0-UYs-xY_YFBl87L&key=AIzaSyCgAbY5aH4k-fRnhjcnSPLJr-qh1TXYPfc,https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=AWU5eFh0kO9XCYybHCOJb0aduj35JtIsxIK3Jdvev1a0rqpDkKlymktA21BcLoC4X4_atDGQM-JqL-gk6h1qYGf4MxOWFyVkaRmxF9RTPbJx6auxhzHMFj8fDRxJuJiy_Z36vpEg3I4KCEfW2B2BZocDBVTIWconSPN0cCDmgTiQOcGSOT8&key=AIzaSyCgAbY5aH4k-fRnhjcnSPLJr-qh1TXYPfc,https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=AWU5eFiV5foYQeCsrxCWd_jNXf2or7c5weV0HuwRXLNMmEexnl-2o_Bt0hNJc2TeUJqfqgIR1Ghw6jvlwOKva2df_z6nsQXOOMF-e8oxxBRWLA1D5cWkTT8SxZeH__Q2HR86KVfcp3kyy_jhOy5wX9MCDPKB5Ehcha264fQMi735YuPBWxOJ&key=AIzaSyCgAbY5aH4k-fRnhjcnSPLJr-qh1TXYPfc,https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=AWU5eFjYSLv6UzYoVeGoBvomHCb6o_kkB0obR5He_RwOZePk7VZ09aUYVgopoDt-XK9J1zIUE3rXIlIJfn_n7rOu6pcOxtuIuvIJD_klh0Vw6iMVfW-aRMSicvX7_xfGX3d-Tujsd5lrXrodPSClhYw3kI09emuplBqtkkyjapO6eY-YRbhC&key=AIzaSyCgAbY5aH4k-fRnhjcnSPLJr-qh1TXYPfc,https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=AWU5eFicC9qNukxjC77oOOhKsaXAxl3_Hh8osC9X15s9ZzdSqSG7DAOD5J409OAY41UAIDdsmQTACcrhLoQlMcRa8kE_mkh_zbyOuXj090YbOky_sGVdG4owLuHruXDHN7baMo0lUQbSw45b3sW3X87fUyJ_tHDGqBMpX_1KXEh1fa9cm4EH&key=AIzaSyCgAbY5aH4k-fRnhjcnSPLJr-qh1TXYPfc,https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=AWU5eFhEb5JPhjwVZiCR3SY5ZGoj8cZMpt-tyMqtKkAug5vMLEyPMFxwyDL3eoFWIEya3iirimSGfxvr6JzHJe9SBNNv2_JCF0DHtGLDZrcKW_nSDxU_RqGH6os5jJszNt1yRfq7YaGAintNB1XHdwznbwIRzNvjumG4TFMB4kl-TVaGlsXg&key=AIzaSyCgAbY5aH4k-fRnhjcnSPLJr-qh1TXYPfc,https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=AWU5eFiiMn0ToFQszMORjx9q4Ty-u5ZAPuPsNj6Rjm8ASgpAxc2x79qtYt_LYCoSYQUaO4HrDbGbaDEe1TXD1PnC4uZL8bo1abA1PD6H2HkFClnFdCs99tamYWBu5qgfE7nlKJckQgw2SDzpDJPy5_RMk04YwPQXq2z3Q8gxmm8XArnbaPXp&key=AIzaSyCgAbY5aH4k-fRnhjcnSPLJr-qh1TXYPfc,https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=AWU5eFhi9cRHbE-MehIxN0aiXxj7_SufBdIxVZQH6TwcfIUZQ22_oOq2ZnFeVTduKB5okGVq0VLGQEv0bHFZj6RRMq1SRQZcOxBpA-QwC63aKsydtnpmNoY-iGhnOomnmusXcD_rFDfBGzpkAy8zqn-QrVIoDXMVhB3o96X9qnBTOh7mZTxB&key=AIzaSyCgAbY5aH4k-fRnhjcnSPLJr-qh1TXYPfc,https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=AWU5eFiSWgATM8basg792WGLy1PMvmkQLdHG4hswcQLoWZi41MLplDB9ikEudTBRSgHDDMPUoSINHDrQAlOWn7b7nKA9aPWaDnHMnG0XRewM6I88ewE2qKCoXyOqaH8utTGkdx5uBxSw--GO3wbWP-XhrMbBfqSGwlNqOGxb8dTB6skdUJFn&key=AIzaSyCgAbY5aH4k-fRnhjcnSPLJr-qh1TXYPfc
+    [item_photos_html] => 
+
+ */
+$allowed_tags ['Places'] = array (
+		array (
+				'[item_url]',
+				'URL of the item at Google Places' 
+		),
+		array (
+				'[item_formatted_address]',
+				'Formatted address of the item' 
+		),
+		array (
+				'[item_icon]',
+				'Icon of the item' 
+		),
+		array (
+				'[item_name]',
+				'Name of the item' 
+		),
+		array (
+				'[item_title]',
+				'Title of the item' 
+		),
+		array (
+				'[item_id]',
+				'ID of the item' 
+		),
+		array (
+				'[item_price_level]',
+				'Price level of the item' 
+		),
+		array (
+				'[item_rating]',
+				'Rating of the item' 
+		),
+		array (
+				'[item_user_ratings_total]',
+				'Number of user ratings' 
+		),
+		array (
+				'[item_business_status]',
+				'Business status of the item' 
+		),
+		array (
+				'[item_lat]',
+				'Latitude of the item' 
+		),
+		array (
+				'[item_lng]',
+				'Longitude of the item' 
+		),
+		array (
+				'[item_image]',
+				'Image URL of the item' 
+		),
+		array (
+				'[item_compound_code]',
+				'Compound code of the item' 
+		),
+		array (
+				'[item_global_code]',
+				'Global code of the item' 
+		),
+		array (
+				'[item_types]',
+				'Types of the item' 
+		),
+		array (
+				'[item_map_iframe]',
+				'Embed code of the item map' 
+		),
+		array (
+				'[item_map_url]',
+				'URL of the item map' 
+		),
+		array ( '[item_dine_in]', '1 if available' ),
+		array ( '[item_formatted_phone_number]', 'Formatted phone number' ),
+		array ( '[item_international_phone_number]', 'International phone number' ),
+		array ( '[item_serves_breakfast]', '1 if available' ),
+		array ( '[item_takeout]', '1 if available' ),	
+		array ( '[item_website]', 'Website of the item' ),
+		array ( '[item_weekday_text]', 'Weekday working hours' ),
+		array ( '[item_photos]', 'Comma separated list of photos' ),
+		array ( '[item_photos_html]', 'HTML of the photos' ),
+		array ( '[item_reviews]', 'List of reviews' )
+);
+
+$gpt_tag = array('[gpt]Prompt[/gpt]', 'Call OpenAI for a prompt and return the result for example [gpt]Write an article about [original_title] in French[/gpt]'); 
 
 //merge gpt_tag array to every array in $allowed_tags values
 foreach ($allowed_tags as $key => $value) {
@@ -121,7 +235,7 @@ if (count($res) > 0 ){
 		$post_name = stripslashes ( $res->post_name );
 		
 		$camp_options = unserialize ( $res->camp_options );
-		
+
 		$camp_options_arr = $camp_options;
 		
 		$feeds = stripslashes ( $res->feeds );
@@ -255,35 +369,46 @@ if (count($res) > 0 ){
 	$camp_post_type = 'post';
 	$camp_post_exact='';
 	$camp_post_execlude='';
-	$camp_options = array('OPT_POST_STARS','OPT_POST_CONTENT','OPT_TBSS'   );
-	$camp_options[] = 'OPT_YT_CACHE';
-	$camp_options[] = 'OPT_DM_CACHE';
-	$camp_options[] = 'OPT_VM_CACHE';
-	$camp_options[] = 'OPT_FL_CACHE';
-	$camp_options[] = 'OPT_EV_CACHE';
-	$camp_options[] = 'OPT_CL_CACHE';
-	$camp_options[] = 'OPT_EB_CACHE';
-	$camp_options[] = 'OPT_PT_CACHE';
-	$camp_options[] = 'OPT_RD_CACHE';
-	$camp_options[] = 'OPT_RD_OFFICIAL_EMBED';
-	$camp_options[] = 'OPT_PT_AUTO_TITLE';
-	$camp_options[] = 'OPT_IT_CACHE';
-	$camp_options[] = 'OPT_IU_CACHE';
-	$camp_options[] = 'OPT_AE_CACHE';
-	$camp_options[] = 'OPT_IT_AUTO_TITLE';
-	$camp_options[] = 'OPT_SC_CACHE';
-	$camp_options[] = 'OPT_FB_CACHE';
-	$camp_options[] = 'OPT_GENERATE_FB_TITLE';
-	$camp_options[] = 'OPT_FEEDS_OG_IMG';
-	$camp_options[] = 'OPT_SUMARRY_FEED';
-	$camp_options[] = 'OPT_CB_DESCRIPTION';
-	$camp_options[] = 'OPT_TW_VID_EMBED';
-	$camp_options[] = 'OPT_AM_GALLERY';
-	$camp_options[] = 'OPT_THUMB';
-	$camp_options[] = 'OPT_FEED_SCRIPT';
-	$camp_options[] = 'OPT_WM_CACHE';
-	$camp_options[] = 'OPT_CJ_CACHE';
-	$camp_options[] = 'OPT_OPENAI_PENDING';
+	
+	//default checked checkboxes
+	$camp_options = [
+		'OPT_POST_STARS',
+		'OPT_POST_CONTENT',
+		'OPT_TBSS',
+		'OPT_YT_CACHE',
+		'OPT_DM_CACHE',
+		'OPT_VM_CACHE',
+		'OPT_FL_CACHE',
+		'OPT_EV_CACHE',
+		'OPT_CL_CACHE',
+		'OPT_EB_CACHE',
+		'OPT_PT_CACHE',
+		'OPT_RD_CACHE',
+		'OPT_RD_OFFICIAL_EMBED',
+		'OPT_PT_AUTO_TITLE',
+		'OPT_IT_CACHE',
+		'OPT_IU_CACHE',
+		'OPT_AE_CACHE',
+		'OPT_IT_AUTO_TITLE',
+		'OPT_SC_CACHE',
+		'OPT_FB_CACHE',
+		'OPT_GENERATE_FB_TITLE',
+		'OPT_FEEDS_OG_IMG',
+		'OPT_SUMARRY_FEED',
+		'OPT_CB_DESCRIPTION',
+		'OPT_TW_VID_EMBED',
+		'OPT_AM_GALLERY',
+		'OPT_THUMB',
+		'OPT_FEED_SCRIPT',
+		'OPT_WM_CACHE',
+		'OPT_CJ_CACHE',
+		'OPT_OPENAI_PENDING',
+		'OPT_TW_RT',
+		'OPT_TW_RE',
+		'OPT_GP_REMOVE_H1',
+		'OPT_PL_CACHE'
+	];
+	
 	
 	$camp_yt_user='';
 	$camp_translate_from='no';
@@ -345,7 +470,9 @@ if (count($res) > 0 ){
 <div style= "clear:both"></div>
 <div id="wp_automatic_main_box" class="TTWForm-container" dir="ltr" style="visibility:hidden;">
  
-     
+ <?php //nonce field 
+wp_nonce_field('wp_automatic_nonce','wp_automatic_nonce_field'); ?>
+    
      
 <div class="TTWForm">
  
@@ -370,7 +497,6 @@ if (count($res) > 0 ){
 				<option  value="Feeds"  <?php @wp_automatic_opt_selected('Feeds',$camp_type) ?> >Feeds</option>
 				<option  value="Multi"  <?php @wp_automatic_opt_selected('Multi',$camp_type) ?> >Multi-page scraper</option>
 				<option  value="Single"  <?php @wp_automatic_opt_selected('Single',$camp_type) ?> >Single-page scraper</option>
-				<option  value="Articles"  <?php @wp_automatic_opt_selected('Articles',$camp_type) ?> >EzineArticles</option>				
 				<option  value="Amazon"  <?php @wp_automatic_opt_selected('Amazon',$camp_type) ?> >Amazon</option>
 				<option  value="Aliexpress"  <?php @wp_automatic_opt_selected('Aliexpress',$camp_type) ?> >AliExpress</option>
 				<option  value="Clickbank"  <?php @wp_automatic_opt_selected('Clickbank',$camp_type) ?> >Clickbank</option>
@@ -392,8 +518,10 @@ if (count($res) > 0 ){
 				<option  value="Reddit"  <?php @wp_automatic_opt_selected('Reddit',$camp_type) ?> >Reddit</option>
 				<option  value="Walmart"  <?php @wp_automatic_opt_selected('Walmart',$camp_type) ?> >Walmart</option>
 				<option  value="Careerjet"  <?php @wp_automatic_opt_selected('Careerjet',$camp_type) ?> >Careerjet</option>
-				
-				  
+				<option  value="telegram"  <?php @wp_automatic_opt_selected('telegram',$camp_type) ?> >Telegram</option>
+				<!--<option  value="Rumble"  <?php @wp_automatic_opt_selected('Rumble',$camp_type) ?> >Rumble</option>-->
+				<option  value="Places"  <?php @wp_automatic_opt_selected('Places',$camp_type) ?> >Google Places</option>
+			
 			</select>
 			
 			<?php if(count($raw_res) != 0)   echo 'Hint: you can not change type . campaign already published <input name="camp_type" type="hidden" value="'.$camp_type.'" />' ?> 
@@ -401,7 +529,7 @@ if (count($res) > 0 ){
 		</div>
           
 
-          <div  id="field111-container" class="field typepart Articles gpt3 ArticlesBase Amazon Clickbank Youtube Vimeo Flicker  eBay f_100 Pinterest Instagram Twitter SoundCloud Itunes Envato DailyMotion Walmart Careerjet TikTok Aliexpress" style="display:none;" >
+          <div  id="field111-container" class="field typepart Articles gpt3 ArticlesBase Amazon Clickbank Youtube Vimeo Flicker  eBay f_100 Pinterest Instagram Twitter SoundCloud Itunes Envato DailyMotion Walmart Careerjet TikTok Aliexpress Places" style="display:none;" >
                <label for="field111">
                     Campaign keywords <i>(search for these keywords) (comma separated)</i>
                </label>
@@ -434,20 +562,13 @@ if (count($res) > 0 ){
 						<tr><td>beer -root</td><td><i>	containing “beer” but not “root”.</i></td></tr>
 						<tr><td>#haiku</td><td><i>	containing the hashtag “haiku”.</i></td></tr>
 						<tr><td>@mashable</td><td><i>	referencing person “mashable”.</i></td></tr>
-						<tr><td>superhero since:2015-07-19</td><td><i>	containing “superhero” and sent since date “2015-07-19” (year-month-day).</i></td></tr>
-						<tr><td>ftw until:2015-07-19</td><td><i>	containing “ftw” and sent before the date “2015-07-19”.</i></td></tr>
 						<tr><td>movie -scary :)</td><td><i>	containing “movie”, but not “scary”, and with a positive attitude.</i></td></tr>
 						<tr><td>flight :(</td><td><i>	containing “flight” and with a negative attitude.</i></td></tr>
 						<tr><td>traffic ?</td><td><i>	containing “traffic” and asking a question.</i></td></tr>
-						<tr><td>hilarious filter:links</td><td><i>	containing “hilarious” and linking to URL.</i></td></tr>
-						<tr><td>puppy filter:media	</td><td><i>	containing “puppy” and an image or video.</i></td></tr>
-						<tr><td>puppy filter:native_video</td><td><i>	containing “puppy” and an uploaded video, Amplify video, Periscope, or Vine.</i></td></tr>
-						<tr><td>puppy filter:images</td><td><i>	containing “puppy” and links identified as photos, including third parties such as Instagram.</i></td></tr>
-						<tr><td>puppy filter:native_video</td><td><i>	containing “puppy” and an uploaded video, Amplify video, Periscope, or Vine.</i></td></tr>
-						<tr><td>puppy filter:videos	</td><td><i>	containing “puppy” and a video</i></td></tr>
-						<tr><td>news source:twitterfeed</td><td><i>	containing “news” and entered via TwitterFeed</i></td></tr>
-						
-				        
+						<tr><td>hilarious has:links</td><td><i>	containing “hilarious” and linking to URL.</i></td></tr>
+						<tr><td>puppy has:media	</td><td><i>	containing “puppy” and an image or video.</i></td></tr>
+						<tr><td>puppy has:images</td><td><i>	containing “puppy” and links identified as photos, including third parties such as Instagram.</i></td></tr>
+						<tr><td>puppy has:videos	</td><td><i>	containing “puppy” and a video</i></td></tr>
 					</tbody>
 		        </table>
 		         
@@ -553,7 +674,7 @@ if (count($res) > 0 ){
  		 		 				</td>
  		 		 				
  		 		 				<td  style="padding-right:10px;width:150px" >
- 		 		 				 		<input  class="no-unify"  value="<?php  echo  htmlentities($cg_ml_lnk_css_rule ,ENT_COMPAT, 'UTF-8' )  ?>" name="cg_ml_lnk_css[]" type="text">
+ 		 		 				 		<input  class="no-unify"  value="<?php  echo  wp_automatic_htmlentities($cg_ml_lnk_css_rule ,ENT_COMPAT, 'UTF-8' )  ?>" name="cg_ml_lnk_css[]" type="text">
  		 		 				</td>
  		 		 				
  		 		 				<td  style="padding-right:8px;" >
@@ -603,7 +724,7 @@ if (count($res) > 0 ){
  		 		 			<tr>
  		 		 				
  		 		 				<td  style="padding-right:10px;width:300px" >
- 		 		 				 		<input  class="no-unify"  value="<?php  echo htmlspecialchars(  $cg_ml_lnk_regex_rule )  ?>" name="cg_ml_lnk_regex[]" type="text">
+ 		 		 				 		<input  class="no-unify"  value="<?php  echo wp_automatic_htmlspecialchars(  $cg_ml_lnk_regex_rule )  ?>" name="cg_ml_lnk_regex[]" type="text">
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
@@ -640,7 +761,7 @@ if (count($res) > 0 ){
  		 		 			<tr>
  		 		 				
  		 		 				<td  style="padding-right:10px;width:300px" >
- 		 		 				 		<input  class="no-unify"  value="<?php  echo htmlentities( $cg_ml_lnk_visual_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_ml_lnk_visual[]" type="text">
+ 		 		 				 		<input  class="no-unify"  value="<?php  echo wp_automatic_htmlentities( $cg_ml_lnk_visual_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_ml_lnk_visual[]" type="text">
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
@@ -701,7 +822,7 @@ if (count($res) > 0 ){
 			                    Rules (search|replace) (one per line)
 				             </label>
 				               
-				             <textarea name="cg_multi_search_replace" ><?php    echo htmlentities(@$camp_general['cg_multi_search_replace'],ENT_COMPAT, 'UTF-8')   ?></textarea>
+				             <textarea name="cg_multi_search_replace" ><?php    echo wp_automatic_htmlentities(@$camp_general['cg_multi_search_replace'],ENT_COMPAT, 'UTF-8')   ?></textarea>
 					    	
 					    	 <i>
 					    	example: "topics|articles" without quotes
@@ -798,7 +919,7 @@ if (count($res) > 0 ){
  		 		 				</td>
  		 		 				
  		 		 				<td  style="padding-right:10px;width:150px" >
- 		 		 				 		<input  class="no-unify"  value="<?php  echo htmlentities(  $cg_ml_cnt_css_rule , ENT_COMPAT, 'UTF-8')  ?>" name="cg_ml_cnt_css[]" type="text">
+ 		 		 				 		<input  class="no-unify"  value="<?php  echo wp_automatic_htmlentities(  $cg_ml_cnt_css_rule , ENT_COMPAT, 'UTF-8')  ?>" name="cg_ml_cnt_css[]" type="text">
  		 		 				</td>
  		 		 				
  		 		 				<td style="padding-right:8px;">
@@ -848,7 +969,7 @@ if (count($res) > 0 ){
  		 		 			<tr>
  		 		 				
  		 		 				<td  style="padding-right:10px;width:300px" >
- 		 		 				 		<input  class="no-unify"  value="<?php  echo  htmlentities( $cg_ml_cnt_regex_rule ,ENT_COMPAT, 'UTF-8')    ?>" name="cg_ml_cnt_regex[]" type="text">
+ 		 		 				 		<input  class="no-unify"  value="<?php  echo  wp_automatic_htmlentities( $cg_ml_cnt_regex_rule ,ENT_COMPAT, 'UTF-8')    ?>" name="cg_ml_cnt_regex[]" type="text">
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
@@ -890,7 +1011,7 @@ if (count($res) > 0 ){
 				<div style="margin-top:0;padding-top:0;padding-bottom:20px" class="select_control_div_div cg_ml_cnt_method cg_ml_cnt_method_infinite field f_100">
  		 		 		
  					<div class="field f_100">
-			 			<label>Page HTML after scroll</label> <textarea name="cg_ml_infinite"><?php echo htmlentities( @$camp_general['cg_ml_infinite'],ENT_COMPAT, 'UTF-8')     ?></textarea> 	 
+			 			<label>Page HTML after scroll</label> <textarea name="cg_ml_infinite"><?php echo wp_automatic_htmlentities( @$camp_general['cg_ml_infinite'],ENT_COMPAT, 'UTF-8')     ?></textarea> 	 
 						<div class="description">Click the scroll button to get as many posts as desired then paste the content of the page above. Check <a target="_blank" href="http://valvepress.com/how-to-import-from-sites-with-infinite-scroll-using-wordpress-automatic-plugin/">this tutorial</a> for more.</div>
 					</div>
 					
@@ -916,7 +1037,7 @@ if (count($res) > 0 ){
  		 		 			<tr>
  		 		 				
  		 		 				<td  style="padding-right:10px;width:300px" >
- 		 		 				 		<input  class="no-unify"  value="<?php  echo htmlentities( $cg_ml_cnt_visual_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_ml_cnt_visual[]" type="text">
+ 		 		 				 		<input  class="no-unify"  value="<?php  echo wp_automatic_htmlentities( $cg_ml_cnt_visual_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_ml_cnt_visual[]" type="text">
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
@@ -957,7 +1078,7 @@ if (count($res) > 0 ){
 			                   List of posts URLs ( one post URL per line )
 				             </label>
 				               
-				             <textarea name="cg_multi_posts_list" ><?php    echo htmlentities(@$camp_general['cg_multi_posts_list'],ENT_COMPAT, 'UTF-8')   ?></textarea>
+				             <textarea name="cg_multi_posts_list" ><?php    echo wp_automatic_htmlentities(@$camp_general['cg_multi_posts_list'],ENT_COMPAT, 'UTF-8')   ?></textarea>
 					    	
 					    	 <i>
 					    	example:<br> 
@@ -1042,7 +1163,7 @@ if (count($res) > 0 ){
  		 		 				</td>
  		 		 				
  		 		 				<td  style="padding-right:10px;width:150px" >
- 		 		 				 		<input  class="no-unify"  value="<?php  echo  htmlentities($cg_sn_css_rule,ENT_COMPAT, 'UTF-8')   ?>" name="cg_sn_css[]" type="text">
+ 		 		 				 		<input  class="no-unify"  value="<?php  echo  wp_automatic_htmlentities($cg_sn_css_rule,ENT_COMPAT, 'UTF-8')   ?>" name="cg_sn_css[]" type="text">
  		 		 				</td>
  		 		 				
  		 		 				<td style="padding-right:8px;">
@@ -1093,7 +1214,7 @@ if (count($res) > 0 ){
  		 		 			<tr>
  		 		 				
  		 		 				<td  style="padding-right:10px;width:300px" >
- 		 		 				 		<input  class="no-unify"  value="<?php  echo htmlentities( $cg_sn_regex_rule ,ENT_COMPAT, 'UTF-8')  ?>" name="cg_sn_regex[]" type="text">
+ 		 		 				 		<input  class="no-unify"  value="<?php  echo wp_automatic_htmlentities( $cg_sn_regex_rule ,ENT_COMPAT, 'UTF-8')  ?>" name="cg_sn_regex[]" type="text">
  		 		 				</td>
  		 		 				
  		 		 				
@@ -1128,7 +1249,7 @@ if (count($res) > 0 ){
  		 		 			<tr>
  		 		 				
  		 		 				<td  style="padding-right:10px;width:300px" >
- 		 		 				 		<input  class="no-unify"  value="<?php  echo htmlentities($cg_sn_visual_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_sn_visual[]" type="text">
+ 		 		 				 		<input  class="no-unify"  value="<?php  echo wp_automatic_htmlentities($cg_sn_visual_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_sn_visual[]" type="text">
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
@@ -1194,7 +1315,7 @@ if (count($res) > 0 ){
  		 		 				</td>
  		 		 				
  		 		 				<td  style="padding-right:10px;width:150px" >
- 		 		 				 		<input  class="no-unify"  value="<?php  echo   htmlentities($cg_sn_cnt_css_rule,ENT_COMPAT, 'UTF-8')   ?>" name="cg_sn_cnt_css[]" type="text">
+ 		 		 				 		<input  class="no-unify"  value="<?php  echo   wp_automatic_htmlentities($cg_sn_cnt_css_rule,ENT_COMPAT, 'UTF-8')   ?>" name="cg_sn_cnt_css[]" type="text">
  		 		 				</td>
  		 		 				
  		 		 				<td style="padding-right:8px;">
@@ -1244,7 +1365,7 @@ if (count($res) > 0 ){
  		 		 			<tr>
  		 		 				
  		 		 				<td  style="padding-right:10px;width:300px" >
- 		 		 				 		<input  class="no-unify"  value="<?php  echo htmlentities( $cg_sn_cnt_regex_rule,ENT_COMPAT, 'UTF-8')    ?>" name="cg_sn_cnt_regex[]" type="text">
+ 		 		 				 		<input  class="no-unify"  value="<?php  echo wp_automatic_htmlentities( $cg_sn_cnt_regex_rule,ENT_COMPAT, 'UTF-8')    ?>" name="cg_sn_cnt_regex[]" type="text">
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
@@ -1281,7 +1402,7 @@ if (count($res) > 0 ){
  		 		 			<tr>
  		 		 				
  		 		 				<td  style="padding-right:10px;width:300px" >
- 		 		 				 		<input  class="no-unify"  value="<?php  echo htmlentities( $cg_sn_cnt_visual_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_sn_cnt_visual[]" type="text">
+ 		 		 				 		<input  class="no-unify"  value="<?php  echo wp_automatic_htmlentities( $cg_sn_cnt_visual_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_sn_cnt_visual[]" type="text">
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
@@ -1405,7 +1526,7 @@ if (count($res) > 0 ){
  		 		 				</td>
  		 		 				
  		 		 				<td  style="padding-right:10px;width:150px" >
- 		 		 				 		<input  class="no-unify"  value="<?php  echo  htmlentities($cg_ml_css_rule,ENT_COMPAT, 'UTF-8')   ?>" name="cg_ml_css[]" type="text">
+ 		 		 				 		<input  class="no-unify"  value="<?php  echo  wp_automatic_htmlentities($cg_ml_css_rule,ENT_COMPAT, 'UTF-8')   ?>" name="cg_ml_css[]" type="text">
  		 		 				</td>
  		 		 				
  		 		 				<td style="padding-right:8px;">
@@ -1456,7 +1577,7 @@ if (count($res) > 0 ){
  		 		 			<tr>
  		 		 				
  		 		 				<td  style="padding-right:10px;width:300px" >
- 		 		 				 		<input  class="no-unify"  value="<?php  echo htmlentities( $cg_ml_regex_rule ,ENT_COMPAT, 'UTF-8')  ?>" name="cg_ml_regex[]" type="text">
+ 		 		 				 		<input  class="no-unify"  value="<?php  echo wp_automatic_htmlentities( $cg_ml_regex_rule ,ENT_COMPAT, 'UTF-8')  ?>" name="cg_ml_regex[]" type="text">
  		 		 				</td>
  		 		 				
  		 		 				
@@ -1497,7 +1618,7 @@ if (count($res) > 0 ){
  		 		 			<tr>
  		 		 				
  		 		 				<td  style="padding-right:10px;width:300px" >
- 		 		 				 		<input  class="no-unify"  value="<?php  echo htmlentities($cg_ml_visual_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_ml_visual[]" type="text">
+ 		 		 				 		<input  class="no-unify"  value="<?php  echo wp_automatic_htmlentities($cg_ml_visual_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_ml_visual[]" type="text">
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
@@ -1574,7 +1695,7 @@ if (count($res) > 0 ){
 						 		 		 				</td>
 						 		 		 				
 						 		 		 				<td  style="padding-right:10px;width:130px" >
-						 		 		 				 		<input  class="no-unify"  value="<?php  echo htmlentities( $cg_feed_custom_id_single ,ENT_COMPAT, 'UTF-8') ?>" name="cg_feed_custom_id[]" type="text">
+						 		 		 				 		<input  class="no-unify"  value="<?php  echo wp_automatic_htmlentities( $cg_feed_custom_id_single ,ENT_COMPAT, 'UTF-8') ?>" name="cg_feed_custom_id[]" type="text">
 						 		 		 				</td>
 						 		 		 				
 						 		 		 				<td style="padding-right:8px;">
@@ -1647,7 +1768,7 @@ if (count($res) > 0 ){
 						 		 		 			<tr>
 						 		 		 				
 						 		 		 				<td  style="padding-right:5px;width:300px" >
-						 		 		 				 		<input   class="no-unify"  value="<?php  echo htmlentities( $cg_feed_custom_regex_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_feed_custom_regex[]" type="text">
+						 		 		 				 		<input   class="no-unify"  value="<?php  echo wp_automatic_htmlentities( $cg_feed_custom_regex_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_feed_custom_regex[]" type="text">
 						 		 		 				</td>
 						 		 		 				
 														<td    style="padding-left:5px;padding-top:8px;" >
@@ -1714,9 +1835,9 @@ if (count($res) > 0 ){
 											 		 		 			<tr class="rule_row" >
 											 		 		 				
 											 		 		 				<td  style="padding-right:10px;width:300px" >
-											 		 		 				 		<input  class="no-unify"  value="<?php  echo htmlentities($cg_feed_visual_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_feed_visual[]" type="text">
+											 		 		 				 		<input  class="no-unify"  value="<?php  echo wp_automatic_htmlentities($cg_feed_visual_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_feed_visual[]" type="text">
 																			
-																					<textarea placeholder="Optional hint for your reference to remember what this part represents..." rows="2" style="max-height:50px;" name="cg_feed_visual_hint[]"  ><?php echo htmlentities(@$camp_general['cg_feed_visual_hint'][$i],ENT_COMPAT, 'UTF-8') ?></textarea>
+																					<textarea placeholder="Optional hint for your reference to remember what this part represents..." rows="2" style="max-height:50px;" name="cg_feed_visual_hint[]"  ><?php echo wp_automatic_htmlentities(@$camp_general['cg_feed_visual_hint'][$i],ENT_COMPAT, 'UTF-8') ?></textarea>
 																					
 											 		 		 				</td>
 											 		 		 				
@@ -1756,8 +1877,46 @@ if (count($res) > 0 ){
 						               
 						               </div>
 						               
+
+									   <div  style="padding-top:12px">
+						               		<div class="option clearfix">
+	                    
+							                    <input name="camp_options[]"  data-controls="wp_auatomatic_multi_paged_part"  value="OPT_FEED_MULTI_PAGE" type="checkbox">
+							                    <span class="option-title">
+														Load multi-paged content 
+							                    </span>
+							                    <br>
+							                    
+									            <div id="wp_auatomatic_multi_paged_part" class="field f_100">
+									           		
+									           		 <div class="description">
+												    	
+												    	 <label>
+										                    Next page link format (Optional)
+											             </label>
+											
+														 <input placeholder="[current_page]/[page_number]" value="<?php    echo wp_automatic_htmlentities(@$camp_general['cg_multi_paged_link'],ENT_COMPAT, 'UTF-8')   ?>" name="cg_multi_paged_link" type="text">
+											             
+												    	 <p>
+												    	
+												    	This feature loads next pages of the single post if the post content is multi-paged
+												    	
+												    	<br><br>Default format is [current_page]/[page_number] so if the first part of the post URL is http://www.example.com/2024/01/01/post-title/ then the next page URL will be http://www.example.com/2016/01/01/post-title/2/
+												    	
+												    	<br><br>Example: add [current_page]/page/[page_number] if the first part of the post URL is http://www.example.com/2024/01/01/post-title/ then the next page URL will be http://www.example.com/2016/01/01/post-title/page/2/
+												    	 
+														<br><br>Limit: the plugin will load a maximum of 10 pages, concat them together for extraction and applying the content extraction rules, best extraction method will be using CSS Class</p>	
+
+											    	</div>
+									           		 
+											    </div>
+											     
+											</div>
+
+										</div>
+
  						                 
-						                 <div  style="padding-top:12px">
+						               <div  style="padding-top:12px">
 						               		<div class="option clearfix">
 	                    
 							                    <input name="camp_options[]"  data-controls="wp_auatomatic_part_to_field" id="post_strip_css_opt" value="OPT_FEED_PTF" type="checkbox">
@@ -1774,7 +1933,7 @@ if (count($res) > 0 ){
 										                    Rules (one per line)
 											             </label>
 											               
-											             <textarea name="cg_part_to_field" ><?php    echo htmlentities(@$camp_general['cg_part_to_field'],ENT_COMPAT, 'UTF-8')   ?></textarea>
+											             <textarea name="cg_part_to_field" ><?php    echo wp_automatic_htmlentities(@$camp_general['cg_part_to_field'],ENT_COMPAT, 'UTF-8')   ?></textarea>
 												    	
 												    	 <i>
 												    	
@@ -1792,7 +1951,7 @@ if (count($res) > 0 ){
 												    	<br><br>If customFieldName is tags, then the extracted part will be set as tags
 													<br><br>If customFieldName is categories, then the extracted part will be set as categories
 												    	<br><br>Add |1 to the end of the rule if you want to get the first match only 
-												    	<br><br>Prefix the customFieldName with  "taxonomy_" if you want to add the value as a cusotm taxonomy. ex: class|tags|taxonomy_product_tag will extract the part with class named tags and set to the taxonomy named product_tag
+												    	<br><br>Prefix the customFieldName with  "taxonomy_" if you want to add the value as a custom taxonomy. ex: class|tags|taxonomy_product_tag will extract the part with class named tags and set to the taxonomy named product_tag
 												    	</i>
 												    	 
 												    	
@@ -1920,7 +2079,7 @@ if (count($res) > 0 ){
 									                    REGEX patterns to strip (one per line)
 									               </label>
 									               
-									                <textarea name="cg_post_strip" ><?php    echo htmlentities(@$camp_general['cg_post_strip'],ENT_COMPAT, 'UTF-8')   ?></textarea>
+									                <textarea name="cg_post_strip" ><?php    echo wp_automatic_htmlentities(@$camp_general['cg_post_strip'],ENT_COMPAT, 'UTF-8')   ?></textarea>
 									               
 									            </div>
 									            
@@ -1975,7 +2134,7 @@ if (count($res) > 0 ){
 											 		 		 			<tr>
 											 		 		 				
 											 		 		 				<td  style="padding-right:5px;width:300px" >
-											 		 		 				 		<input  class="no-unify"  value="<?php  echo htmlentities($cg_feed_visual_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_feed_visual_strip[]" type="text">
+											 		 		 				 		<input  class="no-unify"  value="<?php  echo wp_automatic_htmlentities($cg_feed_visual_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_feed_visual_strip[]" type="text">
 											 		 		 				</td>
 											 		 		 				
 											 		 		 				<td    style="padding-left:15px;padding-top:8px;" > 
@@ -2063,7 +2222,8 @@ if (count($res) > 0 ){
 									               </label>
 									               
 									                <input value="<?php    echo @$camp_general['cg_original_time_regex']   ?>"  name="cg_original_time_regex" type="text">
-													<div class="description" >Example: <br><code>20\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d*)?.\d{2}:\d{2}</code> </div>
+													<div class="description" >Example:<br><code>(January|February|March|April|May|June|July|August|September|October|November|December)\s\d{1,2},\s20\d{2}
+</code><br><br> Example: <br><code>20\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d*)?.\d{2}:\d{2}</code> </div>
 									               
 
 
@@ -2097,7 +2257,7 @@ if (count($res) > 0 ){
 									                		
 									                		</td>
 									                		
-									                		<td  style="vertical-align: top;width: 100%;" ><input value="<?php   echo htmlspecialchars( @$camp_general['cg_feed_custom_id_cat'])   ?>" name="cg_feed_custom_id_cat"    type="text"></td>
+									                		<td  style="vertical-align: top;width: 100%;" ><input value="<?php   echo wp_automatic_htmlspecialchars( @$camp_general['cg_feed_custom_id_cat'])   ?>" name="cg_feed_custom_id_cat"    type="text"></td>
 									                		
 									                		<td    style="padding-left:15px;padding-top:8px;padding-right:10px"   valign="top">
 						 		 		 					 <button  title="Locate"  data-popup-field-name="cg_ml_example_2"  data-popup-field-rss="yes"  class="dashicons-before dashicons-color-picker visual_selector cat_locator" ></button>
@@ -2186,7 +2346,7 @@ if (count($res) > 0 ){
 							               <div class="option clearfix">
 							                    <input name="camp_options[]"   value="OPT_ORIGINAL_META" type="checkbox">
 							                    <span class="option-title">
-														Set meta tags as WordPress tags
+														Set meta tags/Schema keywords as WordPress tags
 							                    </span>
 							                    <br>
 							               </div>
@@ -2216,7 +2376,7 @@ if (count($res) > 0 ){
 								                		
 								                		</td>
 								                		
-								                		<td  style="vertical-align: top;width: 100%;" ><input value="<?php   echo htmlspecialchars( @$camp_general['cg_feed_custom_id_tag'])   ?>" name="cg_feed_custom_id_tag"    type="text"></td>
+								                		<td  style="vertical-align: top;width: 100%;" ><input value="<?php   echo wp_automatic_htmlspecialchars( @$camp_general['cg_feed_custom_id_tag'])   ?>" name="cg_feed_custom_id_tag"    type="text"></td>
 								                		
 								                		<td    style="padding-left:15px;padding-top:8px;padding-right:10px"   valign="top">
 					 		 		 					 <button  title="Locate"  data-popup-field-name="cg_ml_example_2"  data-popup-field-rss="yes"  class="dashicons-before dashicons-color-picker visual_selector tag_locator" ></button>
@@ -2294,7 +2454,7 @@ if (count($res) > 0 ){
 								                		
 								                		</td>
 								                		
-								                		<td  style="vertical-align: top;width: 100%;" ><input value="<?php   echo htmlspecialchars( @$camp_general['cg_feed_custom_id_author'])   ?>" name="cg_feed_custom_id_author"    type="text"></td>
+								                		<td  style="vertical-align: top;width: 100%;" ><input value="<?php   echo wp_automatic_htmlspecialchars( @$camp_general['cg_feed_custom_id_author'])   ?>" name="cg_feed_custom_id_author"    type="text"></td>
 								                		
 								                		<td    style="padding-left:15px;padding-top:8px;padding-right:10px"   valign="top">
 					 		 		 					 <button  title="Locate"  data-popup-field-name="cg_ml_example_2"  data-popup-field-rss="yes"  class="dashicons-before dashicons-color-picker visual_selector author_locator" ></button>
@@ -2496,6 +2656,16 @@ if (count($res) > 0 ){
 										        </div>
 									                    
 											</div>
+
+											<div class="option clearfix">
+                    
+										        <input  name="camp_options[]" value="OPT_FEED_LAZY_NOSCRIPT_DISABLE" type="checkbox">
+										        <span class="option-title">
+														Disable noscript lazy loading fix (Use this option if you encounter duplicate images in the post)
+										        </span>
+										        
+									                    
+											</div>
 											
 											
 											<div class="option clearfix">
@@ -2507,7 +2677,7 @@ if (count($res) > 0 ){
 											        <br>
 											        
 											        <div id="cookie_c" class="field f_100">
-											         	<label>Cookie</label> <input value="<?php echo  htmlentities($camp_general['cg_ml_cookie']  ,ENT_COMPAT, 'UTF-8')     ?>" name="cg_ml_cookie" type="text">
+											         	<label>Cookie</label> <input value="<?php echo  wp_automatic_htmlentities($camp_general['cg_ml_cookie']  ,ENT_COMPAT, 'UTF-8')     ?>" name="cg_ml_cookie" type="text">
 											         	<div class="description">cookie1Name=cookie1Value;cookie2Name=cookie2value;cookie3Name=cookie3Value<br><br>Check this <a target="_blank" href="http://valvepress.com/how-to-import-protected-sites-content-to-wordpress-automatically/">tutorial</a> on how to get the cookies</div>
 											       	</div>
 							                    
@@ -2596,6 +2766,12 @@ if (count($res) > 0 ){
 					?>
 				</select>
 			</div>
+
+			<!-- custom locale code if your country is not listed -->
+			<div class="option clearfix">
+				<label>Custom locale code <i>(optional)</i></label> <input value="<?php  echo @$camp_general['cg_cj_locale_custom']   ?>" name="cg_cj_locale_custom" type="text">
+				<div class="description" >if your country is not listed above, you can use the custom locale code here ex: fr_FR this will overwrite the above selected locale</div>
+			</div>
 			
 			<div class="option clearfix">
 	 			<label>Location <i>(optional)</i></label> <input value="<?php  echo @$camp_general['cg_cj_location']   ?>" name="cg_cj_location" type="text">
@@ -2662,7 +2838,11 @@ if (count($res) > 0 ){
 		 
 		 <!-- Aliexpress part -->
 		 <div  class="field f_100 typepart Aliexpress"  style="display:none">
-		 
+
+					<!--Hint: add product numeric id like 1005005822085800 in keywords box to import specific products-->
+					<p><strong>Hint:</strong> add product numeric id like 1005005822085800 for <a href="https://tr.aliexpress.com/i/1005005822085800.html" target="_blank">this product</a> in keywords box to import specific products</p>
+
+
 		 	        <div class="option clearfix">
                     <input name="camp_options[]" data-controls="ae_full_img_t"  value="OPT_AE_FULL_IMG" type="checkbox">
 
@@ -2677,9 +2857,9 @@ if (count($res) > 0 ){
 		                    Single image template  
 		               </label>
 		               
-		                <input placeholder="<?php echo  htmlentities('<img src="[img_src]" class="wp_automatic_gallery" />') ;?>"  value="<?php    echo htmlentities(@$camp_general['cg_ae_full_img_t'],ENT_COMPAT, 'UTF-8')   ?>"  name="cg_ae_full_img_t" type="text">
+		                <input placeholder="<?php echo  wp_automatic_htmlentities('<img src="[img_src]" class="wp_automatic_gallery" />') ;?>"  value="<?php    echo wp_automatic_htmlentities(@$camp_general['cg_ae_full_img_t'],ENT_COMPAT, 'UTF-8')   ?>"  name="cg_ae_full_img_t" type="text">
 		               	
-		               	<div class="description">This is how the plugin will build images html for the [item_imgs_html] tag.<br><br>*Use [img_src] to replace the image src.<br><br> *Use class="wp_automatic_gallery" to display images as gallery<br><br>Default: <?php echo  htmlentities('<img src="[img_src]" class="wp_automatic_gallery" />') ;?></div>
+		               	<div class="description">This is how the plugin will build images html for the [item_imgs_html] tag.<br><br>*Use [img_src] to replace the image src.<br><br> *Use class="wp_automatic_gallery" to display images as gallery<br><br>Default: <?php echo  wp_automatic_htmlentities('<img src="[img_src]" class="wp_automatic_gallery" />') ;?></div>
 		               
 		            </div>
                </div>
@@ -2776,6 +2956,8 @@ if (count($res) > 0 ){
                
 			   <input value="<?php   echo @$camp_general['cg_cl_page']  ?>" name="cg_cl_page"   type="text">
 			   
+			   <div class="description">ex: https://newyork.craigslist.org/search/mnh/bia</div>
+
 			    <div  class="field f_100">
 			    
 				    <div class="option clearfix">
@@ -2819,9 +3001,9 @@ if (count($res) > 0 ){
 		                    Image template  
 		               </label>
 		               
-		                <input placeholder="<?php echo  htmlentities('<img src="[img_src]" class="wp_automatic_gallery" />') ;?>"  value="<?php    echo htmlentities(@$camp_general['cg_cl_full_img_t'],ENT_COMPAT, 'UTF-8')   ?>"  name="cg_cl_full_img_t" type="text">
+		                <input placeholder="<?php echo  wp_automatic_htmlentities('<img src="[img_src]" class="wp_automatic_gallery" />') ;?>"  value="<?php    echo wp_automatic_htmlentities(@$camp_general['cg_cl_full_img_t'],ENT_COMPAT, 'UTF-8')   ?>"  name="cg_cl_full_img_t" type="text">
 		               	
-		               	<div class="description">This is how the plugin will build images html for the [item_imgs_html] tag.<br><br>*Use [img_src] to replace the image src.<br><br> *Use class="wp_automatic_gallery" to display images as gallery<br><br>Default: <?php echo  htmlentities('<img src="[img_src]" class="wp_automatic_gallery" />') ;?></div>
+		               	<div class="description">This is how the plugin will build images html for the [item_imgs_html] tag.<br><br>*Use [img_src] to replace the image src.<br><br> *Use class="wp_automatic_gallery" to display images as gallery<br><br>Default: <?php echo  wp_automatic_htmlentities('<img src="[img_src]" class="wp_automatic_gallery" />') ;?></div>
 		               
 		            </div>
                </div>
@@ -2939,8 +3121,198 @@ if (count($res) > 0 ){
 		 
 		 </div>
 		 <!-- /Reddit part -->
+		
+		 <!--Rumble part -->
+		 <div  class="field  typepart Rumble"  style="display:none">
+			
+			<div  class="field f_100">
+				<label>
+					Rumble Search URL/Channel 
+				</label>
+				
+				<input value="<?php   echo @$camp_general['cg_rm_page']  ?>" name="cg_rm_page"   type="text">
+				<div class="description">example1: https://rumble.com/search/all?q=crypto<br>example2: https://rumble.com/c/freshandfit<br>example3: https://rumble.com/search/video?q=crypto&sort=views&date=today</div>
+				
+			</div>
+
+			<div  class="field f_100">
+			
+				<div class="option clearfix">
+	                    <input name="camp_options[]" value="OPT_RM_IMG" type="checkbox">
+	                    <span class="option-title">
+								Skip posts with no images
+	                    </span>
+	                    <br>
+	          	</div>
+			</div>
+		</div>
+
+		<!-- /Rumble part -->
+
+		<!-- Google places part -->
+		<div  class="field  typepart Places"  style="display:none">
+				
+				
+				<div  class="field f_100">
+				
+					
+
+					<!-- Maxmimum image width in pixels -->
+					<div class="option clearfix">
+							<label>
+								Maximum image width in pixels (default 700)
+							</label>
+							<input placeholder="700" value="<?php   echo @$camp_general['cg_pl_max_img_width']  ?>" name="cg_pl_max_img_width"   type="text">
+							<div class="description">ex: 800</div>
+					</div>
+
+					<!-- language code optionl eg. fr -->
+					<div class="option clearfix">
+							<label>
+								Language code (optional)
+							</label>
+							<input placeholder="en" value="<?php   echo @$camp_general['cg_pl_lang']  ?>" name="cg_pl_lang"   type="text">
+							<div class="description">ex: fr for French</div>
+					</div>
+				 
+					<!-- cache option only -->
+					<div class="option clearfix">
+							<input name="camp_options[]" value="OPT_PL_CACHE" type="checkbox">
+							<span class="option-title">
+									Cache items for faster posting  (uncheck to call Google each post)
+							</span>
+							<br>
+					</div>
+
+					<!-- Import reviews as comments -->
+					<div class="option clearfix">
+							<input name="camp_options[]" value="OPT_PL_REVIEWS" type="checkbox">
+							<span class="option-title">
+									Import reviews as comments
+							</span>
+							<br>
+					</div>
+				
+					<!-- Skip posts with no images -->
+					<div class="option clearfix">
+							<input name="camp_options[]" value="OPT_PL_IMG" type="checkbox">
+							<span class="option-title">
+									Skip posts with no images
+							</span>
+							<br>
+					</div>
+				</div>
+	</div>
+
+
 		 
-		 
+		 <!-- Telegram part -->
+
+		 <div  class="field  typepart telegram"  style="display:none">
+			
+			<div  class="field f_100">
+				<label>
+					Telegram Channel URL or ID
+				</label>
+				
+				<input value="<?php   echo @$camp_general['cg_te_page']  ?>" name="cg_te_page"   type="text">
+				<div class="description">example1: https://telegram.me/s/CryptoMemesHub<br>example2: CryptoMemesHub</div>
+				
+			</div>
+
+			<div  class="field f_100">
+			
+				<div class="option clearfix">
+	                    <input name="camp_options[]" value="OPT_TE_IMG" type="checkbox">
+	                    <span class="option-title">
+								Skip posts with no images
+	                    </span>
+	                    <br>
+	          	</div>
+				<div class="option clearfix">
+	                    <input name="camp_options[]" value="OPT_TE_TIME" type="checkbox">
+	                    <span class="option-title">
+								Insert posts with its original source posting time
+	                    </span>
+	                    <br>
+	          	</div>
+				<div class="option clearfix">
+					<input name="camp_options[]" value="OPT_TE_AUTHOR" type="checkbox">
+					<span class="option-title">
+							Set the post author from the original post author
+					</span>
+					<br>
+				</div>
+				<div class="option clearfix">
+					<input name="camp_options[]" value="OPT_TE_TOP" type="checkbox">
+					<span class="option-title">
+							Only check the latest post (skip older posts)
+					</span>
+					<br>
+				</div>
+				<div class="option clearfix">
+					<input name="camp_options[]" value="OPT_TE_REVERSE" type="checkbox">
+					<span class="option-title">
+							Reverse posting order (oldest first)
+					</span>
+					<br>
+				</div>
+				<div class="option clearfix">
+	                    <input data-controls="wp_automatic_post_filter_te" name="camp_options[]"   value="OPT_TE_POST_FILTER" type="checkbox">
+	                    <span class="option-title">
+								Post a specific type of posts   
+	                    </span>
+	                    
+	                    <br>
+	                    
+	                    <div id="wp_automatic_post_filter_te" class="field f_100">
+	                		
+	                		
+	                		<div class="option clearfix">
+					                    <input name="camp_options[]"   value="OPT_TE_POST_LINK" type="checkbox">
+					                    <span class="option-title">
+												link  
+					                    </span>
+					                    <br>
+					        </div>
+					        
+					        <div class="option clearfix">
+					                    <input name="camp_options[]"   value="OPT_TE_POST_IMAGE" type="checkbox">
+					                    <span class="option-title">
+												Image  
+					                    </span>
+					                    <br>
+					         </div>
+	                		 
+					         
+					         <div class="option clearfix">
+					                    <input name="camp_options[]"   value="OPT_TE_POST_VIDEO" type="checkbox">
+					                    <span class="option-title">
+												Videos  
+					                    </span>
+					                    <br>
+					         </div>
+					         
+					         <div class="option clearfix">
+					                    <input name="camp_options[]"   value="OPT_TE_POST_TEXT" type="checkbox">
+					                    <span class="option-title">
+												Text only posts  
+					                    </span>
+					                    <br>
+					         </div> 					          
+	                    	 
+	                    </div>
+	                    
+	         	 </div>
+				 
+			</div>
+						
+		</div>	
+
+		 <!-- /Telegram part -->
+
+
+
 		  <!-- Reddit part -->
 		 
 		 <div  class="field f_100 typepart Reddit"  style="display:none">
@@ -3006,8 +3378,8 @@ if (count($res) > 0 ){
 				        	
 				        	    <label>Single image html</label> 
 				        	    
-				        	     <input placeholder="<?php echo  htmlentities( '<img src="[img_src]" />' ,ENT_COMPAT, 'UTF-8')   ?>" value="<?php    echo  htmlentities($camp_general['cg_rd_full_img_t'],ENT_COMPAT, 'UTF-8')   ?>"  name="cg_rd_full_img_t" type="text">
-				         	 <div class="description">Default: <?php echo  htmlentities( '<img src="[img_src]" />' ,ENT_COMPAT, 'UTF-8')   ?></div>
+				        	     <input placeholder="<?php echo  wp_automatic_htmlentities( '<img src="[img_src]" />' ,ENT_COMPAT, 'UTF-8')   ?>" value="<?php    echo  wp_automatic_htmlentities($camp_general['cg_rd_full_img_t'],ENT_COMPAT, 'UTF-8')   ?>"  name="cg_rd_full_img_t" type="text">
+				         	 <div class="description">Default: <?php echo  wp_automatic_htmlentities( '<img src="[img_src]" />' ,ENT_COMPAT, 'UTF-8')   ?></div>
 				        </div>
 				                    
 				</div>	          		
@@ -3174,7 +3546,7 @@ if (count($res) > 0 ){
 							 	
 							 	foreach($medias as $media){
 							 		
-							 		$media = trim($media);
+							 		$media = wp_automatic_trim($media);
 							 		
 							 		$mediaAttributes = 'All,'.$attributes[$media];
 							 		$mediaAttributes = explode(',', $mediaAttributes);
@@ -3182,7 +3554,7 @@ if (count($res) > 0 ){
 							 		
 							 		foreach ($mediaAttributes as $mediaAttribute){
 
-							 			$mediaAttribute = trim($mediaAttribute);
+							 			$mediaAttribute = wp_automatic_trim($mediaAttribute);
 
 							 			wp_automatic_opt_display($mediaAttribute, $mediaAttribute, $camp_general['cg_iu_attribute'],$media);
 							 		
@@ -3835,7 +4207,7 @@ if (count($res) > 0 ){
  		        </select>
  		        </div>
           
-          	<?php if( ! in_array( 'OPT_AMAZON_NOAPI', $wp_automatic_options) && trim( $wp_amazonpin_abk ) != ''  ) {?>
+          	<?php if( ! in_array( 'OPT_AMAZON_NOAPI', $wp_automatic_options) && wp_automatic_trim( $wp_amazonpin_abk ) != ''  ) {?>
           
           	<div class="field f_100">
                <label for="field1zz">
@@ -3852,7 +4224,7 @@ if (count($res) > 0 ){
 									$i=0;
 									foreach ($catNames as $catName){
 										 
-										if( trim($catName) == '' ){
+										if( wp_automatic_trim($catName) == '' ){
 											$catName = $catVals[$i];
 										}  
 										
@@ -3879,7 +4251,7 @@ if (count($res) > 0 ){
  		      <div>
  		      
  		      
-               <?php if( ! in_array( 'OPT_AMAZON_NOAPI', $wp_automatic_options) && trim( $wp_amazonpin_abk ) != ''  ) {?>           
+               <?php if( ! in_array( 'OPT_AMAZON_NOAPI', $wp_automatic_options) && wp_automatic_trim( $wp_amazonpin_abk ) != ''  ) {?>           
  		      
  		      <div class="field f_100">
                <div class="option clearfix">
@@ -4101,7 +4473,7 @@ if (count($res) > 0 ){
 			               <label>
 			                    HTML of the page that contains the product links 
 			               </label>
-			              	  <textarea  name="cg_am_html"><?php echo htmlentities( @$camp_general['cg_am_html'],ENT_COMPAT, 'UTF-8')  ?></textarea>
+			              	  <textarea  name="cg_am_html"><?php echo wp_automatic_htmlentities( @$camp_general['cg_am_html'],ENT_COMPAT, 'UTF-8')  ?></textarea>
 				            	<div class="description">*Paste the whole page HTML that contains the products<br><br>*Suitable for infinte scroll pages like whichlists, check <a href="https://valvepress.com/how-to-import-all-products-from-amazon-wish-list-to-wordpress-using-wordpress-automatic-plugin/" target="_blank">this tutorial</a> on how to import using this option</div>
 				            	
 				             
@@ -4156,9 +4528,9 @@ if (count($res) > 0 ){
 		                    Image template  
 		               </label>
 		               
-		                <input placeholder="<?php echo  htmlentities('<img src="[img_src]" class="wp_automatic_gallery" />') ;?>"  value="<?php    echo htmlentities(@$camp_general['cg_am_full_img_t'],ENT_COMPAT, 'UTF-8')   ?>"  name="cg_am_full_img_t" type="text">
+		                <input placeholder="<?php echo  wp_automatic_htmlentities('<img src="[img_src]" class="wp_automatic_gallery" />') ;?>"  value="<?php    echo wp_automatic_htmlentities(@$camp_general['cg_am_full_img_t'],ENT_COMPAT, 'UTF-8')   ?>"  name="cg_am_full_img_t" type="text">
 		               	
-		               	<div class="description">This is how the plugin will build images html for the [product_imgs_html] tag.<br><br>*Use [img_src] to replace the image src.<br><br> *Use class="wp_automatic_gallery" to display images as gallery<br><br>Default: <?php echo  htmlentities('<img src="[img_src]" class="wp_automatic_gallery" />') ;?></div>
+		               	<div class="description">This is how the plugin will build images html for the [product_imgs_html] tag.<br><br>*Use [img_src] to replace the image src.<br><br> *Use class="wp_automatic_gallery" to display images as gallery<br><br>Default: <?php echo  wp_automatic_htmlentities('<img src="[img_src]" class="wp_automatic_gallery" />') ;?></div>
 		               
 		            </div>
                </div>
@@ -4173,6 +4545,24 @@ if (count($res) > 0 ){
                     <br>
                </div>
                </div>
+
+			   <?php //if not using the API 
+			   		if( in_array( 'OPT_AMAZON_NOAPI', $wp_automatic_options) || wp_automatic_trim( $wp_amazonpin_abk ) == ''  ) {	
+				?>  	
+				
+				<div class="field f_100">
+				   <div class="option clearfix">
+					   <input name="camp_options[]" value="OPT_AM_REVIEWS" type="checkbox">
+					   <span class="option-title">
+						   Import original reviews as WooCommerce product reviews
+					   </span>
+					   <br>
+					</div>
+				</div>
+					
+				<?php } ?>
+					
+			 
                
                <div class="field f_100">
                <div class="option clearfix">
@@ -4193,9 +4583,7 @@ if (count($res) > 0 ){
                     <br>
                </div>
                </div>
-               
-               
-               
+ 
                <div class="field f_100">
 	               <div class="option clearfix">
 	                    <input name="camp_options[]" data-controls="am_location"  value="OPT_AM_LOC" type="checkbox">
@@ -4550,7 +4938,7 @@ if (count($res) > 0 ){
 
 							<label>Article content generation prompt</label> 
 							
-							<textarea name="cg_gp_prompt" placeholder="Write an article about [article_title]" ><?php    echo htmlentities(@$camp_general['cg_gp_prompt'],ENT_COMPAT, 'UTF-8')   ?></textarea>
+							<textarea name="cg_gp_prompt" placeholder="Write an article content about [article_title]" ><?php    echo wp_automatic_htmlentities(@$camp_general['cg_gp_prompt'],ENT_COMPAT, 'UTF-8')   ?></textarea>
 							
 							
 							<div class="description">The prompt will be used to generate the article content. You can use [article_title] to insert the article title in the prompt.<br><br>
@@ -4559,7 +4947,7 @@ if (count($res) > 0 ){
 									*Example3: Write an article about best attractions located in [article_title]<br>
 									*Example4: Write an article about [article_title] and include HTML headings<br> 
 									*Example4: Write 1000 words article about [article_title] and include FAQs section at the end<br> 
-
+									*Example5: Write 1000 words article in HTML format about [article_title] and include conclusion section and FAQs section at the end. do not include the title<br> 
 							</div>	 
 					</div>
 
@@ -4574,6 +4962,17 @@ if (count($res) > 0 ){
 								<br>
 
 								<div class="description">By default, the plugin will use the prompt to generate the article content and it can then be used using the [matched_content]</div>
+
+							</div>
+
+							<div class="option clearfix">
+								<input  name="camp_options[]" id="OPT_GP_REMOVE_H1"  value="OPT_GP_REMOVE_H1" type="checkbox">
+								<span class="option-title">
+									Remove the first H1 heading from the generated content
+								</span>
+								<br>
+
+								<div class="description">Enable this option if you want to remove the generated title inside the post content coming from OpenAI as part of the generated article.</div>
 
 							</div>
 
@@ -4810,7 +5209,7 @@ if (count($res) > 0 ){
 	                    
 	                 <div id="wp_tt_infinte" class="field f_100">
 	                    	<label>TikTok page HTML (Scroll the page then copy the HTML)</label>
-	                    	<textarea name="cg_tt_html"><?php echo htmlentities( @$camp_general['cg_tt_html'],ENT_COMPAT, 'UTF-8')  ?></textarea>
+	                    	<textarea name="cg_tt_html"><?php echo wp_automatic_htmlentities( @$camp_general['cg_tt_html'],ENT_COMPAT, 'UTF-8')  ?></textarea>
 	                    	<div class="description">Scroll as many times as desired, then paste the page HTML. Check this  <a target="_blank" href="https://valvepress.com/how-to-post-older-tiktok-videos-to-wordpress-using-automatic-plugin/">tutorial</a></div>
                     </div>                    
                     
@@ -4853,6 +5252,23 @@ if (count($res) > 0 ){
 	                    <input name="camp_options[]"  value="OPT_TT_NO_CNT_TAG" type="checkbox">
 	                    <span class="option-title">
 								Remove hashtags from generated content. 
+	                    </span>
+	                    <br>
+	                     
+	               </div>
+				   <div class="option clearfix">
+	                    <input name="camp_options[]"  value="OPT_TT_NO_CNT_REP" type="checkbox">
+	                    <span class="option-title">
+								Remove mentions from generated content (@user). 
+	                    </span>
+	                    <br>
+	                     
+	               </div>
+
+				   <div class="option clearfix">
+	                    <input name="camp_options[]"  value="OPT_TT_NO_CNT_MUSIC" type="checkbox">
+	                    <span class="option-title">
+								Remove the music part from the post content (original sound).
 	                    </span>
 	                    <br>
 	                     
@@ -4922,8 +5338,8 @@ if (count($res) > 0 ){
 				        	
 				        	    <label>Single Image Html</label> 
 				        	    
-				        	     <input placeholder="<?php echo  htmlentities( '<img src="[img_src]" />' ,ENT_COMPAT, 'UTF-8')   ?>" value="<?php    echo  htmlentities($camp_general['cg_it_full_img_t'],ENT_COMPAT, 'UTF-8')   ?>"  name="cg_it_full_img_t" type="text">
-				         	 <div class="description">Default: <?php echo  htmlentities( '<img src="[img_src]" />' ,ENT_COMPAT, 'UTF-8')   ?></div>
+				        	     <input placeholder="<?php echo  wp_automatic_htmlentities( '<img src="[img_src]" />' ,ENT_COMPAT, 'UTF-8')   ?>" value="<?php    echo  wp_automatic_htmlentities($camp_general['cg_it_full_img_t'],ENT_COMPAT, 'UTF-8')   ?>"  name="cg_it_full_img_t" type="text">
+				         	 <div class="description">Default: <?php echo  wp_automatic_htmlentities( '<img src="[img_src]" />' ,ENT_COMPAT, 'UTF-8')   ?></div>
 				        </div>
 				                    
 				</div>
@@ -5044,7 +5460,7 @@ if (count($res) > 0 ){
 		 </div>
 		 	
 		 <!-- /Instagram Twitter part -->
-		 <div class="typepart  Twitter Instagram TikTok" style="display:none">
+		 <div class="typepart  Twitter Instagram TikTok telegram" style="display:none">
 		 
 		 <div  class="field f_100">
 	               
@@ -5104,7 +5520,7 @@ if (count($res) > 0 ){
 	                     
 	               </div>
                     	
-                    	<div class="option clearfix  typepart Twitter Instagram">
+                    	<div class="option clearfix  typepart Twitter Instagram TikTok">
 		                    <input  name="camp_options[]"   value="OPT_GENERATE_TW_DOT" type="checkbox">
 		                    <span class="option-title">
 									Don't add "..." after generated title    
@@ -5123,30 +5539,7 @@ if (count($res) > 0 ){
 		 <!--  Twitter Part -->
 		 <div  class="typepart Twitter"  > 
 		 
-		 
-			 	 <div class="field f_100 ">
-	               
-	               <label>
-	                   Recent or Popular posts?
-	               </label>
-	               <select name="cg_tw_type">
-	                    
-	                    <option value="mixed" <?php @wp_automatic_opt_selected('mixed',$camp_general['cg_tw_type']) ?> >
-	                         Mixed
-	                    </option>
-	                    
-	                    <option value="recent" <?php @wp_automatic_opt_selected('recent',$camp_general['cg_tw_type']) ?> >
-	                         Recent
-	                    </option>
-	                    
-	                    <option value="popular" <?php @wp_automatic_opt_selected('popular',$camp_general['cg_tw_type']) ?> >
-	                         Popular
-	                    </option>
-	                    
-	                    
-	                    
-	               </select>
-	          </div>
+
 		 	 
 		 	 <div  class="field f_100">
 		 	 	
@@ -5228,25 +5621,23 @@ if (count($res) > 0 ){
 	               </div>
 	             
 		 	 	<div class="option clearfix">
-	                    <input data-controls="wp_tw_country" name="camp_options[]"  value="OPT_TW_COUNTRY" type="checkbox">
+	                    <input data-controls="wp_tw_lang" name="camp_options[]"  value="OPT_TW_LANG" type="checkbox">
 	                    <span class="option-title">
 								Limit search to a specific language 
 	                    </span>
 	                    <br>
 	                    
-	                    <div id="wp_tw_country" class="field f_100">
+	                    <div id="wp_tw_lang" class="field f_100">
 	                    	<label>Language code 639-1</label>
 	                    	
 	                    	<input value="<?php   echo @$camp_general['cg_tw_lang']  ?>"   name="cg_tw_lang"  type="text">
-	                    	<div class="description"><i>Check list <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">here</a></i></div>
+	                    	<div class="description"><i>Example: en for English or fr for French. Check list <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">here</a></i></div>
                     	
                  		</div>
 		 	 	
 		 	 	</div>
-		 	 	
-		 	 	 
-		 	 	
-		 	 	
+
+  		 	 	
 		 
 		 	</div>
 		 </div>
@@ -5469,6 +5860,7 @@ if (count($res) > 0 ){
 		 <div class="typepart Youtube" style="display:none">
 		 
 
+
 		 
 		 <div id="yt_user_div" class="field f_100">
 		 
@@ -5486,7 +5878,7 @@ if (count($res) > 0 ){
                
                     <input name="camp_options[]" id="yt_user" value="OPT_YT_USER" type="checkbox">
                     <span class="option-title">
-							Post from a specific YouTube channel/playlist 
+							Post from a specific YouTube channel
                     </span>
                     <br>
                     
@@ -5497,97 +5889,30 @@ if (count($res) > 0 ){
 		                
 		                <input id="camp_yt_user" value="<?php   echo $camp_yt_user   ?>" name="camp_yt_user" id="field6"   type="text">
 		                <div class="description"><br>Example 1:  UCRrW0ddrbFnJCbyZqHHv4KQ<br>Example 2:  https://www.youtube.com/channel/UCRrW0ddrbFnJCbyZqHHv4KQ <br>Example 3:  https://www.youtube.com/c/HolyCulture</div>
-		                
-		                <br>
+		                 
 		            	<div class="field f_100">
-		            	<input data-controls-r="" data-controls="wp_automatic_playlist_c"  name="camp_options[]" value="OPT_YT_PLAYLIST" type="checkbox" id="wp_automatic_playlist_opt">
-		                    <span class="option-title">
-									Specify a playlist?   
-		                    </span>
-		                    <br>
-		                    
-		                    <div  id="wp_automatic_playlist_c" class="field f_100">
-		                    	 <select  style="width:220px" class="no-unify" name="cg_yt_playlist" id="cg_yt_playlist"  >
-					                   
-					                   
-					                   
-					                   <?php 
-					                   
-					                   $wp_automatic_yt_playlists = get_post_meta($post_id ,'wp_automatic_yt_playlists',1); 
-					                   
-					               
-					                   if(! is_array($wp_automatic_yt_playlists)) $wp_automatic_yt_playlists = array();
-					                   
-					                   foreach ($wp_automatic_yt_playlists as $playlist){
+		            	
+							<div class="option clearfix">
+							<input  data-controls-r='' name="camp_options[]" id="yt_full" value="OPT_YT_FULL" type="checkbox">
+								<span class="option-title">
+										Don't use keywords add videos without filtering. 
+								</span>
+							</div>
 
+							<div class="option clearfix">
+								<input    name="camp_options[]"  value="OPT_YT_SHORT_SKIP" type="checkbox">
+								<span class="option-title">
+										Skip shorts
+								</span>
+							</div>
 
-
-
-					                   	?>
-											<option  value="<?php   echo $playlist['id'] ?>"  <?php @wp_automatic_opt_selected($camp_general['cg_yt_playlist'],$playlist['id']) ?> >
-					                         	<?php   echo $playlist['title']?>
-					                    	</option>				
-
-					                   	<?php
-
-					                   	
-					                   	
-					                   }
-
-					                   
-					                   
-					                   
-					                   /*
-					                   
-					                   
-					                    <option  value="draft"  <?php @wp_automatic_opt_selected('draft',$camp_post_status) ?> >
-					                         Draft
-					                    </option>
-					                    <option id="field1-2" value="publish"  <?php @wp_automatic_opt_selected('publish',$camp_post_status) ?>  >
-					                         Published
-					                    </option>
-					                    
-					                    */
-
-					               
-					                   ?>
-					                     
-					               </select>
-					               
-					               
-					               <a href="#" id="yt_playlist_update">update playlists</a>
-					               
-					               <span class="spinner is-active spinner-playlist" style="display:none"></span>
-					        
-					        		<br><br>
-					        
-								   <label for="field6">
-					                    Chosen playlist id  
-					               </label>
-						        	
-			                    	<input   id="cg_yt_playlist_txt" value="<?php   echo @$camp_general['cg_yt_playlist']   ?>" name="cg_yt_playlist"   type="text">
-			                	    <div class="description">This field will be automatically loaded with the playlist id or simply paste a playlist id here for example add "PLFgquLnL59amB2HQvPIExssQsuNRPvOwk" for this <a href="https://www.youtube.com/playlist?list=PLFgquLnL59amB2HQvPIExssQsuNRPvOwk">playlist</a></div> 
-			                    
-					               
-		                    </div>
-		                    
-		                	
-		                	
-		                    
-	                    </div>
-	                    
-	       
-		                
-		            	<br>
-		            	<div class="field f_100">
-		            	<input  data-controls-r='' name="camp_options[]" id="yt_full" value="OPT_YT_FULL" type="checkbox">
-		                    <span class="option-title">
-									Don't use keywords add videos without filtering . 
-		                    </span>
-	                    </div>
-
-
-	                    
+							<div class="option clearfix">
+								<input    name="camp_options[]"  value="OPT_YT_SHORT_ONLY" type="checkbox">
+								<span class="option-title">
+										only import shorts
+								</span>
+							</div>
+						</div>
 	                    
 	                    <div class="description">Tip: If you want to post from many channels, just add the channel ID and activate the option to post without keywords then leave the next 7 options below to thier default values. This will reduce the used quota per request from 100 to 3. Daily quota is 10000 and a single search request takes 100</div>
 	                    <br>
@@ -5595,6 +5920,33 @@ if (count($res) > 0 ){
 		            </div>
 		            
                </div>
+
+
+			   <div class="option clearfix">
+		            		<input data-controls-r="" data-controls="wp_automatic_playlist_c"  name="camp_options[]" value="OPT_YT_PLAYLIST" type="checkbox" id="wp_automatic_playlist_opt">
+		                    <span class="option-title">
+									Post from a specific Playlist
+		                    </span>
+		                    <br>
+		                    
+		                    <div  id="wp_automatic_playlist_c" class="field f_100">
+		                    	 
+					        
+								   <label for="field6">
+					                    Playlist ID  or Playlist URL
+					               </label>
+						        	
+			                    	<input   id="cg_yt_playlist_txt" value="<?php   echo @$camp_general['cg_yt_playlist']   ?>" name="cg_yt_playlist"   type="text">
+			                	    <div class="description">Example1 : PLFgquLnL59amB2HQvPIExssQsuNRPvOwk <br>Example2:  https://www.youtube.com/playlist?list=PLFgquLnL59amB2HQvPIExssQsuNRPvOwk </div> 
+			                    
+					               
+		                    </div>
+		                    
+		                	
+		                	
+		                    
+	           </div>
+
                
                <div class="option clearfix">
 	                    
@@ -5930,6 +6282,7 @@ if (count($res) > 0 ){
                     <br>
                </div>
 
+			   <!-- set player subtitle language-->
                <div class="option clearfix">
                     <input data-controls="wp_automatic_yt_plang" name="camp_options[]" value="OPT_YT_PLAYER_LANG" type="checkbox">
                     <span class="option-title">
@@ -5950,6 +6303,27 @@ if (count($res) > 0 ){
                     </div>
                     
                </div>
+
+			   <!-- Truncate transcript to a specific length in chars -->
+			   <div class="option clearfix">
+				   <input data-controls="wp_automatic_yt_truncate" name="camp_options[]" value="OPT_YT_TRUNCATE" type="checkbox">
+				   <span class="option-title">
+							Truncate transcript to a specific length in chars
+					</span>
+				   <br>
+
+				   <div id="wp_automatic_yt_truncate" class="field f_100">
+
+					   <label>
+						   Length
+					   </label>
+
+					   <input value="<?php   echo @$camp_general['cg_yt_truncate']   ?>" name="cg_yt_truncate"   type="text">
+
+					   <div class="description">Example: 1000</div>
+
+				   </div>
+				</div>
                
                 
                
@@ -6405,9 +6779,9 @@ if (count($res) > 0 ){
 			               <label for="field6">
 			                    Image template 
 			               </label>
-			                <input value="<?php     echo   (  htmlentities($camp_general['cg_eb_full_img_t'],ENT_COMPAT, 'UTF-8' )  )  ?>"  name="cg_eb_full_img_t" type="text">
+			                <input value="<?php     echo   (  wp_automatic_htmlentities($camp_general['cg_eb_full_img_t'],ENT_COMPAT, 'UTF-8' )  )  ?>"  name="cg_eb_full_img_t" type="text">
 		              		<div class="description">(this is how the plugin will build images html) use [img_src] to replace the image src. use class="wp_automatic_gallery" to display images as gallery<br><br>
-		              		Deafult:<?php echo  htmlentities( '<img src="[img_src]"  class="wp_automatic_gallery" />' ,ENT_COMPAT, 'UTF-8')   ?></div>
+		              		Deafult:<?php echo  wp_automatic_htmlentities( '<img src="[img_src]"  class="wp_automatic_gallery" />' ,ENT_COMPAT, 'UTF-8')   ?></div>
 		               </div>
 		            </div>
                </div>
@@ -6856,6 +7230,7 @@ Location:
 Price: <span style="color:#b12704">[price_with_discount]</span><br><i><small>(as of [price_update_date] - <span class="wp_automatic_amazon_disclaimer" title="Product prices and availability are accurate as of the date/time indicated and are subject to change. Any price and availability information displayed on [relevant Amazon Site(s), as applicable] at the time of purchase will apply to the purchase of this product.">Details</span>)</small></i><br><br><a href="[product_link]"><img data-src="https://valvepress.s3.amazonaws.com/imgs/buy_now.png"></a> 
 [ad_1]
 [product_desc]
+[product_summary]
 <br>[ad_2]</div> 
 
 
@@ -6953,6 +7328,19 @@ Price: <span style="color:#b12704">[price_with_discount]</span><br><i><small>(as
 		<div class="tempYoutube"><?php   echo $player ?>[vid_desc]
 <br><a href="[source_link]">source</a></div>
 
+<!-- Rumble.com part -->
+<div class="tempRumble"><?php   echo $player ?>[vid_desc]
+<br><a href="[source_link]">source</a></div>
+
+<!-- Places part -->
+<div class="tempPlaces">[item_photos_html]<br>
+<strong>[item_title]</strong><br>
+[item_formatted_address]<br>
+Rating: [item_rating]<br>
+Rated count: [item_user_ratings_total]<br>
+[item_map_iframe]<br><br>
+<a href="[item_url]">Check on Google Maps</a></div>
+
 <!-- Reddit part -->
 <div class="tempReddit">[ad_1]
 [item_img_html]
@@ -6960,6 +7348,14 @@ Price: <span style="color:#b12704">[price_with_discount]</span><br><i><small>(as
 [item_embed]
 [ad_2]
 <br><a href="[item_link]">View Reddit</a> by [item_author_link] -  <a href="[item_url]">View Source</a></div>
+
+<!-- Telegram part -->
+<div class="temptelegram">[ad_1]
+[item_img_html]
+<p>[item_description]</p>
+[item_embed]
+[ad_2]
+<a href="[item_url]">View Source</a></div>
 
 <!-- Careerjet part -->
 <div class="tempCareerjet">[item_logo_html]
