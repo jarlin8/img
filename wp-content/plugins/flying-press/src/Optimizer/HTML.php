@@ -62,14 +62,15 @@ class HTML
       ? preg_replace(
         "/\s$attribute(=(\"|').*?(\\2)(?=\s|>|\/))?(?:(?=[^\w]))/",
         " $attribute_string",
-        $this->tag
+        $this->tag,
+        1
       )
       : preg_replace('/(>|\/>)/', " $attribute_string$1", $this->tag, 1);
   }
 
   public function __unset($attribute)
   {
-    $this->tag = preg_replace("/\s$attribute(=(\"|').*?\\2)(?=\s|>|\/)/", '', $this->tag);
+    $this->tag = preg_replace("/\s$attribute(=(\"|').*?\\2)?(?=\s|>|\/)/", '', $this->tag);
   }
 
   public function getTagName()
@@ -92,6 +93,14 @@ class HTML
       $id = substr($selector, 1);
       preg_match_all(
         "/(<[^>]*id=[\"']{$id}[\"'][^>]*>)/s",
+        $this->tag,
+        $matches,
+        PREG_OFFSET_CAPTURE
+      );
+    } elseif ($selector[0] === '[' && $selector[strlen($selector) - 1] === ']') {
+      $selector = substr($selector, 1, -1);
+      preg_match_all(
+        "/(<[^>]*\s{$selector}([\s=]['\"][^>]*['\"])?[^>]*>)/",
         $this->tag,
         $matches,
         PREG_OFFSET_CAPTURE

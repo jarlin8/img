@@ -9,24 +9,9 @@ class License
 
   public static function init()
   {
-    // Initialize the SureCart client
-    if (!class_exists('SureCart\Licensing\Client')) {
-      require_once FLYING_PRESS_PLUGIN_DIR . 'licensing/src/Client.php';
-    }
-    self::$client = new \SureCart\Licensing\Client(
-      'FlyingPress',
-      self::$surecart_key,
-      FLYING_PRESS_FILE
-    );
 
     // Check if license key is set
     add_action('admin_notices', [__CLASS__, 'license_notice']);
-
-    // License check every week
-    add_action('flying_press_license_reactivation', [__CLASS__, 'update_license_status']);
-    if (!wp_next_scheduled('flying_press_license_reactivation')) {
-      wp_schedule_event(time(), 'weekly', 'flying_press_license_reactivation');
-    }
 
     // Activate license on plugin activation
     register_activation_hook(FLYING_PRESS_FILE_NAME, [__CLASS__, 'activate_license']);
@@ -40,17 +25,10 @@ class License
     if (!$license_key) {
       return;
     }
-
-    $activated = self::$client->license()->activate($license_key);
-
-    if (is_wp_error($activated)) {
-      throw new \Exception($activated->get_error_message());
-    }
-
     Config::update_config([
       'license_key' => $license_key,
       'license_active' => true,
-      'license_status' => 'active',
+      'license_status' => 'active'
     ]);
 
     return true;
@@ -73,28 +51,8 @@ class License
 
   public static function update_license_status()
   {
-    $license_key = Config::$config['license_key'];
-
-    if (!$license_key) {
-      return;
-    }
-
-    $response = wp_remote_get("https://api.surecart.com/v1/public/licenses/$license_key", [
-      'headers' => [
-        'Accept' => 'application/json',
-        'Authorization' => 'Bearer ' . self::$surecart_key,
-      ],
-    ]);
-
-    $body = wp_remote_retrieve_body($response);
-    $license = json_decode($body, true);
-
-    if (!isset($license['status'])) {
-      return;
-    }
-
     Config::update_config([
-      'license_status' => $license['status'],
+      'license_status' => 'active',
     ]);
   }
 

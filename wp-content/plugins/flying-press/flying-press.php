@@ -4,7 +4,7 @@
  * Plugin Name: FlyingPress
  * Plugin URI: https://flyingpress.com
  * Description: Lightning-Fast WordPress on Autopilot
- * Version: 4.13.3
+ * Version: 4.14.4
  * Requires PHP: 7.4
  * Requires at least: 4.7
  * Author: FlyingWeb
@@ -14,7 +14,7 @@ defined('ABSPATH') or die('No script kiddies please!');
 
 require_once dirname(__FILE__) . '/vendor/autoload.php';
 
-define('FLYING_PRESS_VERSION', '4.13.3');
+define('FLYING_PRESS_VERSION', '4.14.4');
 define('FLYING_PRESS_FILE', __FILE__);
 define('FLYING_PRESS_FILE_NAME', plugin_basename(__FILE__));
 define('FLYING_PRESS_PLUGIN_URL', plugin_dir_url(__FILE__));

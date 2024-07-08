@@ -21,6 +21,12 @@ class WpCLI
 
     $subcommand = $args[0];
 
+    if ($subcommand !== 'activate-license' && !is_writable(FLYING_PRESS_CACHE_DIR)) {
+      \WP_CLI::error(
+        'Error: Unable to write to the wp-content/cache folder. Verify folder permissions and try again.'
+      );
+    }
+
     switch ($subcommand) {
       case 'preload-cache': // usage: wp flying-press preload-cache
         try {

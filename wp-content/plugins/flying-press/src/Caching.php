@@ -119,6 +119,7 @@ class Caching
     // Get cache file path
     $host = $_SERVER['HTTP_HOST'];
     $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $path = urldecode($path);
 
     // Allow developers to modify the cache file path
     $path = apply_filters('flying_press_cache_file_path', $path);
@@ -128,8 +129,7 @@ class Caching
     // Create the cache directory if it does not exist
     !is_dir($cache_file_path) && mkdir($cache_file_path, 0755, true);
 
-    // Write the HTML to the cache file
-    file_put_contents($cache_file_path . $cache_file_name, $html);
+    file_put_contents($cache_file_path . $cache_file_name, gzencode($html, 9));
   }
 
   public static function get_cache_file_name()
@@ -168,8 +168,8 @@ class Caching
     // Allow developers to modify the cache file name
     $file_name = apply_filters('flying_press_cache_file_name', $file_name);
 
-    // Append the '.html' extension
-    $file_name .= '.html';
+    // Append the '.html.gz' extension
+    $file_name .= '.html.gz';
 
     return $file_name;
   }

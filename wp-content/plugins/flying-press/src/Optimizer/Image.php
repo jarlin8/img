@@ -10,15 +10,14 @@ class Image
 {
   private static $images = [];
 
-  public static function init()
-  {
-    add_filter('wp_lazy_loading_enabled', '__return_false');
-  }
-
   public static function parse_images($html)
   {
-    // Remove all script tags to skip parsing images inside them
-    $html_without_scripts = preg_replace('/<script.*?<\/script>/is', '', $html);
+    // Remove all script and noscript tags to skip parsing images inside them
+    $html_without_scripts = preg_replace(
+      '/<script.*?<\/script>|<noscript.*?<\/noscript>/is',
+      '',
+      $html
+    );
 
     // Find all images with src attribute
     preg_match_all('/<img[^>]+src=[\"\'][^>]+>/i', $html_without_scripts, $images);
@@ -215,7 +214,9 @@ class Image
     $file_name = 'gravatar-' . substr(md5($url), 0, 12) . '.png';
 
     if (!file_exists(FLYING_PRESS_CACHE_DIR . $file_name)) {
-      file_put_contents(FLYING_PRESS_CACHE_DIR . $file_name, file_get_contents($url));
+      $gravatar_request = wp_remote_get($url);
+      $gravatar = wp_remote_retrieve_body($gravatar_request);
+      file_put_contents(FLYING_PRESS_CACHE_DIR . $file_name, $gravatar);
     }
 
     return FLYING_PRESS_CACHE_URL . $file_name;
@@ -251,7 +252,7 @@ class Image
           continue;
         }
 
-        // Lazy load bacgkround images by lazy loading style attribute
+        // Lazy load background images by lazy loading style attribute
         $style = $element->style;
         $element->{'data-lazy-style'} = $style;
         $element->{'data-lazy-method'} = 'viewport';

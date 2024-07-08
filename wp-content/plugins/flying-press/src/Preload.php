@@ -9,7 +9,7 @@ class Preload
   public static function preload_urls($urls)
   {
     // Write URLs to file (append)
-    file_put_contents(self::$preload_file, "\n" . implode("\n", $urls), FILE_APPEND);
+    file_put_contents(self::$preload_file, implode("\n", $urls) . PHP_EOL, FILE_APPEND);
 
     // Preload first URL
     self::preload_available();

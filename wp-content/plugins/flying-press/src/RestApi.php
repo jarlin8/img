@@ -116,7 +116,7 @@ class RestApi
       return new \WP_Error('flying-press/invalid-url', 'Invalid URL');
     }
 
-    Purge::purge_url($url);
+    Purge::purge_urls([$url]);
     Preload::preload_url($url);
     return ['success' => true];
   }

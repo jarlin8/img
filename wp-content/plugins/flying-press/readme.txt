@@ -1,13 +1,64 @@
 === FlyingPress ===
 Requires at least: 4.7
-Tested up to: 6.5
+Tested up to: 6.5.5
 Requires PHP: 7.4
-Stable tag: 4.13.3
+Stable tag: 4.14.4
 
 == Description ==
 Lightning-Fast WordPress on Autopilot
 
 == Changelog ==
+
+= 4.14.4 - 25 June, 2024 = 
+
+- Improvement: New logo and color scheme to match our updated branding
+
+= 4.14.3 - 19 June, 2024 = 
+
+- Improvement: Disable conflicting optimizations in Perfmatters only if they are enabled in FlyingPress
+- Improvement: Concise, clearer optimization descriptions in the UI
+- Fix: An error of undefined constant `GLOB_BRACE` in non GNU systems
+
+= 4.14.2 - 12 June, 2024 = 
+
+- Fix: Pages got downloaded as gzipped file in OpenLiteSpeed server post v4.14 release 
+- Fix: FlyingCDN was failing to cache pages due to missing headers in OpenLiteSpeed  
+
+= 4.14.1 - 11 June, 2024 = 
+
+- Fix: Double GZIP Compression of cached files resulted in gibberish output for some websites post v4.14 
+- Fix: YouTube placeholder images were not lazily loaded post v4.13.5    
+
+= 4.14.0 - 10 June, 2024 = 
+
+- New: GZIP pre-compression for cached files, resulting in approximately 80% reduction in cache file size and improved performance
+- Improvement: Compatibility for Nginx Helper plugin
+- Improvement: Do not cache Pretty Links  
+- Improvement: Superadmins can now access the FlyingPress dashboard in a multisite network
+- Improvement: Do not minify JavaScript files that are empty or already minified 
+- Improvement: Purge FlyingCDN cache while deactivating FlyingPress 
+- Improvement: Purge FlyingCDN cache while purging a single page
+- Improvement: Decode non-ASCII characters from an URL while generating and purging cache
+- Fix: A warning of undefined property `stdClass:$plugin` in the SureCart plugin updater 
+- Fix: An error in the PolyLang integration caused by non-existent taxonomy terms  
+- Fix: An empty line before list of URLs in preload.txt sometimes caused the preload to hang
+
+= 4.13.5 - 16 May, 2024 = 
+
+- Improvement: Add CDN headers right after caching the page for faster caching in FlyingCDN
+- Improvement: Check for sufficient permissions before purging and preloading cache from the CLI context 
+- Improvement: Efficiently get elements by attribute in the HTML parser 
+- Improvement: Keep WP native lazy loading enabled for better compatibility
+- Improvement: Do not optimize images inside noscript tags
+- Improvement: Upgrade some dependencies for enhanced performance
+- Fix: Error while using lazy render controls inside Divi builder plugin
+- Fix: Generating separate cache for mobile getting disabled after upgrading
+- Fix: Error while unpacking arrays with string keys in PHP <= 8.0 
+
+= 4.13.4 - 20 April, 2024 =
+
+- Improvement: Cache compatibility for WeGlot URL translation
+- Improvement: Leverage WordPress HTTP API to download third party resources for better compatibility
 
 = 4.13.3 - 13 April, 2024 =
 

@@ -19,17 +19,18 @@ class Purge
   }
 
   // Purge a single HTML page
-  public static function purge_url($url)
+  private static function purge_url($url)
   {
     do_action('flying_press_purge_url:before', $url);
 
     // Get directory path for the URL
     $host = parse_url($url, PHP_URL_HOST);
-    $path = parse_url($url, PHP_URL_PATH);
+    $path = parse_url($url, PHP_URL_PATH) ?: '/';
+    $path = urldecode($path);
     $page_cache_dir = FLYING_PRESS_CACHE_DIR . $host . $path;
 
-    // Find all HTML pages in the directory (NOT recursive)
-    $pages = glob($page_cache_dir . '/*.html');
+    // Find all pages in the directory (NOT recursive)
+    $pages = [...glob($page_cache_dir . '/*.html'), ...glob($page_cache_dir . '/*.html.gz')];
 
     // Delete all HTML pages
     array_map(function ($file) {
@@ -83,7 +84,7 @@ class Purge
       if ($fileinfo->isDir()) {
         self::delete_all_pages($fileinfo->getRealPath());
       } else {
-        if ($fileinfo->getExtension() === 'html') {
+        if (in_array($fileinfo->getExtension(), ['html', 'gz'])) {
           unlink($fileinfo->getRealPath());
         }
       }

@@ -13,6 +13,12 @@ class Htaccess
 
   public static function add_htaccess_rules()
   {
+    // If OpenLiteSpeed, remove the rules instead
+    if (preg_match('/openlitespeed/i', $_SERVER['LSWS_EDITION'] ?? '')) {
+      self::remove_htaccess_rules();
+      return;
+    }
+
     $htaccess_file = ABSPATH . '.htaccess';
 
     if (!file_exists($htaccess_file) || !is_writeable($htaccess_file)) {

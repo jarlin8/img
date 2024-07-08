@@ -7,7 +7,6 @@ class Optimizer
   public static function init()
   {
     ob_start([__CLASS__, 'process_output']);
-    Optimizer\Image::init();
     Optimizer\JavaScript::init();
     Optimizer\Bloat::init();
   }
@@ -25,13 +24,6 @@ class Optimizer
       $content = Optimizer\CSS::minify($content);
       $content = Optimizer\CSS::remove_unused_css($content);
 
-      $content = Optimizer\JavaScript::minify($content);
-      $content = Optimizer\JavaScript::defer_external($content);
-      $content = Optimizer\JavaScript::defer_inline($content);
-      $content = Optimizer\JavaScript::delay_scripts($content);
-      $content = Optimizer\JavaScript::lazy_render_selectors($content);
-      $content = Optimizer\JavaScript::replace_lazy_render_markers($content);
-
       $content = Optimizer\IFrame::add_youtube_placeholder($content);
       $content = Optimizer\IFrame::lazy_load($content);
 
@@ -45,6 +37,13 @@ class Optimizer
       $content = Optimizer\Image::preload($content);
       $content = Optimizer\Image::lazy_load_bg_style($content);
       $content = Optimizer\Image::lazy_load_bg_class($content);
+
+      $content = Optimizer\JavaScript::minify($content);
+      $content = Optimizer\JavaScript::defer_external($content);
+      $content = Optimizer\JavaScript::defer_inline($content);
+      $content = Optimizer\JavaScript::delay_scripts($content);
+      $content = Optimizer\JavaScript::lazy_render_selectors($content);
+      $content = Optimizer\JavaScript::replace_lazy_render_markers($content);
 
       $content = Optimizer\JavaScript::inject_core_lib($content);
       $content = Optimizer\JavaScript::inject_lazy_render_lib($content);
@@ -62,6 +61,9 @@ class Optimizer
       $content .= apply_filters('flying_press_footprint', "<!-- $footprint -->");
 
       Caching::cache_page($content);
+
+      header('Cache-Tag: ' . $_SERVER['HTTP_HOST']);
+      header('CDN-Cache-Control: max-age=2592000');
     }
 
     if (isset($_GET['cache_bust'])) {

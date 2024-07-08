@@ -33,7 +33,7 @@ class ACF
 
     // Get the permalink for the post and then purge it
     $url = get_permalink($post_id);
-    Purge::purge_url($url);
+    Purge::purge_urls([$url]);
     Preload::preload_url($url);
   }
 }

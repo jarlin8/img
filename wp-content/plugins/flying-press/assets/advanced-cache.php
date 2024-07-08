@@ -65,17 +65,23 @@ $file_name .= $config['cache_mobile'] && $is_mobile ? '-mobile' : '';
 $query_strings = array_diff_key($_GET, array_flip($config['cache_ignore_queries']));
 $file_name .= !empty($query_strings) ? '-' . md5(serialize($query_strings)) : '';
 
-// Append ".html" to the file name
-$file_name .= '.html';
-
-// File path of the cached file
+// File paths for cache files
 $host = $_SERVER['HTTP_HOST'];
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$cache_file_path = WP_CONTENT_DIR . "/cache/flying-press/$host/$path/$file_name";
+$path = urldecode($path);
+$cache_file_path = WP_CONTENT_DIR . "/cache/flying-press/$host/$path/$file_name.html";
 
-// If we don't have a cache copy, we do not need to proceed
-if (!file_exists($cache_file_path)) {
+// Determine which cache file to use
+$gzipped = file_exists($cache_file_path . '.gz');
+if (!$gzipped && !file_exists($cache_file_path)) {
   return false;
+}
+$cache_file_path .= $gzipped ? '.gz' : '';
+
+// If use gzip, set the necessary headers
+if ($gzipped) {
+  ini_set('zlib.output_compression', 0);
+  header('Content-Encoding: gzip');
 }
 
 // CDN cache headers
@@ -98,6 +104,8 @@ if ($http_modified_since >= $cache_last_modified) {
   header($_SERVER['SERVER_PROTOCOL'] . ' 304 Not Modified', true, 304);
   exit();
 }
+
+header('Content-Type: text/html; charset=UTF-8');
 
 readfile($cache_file_path);
 exit();

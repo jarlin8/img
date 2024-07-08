@@ -33,33 +33,43 @@ class Javascript
         if (Utils::any_keywords_match_string($exclude_keywords, $script)) {
           continue;
         }
+
         $script = new HTML($script);
-        // get src
         $src = $script->src;
         $file_path = Caching::get_file_path_from_url($src);
-        if (!is_file($file_path)) {
+
+        // Skip if file doesn't exist or empty
+        if (!is_file($file_path) || !filesize($file_path)) {
           continue;
         }
+
+        // Generate hash
         $hash = substr(hash_file('md5', $file_path), 0, 12);
 
-        // Generate new hashed file name
+        // If already minified, add hash to the query string and skip minification
+        if (preg_match('/\.min\.js/', $src)) {
+          $html = str_replace($src, strtok($src, '?') . "?ver=$hash", $html);
+          continue;
+        }
+
+        // Generate minified file path and URL
         $file_name = $hash . '.' . basename($file_path);
         $minified_path = FLYING_PRESS_CACHE_DIR . $file_name;
         $minified_url = FLYING_PRESS_CACHE_URL . $file_name;
 
-        // Minify if ninified version of the file doesn't exist
+        // Create minified version if it doesn't exist
         if (!is_file($minified_path)) {
           $minifier = new Minify\JS($file_path);
           $minifier->minify($minified_path);
         }
+
         // Check if minified version is smaller than original
         $original_file_size = filesize($file_path);
         $minified_file_size = filesize($minified_path);
         $wasted_bytes = $original_file_size - $minified_file_size;
         $wasted_percent = ($wasted_bytes / $original_file_size) * 100;
-        $is_already_minified = preg_match('/\.min\.js/', $file_path);
 
-        if ($wasted_bytes < 2048 || $wasted_percent < 10 || $is_already_minified) {
+        if ($wasted_bytes < 2048 || $wasted_percent < 10) {
           $minified_url = strtok($src, '?') . "?ver=$hash";
         }
 

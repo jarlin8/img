@@ -9,11 +9,8 @@ class Auth
     $current_user = wp_get_current_user();
     $allowed_roles = apply_filters('flying_press_allowed_roles', ['administrator', 'editor']);
 
-    // Only allow access to the REST API for users with the specified roles
-    if (!array_intersect($current_user->roles, $allowed_roles)) {
-      return false;
-    }
-
-    return true;
+    // Allow access if the user is a super admin or has one of the allowed roles
+    return \is_super_admin($current_user->ID) ||
+      array_intersect($current_user->roles, $allowed_roles);
   }
 }

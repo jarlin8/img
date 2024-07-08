@@ -139,7 +139,8 @@ class IFrame
     $placeholder_url = FLYING_PRESS_CACHE_URL . $placeholder;
 
     if (!file_exists($placeholder_file)) {
-      $image = file_get_contents("https://img.youtube.com/vi/$id/$resolution.jpg");
+      $image_request = wp_remote_get("https://img.youtube.com/vi/$id/$resolution.jpg");
+      $image = wp_remote_retrieve_body($image_request);
       file_put_contents($placeholder_file, $image);
     }
     return $placeholder_url;

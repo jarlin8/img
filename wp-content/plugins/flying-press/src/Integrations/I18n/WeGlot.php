@@ -22,13 +22,10 @@ class WeGlot
       return $path;
     }
 
-    // Skip if the current language is the original language (default language)
-    if (weglot_get_current_language() === weglot_get_original_language()) {
-      return $path;
-    }
+    $url = weglot_get_current_full_url();
+    $path = parse_url($url, PHP_URL_PATH);
 
-    // Append the current language to the cache file name
-    return '/' . weglot_get_current_language() . $path;
+    return $path;
   }
 
   public static function add_translated_urls($urls)

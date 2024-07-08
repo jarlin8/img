@@ -65,12 +65,12 @@ class Divi
     $toggle_slug = 'flying_press'
   ) {
     $fields_list[$field_slug] = [
-      'label' => et_builder_i18n($label),
-      'description' => et_builder_i18n($description),
+      'label' => $label,
+      'description' => $description,
       'type' => 'yes_no_button',
       'options' => [
-        'off' => et_builder_i18n('No'),
-        'on' => et_builder_i18n('Yes'),
+        'off' => 'No',
+        'on' => 'Yes',
       ],
       'default' => 'off',
       'option_category' => 'configuration',

@@ -18,8 +18,8 @@ class Config
     'cache_bypass_cookies' => [],
     'cache_preload' => true,
     'license_key' => '',
-    'license_active' => false,
-    'license_status' => '',
+    'license_active' => true,
+    'license_status' => 'active',
     'css_minify' => true,
     'css_rucss' => false,
     'css_rucss_method' => 'async',
@@ -125,6 +125,10 @@ class Config
   {
     // Add new fields from the default configuration if they don't exist in the saved configuration
     self::$config = array_merge(self::$initial_config, self::$config);
+
+    // Update the cache_mobile config value from the filter
+    self::$config['cache_mobile'] = apply_filters('flying_press_cache_mobile', false);
+
     update_option('FLYING_PRESS_CONFIG', self::$config);
     do_action('flying_press_update_config:after', self::$config);
     do_action('flying_press_upgraded');
@@ -134,6 +138,10 @@ class Config
   public static function update_config($new_config = [])
   {
     self::$config = array_merge(self::$config, $new_config);
+
+    // Update the cache_mobile config value from the filter
+    self::$config['cache_mobile'] = apply_filters('flying_press_cache_mobile', false);
+
     update_option('FLYING_PRESS_CONFIG', self::$config);
     do_action('flying_press_update_config:after', self::$config);
   }

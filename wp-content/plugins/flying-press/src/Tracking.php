@@ -12,6 +12,8 @@ class Tracking
 
   public static function setup_scheduled_tracking()
   {
+    return;
+
     if (!Config::$config['settings_tracking']) {
       wp_clear_scheduled_hook('flying_press_tracking');
       return;

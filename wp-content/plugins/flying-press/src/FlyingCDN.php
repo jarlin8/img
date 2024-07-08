@@ -20,6 +20,7 @@ class FlyingCDN
     add_action('flying_press_purge_urls:before', [__CLASS__, 'purge_urls']);
     add_action('flying_press_purge_pages:before', [__CLASS__, 'purge_pages']);
     add_action('flying_press_purge_everything:before', [__CLASS__, 'purge_everything']);
+    register_deactivation_hook(FLYING_PRESS_FILE_NAME, [__CLASS__, 'purge_pages']);
   }
 
   public static function purge_urls($urls)
