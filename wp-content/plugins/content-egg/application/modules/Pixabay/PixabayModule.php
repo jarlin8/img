@@ -10,12 +10,14 @@ use ContentEgg\application\components\Content;
 use ContentEgg\application\admin\PluginAdmin;
 use ContentEgg\application\admin\GeneralConfig;
 
+use function ContentEgg\prnx;
+
 /**
  * PixabayModule class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class PixabayModule extends ParserModule
 {
@@ -136,12 +138,12 @@ class PixabayModule extends ParserModule
 			$content->unique_id = $r['id'];
 			$content->title     = strip_tags($r['tags']);
 			$content->url       = $r['pageURL'];
-			$content->img       = $r['webformatURL'];
-			$size               = $this->config('image_size');
-			if ($size !== '_640')
-			{
-				$content->img = str_replace('_640.jpg', $size . '.jpg', $content->img);
-			}
+			$size               = $this->config('size');
+
+			if ($size == 'large' && isset($r['largeImageURL']))
+				$content->img = $r['largeImageURL'];
+			else
+				$content->img = $r['webformatURL'];
 
 			$extra = new ExtraDataPixabay;
 			ExtraDataPixabay::fillAttributes($extra, $r);

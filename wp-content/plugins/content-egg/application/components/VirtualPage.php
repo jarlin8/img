@@ -11,7 +11,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 abstract class VirtualPage
 {
@@ -65,7 +65,7 @@ abstract class VirtualPage
 		elseif (\get_option('permalink_structure'))
 		{
 			$home_path = parse_url(\home_url('/'), PHP_URL_PATH);
-			$page      = preg_replace("#^" . preg_quote($home_path) . "#", '', esc_url_raw(wp_unslash($_SERVER['REQUEST_URI'])));
+			$page      = (string) preg_replace("#^" . preg_quote($home_path) . "#", '', esc_url_raw(wp_unslash($_SERVER['REQUEST_URI'])));
 			$page      = parse_url($page, PHP_URL_PATH);
 			$page      = trim($page, '/');
 		}

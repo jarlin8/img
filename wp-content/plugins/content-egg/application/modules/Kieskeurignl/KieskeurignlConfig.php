@@ -11,7 +11,7 @@ use ContentEgg\application\components\AffiliateParserModuleConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class KieskeurignlConfig extends AffiliateParserModuleConfig
 {
@@ -19,7 +19,7 @@ class KieskeurignlConfig extends AffiliateParserModuleConfig
     {
         $options = array(
             'token' => array(
-                'title' => 'Token <span class="cegg_required">*</span>',
+                'title' => 'API key <span class="cegg_required">*</span>',
                 'callback' => array($this, 'render_input'),
                 'default' => '',
                 'validator' => array(
@@ -27,7 +27,7 @@ class KieskeurignlConfig extends AffiliateParserModuleConfig
                     array(
                         'call' => array('\ContentEgg\application\helpers\FormValidator', 'required'),
                         'when' => 'is_active',
-                        'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'Token'),
+                        'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'API key'),
                     ),
                 ),
             ),
@@ -74,16 +74,7 @@ class KieskeurignlConfig extends AffiliateParserModuleConfig
                     ),
                 ),
             ),
-            'country' => array(
-                'title' => __('Country', 'content-egg'),
-                'description' => '',
-                'callback' => array($this, 'render_dropdown'),
-                'dropdown_options' => array(
-                    'NL' => 'NL',
-                    'BE' => 'BE',
-                ),
-                'default' => 'NL',
-            ),
+
             'exclude_domains' => array(
                 'title' => __('Exclude domains', 'content-egg'),
                 'description' => __('List of domains separated by commas that should be excluded from the search results.', 'content-egg') . ' ' . sprintf(__('For example: %s', 'content-egg'), 'amazon.nl, bol.com'),

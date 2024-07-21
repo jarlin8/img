@@ -9,12 +9,15 @@ use ContentEgg\application\components\ContentProduct;
 use ContentEgg\application\helpers\TemplateHelper;
 use ContentEgg\application\helpers\TextHelper;
 
+use function ContentEgg\prn;
+use function ContentEgg\prnx;
+
 /**
  * StructuredData class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class StructuredData
 {
@@ -56,6 +59,8 @@ class StructuredData
         foreach ($items as $i => $d)
         {
             if (isset($d['stock_status']) && $d['stock_status'] == ContentProduct::STOCK_STATUS_OUT_OF_STOCK)
+                unset($items[$i]);
+            if (empty($d['price']))
                 unset($items[$i]);
         }
         if (!$items = array_values($items))

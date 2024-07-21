@@ -15,7 +15,7 @@ use ContentEgg\application\libs\pepperjam\PepperjamApi;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class PepperjamModule extends AffiliateParserModule
 {
@@ -65,9 +65,8 @@ class PepperjamModule extends AffiliateParserModule
 
 		if ($this->config('programId'))
 		{
-			$options['programId'] = TextHelper::commaList($this->config('programId'));
+			$options['programIds'] = TextHelper::commaList($this->config('programId'));
 		}
-
 		if ($this->config('websiteId'))
 		{
 			$options['websiteId'] = $this->config('websiteId');
@@ -78,7 +77,7 @@ class PepperjamModule extends AffiliateParserModule
 		}
 		if ($this->config('category'))
 		{
-			$options['category'] = $this->config('category');
+			$options['categories'] = $this->config('category');
 		}
 
 		$results = $this->getApiClient()->search($keyword, $options);

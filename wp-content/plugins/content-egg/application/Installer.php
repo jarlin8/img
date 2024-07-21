@@ -13,7 +13,7 @@ use ContentEgg\application\models\AutoblogModel;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class Installer
 {
@@ -130,6 +130,9 @@ class Installer
         if ($db_version < 56)
             self::upgrade_v56();
 
+        if ($db_version < 57)
+            self::upgrade_v57();
+
         \update_option(Plugin::slug . '_db_version', self::dbVesrion());
     }
 
@@ -164,6 +167,11 @@ class Installer
     {
         ModuleUpdateScheduler::clearScheduleEvent();
         ModuleUpdateScheduler::addScheduleEvent('ten_min');
+    }
+
+    private static function upgrade_v57()
+    {
+        SystemScheduler::addScheduleEvent('weekly', time() + rand(259200, 604800));
     }
 
     public function redirect_after_activation()

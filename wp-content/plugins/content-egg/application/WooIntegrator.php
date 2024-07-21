@@ -14,12 +14,14 @@ use ContentEgg\application\helpers\TemplateHelper;
 use ContentEgg\application\components\ContentProduct;
 use ContentEgg\application\Translator;
 
+use function ContentEgg\prnx;
+
 /**
  * WooIntegrator class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class WooIntegrator
 {
@@ -84,13 +86,13 @@ class WooIntegrator
         {
             foreach ($data as $item)
             {
-                if (!$is_product_sync && !empty($item['woo_sync']))
+                if (!$is_product_sync && !empty($item['woo_sync']) && filter_var($item['woo_sync'], FILTER_VALIDATE_BOOLEAN))
                 {
                     self::wooSync($item, $module_id, $post_id);
                     $is_product_sync = true;
                 }
 
-                if (!$is_attr_sync && !empty($item['woo_attr']))
+                if (!$is_attr_sync && !empty($item['woo_attr']) && filter_var($item['woo_attr'], FILTER_VALIDATE_BOOLEAN))
                 {
                     self::wooCreateAttr($item, $module_id, $post_id);
                     $is_attr_sync == true;

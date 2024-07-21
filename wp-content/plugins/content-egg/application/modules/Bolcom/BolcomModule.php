@@ -8,11 +8,11 @@ use ContentEgg\application\components\AffiliateParserModule;
 use ContentEgg\application\components\ContentProduct;
 use ContentEgg\application\admin\PluginAdmin;
 use ContentEgg\application\helpers\TextHelper;
-use ContentEgg\application\libs\bolcom\BolcomApi;
 use ContentEgg\application\libs\bolcom\BolcomJwtApi;
 use ContentEgg\application\components\LinkHandler;
 use ContentEgg\application\Plugin;
 
+use function ContentEgg\prn;
 use function ContentEgg\prnx;
 
 /**
@@ -20,7 +20,7 @@ use function ContentEgg\prnx;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class BolcomModule extends AffiliateParserModule
 {
@@ -77,192 +77,139 @@ class BolcomModule extends AffiliateParserModule
         $options = array();
 
         if ($is_autoupdate)
-        {
             $limit = $this->config('entries_per_page_update');
-        }
         else
-        {
             $limit = $this->config('entries_per_page');
-        }
 
-        $options['limit'] = $limit;
+        if ($limit > 50)
+            $limit = 50;
 
-        $params = array(
-            'country',
-            'offers',
-            'sort',
-        );
+        $options['page-size'] = $limit;
+        $options['country-code'] = $this->config('country');
 
-        foreach ($params as $param)
-        {
-            $value = $this->config($param);
-            if ($value)
-            {
-                $options[$param] = $value;
-            }
-        }
+        $sort = $this->config('sort');
+        if (in_array($sort, array('RELEVANCE', 'POPULARITY', 'PRICE_ASC', 'PRICE_DESC', 'RELEASE_DATE', 'RATING')))
+            $options['sort'] = $sort;
 
         if ($this->config('ids'))
-        {
-            $options['ids'] = (int) $this->config('ids');
-        }
+            $options['category-id'] = (int) $this->config('ids');
 
-        $options['dataoutput'] = 'products';
-        $options['includeattributes'] = 'true';
+        $options['include-categories'] = 'true';
+        $options['include-image'] = 'true';
+        $options['include-offer'] = 'true';
+        $options['include-rating'] = 'true';
 
         $results = $client->search($keyword, $options);
 
-        if (!isset($results['products']) || !is_array($results['products']))
-        {
+        if (!isset($results['results']) || !is_array($results['results']))
             return array();
+
+        $products = $this->prepareResults($results['results']);
+
+        foreach ($products as $i => $product)
+        {
+            $this->applaySpecsAndImage($product);
         }
 
-        return $this->prepareResults($results['products']);
+        return $products;
+    }
+
+    private function applaySpecsAndImage(ContentProduct $product)
+    {
+        if (!$product->ean)
+            return $product;
+
+        $options = array();
+        $options['country-code'] = $this->config('country');
+        $options['include-specifications'] = 'true';
+        $options['include-image'] = 'true';
+
+        try
+        {
+            $r = $this->getApiClient()->product($product->ean, $options);
+        }
+        catch (\Exception $e)
+        {
+            return $product;
+        }
+
+        // large image
+        if (isset($r['image']['url']))
+            $product->img = $r['image']['url'];
+
+        $features = array();
+        if (isset($r['specificationGroups']) && is_array($r['specificationGroups']))
+        {
+            foreach ($r['specificationGroups'] as $spec_group)
+            {
+
+                foreach ($spec_group['specifications'] as $spec)
+                {
+                    $value = \strip_tags(join(', ', $spec['values']));
+
+                    if (strstr($value, 'Deze informatie volgt nog'))
+                        continue;
+
+                    $feature = array(
+                        'group' => \sanitize_text_field($spec_group['title']),
+                        'name' => \sanitize_text_field($spec['name']),
+                        'value' => $value,
+                    );
+                    $features[] = $feature;
+                }
+            }
+        }
+
+        $product->features = $features;
+
+        return $product;
     }
 
     private function prepareResults($results)
     {
         $data = array();
-        $description_type = $this->config('description_type');
+
         foreach ($results as $key => $r)
         {
             $content = new ContentProduct;
 
-            $content->unique_id = $r['id'];
+            $content->unique_id = $r['bolProductId'];
             $content->title = $r['title'];
+            $content->orig_url = $r['url'];
+            $content->domain = 'bol.com';
+            $content->currencyCode = 'EUR';
+            $content->url = $this->createAffUrl($content->orig_url, (array) $content);
+
+            if (!empty($r['ean']))
+                $content->ean = $r['ean'];
+
+            $content->description = $r['description'];
+            if ($max_size = $this->config('description_size'))
+                $content->description = TextHelper::truncateHtml($content->description, $max_size);
+
+            $content->img = $r['image']['url'];
+            if (!empty($r['offer']['price']))
+            {
+                $content->price = $r['offer']['price'];
+                $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
+            }
+            else
+                $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
+
+            if (isset($r['offer']['strikethroughPrice']))
+                $content->priceOld = $r['offer']['strikethroughPrice'];
 
             if (!empty($r['rating']))
             {
-                $content->rating = TextHelper::ratingPrepare($r['rating'] / 10);
-                $content->ratingDecimal = $r['rating'] / 10;
+                $content->rating = TextHelper::ratingPrepare($r['rating']);
+                $content->ratingDecimal = (float) $r['rating'];
             }
-
-            if ($description_type == 'summary' && !empty($r['summary']))
-            {
-                $content->description = $r['summary'];
-            }
-            if ($description_type == 'short' && !empty($r['shortDescription']))
-            {
-                $content->description = $r['shortDescription'];
-            }
-            if ($description_type == 'long' && !empty($r['longDescription']))
-            {
-                $content->description = $r['longDescription'];
-            }
-
-            if ($max_size = $this->config('description_size'))
-            {
-                $content->description = TextHelper::truncateHtml($content->description, $max_size);
-            }
-            if (!empty($r['upc']))
-            {
-                $content->upc = $r['upc'];
-            }
-            if (!empty($r['ean']))
-            {
-                $content->ean = $r['ean'];
-            }
-            if (!empty($r['isbn']))
-            {
-                $content->isbn = $r['isbn'];
-            }
-
-            if (!empty($r['specsTag']))
-            {
-                $content->manufacturer = $r['specsTag'];
-            }
-
-            $content->domain = 'bol.com';
-
-            if (isset($r['offerData']['offers']))
-            {
-                $offer = $r['offerData']['offers'][0]; //only first offer...
-                if (!empty($offer['price']))
-                {
-                    $content->price = $offer['price'];
-                }
-                if (!empty($offer['listPrice']))
-                {
-                    $content->priceOld = $offer['listPrice'];
-                }
-
-                $content->availability = $offer['availabilityDescription'];
-                if (isset($r['offerData']['offers'][0]['id']))
-                {
-                    $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
-                }
-                else
-                {
-                    $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-                }
-            }
-            else
-            {
-                $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-            }
-
-            if (isset($r['images']))
-            {
-                $content->img = $r['images'][4]['url']; // XL size
-            }
-
-            if (isset($r['media']))
-            {
-                $content->images = array();
-                foreach ($r['media'] as $m)
-                {
-                    if ($m['key'] != 'XL' || $m['type'] != 'IMAGE')
-                        continue;
-                    $content->images[] = $m['url'];
-                }
-            }
-
-            if (isset($r['parentCategoryPaths']))
-            {
-                $column_name = 'name';
-                $content->categoryPath = array_map(function ($element) use ($column_name)
-                {
-                    return $element[$column_name];
-                }, $r['parentCategoryPaths'][0]['parentCategories']);
-                $content->category = end($content->categoryPath);
-            }
-
-            $content->currencyCode = 'EUR';
-            $content->orig_url = $r['urls'][0]['value'];
-            $content->url = $this->createAffUrl($content->orig_url, (array) $content);
 
             $content->extra = new ExtraDataBolcom();
+            if (!empty($r['offer']['deliveryDescription']))
+                $content->extra->deliveryDescription = $r['offer']['deliveryDescription'];
             ExtraDataBolcom::fillAttributes($content->extra, $r);
 
-            if (isset($r['attributeGroups']))
-            {
-                $content->features = array();
-                if (!isset($r['attributeGroups']))
-                {
-                    continue;
-                }
-
-                foreach ($r['attributeGroups'] as $attributeGroup)
-                {
-                    if (!isset($attributeGroup['attributes']))
-                    {
-                        continue;
-                    }
-                    foreach ($attributeGroup['attributes'] as $attribute)
-                    {
-                        $value = preg_replace("~<br*/?>~i", " \n", $attribute['value']);
-                        $value = preg_replace("~<li*/?>~i", " \n ", $value);
-                        $value = trim(strip_tags($value));
-
-                        $feature = array(
-                            'group' => sanitize_text_field($attributeGroup['title']),
-                            'name' => sanitize_text_field($attribute['label']),
-                            'value' => strip_tags($attribute['value']),
-                        );
-                        $content->features[] = $feature;
-                    }
-                }
-            }
             $data[] = $content;
         }
 
@@ -274,54 +221,59 @@ class BolcomModule extends AffiliateParserModule
         $client = $this->getApiClient();
 
         $options = array();
-        $options['country'] = $this->config('country');
+        $options['country-code'] = $this->config('country');
 
-        $item_ids = array_map(function ($element)
+        foreach ($items as $i => $item)
         {
-            return $element['unique_id'];
-        }, $items);
+            if (empty($item['ean']))
+                continue;
 
-        $results = $client->products($item_ids, $options);
-        if (!$results || !isset($results['products']))
-        {
-            throw new \Exception('doRequestItems request error.');
-        }
+            $offer = array();
 
-        // assign new data
-        foreach ($results['products'] as $r)
-        {
-            $unique_id = $r['id'];
-            if (!isset($items[$unique_id]))
+            try
             {
+                $offer = $client->offer($item['ean'], $options);
+            }
+            catch (\Exception $e)
+            {
+                if ($e->getCode() == 404)
+                {
+                    $items[$i]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
+                    continue;
+                }
+
                 continue;
             }
 
-            if (isset($r['offerData']['offers']))
-            {
-                $offer = $r['offerData']['offers'][0];
-                if (!empty($offer['price']))
-                {
-                    $items[$unique_id]['price'] = $offer['price'];
-                }
-                if (!empty($offer['listPrice']))
-                {
-                    $items[$unique_id]['priceOld'] = $offer['listPrice'];
-                }
+            if (!$offer)
+                continue;
 
-                $items[$unique_id]['availability'] = $offer['availabilityDescription'];
-            }
-
-            if (isset($r['offerData']['offers'][0]['id']))
+            // assign new data
+            if (!empty($offer['price']))
             {
-                $items[$unique_id]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
+                $items[$i]['price'] = $offer['price'];
+                $items[$i]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
             }
             else
             {
-                $items[$unique_id]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
+                $items[$i]['price'] = '';
+                $items[$i]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
             }
 
-            $items[$unique_id]['orig_url'] = $r['urls'][0]['value'];
-            $items[$unique_id]['url'] = $this->createAffUrl($items[$unique_id]['orig_url'], $items[$unique_id]);
+            if (!empty($offer['strikethroughPrice']))
+                $items[$i]['priceOld'] = $offer['strikethroughPrice'];
+            else
+                $items[$i]['priceOld'] = 0;
+
+            $items[$i]['orig_url'] = $offer['url'];
+            $items[$i]['url'] = $this->createAffUrl($items[$i]['url'], $items[$i]);
+
+            $extra_fields = array('deliveryDescription', 'condition', 'isPreOrder', 'ultimateOrderTime', 'minDeliveryDate', 'maxDeliveryDate', 'releaseDate');
+            foreach ($extra_fields as $field)
+            {
+                if (!empty($offer[$field]))
+                    $items[$i][$field] = $offer[$field];
+            }
         }
 
         return $items;
@@ -329,20 +281,14 @@ class BolcomModule extends AffiliateParserModule
 
     private function getApiClient()
     {
-        if ($this->config('client_id') && $this->config('client_secret'))
-        {
-            $api_client = new BolcomJwtApi($this->config('client_id'), $this->config('client_secret'));
-            $api_client->setAccessToken($this->getAccessToken());
-            return $api_client;
-        }
-
-        $api_client = new BolcomApi($this->config('apikey'));
+        $api_client = new BolcomJwtApi($this->config('client_id'), $this->config('client_secret'));
+        $api_client->setLang($this->config('language'));
+        $api_client->setAccessToken($this->getAccessToken());
         return $api_client;
     }
 
     public function viewDataPrepare($data)
     {
-        $deeplink = $this->config('deeplink');
         foreach ($data as $key => $d)
         {
             $data[$key]['url'] = $this->createAffUrl($d['orig_url'], $d);
@@ -351,13 +297,17 @@ class BolcomModule extends AffiliateParserModule
         return parent::viewDataPrepare($data);
     }
 
-    private function createAffUrl($url, $item = array())
+    private function createAffUrl($url, $item)
     {
-        $deeplink = 'https://partnerprogramma.bol.com/click/click?p=1&t=url&s=' . urlencode($this->config('SiteId')) . '&f=TXL&url={{url_encoded}}&name=cegg';
+        // @link: https://affiliate.bol.com/nl/handleiding/handleiding-productfeed#:~:text=De%C2%A0productfeed%20koppelen,dat%20alles%20werkt
+
+        $deeplink = 'https://partner.bol.com/click/click?p=1&t=url&s=' . urlencode($this->config('SiteId')) . '&url={{url_encoded}}&f=TXL';
+
+        // replacement patterns can be applied
         if ($this->config('subId'))
-        {
             $deeplink .= '&subid=' . $this->config('subId');
-        }
+
+        $deeplink .= '&name=' . urlencode(\apply_filters('cegg_bolcom_link_name_param', 'cegg'));
 
         return LinkHandler::createAffUrl($url, $deeplink, $item);
     }

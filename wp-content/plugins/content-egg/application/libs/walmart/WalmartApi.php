@@ -11,7 +11,7 @@ use ContentEgg\application\libs\RestClient;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link httpS://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  *
  * @link: https://walmart.io/docs/affiliate/introduction
  */
@@ -121,7 +121,6 @@ class WalmartApi extends RestClient
         $pkeyid = openssl_get_privatekey($this->private_key);
         openssl_sign($message, $signature, $pkeyid, OPENSSL_ALGO_SHA256);
         $signature = base64_encode($signature);
-        openssl_free_key($pkeyid);
 
         return $signature;
     }

@@ -12,7 +12,7 @@ use ContentEgg\application\Plugin;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class Ebay2Config extends AffiliateParserModuleConfig
 {
@@ -56,7 +56,6 @@ class Ebay2Config extends AffiliateParserModuleConfig
                 'default' => '',
                 'validator' => array(
                     'trim',
-                    'absint',
                 ),
             ),
             'custom_id' => array(

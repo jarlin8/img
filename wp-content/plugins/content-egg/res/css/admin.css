@@ -338,10 +338,6 @@ table.wp-list-table mark.inactive {
     padding-right: 0;
 }
 
-.egg-container abbr {
-    border-bottom: 0 !important;
-}
-
 #content-egg .container-fluid {
     padding-left: 0px;
 }
@@ -387,4 +383,39 @@ table.wp-list-table mark.inactive {
     font-size: 55%;
     position: relative;
     top: -15px;
+}
+
+.cegg-res-image-container {
+    width: 90px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.cegg-res-product-image {
+    max-width: 90px;
+    max-height: 90px;
+    width: auto;
+    height: auto;
+}
+
+.egg-container .list-group .disabled {
+    opacity: 0.20 !important;
+}
+
+.egg-container .egg-hover-row:hover
+{
+    background-color: #f1f1f1;
+}
+
+.egg-container .cegg-item-handle {
+    cursor: move;
+}
+
+.egg-container .cegg-btn-xs {
+    --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;
+}
+
+body.cegg_wait *, body.cegg_wait, .cegg_wait, .cegg_wait * {
+        cursor: progress !important;
 }

@@ -16,7 +16,7 @@ use ContentEgg\application\components\LinkHandler;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class PayTMModule extends AffiliateParserModule
 {
@@ -99,7 +99,7 @@ class PayTMModule extends AffiliateParserModule
 			}
 			else
 			{
-				$options['price'] = 0;
+				$options['price'] = '';
 			}
 			$options['price'] .= ',';
 			if ($price_max)
@@ -211,7 +211,6 @@ class PayTMModule extends AffiliateParserModule
 			{
 				$items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
 			}
-
 
 			$items[$key]['domain'] = 'paytmmall.com';
 

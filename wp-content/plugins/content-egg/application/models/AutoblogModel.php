@@ -12,13 +12,14 @@ use ContentEgg\application\helpers\TemplateHelper;
 use ContentEgg\application\admin\GeneralConfig;
 
 use function ContentEgg\prn;
+use function ContentEgg\prnx;
 
 /**
  * AutoblogModel class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class AutoblogModel extends Model
 {

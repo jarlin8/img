@@ -8,6 +8,7 @@ use ContentEgg\application\helpers\TemplateHelper;
 use ContentEgg\application\components\ModuleManager;
 use ContentEgg\application\helpers\TextHelper;
 
+use function ContentEgg\prn;
 use function ContentEgg\prnx;
 
 /**
@@ -15,7 +16,7 @@ use function ContentEgg\prnx;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 abstract class AffiliateFeedParserModule extends AffiliateParserModule
 {

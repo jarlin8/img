@@ -13,13 +13,14 @@ use ContentEgg\application\components\LManager;
 use ContentEgg\application\components\ReviewNotice;
 use ContentEgg\application\components\FeaturedImage;
 use ContentEgg\application\ModuleUpdateScheduler;
+use ContentEgg\application\SystemScheduler;
 
 /**
  * PluginAdmin class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class PluginAdmin
 {
@@ -50,10 +51,14 @@ class PluginAdmin
 
         AdminNotice::getInstance()->adminInit();
         if (!Plugin::isFree())
+        {
             LManager::getInstance()->adminInit();
+        }
 
         if (Plugin::isFree())
             ReviewNotice::getInstance()->adminInit();
+        else
+            SystemScheduler::addScheduleEvent('weekly', time() + rand(259200, 604800));
 
         if (Plugin::isFree() || (Plugin::isPro() && Plugin::isActivated()) || Plugin::isEnvato())
         {
@@ -99,7 +104,7 @@ class PluginAdmin
             'sitelang' => GeneralConfig::getInstance()->option('lang'),
         ));
 
-        \wp_enqueue_style('contentegg-admin', \ContentEgg\PLUGIN_RES . '/css/admin.css', null, '' . Plugin::version() . '');
+        \wp_enqueue_style('contentegg-admin', \ContentEgg\PLUGIN_RES . '/css/admin.css', null, '' . Plugin::version() . 'a');
     }
 
     public function add_plugin_row_meta(array $links, $file)

@@ -12,7 +12,7 @@ use ContentEgg\application\libs\amazon\AmazonLocales;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class AmazonNoApiConfig extends AffiliateParserModuleConfig
 {
@@ -22,6 +22,7 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig
         $parent['ttl_items']['title'] .= '**';
         $parent['ttl_items']['default'] = 0;
         $parent['ttl_items']['description'] .= '<br><br><em>'  . sprintf(__('Please be aware that frequently updating prices for the NoAPI module can be challenging. For more detailed information on this matter, please refer to our <a target="_blanl" href="%s">guidelines</a>.', 'content-egg'), 'https://ce-docs.keywordrush.com/modules/affiliate/amazon-no-api-module') . '</em>';
+        $parent['update_mode']['default'] = 'cron';
 
         $options = array(
             'associate_tag' => array(
@@ -48,13 +49,25 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig
                 'section' => 'default',
             ),
             'hide_prices' => array(
-                'title' => __('Prices' . '**', 'content-egg'),
+                'title' => __('Prices', 'content-egg') . '**',
+                'description' => __('Amazon mandates that prices be updated at least every 24 hours if displayed on your site. Without API access, maintaining this update frequency is challenging, so consider hiding prices until you obtain API access. "Outdated prices" refers to updates that occurred more than 24 hours ago.', 'content-egg'),
                 'callback' => array($this, 'render_dropdown'),
                 'dropdown_options' => array(
                     'hide' => __('Hide prices', 'content-egg'),
+                    'hide_24' => __('Hide outdated prices', 'content-egg'),
                     'display' => __('Display prices', 'content-egg'),
                 ),
                 'default' => self::getHidePricesDefault(),
+            ),
+            'api_updates' => array(
+                'title' => __('Updates via API', 'content-egg') . '**',
+                'description' => sprintf(__('If you have received your API access and the <a href="%s">Amazon API</a> module is active and configured, you can delegate the task of updating prices to the API module.', 'content-egg'), '?page=content-egg-modules--Amazon'),
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => array(
+                    'enabled' => __('Enabled', 'content-egg'),
+                    'disabled' => __('Disabled', 'content-egg'),
+                ),
+                'default' => 'disabled',
             ),
         );
 
@@ -63,10 +76,30 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig
 
         $options = array_merge($options, array(
 
+            'scrapingdog_token' => array(
+                'title' => __('Scrapingdog API key' . '**', 'content-egg'),
+                'description' => sprintf(__('Your <a target="_blanl" href="%s">Scrapingdog</a> token.', 'content-egg'), 'https://www.keywordrush.com/go/scrapingdog')
+                    . '<br><br><em>' . __('If Amazon has blocked your server IP, you can activate one of the scraping services to bypass this issue.', 'content-egg') . '</em>',
+                'callback' => array($this, 'render_password'),
+                'default' => '',
+                'validator' => array(
+                    'trim',
+                ),
+            ),
+
+            'scrapeowl_token' => array(
+                'title' => __('Scrapeowl API key' . '**', 'content-egg'),
+                'description' => __('Your scrapeowl.com token.', 'content-egg'),
+                'callback' => array($this, 'render_password'),
+                'default' => '',
+                'validator' => array(
+                    'trim',
+                ),
+            ),
+
             'scraperapi_token' => array(
                 'title' => __('Scraperapi API key' . '**', 'content-egg'),
-                'description' => sprintf(__('Your <a target="_blanl" href="%s">scraperapi.com</a> token.', 'content-egg'), 'https://www.keywordrush.com/go/scraperapi')
-                    . '<br><br><em>' . __('If Amazon has blocked your server IP, you can activate one of the scraping services to bypass this issue.', 'content-egg') . '</em>',
+                'description' => sprintf(__('Your <a target="_blanl" href="%s">Scraperapi</a> token.', 'content-egg'), 'https://www.keywordrush.com/go/scraperapi'),
                 'callback' => array($this, 'render_password'),
                 'default' => '',
                 'validator' => array(
@@ -82,15 +115,7 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig
                     'trim',
                 ),
             ),
-            'scrapingdog_token' => array(
-                'title' => __('Scrapingdog API key' . '**', 'content-egg'),
-                'description' => __('Your scrapingdog.com token.', 'content-egg'),
-                'callback' => array($this, 'render_password'),
-                'default' => '',
-                'validator' => array(
-                    'trim',
-                ),
-            ),
+
             'entries_per_page' => array(
                 'title' => __('Results', 'content-egg'),
                 'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
@@ -229,6 +254,6 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig
 
     public static function getHidePricesDefault()
     {
-        return 'hide';
+        return 'hide_24';
     }
 }

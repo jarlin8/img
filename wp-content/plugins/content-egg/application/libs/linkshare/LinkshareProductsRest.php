@@ -11,7 +11,7 @@ use ContentEgg\application\libs\RestClient;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  *
  * @link: https://rakutenlinkshare.zendesk.com/hc/en-us/articles/200973227-Product-Search-API-Overview
  * @link: https://developers.rakutenmarketing.com/console/registry/resource/_system/governance/apimgt/applicationdata/provider/LinkShare/ProductSearch/1.0/documentation/files/ProductSearch_1.0-Guide(updated).pdf

@@ -11,7 +11,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  *
  */
 class ParserClient
@@ -99,6 +99,7 @@ class ParserClient
 	public function loadHtml($url, $query = null)
 	{
 		$this->_html = $this->restGet($url, $query);
+
 		if (!$this->_html)
 			throw new \Exception('Can\'t load HTML Document.');
 	}

@@ -9,7 +9,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class ContentProduct extends Content
 {
@@ -35,6 +35,7 @@ class ContentProduct extends Content
 	public $availability;
 	public $orig_url;
 	public $ean;
+	public $promo;
 	public $upc;
 	public $sku;
 	public $isbn;
@@ -47,4 +48,7 @@ class ContentProduct extends Content
 	public $stock_status;
 	public $img_large;
 	public $group;
+	public $_priceFormatted;
+	public $_priceOldFormatted;
+	public $_descriptionText;
 }

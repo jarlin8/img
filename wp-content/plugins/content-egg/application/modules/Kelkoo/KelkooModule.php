@@ -18,7 +18,7 @@ use ContentEgg\application\Plugin;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class KelkooModule extends AffiliateParserModule
 {
@@ -152,6 +152,13 @@ class KelkooModule extends AffiliateParserModule
     private function prepareResult(array $r)
     {
         $content = new ContentProduct;
+
+        $fields = array('description', 'price', 'priceWithoutRebate', 'availabilityStatus');
+        foreach ($fields as $field)
+        {
+            if (!isset($r[$field]))
+                $r[$field] = '';
+        }
 
         $content->unique_id = $r['offerId'];
         $content->title = $r['title'];

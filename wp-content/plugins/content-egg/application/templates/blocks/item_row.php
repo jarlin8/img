@@ -40,8 +40,13 @@ use ContentEgg\application\helpers\TemplateHelper;
                     &nbsp;<?php echo \esc_html($stock_status); ?>
                 </mark>
             <?php endif; ?>
+
             <?php if ($cashback_str = TemplateHelper::getCashbackStr($item)) : ?>
                 <div class="cegg-cashback"><?php echo esc_html(sprintf(TemplateHelper::__('Plus %s Cash Back'), $cashback_str)); ?></div>
+            <?php endif; ?>
+
+            <?php if (!empty($item['promo'])) : ?>
+                <div class="cegg-cashback"><?php echo esc_html($item['promo']); ?></div>
             <?php endif; ?>
         </div>
 

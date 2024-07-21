@@ -11,7 +11,7 @@ use ContentEgg\application\helpers\TemplateHelper;
 if (!$all_items = TemplateHelper::sortAllByPrice($data, $order))
     return;
 
-if (TemplateHelper::isModuleDataExist($items, array('Amazon', 'AmazonNoApi')))
+if (TemplateHelper::isModuleDataExist($all_items, array('Amazon', 'AmazonNoApi')))
     \wp_enqueue_script('cegg-frontend', \ContentEgg\PLUGIN_RES . '/js/frontend.js', array('jquery'));
 
 $amazon_last_updated = TemplateHelper::getLastUpdateFormattedAmazon($data);
@@ -40,8 +40,8 @@ if (!$title)
 
                     <?php foreach ($all_items as $key => $item) : ?>
                         <a<?php TemplateHelper::printRel(); ?> class="list-group-item" target="_blank" href="<?php echo esc_url_raw($item['url']); ?>">
-                            <img src="https://testingcf.jsdelivr.net/gh/jarlin8/OSS@main/icons/favicon/<?php echo esc_attr($item['domain']); ?>.svg" height="18" width="18">
-                            <?php echo esc_attr($item['domain']); ?>
+                            <img src="https://testingcf.jsdelivr.net/gh/jarlin8/OSS@main/icons/favicon/<?php echo esc_attr( $item['domain']); ?>.svg" height="18" width="18">
+							<?php echo esc_attr( $item['domain']); ?>
                             <?php if ($item['price']) : ?>
                                 <span<?php if ($item['stock_status'] != -1) echo ' style="background-color: ' . esc_attr(TemplateHelper::getPriceColor()) . '"'; ?> class="cegg-price-badge"><?php echo esc_html(TemplateHelper::formatPriceCurrency($item['price'], $item['currencyCode'])); ?></span>
                                 <?php endif; ?>

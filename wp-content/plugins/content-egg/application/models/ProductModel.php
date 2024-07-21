@@ -13,7 +13,7 @@ use ContentEgg\application\components\ContentProduct;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class ProductModel extends Model
 {
@@ -70,6 +70,9 @@ class ProductModel extends Model
     {
         $per_page = 100;
         $meta_keys = $this->getCeMetaKeys();
+        if (!$meta_keys)
+            return;
+
         $sql_part = $this->getDb()->postmeta . ' WHERE meta_key IN (' . join(',', $meta_keys) . ') LIMIT ' . $per_page;
         $sql = 'SELECT SQL_CALC_FOUND_ROWS * FROM ' . $sql_part;
         $products = $this->getDb()->get_results($sql);

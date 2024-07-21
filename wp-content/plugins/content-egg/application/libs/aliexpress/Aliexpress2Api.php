@@ -13,7 +13,7 @@ use function ContentEgg\prnx;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  *
  * Aliexpress Affiliates API
  * @link: https://developers.aliexpress.com/en/doc.htm?apiName=aliexpress.affiliate.product.query&docId=118192&docType=1

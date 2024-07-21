@@ -11,7 +11,7 @@ use ContentEgg\application\libs\RestClient;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  *
  * @link: https://developer.zanox.com/web/guest/publisher-api-2011
  * @link: http://wiki.zanox.com/en/Step_1_-_Connect_your_application_or_site_with_zanox

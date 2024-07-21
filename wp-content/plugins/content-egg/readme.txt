@@ -17,6 +17,56 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+== Version 13.0.0 ==
+* New: AI features to generate unique product content.
+* New: Clear, compact interface for CE metabox.
+* New: Amazon NoAPI module: Promocodes support.
+* New: 'Description only' template added.
+* Improvement: Feed module limit increased to 50 individual feed modules.
+* Improvement: Amazon module: Product features now uses as product description.
+
+== Version 12.16.0 ==
+* New: ChatGTP Template Creator: https://ce-docs.keywordrush.com/custom-templates/chatgtp-template-creator
+
+= Version 12.15.5 =
+* Fix: AmazonNoAPI module for IN locale.
+
+= Version 12.15.2 =
+* Improvement: Enhanced grid templates.
+
+= Version 12.15.0 =
+* New: Sovrn (Viglink) module updated with the new Sovrn Product API.
+
+= Version 12.14.0 =
+* New: Greenshift template: Grid template added.
+
+= Version 12.13.0 =
+* New: AE:Amazon modules now support search by ASIN.
+* Fix: Grid template fix.
+
+= Version 12.12.0 =
+* New: Kieskeurignl module - Migrated to the new API.
+
+= Version 12.11.0 =
+* New: The Admitad coupons module can now return all coupons by advertiser ID.
+
+= Version 12.10.0 =
+* New: Added large image format to the Pixabay module.
+
+= Version 12.9.0 =
+* New: Preparation for integration with the GreenShift plugin.
+
+= Version 12.8.0 =
+* New: Added an option in the Amazon NoAPI module to delegate the task of updating prices to the Amazon module via API.
+* New: Amazon NoAPI module: option to hide outdated prices.
+* New: Amazon module: option to hide prices.
+
+= Version 12.7.0 =
+* New: Bol.com module - Migrated to the new Marketing Catalog API.
+
+= Version 12.6.0 =
+* New: Support for Scrapeowl added to the AmazonNoAPI module.
+
 = Version 12.5.0 =
 * Improvement: The AmazonNoAPI module now functions as a web scraper.
 * Improvement: The AmazonNoAPI module now supports all Amazon locales.

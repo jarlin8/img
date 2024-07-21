@@ -9,7 +9,7 @@ use ContentEgg\application\helpers\TextHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  *
  * Simple Rest Client
  * @todo: PUT/DELETE Request
@@ -265,6 +265,9 @@ class RestClient
 
     protected function _fixUtf8(&$text)
     {
+        if (!$text)
+            return;
+
         $regex = '/
 					(
 						(?: [\x00-\x7F]                  # single-byte sequences   0xxxxxxx

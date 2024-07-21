@@ -6,12 +6,15 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\libs\RestClient;
 
+use function ContentEgg\prn;
+use function ContentEgg\prnx;
+
 /**
  * AdmitadCoupons class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  *
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
@@ -41,41 +44,34 @@ class AdmitadCoupons extends RestClient
 		$url_parts = @parse_url($uri);
 
 		if (empty($url_parts['host']) || !preg_match('/admitad\.com$/', $url_parts['host']))
-		{
 			throw new \Exception('No valid XML URL was provided. ');
-		}
 
-		// redirect loop for http://export.admitad.com ...
-		// path
 		if (!empty($url_parts['path']))
-		{
 			$path = $url_parts['path'];
-		}
 		else
-		{
 			$path = '';
-		}
 
-		// params
 		if (!empty($url_parts['query']))
-		{
 			parse_str($url_parts['query'], $params);
-		}
 		else
-		{
 			$params = array();
-		}
 
 		if (empty($params['format']) || $params['format'] != 'xml')
-		{
 			throw new \Exception('No valid XML URL was provided. ');
+
+		if (is_numeric($keywords))
+		{
+			$params['advcampaigns'] = $keywords;
+			$params['keyword'] = '';
+			$params['filter'] = 1;
+		}
+		else
+		{
+			$params['keyword'] = $keywords;
+			$params['id'] = 'keyword';
 		}
 
-		// keyword
-		$params['keyword'] = $keywords;
-
 		$response = $this->restGet($path, $params);
-
 		return $this->_decodeResponse($response);
 	}
 }

@@ -14,7 +14,7 @@ use ContentEgg\application\admin\GeneralConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class LocalRedirect
 {
@@ -198,7 +198,7 @@ class LocalRedirect
       include( \get_query_template('404') );
       exit;
       }
-     * 
+     *
      */
 
     public static function base64_url_encode($input)

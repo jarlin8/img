@@ -4,25 +4,27 @@ namespace ContentEgg\application;
 
 defined('\ABSPATH') || exit;
 
-use ContentEgg\application\admin\GeneralConfig;
 use ContentEgg\application\helpers\CurrencyHelper;
 use ContentEgg\application\components\ExternalFeaturedImage;
 use ContentEgg\application\components\AggregateOffer;
 use ContentEgg\application\components\StructuredData;
 use ContentEgg\application\components\ShortcodePreprocessor;
 use ContentEgg\application\components\command\CommandFactory;
+use ContentEgg\application\components\Pattern;
+use ContentEgg\application\admin\SysNotice;
+use ContentEgg\application\admin\GeneralConfig;
 
 /**
  * Plugin class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class Plugin
 {
-    const version = '12.5.0';
-    const db_version = 56;
+    const version = '13.0.1';
+    const db_version = 57;
     const wp_requires = '4.6.1';
     const slug = 'content-egg';
     const short_slug = 'cegg';
@@ -54,6 +56,7 @@ class Plugin
             EggShortcode::getInstance();
             BlockShortcode::getInstance();
             ShortcodePreprocessor::initAction();
+            Pattern::initAction();
 
             if (!\is_admin())
             {
@@ -73,13 +76,18 @@ class Plugin
             ExternalFeaturedImage::initAction();
             AggregateOffer::initAction();
             if (!self::isFree())
+            {
                 DataRestController::getInstance()->init();
+                SystemScheduler::initAction();
+            }
 
             new ProductSearchWidget;
             new PriceMoversWidget;
 
             CommandFactory::initAction();
         }
+        if (!Plugin::isFree())
+            new SysNotice;
     }
 
     public function registerScripts()
@@ -90,10 +98,22 @@ class Plugin
         \wp_register_script('bootstrap-tooltip', \ContentEgg\PLUGIN_RES . '/bootstrap/js/tooltip.js', array('jquery'), null, false);
         \wp_register_script('bootstrap-modal', \ContentEgg\PLUGIN_RES . '/bootstrap/js/modal.js', array('jquery'), null, false);
         \wp_register_script('bootstrap-popover', \ContentEgg\PLUGIN_RES . '/bootstrap/js/popover.js', array('bootstrap-tooltip'), null, false);
-        \wp_register_style('egg-products', \ContentEgg\PLUGIN_RES . '/css/products.css', array(), '11' . Plugin::version());
+        if (self::isDevEnvironment())
+            $r = rand(1, 9999);
+        else
+            $r = Plugin::version();
+        \wp_register_style('egg-products', \ContentEgg\PLUGIN_RES . '/css/products.css', array(), $r);
         \wp_register_script('raphaeljs', \ContentEgg\PLUGIN_RES . '/js/morrisjs/raphael.min.js', array('jquery'));
         \wp_register_script('morrisjs', \ContentEgg\PLUGIN_RES . '/js/morrisjs/morris.min.js', array('raphaeljs'));
         \wp_register_style('morrisjs', \ContentEgg\PLUGIN_RES . '/js/morrisjs/morris.min.css');
+    }
+
+    public static function isDevEnvironment()
+    {
+        if (defined('EXTERNAL_IMPORTER_DEBUG') && EXTERNAL_IMPORTER_DEBUG)
+            return true;
+        else
+            return false;
     }
 
     public static function version()

@@ -12,6 +12,7 @@ use ContentEgg\application\libs\kieskeurignl\KieskeurignlApi;
 use ContentEgg\application\modules\Kieskeurignl\ExtraDataKieskeurignl;
 use ContentEgg\application\helpers\ArrayHelper;
 
+use function ContentEgg\prn;
 use function ContentEgg\prnx;
 
 /**
@@ -19,7 +20,7 @@ use function ContentEgg\prnx;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class KieskeurignlModule extends AffiliateParserModule
 {
@@ -70,85 +71,71 @@ class KieskeurignlModule extends AffiliateParserModule
         else
             $limit = $this->config('entries_per_page');
 
-        return $this->prepareResults($result, $limit);
+        return $this->prepareResults($result, $product_id, $limit);
     }
 
     private function getOffers($product_id)
     {
-        $client = $this->getApiClient();
-        $result = $client->getOffers($product_id);
+        $options = array(
+            'AffiliateId' => $this->config('affiliate_id'),
+        );
 
-        if (!isset($result['section']) || !is_array($result['section']))
+        $client = $this->getApiClient();
+        $response = $client->getOffers($product_id, $options);
+
+        if (!$response || !is_array($response))
             return array();
 
-        return $result;
+        return $response;
     }
 
-    private function prepareResults($result, $limit = 999)
+    private function prepareResults(array $offers, $product_id, $limit = 999)
     {
         $content = new ContentProduct;
 
-        $s = $result['section'];
+        if (!$product = $this->getApiClient()->product($product_id))
+            return array();
 
-        $content->title = '';
-        if (!empty($s['brand']))
-            $content->title .= $s['brand'] . ' ';
-        if (!empty($s['type']))
-            $content->title .= $s['type'] . ' ';
-        if (!empty($s['type_extra']))
-            $content->title .= $s['type_extra'];
-        $content->title = trim($content->title);
+        $content->title = trim($product['title']);
+        $content->description = $product['description'];
+        $content->manufacturer = $product['brand'];
+        if (isset($product['media'][0]))
+            $content->img = $product['media'][0];
 
         $content->currencyCode = 'EUR';
-        if (isset($s['image_templates']['image_template']))
-        {
-            if (is_array($s['image_templates']['image_template']))
-                $img = reset($s['image_templates']['image_template']);
-            else
-                $img = $s['image_templates']['image_template'];
-
-            $content->img = str_replace('/_.', '/l.', $img);
-        }
-        if (TextHelper::isEan($s['ean']))
-            $content->ean = TextHelper::fixEan($s['ean']);
-
-        if (!empty($s['brand']))
-            $content->manufacturer = $s['brand'];
 
         $features = array();
-        if (isset($s['specification']) && is_array($s['specification']) && isset($s['specification'][0]))
+        if (isset($product['specifications']) && is_array($product['specifications']))
         {
             $content->features = array();
-            foreach ($s['specification'] as $d)
+            foreach ($product['specifications'] as $section_name => $attributes)
             {
-                if (strstr($d['value'], 'images.kieskeurig'))
-                    continue;
+                foreach ($attributes as $attr_name => $attr_value)
 
-                $d['label'] = ucfirst(str_replace('tile-', '', $d['label']));
+                    if (strstr($attr_value, 'images.kieskeurig'))
+                        continue;
+
                 $feature = array(
-                    'name' => \sanitize_text_field($d['label']),
-                    'value' => \sanitize_text_field($d['value']),
+                    'name' => \sanitize_text_field(ucfirst($attr_name)),
+                    'value' => \sanitize_text_field($attr_value),
                 );
                 $features[] = $feature;
             }
         }
 
         $content->extra = new ExtraDataKieskeurignl();
-        ExtraDataKieskeurignl::fillAttributes($content->extra, $s);
-
-        $offers = $result['searchresult']['prices']['price'];
-
-        if (!isset($offers[0]) && isset($offers['id']))
-            $offers = array($offers);
+        $content->extra->productid = $product['id']; // for price updates
+        ExtraDataKieskeurignl::fillAttributes($content->extra, $product);
 
         $exclude_domains = TextHelper::getArrayFromCommaList(strtolower($this->config('exclude_domains')));
         $data = array();
-        foreach ($offers as $i => $r)
+        $i = 0;
+        foreach ($offers as $r)
         {
-            $domain = self::getMerchantDomain($r['customer']);
+            $domain = self::getMerchantDomain($r['shop']['name']);
             if (!$domain)
             {
-                $merchant = strtolower($r['customer']);
+                $merchant = strtolower($r['shop']['name']);
                 if (TextHelper::isValidDomainName($merchant))
                     $domain = $merchant;
             }
@@ -158,25 +145,16 @@ class KieskeurignlModule extends AffiliateParserModule
 
             $c = clone $content;
             $c->domain = $domain;
-            $c->unique_id = $r['id'];
-            $c->url = $r['deeplink'];
-            $c->price = $r['pricevalue'];
+            $c->unique_id = $r['shop']['id'] . '-' . $product['id'];
+            $c->logo = $r['shop']['logo'];
+            $c->url = $r['link'];
+            $c->price = $r['amount'];
+            if (!empty($r['productDescription']))
+                $c->description = $r['productDescription'];
 
-            if (!empty($r['text_ad']))
-                $c->description = $r['text_ad'];
-            elseif (!empty($r['info']))
-                $c->description = $r['info'];
+            $c->merchant = $r['shop']['name'];
 
-            $c->merchant = $r['customer'];
-
-            /*
-            if ($r['stock'] == 'yes')
-                $c->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
-            */
-            if ($r['stock'] == 'no')
-                $c->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-            else
-                $c->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
+            $c->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
 
             if ($i == 0 && $features)
                 $c->features = $features;
@@ -184,6 +162,7 @@ class KieskeurignlModule extends AffiliateParserModule
             ExtraDataKieskeurignl::fillAttributes($c->extra, $r);
 
             $data[] = $c;
+            $i++;
 
             if (count($data) >= $limit)
                 break;
@@ -196,7 +175,7 @@ class KieskeurignlModule extends AffiliateParserModule
     {
         $product_ids = array_map(function ($element)
         {
-            return $element['ean'];
+            return $element['extra']['productid'];
         }, $items);
 
         $product_ids = array_unique($product_ids);
@@ -206,12 +185,25 @@ class KieskeurignlModule extends AffiliateParserModule
             if (!$offers = $this->getOffers($product_id))
                 continue;
 
-            $results = array_merge($results, $this->prepareResults($offers));
+            $results = array_merge($results, $this->prepareResults($offers, $product_id));
         }
 
         $new = array();
         foreach ($results as $r)
         {
+            // fix for old api. find item by domain
+            if (!isset($items[$r->unique_id]))
+            {
+                foreach ($items as $item)
+                {
+                    if ($item['domain'] == $r->domain && $item['title'] == $r->title)
+                    {
+                        $new[$item['unique_id']] = $r;
+                        break;
+                    }
+                }
+            }
+
             $new[$r->unique_id] = $r;
         }
 
@@ -252,26 +244,23 @@ class KieskeurignlModule extends AffiliateParserModule
         if (self::isPid($keyword))
             return $keyword;
 
-        if (TextHelper::isEan($keyword))
-            return $keyword;
-
-        $options = array();
-        $options['ps'] = 1; // number of search results
-
         $client = $this->getApiClient();
-        $results = $client->search($keyword, $options);
+        $options = array();
+        $options['Limit'] = 1;
 
-        if (!isset($results['searchresult']['items']['product']))
-            return array();
+        if (TextHelper::isEan($keyword))
+            $results = $client->searchEan($keyword, $options);
+        else
+            $results = $client->search($keyword, $options);
 
-        $results = $results['searchresult']['items']['product'];
-
-        if (!isset($results[0]) && isset($results['@attributes']))
-            $results = array($results);
+        if (!$results || !is_array($results))
+            return false;
 
         $result = reset($results);
+        if (!isset($result['id']))
+            return false;
 
-        return $result['@attributes']['sid'];
+        return $result['id'];
     }
 
     public function viewDataPrepare($data)
@@ -290,7 +279,7 @@ class KieskeurignlModule extends AffiliateParserModule
 
     private function getApiClient()
     {
-        return new KieskeurignlApi($this->config('token'), $this->config('affiliate_id'), $this->config('country'));
+        return new KieskeurignlApi($this->config('token'));
     }
 
     public function renderResults()

@@ -9,12 +9,18 @@
 use ContentEgg\application\helpers\TemplateHelper;
 use ContentEgg\application\helpers\ArrayHelper;
 
+use function ContentEgg\prn;
+
 $all_items = TemplateHelper::mergeAll($data, $order);
 if (TemplateHelper::isNumbered($all_items))
     $all_items = TemplateHelper::sortByNumber($all_items, $order);
 $ratings = TemplateHelper::generateStaticRatings(count($all_items));
 
-foreach ($all_items as $i => $item) {
+foreach ($all_items as $i => $item)
+{
+    if (empty($item['ratingDecimal']) && isset($item['extra']['data']['ratingDecimal']))
+        $all_items[$i]['ratingDecimal'] = $item['ratingDecimal'] = round(TemplateHelper::convertRatingScale($item['extra']['data']['ratingDecimal']), 1);
+
     if (empty($item['ratingDecimal']))
         $all_items[$i]['ratingDecimal'] = $ratings[$i];
     elseif ($item['ratingDecimal'] && $item['group'] !== 'Roundup')
@@ -62,9 +68,9 @@ if ($item['group'] !== 'Roundup')
                     <?php endif; ?>
 
                     <div class="cegg-no-top-margin cegg-list-logo-title">
-                        <img src="https://testingcf.jsdelivr.net/gh/jarlin8/OSS@main/icons/favicon/<?php echo esc_attr($item['domain']); ?>.svg" height="18" width="18">
-                        <a<?php TemplateHelper::printRel(); ?> target="_blank" href="<?php echo esc_url_raw($item['url']); ?>"><?php echo esc_html(TemplateHelper::truncate($item['title'], 100)); ?></a>
-                    </div>
+						<img src="https://testingcf.jsdelivr.net/gh/jarlin8/OSS@main/icons/favicon/<?php echo esc_attr($item['domain']); ?>.svg" height="18" width="18">
+						<a<?php TemplateHelper::printRel(); ?> target="_blank" href="<?php echo esc_url_raw($item['url']); ?>"><?php echo esc_html(TemplateHelper::truncate($item['title'], 100)); ?></a>
+					</div>
                     <div class="text-center cegg-mt10 visible-xs">
                         <a<?php TemplateHelper::printRel(); ?> target="_blank" href="<?php echo esc_url_raw($item['url']); ?>" class="btn btn-danger btn-block"><span><?php TemplateHelper::buyNowBtnText(true, $item, $btn_text); ?></span></a>
                             <?php if ($merchant = TemplateHelper::getMerhantName($item)) : ?>
@@ -76,6 +82,7 @@ if ($item['group'] !== 'Roundup')
                 <div class="col-md-2 col-sm-2 col-xs-3">
 
                     <?php
+
                     if (!empty($item['ratingDecimal']))
                         TemplateHelper::printProgressRing($item['ratingDecimal']);
                     else

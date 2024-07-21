@@ -20,7 +20,7 @@ use function ContentEgg\prnx;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class AmazonModule extends AffiliateParserModule
 {
@@ -41,7 +41,7 @@ class AmazonModule extends AffiliateParserModule
         return self::PARSER_TYPE_PRODUCT;
     }
 
-    public function defaultTemplateName()
+    public function defaultTemeName()
     {
         return 'data_item';
     }
@@ -298,6 +298,7 @@ class AmazonModule extends AffiliateParserModule
 
     public function doRequestItems(array $items)
     {
+
         $locales = array();
         $default_locale = $this->config('locale');
 
@@ -390,8 +391,9 @@ class AmazonModule extends AffiliateParserModule
                 $items[$unique_id]['img'] = $result->img;
             }
 
-            // all extra fields
-            $items[$unique_id]['extra'] = ArrayHelper::object2Array($result->extra);
+            // all extra fields for API data only
+            if (isset($items[$unique_id]['extra']['totalNew']))
+                $items[$unique_id]['extra'] = ArrayHelper::object2Array($result->extra);
         }
 
         return $items;
@@ -480,9 +482,20 @@ class AmazonModule extends AffiliateParserModule
             $content->orig_url = $content->url;
             $content->url = $extra->addToCartUrl;
         }
+        /*
         if (isset($r['ItemInfo']['Features']['DisplayValues']))
         {
             $extra->itemAttributes['Feature'] = $r['ItemInfo']['Features']['DisplayValues'];
+        }
+        */
+
+        if (isset($r['ItemInfo']['Features']['DisplayValues']))
+        {
+            $features = $r['ItemInfo']['Features']['DisplayValues'];
+            if ($features && is_array($features))
+                $content->description = "<ul>\n<li>" . join("</li>\n<li>", $features) . "</li>\n</ul>";
+
+            $extra->itemAttributes['Feature'] = array();
         }
 
         if (!empty($r['Images']['Variants']))
@@ -790,6 +803,31 @@ class AmazonModule extends AffiliateParserModule
             if ($forced_tag = $this->config('forced_tag'))
             {
                 $data[$key]['url'] = TextHelper::addUrlParam($data[$key]['url'], 'tag', $forced_tag);
+            }
+
+            // hide prices?
+            $hp = $this->config('hide_prices');
+            if ($hp == 'hide_24')
+            {
+                $last_update = TemplateHelper::getLastUpdate($this->getId());
+                if ($last_update)
+                    $lt = time() - $last_update;
+                else
+                    $lt = 0;
+            }
+            else
+                $lt = 0;
+
+            if ($hp == 'hide' || ($hp == 'hide_24' && $lt > \DAY_IN_SECONDS))
+            {
+                $data[$key]['price'] = '';
+                $data[$key]['priceOld'] = '';
+                $data[$key]['stock_status'] = 0;
+                $data[$key]['extra']['totalNew'] = '';
+                $data[$key]['extra']['totalUsed'] = '';
+                $data[$key]['extra']['lowestNewPrice'] = '';
+                $data[$key]['extra']['lowestUsedPrice'] = '';
+                $data[$key]['extra']['PricePerUnit'] = '';
             }
         }
 

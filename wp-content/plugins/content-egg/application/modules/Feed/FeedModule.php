@@ -19,7 +19,7 @@ use function ContentEgg\prnx;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class FeedModule extends AffiliateFeedParserModule
 {
@@ -259,6 +259,9 @@ class FeedModule extends AffiliateFeedParserModule
             if (isset($r['availability']))
                 $items[$key]['availability'] = $r['availability'];
 
+            if (isset($r['image ​​link']))
+                $items[$key]['img'] = $r['image ​​link'];
+
             if (isset($r['shipping cost']))
                 $items[$key]['shipping_cost'] = self::extractShippingCost($r['shipping cost']);
             else
@@ -279,18 +282,13 @@ class FeedModule extends AffiliateFeedParserModule
                 $items[$key]['priceOld'] = 0;
             }
 
+            $items[$key]['url'] = $r['affiliate link'];
+
             if ($deeplink)
-            {
                 $items[$key]['url'] = LinkHandler::createAffUrl($items[$key]['orig_url'], $deeplink, $item);
-            }
 
             if (!empty($r['description']) && \apply_filters('cegg_feed_description_update', false))
-            {
                 $items[$key]['description'] = $r['description'];
-            }
-
-            if (!empty($r['affiliate link']))
-                $items[$key]['affiliate link'] = $r['affiliate link'];
         }
 
         return $items;
@@ -406,6 +404,8 @@ class FeedModule extends AffiliateFeedParserModule
             {
                 $content->domain = $this->config('domain');
             }
+
+            $content->merchant = \apply_filters('cegg_feed_merchant_name', '', $content->domain);
 
             if ($deeplink)
             {

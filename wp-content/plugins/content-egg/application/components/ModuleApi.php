@@ -4,16 +4,20 @@ namespace ContentEgg\application\components;
 
 defined('\ABSPATH') || exit;
 
+use ContentEgg\application\components\ai\AiProcessor;
 use ContentEgg\application\Plugin;
 use ContentEgg\application\components\ModuleManager;
+use ContentEgg\application\helpers\TemplateHelper;
 use ContentEgg\application\helpers\TextHelper;
+
+use function ContentEgg\prnx;
 
 /**
  * ModuleApi class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  */
 class ModuleApi
 {
@@ -22,7 +26,8 @@ class ModuleApi
 
     public function __construct()
     {
-        \add_action('wp_ajax_content-egg-module-api', array($this, 'addApiEntry'));
+        \add_action('wp_ajax_content-egg-module-api', array($this, 'addApiEntryModule'));
+        \add_action('wp_ajax_content-egg-ai-api', array($this, 'addApiEntryAi'));
     }
 
     public static function apiBase()
@@ -30,7 +35,55 @@ class ModuleApi
         return Plugin::slug . self::API_BASE;
     }
 
-    public function addApiEntry()
+    public function addApiEntryAi()
+    {
+        sleep(3);
+        if (!\current_user_can('edit_posts'))
+            throw new \Exception("Access denied.");
+
+        \check_ajax_referer('contentegg-metabox', '_contentegg_nonce');
+
+        if (empty($_POST['module']))
+            die("Module is undefined.");
+
+        @set_time_limit(240);
+
+        $module_id = TextHelper::clear(sanitize_text_field(wp_unslash($_POST['module'])));
+        $parser = ModuleManager::getInstance()->parserFactory($module_id);
+
+        if (!$parser || !$parser->isActive())
+            die("The module " . esc_html($parser->getId()) . " is inactive.");
+
+        if (isset($_POST['params']))
+            $params = wp_unslash($_POST['params']); // phpcs:ignore
+        else
+            die("AI params is undefined.");
+
+        $params = json_decode($params, true);
+
+        if (!$params)
+            die("Error: 'ai_params' parameter cannot be empty.");
+
+        if (!isset($params['data']) || !isset($params['title_method']) || !isset($params['description_method']))
+            die("Error: Invalid Parameters");
+
+        $title_method = TextHelper::clear(sanitize_text_field(wp_unslash($params['title_method'])));
+        $description_method = TextHelper::clear(sanitize_text_field(wp_unslash($params['description_method'])));
+        $items = $params['data'];
+
+        try
+        {
+            $items = AiProcessor::applayAiItems($items, $title_method, $description_method);
+        }
+        catch (\Exception $e)
+        {
+            $this->formatJson(array('error' => $e->getMessage()));
+        }
+
+        $this->formatJson(array('results' => $items, 'error' => ''));
+    }
+
+    public function addApiEntryModule()
     {
         if (!\current_user_can('edit_posts'))
         {
@@ -115,6 +168,13 @@ class ModuleApi
                     {
                         $item->priceOld = 0;
                     }
+
+                    if ($item->price)
+                        $item->_priceFormatted = TemplateHelper::formatPriceCurrency($item->price, $item->currencyCode);
+                    if ($item->priceOld)
+                        $item->_priceOldFormatted = TemplateHelper::formatPriceCurrency($item->priceOld, $item->currencyCode);
+                    if ($item->description)
+                        $item->_descriptionText = \wp_strip_all_tags($item->description);
                 }
             }
             $this->formatJson(array('results' => $data, 'error' => ''));

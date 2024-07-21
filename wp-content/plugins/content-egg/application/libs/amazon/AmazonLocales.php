@@ -9,7 +9,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2024 keywordrush.com
  * @link: https://webservices.amazon.com/paapi5/documentation/locale-reference.html
  * @link: https://webservices.amazon.com/paapi5/documentation/common-request-parameters.html#host-and-region
  *
@@ -135,7 +135,7 @@ class AmazonLocales
             'amazon.se',
             'webservices.amazon.se',
             'eu-west-1',
-            'EUR',
+            'SEK',
             'ws-eu',
         ),
         'tr' => array(
