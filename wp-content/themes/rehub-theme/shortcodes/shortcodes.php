@@ -3463,8 +3463,8 @@ if (is_user_logged_in()) {
 			}
         }
         $output .= '</li>';
-        if (function_exists('bp_core_get_user_domain')) :
-			$output .= '<li class="bp-profile-edit-menu-item menu-item"><a href="'.bp_core_get_user_domain( $user_id ).'"><i class="rhicon rhi-cogs"></i></i><span>'. esc_html__("Edit Profile", "rehub-theme") .'</span></a></li>';        	
+        if (function_exists('bp_members_get_user_url')) :
+			$output .= '<li class="bp-profile-edit-menu-item menu-item"><a href="'.bp_members_get_user_url( $user_id ).'"><i class="rhicon rhi-cogs"></i></i><span>'. esc_html__("Edit Profile", "rehub-theme") .'</span></a></li>';        	
         endif;
         if ($submit_url) :
         	if(is_numeric($submit_url)){
@@ -5335,10 +5335,10 @@ function rh_get_group_admins($atts, $content = NULL){
 		$output .= '<ul class="buddypress widget">';
 			foreach( (array) $group->admins as $admin ) {
 				$output .= '<li class="vcard mb15">';
-					$output .= '<div class="item-avatar"><a href="'.bp_core_get_user_domain( $admin->user_id, $admin->user_nicename, $admin->user_login ).'">'.bp_core_fetch_avatar( array( 'item_id' => $admin->user_id, 'email' => $admin->user_email, 'alt' => sprintf( esc_html__( 'Profile picture of %s', 'rehub-theme' ), bp_core_get_user_displayname( $admin->user_id ) ) ) ).'</a></div>';
+					$output .= '<div class="item-avatar"><a href="'.bp_members_get_user_url( $admin->user_id, $admin->user_nicename, $admin->user_login ).'">'.bp_core_fetch_avatar( array( 'item_id' => $admin->user_id, 'email' => $admin->user_email, 'alt' => sprintf( esc_html__( 'Profile picture of %s', 'rehub-theme' ), bp_core_get_user_displayname( $admin->user_id ) ) ) ).'</a></div>';
 					$link = (is_user_logged_in()) ? wp_nonce_url( bp_loggedin_user_domain() . bp_get_messages_slug() . '/compose/?r=' . bp_core_get_username( $admin->user_id) .'&ref='. urlencode(get_permalink())) : '#';
 					$class = (!is_user_logged_in() && rehub_option('userlogin_enable') == '1') ? ' act-rehub-login-popup' : '';
-					$output .='<div class="item"><div class="item-title-bpadmin"><a href="'.bp_core_get_user_domain( $admin->user_id, $admin->user_nicename, $admin->user_login ).'">'.$admin->user_nicename.'</a></div><a href="'.$link.'" class="vendor_store_owner_contactlink'.$class.'"><i class="rhicon rhi-envelope" aria-hidden="true"></i> <span>'. $txt .'</span></a></div>';					
+					$output .='<div class="item"><div class="item-title-bpadmin"><a href="'.bp_members_get_user_url( $admin->user_id, $admin->user_nicename, $admin->user_login ).'">'.$admin->user_nicename.'</a></div><a href="'.$link.'" class="vendor_store_owner_contactlink'.$class.'"><i class="rhicon rhi-envelope" aria-hidden="true"></i> <span>'. $txt .'</span></a></div>';					
 				$output .= '</li>';
 			} 
 		$output .= '</ul>';

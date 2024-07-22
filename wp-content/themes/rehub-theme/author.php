@@ -125,9 +125,9 @@ if(function_exists('mycred_display_users_total_balance') && function_exists('myc
                     
                     <?php do_action( 'rh_user_page_menutab_after', $author_ID ); ?>
                     
-                    <?php if ( function_exists('bp_core_get_user_domain') ) : ?>
+                    <?php if ( function_exists('bp_members_get_user_url') ) : ?>
                         <li>
-                            <a href="<?php echo bp_core_get_user_domain( $author_ID ); ?>" class="position-relative blockstyle pt10 pb10 pl15 pr15"><i class="rhicon rhi-folder-open mr5 rtlml5"></i><?php esc_html_e( 'Show full profile', 'rehub-theme' ); ?></a>
+                            <a href="<?php echo bp_members_get_user_url( $author_ID ); ?>" class="position-relative blockstyle pt10 pb10 pl15 pr15"><i class="rhicon rhi-folder-open mr5 rtlml5"></i><?php esc_html_e( 'Show full profile', 'rehub-theme' ); ?></a>
                         </li>
                     <?php endif; ?>
                     </ul>

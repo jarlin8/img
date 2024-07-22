@@ -147,7 +147,7 @@ $tf_support_date = '';
 							.rehub-activate-form{display:none;}
 						</style>
 						<p>
-							<span><strong style="color:red"><?php esc_html_e( "One license can be active only on one site.", "rehub-theme" ); ?></strong><br><?php esc_html_e( "If you want to deactivate license, you need to install theme on NEW site. Then, use your license key as usual. You will see a message about the License limit and form below where you can deactivate the license. License deactivation can be made only from a NEW site to prevent bad scenarios when you lost access to the old site", "rehub-theme");?><br><br><?php esc_html_e( "You can use extension packs to add more sites. After purchase, please, use this", "rehub-theme");?> <a href="https://wpsoul.com/extended-license-request/" target="_blank"><?php esc_html_e('Request form', 'rehub-theme');?></a> <?php esc_html_e( "and provide list of purchased licenses which you want to extend. Please, note that all your purchased licenses must be activated on sites before sending request for bonus pack.", "rehub-theme" ); ?></span><br>
+							<span><strong style="color:red"><?php esc_html_e( "One license can be active only on one site.", "rehub-theme" ); ?></strong><br><?php esc_html_e( "If you want to deactivate license, you need to install theme on NEW site. Then, use your license key as usual. You will see a message about the License limit and form below where you can deactivate the license. License deactivation can be made only from a NEW site to prevent bad scenarios when you lost access to the old site", "rehub-theme");?></span><br>
 						</p>
 						<div style=" margin-top:20px; border-radius:15px; display:flex;">
 							<div style="border:1px solid #eee; padding:15px;flex-grow:1;">
@@ -207,31 +207,8 @@ $tf_support_date = '';
 					</form>
 				<?php }*/ ?>
 				<p>
-					<span><strong style="color:red"><?php esc_html_e( "One license can be active only on one site.", "rehub-theme" ); ?></strong><br><?php esc_html_e( "You can deactivate your license  from old site when you activate it on new site.", "rehub-theme");?><br><br><?php esc_html_e( "You can use extension packs to add more sites. After purchase, please, use this", "rehub-theme");?> <a href="https://wpsoul.com/extended-license-request/" target="_blank"><?php esc_html_e('Request form', 'rehub-theme');?></a> <?php esc_html_e( "and provide list of purchased licenses which you want to extend. Please, note that all your purchased licenses must be activated on sites before sending request for bonus pack.", "rehub-theme" ); ?></span><br>
+					<span><strong style="color:red"><?php esc_html_e( "One license can be active only on one site.", "rehub-theme" ); ?></strong><br><?php esc_html_e( "You can deactivate your license  from old site when you activate it on new site.", "rehub-theme");?></span><br>
 				</p>
-				<div style=" margin-top:20px; border-radius:15px; display:flex;">
-					<div style="border:1px solid #eee; padding:15px;flex-grow:1;">
-						<a href="https://1.envato.market/n1LqK7" target="_blank" style="color:#444; text-decoration:none">
-						<div style="float: left;font-size: 40px;margin-bottom: 5px;margin-right: 20px;color: #ff9800;"><i class="rhicon rhi-gift"></i></div>
-						<div style="font-size:18px;font-weight:bold">Buy 3 licenses</div>
-						<div style="font-size:15px; margin-top:8px;">and Get <strong style="color:#8234e4">10</strong> allowed sites</div>
-						</a>
-					</div>
-					<div style="border:1px solid #eee; padding:15px;flex-grow:1;margin:0 15px">
-						<a href="https://1.envato.market/n1LqK7" target="_blank" style="color:#444; text-decoration:none">
-						<div style="float: left;font-size: 40px;margin-bottom: 5px;margin-right: 20px;color: #ff9800;"><i class="rhicon rhi-trophy-alt"></i></div>
-						<div style="font-size:18px;font-weight:bold">Buy 5 licenses</div>
-						<div style="font-size:15px; margin-top:8px">and Get <strong style="color:#8234e4">20</strong> allowed sites</div>
-						</a>
-					</div>
-					<div style="border:1px solid #eee; padding:15px;flex-grow:1">
-						<a href="https://1.envato.market/n1LqK7" target="_blank" style="color:#444; text-decoration:none">
-						<div style="float: left;font-size: 40px;margin-bottom: 5px;margin-right: 20px;color: #ff9800;"><i class="rhicon rhi-crown"></i></div>
-						<div style="font-size:18px;font-weight:bold">Buy 10 licenses</div>
-						<div style="font-size:15px; margin-top:8px">and Get <strong style="color:#8234e4">100</strong> allowed sites</div>
-						</a>
-					</div>					
-				</div>
 			<?php endif ?>
 			<div class="clear"></div>
 

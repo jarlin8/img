@@ -5,14 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'Direct script access denied.' );
 }
 
-update_option( 'Rehub_Key', [
-	'tf_username'      => 'GPL',
-	'tf_purchase_code' => 'E7B0U5F7CC8189E6ACL19DD6F6E1B662',
-	'tf_support_date'  => '01.01.2050',
-] );
-
 if ( !defined( 'RH_MAIN_THEME_VERSION' ) ) {
-	define('RH_MAIN_THEME_VERSION', '19.6.3');
+	define('RH_MAIN_THEME_VERSION', '19.7');
 }
 if(!defined('REHUB_NAME_ACTIVE_THEME')){
 	define('REHUB_NAME_ACTIVE_THEME', 'REHUB');
@@ -1505,7 +1499,7 @@ else {
 		$authorid = $author->ID;
 		$authorName = $author->display_name; 
 		if (class_exists( 'BuddyPress' )) {
-			return '<span class="int-source" data-dest="'.bp_core_get_user_domain($authorid).'">'.$authorName.'</span>'; 
+			return '<span class="int-source" data-dest="'.bp_members_get_user_url($authorid).'">'.$authorName.'</span>'; 
 		}
 	    elseif (count_user_posts($authorid) > 0 && !empty($author)) {  	
 			return '<span class="int-source" data-dest="'.get_author_posts_url($authorid).'">'.$authorName.'</span>';
@@ -1584,7 +1578,7 @@ function my_theme_register_required_plugins() {
 			'slug'     				=> 'greenshiftgsap', // The plugin slug (typically the folder name)
 			'source'   				=> get_template_directory() . '/plugins/greenshiftgsap.zip', 
 			'required' 				=> false,
-			'version' 				=> '3.6.3',
+			'version' 				=> '3.7',
 			'force_activation' 		=> false, 
 			'force_deactivation' 	=> false, 
 			'external_url' 			=> '',
@@ -1622,7 +1616,7 @@ function my_theme_register_required_plugins() {
 			'slug'     				=> 'rehub-framework', // The plugin slug (typically the folder name)
 			'source'   				=> get_template_directory() . '/plugins/rehub-framework.zip', 
 			'required' 				=> true,
-			'version' 				=> '19.6.3',
+			'version' 				=> '19.6.4',
 			'force_activation' 		=> false, 
 			'force_deactivation' 	=> false, 
 			'external_url' 			=> '',

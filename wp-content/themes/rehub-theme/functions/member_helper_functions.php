@@ -73,8 +73,8 @@ if(!function_exists('rh_author_detail_box')){
                     .rtl .author_detail_box > div { padding: 0 110px 0 20px }
                 </style>
                 <div class="clearfix">
-                    <?php if ( function_exists('bp_core_get_user_domain') ) : ?>
-                        <a href="<?php echo bp_core_get_user_domain( $author_ID ); ?>" class="see_full_profile_btn floatright mr10 mb10 ml10"><?php esc_html_e( 'Show full profile', 'rehub-theme' ); ?></a>
+                    <?php if ( function_exists('bp_members_get_user_url') ) : ?>
+                        <a href="<?php echo bp_members_get_user_url( $author_ID ); ?>" class="see_full_profile_btn floatright mr10 mb10 ml10"><?php esc_html_e( 'Show full profile', 'rehub-theme' ); ?></a>
                     <?php endif; ?>                
                     <strong class="mb10">
                         <a href="<?php echo get_author_posts_url( $author_ID );?>"><?php echo esc_attr($name);?></a>
@@ -121,8 +121,8 @@ if(rehub_option('bp_redirect') =='1'){
 function rh_redirect_author_archive_to_profile() {
   if(is_author()){
     $user_id = get_query_var( 'author' );
-    if (function_exists('bp_core_get_user_domain')) {
-        wp_redirect( bp_core_get_user_domain( $user_id ) );       
+    if (function_exists('bp_members_get_user_url')) {
+        wp_redirect( bp_members_get_user_url( $user_id ) );       
     }
   }
 }
@@ -535,23 +535,23 @@ if (!function_exists('rh_gmw_vendor_in_popup')){
         $userid = $location->ID;
         if (defined('wcv_plugin_dir')) {
             $avatar = WCV_Vendors::is_vendor($userid) ? '<img src='.rh_show_vendor_avatar($userid, 120, 120).' />' : bp_core_fetch_avatar ( array( 'item_id' => $userid, 'type' => 'full' ) );
-            $link = WCV_Vendors::is_vendor($userid) ? WCV_Vendors::get_vendor_shop_page($userid) : bp_core_get_user_domain($userid);
+            $link = WCV_Vendors::is_vendor($userid) ? WCV_Vendors::get_vendor_shop_page($userid) : bp_members_get_user_url($userid);
             $name = WCV_Vendors::is_vendor($userid) ? WCV_Vendors::get_vendor_sold_by( $userid ) : $location->display_name;
         }
         elseif ( class_exists( 'WeDevs_Dokan' ) ){
             $is_vendor = dokan_is_user_seller( $userid);
             $avatar = $is_vendor ? '<img src='.rh_show_vendor_avatar($userid, 120, 120).' />' : bp_core_fetch_avatar ( array( 'item_id' => $userid, 'type' => 'full' ) );
-            $link = $is_vendor ? dokan_get_store_url($userid) : bp_core_get_user_domain($userid);
+            $link = $is_vendor ? dokan_get_store_url($userid) : bp_members_get_user_url($userid);
             $name = $is_vendor ? get_user_meta( $userid, 'dokan_store_name', true ) : $location->display_name;
         }
         elseif (defined('WCFMmp_TOKEN')) {
             $avatar = wcfm_is_vendor($userid) ? '<img src='.rh_show_vendor_avatar($userid, 120, 120).' />' : bp_core_fetch_avatar ( array( 'item_id' => $userid, 'type' => 'full' ) );
-            $link = wcfm_is_vendor($userid) ? wcfmmp_get_store_url($userid) : bp_core_get_user_domain($userid);
+            $link = wcfm_is_vendor($userid) ? wcfmmp_get_store_url($userid) : bp_members_get_user_url($userid);
             $name = wcfm_is_vendor($userid) ? get_user_meta($userid, 'store_name', true) : $location->display_name;
         }        
         else {
             $avatar = bp_core_fetch_avatar(array('item_id' => $userid, 'type' => 'full'));
-            $link = bp_core_get_user_domain($userid);
+            $link = bp_members_get_user_url($userid);
             $name = $location->display_name;
         }
 

@@ -1271,7 +1271,7 @@ if ( !function_exists('rh_show_vendor_info_single') ) {
 			if(class_exists( 'WeDevs_Dokan' ) && dokan_get_option( 'contact_seller', 'dokan_general', 'on' ) == 'on'){
 				echo '<span class="vendor_store_details_contact mr10">';
 				if(class_exists( 'BuddyPress' ) ) {
-					echo '<a href="'. bp_core_get_user_domain( $vendor_id ) .'" class="vendor_store_owner_name"><span>'. get_the_author_meta('display_name') .'</span></a> ';
+					echo '<a href="'. bp_members_get_user_url( $vendor_id ) .'" class="vendor_store_owner_name"><span>'. get_the_author_meta('display_name') .'</span></a> ';
 				}else{
 					echo '<span class="vendor_store_owner_label">@ <span class="vendor_store_owner_name">'.get_the_author_meta('display_name') .'</span></span>';
 				}
@@ -1283,7 +1283,7 @@ if ( !function_exists('rh_show_vendor_info_single') ) {
 			elseif(is_active_widget( '', '', 'dc-vendor-quick-info')){
 				echo '<span class="vendor_store_details_contact mr10">';
 				if(class_exists( 'BuddyPress' ) ) {
-					echo '<a href="'. bp_core_get_user_domain( $vendor_id ) .'" class="vendor_store_owner_name"><span>'. get_the_author_meta('display_name') .'</span></a> ';
+					echo '<a href="'. bp_members_get_user_url( $vendor_id ) .'" class="vendor_store_owner_name"><span>'. get_the_author_meta('display_name') .'</span></a> ';
 				}else{
 					echo '<span class="vendor_store_owner_label">@ <span class="vendor_store_owner_name">'.get_the_author_meta('display_name') .'</span></span>';
 				}
@@ -1293,7 +1293,7 @@ if ( !function_exists('rh_show_vendor_info_single') ) {
 			}	
 			elseif(class_exists( 'BuddyPress' ) ) {
 				echo '<span class="vendor_store_details_contact mr10"><span class="vendor_store_owner_label">@ </span>';
-				echo '<a href="'. bp_core_get_user_domain( $vendor_id ) .'" class="vendor_store_owner_name"><span>'. get_the_author_meta('display_name') .'</span></a> ';
+				echo '<a href="'. bp_members_get_user_url( $vendor_id ) .'" class="vendor_store_owner_name"><span>'. get_the_author_meta('display_name') .'</span></a> ';
 				if ( bp_is_active( 'messages' )){
 					$link = (is_user_logged_in()) ? wp_nonce_url( bp_loggedin_user_domain() . bp_get_messages_slug() . '/compose/?r=' . bp_core_get_username( $vendor_id) .'&ref='. urlencode(get_permalink())) : '#';
 					$class = (!is_user_logged_in() && rehub_option('userlogin_enable') == '1') ? ' act-rehub-login-popup' : '';

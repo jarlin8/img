@@ -315,8 +315,8 @@ $active_short_description = is_active_widget( '', '', 'wcv_store_short_descripti
 	                </div>
 	                <div class="profile-usertitle text-center mt20">
 	                    <div class="profile-usertitle-name font110 fontbold mb20">
-	                    <?php if ( function_exists('bp_core_get_user_domain') ) : ?>
-	                    	<a href="<?php echo bp_core_get_user_domain( $vendor_id ); ?>">
+	                    <?php if ( function_exists('bp_members_get_user_url') ) : ?>
+	                    	<a href="<?php echo bp_members_get_user_url( $vendor_id ); ?>">
 	                    <?php endif;?>
 	                        <?php echo esc_html($vendor_name); ?> 						
 	                        <?php 	
@@ -329,7 +329,7 @@ $active_short_description = is_active_widget( '', '', 'wcv_store_short_descripti
 									}
 								}
 							?>
-	                        <?php if ( function_exists('bp_core_get_user_domain') ) : ?></a><?php endif;?>
+	                        <?php if ( function_exists('bp_members_get_user_url') ) : ?></a><?php endif;?>
 	                    </div>
 	                </div>
 	                <div class="lineheight25 margincenter mb10 profile-stats">
@@ -399,7 +399,7 @@ $active_short_description = is_active_widget( '', '', 'wcv_store_short_descripti
 	            <?php if ( function_exists( 'mycred_get_users_badges' ) ) : ?>
 	                <div class="profile-achievements mb15 text-center"><div><?php rh_mycred_display_users_badges( $vendor_id ) ?></div></div>
 	            <?php endif; ?>
-                <?php if ( function_exists('bp_core_get_user_domain') ) : ?>
+                <?php if ( function_exists('bp_members_get_user_url') ) : ?>
                 	<?php if ( bp_is_active( 'xprofile' ) ) : ?>
 						<?php if ( bp_has_profile( array( 'profile_group_id' => 1, 'fetch_field_data' => true, 'user_id'=>$vendor_id ) ) ) : while ( bp_profile_groups() ) : bp_the_profile_group(); ?>
 							<?php $numberfields = explode(',', bp_get_the_profile_field_ids());?>
@@ -428,7 +428,7 @@ $active_short_description = is_active_widget( '', '', 'wcv_store_short_descripti
                     <div class="profile-usermenu mt20">
 	                    <ul class="user-menu-tab pt5 pb5 pr10 pl10" role="tablist">
 	                        <li class="text-center">
-	                            <a href="<?php echo bp_core_get_user_domain( $vendor_id ); ?>" class="position-relative blockstyle pt10 pb10 pl15 pr15"><i class="rhicon rhi-folder-open mr5 rtlml5"></i><?php esc_html_e( 'Show full profile', 'rehub-theme' ); ?></a>
+	                            <a href="<?php echo bp_members_get_user_url( $vendor_id ); ?>" class="position-relative blockstyle pt10 pb10 pl15 pr15"><i class="rhicon rhi-folder-open mr5 rtlml5"></i><?php esc_html_e( 'Show full profile', 'rehub-theme' ); ?></a>
 	                        </li>
 	                    </ul>
                     </div>

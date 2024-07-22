@@ -80,7 +80,7 @@
                         '<div class="usr_re"><input id="author" type="text" value="' . esc_attr( $commenter['comment_author'] ) .'" name="author" placeholder="'.__('Name', 'rehub-theme').'"></div>',
 
                     'email' =>
-                        '<div class="email_re"><input id="email" type="text" value="' . esc_attr(  $commenter['comment_author_email'] ) .'" name="email" placeholder="'.__('E-mail', 'rehub-theme').'" autocomplete="email"></div>',
+                        '<div class="email_re"><input id="email" type="text" value="' . esc_attr(  $commenter['comment_author_email'] ) .'" name="email" placeholder="'.__('E-mail', 'rehub-theme').'"></div>',
 
                     'url' =>
                         '<div class="site_re end"><input id="url" type="text" value="' . esc_attr( $commenter['comment_author_url'] ) .'" name="url" placeholder="'.__('Website', 'rehub-theme').'"></div><div class="clearfix"></div>',

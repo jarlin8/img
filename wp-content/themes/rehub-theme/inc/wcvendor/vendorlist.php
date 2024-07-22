@@ -9,7 +9,7 @@
 *   $vendor_meta
 */
 ?>
-<?php $vendor_user_link = ( class_exists( 'BuddyPress' ) ) ? bp_core_get_user_domain( $vendor_id ) : get_author_posts_url( $vendor_id ); ?>
+<?php $vendor_user_link = ( class_exists( 'BuddyPress' ) ) ? bp_members_get_user_url( $vendor_id ) : get_author_posts_url( $vendor_id ); ?>
 <?php 	
 	$vendor = get_userdata( $vendor_id );
 	$vendor_email = $vendor->user_email;

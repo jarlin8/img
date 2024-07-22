@@ -80,7 +80,7 @@
 	                                <div class="bp_user_about_details">
 	                                    <?php $desc_len = strlen(esc_html($seo_user_description));?>
 	                                    <?php if ($desc_len > 180) :?>                           
-	                                        <p><?php kama_excerpt('maxchar=180&text='.$seo_user_description); ?> <a href="<?php echo bp_core_get_user_domain($author_ID);?>profile/#item-body"><?php esc_html_e('(Read more)', 'rehub-theme');?></a></p>
+	                                        <p><?php kama_excerpt('maxchar=180&text='.$seo_user_description); ?> <a href="<?php echo bp_members_get_user_url($author_ID);?>profile/#item-body"><?php esc_html_e('(Read more)', 'rehub-theme');?></a></p>
 	                                    <?php else :?>
 	                                        <p><?php echo esc_html($seo_user_description); ?></p>
 	                                    <?php endif;?>

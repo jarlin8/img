@@ -623,7 +623,7 @@ if(class_exists('\CashbackTracker\application\models\OrderModel')){
 
 	    	$text = __('You got new cashback', 'rehub-theme').' - '.$cashback;
 
-	    	$memberlink = bp_core_get_user_domain( $secondary_item_id).'notifications';
+	    	$memberlink = bp_members_get_user_url( $secondary_item_id).'notifications';
 	        // WordPress Toolbar
 	        if ( 'string' === $format ) {
 	            $return = apply_filters( 'rh_cashback_point_format_filter', $text, $text, $memberlink, $item_id);
