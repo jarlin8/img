@@ -4,9 +4,13 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'Direct script access denied.' );
 }
-
+update_option( 'Rehub_Key', [
+'tf_username' => 'lovegpl',
+'tf_purchase_code' => 'activated-activated',
+'tf_support_date' => '01.01.2030',
+] );
 if ( !defined( 'RH_MAIN_THEME_VERSION' ) ) {
-	define('RH_MAIN_THEME_VERSION', '19.7');
+	define('RH_MAIN_THEME_VERSION', '19.6.9');
 }
 if(!defined('REHUB_NAME_ACTIVE_THEME')){
 	define('REHUB_NAME_ACTIVE_THEME', 'REHUB');
