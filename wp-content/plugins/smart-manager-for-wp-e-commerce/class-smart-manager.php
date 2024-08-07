@@ -725,16 +725,24 @@ class Smart_Manager {
 
 		if( !empty($_GET['landing-page']) ) {
 			$GLOBALS['smart_manager_admin_welcome']->show_welcome_page();
-		} else if( isset( $_GET['sm-settings'] ) && ( class_exists( 'Smart_Manager_Pro_Access_Privilege' ) && is_callable( array('Smart_Manager_Pro_Access_Privilege', 'render_access_privilege_settings') ) ) ) {
-			Smart_Manager_Pro_Access_Privilege::render_access_privilege_settings();
 		} else if( !empty( $_GET['page'] ) && 'smart-manager' === $_GET['page'] ) {
 			$this->show_console_beta();
 		} else if( ( !empty( $_GET['page'] ) && 'smart-manager-pricing' === $_GET['page'] ) ) {
-			wp_redirect( admin_url( 'admin.php?page=smart-manager&tab=upgrade#!/pricing' ) );
+			if ( headers_sent() ) {
+				echo "<meta http-equiv='refresh' content='" . esc_attr( "0;url=admin.php?page=smart-manager&tab=upgrade#!/pricing" ) . "' />";
+			} else {
+				wp_redirect( admin_url( 'admin.php?page=smart-manager&tab=upgrade#!/pricing' ) );
+			}
+			exit;
 		} else if( ( !empty( $_GET['page'] ) && 'sm-storeapps-plugins' === $_GET['page'] ) && ( class_exists( 'StoreApps_Marketplace' ) && is_callable( array('StoreApps_Marketplace', 'init') ) ) ) {
 			StoreApps_Marketplace::init();
 		} else {
-			wp_redirect( admin_url( 'admin.php?page=smart-manager' ) );
+			if ( headers_sent() ) {
+				echo "<meta http-equiv='refresh' content='" . esc_attr( "0;url=admin.php?page=smart-manager" ) . "' />";
+			} else {
+				wp_redirect( admin_url( 'admin.php?page=smart-manager' ) );
+			}
+			exit;
 		}
 	}
 
@@ -1014,9 +1022,6 @@ class Smart_Manager {
 		// if ( isset($_GET['page']) && $_GET['page'] == "smart-manager" ) {
 			wp_register_script ( 'sm_select2', plugins_url ( '/assets/js/select2/select2.full.min.js', SM_PLUGIN_FILE ), $deps, '4.0.5' );
 			wp_enqueue_script( 'sm_select2' );
-			if( isset( $_GET['sm-settings'] ) ){
-				return;
-			}
 		// }
 					
 		//Registering scripts for jqgrid lib.
@@ -1257,7 +1262,6 @@ class Smart_Manager {
 							'updated_msg' => $this->update_msg.' more',
 							'success_msg' => $this->success_msg,
 							'lite_dashboards' => json_encode($lite_dashboards),
-							'is_settings_page' => ( isset( $_GET['sm-settings'] ) ? true : false ),
 							'search_type' => ( ( !empty( $search_type ) ) ? $search_type : 'simple' ),
 							'wpdb_prefix' => $wpdb->prefix,
 							'trashEnabled' => $trash_enabled,

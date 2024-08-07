@@ -11,7 +11,9 @@
             <?php else : ?>
                 <a target="_blank" class="page-title-action" href="<?php echo esc_url_raw(\ContentEgg\application\Plugin::pluginSiteUrl()); ?>">Go PRO</a>
             <?php endif; ?>
-
+            <?php if (!\ContentEgg\application\Plugin::isTooMuchNicheActive()) : ?>
+                <a class="egg-label-tmniche" style="color: #479f76;" href="https://www.keywordrush.com/toomuchniche?utm_source=cegg&utm_medium=referral&utm_campaign=plugin">Unlock AI Power</a>
+            <?php endif; ?>
         </h2>
 
         <?php \settings_errors(); ?>

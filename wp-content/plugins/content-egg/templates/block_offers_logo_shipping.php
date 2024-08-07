@@ -60,18 +60,16 @@ $delivery_at_checkout = false;
                         <?php endif; ?>
 
                         <div class="visible-xs cegg-shipping-xs cegg-shipping-details-xs">
-                            <?php if ($item['price']) : ?>
-                                <?php if (!isset($item['shipping_cost']) || $item['shipping_cost'] == '') : ?>
-                                    <?php echo esc_html(TemplateHelper::__('+ Delivery *')); ?>
+
+                            <?php if (!isset($item['shipping_cost']) || $item['shipping_cost'] == '') : ?>
+                                <?php echo esc_html(TemplateHelper::__('+ Delivery *')); ?>
+                            <?php else : ?>
+                                <?php if (is_numeric($item['shipping_cost']) && (float) $item['shipping_cost'] == 0) : ?>
+                                    <?php echo esc_html(TemplateHelper::__('Free delivery')); ?>
                                 <?php else : ?>
-                                    <?php if (is_numeric($item['shipping_cost']) && (float) $item['shipping_cost'] == 0) : ?>
-                                        <?php echo esc_html(TemplateHelper::__('Free delivery')); ?>
-                                    <?php else : ?>
-                                        <?php echo esc_html(sprintf(TemplateHelper::__('%s incl. delivery'), TemplateHelper::formatPriceCurrency($item['total_price'], $item['currencyCode']))); ?>
-                                    <?php endif; ?>
+                                    <?php echo esc_html(sprintf(TemplateHelper::__('%s incl. delivery'), TemplateHelper::formatPriceCurrency($item['total_price'], $item['currencyCode']))); ?>
                                 <?php endif; ?>
                             <?php endif; ?>
-
                         </div>
 
                         <?php if ($item['module_id'] == 'Amazon') : ?>
@@ -99,21 +97,19 @@ $delivery_at_checkout = false;
                 </div>
 
                 <div class="col-md-4 col-sm-4 text-center hidden-xs cegg-shipping-cell">
-                    <?php if ($item['price']) : ?>
-                        <?php echo esc_html(TemplateHelper::formatPriceCurrency($item['total_price'], $item['currencyCode'])); ?>
-                        <div class="cegg-shipping-details">
-                            <?php if (!isset($item['shipping_cost']) || $item['shipping_cost'] == '') : ?>
-                                <?php $delivery_at_checkout = true; ?>
-                                <?php echo esc_html(TemplateHelper::__('+ Delivery *')); ?>
+                    <?php echo esc_html(TemplateHelper::formatPriceCurrency($item['total_price'], $item['currencyCode'])); ?>
+                    <div class="cegg-shipping-details">
+                        <?php if (!isset($item['shipping_cost']) || $item['shipping_cost'] == '') : ?>
+                            <?php $delivery_at_checkout = true; ?>
+                            <?php echo esc_html(TemplateHelper::__('+ Delivery *')); ?>
+                        <?php else : ?>
+                            <?php if (is_numeric($item['shipping_cost']) && (float) $item['shipping_cost'] == 0) : ?>
+                                <?php echo esc_html(TemplateHelper::__('Free delivery')); ?>
                             <?php else : ?>
-                                <?php if (is_numeric($item['shipping_cost']) && (float) $item['shipping_cost'] == 0) : ?>
-                                    <?php echo esc_html(TemplateHelper::__('Free delivery')); ?>
-                                <?php else : ?>
-                                    <?php echo esc_html(sprintf(TemplateHelper::__('Incl. %s delivery'), TemplateHelper::formatPriceCurrency($item['shipping_cost'], $item['currencyCode']))); ?>
-                                <?php endif; ?>
+                                <?php echo esc_html(sprintf(TemplateHelper::__('Incl. %s delivery'), TemplateHelper::formatPriceCurrency($item['shipping_cost'], $item['currencyCode']))); ?>
                             <?php endif; ?>
-                        </div>
-                    <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
                 </div>
                 <div class="col-md-2 col-sm-2 col-xs-12 cegg-btn-cell">
                     <div class="cegg-btn-row">

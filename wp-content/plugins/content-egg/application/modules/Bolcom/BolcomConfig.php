@@ -12,7 +12,7 @@ use ContentEgg\application\Plugin;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class BolcomConfig extends AffiliateParserModuleConfig
 {
@@ -49,7 +49,7 @@ class BolcomConfig extends AffiliateParserModuleConfig
                 ),
             ),
             'SiteId' => array(
-                'title' => 'Website code' . '<span class="cegg_required">*</span>',
+                'title' => 'Website code <span class="cegg_required">*</span>',
                 'description' => sprintf(__('You can find your Website code <a target="_blank" href="%s">here</a>.', 'content-egg'), 'https://partner.bol.com/account/affiliate/myAccount'),
                 'callback' => array($this, 'render_input'),
                 'default' => '',
@@ -62,18 +62,26 @@ class BolcomConfig extends AffiliateParserModuleConfig
                     ),
                 ),
             ),
+            'apikey' => array(
+                'title' => 'API Access Key (deprecated)',
+                'callback' => array($this, 'render_input'),
+                'default' => '',
+                'validator' => array(
+                    'trim',
+                ),
+            ),
             'entries_per_page' => array(
                 'title' => __('Results', 'content-egg'),
                 'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
-                'default' => 8,
+                'default' => 10,
                 'validator' => array(
                     'trim',
                     'absint',
                     array(
                         'call' => array('\ContentEgg\application\helpers\FormValidator', 'less_than_equal_to'),
-                        'arg' => 50,
-                        'message' => sprintf(__('The field "%s" can not be more than %d.', 'content-egg'), 'Results', 50),
+                        'arg' => 100,
+                        'message' => sprintf(__('The field "%s" can not be more than %d.', 'content-egg'), 'Results', 100),
                     ),
                 ),
             ),
@@ -87,8 +95,8 @@ class BolcomConfig extends AffiliateParserModuleConfig
                     'absint',
                     array(
                         'call' => array('\ContentEgg\application\helpers\FormValidator', 'less_than_equal_to'),
-                        'arg' => 50,
-                        'message' => sprintf(__('The field "%s" can not be more than %d.', 'content-egg'), 'Results for updates', 50),
+                        'arg' => 100,
+                        'message' => sprintf(__('The field "%s" can not be more than %d.', 'content-egg'), 'Results for updates', 100),
                     ),
                 ),
             ),
@@ -101,9 +109,8 @@ class BolcomConfig extends AffiliateParserModuleConfig
                     'trim',
                 ),
             ),
-
             'country' => array(
-                'title' => __('Country', 'content-egg') . '**',
+                'title' => __('Country', 'content-egg'),
                 'description' => __('Signifies whether the shopping context is Dutch or Belgium. This can influence search ranking, and whether some products and offers are returned.', 'content-egg'),
                 'callback' => array($this, 'render_dropdown'),
                 'dropdown_options' => array(
@@ -111,18 +118,6 @@ class BolcomConfig extends AffiliateParserModuleConfig
                     'BE' => __('Belgium (BE)', 'content-egg'),
                 ),
                 'default' => 'NL',
-            ),
-            'language' => array(
-                'title' => __('Language', 'content-egg') . '**',
-                'callback' => array($this, 'render_dropdown'),
-                'dropdown_options' => array(
-                    'nl' => 'nl',
-                    'fr' => 'fr',
-                    'nl-NL' => 'nl-NL',
-                    'nl-BE' => 'nl-BE',
-                    'fr-BE' => 'fr-BE',
-                ),
-                'default' => 'nl',
             ),
             'ids' => array(
                 'title' => __('Category', 'content-egg'),
@@ -152,26 +147,54 @@ class BolcomConfig extends AffiliateParserModuleConfig
                     '26147.' => 'Modeaccessoires',
                     '20639.' => 'Cadeaubonnen',
                 ),
-                'default' => '',
+                'default' => 'all',
+            ),
+            'offers' => array(
+                'title' => __('Offers', 'content-egg'),
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => array(
+                    'all' => __('All', 'content-egg'),
+                    'cheapest' => __('Cheapest', 'content-egg'),
+                    'secondhand' => __('Secondhand', 'content-egg'),
+                    'newoffers' => __('New offers', 'content-egg'),
+                    'bolcom' => 'Bol.com',
+                    'bestoffer' => __('Best offer', 'content-egg'),
+                    'newoffers,bolcom' => __('New offers', 'content-egg') . ' + Bol.com',
+                ),
+                'default' => 'bestoffer',
             ),
             'sort' => array(
                 'title' => __('Sort', 'content-egg'),
                 'description' => __('The way the products are sorted', 'content-egg'),
                 'callback' => array($this, 'render_dropdown'),
                 'dropdown_options' => array(
-                    'RELEVANCE' => __('Relevance', 'content-egg'),
-                    'POPULARITY' => __('Popularity', 'content-egg'),
-                    'PRICE_ASC' => __('Price ascending', 'content-egg'),
-                    'PRICE_DESC' => __('Price descending', 'content-egg'),
-                    'RELEASE_DATE' => __('Realise date', 'content-egg'),
-                    'RATING' => __('Rating', 'content-egg'),
-
+                    '' => __('Default', 'content-egg'),
+                    'rankasc' => __('Sales ranking ascending', 'content-egg'),
+                    'rankdesc' => __('Sales ranking descending', 'content-egg'),
+                    'priceasc' => __('Price ascending', 'content-egg'),
+                    'pricedesc' => __('Price descending', 'content-egg'),
+                    'titleasc' => __('Title ascending', 'content-egg'),
+                    'titledesc' => __('Title descending', 'content-egg'),
+                    'dateasc' => __('Publishing date ascending', 'content-egg'),
+                    'datedesc' => __('Publishing date descending', 'content-egg'),
+                    'ratingasc' => __('Rating ascending', 'content-egg'),
+                    'ratingdesc' => __('Rating descending', 'content-egg'),
                 ),
-                'default' => 'RELEVANCE',
+                'default' => '',
+            ),
+            'description_type' => array(
+                'title' => __('Description type', 'content-egg'),
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => array(
+                    'summary' => __('Summary', 'content-egg'),
+                    'short' => __('Short description', 'content-egg'),
+                    'long' => __('Long description', 'content-egg'),
+                ),
+                'default' => 'summary',
             ),
             'description_size' => array(
                 'title' => __('Trim description', 'content-egg'),
-                'description' => __('Description size in characters (0 - do not truncate).', 'content-egg'),
+                'description' => __('Description size in characters (0 - do not cut)', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => '0',
                 'validator' => array(

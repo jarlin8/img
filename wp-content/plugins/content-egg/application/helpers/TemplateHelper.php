@@ -22,7 +22,7 @@ use function ContentEgg\prnx;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  */
 class TemplateHelper
@@ -42,9 +42,6 @@ class TemplateHelper
 
     public static function formatPriceCurrency($price, $currencyCode, $before_symbol = '', $after_symbol = '')
     {
-        if (!$price)
-            return '';
-
         $decimal_sep = __('number_format_decimal_point', 'content-egg-tpl');
         $thousand_sep = __('number_format_thousands_sep', 'content-egg-tpl');
         if ($decimal_sep == 'number_format_decimal_point')
@@ -246,8 +243,6 @@ class TemplateHelper
         if (!$post_id)
         {
             global $post;
-            if (!$post)
-                return 0;
             $post_id = $post->ID;
         }
 
@@ -656,7 +651,7 @@ class TemplateHelper
         }
     }
 
-    public static function getMerchantLogoUrl(array $item, $blank_on_error = false)
+    public static function getMerhantLogoUrl(array $item, $blank_on_error = false)
     {
         $prefix = '';
         if (!empty($item['module_id']))
@@ -685,12 +680,7 @@ class TemplateHelper
         return self::getMerchantImageUrl($item, $prefix, $remote_url, $blank_on_error);
     }
 
-    public static function getMerhantLogoUrl(array $item, $blank_on_error = false)
-    {
-        return self::getMerchantLogoUrl($item, $blank_on_error);
-    }
-
-    public static function getMerchantIconUrl(array $item, $blank_on_error = false)
+    public static function getMerhantIconUrl(array $item, $blank_on_error = false)
     {
         $prefix = 'icon_';
         if (!empty($item['module_id']))
@@ -706,11 +696,6 @@ class TemplateHelper
         $remote_url = 'https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://' . urlencode($item['domain']) . '&size=16';
 
         return self::getMerchantImageUrl($item, $prefix, $remote_url, $blank_on_error);
-    }
-
-    public static function getMerhantIconUrl(array $item, $blank_on_error = false)
-    {
-        return self::getMerchantIconUrl($item, $blank_on_error);
     }
 
     public static function getMerchantName(array $item, $print = false)
@@ -1324,21 +1309,24 @@ class TemplateHelper
         return $prefix . self::$global_id++;
     }
 
-    public static function isModuleDataExist($items, $module_ids)
-    {
-        if (!is_array($module_ids))
-            $module_ids = array($module_ids);
+	public static function isModuleDataExist($items, $module_ids)
+	{
+		if (!is_array($module_ids))
+			$module_ids = array($module_ids);
 
-        foreach ($module_ids as $module_id)
-        {
-            foreach ($items as $item)
-            {
-                if (isset($item['module_id']) && $item['module_id'] == $module_id)
-                    return true;
-            }
-        }
-        return false;
-    }
+		if (!is_array($items)) {
+			return false;
+		}
+
+		foreach ($module_ids as $module_id) {
+			foreach ($items as $item) {
+				if (isset($item['module_id']) && $item['module_id'] == $module_id)
+					return true;
+			}
+		}
+
+		return false;
+	}
 
     public static function isCashbackTrakerActive()
     {
@@ -1578,18 +1566,18 @@ class TemplateHelper
 
         $params['src'] = self::getOptimizedImage($item, $max_width, $max_height);
 
-        $params['decoding'] = 'async';
-        $params['loading'] = 'lazy';
-
         if (!empty($item['title']))
+        {
             $params['alt'] = $item['title'];
+        }
         elseif (!empty($item['_alt']))
+        {
             $params['alt'] = $item['_alt'];
-
-        /*
+        }
         if ($sizes = self::getImageSizesRatio($item, $max_width, $max_height))
+        {
             $params = array_merge($params, $sizes);
-        */
+        }
 
         echo '<img ' . self::buildTagParams($params) . ' />'; // phpcs:ignore
     }
@@ -1649,9 +1637,6 @@ class TemplateHelper
 
     public static function getOptimizedImage(array $item, $max_width, $max_height)
     {
-        $item['img'] = preg_replace('/\._AC_SL\d+_\./', '._SS520_.', $item['img']);
-        $item['img'] = preg_replace('/\._SL\d+_\./', '._SS520_.', $item['img']);
-
         if ($item['module_id'] == 'Amazon' && strpos($item['img'], 'https://m.media-amazon.com') !== false)
         {
             if (!isset($item['extra']['primaryImages']))
@@ -2003,22 +1988,6 @@ class TemplateHelper
         if (!$OldValue)
             return 0;
 
-        $r =  ((($OldValue - $OldMin) * ($NewMax - $NewMin)) / ($OldMax - $OldMin)) + $NewMin;
-
-        if ($r >= $NewMax)
-            return $OldValue;
-
-        return $r;
-    }
-
-    public static function isPriceAvailable(array $items)
-    {
-        foreach ($items as $item)
-        {
-            if ($item['price'])
-                return true;
-        }
-
-        return false;
+        return ((($OldValue - $OldMin) * ($NewMax - $NewMin)) / ($OldMax - $OldMin)) + $NewMin;
     }
 }

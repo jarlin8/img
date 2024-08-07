@@ -6,14 +6,12 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\libs\RestClient;
 
-use function ContentEgg\prnx;
-
 /**
  * BolcomJwtApi class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  * @link: https://affiliate.bol.com/nl/handleiding/handleiding-toegang-api
  */
@@ -22,9 +20,8 @@ require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATO
 class BolcomJwtApi extends RestClient
 {
 
-    const API_URI_BASE = 'https://api.bol.com/marketing/catalog/v1';
+    const API_URI_BASE = 'https://api.bol.com/catalog/v4';
 
-    protected $lang;
     protected $client_id;
     protected $client_secret;
     protected $access_token;
@@ -45,40 +42,32 @@ class BolcomJwtApi extends RestClient
         $this->access_token = $access_token;
     }
 
-    public function setLang($lang)
-    {
-        $this->lang = $lang;
-    }
-
     /**
-     * Search for products
-     * @link: https://api.bol.com/marketing/docs/api-reference/catalog-api-v1.html#tag/Products/operation/searchProducts
+     * Search for items
+     * @link: https://affiliate.bol.com/nl/api-documentatie#get-catalog-v4-search
      */
-    public function search($keyword, array $options)
+    public function search($keywords, array $options)
     {
-        $options['search-term'] = $keyword;
-        $response = $this->restGet('/products/search', $options);
+        $options['q'] = $keywords;
+        $response = $this->restGet('/search', $options);
 
         return $this->_decodeResponse($response);
     }
 
     /**
-     * Get the best offer for a product
-     * @link: https://api.bol.com/marketing/docs/api-reference/catalog-api-v1.html#tag/Products/operation/getProductBestOffer
+     * The products operation gets detailed information for products.
+     * @link: https://affiliate.bol.com/nl/api-documentatie#get-catalog-v4-products-{productId}
      */
-    public function offer($ean, $options = array())
+    public function products($item_ids, $options = array())
     {
-        $response = $this->restGet('/products/' . urlencode($ean) . '/offers/best', $options);
-        return $this->_decodeResponse($response);
-    }
+        //The unique id for one or more products (comma separated).
+        if (is_array($item_ids))
+        {
+            $item_ids = join(',', $item_ids);
+        }
 
-    /**
-     * Get the best offer for a product
-     * @link: https://api.bol.com/marketing/docs/api-reference/catalog-api-v1.html#tag/Products/operation/getProduct
-     */
-    public function product($ean, $options = array())
-    {
-        $response = $this->restGet('/products/' . urlencode($ean), $options);
+        $response = $this->restGet('/products/' . urlencode($item_ids), $options);
+
         return $this->_decodeResponse($response);
     }
 
@@ -87,6 +76,7 @@ class BolcomJwtApi extends RestClient
         $query = array(
             'grant_type' => 'client_credentials',
         );
+
         $this->setCustomHeaders(array('Authorization' => 'Basic ' . base64_encode($this->client_id . ":" . $this->client_secret)));
         $response = $this->restPost('https://login.bol.com/token', $query);
         return $this->_decodeResponse($response);
@@ -94,12 +84,7 @@ class BolcomJwtApi extends RestClient
 
     public function restGet($path, array $query = null)
     {
-        $headers = array(
-            'Accept-Language' => $this->lang,
-            'Authorization' => 'Bearer ' . $this->access_token,
-        );
-
-        $this->addCustomHeaders($headers);
+        $this->addCustomHeaders(array('Authorization' => 'Bearer ' . $this->access_token));
         return parent::restGet($path, $query);
     }
 }

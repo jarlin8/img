@@ -11,7 +11,7 @@ use ContentEgg\application\libs\RestClient;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  * Ebay Finding API
  * @link: http://developer.ebay.com/DevZone/finding/Concepts/FindingAPIGuide.html

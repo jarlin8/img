@@ -2,7 +2,6 @@
 
 namespace ContentEgg\application\helpers;
 
-use function ContentEgg\prn;
 use function ContentEgg\prnx;
 
 defined('\ABSPATH') || exit;
@@ -12,7 +11,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class TextHelper
 {
@@ -408,14 +407,8 @@ class TextHelper
 
     public static function parsePriceAmount($money)
     {
-
         if (is_float($money) || is_int($money))
             return $money;
-
-        if (strstr($money, 'đ'))
-            $is_vnd = true;
-        else
-            $is_vnd = false;
 
         if (strstr($money, '-'))
         {
@@ -430,7 +423,8 @@ class TextHelper
         $removedThousendSeparator = preg_replace('/(\.|,)(?=[0-9]{3,}$)/', '', $stringWithCommaOrDot);
 
         $p = (float) str_replace(',', '.', $removedThousendSeparator);
-        if (!$is_vnd && $p >= 100000000 && !preg_match('/\.000$/', $cleanString) && !preg_match('/\,000$/', $cleanString))
+
+        if ($p >= 1000000000000)
             return (float) $money;
 
         return $p;
@@ -445,10 +439,9 @@ class TextHelper
             '₹' => 'INR',
             'Rs.' => 'INR',
             '€' => 'EUR',
-            '₫' => 'VND',
+            'руб' => 'RUR',
             'грн' => 'UAH'
         );
-
         foreach ($currencies as $symbol => $code)
         {
             if (strstr($money, $symbol))
@@ -1279,7 +1272,6 @@ class TextHelper
 
     public static function isHtmlTagDetected($string)
     {
-        $string = (string) $string;
         if ($string != strip_tags($string))
             return true;
         else
@@ -1321,10 +1313,5 @@ class TextHelper
         $excerpt_more = apply_filters('excerpt_more', ' ' . '[&hellip;]');
         $text = wp_trim_words($text, $excerpt_length, $excerpt_more);
         return apply_filters('wp_trim_excerpt', $text, $raw_excerpt);
-    }
-
-    static public function isUrl($url)
-    {
-        return filter_var($url, FILTER_VALIDATE_URL);
     }
 }

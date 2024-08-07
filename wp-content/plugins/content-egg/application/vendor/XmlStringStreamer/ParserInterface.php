@@ -1,9 +1,9 @@
 <?php
 
 /*
- * Modified version of XmlStringStreamer, edited namespaces only
+ * Modified version of XmlStringStreamer, edited namespaces only 
  * @author keywordrush.com <support@keywordrush.com>
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 
 /**

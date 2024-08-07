@@ -8,10 +8,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 				$req_params = array(),
 				$plugin_path = '',
 				$custom_product_search_key_prefix = 'sm_custom_product_',
-				$advanced_search_option_name = 'sa_sm_search_order_product_ids',
-				$custom_product_search_cols = array(),
-				$custom_search_cols = array();
-
+				$custom_product_search_cols = array();
+		public static $custom_search_cols = array();
+		public static $advanced_search_option_name = 'sa_sm_search_order_product_ids';
 		public $shop_order = '';
 
 		protected static $_instance = null;
@@ -24,8 +23,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 		}
 
 		function __construct($dashboard_key) {
-
-			add_filter( 'sm_search_table_types', array( &$this, 'orders_search_table_types' ), 12, 1 ); // should be kept before calling the parent class constructor
+			add_filter( 'sm_search_table_types',  __CLASS__. '::orders_search_table_types', 12, 1 ); // should be kept before calling the parent class constructor
 
 			parent::__construct($dashboard_key);
 			self::actions();
@@ -36,7 +34,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 														'title'	=> 'posts/post_title'
 													);
 
-			$this->custom_search_cols = array( 
+			self::$custom_search_cols = array( 
 												'coupons_used'		=> 'woocommerce_order_items/coupon',
 												'shipping_method'	=> 'woocommerce_order_items/shipping'
 											);
@@ -53,7 +51,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 			add_filter( 'sm_search_query_woocommerce_order_itemmeta_select', array( &$this, 'orders_advanced_search_select' ), 12, 2 );
 			add_filter( 'sm_search_query_woocommerce_order_itemmeta_from', array( &$this, 'orders_advanced_search_from' ), 12, 2 );
 			add_filter( 'sm_search_query_woocommerce_order_itemmeta_join', array( &$this, 'orders_advanced_search_join' ), 12, 2 );
-			add_filter( 'sm_search_woocommerce_order_items_cond', array( &$this, 'orders_advanced_search_flat_table_cond' ), 12, 2 );
+			add_filter( 'sm_search_woocommerce_order_items_cond', 'Smart_Manager_Pro_Shop_Order::orders_advanced_search_flat_table_cond', 12, 2 );
 
 			add_action( 'sm_advanced_search_processing_complete', array( &$this, 'orders_advanced_search_post_processing' ), 12, 1 );
 
@@ -95,6 +93,35 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 		public static function post_batch_update_db_updates( $update_flag = false, $args = array() ) {
 			if ( empty( $args ) || empty( $args['id'] ) ) return $update_flag;
 			$args['order_obj'] = wc_get_order( $args['id'] );
+
+			if ( ( in_array( $args['col_nm'], array( '_order_shipping', 'shipping_total_amount', 'shipping_method', 'shipping_method_title' ) ) ) ) {
+				if ( ! empty( $args ) && ! empty( $args['operator'] ) && $args['copy_from_operators'] && in_array( $args['operator'], $args['copy_from_operators'] ) && ! empty( $args['selected_table_name'] ) && ! empty( $args['selected_column_name'] ) && ! empty( $args['selected_value'] ) && is_callable( array( 'Smart_Manager_Pro_Shop_Order', 'get_previous_shipping_details') ) ) {
+					$args['value'] = self::get_previous_shipping_details( $args );
+				}
+				return Smart_Manager_Shop_Order::update_shipping_details(
+					array(
+						'id' => $args['id'],
+						'value' => $args['value'],
+						'update_column' => $args['col_nm'],
+						'dashboard' => $args['dashboard_key']
+					)
+				);
+			}
+			if ( ( ! empty( $args['operator'] ) ) && in_array( $args['operator'], array( 'add_to', 'remove_from' ) ) && in_array( $args['col_nm'] , array( 'note_for_customer' ) ) ) {
+				switch ( $args['operator'] ) {
+					case 'add_to':
+						$order = new WC_Order( $args['id'] );
+						if ( ! $order instanceof WC_Order || ( ! is_callable( array( $order, 'add_order_note') ) ) ) {
+							return $update_flag;
+						}
+						return $order->add_order_note( $args['value'], 1, true );
+					case 'remove_from':
+						if ( ! function_exists( 'wc_delete_order_note' ) ) {
+							return $update_flag;
+						}
+						return wc_delete_order_note( $args['value'] );
+				}
+			}
 			if ( ! empty( Smart_Manager::$sm_is_woo79 ) ) {
 				if( ! empty( $args['curr_obj_getter_func'] ) && ! empty( $args['curr_obj_class_nm'] ) && function_exists( $args['curr_obj_getter_func'] ) && class_exists( $args['curr_obj_class_nm'] ) ) {
 					$args['order_obj'] = call_user_func( $args['curr_obj_getter_func'], $args['id'] );
@@ -283,9 +310,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 				return $query;
 			}
 			$ometa_cond = $searched_col_table_nm .".meta_value ". $searched_col_op ." in (". implode( ",", $p_ids ) .")";
-			if( count( $p_ids ) > 100 && !empty( $this->advanced_search_option_name ) ){
-				update_option( $this->advanced_search_option_name, implode( ",", $p_ids ), 'no' );
-				$ometa_cond = $searched_col_op ." FIND_IN_SET( ". $searched_col_table_nm .".meta_value, (SELECT option_value FROM ". $wpdb->prefix ."options WHERE option_name = '". $this->advanced_search_option_name ."') )";
+			if( count( $p_ids ) > 100 && !empty( self::$advanced_search_option_name ) ){
+				update_option( self::$advanced_search_option_name, implode( ",", $p_ids ), 'no' );
+				$ometa_cond = $searched_col_op ." FIND_IN_SET( ". $searched_col_table_nm .".meta_value, (SELECT option_value FROM ". $wpdb->prefix ."options WHERE option_name = '". self::$advanced_search_option_name ."') )";
 			}
 
 			$query['cond_woocommerce_order_itemmeta'] = "( ( ". $searched_col_table_nm .".meta_key = '_product_id' AND ". $ometa_cond ." )
@@ -299,7 +326,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 		 * @param array $table_types array of table types.
 		 * @return array $table_types updated array of table types.
 		 */
-		public function orders_search_table_types( $table_types = array() ){
+		public static function orders_search_table_types( $table_types = array() ){
 			$table_types['flat']['woocommerce_order_items'] =  'order_id';
 			$table_types['meta']['woocommerce_order_itemmeta'] =  'order_id';
 			return $table_types;
@@ -347,12 +374,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 		 * @param array $params The search condition params.
 		 * @return string updated search query condition.
 		 */
-		public function orders_advanced_search_flat_table_cond( $cond = '', $params = array() ){
+		public static function orders_advanced_search_flat_table_cond( $cond = '', $params = array() ){
 			$col = ( ! empty( $params['search_col'] ) ) ? $params['search_col'] : '';
-			if( empty( $col ) || ( ! empty( $col ) && !in_array( $col, array_keys( $this->custom_search_cols ) ) ) ){
+			if( empty( $col ) || ( ! empty( $col ) && !in_array( $col, array_keys( self::$custom_search_cols ) ) ) ){
 				return $cond;
 			}
-			$search_meta = explode( "/", $this->custom_search_cols[$col] );
+			$search_meta = explode( "/", self::$custom_search_cols[$col] );
 			$search_table = ( ! empty( $search_meta[0] ) ) ? $search_meta[0] : '';
 			$search_col = ( ! empty( $search_meta[1] ) ) ? $search_meta[1] : '';
 
@@ -371,9 +398,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 					return $updated_cond;
 				}
 
-				if( count( $o_ids ) > 100 && !empty( $this->advanced_search_option_name ) ){
-					update_option( $this->advanced_search_option_name, implode( ",", $o_ids ), 'no' );
-					return "( NOT FIND_IN_SET( ". $wpdb->prefix ."woocommerce_order_items.order_id, (SELECT option_value FROM ". $wpdb->prefix ."options WHERE option_name = '". $this->advanced_search_option_name ."') ) )";
+				if( count( $o_ids ) > 100 && !empty( self::$advanced_search_option_name ) ){
+					update_option( self::$advanced_search_option_name, implode( ",", $o_ids ), 'no' );
+					return "( NOT FIND_IN_SET( ". $wpdb->prefix ."woocommerce_order_items.order_id, (SELECT option_value FROM ". $wpdb->prefix ."options WHERE option_name = '". self::$advanced_search_option_name ."') ) )";
 				}
 
 				return "(". $wpdb->prefix ."woocommerce_order_items.order_id NOT IN (". implode( ",", $o_ids ) .") )";
@@ -388,8 +415,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 		 * @return void
 		 */
 		public function orders_advanced_search_post_processing(){
-			if( !empty( $this->advanced_search_option_name ) && !empty( get_option( $this->advanced_search_option_name ) ) ){
-				delete_option( $this->advanced_search_option_name );
+			if( !empty( self::$advanced_search_option_name ) && !empty( get_option( self::$advanced_search_option_name ) ) ){
+				delete_option( self::$advanced_search_option_name );
 			}
 		}
 
@@ -410,14 +437,13 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 		 * @return string|array json encoded string or array of values.
 		 */
 		public static function get_copy_from_record_ids( $args = array() ) {
-
-			if ( empty( Smart_Manager::$sm_is_woo79 ) ) {
-				parent::get_batch_update_copy_from_record_ids( $args );
+			if ( empty( $args ) || ( ! is_array( $args ) ) || empty( $args['type'] ) || empty( $args['curr_obj'] ) || empty( $args['field_title_prefix'] ) ) {
 				return;
 			}
-
-			$curr_obj = ( ! empty( $args ) && ! empty( $args['curr_obj'] ) ) ? $args['curr_obj'] : null;
-			if( empty( $curr_obj ) || empty( $args['type'] ) || empty( $args['field_title_prefix'] ) ){
+			$curr_obj = $args['curr_obj'];
+			if ( empty( Smart_Manager::$sm_is_woo79 ) && ( ! empty( $curr_obj->dashboard_key ) ) ) {
+				$pro_base_instance = new parent( $curr_obj->dashboard_key );
+				$pro_base_instance->get_batch_update_copy_from_record_ids( $args );
 				return;
 			}
 			
@@ -526,6 +552,103 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
                 return false;
             }
             return true;
+		}
+
+		/**
+		 * Function to get previous shipping details info.
+		 *
+		 * @param array $args args array
+		 * @return mixed int or float or string based on column
+		 */
+		public static function get_previous_shipping_details( $args = array() ) {
+			if ( empty( $args['value'] ) || empty( $args['selected_column_name'] ) || empty( $args['dashboard_key'] ) ) {
+				return;
+			}
+			$subs_or_order_obj = null;
+			if ( 'shop_subscription' === $args['dashboard_key'] && function_exists( 'wcs_get_subscription' ) ) {
+				$subscription = wcs_get_subscription( absint( $args['value'] ) );
+				if ( ! $subscription || ! is_a( $subscription, 'WC_Subscription' ) ) {
+					return;
+				}
+				$subs_or_order_obj = $subscription;
+			} else {
+				$order = wc_get_order( $args['value'] );
+				if ( ! $order || ! is_a( $order, 'WC_Order' ) || ! is_callable( array( $order, 'get_status' ) ) ) {
+					return;
+				}
+				$status = $order->get_status();
+				if ( empty( $status ) || ! in_array( $status, array( 'pending', 'on-hold' ) ) ) {
+					return;
+				}
+				$subs_or_order_obj = $order;
+			}
+			$line_items = ( is_callable( array( $subs_or_order_obj, 'get_items' ) ) ) ? $subs_or_order_obj->get_items( 'shipping' ) : array();
+			if ( empty( $line_items ) || ! is_array( $line_items ) ) {
+                return;
+            }
+			foreach( $line_items as $item_id => $item ) {
+				switch ( $args['selected_column_name'] ) {
+					case 'shipping_method':
+						if ( ! is_callable( array( $item, 'set_method_id' ) ) ) {
+							break;
+						}
+						return $item->get_method_id();
+					case 'shipping_method_title':
+						if ( ! is_callable( array( $item, 'get_method_title' ) ) ) {
+							break;
+						}
+						return $item->get_method_title();
+					case in_array( $args['selected_column_name'], array( '_order_shipping', 'shipping_total_amount' ) ):
+						if ( ! is_callable( array( $item, 'get_total' ) ) ) {
+							break;
+						}
+						return $item->get_total();
+				}
+			}
+		}
+
+		/**
+		 * Function to get order notes.
+		 *
+		 * @param array $args args array
+		 * @return mixed $data
+		 */
+		public function get_order_notes_for_customer( $args = array() ) {
+			global $wpdb;
+			$data = array();
+			$is_ajax = ( isset( $args['is_ajax'] )  ) ? $args['is_ajax'] : true;
+			$search_term = ( ! empty( $this->req_params['search_term'] ) ) ? $this->req_params['search_term'] : ( ( ! empty( $args['search_term'] ) ) ? $args['search_term'] : '' );
+			$field =  ( ! empty( $this->req_params['field'] ) ) ? explode( "/", $this->req_params['field'] ) : array();
+			$search_cond = '';
+			$prepare_values = ['order_note'];
+			if ( ! empty( $field ) && is_array( $field ) && ( ! empty( $field[1] ) ) && ( 'note_for_customer' === $field[1] ) ) {
+				$search_cond .= " AND cmm.meta_key = %s AND cmm.meta_value = %d";
+				$prepare_values[] = 'is_customer_note'; // meta_key value
+				$prepare_values[] = 1; // meta_value
+			}
+			if ( ! empty( $search_term ) ) {
+				$search_cond .= " AND cm.comment_content LIKE %s";
+				$prepare_values[] = '%' . $wpdb->esc_like( $search_term ) . '%';
+			}
+			$order_notes = $wpdb->get_results( $wpdb->prepare( "SELECT cm.comment_content AS order_note, cm.comment_post_ID as order_id, cm.comment_ID as comment_id
+							                                        FROM {$wpdb->prefix}comments AS cm
+							                                        JOIN {$wpdb->prefix}commentmeta AS cmm
+							                                        ON (cmm.comment_id = cm.comment_ID)
+							                                        WHERE cm.comment_type = %s" . $search_cond, ...$prepare_values ), 'ARRAY_A'
+						);
+			if ( ! empty( $order_notes ) && is_array( $order_notes ) ) {
+				foreach ( $order_notes as $order_note ) {
+					if ( empty( $order_note['comment_id'] || empty( $order_note['order_note'] ) || empty( $order_note['order_id'] ) ) ) {
+						continue;
+					}
+					$data[ $order_note['comment_id'] ] = $order_note['order_note'] . ' #' . $order_note['order_id'];
+				}
+			}
+			if ( $is_ajax ) {
+				wp_send_json( $data );
+			} else {
+				return $data;
+			}
 		}
 	}
 }

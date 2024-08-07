@@ -11,21 +11,16 @@ use ContentEgg\application\components\ExtraData;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  */
 class ExtraDataKieskeurignl extends ExtraData
 {
-	public $productid;
-	public $link;
-	public $deliveryText;
-	public $deliveryCode;
-	public $textAd;
-
 	public $productgroupcode;
 	public $type;
 	public $type_extra;
 	public $metakeywords;
+	public $productid;
 	public $pricecount;
 	public $shopcount;
 	public $pricemin;

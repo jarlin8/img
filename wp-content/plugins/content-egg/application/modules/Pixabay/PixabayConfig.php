@@ -11,7 +11,7 @@ use ContentEgg\application\components\ParserModuleConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class PixabayConfig extends ParserModuleConfig
 {
@@ -66,14 +66,19 @@ class PixabayConfig extends ParserModuleConfig
 				),
 				'section'     => 'default',
 			),
-			'size'              => array(
-				'title'            => __('Image size', 'content-egg'),
+			'image_size'              => array(
+				'title'            => __('Size', 'content-egg'),
+				'description'      => __('Height size of image', 'content-egg'),
 				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
-					'medium' => __('Medium', 'content-egg'),
-					'large' => __('Large', 'content-egg'),
+					'_180' => '180px',
+					'_340' => '340px',
+					'_640' => '640px',
+					'_960' => '960px',
 				),
-				'default'          => 'medium',
+				'default'          => '_640',
+				'section'          => 'default',
+				'metaboxInit'      => true,
 			),
 			'image_type'              => array(
 				'title'            => __('Type of image', 'content-egg'),

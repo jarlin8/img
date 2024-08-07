@@ -20,7 +20,7 @@ use function ContentEgg\prnx;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class Ebay2Module extends AffiliateParserModule
 {
@@ -542,13 +542,9 @@ class Ebay2Module extends AffiliateParserModule
             $content->img = $r['image']['imageUrl'];
         }
 
-        if (isset($r['price']['value']))
-            $content->price = (float) $r['price']['value'];
-        if (isset($r['price']['currency']))
-        {
-            $content->currencyCode = $r['price']['currency'];
-            $content->currency = TextHelper::currencyTyping($content->currencyCode);
-        }
+        $content->price = (float) $r['price']['value'];
+        $content->currencyCode = $r['price']['currency'];
+        $content->currency = TextHelper::currencyTyping($content->currencyCode);
 
         if (isset($r['marketingPrice']['originalPrice']))
         {
@@ -596,7 +592,6 @@ class Ebay2Module extends AffiliateParserModule
         if (isset($r['shippingOptions']) && $r['shippingOptions'][0]['shippingCostType'] == 'FIXED' && !(float) $r['shippingOptions'][0]['shippingCost']['value'])
         {
             $extra->IsEligibleForSuperSaverShipping = true;
-            $content->shipping_cost = 0;
         }
 
         $content->extra = $extra;
@@ -619,14 +614,8 @@ class Ebay2Module extends AffiliateParserModule
     public function requestAccessToken()
     {
         $api_client = $this->getEbayClientBrowse();
-        try
-        {
-            $response = $api_client->requestAccessToken();
-        }
-        catch (\Exception $e)
-        {
-            throw new \Exception('Ebay Browse API: ' . $e->getMessage() . ' - ' . $e->getCode());
-        }
+        $response = $api_client->requestAccessToken();
+
         if (empty($response['access_token']) || empty($response['expires_in']))
         {
             throw new \Exception('Ebay Browse API: Invalid Response Format.');

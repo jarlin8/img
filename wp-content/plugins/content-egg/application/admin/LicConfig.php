@@ -13,7 +13,7 @@ use ContentEgg\application\components\LManager;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class LicConfig extends Config
 {
@@ -46,7 +46,7 @@ class LicConfig extends Config
 
 		global $submenu;
 		if (!Plugin::isTooMuchNicheActive())
-			$submenu['content-egg'][] = array('<b style="color: #75b798;">TMN Plugin</b>', 'manage_options', 'https://www.keywordrush.com/toomuchniche?utm_source=cegg&utm_medium=referral&utm_campaign=plugin');
+			$submenu['content-egg'][] = array('<b style="color: #75b798;">Unlock AI Power</b>', 'manage_options', 'https://www.keywordrush.com/toomuchniche?utm_source=cegg&utm_medium=referral&utm_campaign=plugin');
 	}
 
 	protected function options()

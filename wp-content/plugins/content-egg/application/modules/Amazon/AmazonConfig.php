@@ -12,7 +12,7 @@ use ContentEgg\application\libs\amazon\AmazonLocales;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class AmazonConfig extends AffiliateParserModuleConfig
 {
@@ -129,17 +129,6 @@ class AmazonConfig extends AffiliateParserModuleConfig
 				),
 				'default'          => 'product',
 				'section'          => 'default',
-			),
-			'hide_prices' => array(
-				'title' => __('Prices', 'content-egg') . '**',
-				'description' => __('Amazon mandates that prices be updated at least every 24 hours if displayed on your site. Without API access, maintaining this update frequency is challenging, so consider hiding prices until you obtain API access. "Outdated prices" refers to updates that occurred more than 24 hours ago.', 'content-egg'),
-				'callback' => array($this, 'render_dropdown'),
-				'dropdown_options' => array(
-					'hide' => __('Hide prices', 'content-egg'),
-					'hide_24' => __('Hide outdated prices', 'content-egg'),
-					'display' => __('Display prices', 'content-egg'),
-				),
-				'default' => 'display',
 			),
 			'search_index'            => array(
 				'title'       => __('Search Index', 'content-egg'),

@@ -1,9 +1,9 @@
 /**
  * Modified version of jQuery blockUI plugin
- *
+ *  
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 
 /*!
@@ -36,7 +36,7 @@
 		var mode = document.documentMode || 0;
 		//var setExpr = $.isFunction( document.createElement('div').style.setExpression );
 		var setExpr = typeof document.createElement('div').style.setExpression === "function";
-
+                
 		// global $ methods for blocking/unblocking the entire page
 		$.blockUI   = function(opts) { install(window, opts); };
 		$.unblockUI = function(opts) { remove(window, opts); };

@@ -13,8 +13,6 @@ use ContentEgg\application\modules\Amazon\AmazonModule;
 use ContentEgg\application\modules\AmazonNoApi\ExtraDataAmazonNoApi;
 use ContentEgg\application\helpers\ArrayHelper;
 use ContentEgg\application\libs\amazon\AmazonClient;
-use ContentEgg\application\components\ModuleManager;
-use ContentEgg\application\helpers\TemplateHelper;
 
 use function ContentEgg\prn;
 use function ContentEgg\prnx;
@@ -24,7 +22,7 @@ use function ContentEgg\prnx;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class AmazonNoApiModule extends AffiliateParserModule
 {
@@ -82,12 +80,6 @@ class AmazonNoApiModule extends AffiliateParserModule
         else
             $limit = $this->config('entries_per_page');
 
-        // for TMN under XX
-        if (!empty($query_params['maximum_price']))
-            $max_price = (float)$query_params['maximum_price'];
-        else
-            $max_price = 0;
-
         $keyword = trim($keyword);
         if (TextHelper::isAsin($keyword))
         {
@@ -100,13 +92,14 @@ class AmazonNoApiModule extends AffiliateParserModule
 
         try
         {
+
             if (filter_var($keyword, FILTER_VALIDATE_URL) && AmazonModule::parseAsinFromUrl($keyword))
             {
                 if ($result = $client->product($keyword))
                     $results = array($result);
             }
             else
-                $results = $client->search($keyword, $limit, $max_price);
+                $results = $client->search($keyword, $limit);
         }
         catch (\Exception $e)
         {
@@ -126,33 +119,8 @@ class AmazonNoApiModule extends AffiliateParserModule
         return $this->prepareResults($results, $locale);
     }
 
-    private function doRequestItemsApi(array $items)
-    {
-        if ($this->config('api_updates') != 'enabled')
-            return array();
-
-        if (!ModuleManager::getInstance()->isModuleActive('Amazon'))
-            return array();
-
-        $module = ModuleManager::getInstance()->factory('Amazon');
-
-        try
-        {
-            $updated_data = $module->doRequestItems($items);
-        }
-        catch (\Exception $e)
-        {
-            return array();
-        }
-
-        return $updated_data;
-    }
-
     public function doRequestItems(array $items)
     {
-        if ($res = $this->doRequestItemsApi($items))
-            return $res;
-
         @set_time_limit(300);
 
         $i = 0;
@@ -192,18 +160,13 @@ class AmazonNoApiModule extends AffiliateParserModule
 
             $items[$key]['price'] = $product->price;
             $items[$key]['priceOld'] = $product->priceOld;
-
-            if ($product->currencyCode)
-            {
-                $items[$key]['currencyCode'] = $product->currencyCode;
-                $items[$key]['currency'] = TextHelper::currencyTyping($product->currencyCode);
-            }
+            $items[$key]['currencyCode'] = $product->currencyCode;
+            $items[$key]['currency'] = TextHelper::currencyTyping($product->currencyCode);
             $items[$key]['stock_status'] = $product->stock_status;
             $items[$key]['rating'] = $product->rating;
-            // $items[$key]['ratingDecimal'] = $product->ratingDecimal; //top listing tmplate
+            $items[$key]['ratingDecimal'] = $product->ratingDecimal;
             $items[$key]['url'] = $product->url;
             $items[$key]['img'] = $product->img;
-            $items[$key]['promo'] = TextHelper::truncate($product->promo);
             $items[$key]['extra'] = ArrayHelper::object2Array($product->extra);
         }
 
@@ -290,7 +253,7 @@ class AmazonNoApiModule extends AffiliateParserModule
         {
             $this->api_client = new AmazonClient($locale);
 
-            $services = array('scrapeowl', 'scrapingdog', 'scraperapi', 'proxycrawl');
+            $services = array('scraperapi', 'proxycrawl', 'scrapingdog');
             foreach ($services as $service)
             {
                 if ($token_value = $this->config($service . '_token'))
@@ -360,22 +323,10 @@ class AmazonNoApiModule extends AffiliateParserModule
             else
                 $data[$key]['url'] = TextHelper::addUrlParam($data[$key]['url'], 'tag', $tag_id);
 
-            $hp = $this->config('hide_prices');
-            if ($hp == 'hide_24')
+            if ($this->config('hide_prices') == 'hide')
             {
-                $last_update = TemplateHelper::getLastUpdate($this->getId());
-                if ($last_update)
-                    $lt = time() - $last_update;
-                else
-                    $lt = 0;
-            }
-            else
-                $lt = 0;
-
-            if ($hp == 'hide' || ($hp == 'hide_24' && $lt > \DAY_IN_SECONDS))
-            {
-                $data[$key]['price'] = '';
-                $data[$key]['priceOld'] = '';
+                $data[$key]['price'] = 0;
+                $data[$key]['priceOld'] = 0;
                 $data[$key]['stock_status'] = 0;
             }
         }

@@ -11,7 +11,7 @@ use ContentEgg\application\models\FeedProductModel;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class DaisyconProductModel extends FeedProductModel
 {
@@ -28,13 +28,13 @@ class DaisyconProductModel extends FeedProductModel
                     stock_status tinyint(1) DEFAULT 0,
                     price float(12,2) DEFAULT NULL,
                     title text,
-                    ean varchar(13) DEFAULT NULL,
+                    ean varchar(13) DEFAULT NULL,                                        
                     orig_url text,
                     product text,
                     KEY id (id(32)),
                     KEY uid (stock_status),
                     KEY orig_url (orig_url(60)),
-                    KEY ean (ean(13)),
+                    KEY ean (ean(13)),                                        
                     KEY price (price),
                     FULLTEXT (title)
                     ) $this->charset_collate;";

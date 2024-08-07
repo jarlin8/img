@@ -190,14 +190,16 @@ jQuery(document).on('smart_manager_init','#sm_editor_grid', function() {
 })
 // Code for handling the undo & delete tasks functionality
 .on('sm_show_tasks_change', '#sm_editor_grid', function(){
-    if("undefined" !== typeof(window.smart_manager.showTasks) && "function" === typeof(window.smart_manager.showTasks)){
-        window.smart_manager.showTasks();
-    }
    jQuery(document).off( 'click', ".sm_top_bar_action_btns #sm_beta_undo_selected,.sm_top_bar_action_btns #sm_beta_undo_all_tasks,.sm_top_bar_action_btns #sm_beta_delete_selected_tasks, .sm_top_bar_action_btns #sm_beta_delete_all_tasks").on( 'click', ".sm_top_bar_action_btns #sm_beta_undo_selected,.sm_top_bar_action_btns #sm_beta_undo_all_tasks,.sm_top_bar_action_btns #sm_beta_delete_selected_tasks, .sm_top_bar_action_btns #sm_beta_delete_all_tasks", function(){
         if("undefined" !== typeof(window.smart_manager.taskActionsModal) && "function" === typeof(window.smart_manager.taskActionsModal)){
             window.smart_manager.taskActionsModal({id: jQuery(this).attr('id'),btnText: jQuery(this).text()});
         }
     })
+    if((typeof window.smart_manager.dirtyRowColIds !== 'undefined') && Object.getOwnPropertyNames(window.smart_manager.dirtyRowColIds).length > 0){
+		window.smart_manager.confirmUnsavedChanges({'yesCallback': window.smart_manager.showTasks, 'noCallback': window.smart_manager.handleShowTasks})
+    }else if("undefined" !== typeof(window.smart_manager.showTasks) && "function" === typeof(window.smart_manager.showTasks)){
+        window.smart_manager.showTasks();
+    }
 })
 
 // Code for handling renaming of column titles
@@ -1609,4 +1611,8 @@ Smart_Manager.prototype.privilegeSettingsUpdate = function(){
             window.smart_manager.showNotification()
         }
     });
+}
+// Function for unchecking the 'Show Tasks' when click on it during unsaved changes.
+Smart_Manager.prototype.handleShowTasks = function(){
+    jQuery("#sm_show_tasks").prop('checked', false);
 }

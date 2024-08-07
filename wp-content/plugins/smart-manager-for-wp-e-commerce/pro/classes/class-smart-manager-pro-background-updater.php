@@ -83,7 +83,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 					include_once( SM_PLUGIN_DIR_PATH . '/classes/class-smart-manager-base.php' );
 					include_once dirname( __FILE__ ) .'/class-smart-manager-pro-base.php';
 					include_once dirname( __FILE__ ) .'/'. $params['callback']['class_path'];
-
+					if( ! class_exists( 'Smart_Manager_Task' ) && file_exists( SM_PLUGIN_DIR_PATH .'/classes/class-smart-manager-task.php' ) ){
+						include_once SM_PLUGIN_DIR_PATH .'/classes/class-smart-manager-task.php';
+					}
 					if( ! class_exists( 'Smart_Manager_Pro_Task' ) && file_exists( dirname( __FILE__ ) .'/class-smart-manager-pro-task.php' ) ){
 						include_once dirname( __FILE__ ) .'/class-smart-manager-pro-task.php';
 					}

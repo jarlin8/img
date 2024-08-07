@@ -13,7 +13,6 @@ use ContentEgg\application\helpers\CurrencyHelper;
 use ContentEgg\application\helpers\TemplateHelper;
 use ContentEgg\application\helpers\TextHelper;
 
-use function ContentEgg\prn;
 use function ContentEgg\prnx;
 
 /**
@@ -21,7 +20,7 @@ use function ContentEgg\prnx;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class ContentManager
 {
@@ -99,15 +98,6 @@ class ContentManager
         array_walk_recursive($data, array(__CLASS__, 'sanitizeData'));
         $module = ModuleManager::getInstance()->factory($module_id);
         $data = $module->presavePrepare($data, $post_id);
-
-        foreach ($data as $id => $d)
-        {
-            foreach ($d as $field => $r)
-            {
-                if ($field[0] == '_')
-                    $data[$id][$field] = null;
-            }
-        }
 
         return $data;
     }
@@ -292,9 +282,8 @@ class ContentManager
             {
                 if (isset($d['stock_status']) && $d['stock_status'] == ContentProduct::STOCK_STATUS_OUT_OF_STOCK)
                 {
-                    $data[$key]['price'] = '';
-                    $data[$key]['priceOld'] = '';
-                    $data[$key]['total_price'] = '';
+                    $data[$key]['price'] = 0;
+                    $data[$key]['priceOld'] = 0;
                 }
             }
         }
@@ -449,9 +438,6 @@ class ContentManager
                 $data[$key]['rating'] = $d['extra']['data']['rating'];
             }
 
-            if (isset($d['price']) && isset($d['priceOld']) && $d['price'] == $d['priceOld'])
-                $data[$key]['priceOld'] = 0;
-
             if (isset($data[$key]['rating']))
             {
                 $data[$key]['rating'] = (float) $data[$key]['rating'];
@@ -476,7 +462,6 @@ class ContentManager
 
         // local redirect & other
         $module = ModuleManager::getInstance()->factory($module_id);
-
         if ($module->isParser())
         {
             $data = $module->viewDataPrepare($data);

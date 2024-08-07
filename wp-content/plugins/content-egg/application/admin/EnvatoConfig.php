@@ -12,7 +12,7 @@ use ContentEgg\application\Plugin;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class EnvatoConfig extends LicConfig
 {
@@ -89,6 +89,7 @@ class EnvatoConfig extends LicConfig
 	public function activatingLicense($value)
 	{
 		return true;
+
 		// do not try to activate...
 		if (\get_settings_errors())
 		{
@@ -142,6 +143,7 @@ class EnvatoConfig extends LicConfig
 	public function envatoFlag()
 	{
 		return false;
+
 		if (\get_settings_errors())
 		{
 			return true;

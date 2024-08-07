@@ -25,10 +25,7 @@ use function ContentEgg\prn;
                 echo \esc_html($item['title']);
                 break;
             case 'img':
-                $img = $item['img'];
-                $img = preg_replace('/\._AC_SL\d+_\./', '._SS520_.', $img);
-                $img = preg_replace('/\._SL\d+_\./', '._SS520_.', $img);
-                echo '<img src="' . \esc_attr($img) . '" alt="' . \esc_attr($item['title']) . '" />';
+                echo '<img src="' . \esc_attr($item['img']) . '" alt="' . \esc_attr($item['title']) . '" />';
                 break;
             case 'price':
                 if ($item['price'])
@@ -63,9 +60,6 @@ use function ContentEgg\prn;
                 echo '<a ' . TemplateHelper::printRel(false) . ' target="_blank" href=" ' . esc_url_raw($item['url']) . '">';
                 echo '<img src="' . \esc_attr($item['img']) . '" alt="' . \esc_attr($item['title']) . '" class="cegg-cust-img" />';
                 echo '</a>';
-                break;
-            case 'attribute':
-                echo esc_html(TemplateHelper::getLastUpdateFormatted($item['module_id']));
                 break;
             default:
                 break;

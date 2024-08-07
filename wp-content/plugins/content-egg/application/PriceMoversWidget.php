@@ -18,7 +18,7 @@ use ContentEgg\application\components\ContentProduct;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class PriceMoversWidget extends CEWidget
 {
@@ -56,7 +56,7 @@ class PriceMoversWidget extends CEWidget
         /*
         if (!$force && (empty($GLOBALS['pagenow']) || ($GLOBALS['pagenow'] != 'widgets.php' && $GLOBALS['pagenow'] != 'admin-ajax.php')))
             return array();
-         *
+         * 
          */
 
         return

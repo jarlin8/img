@@ -92,7 +92,6 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 				$join .= " JOIN {$wpdb->prefix}postmeta
                             	ON ({$wpdb->prefix}postmeta.post_id = {$wpdb->prefix}posts.id)";
 			}
-
 			return $join;
 		}
 
@@ -1368,6 +1367,32 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 					$store_model_transient = false;
 					update_option( '_sm_update_8360_product', 1, 'no' );
 				}
+				if ( false === get_option( '_sm_update_8390_product_stock_log' ) ) {
+					delete_transient( 'sa_sm_product_stock_log_tasks' );
+					$wpdb->query(
+                        $wpdb->prepare(
+                            "DELETE FROM {$wpdb->usermeta} WHERE meta_key = %s",
+                            'sa_sm_product_stock_log_tasks'
+                        )
+                    );
+					$store_model_transient = false;
+					update_option( '_sm_update_8390_product_stock_log', 1, 'no' );
+				}
+				if ( in_array( $this->dashboard_key, array( 'shop_order', 'shop_subscription' ) ) && ( false === get_option( '_sm_update_8400_' . $this->dashboard_key ) ) ) {
+					delete_transient( 'sa_sm_' . $this->dashboard_key );
+					$store_model_transient = false;
+					update_option( '_sm_update_8400_' . $this->dashboard_key, 1, 'no' );
+				}
+				if ( in_array( $this->dashboard_key, array( 'shop_order', 'shop_subscription' ) ) && ( false === get_option( '_sm_update_8410_' . $this->dashboard_key ) ) ) {
+					delete_transient( 'sa_sm_' . $this->dashboard_key );
+					$store_model_transient = false;
+					update_option( '_sm_update_8410_' . $this->dashboard_key, 1, 'no' );
+				}
+				if ( in_array( $this->dashboard_key, array( 'shop_order', 'shop_subscription' ) ) && ( false === get_option( '_sm_update_8430_' . $this->dashboard_key ) ) ) {
+					delete_transient( 'sa_sm_' . $this->dashboard_key );
+					$store_model_transient = false;
+					update_option( '_sm_update_8430_' . $this->dashboard_key, 1, 'no' );
+				}
 			}
 
 			$store_model = $store_model_transient;
@@ -2218,7 +2243,7 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 							
         					//Code for rounding of integer fields
         					if( isset( $numeric_postmeta_cols_decimal_places[$meta_key] ) && !empty( $meta_value ) ) {
-        						$meta_value = round( $meta_value, $numeric_postmeta_cols_decimal_places[$meta_key] );
+        						$meta_value = round( intval( $meta_value ), intval( $numeric_postmeta_cols_decimal_places[$meta_key] ) );
         					}
 
         					$meta_key = sanitize_title($meta_key);

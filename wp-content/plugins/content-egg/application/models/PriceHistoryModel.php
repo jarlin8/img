@@ -11,7 +11,7 @@ use ContentEgg\application\admin\GeneralConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class PriceHistoryModel extends Model
 {
@@ -269,12 +269,12 @@ class PriceHistoryModel extends Model
                ' . $change . ' as `change`
             FROM ' . $this->tableName() . ' p_last
                INNER JOIN (SELECT unique_id, create_date, MAX(price) as price FROM ' . $this->tableName() . ' GROUP BY unique_id) AS p_prev
-                    ON p_last.unique_id = p_prev.unique_id
+                    ON p_last.unique_id = p_prev.unique_id	 
                     AND p_last.create_date >= NOW() - INTERVAL ' . $params['time_period'] . ' DAY
                INNER JOIN ' . $this->getDb()->posts . ' AS post
                    ON post.ID = p_last.post_id
                    AND post.post_status = "publish"
-            GROUP BY unique_id
+            GROUP BY unique_id	
             ORDER BY `change` ' . $order . '
             LIMIT ' . $params['limit'];
 
@@ -326,7 +326,7 @@ class PriceHistoryModel extends Model
                    ON post.ID = price_history.post_id
                    AND post.post_status = "publish"
             WHERE ' . $direction_where . ' AND is_latest = 1 AND create_date >= NOW() - INTERVAL ' . $params['last_update'] . ' DAY
-            GROUP BY unique_id
+            GROUP BY unique_id	
             ORDER BY pchange ' . $order . '
             LIMIT ' . $limit;
 		$results = $this->getDb()->get_results($sql, \ARRAY_A);

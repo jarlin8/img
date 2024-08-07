@@ -435,7 +435,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Access_Privilege' ) ) {
 			        }				        	
 			    }
 		        if ( empty( $final_dashboards )) {
-		        	$final_dashboards['valid'][] = array();
+		        	$final_dashboards['valid'][] = "";
 		        }	
 			}
            return $final_dashboards;	

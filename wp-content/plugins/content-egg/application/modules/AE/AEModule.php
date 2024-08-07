@@ -21,7 +21,7 @@ use function ContentEgg\prnx;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class AEModule extends AffiliateParserModule
 {
@@ -101,7 +101,6 @@ class AEModule extends AffiliateParserModule
 
         $is_url_passed = false;
         $is_catalog_url_passed = false;
-
         // Catalog url?
         if ($keyword[0] == '[' && preg_match('/^\[catalog(.*?)\](.+)/', $keyword, $matches))
         {
@@ -120,10 +119,6 @@ class AEModule extends AffiliateParserModule
             $entries_per_page = (int) $catalog_atts['limit'];
             $is_catalog_url_passed = true;
         }
-
-        // ASIN?
-        if (TextHelper::isAsin($keyword))
-            $keyword = 'https://www.' . $this->getShopHost() . '/dp/' . $keyword . '/';
 
         // 1. Url passed?
         $is_url_passed = filter_var($keyword, FILTER_VALIDATE_URL) && TextHelper::getDomainWithoutSubdomain($this->getShopHost()) == TextHelper::getHostName($keyword);
@@ -151,11 +146,7 @@ class AEModule extends AffiliateParserModule
             // 2. Parse catalog
             if (!$is_url_passed)
             {
-                if (\version_compare('10.9.9', \Keywordrush\AffiliateEgg\Plugin::version(), '>'))
-                    $product_urls = ParserManager::getInstance()->parseSearchCatalog($this->getMyShortId(), $keyword, $entries_per_page);
-                else
-                    $product_urls = ParserManager::getInstance()->parseSearchCatalog($this->getMyShortId(), $keyword, $entries_per_page, $query_params);
-
+                $product_urls = ParserManager::getInstance()->parseSearchCatalog($this->getMyShortId(), $keyword, $entries_per_page);
                 if (!$product_urls || !is_array($product_urls))
                     return array();
             }
@@ -245,10 +236,6 @@ class AEModule extends AffiliateParserModule
                         'name' => $f['name'],
                         'value' => $f['value'],
                     );
-
-                    if (isset($f['group']))
-                        $feature['group'] = $f['group'];
-
                     $content->features[] = $feature;
                 }
                 unset($r['extra']['features']);

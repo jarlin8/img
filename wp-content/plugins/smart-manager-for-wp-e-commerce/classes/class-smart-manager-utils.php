@@ -33,13 +33,7 @@ function sm_update_stock_status( $id = 0, $update_column = '', $update_value = '
   if ( ( ( !empty( Smart_Manager::$sm_is_woo21 ) && Smart_Manager::$sm_is_woo21 == 'true' ) || ( !empty( Smart_Manager::$sm_is_woo22 ) && Smart_Manager::$sm_is_woo22 == 'true' ) || ( !empty( Smart_Manager::$sm_is_woo30 ) && Smart_Manager::$sm_is_woo30 == 'true' ) ) && !empty( $id ) ) {
 	  	$parent_id = wp_get_post_parent_id( $id );
 		$woo_version = ( ( defined( 'WOOCOMMERCE_VERSION' ) ) ? WOOCOMMERCE_VERSION : $woocommerce->version );
-		$woo_prod_obj_stock_status = '';
-
-		if( $parent_id > 0 && class_exists('WC_Product_Variation') ) {
-		   $woo_prod_obj_stock_status = new WC_Product_Variation($id);
-		} else if( class_exists('WC_Product') ) {
-		   $woo_prod_obj_stock_status = new WC_Product($id);
-		}
+		$woo_prod_obj_stock_status = function_exists( 'wc_get_product' ) ? wc_get_product( absint( $id ) ) : null;
 
 		if ( empty( $woo_prod_obj_stock_status ) || ! $woo_prod_obj_stock_status instanceof WC_Product ) {
 			return false;

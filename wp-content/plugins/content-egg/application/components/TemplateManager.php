@@ -9,15 +9,12 @@ use ContentEgg\application\admin\GeneralConfig;
 use ContentEgg\application\helpers\TemplateHelper;
 use ContentEgg\application\Plugin;
 
-use function ContentEgg\prn;
-use function ContentEgg\prnx;
-
 /**
  * TemplateManager class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 abstract class TemplateManager
 {
@@ -106,8 +103,6 @@ abstract class TemplateManager
                 $templates[$template_id] .= ' [' . esc_attr(__($custom_name, 'content-egg')) . ']';
             }
         }
-
-        asort($templates, SORT_STRING);
 
         return $templates;
     }

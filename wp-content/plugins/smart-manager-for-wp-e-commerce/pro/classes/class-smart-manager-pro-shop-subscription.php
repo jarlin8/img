@@ -14,7 +14,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 											'blue' 		=> array( 'wc-switched', 'wc-pending-cancel' ) );
 
 		protected static $_instance = null;
-
 		public static function instance($dashboard_key) {
 			if ( is_null( self::$_instance ) ) {
 				self::$_instance = new self($dashboard_key);
@@ -36,7 +35,13 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 			if ( ! empty( Smart_Manager::$sm_is_woo79 ) ) {
 				add_filter( 'sm_search_table_types', array( 'Smart_Manager_Shop_Order', 'sm_order_search_table_types' ), 12, 1 ); // should be kept before calling the parent class constructor
 			}
-
+			add_filter( 'sm_search_table_types', 'Smart_Manager_Pro_Shop_Order::orders_search_table_types', 13, 1 );
+			if ( empty( Smart_Manager_Pro_Shop_Order::$custom_search_cols ) ) {
+				Smart_Manager_Pro_Shop_Order::$custom_search_cols = array( 
+					'coupons_used'		=> 'woocommerce_order_items/coupon',
+					'shipping_method'	=> 'woocommerce_order_items/shipping'
+				);
+			}
 			parent::__construct($dashboard_key);
 			self::actions();
 
@@ -60,11 +65,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 				add_filter( 'woocommerce_orders_table_query_clauses',  array( &$this, 'modify_subscriptions_table_query_clauses' ), 99, 3 );
 				add_filter( 'sm_search_query_formatted', array( 'Smart_Manager_Shop_Order', 'sm_order_addresses_search_query_formatted' ), 12, 2 );
 				add_filter( 'sm_search_wc_orders_meta_cond', array( 'Smart_Manager_Shop_Order','search_wc_orders_meta_cond' ), 10, 2 );
-
 				// Filters for 'inline_update' functionality
 				add_filter( 'sm_default_inline_update', function() { return false; } );
-				add_action( 'sm_inline_update_post', array( &$this, 'subscriptions_inline_update' ), 10, 2 );
-
 				add_filter( 'sm_beta_background_entire_store_ids_query', array( $this,'get_entire_store_ids_query' ), 12, 1 );
 
 			} else {
@@ -73,12 +75,13 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 				add_filter( 'found_posts',array( 'Smart_Manager_Shop_Order' ,'kpi_data_query'), 100, 2 );
 				add_filter( 'sm_batch_update_copy_from_ids_select',array( &$this,'sm_batch_update_copy_from_ids_select' ), 10, 2 );
 			}
-
+			add_filter( 'sm_search_woocommerce_order_items_cond', 'Smart_Manager_Pro_Shop_Order::orders_advanced_search_flat_table_cond', 99, 2 );
 			add_filter( 'sm_data_model', array( &$this, 'subscriptions_data_model' ), 10, 2 );
-
 			// hooks for delete functionality
 			add_filter( 'sm_default_process_delete_records', function() { return false; } );
 			add_filter( 'sm_default_process_delete_records_result', array( 'Smart_Manager_Shop_Order', 'order_trash' ), 12, 2 );
+			add_action( 'sm_inline_update_post', array( &$this, 'subscriptions_inline_update' ), 10, 2 );
+
 		}
 
 		public static function actions() {
@@ -164,7 +167,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 
 			//Code to get the custom column model
 			if( is_callable( array( 'Smart_Manager_Shop_Order', 'generate_orders_custom_column_model' ) ) ) {
-				$dashboard_model['columns'] = self::generate_orders_custom_column_model( $dashboard_model['columns'] );
+				$dashboard_model['columns'] = self::generate_orders_custom_column_model( $dashboard_model['columns'], $this->dashboard_key );
 			}
 
 			$column_model = &$dashboard_model['columns'];
@@ -300,7 +303,15 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 		 * @return void.
 		 */
 		public function subscriptions_inline_update( $edited_data = array(), $params = array() ) {
-			( is_callable( array( 'Smart_Manager_Shop_Order', 'process_inline_update' ) ) ) ? Smart_Manager_Shop_Order::process_inline_update( $edited_data, array_merge( array( 'curr_obj' => $this, 'meta_date_getter_func' => 'get_date', 'meta_date_setter_func' => 'update_dates' ), $params ) ) : '';
+			if ( empty( $edited_data ) || ! is_array( $edited_data ) ) {
+				return;
+			}
+			Smart_Manager_Shop_Order::process_shipping_details_update( array( 'edited_data' => $edited_data,
+																				'dashboard'    => $this->dashboard_key
+																				) );
+			if ( ! empty( Smart_Manager::$sm_is_woo79 ) ) {
+				( is_callable( array( 'Smart_Manager_Shop_Order', 'process_inline_update' ) ) ) ? Smart_Manager_Shop_Order::process_inline_update( $edited_data, array_merge( array( 'curr_obj' => $this, 'meta_date_getter_func' => 'get_date', 'meta_date_setter_func' => 'update_dates' ), $params ) ) : '';
+			}
 		}
 
 		/**
@@ -347,10 +358,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 		}
 
 		/**
-			* Modifying args for meta columns.
-			* @param  array $args args to get column model.
-			* @return array Updated args values for meta columns
-		*/
+		 * Modifying args for meta columns.
+		 * @param  array $args args to get column model.
+		 * @return array Updated args values for meta columns
+		 */
 		public function update_meta_col_model( $args = array()) {
 			if ( empty( $args['table_nm'] ) || ( empty( $args['col'] ) ) ) {
 				return $args;

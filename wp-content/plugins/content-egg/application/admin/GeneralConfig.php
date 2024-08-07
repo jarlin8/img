@@ -7,7 +7,6 @@ defined('\ABSPATH') || exit;
 use ContentEgg\application\components\Config;
 use ContentEgg\application\Plugin;
 use ContentEgg\application\admin\PluginAdmin;
-use ContentEgg\application\components\ai\AiClient;
 use ContentEgg\application\models\PriceAlertModel;
 use ContentEgg\application\components\ModuleManager;
 use ContentEgg\application\helpers\TextHelper;
@@ -19,7 +18,7 @@ use function ContentEgg\prnx;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class GeneralConfig extends Config
 {
@@ -162,81 +161,6 @@ class GeneralConfig extends Config
                 'callback' => array($this, 'render_dropdown'),
                 'default' => self::getDefaultLang(),
                 'section' => __('General settings', 'content-egg'),
-            ),
-            'ai_model' => array(
-                'title' => __('AI Model', 'content-egg'),
-                'callback' => array($this, 'render_dropdown'),
-                'dropdown_options' => self::getAiModelList(),
-                'default' => 'gpt-4o-mini',
-                'description' => __('Please be cautious with your model settings, as some AI models may be significantly more expensive than others.', 'content-egg'),
-                'section' => __('AI', 'content-egg'),
-            ),
-            'ai_key' => array(
-                'title' => 'AI API key' . ' <span style="color:red;">*</span>',
-                'description' => sprintf(__('Add your <a target="_blank" href="%s" href="">OpenAI</a> or <a target="_blank" href="%s" href="">Claude</a> API key according to the AI model you have selected.', 'content-egg'), 'https://platform.openai.com/api-keys', 'https://console.anthropic.com/settings/keys'),
-                'callback' => array($this, 'render_password'),
-                'default' => '',
-                'validator' => array(
-                    'trim',
-                    array(
-                        'call'    => array('\ContentEgg\application\helpers\FormValidator', 'required'),
-                        'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'OpenAI API key'),
-                    ),
-                ),
-                'section' => __('AI', 'content-egg'),
-            ),
-            'ai_language' => array(
-                'title' => __('Language', 'content-egg'),
-                'callback' => array($this, 'render_dropdown'),
-                'dropdown_options' => self::getAiLanguagesList(),
-                'default' => self::getDefaultAiLang(),
-                'section' => __('AI', 'content-egg'),
-
-            ),
-            'ai_temperature' => array(
-                'title' => __('Creativity level', 'content-egg'),
-                'callback' => array($this, 'render_dropdown'),
-                'dropdown_options' => self::getAiCreativitiesList(),
-                'default' => '0.75',
-                'section' => __('AI', 'content-egg'),
-
-            ),
-            'prompt1' => array(
-                'title' => sprintf(__('Custom prompt #%d', 'content-egg'), 1),
-                'description' => __('For custom prompts, you can use placeholders such as %title%, %description%, %description_html%, %lang%, %features%, %reviews%, %title_new%.', 'content-egg')
-                    . ' ' . sprintf(__('<a target="_blank" href="%s">More info...</a>', 'content-egg'), 'https://ce-docs.keywordrush.com/ai/custom-prompts'),
-                'callback' => array($this, 'render_textarea'),
-                'validator' => array(
-                    'trim',
-                ),
-                'section' => __('AI', 'content-egg'),
-
-            ),
-            'prompt2' => array(
-                'title' => sprintf(__('Custom prompt #%d', 'content-egg'), 2),
-                'callback' => array($this, 'render_textarea'),
-                'validator' => array(
-                    'trim',
-                ),
-                'section' => __('AI', 'content-egg'),
-
-            ),
-            'prompt3' => array(
-                'title' => sprintf(__('Custom prompt #%d', 'content-egg'), 3),
-                'callback' => array($this, 'render_textarea'),
-                'validator' => array(
-                    'trim',
-                ),
-                'section' => __('AI', 'content-egg'),
-
-            ),
-            'prompt4' => array(
-                'title' => sprintf(__('Custom prompt #%d', 'content-egg'), 4),
-                'callback' => array($this, 'render_textarea'),
-                'validator' => array(
-                    'trim',
-                ),
-                'section' => __('AI', 'content-egg'),
             ),
             'post_types' => array(
                 'title' => 'Post Types',
@@ -743,111 +667,11 @@ class GeneralConfig extends Config
                 'default' => array(),
                 'section' => __('Shops', 'content-egg'),
             ),
-
         );
 
         $options = \apply_filters('cegg_general_config', $options);
 
         return $options;
-    }
-
-    public static function getAiLanguagesList()
-    {
-        return array_combine(array_values(self::getAiLanguages()), array_values(self::getAiLanguages()));
-    }
-
-    public static function getAiLanguages()
-    {
-        $list = array(
-            'ar' => 'Arabic',
-            'zh_CN' => 'Chinese (zh_CN)',
-            'bg' => 'Bulgarian',
-            'hr' => 'Croatian',
-            'cs' => 'Czech',
-            'da' => 'Danish',
-            'nl' => 'Dutch',
-            'en' => 'English',
-            'tl' => 'Filipino',
-            'fi' => 'Finnish',
-            'fr' => 'French',
-            'de' => 'German',
-            'el' => 'Greek',
-            'iw' => 'Hebrew',
-            'hi' => 'Hindi',
-            'hu' => 'Hungarian',
-            'id' => 'Indonesian',
-            'it' => 'Italian',
-            'ja' => 'Japanese',
-            'ko' => 'Korean',
-            'lv' => 'Latvian',
-            'lt' => 'Lithuanian',
-            'ms' => 'Malay',
-            'no' => 'Norwegian',
-            'pl' => 'Polish',
-            'pt' => 'Portuguese',
-            'pt_BR' => 'Portuguese (Brazil)',
-            'pt_PT' => 'Portuguese (Portugal)',
-            'ro' => 'Romanian',
-            'sk' => 'Slovak',
-            'sl' => 'Slovenian',
-            'es' => 'Spanish',
-            'sv' => 'Swedish',
-            'th' => 'Thai',
-            'tr' => 'Turkish',
-            'uk' => 'Ukrainian',
-            'vi' => 'Vietnamese',
-        );
-
-        ksort($list);
-        return $list;
-    }
-
-    public static function getAiCreativitiesList()
-    {
-        return array(
-            '0.0' => __('Min (more factual, but repetiteve)', 'content-egg'),
-            '0.5' => __('Low', 'content-egg'),
-            '0.75' => __('Optimal', 'content-egg') . ' ' . __('(recommended)', 'content-egg'),
-            '1.0' => __('Optimal+', 'content-egg'),
-            '1.2' => __('Hight', 'content-egg'),
-            '1.5' => __('Max (less factual, but creative)', 'content-egg'),
-        );
-    }
-
-    public static function getAiDefaultLang()
-    {
-        $parts = explode('_', \get_locale());
-        $lang = strtolower(reset($parts));
-        $languages = self::getAiLanguages();
-
-        if (isset($languages[$lang]))
-            return $languages[$lang];
-        else
-            return 'English';
-    }
-
-    public static function getAiModelList()
-    {
-        $models = AiClient::models();
-        $res = array();
-        foreach ($models as $key => $model)
-        {
-            $res[$key] = $model['name'];
-        }
-
-        return $res;
-    }
-
-    public static function getDefaultAiLang()
-    {
-        $parts = explode('_', \get_locale());
-        $lang = strtolower(reset($parts));
-        $languages = self::getAiLanguages();
-
-        if (isset($languages[$lang]))
-            return $languages[$lang];
-        else
-            return 'English';
     }
 
     public static function getDefaultLang()

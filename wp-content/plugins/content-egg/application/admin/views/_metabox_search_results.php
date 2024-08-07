@@ -1,37 +1,33 @@
 <?php defined('\ABSPATH') || exit; ?>
+<div class="search_results" ng-show="models.<?php echo esc_attr($module_id); ?>.results.length > 0 && !models.<?php echo esc_attr($module_id); ?>.processing && !models.<?php echo esc_attr($module_id); ?>.error">
+    <div class="row search_results_row" ng-class="{
+                'result_added' : result.added}" ng-click="add(result, '<?php echo esc_attr($module_id); ?>')" repeat-done ng-repeat="result in models.<?php echo esc_attr($module_id); ?>.results">
+        <div class="col-md-1" ng-if="result.img">
+            <img style="max-height: 80px;" ng-src="{{result.img}}" class="img-thumbnail" />
+        </div>
+        <div ng-class="result.img ? 'col-md-11' : 'col-md-12'">
+            <strong ng-show="result.title">{{result.title}}</strong>
+            <p ng-show="result.description">{{result.description| limitTo: 200}}{{result.description.length > 200 ? '&hellip;' : ''}}</p>
+            <p>
+                <span ng-show="result.price"><b>{{result.currencyCode}}</b> <strike ng-show="result.priceOld">{{result.priceOld}}</strike> <b>{{result.price}}</b></span>
+                <span ng-show="result.domain" class="text-muted">&nbsp;&nbsp;<img src="https://www.google.com/s2/favicons?domain=https://{{result.domain}}"> {{result.domain}}</span>
+                <span ng-show="result.features.length">&nbsp;&nbsp;<small class="text-muted"><?php esc_html_e('Attributes:', 'content-egg'); ?> {{result.features.length}}</small></span>
+                <span ng-show="result.ean">&nbsp;&nbsp;<small class="text-muted"><?php esc_html_e('EAN:', 'content-egg'); ?> {{result.ean}}</small></span>
+                <?php if ($module_id == 'Amazon' || $module_id == 'AmazonNoApi' || $module_id == 'Ebay2'): ?>
+                    <span class="text-muted">
+                        <br>
+                        <small class="text-primary" ng-show="result.extra.IsPrimeEligible">PRIME</small>
+                        <small class="text-primary" ng-show="result.extra.priorityListing">Priority listing</small>
+                        <small class="text-success" ng-show="result.extra.IsEligibleForSuperSaverShipping">Free Shipping<span ng-show="result.extra.IsAmazonFulfilled"> by Amazon</span></small>
+                    </span>            
+                <?php endif; ?>
 
-<div class="list-group list-group-numbered" style="max-height: 600px;overflow-y: scroll;">
-
-    <a class="list-group-item list-group-item-action d-flex justify-content-start align-items-start" ng-class="{'disabled' : result.added}" ng-click="add(result, '<?php echo esc_attr($module_id); ?>')" repeat-done ng-repeat="result in models.<?php echo esc_attr($module_id); ?>.results">
-        <div class="ms-2 me-auto d-flex justify-content-start align-items-center1">
-            <div ng-show="result.img" class="cegg-res-image-container me-3 text-center">
-                <img class="img-thumbnail cegg-res-product-image mx-auto" ng-src="{{result.img}}">
-            </div>
-            <div>
-                <div ng-show="result.title" class="fw-bold">{{result.title| limitTo: 120}}{{result.title.length > 120 ? '&hellip;' : ''}}</div>
-                <div ng-show="result._descriptionText" class="mt-1 small text-muted">{{result._descriptionText| limitTo: 250}}{{result.description.length > 250 ? '&hellip;' : ''}}</div>
-
-                <div class="mt-2">
-                    <span ng-show="result._priceFormatted"><b ng-bind-html="result._priceFormatted"></b> <strike ng-show="result._priceOldFormatted" ng-bind-html="result._priceOldFormatted"></strike></span>
-                    <span ng-show="result.domain" class="small text-muted ms-2"><img src="https://www.google.com/s2/favicons?domain=https://{{result.domain}}"> {{result.domain}}</span>
-                    <span ng-show="result.features.length" class="ms-2"><small class="small text-muted"><?php esc_html_e('Attributes:', 'content-egg'); ?> {{result.features.length}}</small></span>
-                    <span ng-show="result.ean" class="ms-2"><small class="small text-muted"><?php esc_html_e('EAN:', 'content-egg'); ?> {{result.ean}}</small></span>
-                    <?php if ($module_id == 'Amazon' || $module_id == 'AmazonNoApi' || $module_id == 'Ebay2') : ?>
-                        <div class="text-muted small">
-                            <small class="text-success" ng-show="result.promo">{{result.promo}}</small>
-                            <small class="text-primary" ng-show="result.extra.IsPrimeEligible">PRIME</small>
-                            <small class="text-primary" ng-show="result.extra.priorityListing">Priority listing</small>
-                            <small class="text-success" ng-show="result.extra.IsEligibleForSuperSaverShipping">Free Shipping<span ng-show="result.extra.IsAmazonFulfilled"> by Amazon</span></small>
-                        </div>
-                    <?php endif; ?>
-
-                </div>
-                <div ng-show="result.code">
-                    <?php esc_html_e('Coupon code:', 'content-egg'); ?> <em>{{result.code}}</em>
-                    - <span ng-show="result.startDate">{{result.startDate * 1000|date:'mediumDate'}} - {{result.endDate * 1000|date:'mediumDate'}}</span>
-                </div>
+            </p>
+            <div ng-show="result.code">
+                <?php esc_html_e('Coupon code:', 'content-egg'); ?> <em>{{result.code}}</em>
+                - <span ng-show="result.startDate">{{result.startDate * 1000|date:'mediumDate'}} - {{result.endDate * 1000|date:'mediumDate'}}</span>
             </div>
 
         </div>
-    </a>
+    </div>
 </div>

@@ -11,7 +11,7 @@ use ContentEgg\application\helpers\TemplateHelper;
 if (!$all_items = TemplateHelper::sortAllByPrice($data, $order))
     return;
 
-if (TemplateHelper::isModuleDataExist($all_items, array('Amazon', 'AmazonNoApi')))
+if (TemplateHelper::isModuleDataExist($items, array('Amazon', 'AmazonNoApi')))
     \wp_enqueue_script('cegg-frontend', \ContentEgg\PLUGIN_RES . '/js/frontend.js', array('jquery'));
 
 $amazon_last_updated = TemplateHelper::getLastUpdateFormattedAmazon($data);

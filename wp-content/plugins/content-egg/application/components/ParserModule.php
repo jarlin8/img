@@ -15,7 +15,7 @@ use ContentEgg\application\Plugin;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 abstract class ParserModule extends Module
 {
@@ -172,14 +172,14 @@ abstract class ParserModule extends Module
 
         if (!$token || $force)
         {
-            // try
-            // {
-            list($token, $expires_in) = $this->requestAccessToken();
-            //  }
-            //  catch (\Exception $e)
-            //  {
-            //       return false;
-            //   }
+            try
+            {
+                list($token, $expires_in) = $this->requestAccessToken();
+            }
+            catch (\Exception $e)
+            {
+                return false;
+            }
             \set_transient($transient_name, $token, (int) $expires_in);
         }
 

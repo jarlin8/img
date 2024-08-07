@@ -21,7 +21,7 @@ use function ContentEgg\prnx;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class ShopeeModule extends AffiliateParserModule
 {
@@ -191,10 +191,6 @@ class ShopeeModule extends AffiliateParserModule
         elseif (isset($r['priceMax']))
             $content->price = (float) $r['priceMax'];
 
-        $discount_rate = (int)$r['priceDiscountRate'];
-        if ($discount_rate > 0 && $discount_rate < 100 && $content->price)
-            $content->priceOld = number_format($content->price * 100 / (100 - $discount_rate), 2, '.', '');
-
         if (isset($r['ratingStar']))
         {
             $content->ratingDecimal = (float) $r['ratingStar'];
@@ -288,13 +284,8 @@ class ShopeeModule extends AffiliateParserModule
         $id = end($parts);
         if (is_numeric($id))
             return (int) $id;
-
-        $parts = explode('.', $url);
-        $id = end($parts);
-        if (is_numeric($id))
-            return (int) $id;
-
-        return '';
+        else
+            return '';
     }
 
     private static function isProductId($str)

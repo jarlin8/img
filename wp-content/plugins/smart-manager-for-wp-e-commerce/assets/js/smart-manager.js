@@ -180,9 +180,6 @@ Smart_Manager.prototype.init = function() {
 	this.pricingPageURL = ((this.smAppAdminURL) ? this.smAppAdminURL : location.href) + '-pricing';
 	
 	this.month_names_short = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-	this.isSettingsPage = sm_beta_params.is_settings_page;
-
 	this.forceCollapseAdminMenu = (sm_beta_params.hasOwnProperty('forceCollapseAdminMenu')) ? parseInt(sm_beta_params.forceCollapseAdminMenu) : 0
 	this.defaultImagePlaceholder = (sm_beta_params.hasOwnProperty('defaultImagePlaceholder')) ? sm_beta_params.defaultImagePlaceholder : ''
 	this.rowHeight = (sm_beta_params.hasOwnProperty('rowHeight')) ? sm_beta_params.rowHeight : '50px'
@@ -218,6 +215,7 @@ Smart_Manager.prototype.init = function() {
 		this.sm_nonce = this.sm_dashboards['sm_nonce'];
 		delete this.sm_dashboards['sm_nonce'];
 		this.sm_is_woo79 = (sm_beta_params.hasOwnProperty('SM_IS_WOO79')) ? sm_beta_params.SM_IS_WOO79 : '';
+		this.modalVals = {}
 	}
 	
 	window.smart_manager.setDashboardDisplayName();
@@ -261,7 +259,7 @@ Smart_Manager.prototype.init = function() {
 		}
 	}
 
-	if ( !jQuery(document.body).hasClass('folded') && window.smart_manager.sm_beta_pro == 1 && !window.smart_manager.isSettingsPage && window.smart_manager.forceCollapseAdminMenu == 1) {
+	if ( !jQuery(document.body).hasClass('folded') && window.smart_manager.sm_beta_pro == 1 && window.smart_manager.forceCollapseAdminMenu == 1) {
 		jQuery(document.body).addClass('folded');
 	}
 
@@ -2308,7 +2306,7 @@ Smart_Manager.prototype.event_handler = function() {
 			}
 			window.smart_manager.toggleTopBar();
 		    window.smart_manager.setDashboardDisplayName();
-			window.smart_manager.load_dashboard(); 
+			window.smart_manager.load_dashboard()
 		} else {
 			jQuery(this).val(window.smart_manager.current_selected_dashboard);
 			window.smart_manager.notification = {message: sprintf(
@@ -2328,7 +2326,9 @@ Smart_Manager.prototype.event_handler = function() {
 
 	.off( 'click', '#show_hide_cols_sm_editor_grid' ).on( 'click', '#show_hide_cols_sm_editor_grid' ,function(e){
 		e.preventDefault();
-		if ( "undefined" !== typeof (window.smart_manager.showPannelDialog) && "function" === typeof (window.smart_manager.showPannelDialog) ) {
+		if((typeof window.smart_manager.dirtyRowColIds !== 'undefined') && Object.getOwnPropertyNames(window.smart_manager.dirtyRowColIds).length > 0){
+			window.smart_manager.confirmUnsavedChanges({'yesCallback': window.smart_manager.showPannelDialog, 'yesCallbackParams': window.smart_manager.columnManagerRoute, 'hideOnYes': false})
+		}else if( "undefined" !== typeof (window.smart_manager.showPannelDialog) && "function" === typeof (window.smart_manager.showPannelDialog)){
 			window.smart_manager.showPannelDialog(window.smart_manager.columnManagerRoute);
 		}
 	})
@@ -2395,10 +2395,10 @@ Smart_Manager.prototype.event_handler = function() {
 			if ( typeof (window.smart_manager.initialize_advanced_search) !== "undefined" && typeof (window.smart_manager.initialize_advanced_search) === "function" ) {
 				window.smart_manager.initialize_advanced_search();
 			}
-
-			// Code to show the advanced search dialog in case of no conditions
-			if ( window.smart_manager.advancedSearchRuleCount == 0 && typeof (window.smart_manager.showPannelDialog) !== "undefined" && typeof (window.smart_manager.showPannelDialog) === "function" ) {
-				window.smart_manager.showPannelDialog(window.smart_manager.advancedSearchRoute)
+			if((typeof window.smart_manager.dirtyRowColIds !== 'undefined') && Object.getOwnPropertyNames(window.smart_manager.dirtyRowColIds).length > 0){
+				window.smart_manager.confirmUnsavedChanges({'yesCallback': window.smart_manager.showPannelDialog, 'yesCallbackParams': window.smart_manager.advancedSearchRoute, 'hideOnYes': false})
+			}else if("undefined" !== typeof(window.smart_manager.showPannelDialog) && "function" === typeof(window.smart_manager.showPannelDialog)){ // Code to show the advanced search dialog in case of no conditions.
+				window.smart_manager.showPannelDialog(window.smart_manager.advancedSearchRoute);
 			}
 		}
 
@@ -2419,7 +2419,11 @@ Smart_Manager.prototype.event_handler = function() {
 				jQuery('#sm_simple_search_box').val(window.smart_manager.simpleSearchText)
 			} else {
 				window.smart_manager.simpleSearchText = jQuery('#sm_simple_search_box').val();
-				window.smart_manager.refresh();
+				if((typeof window.smart_manager.dirtyRowColIds !== 'undefined') && Object.getOwnPropertyNames(window.smart_manager.dirtyRowColIds).length > 0){
+					window.smart_manager.confirmUnsavedChanges({'yesCallback': window.smart_manager.refresh})
+				}else if("undefined" !== typeof(window.smart_manager.refresh) && "function" === typeof(window.smart_manager.refresh)){ // Code to show the advanced search dialog in case of no conditions.
+					window.smart_manager.refresh();
+				}
 			}
 		}, 1000);
 	})
@@ -2559,7 +2563,11 @@ Smart_Manager.prototype.event_handler = function() {
 			}
 			if( !isBackgroundProcessRunning ) {
 				params.btnParams.hideOnYes = (window.smart_manager.sm_beta_pro == 1) ? false : true;
-				window.smart_manager.showConfirmDialog(params);
+				if((typeof window.smart_manager.dirtyRowColIds !== 'undefined') && Object.getOwnPropertyNames(window.smart_manager.dirtyRowColIds).length > 0){
+					window.smart_manager.confirmUnsavedChanges({'yesCallback': window.smart_manager.showConfirmDialog, 'yesCallbackParams': params, 'hideOnYes': false})
+				}else if(typeof (window.smart_manager.showConfirmDialog) !== "undefined" && typeof (window.smart_manager.showConfirmDialog) === "function"){
+					window.smart_manager.showConfirmDialog(params);
+				}
 			}
 		}
 		return false;    
@@ -2655,7 +2663,11 @@ Smart_Manager.prototype.event_handler = function() {
 			},
 			closeCTA: { title: _x('Cancel', 'button', 'smart-manager-for-wp-e-commerce')}
 		}
-		window.smart_manager.showModal()
+		if((typeof window.smart_manager.dirtyRowColIds !== 'undefined') && Object.getOwnPropertyNames(window.smart_manager.dirtyRowColIds).length > 0){
+			window.smart_manager.confirmUnsavedChanges({'yesCallback': window.smart_manager.showModal, 'modalVals': window.smart_manager.modal, 'hideOnYes': false})
+		}else if("undefined" !== typeof(window.smart_manager.showModal) && "function" === typeof(window.smart_manager.showModal)){
+			window.smart_manager.showModal()
+		}
 	})
 
 	.off('click', "#sm_custom_views_create, #sm_custom_views_update").on('click', "#sm_custom_views_create, #sm_custom_views_update", function(e){
@@ -2664,7 +2676,12 @@ Smart_Manager.prototype.event_handler = function() {
 			if ( typeof (window.smart_manager.createUpdateViewDialog) !== "undefined" && typeof (window.smart_manager.createUpdateViewDialog) === "function" ) {
 				let id = jQuery(this).attr('id');
 				let action = (id == 'sm_custom_views_update') ? 'update' : 'create';
-				window.smart_manager.createUpdateViewDialog(action);
+				if((typeof window.smart_manager.dirtyRowColIds !== 'undefined') && Object.getOwnPropertyNames(window.smart_manager.dirtyRowColIds).length > 0){
+					window.smart_manager.confirmUnsavedChanges({'yesCallback': window.smart_manager.createUpdateViewDialog, 'yesCallbackParams': action, 'hideOnYes': false})
+				}else if("undefined" !== typeof(window.smart_manager.createUpdateViewDialog) && "function" === typeof(window.smart_manager.createUpdateViewDialog)){
+					window.smart_manager.createUpdateViewDialog(action);
+				}
+				
 			}
 		}  else {
 			window.smart_manager.notification = {message: sprintf(
@@ -2716,7 +2733,9 @@ Smart_Manager.prototype.event_handler = function() {
 			window.smart_manager.notification = {message: _x('Please select a record', 'notification', 'smart-manager-for-wp-e-commerce')}
 			window.smart_manager.showNotification()
 		} else if(window.smart_manager.exportCSVActions && 'undefined' !== typeof(id) && id && window.smart_manager.exportCSVActions.includes(id) && !isBackgroundProcessRunning){ //code for handling export CSV functionality.
-			if("undefined" !== typeof(window.smart_manager.getExportCsv) && "function" === typeof(window.smart_manager.getExportCsv) && params && btnText){
+			if((typeof window.smart_manager.dirtyRowColIds !== 'undefined') && Object.getOwnPropertyNames(window.smart_manager.dirtyRowColIds).length > 0){
+				window.smart_manager.confirmUnsavedChanges({'yesCallback': window.smart_manager.getExportCsv, 'yesCallbackParams': {'params':params,'id':id,'btnText':btnText}, 'hideOnYes': false})
+			}else if("undefined" !== typeof(window.smart_manager.getExportCsv) && "function" === typeof(window.smart_manager.getExportCsv) && params && btnText){
 				window.smart_manager.getExportCsv({'params':params,'id':id,'btnText':btnText});
 			}
 		}
@@ -2726,13 +2745,17 @@ Smart_Manager.prototype.event_handler = function() {
 					if(window.smart_manager.selectedRows.length > 0 || window.smart_manager.selectAll || 'sm_entire_store' === className){
 						if( id == 'batch_update_sm_editor_grid' && !isBackgroundProcessRunning ) { //code for handling batch update functionality
 							// window.smart_manager.createBatchUpdateDialog();
-							if ( typeof (window.smart_manager.showPannelDialog) !== "undefined" && typeof (window.smart_manager.showPannelDialog) === "function" ) {
+							if((typeof window.smart_manager.dirtyRowColIds !== 'undefined') && Object.getOwnPropertyNames(window.smart_manager.dirtyRowColIds).length > 0){
+								window.smart_manager.confirmUnsavedChanges({'yesCallback': window.smart_manager.showPannelDialog, 'yesCallbackParams': window.smart_manager.bulkEditRoute, 'hideOnYes': false})
+							}else if(typeof (window.smart_manager.showPannelDialog) !== "undefined" && typeof (window.smart_manager.showPannelDialog) === "function"){
 								window.smart_manager.showPannelDialog(window.smart_manager.bulkEditRoute)
 							}
 						} else if( ( id == 'sm_beta_dup_entire_store' || id == 'sm_beta_dup_selected' ) && !isBackgroundProcessRunning ) { //code for handling duplicate records functionality
 							if(window.smart_manager.isTaxonomyDashboard()){
 								window.smart_manager.notification = {message: _x('Comming soon', 'notification', 'smart-manager-for-wp-e-commerce')}
-								window.smart_manager.showNotification()
+								if(typeof (window.smart_manager.showNotification) !== "undefined" && typeof (window.smart_manager.showNotification) === "function" ){
+									window.smart_manager.showNotification();
+								}
 							}else {
 								params.content = (window.smart_manager.dashboard_key != 'product') ? '<p>'+_x('This will duplicate only the records in posts, postmeta and related taxonomies.', 'modal content', 'smart-manager-for-wp-e-commerce')+'</p>' : '';
 								params.content += _x('Are you sure you want to duplicate the ', 'modal content', 'smart-manager-for-wp-e-commerce') + btnText + '?';
@@ -2744,10 +2767,16 @@ Smart_Manager.prototype.event_handler = function() {
 								window.smart_manager.duplicateStore = ( id == 'sm_beta_dup_entire_store' ) ? true : false;
 
 								params.btnParams.hideOnYes = false;
-								window.smart_manager.showConfirmDialog(params);
+								if((typeof window.smart_manager.dirtyRowColIds !== 'undefined') && Object.getOwnPropertyNames(window.smart_manager.dirtyRowColIds).length > 0){
+									window.smart_manager.confirmUnsavedChanges({'yesCallback': window.smart_manager.showConfirmDialog, 'yesCallbackParams': params, 'hideOnYes': false})
+								}else if("undefined" !== typeof(window.smart_manager.showConfirmDialog) && "function" === typeof(window.smart_manager.showConfirmDialog)){
+									window.smart_manager.showConfirmDialog(params);
+								}
 							}
 						} else if( id == 'print_invoice_sm_editor_grid_btn' ) { //code for handling Print Invoice functionality
-							if ( typeof (window.smart_manager.printInvoice) !== "undefined" && typeof (window.smart_manager.printInvoice) === "function" ) {
+							if((typeof window.smart_manager.dirtyRowColIds !== 'undefined') && Object.getOwnPropertyNames(window.smart_manager.dirtyRowColIds).length > 0){
+								window.smart_manager.confirmUnsavedChanges({'yesCallback': window.smart_manager.printInvoice})
+							}else if(typeof (window.smart_manager.printInvoice) !== "undefined" && typeof (window.smart_manager.printInvoice) === "function"){
 								window.smart_manager.printInvoice();
 							}
 						}
@@ -4217,6 +4246,47 @@ jQuery.widget('ui.dialog', jQuery.extend({}, jQuery.ui.dialog.prototype, {
 			}
 		},200)
 	}
+// Function for displaying confirm dialog for unsaved changes.
+	Smart_Manager.prototype.confirmUnsavedChanges = function(params ={}) {
+			try{
+				window.smart_manager.modal = {
+					title: _x('Attention!', 'modal title', 'smart-manager-for-wp-e-commerce'),
+					content: '<div style="font-size:1.2em;margin:1em;"> <div style="margin-bottom:1em;">'+
+						_x('You have unsaved changes. Are you sure you want to continue?', 'modal content', 'smart-manager-for-wp-e-commerce')+'</div></div>',
+					autoHide: false,
+					cta: {
+						title: _x('Yes', 'button', 'smart-manager-for-wp-e-commerce'),
+						//closeModalOnClick: (params.hasOwnProperty('hideOnYes')) ? params.hideOnYes : true,
+						callback: function() {
+							 setTimeout(() => { // TODO: improve it
+								if(params.hasOwnProperty('modalVals')){
+									window.smart_manager.modal = params.modalVals
+								}
+								if(params.hasOwnProperty('yesCallback') && typeof params.yesCallback === "function"){
+									if(params.hasOwnProperty('yesCallbackParams')){
+										params.yesCallback( params.yesCallbackParams );
+									}else{
+										params.yesCallback();
+									}
+								}
+							 },300)
+						}
+					},
+					closeCTA: { title: _x('No', 'button', 'smart-manager-for-wp-e-commerce'),
+						callback: function() {
+							if( params.hasOwnProperty('noCallback') && typeof params.noCallback === "function" ) {
+								params.noCallback();
+							}
+						}
+					}
+				}
+				window.smart_manager.showModal()
+			}
+			catch(e){
+				SMErrorHandler.log('Exception occurred in confirmUnsavedChanges:: ', e)
+			}
+	}
+
 	// Register an alias for datetime
 	Handsontable.cellTypes.registerCellType('sm.datetime', {
 		editor: dateTimeEditor,

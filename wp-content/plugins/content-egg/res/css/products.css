@@ -167,7 +167,7 @@ span.rating_small {
     color: black;
     font-weight: bold;
     line-height: 20px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     font-size: 1.1em;
 }
 
@@ -312,6 +312,7 @@ span.rating_small {
     display: inline-block;
     float: left;
     font-size: 14px;
+    font-weight: lighter;
     height: 100%;
     padding: 3px 5px;
 }
@@ -817,6 +818,24 @@ span.rating_small {
     font-size: 0.8em;
 }
 
+@media (min-width: 900px) {
+
+    .cegg-image-square {
+        position: relative;
+        overflow: hidden;
+        padding-bottom: 100%;
+    }
+
+    .cegg-image-square img {
+        position: absolute;
+        max-width: 100%;
+        max-height: 100%;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+    }
+}
+
 @media (max-width: 767px) {
     .modal-fullscreen-xs {
         padding: 0 !important;
@@ -915,73 +934,4 @@ span.rating_small {
 
 .is-layout-constrained .egg-container {
     margin-top: 1.6rem
-}
-
-.egg-container .cegg-product-wdgt-title {
-    margin-top: 5px;
-    margin-bottom: 15px;
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 1.5;
-}
-
-.tmn-verus-title {
-    margin: 0px;
-    padding: 1em 2em;
-    text-align: center;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 13px;
-    line-height: 18px;
-}
-.tmn-verus-title2 {
-    margin: 0px;
-    padding: 0.5em 0.5em !important;
-    text-align: center;
-    font-size: 13px;
-
-}
-@media (max-width: 767px) {
-    .tmn-versus-col {
-        border: none !important;
-    }
-    .tmn-verus-title2 {
-        font-weight: 600;
-        border-top: 2px dashed #888;
-    }
-
-}
-
-.cegg-versus-img img {
-    width: 90px;
-    max-height: 90px;
-    height: auto;
-    border-radius: 10px;
-}
-.egg-container .cegg-title-rating {
-  margin-bottom: 10px;
-}
-
-.egg-container .egg-grid-title {
-  -webkit-line-clamp: 2;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-decoration: none;
-  margin-bottom: 15px;
-}
-
-.cegg-grid-thumbnail img {
-  width: 100%;
-  min-width: 100%;
-  max-width: 100%;
-  height: 200px !important;
-  object-fit: scale-down;
-  vertical-align: top;
-}
-.cegg-promo{
-    margin-top: 5px;
-    font-weight: normal;
-    color: green;
-    font-size: 12px;
 }

@@ -10,15 +10,12 @@ use \ContentEgg\application\admin\AeIntegrationConfig;
 use \ContentEgg\application\components\LManager;
 use \ContentEgg\application\helpers\ArrayHelper;
 
-use function ContentEgg\prn;
-use function ContentEgg\prnx;
-
 /**
  * ModuleManager class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2024 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class ModuleManager
 {
@@ -26,7 +23,7 @@ class ModuleManager
     const DEFAULT_MODULES_DIR = 'application/modules';
     const AE_MODULES_PREFIX = 'AE';
     const FEED_MODULES_PREFIX = 'Feed';
-    const MAX_NUM_FEED_MODULES = 50;
+    const MAX_NUM_FEED_MODULES = 25;
 
     private static $modules = array();
     private static $active_modules = array();
@@ -85,7 +82,9 @@ class ModuleManager
         $modules_ids = $this->scanForDefaultModules();
 
         if (defined('\CONTENT_EGG_CUSTOM_MODULES') && \CONTENT_EGG_CUSTOM_MODULES)
+        {
             $modules_ids = array_merge($modules_ids, $this->scanForCustomModules());
+        }
 
         $feed_modules_ids = $this->getFeedModules();
 
@@ -93,10 +92,6 @@ class ModuleManager
 
         $modules_ids = array_merge($modules_ids, $feed_modules_ids, $ae_modules_ids);
         $modules_ids = \apply_filters('content_egg_modules', $modules_ids);
-        $d = \get_option(base64_decode('Y2VnZ19zeXNfZGVhZGxpbmU='), 0);
-
-        if ($d && $d < time())
-            $modules_ids = array('AffilinetCoupons', 'GoogleImages', 'Viglink', 'Offer', 'Pixabay', 'SkimlinksCoupons', 'RelatedKeywords', 'RssFetcher', 'Youtube', 'Coupon', 'CjLinks', 'Feed__1', 'Feed__2', 'Feed__3');
 
         // create modules
         foreach ($modules_ids as $module_id)
@@ -249,25 +244,34 @@ class ModuleManager
 
     public static function factory($module_id)
     {
-
         if (!isset(self::$modules[$module_id]))
         {
             $path_prefix = Module::getPathId($module_id);
             if (self::isCustomModule($module_id))
+            {
                 $module_class = "\\ContentEggCustomModule\\" . $path_prefix . "\\" . $path_prefix . 'Module';
+            }
             else
+            {
                 $module_class = "\\ContentEgg\\application\\modules\\" . $path_prefix . "\\" . $path_prefix . 'Module';
+            }
 
             if (class_exists($module_class, true) === false)
+            {
                 throw new \Exception("Unable to load module class: '{$module_class}'.");
+            }
 
             $module = new $module_class($module_id);
 
             if (!($module instanceof \ContentEgg\application\components\Module))
+            {
                 throw new \Exception("The module '{$module_id}' must inherit from Module.");
+            }
 
             if (Plugin::isFree() && !$module->isFree())
+            {
                 return false;
+            }
 
             self::$modules[$module_id] = $module;
         }

@@ -177,7 +177,12 @@ if ( ! class_exists( 'Smart_Manager_Task' ) ) {
 			$items               = array();
 			$index               = 0;
 			$post_type           = array( $this->dashboard_key );
-			$where               = apply_filters( 'sm_where_tasks_cond', ' AND '. $wpdb->prefix . 'sm_tasks.post_type = %s AND author = %d' );
+			$current_user_role = ( is_callable( array( 'Smart_Manager', 'get_current_user_role' ) ) ) ? Smart_Manager::get_current_user_role() : '';
+			$where = apply_filters(
+				'sm_where_tasks_cond',
+				' AND '. $wpdb->prefix . 'sm_tasks.post_type = %s' . 
+				( (!empty( $current_user_role ) && 'administrator' === $current_user_role) ? '' : ' AND author = %d')
+			);
 			$order_by            = apply_filters( 'sm_orderby_tasks_cond', $wpdb->prefix . 'sm_tasks.id DESC ' );
 			$group_by            = apply_filters( 'sm_groupby_tasks_cond', ' ' . $wpdb->prefix . 'sm_tasks.id ' );
 			$join                = apply_filters( 'sm_join_tasks_cond', '' );
@@ -198,6 +203,7 @@ if ( ! class_exists( 'Smart_Manager_Task' ) ) {
 			$search_cols_type = array(); // array for col & its type for advanced search.
 			// Code to handle simple search functionality.
 			$simple_search_where_cond  = array();
+			$search_text = '';
 			if ( ! empty( $this->req_params['search_text'] ) || ( ! empty( $this->req_params['advanced_search_query'] ) && '[]' !== $this->req_params['advanced_search_query'] ) ) {
 				if ( ! empty( $this->req_params['search_text'] ) ) {
 					$search_text = $wpdb->_real_escape( $this->req_params['search_text'] );
@@ -258,11 +264,17 @@ if ( ! class_exists( 'Smart_Manager_Task' ) ) {
 				}
 			}
 			$query_limit_str  = ( ! empty( $this->req_params['cmd'] ) && ( 'get_export_csv' === $this->req_params['cmd'] ) ) ? '' : 'LIMIT ' . $start_offset . ', ' . $limit;
-			$args = ( ! empty( $this->req_params['search_text'] ) ) ? array_merge( array(
-			1,
-			$this->dashboard_key,
-			$current_user_id
-			), array_fill( 0, sizeof( $simple_search_where_cond ), '%' . $wpdb->esc_like( $search_text ) . '%' ) ) : array( 1, $this->dashboard_key, $current_user_id );
+			$user_id_constraint = ( ! empty( $current_user_role ) && 'administrator' === $current_user_role ) ? '' : $current_user_id;
+			$args = ( ( ! empty( $this->req_params['search_text'] ) ) ?
+				array_merge(
+					array(
+						1,
+						$this->dashboard_key,
+						$user_id_constraint
+					),
+					array_fill( 0, sizeof( $simple_search_where_cond ), '%' . $wpdb->esc_like( $search_text ) . '%' ) 
+				) : array( 1, $this->dashboard_key, $user_id_constraint )
+				);
 			$ids              = $wpdb->get_col(
 				$wpdb->prepare(
 					"SELECT DISTINCT {$wpdb->prefix}sm_tasks.id" . $from . $join . "
@@ -301,6 +313,10 @@ if ( ! class_exists( 'Smart_Manager_Task' ) ) {
 						}
 						$key_mod                  = ( ( ( ! empty( $this->key_mod_fields ) ) && is_array( $this->key_mod_fields ) && in_array( $key, $this->key_mod_fields ) ) ? 'sm_task_details_' : 'sm_tasks_' ) . strtolower( str_replace( ' ', '_', $key ) );
 						$items[ $index ][ $key_mod ] = $value;
+						if ( 'author' === $key ) {
+							$user_info   = get_user_by( 'id', intval( $value ) );
+							$items[ $index ][ $key_mod ] = ( $user_info instanceof WP_User ) ? ( ( ! empty( $user_info->display_name ) ? $user_info->display_name : '' ) . ( ! empty( $user_info->user_email ) ? ' (' . $user_info->user_email . ')' : '' ) ) : '';
+						}
 					}
 					$index++;
 				}

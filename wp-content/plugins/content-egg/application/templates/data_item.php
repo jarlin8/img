@@ -35,7 +35,7 @@ if (TemplateHelper::isModuleDataExist($items, array('Amazon', 'AmazonNoApi')))
                             'Udemy'
                         ), array('item' => $item));
                         ?>
-                        <?php if ($item['module_id'] !== 'AmazonNoApi') $this->renderBlock('item_reviews', array('item' => $item)); ?>
+                        <?php $this->renderBlock('item_reviews', array('item' => $item)); ?>
                     </div>
                 </div>
             </div>
