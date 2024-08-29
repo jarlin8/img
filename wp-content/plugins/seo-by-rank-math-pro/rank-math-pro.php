@@ -9,7 +9,7 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Rank Math SEO PRO
- * Version:           3.0.61
+ * Version:           3.0.69
  * Plugin URI:        https://rankmath.com/wordpress/plugin/seo-suite/
  * Description:       Super-charge your website’s SEO with the Rank Math PRO options like Site Analytics, SEO Performance, Custom Schema Templates, News/Video Sitemaps, etc.
  * Author:            Rank Math
@@ -23,47 +23,45 @@
 use RankMath\Helper;
 
 defined( 'ABSPATH' ) || exit;
-
 add_filter( 'rank_math/admin/sensitive_data_encryption', '__return_false' );
 
 update_option( 'rank_math_connect_data', [
-     'username'  => 'user420',
-     'email'     => 'user420@gmail.com',
-     'api_key'   => '*********',
-     'plan'      => 'business',
-     'connected' => true,
+'username' => 'user555',
+'email' => 'user555@gmail.com',
+'api_key' => '*********',
+'plan' => 'business',
+'connected' => true,
 ] );
 update_option( 'rank_math_registration_skip', 1 );
 
 add_action( 'init', function() {
-     add_filter( 'pre_http_request', function( $pre, $parsed_args, $url ) {
-          if ( strpos( $url, 'https://rankmath.com/wp-json/rankmath/v1/' ) !== false ) {
-               $basename = basename( parse_url( $url, PHP_URL_PATH ) );
-               if ( $basename == 'siteSettings' ) {
-                    return [
-                         'response' => [ 'code' => 200, 'message' => 'ОК' ],
-                         'body'     => json_encode( [
-                              'error' => '',
-                              'plan'  => 'business',
-                              'keywords' => get_option( 'rank_math_keyword_quota', [ 'available' => 10000, 'taken' => 0 ] ),
-                              'analytics' => 'on',
-                         ] ),
-                     ];
-               } elseif ( $basename == 'keywordsInfo' ) {
-                    if ( isset( $parsed_args['body']['count'] ) ) {
-                         return [
-                              'response' => [ 'code' => 200, 'message' => 'ОК' ],
-                              'body'     => json_encode( [ 'available' => 10000, 'taken' => $parsed_args['body']['count'] ] ),
-                         ];
-                    }
+add_filter( 'pre_http_request', function( $pre, $parsed_args, $url ) {
+if ( strpos( $url, 'https://rankmath.com/wp-json/rankmath/v1/' ) !== false ) {
+$basename = basename( parse_url( $url, PHP_URL_PATH ) );
+if ( $basename == 'siteSettings' ) {
+return [
+'response' => [ 'code' => 200, 'message' => 'ОК' ],
+'body' => json_encode( [
+'error' => '',
+'plan' => 'business',
+'keywords' => get_option( 'rank_math_keyword_quota', [ 'available' => 10000, 'taken' => 0 ] ),
+'analytics' => 'on',
+] ),
+];
+} elseif ( $basename == 'keywordsInfo' ) {
+if ( isset( $parsed_args['body']['count'] ) ) {
+return [
+'response' => [ 'code' => 200, 'message' => 'ОК' ],
+'body' => json_encode( [ 'available' => 10000, 'taken' => $parsed_args['body']['count'] ] ),
+];
+}
 
-               } 
-               return [ 'response' => [ 'code' => 200, 'message' => 'ОК' ] ];
-          }
-          return $pre;
-     }, 10, 3 );
+}
+return [ 'response' => [ 'code' => 200, 'message' => 'ОК' ] ];
+}
+return $pre;
+}, 10, 3 );
 } );
-
 /**
  * RankMath class.
  *
@@ -76,14 +74,14 @@ final class RankMathPro {
 	 *
 	 * @var string
 	 */
-	public $version = '3.0.61';
+	public $version = '3.0.69';
 
 	/**
 	 * Minimum version of Rank Math SEO.
 	 *
 	 * @var string
 	 */
-	public $rank_math_min_version = '1.0.218';
+	public $rank_math_min_version = '1.0.226';
 
 	/**
 	 * Holds various class instances

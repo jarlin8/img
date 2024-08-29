@@ -25,13 +25,6 @@ class News_Sitemap {
 	use Hooker;
 
 	/**
-	 * NEWS Publication.
-	 *
-	 * @var string
-	 */
-	protected $news_publication = null;
-
-	/**
 	 * Holds the Sitemap slug.
 	 *
 	 * @var string
@@ -239,10 +232,6 @@ class News_Sitemap {
 	 * @return string
 	 */
 	private function get_news_publication( $renderer, $entity ) {
-		if ( ! is_null( $this->news_publication ) ) {
-			return $this->news_publication;
-		}
-
 		$lang = Locale::get_site_language();
 
 		/**
@@ -255,12 +244,12 @@ class News_Sitemap {
 		$name = Helper::get_settings( 'sitemap.news_sitemap_publication_name' );
 		$name = $name ? $name : get_bloginfo( 'name' );
 
-		$this->news_publication  = '';
-		$this->news_publication .= $renderer->newline( '<news:publication>', 3 );
-		$this->news_publication .= $renderer->newline( '<news:name>' . esc_html( $name ) . '</news:name>', 4 );
-		$this->news_publication .= $renderer->newline( '<news:language>' . $lang . '</news:language>', 4 );
-		$this->news_publication .= $renderer->newline( '</news:publication>', 3 );
+		$news_publication  = '';
+		$news_publication .= $renderer->newline( '<news:publication>', 3 );
+		$news_publication .= $renderer->newline( '<news:name>' . esc_html( $name ) . '</news:name>', 4 );
+		$news_publication .= $renderer->newline( '<news:language>' . $lang . '</news:language>', 4 );
+		$news_publication .= $renderer->newline( '</news:publication>', 3 );
 
-		return $this->news_publication;
+		return $news_publication;
 	}
 }

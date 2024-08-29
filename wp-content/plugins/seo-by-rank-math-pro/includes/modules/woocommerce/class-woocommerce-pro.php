@@ -11,6 +11,7 @@ namespace RankMathPro;
 
 use RankMath\Helper;
 use RankMath\Traits\Hooker;
+use RankMath\Schema\DB;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -200,7 +201,7 @@ class WooCommerce {
 		}
 
 		echo '<span class="rank-math-gtin-wrapper">';
-		echo $this->get_formatted_value( $gtin_code );
+		echo esc_html( $this->get_formatted_value( $gtin_code ) );
 		echo '</span>';
 	}
 
@@ -260,6 +261,17 @@ class WooCommerce {
 			return $entity;
 		}
 
+		$schemas = array_filter(
+			DB::get_schemas( $product_id ),
+			function( $schema ) {
+				return $schema['@type'] === 'WooCommerceProduct';
+			}
+		);
+
+		if ( empty( $schemas ) && Helper::get_default_schema_type( $product_id ) !== 'WooCommerceProduct' ) {
+			return $entity;
+		}
+
 		$variations = $product->get_available_variations( 'object' );
 		if ( empty( $variations ) ) {
 			return $entity;
@@ -307,11 +319,13 @@ class WooCommerce {
 	 * @since 3.0.57
 	 */
 	private function get_variant_data( $variation, $product ) {
-		$variant = [
+		$description = $this->get_variant_description( $variation, $product );
+		$description = $this->do_filter( 'product_description/apply_shortcode', false ) ? do_shortcode( $description ) : Helper::strip_shortcodes( $description );
+		$variant     = [
 			'@type'       => 'Product',
 			'sku'         => $variation->get_sku(),
 			'name'        => $variation->get_name(),
-			'description' => wp_strip_all_tags( $this->get_variant_description( $variation, $product ), true ),
+			'description' => wp_strip_all_tags( $description, true ),
 			'image'       => wp_get_attachment_image_url( $variation->get_image_id() ),
 		];
 
