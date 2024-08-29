@@ -131,8 +131,6 @@ if(!function_exists('flatsome_defaults')){
       'footer_1_columns' => '4',
       'footer_2_columns' => '4',
       'footer_bottom_text' => 'dark',
-      // Optimize
-      'lazy_load_backgrounds' => 1,
       'lazy_load_scripts' => 0,
       'payment_icons' => array('visa','paypal','stripe','mastercard','cashondelivery'),
     );

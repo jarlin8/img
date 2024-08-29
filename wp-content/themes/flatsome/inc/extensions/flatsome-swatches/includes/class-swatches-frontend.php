@@ -26,9 +26,20 @@ class Swatches_Frontend {
 	/**
 	 * Main instance
 	 *
+	 * @deprecated in favor of get_instance()
 	 * @return Swatches_Frontend
 	 */
 	public static function instance() {
+		_deprecated_function( __METHOD__, '3.19.0', 'get_instance()' );
+		return self::get_instance();
+	}
+
+	/**
+	 * Main instance
+	 *
+	 * @return Swatches_Frontend
+	 */
+	public static function get_instance() {
 		if ( is_null( self::$instance ) ) {
 			self::$instance = new self();
 		}
@@ -104,18 +115,13 @@ class Swatches_Frontend {
 			}
 		<?php endif; ?>
 
-		<?php if ( get_theme_mod( 'swatches_color_selected', \Flatsome_Default::COLOR_SECONDARY ) !== \Flatsome_Default::COLOR_SECONDARY ) : ?>
-			.variations_form .ux-swatch.selected {
-			box-shadow: 0 0 0 2px <?php echo get_theme_mod( 'swatches_color_selected' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
-			}
-		<?php endif; ?>
+		.variations_form .ux-swatch.selected {
+		box-shadow: 0 0 0 2px <?php echo get_theme_mod( 'swatches_color_selected' ) ?: 'var(--fs-color-secondary)'; // phpcs:ignore WordPress.Security.EscapeOutput ?>;
+		}
 
-		<?php if ( get_theme_mod( 'swatches_box_color_selected', \Flatsome_Default::COLOR_SECONDARY ) !== \Flatsome_Default::COLOR_SECONDARY ) : ?>
-			.ux-swatches-in-loop .ux-swatch.selected {
-			box-shadow: 0 0 0 2px <?php echo get_theme_mod( 'swatches_box_color_selected' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
-			}
-		<?php endif; ?>
-
+		.ux-swatches-in-loop .ux-swatch.selected {
+		box-shadow: 0 0 0 2px <?php echo get_theme_mod( 'swatches_box_color_selected' ) ?: 'var(--fs-color-secondary)'; // phpcs:ignore WordPress.Security.EscapeOutput ?>;
+		}
 		<?php
 		$output = ob_get_clean();
 
@@ -123,7 +129,7 @@ class Swatches_Frontend {
 			return;
 		}
 
-		$css  = '<style id="flatsome-swatches-css" type="text/css">';
+		$css  = '<style id="flatsome-swatches-css">';
 		$css .= $output;
 		$css .= '</style>';
 

@@ -44,7 +44,7 @@ function ux_accordion( $atts, $content = null ) {
 
 	if ($title) $title = '<h3 class="accordion_title">' . $title . '</h3>';
 
-	$result = $title . '<div class="' . implode( ' ', $classes ) . '">' . do_shortcode( $content ) . '</div>';
+	$result = wp_kses_post( $title ) . '<div class="' . esc_attr( implode( ' ', $classes ) ) . '">' . do_shortcode( $content ) . '</div>';
 
 	array_pop( $flatsome_accordion_state );
 
@@ -138,7 +138,7 @@ function ux_accordion_item( $atts, $content = null, $tag = '' ) {
 	<div id="<?php echo esc_attr( $atts['id'] ); ?>" class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>">
 		<a <?php echo flatsome_html_atts( $link_atts ); ?>>
 			<button class="toggle" aria-label="<?php esc_attr_e( 'Toggle', 'flatsome' ); ?>"><i class="icon-angle-down"></i></button>
-			<span><?php echo $atts['title']; // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
+			<span><?php echo wp_kses_post( $atts['title'] ); ?></span>
 		</a>
 		<div <?php echo flatsome_html_atts( $accordion_inner_atts ); ?>>
 			<?php echo do_shortcode( $content ); ?>
@@ -174,7 +174,7 @@ function flatsome_print_faq_schema() {
 			'name'           => wp_strip_all_tags( $faq['question'] ),
 			'acceptedAnswer' => array(
 				'@type' => 'Answer',
-				'text'  => $faq['answer'],
+				'text'  => wp_kses_post( $faq['answer'] ),
 			),
 		);
 	}

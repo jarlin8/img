@@ -63,16 +63,14 @@ Flatsome_Option::add_field( 'option', array(
 	),
 ));
 
-
-Flatsome_Option::add_field( 'option',  array(
-	'type'        => 'image',
-	'settings'     => 'custom_cart_icon',
-	'label'       => __( 'Custom Cart Icon', 'flatsome-admin' ),
-	'section'     => 'header_cart',
-	'transport' => $transport,
-	'default'     => '',
-));
-
+Flatsome_Option::add_field( 'option', array(
+	'type'      => 'image',
+	'settings'  => 'custom_cart_icon',
+	'label'     => esc_html__( 'Custom Cart Icon', 'flatsome-admin' ),
+	'section'   => 'header_cart',
+	'transport' => flatsome_customizer_transport(),
+	'choices'   => array( 'save_as' => 'id' ),
+) );
 
 Flatsome_Option::add_field( 'option',  array(
 	'type'        => 'checkbox',

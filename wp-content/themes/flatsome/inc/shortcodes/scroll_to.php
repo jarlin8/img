@@ -38,20 +38,20 @@ function flatsome_scroll_to( $atts, $content = null, $tag = '' ) {
 
 	$element_atts = array(
 		'class'       => 'scroll-to',
-		'data-label'  => 'Scroll to: ' . $atts['link'],
-		'data-bullet' => $atts['bullet'],
-		'data-link'   => $atts['link'],
-		'data-title'  => $atts['title'],
+		'data-label'  => esc_attr( 'Scroll to: ' . $atts['link'] ),
+		'data-bullet' => esc_attr( $atts['bullet'] ),
+		'data-link'   => esc_attr( $atts['link'] ),
+		'data-title'  => esc_attr( $atts['title'] ),
 	);
 
 	if ( $atts['offset_type'] === 'custom' ) {
 		$element_atts['data-offset-type'] = $atts['offset_type'];
-		$element_atts['data-offset']      = $atts['offset'];
+		$element_atts['data-offset']      = esc_attr( $atts['offset'] );
 	}
 
 	return sprintf( '<span %s><a name="%s"></a></span>',
 		flatsome_html_atts( $element_atts ),
-		str_replace( '#', '', $atts['link'] )
+		esc_attr( str_replace( '#', '', $atts['link'] ) )
 	);
 }
 

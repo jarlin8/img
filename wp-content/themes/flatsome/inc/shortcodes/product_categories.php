@@ -115,7 +115,7 @@ function ux_product_categories($atts, $content = null, $tag = '' ) {
     }
 
     // Add Animations
-    if($animate) {$animate = 'data-animate="'.$animate.'"';}
+    if($animate) {$animate = 'data-animate="' . esc_attr( $animate ) . '"';}
 
     // Set box style
     if($style) $classes_box[] = 'box-'.$style;
@@ -206,26 +206,26 @@ function ux_product_categories($atts, $content = null, $tag = '' ) {
           $image = wc_placeholder_img_src();
         }
 
-        ?><div class="<?php echo implode(' ', $classes_col); ?>" <?php echo $animate;?>>
+        ?><div class="<?php echo esc_attr( implode( ' ', $classes_col ) ); ?>" <?php echo $animate;?>>
             <div class="col-inner">
               <?php do_action( 'woocommerce_before_subcategory', $category ); ?>
-                <div class="<?php echo implode(' ', $classes_box); ?> ">
+                <div class="<?php echo esc_attr( implode( ' ', $classes_box ) ); ?> ">
                 <div class="box-image" <?php echo get_shortcode_inline_css($css_args_img); ?>>
-                  <div class="<?php echo implode(' ', $classes_image); ?>" <?php echo get_shortcode_inline_css($css_image_height); ?>>
+                  <div class="<?php echo esc_attr( implode( ' ', $classes_image ) ); ?>" <?php echo get_shortcode_inline_css($css_image_height); ?>>
                   <?php echo '<img src="' . esc_url( $image ) . '" alt="' . esc_attr( $category->name ) . '" width="300" height="300" />'; ?>
-                  <?php if($image_overlay){ ?><div class="overlay" style="background-color: <?php echo $image_overlay;?>"></div><?php } ?>
+                  <?php if($image_overlay){ ?><div class="overlay" style="background-color: <?php echo esc_attr( $image_overlay ); ?>"></div><?php } ?>
                   <?php if($style == 'shade'){ ?><div class="shade"></div><?php } ?>
                   </div>
                 </div>
-                <div class="box-text <?php echo implode(' ', $classes_text); ?>" <?php echo get_shortcode_inline_css($css_args); ?>>
+                <div class="box-text <?php echo esc_attr( implode( ' ', $classes_text ) ); ?>" <?php echo get_shortcode_inline_css($css_args); ?>>
                   <div class="box-text-inner">
                       <h5 class="uppercase header-title">
-                              <?php echo $category->name; ?>
+                              <?php echo wp_kses_post( $category->name ); ?>
                       </h5>
                       <?php if($show_count) { ?>
                       <p class="is-xsmall uppercase count <?php if($style == 'overlay') echo 'show-on-hover hover-reveal reveal-small'; ?>">
 	                      <?php if ( $category->count > 0 ) {
-		                      echo apply_filters( 'woocommerce_subcategory_count_html', $category->count . ' ' . ( $category->count > 1 ? __( 'Products', 'woocommerce' ) : __( 'Product', 'woocommerce' ) ), $category );
+		                      echo apply_filters( 'woocommerce_subcategory_count_html', $category->count . ' ' . ( $category->count > 1 ? esc_html__( 'Products', 'woocommerce' ) : esc_html__( 'Product', 'woocommerce' ) ), $category );
 	                      }
 	                      ?>
                       </p>

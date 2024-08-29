@@ -5,7 +5,9 @@
   <div class="banner-inner fill">
     <div class="banner-bg fill"  data-parallax-container=".banner" data-parallax-background
         ng-attr-data-parallax="-{{ shortcode.options.parallax }}" >
-      <div class="bg fill bg-fill" ng-style="{ 'backgroundPosition': shortcode.options.bgPos }" wp-attachment="shortcode.options.bg" wp-attachment-size="shortcode.options.bgSize"></div>
+
+	  <img ng-if="shortcode.options.bg" class="bg" ng-style="{ 'objectPosition': shortcode.options.bgPos }" wp-attachment="shortcode.options.bg" wp-attachment-size="shortcode.options.bgSize" alt="" />
+
       <video ng-if="shortcode.options.videoMp4"
       class="video-bg no-click {{shortcode.options.videoVisibility}}"
       preload="auto" autoplay="true" ng-attr-loop="{{shortcode.options.videoLoop !== 'false'}}" muted="muted">

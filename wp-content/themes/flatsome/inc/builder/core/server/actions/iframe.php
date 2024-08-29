@@ -50,11 +50,11 @@ add_filter( 'post_content', function ( $content, $post_id, $context ) {
 add_filter( 'get_post_metadata', function ( $value, $object_id, $meta_key, $single ) {
   $post_id = null;
 
-  if ( array_key_exists( 'post_id', $_GET) ) $post_id = $_GET['post_id'];
-  if ( array_key_exists( 'edit_post_id', $_GET) ) $post_id = $_GET['edit_post_id'];
+  if ( array_key_exists( 'post_id', $_GET) ) $post_id = intval( $_GET['post_id'] );
+  if ( array_key_exists( 'edit_post_id', $_GET) ) $post_id = intval( $_GET['edit_post_id'] );
 
   if ( array_key_exists( $meta_key, $_GET ) && $post_id == $object_id ) {
-      return $_GET[$meta_key];
+      return sanitize_text_field( $_GET[$meta_key] );
   }
 
   return $value;

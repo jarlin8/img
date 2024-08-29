@@ -26,9 +26,20 @@ class Variation_Images_Frontend {
 	/**
 	 * Main instance
 	 *
+	 * @deprecated in favor of get_instance()
 	 * @return Variation_Images_Frontend
 	 */
 	public static function instance() {
+		_deprecated_function( __METHOD__, '3.19.0', 'get_instance()' );
+		return self::get_instance();
+	}
+
+	/**
+	 * Main instance
+	 *
+	 * @return Variation_Images_Frontend
+	 */
+	public static function get_instance() {
 		if ( is_null( self::$instance ) ) {
 			self::$instance = new self();
 		}

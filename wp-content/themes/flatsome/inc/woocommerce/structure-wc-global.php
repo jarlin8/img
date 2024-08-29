@@ -161,7 +161,7 @@ if ( ! function_exists( 'flatsome_header_add_to_cart_fragment_count' ) ) {
 		ob_start();
 		?>
 		<span class="cart-icon image-icon">
-			<strong><?php echo WC()->cart->cart_contents_count; ?></strong>
+			<strong><?php echo WC()->cart->get_cart_contents_count(); ?></strong>
 		</span>
 		<?php
 		$fragments['.header .cart-icon'] = ob_get_clean();
@@ -188,7 +188,7 @@ if ( ! function_exists( 'flatsome_header_add_to_cart_fragment_count_label' ) ) {
 		$icon = get_theme_mod( 'cart_icon', 'basket' );
 		ob_start();
 		?>
-		<i class="icon-shopping-<?php echo $icon; ?>" data-icon-label="<?php echo WC()->cart->cart_contents_count; ?>">
+		<i class="icon-shopping-<?php echo $icon; ?>" data-icon-label="<?php echo WC()->cart->get_cart_contents_count(); ?>">
 		<?php
 		$fragments[ '.cart-item i.icon-shopping-' . $icon ] = ob_get_clean();
 
@@ -206,15 +206,17 @@ if ( ! function_exists( 'flatsome_header_add_to_cart_custom_icon_fragment_count_
 	 * @return mixed
 	 */
 	function flatsome_header_add_to_cart_custom_icon_fragment_count_label( $fragments ) {
-		$custom_cart_icon = get_theme_mod( 'custom_cart_icon' );
+		$custom_cart_icon_id = get_theme_mod( 'custom_cart_icon' );
+		$custom_cart_icon    = wp_get_attachment_image_src( $custom_cart_icon_id, 'large' );
+
 		if ( ! $custom_cart_icon ) {
 			return $fragments;
 		}
 
 		ob_start();
 		?>
-		<span class="image-icon header-cart-icon" data-icon-label="<?php echo WC()->cart->cart_contents_count; ?>">
-			<img class="cart-img-icon" alt="<?php _e( 'Cart', 'woocommerce' ); ?>" src="<?php echo do_shortcode( $custom_cart_icon ); ?>"/>
+		<span class="image-icon header-cart-icon" data-icon-label="<?php echo WC()->cart->get_cart_contents_count(); ?>">
+			<img class="cart-img-icon" alt="<?php echo esc_attr__( 'Cart', 'woocommerce' ); ?>" src="<?php echo esc_url( $custom_cart_icon[0] ); ?>" width="<?php echo esc_attr( $custom_cart_icon[1] ); ?>" height="<?php echo esc_attr( $custom_cart_icon[2] ); ?>"/>
 		</span>
 		<?php
 		$fragments['.image-icon.header-cart-icon'] = ob_get_clean();
@@ -508,7 +510,7 @@ if ( ! function_exists( 'flatsome_wc_get_gallery_image_html' ) ) {
 					'data-large_image'        => esc_url( $full_src[0] ),
 					'data-large_image_width'  => esc_attr( $full_src[1] ),
 					'data-large_image_height' => esc_attr( $full_src[2] ),
-					'class'                   => esc_attr( $main_image ? 'wp-post-image skip-lazy' : 'skip-lazy' ), // skip-lazy, blacklist for Jetpack's lazy load.
+					'class'                   => esc_attr( $main_image ? 'wp-post-image' : '' ),
 				),
 				$attachment_id,
 				$image_size,
@@ -551,100 +553,6 @@ function flatsome_filter_shortcode_atts_products( $attrs ) {
 }
 
 add_filter( 'shortcode_atts_products', 'flatsome_filter_shortcode_atts_products' );
-
-/**
- * Flatsome Payment Icons List.
- *
- * Returns a list of Flatsome Payment Icons.
- *
- * @return array Payment Icons list.
- */
-function flatsome_get_payment_icons_list() {
-	return apply_filters( 'flatsome_payment_icons', array(
-		'amazon'          => __( 'Amazon', 'flatsome-admin' ),
-		'americanexpress' => __( 'American Express', 'flatsome-admin' ),
-		'applepay'        => __( 'Apple Pay', 'flatsome-admin' ),
-		'afterpay'        => __( 'AfterPay', 'flatsome-admin' ),
-		'afterpay-2'      => __( 'AfterPay 2', 'flatsome-admin' ),
-		'alipay'          => __( 'Alipay', 'flatsome-admin' ),
-		'atm'             => __( 'Atm', 'flatsome-admin' ),
-		'bancontact'      => __( 'Bancontact', 'flatsome-admin' ),
-		'bankomat'        => __( 'Bankomat', 'flatsome-admin' ),
-		'banktransfer'    => __( 'Bank Transfer', 'flatsome-admin' ),
-		'belfius'         => __( 'Belfius', 'flatsome-admin' ),
-		'bitcoin'         => __( 'BitCoin', 'flatsome-admin' ),
-		'braintree'       => __( 'Braintree', 'flatsome-admin' ),
-		'cartasi'         => __( 'CartaSi', 'flatsome-admin' ),
-		'cashcloud'       => __( 'CashCloud', 'flatsome-admin' ),
-		'cashondelivery'  => __( 'Cash On Delivery', 'flatsome-admin' ),
-		'cashonpickup'    => __( 'Cash on Pickup', 'flatsome-admin' ),
-		'cbc'             => __( 'CBC', 'flatsome-admin' ),
-		'cirrus'          => __( 'Cirrus', 'flatsome-admin' ),
-		'clickandbuy'     => __( 'Click and Buy', 'flatsome-admin' ),
-		'creditcard'      => __( 'Credit Card', 'flatsome-admin' ),
-		'creditcard2'     => __( 'Credit Card 2', 'flatsome-admin' ),
-		'dancard'         => __( 'DanKort', 'flatsome-admin' ),
-		'dinnersclub'     => __( 'Dinners Club', 'flatsome-admin' ),
-		'discover'        => __( 'Discover', 'flatsome-admin' ),
-		'elo'             => __( 'Elo', 'flatsome-admin' ),
-		'eps'             => __( 'Eps', 'flatsome-admin' ),
-		'facture'         => __( 'Facture', 'flatsome-admin' ),
-		'fattura'         => __( 'Fattura', 'flatsome-admin' ),
-		'flattr'          => __( 'Flattr', 'flatsome-admin' ),
-		'giropay'         => __( 'GiroPay', 'flatsome-admin' ),
-		'googlepay'       => __( 'Google Pay', 'flatsome-admin' ),
-		'googlewallet'    => __( 'Google Wallet', 'flatsome-admin' ), // Deprecated, changed to Google Pay.
-		'hiper'           => __( 'Hiper', 'flatsome-admin' ),
-		'ideal'           => __( 'IDeal', 'flatsome-admin' ),
-		'interac'         => __( 'Interac', 'flatsome-admin' ),
-		'invoice'         => __( 'Invoice', 'flatsome-admin' ),
-		'jcb'             => __( 'JCB', 'flatsome-admin' ),
-		'kbc'             => __( 'KBC', 'flatsome-admin' ),
-		'klarna'          => __( 'Klarna', 'flatsome-admin' ),
-		'maestro'         => __( 'Maestro', 'flatsome-admin' ),
-		'mastercard'      => __( 'MasterCard', 'flatsome-admin' ),
-		'mastercard-2'    => __( 'MasterCard 2', 'flatsome-admin' ),
-		'mir'             => __( 'Mir', 'flatsome-admin' ),
-		'moip'            => __( 'Moip', 'flatsome-admin' ),
-		'mollie'          => __( 'Mollie', 'flatsome-admin' ),
-		'ogone'           => __( 'Ogone', 'flatsome-admin' ),
-		'paybox'          => __( 'Paybox', 'flatsome-admin' ),
-		'paylife'         => __( 'Paylife', 'flatsome-admin' ),
-		'paymill'         => __( 'PayMill', 'flatsome-admin' ),
-		'paypal'          => __( 'PayPal', 'flatsome-admin' ),
-		'paypal-2'        => __( 'PayPal 2', 'flatsome-admin' ),
-		'paysafe'         => __( 'PaySafe', 'flatsome-admin' ),
-		'paysera'         => __( 'Paysera', 'flatsome-admin' ),
-		'payshop'         => __( 'PayShop', 'flatsome-admin' ),
-		'paytm'           => __( 'Paytm', 'flatsome-admin' ),
-		'payu'            => __( 'PayU', 'flatsome-admin' ),
-		'postepay'        => __( 'Postepay', 'flatsome-admin' ),
-		'quick'           => __( 'Quick', 'flatsome-admin' ),
-		'rechung'         => __( 'Rechung', 'flatsome-admin' ),
-		'revolut'         => __( 'Revolut', 'flatsome-admin' ),
-		'ripple'          => __( 'Ripple', 'flatsome-admin' ),
-		'rupay'           => __( 'RuPay', 'flatsome-admin' ),
-		'sage'            => __( 'Sage', 'flatsome-admin' ),
-		'sepa'            => __( 'Sepa', 'flatsome-admin' ),
-		'six'             => __( 'Six', 'flatsome-admin' ),
-		'skrill'          => __( 'Skrill', 'flatsome-admin' ),
-		'sofort'          => __( 'Sofort', 'flatsome-admin' ),
-		'square'          => __( 'Square', 'flatsome-admin' ),
-		'stripe'          => __( 'Stripe', 'flatsome-admin' ),
-		'swish'           => __( 'Swish (SE)', 'flatsome-admin' ),
-		'truste'          => __( 'Truste', 'flatsome-admin' ),
-		'twint'           => __( 'Twint', 'flatsome-admin' ),
-		'unionpay'        => __( 'UnionPay', 'flatsome-admin' ),
-		'venmo'           => __( 'Venmo', 'flatsome-admin' ),
-		'verisign'        => __( 'VeriSign', 'flatsome-admin' ),
-		'vipps'           => __( 'Vipps', 'flatsome-admin' ),
-		'visa'            => __( 'Visa', 'flatsome-admin' ),
-		'visa1'           => __( 'Visa 2', 'flatsome-admin' ),
-		'visaelectron'    => __( 'Visa Electron', 'flatsome-admin' ),
-		'westernunion'    => __( 'Western Union', 'flatsome-admin' ),
-		'wirecard'        => __( 'Wirecard', 'flatsome-admin' ),
-	) );
-}
 
 if ( flatsome_is_mini_cart_reveal() ) {
 	/**

@@ -280,26 +280,14 @@ function flatsome_scripts() {
 
 	if ( apply_filters( 'experimental_flatsome_pjax_enabled', true ) ) {
 		$pjax = apply_filters( 'experimental_flatsome_pjax', array(
-			'selectors'           => array(),
-			'elements'            => array( '#wrapper' ),
-			'processing_elements' => array(),
-			'scroll_to_top'       => get_theme_mod( 'pjax_scroll_to_top' ),
-			'cache_bust'          => false,
-			'timeout'             => 5000,
+			'cache_bust' => false,
+			'elements'   => array( '#wrapper' ),
+			'entries'    => array(),
+			'scroll_to'  => get_theme_mod( 'pjax_scroll_to_top' ) ? 'top' : '',
+			'timeout'    => 5000,
 		) );
 
-		foreach ( [ 'selectors', 'elements' ] as $key ) {
-			if ( isset( $pjax[ $key ] ) ) {
-				if ( ! is_array( $pjax[ $key ] ) ) {
-					trigger_error( "Filter 'flatsome_pjax' expects an array as value for key '$key'. Defaulting to empty array." ); // phpcs:ignore
-					$pjax[ $key ] = array();
-					continue;
-				}
-				$pjax[ $key ] = array_filter( array_unique( $pjax[ $key ] ) );
-			}
-		}
-
-		if ( ! empty( $pjax['selectors'] ) && ! empty( $pjax['elements'] ) ) {
+		if ( ! empty( $pjax['entries'] ) ) {
 			flatsome_enqueue_asset( 'flatsome-pjax', 'flatsome-pjax', array( 'flatsome-js', 'jquery' ) );
 			wp_add_inline_script( 'flatsome-pjax', 'var flatsomePjax = ' . wp_json_encode( $pjax ), 'before' );
 		}
@@ -353,18 +341,6 @@ function flatsome_ux_builder_scripts( $context ) {
 }
 
 add_action( 'ux_builder_enqueue_scripts', 'flatsome_ux_builder_scripts', 10 );
-
-
-if ( ! is_admin() && get_theme_mod( 'lazy_load_backgrounds', 1 ) ) {
-	/**
-	 * Lazy load backgrounds
-	 */
-	function flatsome_lazy_load_backgrounds_css() {
-		echo '<style>.bg{opacity: 0; transition: opacity 1s; -webkit-transition: opacity 1s;} .bg-loaded{opacity: 1;}</style>';
-	}
-
-	add_filter( 'wp_head', 'flatsome_lazy_load_backgrounds_css' );
-}
 
 /**
  * Remove jQuery migrate.
@@ -468,48 +444,72 @@ add_filter( 'upload_mimes', 'flatsome_upload_mimes' );
 function experimental_flatsome_pjax_config( $args ) {
 	if ( get_theme_mod( 'blog_pagination' ) === 'ajax' ) {
 		if ( flatsome_is_blog_archive() ) {
-			$args['selectors'][]                       = '.page-numbers.nav-pagination:not(.ux-relay__pagination) li a';
-			$args['processing_elements']['#post-list'] = [
-				'style'    => 'spotlight',
-				'position' => 'sticky',
+			$args['entries'][] = [
+				'selectors'           => [ '.page-numbers.nav-pagination:not(.ux-relay__pagination) li a' ],
+				'processing_elements' => [
+					'#post-list' => [
+						'style'    => 'spotlight',
+						'position' => 'sticky',
+					],
+				],
 			];
 		}
 
 		if ( is_single() && get_post_type() === 'post' ) {
-			$args['selectors'][]                               = '.navigation-post a';
-			$args['processing_elements']['.blog-single .post'] = [
-				'style'    => 'spotlight',
-				'position' => 'sticky',
+			$args['entries'][] = [
+				'selectors'           => [ '.navigation-post a' ],
+				'processing_elements' => [
+					'.blog-single .post' => [
+						'style'    => 'spotlight',
+						'position' => 'sticky',
+					],
+				],
 			];
 		}
 	}
 
 	if ( is_woocommerce_activated() ) {
-		$is_shop_archive      = flatsome_is_shop_archive();
-		$shop_ajax_pagination = get_theme_mod( 'shop_pagination' ) === 'ajax';
+		$is_shop_archive          = flatsome_is_shop_archive();
+		$shop_ajax_pagination     = get_theme_mod( 'shop_pagination' ) === 'ajax';
+		$processing_elements_shop = [
+			'.shop-container' => [
+				'style'    => 'spotlight',
+				'position' => 'sticky',
+			],
+		];
 
 		if ( $shop_ajax_pagination && $is_shop_archive ) {
-			$args['selectors'][] = '.woocommerce-pagination a';
+			$args['entries'][] = [
+				'selectors'           => [ '.woocommerce-pagination a' ],
+				'processing_elements' => $processing_elements_shop,
+			];
+		}
+
+		if ( $shop_ajax_pagination && is_product() ) {
+			$args['entries'][] = [
+				'selectors'           => [ '#reviews .woocommerce-pagination a' ],
+				'elements'            => [ '#reviews #comments' ],
+				'processing_elements' => [ '#comments .commentlist' => [ 'position' => 'sticky' ] ],
+				'scroll_to'           => '#reviews #comments',
+			];
 		}
 
 		if ( get_theme_mod( 'shop_filter_widgets_pjax' ) && $is_shop_archive ) {
-			$args['selectors'][] = '.widget_layered_nav li';
-			$args['selectors'][] = '.widget_rating_filter li';
-			$args['selectors'][] = '.widget_layered_nav_filters li';
-			$args['selectors'][] = '.widget_product_categories ul a';
+			$args['entries'][] = [
+				'selectors'           => [
+					'.widget_layered_nav li',
+					'.widget_rating_filter li',
+					'.widget_layered_nav_filters li',
+					'.widget_product_categories ul a',
+				],
+				'processing_elements' => $processing_elements_shop,
+			];
 
 			add_filter( 'body_class', function ( $classes ) {
 				$classes[] = 'ux-shop-ajax-filters';
 
 				return $classes;
 			} );
-		}
-
-		if ( $is_shop_archive ) {
-			$args['processing_elements']['.shop-container'] = [
-				'style'    => 'spotlight',
-				'position' => 'sticky',
-			];
 		}
 	}
 

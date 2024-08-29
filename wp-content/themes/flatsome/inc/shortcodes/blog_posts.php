@@ -147,7 +147,7 @@ function shortcode_latest_from_blog($atts, $content = null, $tag = '' ) {
   	);
 
     // Add Animations
-	if($animate) {$animate = 'data-animate="'.$animate.'"';}
+	if($animate) {$animate = 'data-animate="' . esc_attr( $animate ) . '"';}
 
 	$classes_text = implode(' ', $classes_text);
 	$classes_image = implode(' ', $classes_image);
@@ -173,6 +173,18 @@ function shortcode_latest_from_blog($atts, $content = null, $tag = '' ) {
 	$repeater['columns__sm'] = $columns__sm;
 	$repeater['depth'] = $depth;
 	$repeater['depth_hover'] = $depth_hover;
+
+	if ( ! empty( $offset ) ) {
+		$found_posts_filter_callback = function ( $found_posts, $query ) use ( $offset ) {
+			return $found_posts - (int) $offset;
+		};
+
+		add_filter( 'found_posts', $found_posts_filter_callback, 1, 2 );
+	}
+
+	$offset = (int) $page_number > 1
+		? (int) $offset + ( (int) $page_number - 1 ) * (int) $posts
+		: $offset;
 
 	$args = array(
 		'post_status' => 'publish',
@@ -217,6 +229,10 @@ function shortcode_latest_from_blog($atts, $content = null, $tag = '' ) {
 
 $recentPosts = new WP_Query( $args );
 
+	if ( isset( $found_posts_filter_callback ) ) {
+		remove_filter( 'found_posts', $found_posts_filter_callback, 1 );
+	}
+
 	Flatsome_Relay::render_container_open( $recentPosts, $tag, $defined_atts, $atts );
 
 	if ( $type == 'grid' ) {
@@ -249,16 +265,16 @@ while ( $recentPosts->have_posts() ) : $recentPosts->the_post();
 	        if($grid[$current]['size'] == 'thumbnail') $show_excerpt = 'false';
 	    }
 
-		?><div class="col <?php echo implode(' ', $col_class); ?>" <?php echo $animate;?>>
+		?><div class="col <?php echo esc_attr( implode( ' ', $col_class ) ); ?>" <?php echo $animate;?>>
 			<div class="col-inner">
-				<div class="box <?php echo $classes_box; ?> box-blog-post has-hover">
+				<div class="box <?php echo esc_attr( $classes_box ); ?> box-blog-post has-hover">
           <?php if(has_post_thumbnail()) { ?>
   					<div class="box-image" <?php echo get_shortcode_inline_css($css_args_img); ?>>
-  						<div class="<?php echo $classes_image; ?>" <?php echo get_shortcode_inline_css($css_image_height); ?>>
-							<a href="<?php the_permalink() ?>" class="plain" aria-label="<?php echo esc_attr( the_title() ); ?>">
+  						<div class="<?php echo esc_attr( $classes_image ); ?>" <?php echo get_shortcode_inline_css($css_image_height); ?>>
+							<a href="<?php the_permalink(); ?>" class="plain" aria-label="<?php echo esc_attr( the_title() ); ?>">
 								<?php the_post_thumbnail( $image_size ); ?>
 							</a>
-  							<?php if($image_overlay){ ?><div class="overlay" style="background-color: <?php echo $image_overlay;?>"></div><?php } ?>
+  							<?php if($image_overlay){ ?><div class="overlay" style="background-color: <?php echo esc_attr( $image_overlay ); ?>"></div><?php } ?>
   							<?php if($style == 'shade'){ ?><div class="shade"></div><?php } ?>
   						</div>
   						<?php if($post_icon && get_post_format()) { ?>
@@ -270,7 +286,7 @@ while ( $recentPosts->have_posts() ) : $recentPosts->the_post();
   						<?php } ?>
   					</div>
           <?php } ?>
-					<div class="box-text <?php echo $classes_text; ?>" <?php echo get_shortcode_inline_css($css_args); ?>>
+					<div class="box-text <?php echo esc_attr( $classes_text ); ?>" <?php echo get_shortcode_inline_css($css_args); ?>>
 					<div class="box-text-inner blog-post-inner">
 
 					<?php do_action('flatsome_blog_post_before'); ?>
@@ -279,18 +295,18 @@ while ( $recentPosts->have_posts() ) : $recentPosts->the_post();
 						<p class="cat-label <?php if($show_category == 'label') echo 'tag-label'; ?> is-xxsmall op-7 uppercase">
 					<?php
 						foreach((get_the_category()) as $cat) {
-						echo $cat->cat_name . ' ';
+						echo wp_kses_post( $cat->cat_name ) . ' ';
 					}
 					?>
 					</p>
 					<?php } ?>
-					<h5 class="post-title is-<?php echo $title_size; ?> <?php echo $title_style;?>">
+					<h5 class="post-title is-<?php echo esc_attr( $title_size ); ?> <?php echo esc_attr( $title_style );?>">
 						<a href="<?php the_permalink() ?>" class="plain"><?php the_title(); ?></a>
 					</h5>
 					<?php if((!has_post_thumbnail() && $show_date !== 'false') || $show_date == 'text') {?><div class="post-meta is-small op-8"><?php echo get_the_date(); ?></div><?php } ?>
 					<div class="is-divider"></div>
 					<?php if($show_excerpt !== 'false') { ?>
-					<p class="from_the_blog_excerpt <?php if($show_excerpt !== 'visible'){ echo 'show-on-hover hover-'.$show_excerpt; } ?>">
+					<p class="from_the_blog_excerpt <?php if($show_excerpt !== 'visible'){ echo 'show-on-hover hover-'. esc_attr( $show_excerpt ); } ?>">
 						<?php echo flatsome_get_the_excerpt( $excerpt_length ); ?>
 					</p>
 					<?php } ?>
@@ -306,8 +322,8 @@ while ( $recentPosts->have_posts() ) : $recentPosts->the_post();
                     <?php } ?>
 
 					<?php if($readmore) { ?>
-						<a href="<?php echo get_the_permalink(); ?>" class="button <?php echo $readmore_color; ?> is-<?php echo $readmore_style; ?> is-<?php echo $readmore_size; ?> mb-0">
-							<?php echo $readmore ;?>
+						<a href="<?php the_permalink(); ?>" class="button <?php echo esc_attr( $readmore_color ); ?> is-<?php echo esc_attr( $readmore_style ); ?> is-<?php echo esc_attr( $readmore_size ); ?> mb-0">
+							<?php echo wp_kses_post( $readmore ); ?>
 						</a>
 					<?php } ?>
 
@@ -317,7 +333,7 @@ while ( $recentPosts->have_posts() ) : $recentPosts->the_post();
 					</div>
 					<?php if(has_post_thumbnail() && ($show_date == 'badge' || $show_date == 'true')) {?>
 					<?php if(!$badge_style) $badge_style = get_theme_mod('blog_badge_style', 'outline'); ?>
-						<div class="badge absolute top post-date badge-<?php echo $badge_style; ?>">
+						<div class="badge absolute top post-date badge-<?php echo esc_attr( $badge_style ); ?>">
 							<div class="badge-inner">
 								<span class="post-date-day"><?php echo get_the_time('d', get_the_ID()); ?></span><br>
 								<span class="post-date-month is-xsmall"><?php echo get_the_time('M', get_the_ID()); ?></span>

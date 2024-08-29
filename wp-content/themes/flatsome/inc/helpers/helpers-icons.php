@@ -11,11 +11,11 @@
  */
 function get_flatsome_icon( $name, $size = null, $atts = null ) {
 	$default_atts = array(
-		'class' => $name,
+		'class' => esc_attr( $name ),
 	);
 
 	if ( $size ) {
-		$default_atts['style'] = 'font-size:' . $size . ';';
+		$default_atts['style'] = 'font-size:' . esc_attr( $size ) . ';';
 	}
 
 	$atts      = wp_parse_args( $atts, $default_atts );

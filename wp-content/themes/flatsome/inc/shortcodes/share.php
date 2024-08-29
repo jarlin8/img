@@ -65,7 +65,7 @@ function flatsome_share( $atts, $content = null, $tag = '' ) {
 	$whatsapp_text  = $post_title . ' - ' . $link;
 	$window_open    = "window.open(this.href,this.title,'width=500,height=500,top=300px,left=300px'); return false;";
 
-	if ( $title ) $title = '<span class="share-icons-title">' . $title . '</span>';
+	if ( $title ) $title = '<span class="share-icons-title">' . wp_kses_post( $title ) . '</span>';
 	// Get custom theme style.
 	if ( ! $style ) $style = get_theme_mod( 'social_icons_style', 'outline' );
 
@@ -75,7 +75,7 @@ function flatsome_share( $atts, $content = null, $tag = '' ) {
 	$share = get_theme_mod( 'social_icons', array( 'facebook', 'twitter', 'email', 'linkedin', 'pinterest', 'whatsapp' ) );
 
 	// Scale.
-	if ( $scale ) $scale = 'style="font-size:' . $scale . '%"';
+	if ( $scale ) $scale = 'style="font-size:' . esc_attr( $scale ) . '%"';
 
 	// Fix old deprecated.
 	if ( ! isset( $share[0] ) ) {
@@ -141,6 +141,22 @@ function flatsome_share( $atts, $content = null, $tag = '' ) {
 			),
 			'icon'     => get_flatsome_icon( 'icon-twitter' ),
 			'priority' => 30,
+		),
+		'threads'   => array(
+			'enabled'  => in_array( 'threads', $share, true ),
+			'atts'     => array(
+				'href'       => add_query_arg( array(
+					'text' => rawurlencode( get_the_title() . "\n\n" . $link ),
+				), 'https://threads.net/intent/post' ),
+				'onclick'    => $window_open,
+				'rel'        => 'noopener nofollow',
+				'target'     => '_blank',
+				'class'      => $classes . ' threads',
+				'title'      => esc_attr__( 'Share on Threads', 'flatsome' ),
+				'aria-label' => esc_attr__( 'Share on Threads', 'flatsome' ),
+			),
+			'icon'     => get_flatsome_icon( 'icon-threads' ),
+			'priority' => 35,
 		),
 		'email'     => array(
 			'enabled'  => in_array( 'email', $share, true ),

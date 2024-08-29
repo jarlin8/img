@@ -40,7 +40,7 @@ function flatsome_banner_grid($atts, $content = null) {
     ob_start();
   ?>
   <div class="banner-grid-wrapper">
-  <div id="<?php echo $_id; ?>" class="banner-grid <?php echo implode(' ', $classes); ?>" data-packery-options="">
+  <div id="<?php echo esc_attr( $_id ); ?>" class="banner-grid <?php echo esc_attr( implode( ' ', $classes ) ); ?>" data-packery-options="">
           <?php if(has_shortcode( $content, 'col_grid' ) || has_shortcode( $content, 'col' )) { ?>
             <?php echo do_shortcode( $content ) ?>
           <?php } else {
@@ -100,7 +100,7 @@ function ux_grid_col($atts, $content = null) {
   $classes[] = $height ? 'grid-col-'.$height : 'grid-col-1';
 
   // Add Animation Class
-  if($animate) { $animate = 'data-animate="'.$animate.'"'; }
+  if($animate) { $animate = 'data-animate="' . esc_attr( $animate ) . '"'; }
 
   if ( $class ) $classes[] = $class;
   if ( $visibility ) $classes[] = $visibility;
@@ -112,7 +112,7 @@ function ux_grid_col($atts, $content = null) {
   $classes =  implode(" ", $classes);
   $classes_inner =  implode(" ", $classes_inner);
 
-  $column = '<div class="'.$classes.'" '.$animate.'><div class="'.$classes_inner.'">'.$content.'</div></div>';
+  $column = '<div class="' . esc_attr( $classes ) . '" ' . $animate . '><div class="' . esc_attr( $classes_inner ) . '">' . $content . '</div></div>';
 
   return do_shortcode( $column );
 }

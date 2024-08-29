@@ -124,8 +124,6 @@ if ( ! class_exists( 'Envato_Theme_Setup_Wizard' ) ) {
 		/**
 		 * A dummy constructor to prevent this class from being loaded more than once.
 		 *
-		 * @see Envato_Theme_Setup_Wizard::instance()
-		 *
 		 * @since 1.1.1
 		 * @access private
 		 */
@@ -136,8 +134,6 @@ if ( ! class_exists( 'Envato_Theme_Setup_Wizard' ) ) {
 
 		/**
 		 * Get the site logo URL.
-		 *
-		 * @see Envato_Theme_Setup_Wizard::instance()
 		 *
 		 * @since 3.15.2
 		 * @access public
@@ -158,8 +154,6 @@ if ( ! class_exists( 'Envato_Theme_Setup_Wizard' ) ) {
 
 		/**
 		 * Get the default style. Can be overriden by theme init scripts.
-		 *
-		 * @see Envato_Theme_Setup_Wizard::instance()
 		 *
 		 * @since 1.1.9
 		 * @access public

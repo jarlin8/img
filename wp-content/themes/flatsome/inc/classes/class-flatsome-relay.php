@@ -76,7 +76,6 @@ final class Flatsome_Relay {
 	 */
 	private static $enabled;
 
-
 	/**
 	 * Flatsome_Relay constructor.
 	 */
@@ -135,6 +134,10 @@ final class Flatsome_Relay {
 
 		if ( ! empty( $atts['relay_class'] ) ) {
 			$classes[] = $atts['relay_class'];
+		}
+
+		if ( ! empty( $atts['visibility'] ) ) {
+			$classes[] = $atts['visibility'];
 		}
 
 		$container_atts = array(
@@ -282,6 +285,8 @@ final class Flatsome_Relay {
 		echo '<ul class="ux-relay__pagination page-numbers nav-pagination links">';
 		foreach ( $pages as $page ) {
 			$page = str_replace( 'page-numbers', 'page-number', $page );
+			$page = str_replace( '<a class="next page-number', '<a aria-label="' . esc_attr__( 'Next', 'flatsome' ) . '" class="next page-number', $page );
+			$page = str_replace( '<a class="prev page-number', '<a aria-label="' . esc_attr__( 'Previous', 'flatsome' ) . '" class="prev page-number', $page );
 
 			// Create '#/page/x' hrefs without site URL and query args.
 			$page = preg_replace_callback( '/href="([^"]*)"/', function ( $matches ) {

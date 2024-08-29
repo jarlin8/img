@@ -764,6 +764,7 @@ if ( get_theme_mod( 'swatches' ) ) :
 		'settings'        => 'swatches_box_color_selected',
 		'transport'       => 'postMessage',
 		'label'           => __( 'Color :selected', 'flatsome' ),
+		'description'     => __( 'Default is Secondary color', 'flatsome-admin' ),
 		'section'         => 'woocommerce_product_catalog',
 		'active_callback' => array(
 			array(
@@ -772,7 +773,7 @@ if ( get_theme_mod( 'swatches' ) ) :
 				'value'    => '',
 			),
 		),
-		'default'         => Flatsome_Default::COLOR_SECONDARY,
+		'default'         => '',
 	) );
 
 	Flatsome_Option::add_field( 'option', array(

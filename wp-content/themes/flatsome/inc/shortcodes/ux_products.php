@@ -165,7 +165,7 @@ function ux_products($atts, $content = null, $tag = '' ) {
 	if(!$image_size) $image_size = 'woocommerce_thumbnail';
 
    	// Add Animations
-	if($animate) {$animate = 'data-animate="'.$animate.'"';}
+	if($animate) {$animate = 'data-animate="'.esc_attr($animate).'"';}
 
 
 	// Set box style
@@ -299,19 +299,19 @@ function ux_products($atts, $content = null, $tag = '' ) {
 				        // Set image size
 				        if($grid[$current]['size']) $image_size = $grid[$current]['size'];
 				    }
-	            	?><div class="<?php echo implode(' ', $classes_col); ?>" <?php echo $animate;?>>
+	            	?><div class="<?php echo esc_attr(implode(' ', $classes_col)); ?>" <?php echo $animate;?>>
 						<div class="col-inner">
 						<?php woocommerce_show_product_loop_sale_flash(); ?>
-						<div class="product-small <?php echo implode(' ', $classes_box); ?>">
+						<div class="product-small <?php echo esc_attr(implode(' ', $classes_box)); ?>">
 							<div class="box-image" <?php echo get_shortcode_inline_css($css_args_img); ?>>
-								<div class="<?php echo implode(' ', $classes_image); ?>" <?php echo get_shortcode_inline_css($css_image_height); ?>>
-									<a href="<?php echo get_the_permalink(); ?>" aria-label="<?php echo esc_attr( $product->get_title() ); ?>">
+								<div class="<?php echo esc_attr(implode(' ', $classes_image)); ?>" <?php echo get_shortcode_inline_css($css_image_height); ?>>
+									<a href="<?php echo esc_url(get_the_permalink()); ?>" aria-label="<?php echo esc_attr( $product->get_title() ); ?>">
 										<?php
 											if($back_image) flatsome_woocommerce_get_alt_product_thumbnail($image_size);
 											echo woocommerce_get_product_thumbnail($image_size);
 										?>
 									</a>
-									<?php if($image_overlay){ ?><div class="overlay fill" style="background-color: <?php echo $image_overlay;?>"></div><?php } ?>
+									<?php if($image_overlay){ ?><div class="overlay fill" style="background-color: <?php echo esc_attr($image_overlay);?>"></div><?php } ?>
 									 <?php if($style == 'shade'){ ?><div class="shade"></div><?php } ?>
 								</div>
 								<div class="image-tools top right show-on-hover">
@@ -325,7 +325,7 @@ function ux_products($atts, $content = null, $tag = '' ) {
 								<?php if($out_of_stock) { ?><div class="out-of-stock-label"><?php _e( 'Out of stock', 'woocommerce' ); ?></div><?php }?>
 							</div>
 
-							<div class="box-text <?php echo implode(' ', $classes_text); ?>" <?php echo get_shortcode_inline_css($css_args); ?>>
+							<div class="box-text <?php echo esc_attr(implode(' ', $classes_text)); ?>" <?php echo get_shortcode_inline_css($css_args); ?>>
 								<?php
 									do_action( 'woocommerce_before_shop_loop_item_title' );
 

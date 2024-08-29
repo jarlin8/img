@@ -137,9 +137,20 @@ final class Status {
 	/**
 	 * Main instance.
 	 *
+	 * @deprecated in favor of get_instance()
 	 * @return Status
 	 */
 	public static function instance() {
+		_deprecated_function( __METHOD__, '3.19.0', 'get_instance()' );
+		return self::get_instance();
+	}
+
+	/**
+	 * Main instance.
+	 *
+	 * @return Status
+	 */
+	public static function get_instance() {
 		if ( is_null( self::$instance ) ) {
 			self::$instance = new self();
 		}
@@ -198,7 +209,7 @@ final class Status {
 			'author_url'             => esc_url_raw( $active_theme->{'Author URI'} ),
 			'is_child_theme'         => is_child_theme(),
 			'has_outdated_templates' => $this->outdated_templates,
-			'is_registered'          => flatsome_envato()->is_registered(),
+			'is_registered'          => flatsome_envato()->is_verified(),
 			'release_channel'        => get_theme_mod( 'release_channel' ),
 			'overrides'              => $this->override_files,
 		);
@@ -1332,6 +1343,6 @@ final class Log_Level { // phpcs:ignore
  * @return Status
  */
 function status() {
-	return Status::instance();
+	return Status::get_instance();
 }
 

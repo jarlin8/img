@@ -86,7 +86,7 @@ class AjaxManager {
     );
 
     if ( array_key_exists( 'id', $data ) ) {
-      $args['ID'] = $data['id'];
+      $args['ID'] = intval( $data['id'] );
       $post_id = wp_update_post( $args, true );
     } else {
       $post_id = wp_insert_post( $args, true );

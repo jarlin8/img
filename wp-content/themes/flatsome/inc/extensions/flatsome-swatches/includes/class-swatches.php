@@ -203,9 +203,20 @@ final class Swatches {
 	/**
 	 * Main instance.
 	 *
+	 * @deprecated in favor of get_instance()
 	 * @return Swatches
 	 */
 	public static function instance() {
+		_deprecated_function( __METHOD__, '3.19.0', 'get_instance()' );
+		return self::get_instance();
+	}
+
+	/**
+	 * Main instance.
+	 *
+	 * @return Swatches
+	 */
+	public static function get_instance() {
 		if ( is_null( self::$instance ) ) {
 			self::$instance = new self();
 		}
@@ -219,7 +230,7 @@ final class Swatches {
 	 * @return Swatches_Admin
 	 */
 	public function admin() {
-		return Swatches_Admin::instance();
+		return Swatches_Admin::get_instance();
 	}
 
 	/**
@@ -228,7 +239,7 @@ final class Swatches {
 	 * @return Swatches_Frontend
 	 */
 	public function frontend() {
-		return Swatches_Frontend::instance();
+		return Swatches_Frontend::get_instance();
 	}
 }
 
@@ -251,6 +262,6 @@ function flatsome_swatches() {
  * @return Swatches
  */
 function swatches() {
-	return Swatches::instance();
+	return Swatches::get_instance();
 }
 

@@ -53,8 +53,9 @@ final class Flatsome {
 		$this->theme_json->init();
 
 		if ( is_woocommerce_activated() ) {
-			Flatsome\WooCommerce\MiniCart::instance();
-			Flatsome\WooCommerce\Shipping::instance();
+			Flatsome\WooCommerce\MiniCart::get_instance();
+			Flatsome\WooCommerce\Shipping::get_instance();
+			Flatsome\WooCommerce\BuyNow::get_instance();
 		}
 	}
 
@@ -70,9 +71,20 @@ final class Flatsome {
 	/**
 	 * Main instance.
 	 *
+	 * @deprecated in favor of get_instance()
 	 * @return Flatsome
 	 */
 	public static function instance() {
+		_deprecated_function( __METHOD__, '3.19.0', 'get_instance()' );
+		return self::get_instance();
+	}
+
+	/**
+	 * Main instance.
+	 *
+	 * @return Flatsome
+	 */
+	public static function get_instance() {
 		if ( is_null( self::$instance ) ) {
 			self::$instance = new self();
 		}

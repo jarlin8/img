@@ -29,6 +29,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 			'snapchat'   => '',
 			'x'          => '',
 			'twitter'    => '',
+			'threads'    => '',
 			'linkedin'   => '',
 			'email'      => '',
 			'phone'      => '',
@@ -64,6 +65,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		'snapchat'  => $snapchat,
 		'x'         => $x,
 		'twitter'   => $twitter,
+		'threads'   => $threads,
 		'email'     => $email,
 		'phone'     => $phone,
 		'pinterest' => $pinterest,
@@ -90,6 +92,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		$snapchat  = get_theme_mod( 'follow_snapchat' );
 		$x         = get_theme_mod( 'follow_x' );
 		$twitter   = get_theme_mod( 'follow_twitter' );
+		$threads   = get_theme_mod( 'follow_threads' );
 		$email     = get_theme_mod( 'follow_email' );
 		$phone     = get_theme_mod( 'follow_phone' );
 		$pinterest = get_theme_mod( 'follow_pinterest' );
@@ -110,13 +113,13 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 	$style = get_flatsome_icon_class( $style );
 
 	// Scale.
-	if ( $scale ) $scale = 'style="font-size:' . $scale . '%"';
+	if ( $scale ) $scale = 'style="font-size:' . esc_attr( $scale ) . '%"';
 
 	$follow_links = apply_filters( 'flatsome_follow_links', array(
 		'facebook'  => array(
 			'enabled'  => ! empty( $facebook ),
 			'atts'     => array(
-				'href'       => $facebook,
+				'href'       => esc_url( $facebook ),
 				'target'     => '_blank',
 				'rel'        => 'noopener nofollow',
 				'data-label' => 'Facebook',
@@ -130,7 +133,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		'instagram' => array(
 			'enabled'  => ! empty( $instagram ),
 			'atts'     => array(
-				'href'       => $instagram,
+				'href'       => esc_url( $instagram ),
 				'target'     => '_blank',
 				'rel'        => 'noopener nofollow',
 				'data-label' => 'Instagram',
@@ -144,7 +147,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		'tiktok'    => array(
 			'enabled'  => ! empty( $tiktok ),
 			'atts'     => array(
-				'href'       => $tiktok,
+				'href'       => esc_url( $tiktok ),
 				'target'     => '_blank',
 				'rel'        => 'noopener nofollow',
 				'data-label' => 'TikTok',
@@ -180,7 +183,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		'x'         => array(
 			'enabled'  => ! empty( $x ),
 			'atts'     => array(
-				'href'       => $x,
+				'href'       => esc_url( $x ),
 				'data-label' => esc_attr_x( 'X', 'social media', 'flatsome' ),
 				'target'     => '_blank',
 				'rel'        => 'noopener nofollow',
@@ -194,7 +197,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		'twitter'   => array(
 			'enabled'  => ! empty( $twitter ),
 			'atts'     => array(
-				'href'       => $twitter,
+				'href'       => esc_url( $twitter ),
 				'data-label' => 'Twitter',
 				'target'     => '_blank',
 				'rel'        => 'noopener nofollow',
@@ -205,10 +208,24 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 			'icon'     => get_flatsome_icon( 'icon-twitter' ),
 			'priority' => 50,
 		),
+		'threads'   => array(
+			'enabled'  => ! empty( $threads ),
+			'atts'     => array(
+				'href'       => $threads,
+				'data-label' => 'Threads',
+				'target'     => '_blank',
+				'rel'        => 'noopener nofollow',
+				'class'      => $style . ' threads tooltip',
+				'title'      => esc_attr__( 'Follow on Threads', 'flatsome' ),
+				'aria-label' => esc_attr__( 'Follow on Threads', 'flatsome' ),
+			),
+			'icon'     => get_flatsome_icon( 'icon-threads' ),
+			'priority' => 55,
+		),
 		'email'     => array(
 			'enabled'  => ! empty( $email ),
 			'atts'     => array(
-				'href'       => 'mailto:' . $email,
+				'href'       => 'mailto:' . esc_attr( $email ),
 				'data-label' => 'E-mail',
 				'target'     => '_blank',
 				'rel'        => 'nofollow',
@@ -222,7 +239,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		'phone'     => array(
 			'enabled'  => ! empty( $phone ),
 			'atts'     => array(
-				'href'       => 'tel:' . $phone,
+				'href'       => 'tel:' . esc_attr( $phone ),
 				'data-label' => 'Phone',
 				'target'     => '_blank',
 				'rel'        => 'nofollow',
@@ -236,7 +253,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		'pinterest' => array(
 			'enabled'  => ! empty( $pinterest ),
 			'atts'     => array(
-				'href'       => $pinterest,
+				'href'       => esc_url( $pinterest ),
 				'data-label' => 'Pinterest',
 				'target'     => '_blank',
 				'rel'        => 'noopener nofollow',
@@ -250,7 +267,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		'rss'       => array(
 			'enabled'  => ! empty( $rss ),
 			'atts'     => array(
-				'href'       => $rss,
+				'href'       => esc_url( $rss ),
 				'data-label' => 'RSS Feed',
 				'target'     => '_blank',
 				'rel'        => 'noopener nofollow',
@@ -264,7 +281,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		'linkedin'  => array(
 			'enabled'  => ! empty( $linkedin ),
 			'atts'     => array(
-				'href'       => $linkedin,
+				'href'       => esc_url( $linkedin ),
 				'data-label' => 'LinkedIn',
 				'target'     => '_blank',
 				'rel'        => 'noopener nofollow',
@@ -278,7 +295,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		'youtube'   => array(
 			'enabled'  => ! empty( $youtube ),
 			'atts'     => array(
-				'href'       => $youtube,
+				'href'       => esc_url( $youtube ),
 				'data-label' => 'YouTube',
 				'target'     => '_blank',
 				'rel'        => 'noopener nofollow',
@@ -292,7 +309,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		'flickr'    => array(
 			'enabled'  => ! empty( $flickr ),
 			'atts'     => array(
-				'href'       => $flickr,
+				'href'       => esc_url( $flickr ),
 				'data-label' => 'Flickr',
 				'target'     => '_blank',
 				'rel'        => 'noopener nofollow',
@@ -306,7 +323,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		'500px'     => array(
 			'enabled'  => ! empty( $px500 ),
 			'atts'     => array(
-				'href'       => $px500,
+				'href'       => esc_url( $px500 ),
 				'data-label' => '500px',
 				'target'     => '_blank',
 				'rel'        => 'noopener nofollow',
@@ -320,7 +337,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		'vkontakte' => array(
 			'enabled'  => ! empty( $vkontakte ),
 			'atts'     => array(
-				'href'       => $vkontakte,
+				'href'       => esc_url( $vkontakte ),
 				'data-label' => 'VKontakte',
 				'target'     => '_blank',
 				'rel'        => 'noopener nofollow',
@@ -334,7 +351,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		'telegram'  => array(
 			'enabled'  => ! empty( $telegram ),
 			'atts'     => array(
-				'href'       => $telegram,
+				'href'       => esc_url( $telegram ),
 				'data-label' => 'Telegram',
 				'target'     => '_blank',
 				'rel'        => 'noopener nofollow',
@@ -348,7 +365,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		'twitch'    => array(
 			'enabled'  => ! empty( $twitch ),
 			'atts'     => array(
-				'href'       => $twitch,
+				'href'       => esc_url( $twitch ),
 				'data-label' => 'Twitch',
 				'target'     => '_blank',
 				'rel'        => 'noopener nofollow',
@@ -362,7 +379,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		'discord'   => array(
 			'enabled'  => ! empty( $discord ),
 			'atts'     => array(
-				'href'       => $discord,
+				'href'       => esc_url( $discord ),
 				'data-label' => 'Discord',
 				'target'     => '_blank',
 				'rel'        => 'noopener nofollow',
@@ -386,7 +403,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 	?>
 	<div class="<?php echo esc_attr( implode( ' ', $wrapper_class ) ); ?>" <?php echo $scale; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 		<?php
-		if ( $title ) echo "<span>{$title}</span>";
+		if ( $title ) echo '<span>' . wp_kses_post( $title ) . '</span>';
 		foreach ( $follow_links as $follow_link ) {
 			if ( isset( $follow_link['enabled'] ) && $follow_link['enabled'] == false ) continue;
 			printf( '<a %1$s>%2$s</a>',

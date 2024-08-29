@@ -5,7 +5,7 @@
  * @author           WooThemes
  * @package          WooCommerce/Templates
  * @version          3.3.1
- * @flatsome-version 3.16.0
+ * @flatsome-version 3.19.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -42,6 +42,8 @@ if ( $total <= 1 ) {
 			echo '<ul class="page-numbers nav-pagination links text-center">';
 			foreach ( $pages as $page ) {
 				$page = str_replace( 'page-numbers', 'page-number', $page );
+				$page = str_replace( '<a class="next page-number', '<a aria-label="' . esc_attr__( 'Next', 'flatsome' ) . '" class="next page-number', $page );
+				$page = str_replace( '<a class="prev page-number', '<a aria-label="' . esc_attr__( 'Previous', 'flatsome' ) . '" class="prev page-number', $page );
 				echo '<li>' . $page . '</li>';
 			}
 			echo '</ul>';

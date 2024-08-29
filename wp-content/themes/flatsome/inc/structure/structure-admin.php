@@ -1,5 +1,7 @@
 <?php
 
+add_action( 'admin_init', [ Flatsome\Admin\Features::class, 'get_instance' ] );
+
 /* Add Custom WP Editor CSS */
 
 if(!function_exists('flatsome_editor_style')) {

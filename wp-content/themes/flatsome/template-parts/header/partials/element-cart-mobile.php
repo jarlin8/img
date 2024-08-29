@@ -3,7 +3,7 @@
  * Mobile cart element.
  *
  * @package          Flatsome\Templates
- * @flatsome-version 3.18.7
+ * @flatsome-version 3.19.0
  */
 
 if ( is_woocommerce_activated() && flatsome_is_wc_cart_available() ) {
@@ -13,7 +13,10 @@ if ( is_woocommerce_activated() && flatsome_is_wc_cart_available() ) {
   $custom_cart_content = flatsome_option('html_cart_header');
   $icon_style = flatsome_option('cart_icon_style');
   $icon = flatsome_option('cart_icon');
+  $custom_cart_icon_id = get_theme_mod( 'custom_cart_icon' );
+  $custom_cart_icon = wp_get_attachment_image_src( $custom_cart_icon_id, 'large' );
   $disable_mini_cart = apply_filters( 'flatsome_disable_mini_cart', is_cart() || is_checkout() );
+
   if ( $disable_mini_cart ) {
     $cart_style = 'link';
   }
@@ -42,19 +45,19 @@ if ( is_woocommerce_activated() && flatsome_is_wc_cart_available() ) {
 		<a <?php echo flatsome_html_atts( $link_atts ); ?>>
 
 <?php
-if(flatsome_option('custom_cart_icon')) { ?>
-  <span class="image-icon header-cart-icon" data-icon-label="<?php echo WC()->cart->cart_contents_count; ?>">
-    <img class="cart-img-icon" alt="<?php _e('Cart', 'woocommerce'); ?>" src="<?php echo do_shortcode(flatsome_option('custom_cart_icon')); ?>"/>
+if($custom_cart_icon) { ?>
+  <span class="image-icon header-cart-icon" data-icon-label="<?php echo WC()->cart->get_cart_contents_count(); ?>">
+	<img class="cart-img-icon" alt="<?php echo esc_attr__( 'Cart', 'woocommerce' ); ?>" src="<?php echo esc_url( $custom_cart_icon[0] ); ?>" width="<?php echo esc_attr( $custom_cart_icon[1] ); ?>" height="<?php echo esc_attr( $custom_cart_icon[2] ); ?>"/>
   </span>
 <?php }
 else { ?>
   <?php if(!$icon_style) { ?>
   <span class="cart-icon image-icon">
-    <strong><?php echo WC()->cart->cart_contents_count; ?></strong>
+    <strong><?php echo WC()->cart->get_cart_contents_count(); ?></strong>
   </span>
   <?php } else { ?>
   <i class="icon-shopping-<?php echo $icon;?>"
-    data-icon-label="<?php echo WC()->cart->cart_contents_count; ?>">
+    data-icon-label="<?php echo WC()->cart->get_cart_contents_count(); ?>">
   </i>
   <?php } ?>
 <?php }  ?>

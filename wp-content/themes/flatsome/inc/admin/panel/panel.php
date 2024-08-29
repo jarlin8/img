@@ -11,7 +11,6 @@ class Flatsome_Admin {
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'flatsome_panel_register_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'flatsome_panel_style' ) );
-		add_action( 'wp_ajax_flatsome_purchase_codes', array( $this, 'flatsome_purchase_codes' ) );
 	}
 
 
@@ -26,31 +25,6 @@ class Flatsome_Admin {
 		$version = $theme->get( 'Version' );
 
 		wp_enqueue_style( 'flatsome-panel-css', $uri . '/inc/admin/panel/panel.css', array(), $version );
-		wp_enqueue_script( 'flatsome-panel', $uri . '/inc/admin/panel/panel.js', array( 'jquery', 'wp-date' ), $version, true );
-		wp_localize_script( 'flatsome-panel', 'flatsomePanelOptions', array(
-			'errorMessage' => __( 'Sorry, an error occurred while accessing the API.', 'flatsome' ),
-		) );
-	}
-
-	/**
-	 * Returns a list of available purchase codes for a token.
-	 */
-	public function flatsome_purchase_codes() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return wp_send_json_error();
-		}
-
-		if ( is_a( flatsome_envato()->registration, 'Flatsome_Envato_Registration' ) ) {
-			$result = flatsome_envato()->registration->get_purchase_codes();
-
-			if ( is_wp_error( $result ) ) {
-				return wp_send_json_error();
-			} else {
-				return wp_send_json( $result );
-			}
-		}
-
-		return wp_send_json_error();
 	}
 
 	/**
@@ -64,6 +38,7 @@ class Flatsome_Admin {
 		add_submenu_page( 'flatsome-panel', 'Theme Registration', 'Theme Registration', 'manage_options', 'admin.php?page=flatsome-panel' );
 		add_submenu_page( 'flatsome-panel', 'Help & Guides', 'Help & Guides', 'manage_options', 'flatsome-panel-support', array( $this, 'flatsome_panel_support' ) );
 		add_submenu_page( 'flatsome-panel', 'Status', 'Status', 'manage_options', 'flatsome-panel-status', array( $this, 'flatsome_panel_status' ) );
+		add_submenu_page( 'flatsome-panel', 'Features', 'Features', 'manage_options', 'flatsome-panel-features', array( $this, 'flatsome_panel_features' ) );
 		add_submenu_page( 'flatsome-panel', 'Change log', 'Change log', 'manage_options', 'flatsome-panel-changelog', array( $this, 'flatsome_panel_changelog' ) );
 		add_submenu_page( 'flatsome-panel', '', 'Theme Options', 'manage_options', 'customize.php' );
 	}
@@ -122,6 +97,17 @@ class Flatsome_Admin {
 			<div class="wrap about-wrap">
 				<?php require get_template_directory() . '/inc/admin/panel/sections/top.php'; ?>
 				<?php require get_template_directory() . '/inc/admin/panel/sections/tab-status.php'; ?>
+			</div>
+		</div>
+		<?php
+	}
+
+	public function flatsome_panel_features() {
+		?>
+		<div class="flatsome-panel">
+			<div class="wrap about-wrap">
+				<?php require get_template_directory() . '/inc/admin/panel/sections/top.php'; ?>
+				<?php require get_template_directory() . '/inc/admin/panel/sections/tab-features.php'; ?>
 			</div>
 		</div>
 		<?php

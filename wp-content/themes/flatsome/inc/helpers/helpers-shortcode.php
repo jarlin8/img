@@ -154,28 +154,28 @@ function get_flatsome_repeater_start( $atts ) {
   <?php if($atts['title']){?>
   <div class="row">
     <div class="large-12 col">
-      <h3 class="section-title"><span><?php echo $atts['title']; ?></span></h3>
+      <h3 class="section-title"><span><?php echo wp_kses_post( $atts['title'] ); ?></span></h3>
     </div>
   </div>
   <?php } ?>
 
   <?php if($atts['type'] == 'slider') { // Slider grid ?>
-  <div class="row <?php echo $row_classes; ?>"  data-flickity-options='<?php echo $slider_options; ?>' <?php echo $atts['attrs'] ?>>
+  <div class="row <?php echo esc_attr( $row_classes ); ?>"  data-flickity-options='<?php echo esc_attr( $slider_options ); ?>' <?php echo $atts['attrs'] ?>>
 
   <?php } else if($atts['type'] == 'slider-full') { // Full slider ?>
-  <div id="<?php echo $atts['id']; ?>" class="<?php echo $row_classes_full; ?>" data-flickity-options='<?php echo $slider_options; ?>'>
+  <div id="<?php echo esc_attr( $atts['id'] ); ?>" class="<?php echo esc_attr( $row_classes_full ); ?>" data-flickity-options='<?php echo esc_attr( $slider_options ); ?>'>
 
   <?php } else if($atts['type'] == 'masonry') { // Masonry grid ?>
-  <div id="<?php echo $atts['id']; ?>" class="row <?php echo $row_classes; ?>" data-packery-options='{"itemSelector": ".col", "gutter": 0, "presentageWidth" : true}'>
+  <div id="<?php echo esc_attr( $atts['id'] ); ?>" class="row <?php echo esc_attr( $row_classes ); ?>" data-packery-options='{"itemSelector": ".col", "gutter": 0, "presentageWidth" : true}'>
 
   <?php } else if($atts['type'] == 'grid') { ?>
-  <div id="<?php echo $atts['id']; ?>" class="row <?php echo $row_classes; ?>" data-packery-options='{"itemSelector": ".col", "gutter": 0, "presentageWidth" : true}'>
+  <div id="<?php echo esc_attr( $atts['id'] ); ?>" class="row <?php echo esc_attr( $row_classes ); ?>" data-packery-options='{"itemSelector": ".col", "gutter": 0, "presentageWidth" : true}'>
 
   <?php } else if($atts['type'] == 'blank') { //Blank type ?>
   <div class="container">
 
   <?php } else { // Normal Rows ?>
-  <div class="row <?php echo $row_classes; ?>" <?php echo $atts['attrs'] ?>>
+  <div class="row <?php echo esc_attr( $row_classes ); ?>" <?php echo $atts['attrs'] ?>>
   <?php }
 }
 
@@ -234,7 +234,7 @@ function get_shortcode_inline_css($args){
         $unit = array_key_exists( 'unit', $value ) ? $value['unit'] : null;
         if($value['value']) $style .=  $value['attribute'].':'.$value['value'].$unit.';';
        }
-    if($style) return 'style="'.$style.'"';
+    if($style) return 'style="'.esc_attr($style).'"';
 }
 
 
@@ -270,7 +270,7 @@ function flatsome_get_image( $id, $size = 'large', $alt = 'bg_image', $inline = 
 	}
 
     if (!is_numeric($id)) {
-        return '<img src="' . $id . '" alt="' . $alt . '"' . $title_html . '/>';
+        return '<img src="' . esc_url( $id ) . '" alt="' . esc_attr( $alt ) . '"' . $title_html . '/>';
     } else {
         $meta = get_post_mime_type($id);
 

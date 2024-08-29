@@ -9,8 +9,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-04-10T12:28:40+00:00\n"
-"PO-Revision-Date: 2024-04-10 12:31\n"
+"POT-Creation-Date: 2024-08-12T17:15:49+00:00\n"
+"PO-Revision-Date: 2024-08-12 17:18\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: flatsome\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
@@ -122,7 +122,7 @@ msgstr "<span class=“meta-nav”>&rarr;</span> السابق"
 msgid "Next <span class=\"meta-nav\">&rarr;</span>"
 msgstr "التالي <span class=\"meta-nav\">&larr;</span>"
 
-#: inc/admin/admin-bar.php:87
+#: inc/admin/admin-bar.php:94
 msgid "Activate Theme"
 msgstr "تفعيل الثيم"
 
@@ -135,14 +135,14 @@ msgid "Flatsome issues"
 msgstr "مشكلات Flatsome"
 
 #: inc/admin/admin-notice.php:38
-#: inc/functions/function-site-health.php:74
+#: inc/functions/function-site-health.php:53
 msgid "Manage registration"
 msgstr "إدارة التسجيل"
 
 #: inc/admin/admin-notice.php:43
-#: inc/admin/envato_setup/envato_setup.php:2025
-#: inc/functions/function-site-health.php:79
-#: template-parts/admin/envato/register-form.php:105
+#: inc/admin/envato_setup/envato_setup.php:2019
+#: inc/functions/function-site-health.php:58
+#: template-parts/admin/envato/register-form.php:94
 msgid "Manage your licenses"
 msgstr "إدارة الرخص الخاصة بك"
 
@@ -286,301 +286,325 @@ msgid "Add any HTML, SVG or shortcode here."
 msgstr "إضافة أي صيغة HTML أو SVG أو شفرة مختصرة هنا."
 
 #: inc/admin/backend/menu/class-menu.php:245
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:226
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:237
 msgid "Select image"
 msgstr "اختر صورة"
 
 #: inc/admin/backend/menu/class-menu.php:250
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:227
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:238
 msgid "Remove"
 msgstr "إزالة"
 
-#: inc/admin/classes/class-status.php:548
-#: inc/admin/classes/class-status.php:576
+#: inc/admin/classes/class-features.php:30
+msgid "Features"
+msgstr ""
+
+#: inc/admin/classes/class-features.php:37
+msgid "Experimental features"
+msgstr ""
+
+#: inc/admin/classes/class-features.php:81
+msgid "There are currently no experimental features in development."
+msgstr ""
+
+#: inc/admin/classes/class-features.php:83
+msgid "Features that are testable while they're in development. These features are likely to change, so avoid using them in production."
+msgstr ""
+
+#. translators: %s: PHP version.
+#: inc/admin/classes/class-features.php:132
+msgid "This feature requires PHP version %s or higher."
+msgstr ""
+
+#. translators: %s: WordPress version.
+#: inc/admin/classes/class-features.php:136
+msgid "This feature requires WordPress version %s or higher."
+msgstr ""
+
+#: inc/admin/classes/class-status.php:559
+#: inc/admin/classes/class-status.php:587
 msgid "Theme"
 msgstr "الثيم"
 
-#: inc/admin/classes/class-status.php:549
-#: inc/admin/classes/class-status.php:689
+#: inc/admin/classes/class-status.php:560
+#: inc/admin/classes/class-status.php:700
 msgid "WordPress environment"
 msgstr "بيئة WordPress"
 
-#: inc/admin/classes/class-status.php:550
-#: inc/admin/classes/class-status.php:801
+#: inc/admin/classes/class-status.php:561
+#: inc/admin/classes/class-status.php:812
 msgid "Server environment"
 msgstr "بيئة الخادم"
 
-#: inc/admin/classes/class-status.php:551
-#: inc/admin/classes/class-status.php:883
+#: inc/admin/classes/class-status.php:562
+#: inc/admin/classes/class-status.php:894
 #: inc/functions/function-site-health.php:31
-#: inc/functions/function-site-health.php:52
 msgid "Security"
 msgstr "الأمان"
 
-#: inc/admin/classes/class-status.php:552
-#: inc/admin/classes/class-status.php:939
+#: inc/admin/classes/class-status.php:563
+#: inc/admin/classes/class-status.php:950
 msgid "Database"
 msgstr "قاعدة البيانات"
 
-#: inc/admin/classes/class-status.php:553
-#: inc/admin/classes/class-status.php:977
+#: inc/admin/classes/class-status.php:564
+#: inc/admin/classes/class-status.php:988
 msgid "Templates"
 msgstr "القوالب"
 
-#: inc/admin/classes/class-status.php:557
+#: inc/admin/classes/class-status.php:568
 msgid "More details"
 msgstr "المزيد من التفاصيل"
 
-#: inc/admin/classes/class-status.php:582
+#: inc/admin/classes/class-status.php:593
 msgid "Name"
 msgstr "الاسم"
 
-#: inc/admin/classes/class-status.php:584
+#: inc/admin/classes/class-status.php:595
 msgid "The name of the current active theme."
 msgstr "الاسم للثيم المفعل حالياً."
 
-#: inc/admin/classes/class-status.php:589
+#: inc/admin/classes/class-status.php:600
 msgid "Version"
 msgstr "الإصدار"
 
-#: inc/admin/classes/class-status.php:591
+#: inc/admin/classes/class-status.php:602
 msgid "The version of the current active theme."
 msgstr "الإصدارللثيم المفعل حالياً."
 
-#: inc/admin/classes/class-status.php:596
+#: inc/admin/classes/class-status.php:607
 msgid "Author URL"
 msgstr "رابط المؤلف"
 
-#: inc/admin/classes/class-status.php:598
+#: inc/admin/classes/class-status.php:609
 msgid "The theme developers URL."
 msgstr "رابط مطوري الثيم."
 
-#: inc/admin/classes/class-status.php:603
+#: inc/admin/classes/class-status.php:614
 msgid "Registered"
 msgstr "مسجل"
 
-#: inc/admin/classes/class-status.php:605
+#: inc/admin/classes/class-status.php:616
 msgid "Displays whether or not the theme is registered."
 msgstr "عرض فيما إذا كان الثيم مسجل أم لا."
 
-#: inc/admin/classes/class-status.php:612
-#: inc/functions/function-site-health.php:28
+#: inc/admin/classes/class-status.php:623
 msgid "You should register Flatsome with a purchase code"
 msgstr "يجب عليك تسجيل Flatsome برمز الشراء"
 
-#: inc/admin/classes/class-status.php:618
+#: inc/admin/classes/class-status.php:629
 msgid "Child theme"
 msgstr "الثيم الفرعي"
 
-#: inc/admin/classes/class-status.php:620
+#: inc/admin/classes/class-status.php:631
 msgid "Displays whether or not the current active theme is a child theme."
 msgstr "يعرض فيما إذا كان الثيم المفعل حالياً هو ثيم فرعي أم لا."
 
 #. translators: %s: Docs link.
-#: inc/admin/classes/class-status.php:628
+#: inc/admin/classes/class-status.php:639
 msgid "If you are modifying Flatsome on the parent theme we recommend using a child theme. See: <a href=\"%s\" target=\"_blank\">How to create a child theme</a>"
 msgstr "إذا كنت تعدل على Flatsome من الثيم الأصل فنحن نفضل استخدام الثيم الفرعي. أنظر: <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">كيف تنشئ ثيم فرعي</a>"
 
-#: inc/admin/classes/class-status.php:634
+#: inc/admin/classes/class-status.php:645
 msgid "Release channel"
 msgstr "قناة الإصدار"
 
-#: inc/admin/classes/class-status.php:636
+#: inc/admin/classes/class-status.php:647
 msgid "Which updates to receive on this site."
 msgstr "ما التحديثات التي يتلقاها هذا الموقع."
 
-#: inc/admin/classes/class-status.php:650
+#: inc/admin/classes/class-status.php:661
 msgid "Parent theme name"
 msgstr "اسم الموضوع الرئيسي"
 
-#: inc/admin/classes/class-status.php:652
+#: inc/admin/classes/class-status.php:663
 msgid "The name of the parent theme."
 msgstr "اسم الموضوع الرئيسي."
 
-#: inc/admin/classes/class-status.php:657
+#: inc/admin/classes/class-status.php:668
 msgid "Parent theme version"
 msgstr "إصدار سمة الأصل"
 
-#: inc/admin/classes/class-status.php:659
+#: inc/admin/classes/class-status.php:670
 msgid "The installed version of the parent theme."
 msgstr "النسخة المثبتة من الموضوع الرئيسي."
 
-#: inc/admin/classes/class-status.php:664
+#: inc/admin/classes/class-status.php:675
 msgid "Parent theme author URL"
 msgstr "URL كاتب الموضوع الرئيسي"
 
-#: inc/admin/classes/class-status.php:666
+#: inc/admin/classes/class-status.php:677
 msgid "The parent theme developers URL."
 msgstr "عنوان URL لمطوري الموضوع الرئيسي."
 
-#: inc/admin/classes/class-status.php:695
+#: inc/admin/classes/class-status.php:706
 msgid "WordPress version"
 msgstr "إصدار WordPress"
 
-#: inc/admin/classes/class-status.php:697
+#: inc/admin/classes/class-status.php:708
 msgid "The installed WordPress version (indicates the fulfillment of the minimum required version)."
 msgstr "إصدار WordPress المثبت (يشير إلى استيفاء الحد الأدنى من الإصدار المطلوب)."
 
 #. translators: %s: The minimum required WP version number.
-#: inc/admin/classes/class-status.php:706
+#: inc/admin/classes/class-status.php:717
 msgid "The theme requires WordPress version %s or above."
 msgstr "الثيم يتطلب الإصدار %s من WordPress أو أعلى."
 
-#: inc/admin/classes/class-status.php:718
+#: inc/admin/classes/class-status.php:729
 msgid "WooCommerce version"
 msgstr "إصدار WooCommerce"
 
-#: inc/admin/classes/class-status.php:720
+#: inc/admin/classes/class-status.php:731
 msgid "The installed WooCommerce version (indicates the fulfillment of the minimum required version)."
 msgstr "إصدار WooCommerce المثبت (يشير إلى استيفاء الحد الأدنى من الإصدار المطلوب)."
 
 #. translators: %s: The minimum required WC version number.
-#: inc/admin/classes/class-status.php:729
+#: inc/admin/classes/class-status.php:740
 msgid "The theme requires WooCommerce version %s or above."
 msgstr "الثيم يتطلب الإصدار %s من WooCommerce أو أعلى."
 
-#: inc/admin/classes/class-status.php:741
+#: inc/admin/classes/class-status.php:752
 msgid "WordPress memory limit"
 msgstr "حد الذاكرة للـ WordPress"
 
-#: inc/admin/classes/class-status.php:743
+#: inc/admin/classes/class-status.php:754
 msgid "The maximum amount of memory (RAM) that your site can use at one time."
 msgstr "الحد الأقصى لكمية الذاكرة (RAM) التي يمكن لموقعك استخدامها في وقت واحد."
 
 #. translators: %1$s: Memory limit, %2$s: Docs link.
-#: inc/admin/classes/class-status.php:750
+#: inc/admin/classes/class-status.php:761
 msgid "%1$s - We recommend setting memory to at least 256MB. See: %2$s"
 msgstr "%1$s - نحن نوصي بضبط الذاكرة لتكون في الأقل 256 ميغابايت. انظر: %2$s"
 
 #. translators: %1$s: Memory limit, %2$s: Docs link.
-#: inc/admin/classes/class-status.php:750
+#: inc/admin/classes/class-status.php:761
 msgid "Increasing memory allocated to PHP"
 msgstr "زيادة الذاكرة المخصصة لـ PHP"
 
-#: inc/admin/classes/class-status.php:757
+#: inc/admin/classes/class-status.php:768
 msgid "WordPress image sizes"
 msgstr "أحجام الصورة في WordPress"
 
-#: inc/admin/classes/class-status.php:759
+#: inc/admin/classes/class-status.php:770
 msgid "The image sizes that are registered on this site."
 msgstr "أحجام الصورة المسجلة بهذا الموقع."
 
-#: inc/admin/classes/class-status.php:807
+#: inc/admin/classes/class-status.php:818
 msgid "Server info"
 msgstr "معلومات الخادم"
 
-#: inc/admin/classes/class-status.php:808
+#: inc/admin/classes/class-status.php:819
 msgid "Information about the web server that is currently hosting your site."
 msgstr "معلومات عن خادم الويب الذي يستضيف موقعك حاليا."
 
-#: inc/admin/classes/class-status.php:812
+#: inc/admin/classes/class-status.php:823
 msgid "PHP version"
 msgstr "إصدار PHP"
 
-#: inc/admin/classes/class-status.php:814
+#: inc/admin/classes/class-status.php:825
 msgid "The version of PHP installed on your hosting server."
 msgstr "إصدار PHP المثبت على خادم الاستضافة الخاص بك."
 
 #. translators: %s: The recommended PHP version number.
-#: inc/admin/classes/class-status.php:826
+#: inc/admin/classes/class-status.php:837
 msgid "We recommend using PHP version %s or above for greater performance and security."
 msgstr "نحن نوصي باستخدام الإصدار %s من الـ PHP أو أعلى للأمان ولأداء أكبر."
 
-#: inc/admin/classes/class-status.php:837
+#: inc/admin/classes/class-status.php:848
 msgid "PHP post max size"
 msgstr "الحجم الأقصى لـ PHP POST"
 
-#: inc/admin/classes/class-status.php:839
+#: inc/admin/classes/class-status.php:850
 msgid "The largest filesize that can be contained in one post."
 msgstr "أكبر حجم ملف يمكن احتواؤه في وظيفة واحدة."
 
-#: inc/admin/classes/class-status.php:844
+#: inc/admin/classes/class-status.php:855
 msgid "PHP time limit"
 msgstr "المهلة المحددة لـ PHP"
 
-#: inc/admin/classes/class-status.php:846
+#: inc/admin/classes/class-status.php:857
 msgid "The amount of time (in seconds) that your site will spend on a single operation before timing out (to avoid server lockups)."
 msgstr "مقدار الزمن (بالثواني) الذي تستغرقه عملية منفردة في موقعك قبل انقضاء التوقيت (لتفادي شل الخادم)."
 
-#: inc/admin/classes/class-status.php:851
+#: inc/admin/classes/class-status.php:862
 msgid "PHP max input variables"
 msgstr "الحد الأعلى لإدخال المتغيرات في الـ PHP"
 
-#: inc/admin/classes/class-status.php:853
+#: inc/admin/classes/class-status.php:864
 msgid "The maximum number of variables your server can use for a single function to avoid overloads."
 msgstr "الحد الأقصى لعدد المتغيرات التي يمكن للخادم استخدامها لدالة واحدة لتجنب التحميل الزائد."
 
-#: inc/admin/classes/class-status.php:859
+#: inc/admin/classes/class-status.php:870
 msgid "Max upload size"
 msgstr "حجم التحميل الأقصى"
 
-#: inc/admin/classes/class-status.php:861
+#: inc/admin/classes/class-status.php:872
 msgid "The largest filesize that can be uploaded to your WordPress installation."
 msgstr "أكبر حجم للملف يمكن تحميله إلى تثبيت WordPress الخاص بك."
 
-#: inc/admin/classes/class-status.php:889
+#: inc/admin/classes/class-status.php:900
 msgid "Secure connection (HTTPS)"
 msgstr "اتصال آمن (HTTPS)"
 
-#: inc/admin/classes/class-status.php:891
+#: inc/admin/classes/class-status.php:902
 msgid "Is the connection to your site secure?"
 msgstr "هل الاتصال بموقعك آمن؟"
 
 #. translators: %s: Docs link.
-#: inc/admin/classes/class-status.php:900
+#: inc/admin/classes/class-status.php:911
 msgid "Your site is not using HTTPS. <a href=\"%s\" target=\"_blank\">Learn more about HTTPS and SSL Certificates</a>."
 msgstr "موقعك لا يستخدم HTTPS. <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">تعلم المزيد عن HTTPS وشهادات الـ SSL</a>."
 
-#: inc/admin/classes/class-status.php:907
+#: inc/admin/classes/class-status.php:918
 msgid "Hide errors from visitors"
 msgstr "إخفاء الأخطاء عن الزوار"
 
-#: inc/admin/classes/class-status.php:909
+#: inc/admin/classes/class-status.php:920
 msgid "Error messages can contain sensitive information about your site environment. These should be hidden from untrusted visitors."
 msgstr "رسائل الخطأ يمكن أن تحتوي على معلومات حساسة عن بيئة الموقع الخاص بك. لذا يجب إخفائها عن الزوار غير الموثوقين."
 
-#: inc/admin/classes/class-status.php:916
+#: inc/admin/classes/class-status.php:927
 msgid "Error messages should not be shown to visitors."
 msgstr "لا ينبغي أن تظهر رسائل الخطأ للزوار."
 
-#: inc/admin/classes/class-status.php:945
+#: inc/admin/classes/class-status.php:956
 msgid "Flatsome database version"
 msgstr "إصدار قاعدة بيانات Flatsome"
 
-#: inc/admin/classes/class-status.php:947
+#: inc/admin/classes/class-status.php:958
 msgid "The database version for Flatsome. This should be the same as the parent theme version."
 msgstr "إصدار قاعدة البيانات لـ Flatsome. يجب أن يكون نفس إصدار الثيم الأصل."
 
-#: inc/admin/classes/class-status.php:954
+#: inc/admin/classes/class-status.php:965
 msgid "This should be the same as the parent theme version."
 msgstr "يجب أن يكون هذا نفس إصدار الثيم الأصل."
 
-#: inc/admin/classes/class-status.php:983
+#: inc/admin/classes/class-status.php:994
 msgid "Overrides"
 msgstr "التجاوزات"
 
-#: inc/admin/classes/class-status.php:984
+#: inc/admin/classes/class-status.php:995
 msgid "This section shows any files that are overriding the default Flatsome templates."
 msgstr "يظهر هذا القسم أي ملفات تطغى على قوالب Flatsome الافتراضية."
 
 #. translators: %1$s: Template name, %2$s: Template version, %3$s: Core version.
-#: inc/admin/classes/class-status.php:997
+#: inc/admin/classes/class-status.php:1008
 msgid "%1$s version %2$s is out of date. The core version is %3$s"
 msgstr "إصدار %1$s هو %2$s وهو منتهي الصلاحية. الإصدار الأساسي هو %3$s"
 
-#: inc/admin/envato_setup/envato_setup.php:2018
+#: inc/admin/envato_setup/envato_setup.php:2012
 msgid "Register Theme"
 msgstr "تسجيل الثيم"
 
-#: inc/admin/envato_setup/envato_setup.php:2043
+#: inc/admin/envato_setup/envato_setup.php:2037
 msgid "Continue"
 msgstr "استمرار"
 
-#: inc/admin/envato_setup/envato_setup.php:2044
+#: inc/admin/envato_setup/envato_setup.php:2038
 msgid "Unregister"
 msgstr "غير مسجل"
 
-#: inc/admin/envato_setup/envato_setup.php:2046
+#: inc/admin/envato_setup/envato_setup.php:2040
 msgid "Register"
 msgstr "تسجيل"
 
@@ -612,26 +636,26 @@ msgstr "التنقل عبر السابق / التالي"
 msgid "HTML after blog posts"
 msgstr "صيغة HTML بعد منشورات المدونة"
 
-#: inc/admin/options/header/options-header-cart.php:117
+#: inc/admin/options/header/options-header-cart.php:115
 msgid "Show quantity input"
 msgstr "إظهار إدخال الكمية"
 
-#: inc/admin/options/header/options-header-cart.php:127
+#: inc/admin/options/header/options-header-cart.php:125
 #: inc/admin/options/shop/options-shop-cart-checkout.php:81
 #: inc/admin/options/shop/options-shop-cart-checkout.php:258
 msgid "Show free shipping"
 msgstr "إظهار الشحن المجاني"
 
-#: inc/admin/options/header/options-header-cart.php:158
+#: inc/admin/options/header/options-header-cart.php:156
 #: inc/admin/options/styles/options-lightbox.php:30
 msgid "Drawer width"
 msgstr "عرض الدرج"
 
-#: inc/admin/options/header/options-header-cart.php:167
+#: inc/admin/options/header/options-header-cart.php:165
 msgid "Sticky footer"
 msgstr "التذييل المثبت"
 
-#: inc/admin/options/header/options-header-cart.php:177
+#: inc/admin/options/header/options-header-cart.php:175
 msgid "Show cross sells"
 msgstr "إظهار البيع المتبادل"
 
@@ -716,7 +740,7 @@ msgid "Menu elements tab 2"
 msgstr "عناصر القائمة لعلامة التبويب 2"
 
 #: inc/admin/options/header/options-header-nav-vertical.php:9
-#: inc/functions/function-setup.php:95
+#: inc/functions/function-setup.php:120
 msgid "Vertical Menu"
 msgstr "القائمة العمودية"
 
@@ -800,7 +824,7 @@ msgid "Show catalog ordering"
 msgstr "إظهار ترتيب الكتالوج"
 
 #: inc/admin/options/shop/options-shop-category.php:766
-#: inc/admin/options/shop/options-shop-product-page.php:413
+#: inc/admin/options/shop/options-shop-product-page.php:475
 msgid "Color :selected"
 msgstr "اللون: محدد"
 
@@ -810,33 +834,33 @@ msgstr "اللون: محدد"
 msgid "Custom product layout"
 msgstr "تخطيط منتج مخصص"
 
-#: inc/admin/options/shop/options-shop-product-page.php:374
+#: inc/admin/options/shop/options-shop-product-page.php:436
 msgid "Layout"
 msgstr "التخطيط"
 
-#: inc/admin/options/shop/options-shop-product-page.php:386
+#: inc/admin/options/shop/options-shop-product-page.php:448
 msgid "Tooltip"
 msgstr "أداة التلميح"
 
-#: inc/admin/options/shop/options-shop-product-page.php:387
+#: inc/admin/options/shop/options-shop-product-page.php:449
 msgid "Show a tooltip with the term or term description."
 msgstr "إظهار تلميح مع المصطلح أو وصف المصطلح."
 
-#: inc/admin/options/shop/options-shop-product-page.php:395
+#: inc/admin/options/shop/options-shop-product-page.php:457
 msgid "Inactive out of stock"
 msgstr "نافذ من المخزون غير مفعل"
 
-#: inc/admin/options/shop/options-shop-product-page.php:396
+#: inc/admin/options/shop/options-shop-product-page.php:458
 msgid "Show out of stock items as inactive."
 msgstr "إظهار العناصر النافذة من المخزون على أنها غير مفعلة."
 
-#: inc/admin/options/shop/options-shop-product-page.php:404
+#: inc/admin/options/shop/options-shop-product-page.php:466
 msgid "Disable deselection"
 msgstr "تعطيل إلغاء الاختيار"
 
 #: inc/admin/options/social/options-social.php:75
-#: inc/admin/options/social/options-social.php:152
-#: inc/shortcodes/follow.php:184
+#: inc/admin/options/social/options-social.php:153
+#: inc/shortcodes/follow.php:187
 msgctxt "social media"
 msgid "X"
 msgstr "X"
@@ -852,10 +876,6 @@ msgstr "لون التلميح"
 #: inc/admin/options/styles/options-colors.php:159
 msgid "Tooltip background color"
 msgstr "لون خلفية التلميح"
-
-#: inc/admin/panel/panel.php:31
-msgid "Sorry, an error occurred while accessing the API."
-msgstr "عذرًا ، حدث خطأ في أثناء الوصول إلى واجهة برمجة التطبيقات."
 
 #: inc/admin/panel/sections/tab-activate.php:12
 msgid "Theme registration"
@@ -873,46 +893,17 @@ msgid "Not allowed."
 msgstr "غير مسموح."
 
 #. translators: %s: Time left.
-#: inc/classes/class-flatsome-envato-admin.php:140
+#: inc/classes/class-flatsome-envato-admin.php:152
 msgid "Please try again in %s."
 msgstr "الرجاء المحاولة مرة أخرى في غضون %s."
 
-#: inc/classes/class-flatsome-envato-admin.php:180
+#: inc/classes/class-flatsome-envato-admin.php:192
 msgid "You must agree to the Envato License Terms."
 msgstr "يجب أن توافق على شروط رخصة Envato."
 
-#: inc/classes/class-flatsome-envato-registration.php:36
-msgid "Missing token."
-msgstr "رمز مفقود."
-
-#: inc/classes/class-flatsome-envato-registration.php:38
 #: inc/classes/class-flatsome-registration.php:34
 msgid "No purchase code provided."
 msgstr "لم يتم تقديم رمز شراء."
-
-#: inc/classes/class-flatsome-envato-registration.php:99
-#: inc/classes/class-flatsome-registration.php:125
-#: inc/classes/class-flatsome-wupdates-registration.php:88
-msgid "No version received."
-msgstr "لم يتم استلام أي إصدار."
-
-#: inc/classes/class-flatsome-envato-registration.php:103
-#: inc/classes/class-flatsome-registration.php:129
-#: inc/classes/class-flatsome-wupdates-registration.php:92
-msgid "Invalid version received."
-msgstr "تم استلام إصدار غير صالح."
-
-#: inc/classes/class-flatsome-envato-registration.php:133
-#: inc/classes/class-flatsome-registration.php:156
-#: inc/classes/class-flatsome-wupdates-registration.php:118
-msgid "No URL received."
-msgstr "لم يتم استلام عنوان URL."
-
-#: inc/classes/class-flatsome-envato-registration.php:137
-#: inc/classes/class-flatsome-registration.php:160
-#: inc/classes/class-flatsome-wupdates-registration.php:122
-msgid "Invalid URL received."
-msgstr "تم استلام عنوان URL غير صالح."
 
 #: inc/classes/class-flatsome-registration.php:36
 msgid "The provided value seems to be a token. Please register with a purchase code instead."
@@ -926,28 +917,52 @@ msgstr "رمز شراء غير صالح."
 msgid "Your site is registered. But the purchase code could not be verified at the moment."
 msgstr "تم تسجيل موقعك. لكن لا يمكن التحقق من رمز الشراء في الوقت الحالي."
 
-#: inc/classes/class-flatsome-registration.php:102
-#: inc/classes/class-flatsome-registration.php:145
+#: inc/classes/class-flatsome-registration.php:105
+#: inc/classes/class-flatsome-registration.php:148
 msgid "No purchase code."
 msgstr "لا يوجد رمز شراء."
 
-#: inc/classes/class-flatsome-relay.php:227
+#: inc/classes/class-flatsome-registration.php:128
+msgid "No version received."
+msgstr "لم يتم استلام أي إصدار."
+
+#: inc/classes/class-flatsome-registration.php:132
+msgid "Invalid version received."
+msgstr "تم استلام إصدار غير صالح."
+
+#: inc/classes/class-flatsome-registration.php:159
+msgid "No URL received."
+msgstr "لم يتم استلام عنوان URL."
+
+#: inc/classes/class-flatsome-registration.php:163
+msgid "Invalid URL received."
+msgstr "تم استلام عنوان URL غير صالح."
+
+#: inc/classes/class-flatsome-relay.php:230
 #: inc/extensions/flatsome-infinite-scroll/templates/button.php:2
 msgid "Load more"
 msgstr "تحميل المزيد"
 
-#: inc/classes/class-flatsome-relay.php:238
+#: inc/classes/class-flatsome-relay.php:241
+#: inc/classes/class-flatsome-relay.php:289
+#: inc/structure/structure-posts.php:303
+#: woocommerce/loop/pagination.php:46
+#: woocommerce/single-product-reviews.php:67
 msgid "Previous"
 msgstr "السابق"
 
-#: inc/classes/class-flatsome-relay.php:243
+#: inc/classes/class-flatsome-relay.php:246
+#: inc/classes/class-flatsome-relay.php:288
+#: inc/structure/structure-posts.php:302
+#: woocommerce/loop/pagination.php:45
+#: woocommerce/single-product-reviews.php:66
 msgid "Next"
 msgstr "التالي"
 
-#: inc/classes/class-flatsome-wupdates-registration.php:70
-#: inc/classes/class-flatsome-wupdates-registration.php:108
-msgid "Missing purchase code."
-msgstr "رمز الشراء مفقود."
+#: inc/classes/class-flatsome-wupdates-registration.php:65
+#: inc/classes/class-flatsome-wupdates-registration.php:75
+msgid "Purchase code not verified."
+msgstr ""
 
 #. translators: %d: The status code.
 #: inc/classes/class-uxthemes-api.php:78
@@ -1048,68 +1063,68 @@ msgctxt "cookie notice"
 msgid "Accept"
 msgstr "قبول"
 
-#: inc/extensions/flatsome-live-search/flatsome-live-search.php:199
+#: inc/extensions/flatsome-live-search/flatsome-live-search.php:200
 msgid "No matches found"
 msgstr "لم يتم العثور على تطابق"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:76
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:87
 msgid "Swatch size"
 msgstr "حجم نموذج العينة"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:79
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:90
 msgid "X Small"
 msgstr "صغير جداً"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:80
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:91
 msgid "Small"
 msgstr "صغير"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:81
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:92
 msgid "Medium"
 msgstr "متوسط"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:82
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:93
 msgid "Large"
 msgstr "كبير"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:83
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:94
 msgid "X Large"
 msgstr "كبير جداً"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:85
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:96
 msgid "Determines the size of the swatches."
 msgstr "يحدد حجم نماذج العينات."
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:89
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:100
 msgid "Swatch shape"
 msgstr "شكل نموذج العينة"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:92
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:103
 msgid "Square"
 msgstr "ميدان"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:93
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:104
 msgid "Rounded"
 msgstr "مدور"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:94
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:105
 msgid "Circle"
 msgstr "دائرة"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:96
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:107
 msgid "Determines the shape of the swatches."
 msgstr "يحدد شكل نموذج العينة."
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:100
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:101
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:111
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:112
 msgid "Use variation images?"
 msgstr "استخدام صور للتنوعات؟"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:102
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:113
 msgid "Enable this if you want swatches for this attribute to be auto filled with variation images."
 msgstr "قم بتمكين هذا إذا كنت تريد تعبئة نماذج العينات لهذه السمة تلقائيًا بصور التنوعات."
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:342
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:353
 msgid "Value"
 msgstr "القيمة"
 
@@ -1130,7 +1145,7 @@ msgid "Quick View"
 msgstr "معاينة سريعة"
 
 #: inc/functions/function-custom-css.php:665
-#: inc/woocommerce/structure-wc-global.php:330
+#: inc/woocommerce/structure-wc-global.php:332
 #: inc/woocommerce/structure-wc-product-box.php:29
 msgid "New"
 msgstr "جديد"
@@ -1152,44 +1167,44 @@ msgstr "شعبي"
 msgid "Follow on %s"
 msgstr "تابعنا على %s"
 
-#: inc/functions/function-setup.php:89
-#: inc/functions/function-setup.php:227
+#: inc/functions/function-setup.php:114
+#: inc/functions/function-setup.php:252
 msgid "Main Menu"
 msgstr "القائمة الرئيسية"
 
-#: inc/functions/function-setup.php:90
+#: inc/functions/function-setup.php:115
 msgid "Main Menu - Mobile"
 msgstr "القائمة الرئيسية - الجوال"
 
-#: inc/functions/function-setup.php:91
+#: inc/functions/function-setup.php:116
 msgid "Secondary Menu"
 msgstr "القائمة الثانوية"
 
-#: inc/functions/function-setup.php:92
+#: inc/functions/function-setup.php:117
 msgid "Footer Menu"
 msgstr "قائمة التذييل"
 
-#: inc/functions/function-setup.php:93
+#: inc/functions/function-setup.php:118
 msgid "Top Bar Menu"
 msgstr "قائمة الشريط العلوي"
 
-#: inc/functions/function-setup.php:94
+#: inc/functions/function-setup.php:119
 msgid "My Account Menu"
 msgstr "قائمة حسابي"
 
-#: inc/functions/function-setup.php:129
+#: inc/functions/function-setup.php:154
 msgid "Sidebar"
 msgstr "الشريط الجانبي"
 
-#: inc/functions/function-setup.php:139
+#: inc/functions/function-setup.php:164
 msgid "Footer 1"
 msgstr "التذييل 1"
 
-#: inc/functions/function-setup.php:149
+#: inc/functions/function-setup.php:174
 msgid "Footer 2"
 msgstr "التذييل 2"
 
-#: inc/functions/function-setup.php:228
+#: inc/functions/function-setup.php:253
 #: inc/shortcodes/accordion.php:140
 #: woocommerce/single-product/tabs/accordian.php:33
 msgid "Toggle"
@@ -1199,42 +1214,38 @@ msgstr "تبديل"
 msgid "Flatsome registration"
 msgstr "تسجيل Flatsome"
 
-#: inc/functions/function-site-health.php:36
-#: template-parts/admin/envato/register-form.php:38
-msgid "Your copy of Flatsome is registered with a personal Envato token. Please register Flatsome with a purchase code instead to ensure your site receives updates in the future."
-msgstr "نسختك من Flatsome مسجلة برمز Envato الشخصي. يرجى تسجيل Flatsome برمز شراء بدلاً من ذلك للتأكد من أن موقعك سيتلقى التحديثات في المستقبل."
-
-#: inc/functions/function-site-health.php:41
-msgid "Register with a purchase code now"
-msgstr "التسجيل الآن برمز شراء"
-
-#: inc/functions/function-site-health.php:49
+#: inc/functions/function-site-health.php:28
 msgid "Flatsome is registered"
 msgstr "تم تسجيل Flatsome"
 
-#: inc/functions/function-site-health.php:55
+#: inc/functions/function-site-health.php:34
 msgid "Register Flatsome to receive updates."
 msgstr "سجّل Flatsome لتلقي التحديثات."
 
-#: inc/functions/function-site-health.php:61
+#: inc/functions/function-site-health.php:40
 msgid "Flatsome is not registered"
 msgstr "لم يتم تسجيل Flatsome"
 
-#: inc/functions/function-site-health.php:65
+#: inc/functions/function-site-health.php:44
 msgid "Register now"
 msgstr "سجل الآن"
 
-#: inc/functions/function-site-health.php:69
+#: inc/functions/function-site-health.php:48
 msgid "Flatsome was unable to receive the latest update"
 msgstr "لم يتمكن Flatsome من تلقي آخر تحديث"
 
 #: inc/integrations/wc-yith-wishlist/yith-wishlist.php:61
 #: inc/integrations/wc-yith-wishlist/yith-wishlist.php:82
+#: template-parts/header/partials/element-wishlist-mobile.php:20
+#: template-parts/header/partials/element-wishlist-mobile.php:21
+#: template-parts/header/partials/element-wishlist.php:18
+#: template-parts/header/partials/element-wishlist.php:23
+#: template-parts/header/partials/element-wishlist.php:24
 msgid "Wishlist"
 msgstr "قائمة الرغبات"
 
 #. translators: %s: Comment count
-#: inc/shortcodes/blog_posts.php:302
+#: inc/shortcodes/blog_posts.php:318
 msgid "%s Comment"
 msgid_plural "%s Comments"
 msgstr[0] "بلا تعليقات"
@@ -1244,97 +1255,102 @@ msgstr[3] "%s تعليقات"
 msgstr[4] "%s تعليقاً"
 msgstr[5] "%s تعليق"
 
-#: inc/shortcodes/follow.php:124
-#: inc/shortcodes/follow.php:125
+#: inc/shortcodes/follow.php:127
+#: inc/shortcodes/follow.php:128
 msgid "Follow on Facebook"
 msgstr "تابعنا على Facebook"
 
-#: inc/shortcodes/follow.php:138
-#: inc/shortcodes/follow.php:139
+#: inc/shortcodes/follow.php:141
+#: inc/shortcodes/follow.php:142
 msgid "Follow on Instagram"
 msgstr "تابعنا على Instagram"
 
-#: inc/shortcodes/follow.php:152
-#: inc/shortcodes/follow.php:153
+#: inc/shortcodes/follow.php:155
+#: inc/shortcodes/follow.php:156
 msgid "Follow on TikTok"
 msgstr "تابعنا على TikTok"
 
-#: inc/shortcodes/follow.php:169
-#: inc/shortcodes/follow.php:170
+#: inc/shortcodes/follow.php:172
+#: inc/shortcodes/follow.php:173
 msgid "Follow on SnapChat"
 msgstr "تابعنا على SnapChat"
 
-#: inc/shortcodes/follow.php:176
+#: inc/shortcodes/follow.php:179
 msgid "Point the SnapChat camera at this to add us to SnapChat."
 msgstr "وجه الكاميرة في SnapChat إلى هذا لإضافتنا إلى SnapChat."
 
-#: inc/shortcodes/follow.php:188
-#: inc/shortcodes/follow.php:189
+#: inc/shortcodes/follow.php:191
+#: inc/shortcodes/follow.php:192
 msgid "Follow on X"
 msgstr "متابعة علي X"
 
-#: inc/shortcodes/follow.php:202
-#: inc/shortcodes/follow.php:203
+#: inc/shortcodes/follow.php:205
+#: inc/shortcodes/follow.php:206
 msgid "Follow on Twitter"
 msgstr "تابعنا على Twitter"
 
-#: inc/shortcodes/follow.php:216
-#: inc/shortcodes/follow.php:217
+#: inc/shortcodes/follow.php:219
+#: inc/shortcodes/follow.php:220
+msgid "Follow on Threads"
+msgstr ""
+
+#: inc/shortcodes/follow.php:233
+#: inc/shortcodes/follow.php:234
 msgid "Send us an email"
 msgstr "أرسل لنا بريدا إلكترونياً"
 
-#: inc/shortcodes/follow.php:230
-#: inc/shortcodes/follow.php:231
+#: inc/shortcodes/follow.php:247
+#: inc/shortcodes/follow.php:248
 msgid "Call us"
 msgstr "أتصل بنا هاتفيا"
 
-#: inc/shortcodes/follow.php:244
-#: inc/shortcodes/follow.php:245
+#: inc/shortcodes/follow.php:261
+#: inc/shortcodes/follow.php:262
 msgid "Follow on Pinterest"
 msgstr "تابعنا على Pinterest"
 
-#: inc/shortcodes/follow.php:258
-#: inc/shortcodes/follow.php:259
+#: inc/shortcodes/follow.php:275
+#: inc/shortcodes/follow.php:276
 msgid "Subscribe to RSS"
 msgstr "الإشتراك بـ RSS"
 
-#: inc/shortcodes/follow.php:272
-#: inc/shortcodes/follow.php:273
+#: inc/shortcodes/follow.php:289
+#: inc/shortcodes/follow.php:290
 msgid "Follow on LinkedIn"
 msgstr "تابعنا على LinkedIn"
 
-#: inc/shortcodes/follow.php:286
-#: inc/shortcodes/follow.php:287
+#: inc/shortcodes/follow.php:303
+#: inc/shortcodes/follow.php:304
 msgid "Follow on YouTube"
 msgstr "تابعنا على YouTube"
 
-#: inc/shortcodes/follow.php:300
-#: inc/shortcodes/follow.php:301
+#: inc/shortcodes/follow.php:317
+#: inc/shortcodes/follow.php:318
 msgid "Flickr"
 msgstr "Flickr"
 
-#: inc/shortcodes/follow.php:314
-#: inc/shortcodes/follow.php:315
+#: inc/shortcodes/follow.php:331
+#: inc/shortcodes/follow.php:332
 msgid "Follow on 500px"
 msgstr "تابعنا على 500px"
 
-#: inc/shortcodes/follow.php:328
-#: inc/shortcodes/follow.php:329
+#: inc/shortcodes/follow.php:345
+#: inc/shortcodes/follow.php:346
 msgid "Follow on VKontakte"
 msgstr "تابعنا على VKontakte"
 
-#: inc/shortcodes/follow.php:342
-#: inc/shortcodes/follow.php:343
+#: inc/shortcodes/follow.php:359
+#: inc/shortcodes/follow.php:360
 msgid "Follow on Telegram"
 msgstr "تابعنا على Telegram"
 
-#: inc/shortcodes/follow.php:356
-#: inc/shortcodes/follow.php:357
+#: inc/shortcodes/follow.php:373
+#: inc/shortcodes/follow.php:374
 msgid "Follow on Twitch"
 msgstr "تابعنا على Twitch"
 
-#: inc/shortcodes/follow.php:370
-#: inc/shortcodes/follow.php:371
+#: inc/shortcodes/follow.php:387
+#: inc/shortcodes/follow.php:388
 msgid "Follow on Discord"
 msgstr "تابعنا على Discord"
 
@@ -1343,7 +1359,7 @@ msgstr "تابعنا على Discord"
 msgid "All"
 msgstr "الكل"
 
-#: inc/shortcodes/sections.php:154
+#: inc/shortcodes/sections.php:150
 msgid "Scroll for more"
 msgstr "تمرير من أجل المزيد"
 
@@ -1367,38 +1383,43 @@ msgstr "مشاركة على X"
 msgid "Share on Twitter"
 msgstr "المشاركة على تويتر"
 
+#: inc/shortcodes/share.php:155
+#: inc/shortcodes/share.php:156
+msgid "Share on Threads"
+msgstr ""
+
 #. translators: %s: the share link.
-#: inc/shortcodes/share.php:151
+#: inc/shortcodes/share.php:167
 msgid "Check this out: %s"
 msgstr "تحقق من هذا: %s"
 
-#: inc/shortcodes/share.php:155
-#: inc/shortcodes/share.php:156
+#: inc/shortcodes/share.php:171
+#: inc/shortcodes/share.php:172
 msgid "Email to a Friend"
 msgstr "أرسل لصديق كبريد إلكتروني"
 
-#: inc/shortcodes/share.php:173
-#: inc/shortcodes/share.php:174
+#: inc/shortcodes/share.php:189
+#: inc/shortcodes/share.php:190
 msgid "Pin on Pinterest"
 msgstr "ثبّت على Pinterest"
 
-#: inc/shortcodes/share.php:187
-#: inc/shortcodes/share.php:188
+#: inc/shortcodes/share.php:203
+#: inc/shortcodes/share.php:204
 msgid "Share on VKontakte"
 msgstr "المشاركة على VKontakte"
 
-#: inc/shortcodes/share.php:201
-#: inc/shortcodes/share.php:202
+#: inc/shortcodes/share.php:217
+#: inc/shortcodes/share.php:218
 msgid "Share on LinkedIn"
 msgstr "مشاركة على Linkedin"
 
-#: inc/shortcodes/share.php:215
-#: inc/shortcodes/share.php:216
+#: inc/shortcodes/share.php:231
+#: inc/shortcodes/share.php:232
 msgid "Share on Tumblr"
 msgstr "المشاركة على Tumblr"
 
-#: inc/shortcodes/share.php:229
-#: inc/shortcodes/share.php:230
+#: inc/shortcodes/share.php:245
+#: inc/shortcodes/share.php:246
 msgid "Share on Telegram"
 msgstr "المشاركة على Telegram"
 
@@ -1513,17 +1534,21 @@ msgstr "إضافة منتجات الارتقاء بالصفقة لصفحات ا�
 msgid "Complete the look"
 msgstr "أكمل المظهر"
 
-#: inc/woocommerce/class-mini-cart.php:157
+#: inc/woocommerce/class-buy-now.php:100
+msgid "Buy now"
+msgstr ""
+
+#: inc/woocommerce/class-mini-cart.php:168
 msgctxt "mini cart add to cart button label"
 msgid "Add"
 msgstr "إضافة"
 
 #. translators: %s: The threshold
-#: inc/woocommerce/class-shipping.php:149
+#: inc/woocommerce/class-shipping.php:160
 msgid "Add %s to cart and get free shipping!"
 msgstr "أضف %s إلى سلة التسوق واحصل على شحن مجاني!"
 
-#: inc/woocommerce/class-shipping.php:160
+#: inc/woocommerce/class-shipping.php:171
 msgid "Your order qualifies for free shipping 🎉"
 msgstr "طلبك مؤهل للشحن المجاني 🎉"
 
@@ -1561,11 +1586,11 @@ msgstr "شريط المتجر الجانبي"
 msgid "Product Sidebar"
 msgstr "الشريط الجانبي للمنتج"
 
-#: inc/woocommerce/structure-wc-global.php:262
+#: inc/woocommerce/structure-wc-global.php:264
 msgid "Posts found"
 msgstr "المنشورات التي تم العثور عليها"
 
-#: inc/woocommerce/structure-wc-global.php:275
+#: inc/woocommerce/structure-wc-global.php:277
 msgid "Pages found"
 msgstr "الصفحات التي تم العثور عليها"
 
@@ -1622,7 +1647,7 @@ msgstr "فيديو"
 msgid "Zoom"
 msgstr "تكبير"
 
-#: inc/woocommerce/structure-wc-product-page.php:286
+#: inc/woocommerce/structure-wc-product-page.php:287
 msgid "Select options"
 msgstr "تحديد خيارات"
 
@@ -1708,19 +1733,15 @@ msgstr "تم اكتشاف اسم مجلد قالب غير مألوف: <em>%s</em
 msgid "Your site is <strong>registered</strong>. Thank you! Enjoy Flatsome and one-click updates."
 msgstr "لقد تم <strong>تسجيل</strong> الموقع الخاص بك. شكراً لك! استمتع مع قالب Flatsome والتحديثات بنقرة واحدة."
 
-#: template-parts/admin/envato/register-form.php:39
-msgid "The selector below will show available purchase codes you can register with."
-msgstr "سيُظهر المحدد أدناه رموز الشراء المتاحة التي يمكنك التسجيل بها."
+#: template-parts/admin/envato/register-form.php:37
+msgid "Your copy of Flatsome appears to be registered using an unsupported or outdated method. Please re-register with a valid purchase code."
+msgstr ""
 
-#: template-parts/admin/envato/register-form.php:42
-msgid "Select a purchase code:"
-msgstr "اختيار رمز شراء:"
-
-#: template-parts/admin/envato/register-form.php:60
+#: template-parts/admin/envato/register-form.php:52
 msgid "Registered domain:"
 msgstr "النطاق المسجل:"
 
-#: template-parts/admin/envato/register-form.php:121
+#: template-parts/admin/envato/register-form.php:110
 msgid "Are you sure you want to unregister Flatsome?"
 msgstr "هل أنت متأكد أنك تريد إلغاء تسجيل Flatsome؟"
 

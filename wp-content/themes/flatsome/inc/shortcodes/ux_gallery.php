@@ -76,7 +76,7 @@ function ux_gallery($atts) {
       }
 
       // Add Animations
-      if($animate) {$animate = 'data-animate="'.$animate.'"';}
+      if($animate) {$animate = 'data-animate="' . esc_attr( $animate ) . '"';}
 
       // Set box style
       if($style) $classes_box[] = 'box-'.$style;
@@ -165,14 +165,14 @@ function ux_gallery($atts) {
         if(isset($content) && strpos($content, 'watch?v=') !== false){
             $has_video = true;
             if(!$image_overlay) $image_overlay = 'rgba(0,0,0,.2)';
-            $link_start = '<a href="'.$content.'" class="open-video" title="'. esc_attr( $attachment->post_excerpt ) . '">';
+            $link_start = '<a href="'.esc_url($content).'" class="open-video" title="'. esc_attr( $attachment->post_excerpt ) . '">';
             $link_end = '</a>';
 
         } else if( 'false' !== $lightbox) {
            $image_src = wp_get_attachment_image_src( $attachment->ID, $lightbox_image_size);
 		   $link_href = $image_src ? $image_src[0] : '';
            $link_class = $is_multi_gallery ? '' : 'image-lightbox lightbox-gallery';
-           $link_start = '<a class="' . $link_class . '" href="'.$link_href.'" title="'. esc_attr( $attachment->post_excerpt ) . '">';
+           $link_start = '<a class="' . $link_class . '" href="' . esc_url( $link_href ) . '" title="' . esc_attr( $attachment->post_excerpt ) . '">';
            $link_end = '</a>';
         }
 
@@ -190,15 +190,15 @@ function ux_gallery($atts) {
         }
 
         $image_output = wp_get_attachment_image( $id, $image_size, false, $atts );
-      ?><div class="<?php echo implode(' ', $classes_col); ?>" <?php echo $animate;?>>
+      ?><div class="<?php echo esc_attr( implode( ' ', $classes_col ) ); ?>" <?php echo $animate;?>>
           <div class="col-inner">
             <?php echo $link_start; ?>
-            <div class="<?php echo implode(' ', $classes_box); ?>">
-              <div class="<?php echo implode(' ', $classes_image); ?>" <?php echo get_shortcode_inline_css($css_args_img); ?>>
+            <div class="<?php echo esc_attr( implode( ' ', $classes_box ) ); ?>">
+              <div class="<?php echo esc_attr( implode( ' ', $classes_image ) ); ?>" <?php echo get_shortcode_inline_css($css_args_img); ?>>
                 <?php echo $image_output; ?>
                 <?php if($image_overlay){ ?>
                   <div class="overlay fill"
-                      style="background-color: <?php echo $image_overlay;?>">
+                      style="background-color: <?php echo esc_attr( $image_overlay ); ?>">
                   </div>
                 <?php } ?>
                 <?php if($style == 'shade'){ ?>
@@ -212,8 +212,8 @@ function ux_gallery($atts) {
                     </div>
                 <?php } ?>
               </div>
-              <div class="<?php echo implode(' ', $classes_text); ?>" <?php echo get_shortcode_inline_css($css_args_text); ?>>
-                 <p><?php echo $attachment->post_excerpt; ?></p>
+              <div class="<?php echo esc_attr( implode( ' ', $classes_text ) ); ?>" <?php echo get_shortcode_inline_css($css_args_text); ?>>
+                 <p><?php echo wp_kses_post( $attachment->post_excerpt ); ?></p>
               </div>
             </div>
             <?php echo $link_end; ?>

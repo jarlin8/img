@@ -59,9 +59,16 @@ class FL_LazyLoad_Images {
       if ( in_array( $imgHTML, $search, true ) ) {
         continue; // already has a replacement
       }
-      if ( strpos( $imgHTML, 'fetchpriority="high"' ) !== false ) {
-        continue; // don't lazy-load images with fetchpriority="high"
-      }
+
+	    if ( strpos( $imgHTML, 'fetchpriority="high"' ) !== false ) {
+		    continue; // don't lazy-load images with fetchpriority="high"
+	    }
+
+	    // Skip images with 'ux-skip-lazy' class.
+	    if ( preg_match( '/class=["\'].*?ux-skip-lazy.*?["\']/', $imgHTML ) ) {
+		    continue;
+	    }
+
       // don't do the replacement if the image is a data-uri
       if ( ! preg_match( "/src=['\"]data:image/is", $imgHTML ) ) {
         $i++;

@@ -74,6 +74,7 @@ Flatsome_Option::add_field( 'option',  array(
 			"linkedin" => "LinkedIn",
 			"x" => esc_html_x( 'X', 'social media', 'flatsome' ),
 			"twitter" => "Twitter",
+			"threads" => "Threads",
 			"email" => "Email",
 			"pinterest" => "Pinterest",
 			"vk" => "VKontakte",
@@ -165,6 +166,15 @@ Flatsome_Option::add_field( 'option',  array(
 	'section'     => 'follow',
 	'default'     => '',
 ));
+
+Flatsome_Option::add_field( 'option', array(
+	'type'      => 'text',
+	'settings'  => 'follow_threads',
+	'label'     => esc_html__( 'Threads', 'flatsome-admin' ),
+	'transport' => flatsome_customizer_transport(),
+	'section'   => 'follow',
+	'default'   => '',
+) );
 
 Flatsome_Option::add_field( 'option',  array(
 	'type'        => 'text',
@@ -296,7 +306,7 @@ function flatsome_refresh_social( WP_Customize_Manager $wp_customize ) {
 
 	  $wp_customize->selective_refresh->add_partial( 'follow_icons', array(
 	    'selector' => '.follow-icons',
-	    'settings' => array('follow_linkedin','follow_flickr','follow_email','follow_phone','follow_style','follow_facebook','follow_x','follow_twitter','follow_instagram','follow_tiktok','follow_rss','follow_vk','follow_youtube','follow_pinterest','follow_snapchat','follow_500px','follow_telegram','follow_twitch','follow_discord'),
+	    'settings' => array('follow_linkedin','follow_flickr','follow_email','follow_phone','follow_style','follow_facebook','follow_x','follow_twitter','follow_threads','follow_instagram','follow_tiktok','follow_rss','follow_vk','follow_youtube','follow_pinterest','follow_snapchat','follow_500px','follow_telegram','follow_twitch','follow_discord'),
 	    'container_inclusive' => true,
 	    'render_callback' => function() {
 	        return do_shortcode('[follow defaults="true" style="'.flatsome_option('follow_style').'"]');

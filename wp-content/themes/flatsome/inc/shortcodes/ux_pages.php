@@ -95,7 +95,7 @@ function ux_pages($atts) {
       }
 
       // Add Animations
-      if($animate) {$animate = 'data-animate="'.$animate.'"';}
+      if($animate) {$animate = 'data-animate="'.esc_attr($animate).'"';}
 
       // Set box style
       if($style) $classes_box[] = 'box-'.$style;
@@ -172,20 +172,20 @@ function ux_pages($atts) {
             if($grid[$current]['size'] == 'medium') $image_size = 'medium';
         }
 
-      ?><div class="<?php echo implode(' ', $classes_col); ?>" <?php echo $animate;?>>
+      ?><div class="<?php echo esc_attr(implode(' ', $classes_col)); ?>" <?php echo $animate;?>>
           <div class="col-inner" <?php echo get_shortcode_inline_css($css_col); ?>>
-          <a class="block plain" href="<?php echo get_the_permalink($page->ID); ?>" title="<?php echo $page->post_title; ?>" target="<?php echo $target; ?>">
-            <div class="<?php echo implode(' ', $classes_box); ?>">
+          <a class="block plain" href="<?php echo esc_url( get_the_permalink($page->ID) ); ?>" title="<?php echo esc_attr( $page->post_title ); ?>" target="<?php echo esc_attr( $target ); ?>">
+            <div class="<?php echo esc_attr( implode(' ', $classes_box) ); ?>">
                   <div class="box-image" <?php echo get_shortcode_inline_css($css_args_img); ?>>
-                      <div class="<?php echo implode(' ', $classes_image); ?>" <?php echo get_shortcode_inline_css($css_image_height); ?>>
+                      <div class="<?php echo esc_attr( implode(' ', $classes_image) ); ?>" <?php echo get_shortcode_inline_css($css_image_height); ?>>
                       <?php $img_id = get_post_thumbnail_id($page->ID); echo wp_get_attachment_image($img_id, $image_size); ?>
                       </div>
-                      <?php if($image_overlay){ ?><div class="overlay" style="background-color: <?php echo $image_overlay;?>"></div><?php } ?>
+                      <?php if($image_overlay){ ?><div class="overlay" style="background-color: <?php echo esc_attr( $image_overlay );?>"></div><?php } ?>
                       <?php if($style == 'shade'){ ?><div class="shade"></div><?php } ?>
                   </div>
-                  <div class="<?php echo implode(' ', $classes_text); ?>" <?php echo get_shortcode_inline_css($css_args); ?>>
+                  <div class="<?php echo esc_attr( implode(' ', $classes_text) ); ?>" <?php echo get_shortcode_inline_css($css_args); ?>>
                         <div class="box-text-inner">
-                            <p><?php echo $page->post_title; ?></p>
+                            <p><?php echo wp_kses_post( $page->post_title ); ?></p>
                         </div>
                   </div>
               </div>

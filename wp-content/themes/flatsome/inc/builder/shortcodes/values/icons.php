@@ -48,6 +48,7 @@ return array(
 	'icon-star-o'          => 'Star Outline',
 	'icon-tag'             => 'Tag',
 	'icon-telegram'        => 'Telegram',
+	'icon-threads'         => 'Threads',
 	'icon-tiktok'          => 'TikTok',
 	'icon-tumblr'          => 'Tumblr',
 	'icon-twitch'          => 'Twitch',

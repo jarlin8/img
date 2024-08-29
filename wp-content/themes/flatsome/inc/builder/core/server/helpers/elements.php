@@ -71,8 +71,8 @@ function ux_builder_element_style_tag( $id, $rules, $atts ) {
   $trimmed_output = trim( $output );
 
   if ( ! empty( $trimmed_output ) ) {
-    return "\n<style>\n" . $trimmed_output . "\n</style>\n";
+    return "\n<style>\n" . strip_tags( $trimmed_output ) . "\n</style>\n"; // phpcs:ignore WordPress.WP.AlternativeFunctions.strip_tags_strip_tags
   }
 
-  return $output;
+  return '';
 }

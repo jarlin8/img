@@ -67,6 +67,13 @@ $wp_admin_bar->add_menu( array(
 		'href'   => $panel_url . '-status',
 	) );
 
+	$wp_admin_bar->add_menu( array(
+		'parent' => 'flatsome_panel',
+		'id'     => 'flatsome_panel_features',
+		'title'  => 'Features',
+		'href'   => $panel_url . '-features',
+	) );
+
 $wp_admin_bar->add_menu( array(
  'parent' => 'flatsome_panel',
  'id' => 'flatsome_panel_changelog',

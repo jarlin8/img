@@ -11,7 +11,7 @@ return array(
 
      'ids' => array(
         'type' => 'select',
-        'heading' => 'Custom Posts',
+        'heading' => 'Posts',
         'param_name' => 'ids',
 		'full_width' => true,
         'config' => array(

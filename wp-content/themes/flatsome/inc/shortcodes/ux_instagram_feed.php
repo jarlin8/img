@@ -114,14 +114,14 @@ function ux_instagram_feed( $atts, $content = null ) {
 					$caption = $item['description'];
 				}
 				?><div class="img has-hover no-overflow">
-					<div class="dark instagram-image-container image-<?php echo $image_hover; ?> instagram-image-type--<?php echo $item['type']; ?>">
-						<a href="<?php echo $item['link']; ?>" target="_blank" rel="noopener" class="plain">
+					<div class="dark instagram-image-container image-<?php echo esc_attr( $image_hover ); ?> instagram-image-type--<?php echo esc_attr( $item['type'] ); ?>">
+						<a href="<?php echo esc_url( $item['link'] ); ?>" target="_blank" rel="noopener" class="plain">
 							<?php echo flatsome_get_image( $image_url, false, $caption ); ?>
 							<?php if ( $image_overlay ) { ?>
-								<div class="overlay" style="background-color: <?php echo $image_overlay; ?>"></div>
+								<div class="overlay" style="background-color: <?php echo esc_attr( $image_overlay ); ?>"></div>
 							<?php } ?>
 							<?php if ( $caption ) { ?>
-								<div class="caption"><?php echo $caption; ?></div>
+								<div class="caption"><?php echo wp_kses_post( $caption ); ?></div>
 							<?php } ?>
 						</a>
 					</div>

@@ -15,7 +15,6 @@ include_once(dirname( __FILE__ ).'/options-shop-my-account.php');
 include_once(dirname( __FILE__ ).'/options-shop-cart-checkout.php');
 include_once(dirname( __FILE__ ).'/options-shop-payments-icons.php');
 include_once(dirname( __FILE__ ).'/options-shop-store-notice.php');
-//include_once(dirname( __FILE__ ).'/options-shop-catalog-mode.php');
 
 function flatsome_refresh_shop_partials( WP_Customize_Manager $wp_customize ) {
 

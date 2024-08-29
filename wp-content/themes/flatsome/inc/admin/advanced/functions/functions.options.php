@@ -130,14 +130,6 @@ if ( ! function_exists( 'of_options' ) ) {
 		);
 
 		$of_options[] = array(
-			'name' => 'Lazy Load Banner and Section backgrounds',
-			'id'   => 'lazy_load_backgrounds',
-			'desc' => 'Enable lazy loading of banner and section backgrounds.',
-			'std'  => 1,
-			'type' => 'checkbox',
-		);
-
-		$of_options[] = array(
 			'name' => 'Lazy Load Images',
 			'id'   => 'lazy_load_images',
 			'desc' => 'Enable lazy loading for images. It will generate an inline blank Base64 image with the same aspect ratio as the original image.',
@@ -352,7 +344,7 @@ if ( ! function_exists( 'of_options' ) ) {
 			);
 
 			$of_options[] = array(
-				'name'    => 'Search Products Order By',
+				'name'    => 'Products: Order by',
 				'id'      => 'search_products_order_by',
 				'type'    => 'select',
 				'std'     => 'relevance',
@@ -360,6 +352,17 @@ if ( ! function_exists( 'of_options' ) ) {
 					'relevance' => 'Relevance',
 					'title'     => 'Title',
 					'price'     => 'Price',
+				),
+			);
+
+			$of_options[] = array(
+				'name'    => 'Products: Order',
+				'id'      => 'search_products_order',
+				'type'    => 'select',
+				'std'     => 'ASC',
+				'options' => array(
+					'ASC'  => 'Ascending',
+					'DESC' => 'Descending',
 				),
 			);
 

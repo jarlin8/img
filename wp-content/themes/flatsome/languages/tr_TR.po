@@ -9,8 +9,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-04-10T12:28:40+00:00\n"
-"PO-Revision-Date: 2024-04-10 12:31\n"
+"POT-Creation-Date: 2024-08-12T17:15:49+00:00\n"
+"PO-Revision-Date: 2024-08-12 17:18\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: flatsome\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -118,7 +118,7 @@ msgstr "<span class=\"meta-nav\">&larr;</span> Önceki"
 msgid "Next <span class=\"meta-nav\">&rarr;</span>"
 msgstr "Sonraki <span class=\"meta-nav\">&rarr;</span>"
 
-#: inc/admin/admin-bar.php:87
+#: inc/admin/admin-bar.php:94
 msgid "Activate Theme"
 msgstr "Temayı Etkinleştir"
 
@@ -131,14 +131,14 @@ msgid "Flatsome issues"
 msgstr "Flatsome sorunları"
 
 #: inc/admin/admin-notice.php:38
-#: inc/functions/function-site-health.php:74
+#: inc/functions/function-site-health.php:53
 msgid "Manage registration"
 msgstr "Kayıt işlemlerini yönetin"
 
 #: inc/admin/admin-notice.php:43
-#: inc/admin/envato_setup/envato_setup.php:2025
-#: inc/functions/function-site-health.php:79
-#: template-parts/admin/envato/register-form.php:105
+#: inc/admin/envato_setup/envato_setup.php:2019
+#: inc/functions/function-site-health.php:58
+#: template-parts/admin/envato/register-form.php:94
 msgid "Manage your licenses"
 msgstr "Lisanslarınızı yönetin"
 
@@ -186,7 +186,7 @@ msgstr "Bağla"
 
 #: inc/admin/advanced/functions/functions.php:23
 msgid "Super Admin"
-msgstr ""
+msgstr "Süper Yönetici"
 
 #: inc/admin/backend/menu/class-menu.php:89
 msgid "Flatsome menu item options"
@@ -282,301 +282,325 @@ msgid "Add any HTML, SVG or shortcode here."
 msgstr "Buraya herhangi bir HTML, SVG veya kısa kod ekleyin."
 
 #: inc/admin/backend/menu/class-menu.php:245
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:226
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:237
 msgid "Select image"
 msgstr "Görsel seçin"
 
 #: inc/admin/backend/menu/class-menu.php:250
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:227
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:238
 msgid "Remove"
 msgstr "Kaldır"
 
-#: inc/admin/classes/class-status.php:548
-#: inc/admin/classes/class-status.php:576
+#: inc/admin/classes/class-features.php:30
+msgid "Features"
+msgstr "Özellikler"
+
+#: inc/admin/classes/class-features.php:37
+msgid "Experimental features"
+msgstr "Deneysel özellikler"
+
+#: inc/admin/classes/class-features.php:81
+msgid "There are currently no experimental features in development."
+msgstr "Şu anda geliştirilmekte olan bir deneysel özellik yok."
+
+#: inc/admin/classes/class-features.php:83
+msgid "Features that are testable while they're in development. These features are likely to change, so avoid using them in production."
+msgstr "Geliştirme aşamasında olan test edilebilir özellikler. Bu özellikler muhtemelen değişecektir, bu yüzden canlı ortamda kullanmaktan kaçının."
+
+#. translators: %s: PHP version.
+#: inc/admin/classes/class-features.php:132
+msgid "This feature requires PHP version %s or higher."
+msgstr "Bu özellik, %s veya daha yüksek bir PHP sürümü gerektirir."
+
+#. translators: %s: WordPress version.
+#: inc/admin/classes/class-features.php:136
+msgid "This feature requires WordPress version %s or higher."
+msgstr "Bu özellik, %s veya daha yüksek bir WordPress sürümü gerektirir."
+
+#: inc/admin/classes/class-status.php:559
+#: inc/admin/classes/class-status.php:587
 msgid "Theme"
 msgstr "Tema"
 
-#: inc/admin/classes/class-status.php:549
-#: inc/admin/classes/class-status.php:689
+#: inc/admin/classes/class-status.php:560
+#: inc/admin/classes/class-status.php:700
 msgid "WordPress environment"
 msgstr "WordPress ortamı"
 
-#: inc/admin/classes/class-status.php:550
-#: inc/admin/classes/class-status.php:801
+#: inc/admin/classes/class-status.php:561
+#: inc/admin/classes/class-status.php:812
 msgid "Server environment"
 msgstr "Sunucu ortamı"
 
-#: inc/admin/classes/class-status.php:551
-#: inc/admin/classes/class-status.php:883
+#: inc/admin/classes/class-status.php:562
+#: inc/admin/classes/class-status.php:894
 #: inc/functions/function-site-health.php:31
-#: inc/functions/function-site-health.php:52
 msgid "Security"
 msgstr "Güvenlik"
 
-#: inc/admin/classes/class-status.php:552
-#: inc/admin/classes/class-status.php:939
+#: inc/admin/classes/class-status.php:563
+#: inc/admin/classes/class-status.php:950
 msgid "Database"
 msgstr "Veritabanı"
 
-#: inc/admin/classes/class-status.php:553
-#: inc/admin/classes/class-status.php:977
+#: inc/admin/classes/class-status.php:564
+#: inc/admin/classes/class-status.php:988
 msgid "Templates"
 msgstr "Şablonlar"
 
-#: inc/admin/classes/class-status.php:557
+#: inc/admin/classes/class-status.php:568
 msgid "More details"
 msgstr "Daha fazla ayrıntı"
 
-#: inc/admin/classes/class-status.php:582
+#: inc/admin/classes/class-status.php:593
 msgid "Name"
 msgstr "Ad"
 
-#: inc/admin/classes/class-status.php:584
+#: inc/admin/classes/class-status.php:595
 msgid "The name of the current active theme."
 msgstr "Mevcut aktif temanın adı."
 
-#: inc/admin/classes/class-status.php:589
+#: inc/admin/classes/class-status.php:600
 msgid "Version"
 msgstr "Sürüm"
 
-#: inc/admin/classes/class-status.php:591
+#: inc/admin/classes/class-status.php:602
 msgid "The version of the current active theme."
 msgstr "Mevcut aktif temanın sürümü."
 
-#: inc/admin/classes/class-status.php:596
+#: inc/admin/classes/class-status.php:607
 msgid "Author URL"
 msgstr "Yazar URL&rsquo; si"
 
-#: inc/admin/classes/class-status.php:598
+#: inc/admin/classes/class-status.php:609
 msgid "The theme developers URL."
 msgstr "Tema geliştiricileri URL&rsquo; si."
 
-#: inc/admin/classes/class-status.php:603
+#: inc/admin/classes/class-status.php:614
 msgid "Registered"
 msgstr "Kayıt edilmiş"
 
-#: inc/admin/classes/class-status.php:605
+#: inc/admin/classes/class-status.php:616
 msgid "Displays whether or not the theme is registered."
 msgstr "Temanın kayıtlı olup olmadığını gösterir."
 
-#: inc/admin/classes/class-status.php:612
-#: inc/functions/function-site-health.php:28
+#: inc/admin/classes/class-status.php:623
 msgid "You should register Flatsome with a purchase code"
 msgstr "Flatsome&rsquo; u bir satın alma koduyla kaydetmelisiniz"
 
-#: inc/admin/classes/class-status.php:618
+#: inc/admin/classes/class-status.php:629
 msgid "Child theme"
 msgstr "Alt tema"
 
-#: inc/admin/classes/class-status.php:620
+#: inc/admin/classes/class-status.php:631
 msgid "Displays whether or not the current active theme is a child theme."
 msgstr "Geçerli etkin temanın bir alt tema olup olmadığını görüntüler."
 
 #. translators: %s: Docs link.
-#: inc/admin/classes/class-status.php:628
+#: inc/admin/classes/class-status.php:639
 msgid "If you are modifying Flatsome on the parent theme we recommend using a child theme. See: <a href=\"%s\" target=\"_blank\">How to create a child theme</a>"
-msgstr ""
+msgstr "Flatsome'u ana tema üzerinde değiştiriyorsanız, bir alt tema kullanmanızı öneririz. Bakınız: <a href=\"%s\" target=\"_blank\">Alt tema nasıl oluşturulur</a>"
 
-#: inc/admin/classes/class-status.php:634
+#: inc/admin/classes/class-status.php:645
 msgid "Release channel"
 msgstr "Yayın kanalı"
 
-#: inc/admin/classes/class-status.php:636
+#: inc/admin/classes/class-status.php:647
 msgid "Which updates to receive on this site."
 msgstr "Bu sitede hangi güncellemeleri alacağınız."
 
-#: inc/admin/classes/class-status.php:650
+#: inc/admin/classes/class-status.php:661
 msgid "Parent theme name"
 msgstr "Ana tema adı"
 
-#: inc/admin/classes/class-status.php:652
+#: inc/admin/classes/class-status.php:663
 msgid "The name of the parent theme."
 msgstr "Ana temanın adı."
 
-#: inc/admin/classes/class-status.php:657
+#: inc/admin/classes/class-status.php:668
 msgid "Parent theme version"
 msgstr "Ana tema sürümü"
 
-#: inc/admin/classes/class-status.php:659
+#: inc/admin/classes/class-status.php:670
 msgid "The installed version of the parent theme."
 msgstr "Ana temanın kurulu sürümü."
 
-#: inc/admin/classes/class-status.php:664
+#: inc/admin/classes/class-status.php:675
 msgid "Parent theme author URL"
 msgstr "Ana tema yazarı URL&rsquo; si"
 
-#: inc/admin/classes/class-status.php:666
+#: inc/admin/classes/class-status.php:677
 msgid "The parent theme developers URL."
 msgstr "Ana tema geliştiricileri URL&rsquo; si."
 
-#: inc/admin/classes/class-status.php:695
+#: inc/admin/classes/class-status.php:706
 msgid "WordPress version"
 msgstr "WordPress sürümü"
 
-#: inc/admin/classes/class-status.php:697
+#: inc/admin/classes/class-status.php:708
 msgid "The installed WordPress version (indicates the fulfillment of the minimum required version)."
 msgstr "Yüklü WordPress sürümü (gerekli minimum sürümün karşılandığını gösterir)."
 
 #. translators: %s: The minimum required WP version number.
-#: inc/admin/classes/class-status.php:706
+#: inc/admin/classes/class-status.php:717
 msgid "The theme requires WordPress version %s or above."
 msgstr "Tema, WordPress sürüm %s veya üzerini gerektirir."
 
-#: inc/admin/classes/class-status.php:718
+#: inc/admin/classes/class-status.php:729
 msgid "WooCommerce version"
 msgstr "WooCommerce sürümü"
 
-#: inc/admin/classes/class-status.php:720
+#: inc/admin/classes/class-status.php:731
 msgid "The installed WooCommerce version (indicates the fulfillment of the minimum required version)."
 msgstr "Yüklü WooCommerce sürümü (gerekli minimum sürümün karşılandığını gösterir)."
 
 #. translators: %s: The minimum required WC version number.
-#: inc/admin/classes/class-status.php:729
+#: inc/admin/classes/class-status.php:740
 msgid "The theme requires WooCommerce version %s or above."
 msgstr "Tema, WooCommerce sürüm %s veya üzerini gerektirir."
 
-#: inc/admin/classes/class-status.php:741
+#: inc/admin/classes/class-status.php:752
 msgid "WordPress memory limit"
 msgstr "WordPress bellek limiti"
 
-#: inc/admin/classes/class-status.php:743
+#: inc/admin/classes/class-status.php:754
 msgid "The maximum amount of memory (RAM) that your site can use at one time."
 msgstr "Sitenizin tek seferde kullanabileceği maksimum bellek (RAM) miktarı."
 
 #. translators: %1$s: Memory limit, %2$s: Docs link.
-#: inc/admin/classes/class-status.php:750
+#: inc/admin/classes/class-status.php:761
 msgid "%1$s - We recommend setting memory to at least 256MB. See: %2$s"
 msgstr "%1$s - Belleği en az 256 MB olarak ayarlamanızı öneririz. Bakınız: %2$s"
 
 #. translators: %1$s: Memory limit, %2$s: Docs link.
-#: inc/admin/classes/class-status.php:750
+#: inc/admin/classes/class-status.php:761
 msgid "Increasing memory allocated to PHP"
 msgstr "PHP için ayrılan belleği artırma"
 
-#: inc/admin/classes/class-status.php:757
+#: inc/admin/classes/class-status.php:768
 msgid "WordPress image sizes"
 msgstr "WordPress görsel boyutları"
 
-#: inc/admin/classes/class-status.php:759
+#: inc/admin/classes/class-status.php:770
 msgid "The image sizes that are registered on this site."
 msgstr "Bu sitede kayıtlı olan görsel boyutları."
 
-#: inc/admin/classes/class-status.php:807
+#: inc/admin/classes/class-status.php:818
 msgid "Server info"
 msgstr "Sunucu bilgisi"
 
-#: inc/admin/classes/class-status.php:808
+#: inc/admin/classes/class-status.php:819
 msgid "Information about the web server that is currently hosting your site."
 msgstr "Şu anda sitenizi barındıran Web sunucusu hakkında bilgi."
 
-#: inc/admin/classes/class-status.php:812
+#: inc/admin/classes/class-status.php:823
 msgid "PHP version"
 msgstr "PHP sürümü"
 
-#: inc/admin/classes/class-status.php:814
+#: inc/admin/classes/class-status.php:825
 msgid "The version of PHP installed on your hosting server."
 msgstr "Barındırma sunucunuzda yüklü olan PHP sürümü."
 
 #. translators: %s: The recommended PHP version number.
-#: inc/admin/classes/class-status.php:826
+#: inc/admin/classes/class-status.php:837
 msgid "We recommend using PHP version %s or above for greater performance and security."
 msgstr "Daha yüksek performans ve güvenlik için PHP sürüm %s veya üzerini kullanmanızı öneririz."
 
-#: inc/admin/classes/class-status.php:837
+#: inc/admin/classes/class-status.php:848
 msgid "PHP post max size"
 msgstr "PHP maksimum gönderi boyutu"
 
-#: inc/admin/classes/class-status.php:839
+#: inc/admin/classes/class-status.php:850
 msgid "The largest filesize that can be contained in one post."
 msgstr "Bir yazıda bulunabilecek en büyük dosya boyutu."
 
-#: inc/admin/classes/class-status.php:844
+#: inc/admin/classes/class-status.php:855
 msgid "PHP time limit"
 msgstr "PHP süre sınırı"
 
-#: inc/admin/classes/class-status.php:846
+#: inc/admin/classes/class-status.php:857
 msgid "The amount of time (in seconds) that your site will spend on a single operation before timing out (to avoid server lockups)."
 msgstr "Sitenizin zaman aşımına uğramadan önce tek bir işlem için harcayacağı saniye cinsinden süre (sunucu kilitlenmelerini önlemek için)."
 
-#: inc/admin/classes/class-status.php:851
+#: inc/admin/classes/class-status.php:862
 msgid "PHP max input variables"
 msgstr "PHP maksimum giriş değişkenleri"
 
-#: inc/admin/classes/class-status.php:853
+#: inc/admin/classes/class-status.php:864
 msgid "The maximum number of variables your server can use for a single function to avoid overloads."
 msgstr "Aşırı yüklenmeleri önlemek için sunucunuzun tek bir işlev için kullanabileceği maksimum değişken sayısı."
 
-#: inc/admin/classes/class-status.php:859
+#: inc/admin/classes/class-status.php:870
 msgid "Max upload size"
 msgstr "Maksimum yükleme boyutu"
 
-#: inc/admin/classes/class-status.php:861
+#: inc/admin/classes/class-status.php:872
 msgid "The largest filesize that can be uploaded to your WordPress installation."
 msgstr "WordPress kurulumunuza yüklenebilecek en büyük dosya boyutu."
 
-#: inc/admin/classes/class-status.php:889
+#: inc/admin/classes/class-status.php:900
 msgid "Secure connection (HTTPS)"
 msgstr "Güvenli bağlantı (HTTPS)"
 
-#: inc/admin/classes/class-status.php:891
+#: inc/admin/classes/class-status.php:902
 msgid "Is the connection to your site secure?"
 msgstr "Sitenize olan bağlantı güvenli mi?"
 
 #. translators: %s: Docs link.
-#: inc/admin/classes/class-status.php:900
+#: inc/admin/classes/class-status.php:911
 msgid "Your site is not using HTTPS. <a href=\"%s\" target=\"_blank\">Learn more about HTTPS and SSL Certificates</a>."
-msgstr ""
+msgstr "Siteniz HTTPS kullanmıyor.<a href=\"%s\" target=\"_blank\">HTTPS ve SSL Sertifikaları hakkında daha fazla bilgi edinin</a>."
 
-#: inc/admin/classes/class-status.php:907
+#: inc/admin/classes/class-status.php:918
 msgid "Hide errors from visitors"
 msgstr "Hataları ziyaretçilerden gizleyin"
 
-#: inc/admin/classes/class-status.php:909
+#: inc/admin/classes/class-status.php:920
 msgid "Error messages can contain sensitive information about your site environment. These should be hidden from untrusted visitors."
 msgstr "Hata mesajları site ortamınız hakkında hassas bilgiler içerebilir. Bunlar güvenilmeyen ziyaretçilerden gizlenmelidir."
 
-#: inc/admin/classes/class-status.php:916
+#: inc/admin/classes/class-status.php:927
 msgid "Error messages should not be shown to visitors."
 msgstr "Hata mesajları ziyaretçilere gösterilmemelidir."
 
-#: inc/admin/classes/class-status.php:945
+#: inc/admin/classes/class-status.php:956
 msgid "Flatsome database version"
 msgstr "Flatsome veritabanı sürümü"
 
-#: inc/admin/classes/class-status.php:947
+#: inc/admin/classes/class-status.php:958
 msgid "The database version for Flatsome. This should be the same as the parent theme version."
 msgstr "Flatsome için veritabanı sürümü. Bu, ana tema sürümüyle aynı olmalıdır."
 
-#: inc/admin/classes/class-status.php:954
+#: inc/admin/classes/class-status.php:965
 msgid "This should be the same as the parent theme version."
 msgstr "Bu, ana tema sürümüyle aynı olmalıdır."
 
-#: inc/admin/classes/class-status.php:983
+#: inc/admin/classes/class-status.php:994
 msgid "Overrides"
 msgstr "Geçersiz kılmalar"
 
-#: inc/admin/classes/class-status.php:984
+#: inc/admin/classes/class-status.php:995
 msgid "This section shows any files that are overriding the default Flatsome templates."
 msgstr "Bu bölüm, varsayılan Flatsome şablonlarını geçersiz kılan tüm dosyaları gösterir."
 
 #. translators: %1$s: Template name, %2$s: Template version, %3$s: Core version.
-#: inc/admin/classes/class-status.php:997
+#: inc/admin/classes/class-status.php:1008
 msgid "%1$s version %2$s is out of date. The core version is %3$s"
 msgstr "%1$s sürüm %2$s güncel değil. Çekirdek sürüm %3$s&rsquo; dir"
 
-#: inc/admin/envato_setup/envato_setup.php:2018
+#: inc/admin/envato_setup/envato_setup.php:2012
 msgid "Register Theme"
 msgstr "Temayı kaydedin"
 
-#: inc/admin/envato_setup/envato_setup.php:2043
+#: inc/admin/envato_setup/envato_setup.php:2037
 msgid "Continue"
 msgstr "Devam edin"
 
-#: inc/admin/envato_setup/envato_setup.php:2044
+#: inc/admin/envato_setup/envato_setup.php:2038
 msgid "Unregister"
 msgstr "Kaydı kaldırın"
 
-#: inc/admin/envato_setup/envato_setup.php:2046
+#: inc/admin/envato_setup/envato_setup.php:2040
 msgid "Register"
 msgstr "Kayıt edin"
 
@@ -608,28 +632,28 @@ msgstr "Önceki/Sonraki navigasyon"
 msgid "HTML after blog posts"
 msgstr "Blog yazılarından sonra HTML"
 
-#: inc/admin/options/header/options-header-cart.php:117
+#: inc/admin/options/header/options-header-cart.php:115
 msgid "Show quantity input"
-msgstr ""
+msgstr "Miktar girişini göster"
 
-#: inc/admin/options/header/options-header-cart.php:127
+#: inc/admin/options/header/options-header-cart.php:125
 #: inc/admin/options/shop/options-shop-cart-checkout.php:81
 #: inc/admin/options/shop/options-shop-cart-checkout.php:258
 msgid "Show free shipping"
-msgstr ""
+msgstr "Ücretsiz gönderimi göster"
 
-#: inc/admin/options/header/options-header-cart.php:158
+#: inc/admin/options/header/options-header-cart.php:156
 #: inc/admin/options/styles/options-lightbox.php:30
 msgid "Drawer width"
-msgstr ""
+msgstr "Çekmece genişliği"
 
-#: inc/admin/options/header/options-header-cart.php:167
+#: inc/admin/options/header/options-header-cart.php:165
 msgid "Sticky footer"
-msgstr ""
+msgstr "Yapışkan altbilgi"
 
-#: inc/admin/options/header/options-header-cart.php:177
+#: inc/admin/options/header/options-header-cart.php:175
 msgid "Show cross sells"
-msgstr ""
+msgstr "Çapraz satışları göster"
 
 #: inc/admin/options/header/options-header-logo.php:106
 msgid "Logo link"
@@ -712,7 +736,7 @@ msgid "Menu elements tab 2"
 msgstr "Menü öğeleri ikinci sekmesi"
 
 #: inc/admin/options/header/options-header-nav-vertical.php:9
-#: inc/functions/function-setup.php:95
+#: inc/functions/function-setup.php:120
 msgid "Vertical Menu"
 msgstr "Dikey Menü"
 
@@ -789,14 +813,14 @@ msgstr "Gönderi tahmini varış yerini göster"
 
 #: inc/admin/options/shop/options-shop-category.php:261
 msgid "Show result count"
-msgstr ""
+msgstr "Sonuç sayısını göster"
 
 #: inc/admin/options/shop/options-shop-category.php:270
 msgid "Show catalog ordering"
-msgstr ""
+msgstr "Katalog sıralamasını göster"
 
 #: inc/admin/options/shop/options-shop-category.php:766
-#: inc/admin/options/shop/options-shop-product-page.php:413
+#: inc/admin/options/shop/options-shop-product-page.php:475
 msgid "Color :selected"
 msgstr "Renk (seçili - :selected)"
 
@@ -806,52 +830,48 @@ msgstr "Renk (seçili - :selected)"
 msgid "Custom product layout"
 msgstr "Özel ürün sayfası yerleşimi"
 
-#: inc/admin/options/shop/options-shop-product-page.php:374
+#: inc/admin/options/shop/options-shop-product-page.php:436
 msgid "Layout"
 msgstr "Yerleşim"
 
-#: inc/admin/options/shop/options-shop-product-page.php:386
+#: inc/admin/options/shop/options-shop-product-page.php:448
 msgid "Tooltip"
 msgstr "Araç İpucu"
 
-#: inc/admin/options/shop/options-shop-product-page.php:387
+#: inc/admin/options/shop/options-shop-product-page.php:449
 msgid "Show a tooltip with the term or term description."
 msgstr "Terim veya terim açıklamasıyla birlikte bir araç ipucu gösterin."
 
-#: inc/admin/options/shop/options-shop-product-page.php:395
+#: inc/admin/options/shop/options-shop-product-page.php:457
 msgid "Inactive out of stock"
 msgstr "Stokta yoksa deaktif et"
 
-#: inc/admin/options/shop/options-shop-product-page.php:396
+#: inc/admin/options/shop/options-shop-product-page.php:458
 msgid "Show out of stock items as inactive."
 msgstr "Stokta olmayan öğeleri pasif olarak göster."
 
-#: inc/admin/options/shop/options-shop-product-page.php:404
+#: inc/admin/options/shop/options-shop-product-page.php:466
 msgid "Disable deselection"
 msgstr "Seçimi kaldırmayı devre dışı bırak"
 
 #: inc/admin/options/social/options-social.php:75
-#: inc/admin/options/social/options-social.php:152
-#: inc/shortcodes/follow.php:184
+#: inc/admin/options/social/options-social.php:153
+#: inc/shortcodes/follow.php:187
 msgctxt "social media"
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #: inc/admin/options/styles/options-colors.php:144
 msgid "Tooltip colors"
-msgstr ""
+msgstr "İpucu renkleri"
 
 #: inc/admin/options/styles/options-colors.php:150
 msgid "Tooltip color"
-msgstr ""
+msgstr "İpucu rengi"
 
 #: inc/admin/options/styles/options-colors.php:159
 msgid "Tooltip background color"
-msgstr ""
-
-#: inc/admin/panel/panel.php:31
-msgid "Sorry, an error occurred while accessing the API."
-msgstr "Üzgünüz, API&rsquo; ye erişirken bir hata oluştu."
+msgstr "Araç ipucu arka plan rengi"
 
 #: inc/admin/panel/sections/tab-activate.php:12
 msgid "Theme registration"
@@ -869,46 +889,17 @@ msgid "Not allowed."
 msgstr "İzin verilmiyor."
 
 #. translators: %s: Time left.
-#: inc/classes/class-flatsome-envato-admin.php:140
+#: inc/classes/class-flatsome-envato-admin.php:152
 msgid "Please try again in %s."
 msgstr "Lütfen %s içinde tekrar deneyin."
 
-#: inc/classes/class-flatsome-envato-admin.php:180
+#: inc/classes/class-flatsome-envato-admin.php:192
 msgid "You must agree to the Envato License Terms."
 msgstr "Envato Lisans Koşullarını kabul etmelisiniz."
 
-#: inc/classes/class-flatsome-envato-registration.php:36
-msgid "Missing token."
-msgstr "Eksik jeton."
-
-#: inc/classes/class-flatsome-envato-registration.php:38
 #: inc/classes/class-flatsome-registration.php:34
 msgid "No purchase code provided."
 msgstr "Satın alma kodu verilmedi."
-
-#: inc/classes/class-flatsome-envato-registration.php:99
-#: inc/classes/class-flatsome-registration.php:125
-#: inc/classes/class-flatsome-wupdates-registration.php:88
-msgid "No version received."
-msgstr "Herhangi bir sürüm alınmadı."
-
-#: inc/classes/class-flatsome-envato-registration.php:103
-#: inc/classes/class-flatsome-registration.php:129
-#: inc/classes/class-flatsome-wupdates-registration.php:92
-msgid "Invalid version received."
-msgstr "Geçersiz sürüm alındı."
-
-#: inc/classes/class-flatsome-envato-registration.php:133
-#: inc/classes/class-flatsome-registration.php:156
-#: inc/classes/class-flatsome-wupdates-registration.php:118
-msgid "No URL received."
-msgstr "Herhangi bir URL alınmadı."
-
-#: inc/classes/class-flatsome-envato-registration.php:137
-#: inc/classes/class-flatsome-registration.php:160
-#: inc/classes/class-flatsome-wupdates-registration.php:122
-msgid "Invalid URL received."
-msgstr "Geçersiz URL alındı."
 
 #: inc/classes/class-flatsome-registration.php:36
 msgid "The provided value seems to be a token. Please register with a purchase code instead."
@@ -922,28 +913,52 @@ msgstr "Geçersiz satın alma kodu."
 msgid "Your site is registered. But the purchase code could not be verified at the moment."
 msgstr "Siteniz kaydedildi. Ancak satın alma kodu şu anda doğrulanamadı."
 
-#: inc/classes/class-flatsome-registration.php:102
-#: inc/classes/class-flatsome-registration.php:145
+#: inc/classes/class-flatsome-registration.php:105
+#: inc/classes/class-flatsome-registration.php:148
 msgid "No purchase code."
 msgstr "Satın alma kodu yok."
 
-#: inc/classes/class-flatsome-relay.php:227
+#: inc/classes/class-flatsome-registration.php:128
+msgid "No version received."
+msgstr "Herhangi bir sürüm alınmadı."
+
+#: inc/classes/class-flatsome-registration.php:132
+msgid "Invalid version received."
+msgstr "Geçersiz sürüm alındı."
+
+#: inc/classes/class-flatsome-registration.php:159
+msgid "No URL received."
+msgstr "Herhangi bir URL alınmadı."
+
+#: inc/classes/class-flatsome-registration.php:163
+msgid "Invalid URL received."
+msgstr "Geçersiz URL alındı."
+
+#: inc/classes/class-flatsome-relay.php:230
 #: inc/extensions/flatsome-infinite-scroll/templates/button.php:2
 msgid "Load more"
-msgstr ""
+msgstr "Daha fazla yükle"
 
-#: inc/classes/class-flatsome-relay.php:238
+#: inc/classes/class-flatsome-relay.php:241
+#: inc/classes/class-flatsome-relay.php:289
+#: inc/structure/structure-posts.php:303
+#: woocommerce/loop/pagination.php:46
+#: woocommerce/single-product-reviews.php:67
 msgid "Previous"
-msgstr ""
+msgstr "Önceki"
 
-#: inc/classes/class-flatsome-relay.php:243
+#: inc/classes/class-flatsome-relay.php:246
+#: inc/classes/class-flatsome-relay.php:288
+#: inc/structure/structure-posts.php:302
+#: woocommerce/loop/pagination.php:45
+#: woocommerce/single-product-reviews.php:66
 msgid "Next"
-msgstr ""
+msgstr "Sonraki"
 
-#: inc/classes/class-flatsome-wupdates-registration.php:70
-#: inc/classes/class-flatsome-wupdates-registration.php:108
-msgid "Missing purchase code."
-msgstr "Satın alma kodu eksik."
+#: inc/classes/class-flatsome-wupdates-registration.php:65
+#: inc/classes/class-flatsome-wupdates-registration.php:75
+msgid "Purchase code not verified."
+msgstr "Satın alma kodu doğrulanmadı."
 
 #. translators: %d: The status code.
 #: inc/classes/class-uxthemes-api.php:78
@@ -1044,68 +1059,68 @@ msgctxt "cookie notice"
 msgid "Accept"
 msgstr "Kabul et"
 
-#: inc/extensions/flatsome-live-search/flatsome-live-search.php:199
+#: inc/extensions/flatsome-live-search/flatsome-live-search.php:200
 msgid "No matches found"
 msgstr "Hiçbir eşleşme bulunamadı"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:76
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:87
 msgid "Swatch size"
 msgstr "Renk Örneği boyutu"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:79
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:90
 msgid "X Small"
 msgstr "X Small"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:80
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:91
 msgid "Small"
 msgstr "Small"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:81
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:92
 msgid "Medium"
 msgstr "Medium"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:82
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:93
 msgid "Large"
 msgstr "Large"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:83
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:94
 msgid "X Large"
 msgstr "X Large"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:85
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:96
 msgid "Determines the size of the swatches."
 msgstr "Renk örneklerinin boyutunu belirler."
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:89
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:100
 msgid "Swatch shape"
 msgstr "Renk örneği şekli"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:92
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:103
 msgid "Square"
 msgstr "Kare"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:93
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:104
 msgid "Rounded"
 msgstr "Yuvarlatılmış"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:94
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:105
 msgid "Circle"
 msgstr "Yuvarlak"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:96
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:107
 msgid "Determines the shape of the swatches."
 msgstr "Renk örneklerinin şeklini belirler."
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:100
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:101
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:111
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:112
 msgid "Use variation images?"
 msgstr "Varyasyon görselleri kullanılsın mı?"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:102
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:113
 msgid "Enable this if you want swatches for this attribute to be auto filled with variation images."
 msgstr "Eğer bu özellik için renk örneklerinin varyasyon görselleriyle otomatik olarak doldurulmasını istiyorsanız, bunu etkinleştirin."
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:342
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:353
 msgid "Value"
 msgstr "Değer"
 
@@ -1126,7 +1141,7 @@ msgid "Quick View"
 msgstr "Hızlı Görünüm"
 
 #: inc/functions/function-custom-css.php:665
-#: inc/woocommerce/structure-wc-global.php:330
+#: inc/woocommerce/structure-wc-global.php:332
 #: inc/woocommerce/structure-wc-product-box.php:29
 msgid "New"
 msgstr "Yeni"
@@ -1148,44 +1163,44 @@ msgstr "Popüler"
 msgid "Follow on %s"
 msgstr "%s üzerinden Takip et"
 
-#: inc/functions/function-setup.php:89
-#: inc/functions/function-setup.php:227
+#: inc/functions/function-setup.php:114
+#: inc/functions/function-setup.php:252
 msgid "Main Menu"
 msgstr "Ana Menü"
 
-#: inc/functions/function-setup.php:90
+#: inc/functions/function-setup.php:115
 msgid "Main Menu - Mobile"
 msgstr "Ana Menü - Mobil"
 
-#: inc/functions/function-setup.php:91
+#: inc/functions/function-setup.php:116
 msgid "Secondary Menu"
 msgstr "İkincil Menü"
 
-#: inc/functions/function-setup.php:92
+#: inc/functions/function-setup.php:117
 msgid "Footer Menu"
 msgstr "Alt Menü"
 
-#: inc/functions/function-setup.php:93
+#: inc/functions/function-setup.php:118
 msgid "Top Bar Menu"
 msgstr "Üst Menü"
 
-#: inc/functions/function-setup.php:94
+#: inc/functions/function-setup.php:119
 msgid "My Account Menu"
 msgstr "Hesabım Menüsü"
 
-#: inc/functions/function-setup.php:129
+#: inc/functions/function-setup.php:154
 msgid "Sidebar"
 msgstr "Kenar Çubuğu"
 
-#: inc/functions/function-setup.php:139
+#: inc/functions/function-setup.php:164
 msgid "Footer 1"
 msgstr "Alt Bilgi 1"
 
-#: inc/functions/function-setup.php:149
+#: inc/functions/function-setup.php:174
 msgid "Footer 2"
 msgstr "Alt Bilgi 2"
 
-#: inc/functions/function-setup.php:228
+#: inc/functions/function-setup.php:253
 #: inc/shortcodes/accordion.php:140
 #: woocommerce/single-product/tabs/accordian.php:33
 msgid "Toggle"
@@ -1195,138 +1210,139 @@ msgstr "Aç/Kapat"
 msgid "Flatsome registration"
 msgstr "Flatsome kaydı"
 
-#: inc/functions/function-site-health.php:36
-#: template-parts/admin/envato/register-form.php:38
-msgid "Your copy of Flatsome is registered with a personal Envato token. Please register Flatsome with a purchase code instead to ensure your site receives updates in the future."
-msgstr "Flatsome kopyanız kişisel bir Envato jetonu ile kaydedilmiştir. Gelecekte güncellemeleri almak için lütfen Flatsome'u bir satın alma koduyla kaydedin."
-
-#: inc/functions/function-site-health.php:41
-msgid "Register with a purchase code now"
-msgstr "Şimdi bir satın alma koduyla kaydolun"
-
-#: inc/functions/function-site-health.php:49
+#: inc/functions/function-site-health.php:28
 msgid "Flatsome is registered"
 msgstr "Flatsome kayıtlı"
 
-#: inc/functions/function-site-health.php:55
+#: inc/functions/function-site-health.php:34
 msgid "Register Flatsome to receive updates."
 msgstr "Güncellemeleri almak için Flatsome&apos; u kaydedin."
 
-#: inc/functions/function-site-health.php:61
+#: inc/functions/function-site-health.php:40
 msgid "Flatsome is not registered"
 msgstr "Flatsome kaydedilmemiş"
 
-#: inc/functions/function-site-health.php:65
+#: inc/functions/function-site-health.php:44
 msgid "Register now"
 msgstr "Şimdi kayıt ettirin"
 
-#: inc/functions/function-site-health.php:69
+#: inc/functions/function-site-health.php:48
 msgid "Flatsome was unable to receive the latest update"
 msgstr "Flatsome, en son güncellemeyi alamadı"
 
 #: inc/integrations/wc-yith-wishlist/yith-wishlist.php:61
 #: inc/integrations/wc-yith-wishlist/yith-wishlist.php:82
+#: template-parts/header/partials/element-wishlist-mobile.php:20
+#: template-parts/header/partials/element-wishlist-mobile.php:21
+#: template-parts/header/partials/element-wishlist.php:18
+#: template-parts/header/partials/element-wishlist.php:23
+#: template-parts/header/partials/element-wishlist.php:24
 msgid "Wishlist"
 msgstr "İstek Listesi"
 
 #. translators: %s: Comment count
-#: inc/shortcodes/blog_posts.php:302
+#: inc/shortcodes/blog_posts.php:318
 msgid "%s Comment"
 msgid_plural "%s Comments"
 msgstr[0] "%s Yorum"
 msgstr[1] "%s Yorum"
 
-#: inc/shortcodes/follow.php:124
-#: inc/shortcodes/follow.php:125
+#: inc/shortcodes/follow.php:127
+#: inc/shortcodes/follow.php:128
 msgid "Follow on Facebook"
 msgstr "Facebook&apos; ta takip et"
 
-#: inc/shortcodes/follow.php:138
-#: inc/shortcodes/follow.php:139
+#: inc/shortcodes/follow.php:141
+#: inc/shortcodes/follow.php:142
 msgid "Follow on Instagram"
 msgstr "Instagram&apos; da takip et"
 
-#: inc/shortcodes/follow.php:152
-#: inc/shortcodes/follow.php:153
+#: inc/shortcodes/follow.php:155
+#: inc/shortcodes/follow.php:156
 msgid "Follow on TikTok"
 msgstr "TikTok&apos; ta takip et"
 
-#: inc/shortcodes/follow.php:169
-#: inc/shortcodes/follow.php:170
+#: inc/shortcodes/follow.php:172
+#: inc/shortcodes/follow.php:173
 msgid "Follow on SnapChat"
 msgstr "Snapchat&apos; te takip et"
 
-#: inc/shortcodes/follow.php:176
+#: inc/shortcodes/follow.php:179
 msgid "Point the SnapChat camera at this to add us to SnapChat."
 msgstr "Bizi SnapChat&apos; e eklemek için bunu kameranıza okutun."
 
-#: inc/shortcodes/follow.php:188
-#: inc/shortcodes/follow.php:189
+#: inc/shortcodes/follow.php:191
+#: inc/shortcodes/follow.php:192
 msgid "Follow on X"
-msgstr ""
+msgstr "X&#39; te takip et"
 
-#: inc/shortcodes/follow.php:202
-#: inc/shortcodes/follow.php:203
+#: inc/shortcodes/follow.php:205
+#: inc/shortcodes/follow.php:206
 msgid "Follow on Twitter"
 msgstr "Twitter&apos; da takip et"
 
-#: inc/shortcodes/follow.php:216
-#: inc/shortcodes/follow.php:217
+#: inc/shortcodes/follow.php:219
+#: inc/shortcodes/follow.php:220
+msgid "Follow on Threads"
+msgstr "Threads&#39; te takip et"
+
+#: inc/shortcodes/follow.php:233
+#: inc/shortcodes/follow.php:234
 msgid "Send us an email"
 msgstr "Bize e-posta gönderin"
 
-#: inc/shortcodes/follow.php:230
-#: inc/shortcodes/follow.php:231
+#: inc/shortcodes/follow.php:247
+#: inc/shortcodes/follow.php:248
 msgid "Call us"
 msgstr "Bizi arayın"
 
-#: inc/shortcodes/follow.php:244
-#: inc/shortcodes/follow.php:245
+#: inc/shortcodes/follow.php:261
+#: inc/shortcodes/follow.php:262
 msgid "Follow on Pinterest"
 msgstr "Pinterest&apos; te takip et"
 
-#: inc/shortcodes/follow.php:258
-#: inc/shortcodes/follow.php:259
+#: inc/shortcodes/follow.php:275
+#: inc/shortcodes/follow.php:276
 msgid "Subscribe to RSS"
 msgstr "RSS&apos; e abone ol"
 
-#: inc/shortcodes/follow.php:272
-#: inc/shortcodes/follow.php:273
+#: inc/shortcodes/follow.php:289
+#: inc/shortcodes/follow.php:290
 msgid "Follow on LinkedIn"
 msgstr "Linkedin&apos; de takip et"
 
-#: inc/shortcodes/follow.php:286
-#: inc/shortcodes/follow.php:287
+#: inc/shortcodes/follow.php:303
+#: inc/shortcodes/follow.php:304
 msgid "Follow on YouTube"
 msgstr "YouTube&apos; da takip et"
 
-#: inc/shortcodes/follow.php:300
-#: inc/shortcodes/follow.php:301
+#: inc/shortcodes/follow.php:317
+#: inc/shortcodes/follow.php:318
 msgid "Flickr"
 msgstr "Flickr"
 
-#: inc/shortcodes/follow.php:314
-#: inc/shortcodes/follow.php:315
+#: inc/shortcodes/follow.php:331
+#: inc/shortcodes/follow.php:332
 msgid "Follow on 500px"
 msgstr "500px&apos; te takip et"
 
-#: inc/shortcodes/follow.php:328
-#: inc/shortcodes/follow.php:329
+#: inc/shortcodes/follow.php:345
+#: inc/shortcodes/follow.php:346
 msgid "Follow on VKontakte"
 msgstr "VKontakte&apos; de takip et"
 
-#: inc/shortcodes/follow.php:342
-#: inc/shortcodes/follow.php:343
+#: inc/shortcodes/follow.php:359
+#: inc/shortcodes/follow.php:360
 msgid "Follow on Telegram"
 msgstr "Telegram&apos; da takip et"
 
-#: inc/shortcodes/follow.php:356
-#: inc/shortcodes/follow.php:357
+#: inc/shortcodes/follow.php:373
+#: inc/shortcodes/follow.php:374
 msgid "Follow on Twitch"
 msgstr "Twitch&apos; te takip et"
 
-#: inc/shortcodes/follow.php:370
-#: inc/shortcodes/follow.php:371
+#: inc/shortcodes/follow.php:387
+#: inc/shortcodes/follow.php:388
 msgid "Follow on Discord"
 msgstr "Discord&apos; da takip et"
 
@@ -1335,7 +1351,7 @@ msgstr "Discord&apos; da takip et"
 msgid "All"
 msgstr "Tümü"
 
-#: inc/shortcodes/sections.php:154
+#: inc/shortcodes/sections.php:150
 msgid "Scroll for more"
 msgstr "Daha fazlası için aşağı kaydırın"
 
@@ -1352,45 +1368,50 @@ msgstr "Facebook&apos; ta paylaş"
 #: inc/shortcodes/share.php:125
 #: inc/shortcodes/share.php:126
 msgid "Share on X"
-msgstr ""
+msgstr "X&#39; te paylaş"
 
 #: inc/shortcodes/share.php:139
 #: inc/shortcodes/share.php:140
 msgid "Share on Twitter"
 msgstr "Twitter&apos; da paylaş"
 
+#: inc/shortcodes/share.php:155
+#: inc/shortcodes/share.php:156
+msgid "Share on Threads"
+msgstr "Threads&#39; te paylaş"
+
 #. translators: %s: the share link.
-#: inc/shortcodes/share.php:151
+#: inc/shortcodes/share.php:167
 msgid "Check this out: %s"
 msgstr "Buna bir göz at: %s"
 
-#: inc/shortcodes/share.php:155
-#: inc/shortcodes/share.php:156
+#: inc/shortcodes/share.php:171
+#: inc/shortcodes/share.php:172
 msgid "Email to a Friend"
 msgstr "Arkadaşına e-posta ile gönder"
 
-#: inc/shortcodes/share.php:173
-#: inc/shortcodes/share.php:174
+#: inc/shortcodes/share.php:189
+#: inc/shortcodes/share.php:190
 msgid "Pin on Pinterest"
 msgstr "Pinterest&apos; te pinle"
 
-#: inc/shortcodes/share.php:187
-#: inc/shortcodes/share.php:188
+#: inc/shortcodes/share.php:203
+#: inc/shortcodes/share.php:204
 msgid "Share on VKontakte"
 msgstr "VKontakte&apos; de paylaş"
 
-#: inc/shortcodes/share.php:201
-#: inc/shortcodes/share.php:202
+#: inc/shortcodes/share.php:217
+#: inc/shortcodes/share.php:218
 msgid "Share on LinkedIn"
 msgstr "Linkedin&apos; de paylaş"
 
-#: inc/shortcodes/share.php:215
-#: inc/shortcodes/share.php:216
+#: inc/shortcodes/share.php:231
+#: inc/shortcodes/share.php:232
 msgid "Share on Tumblr"
 msgstr "Tumblr&apos; da paylaş"
 
-#: inc/shortcodes/share.php:229
-#: inc/shortcodes/share.php:230
+#: inc/shortcodes/share.php:245
+#: inc/shortcodes/share.php:246
 msgid "Share on Telegram"
 msgstr "Telegram&apos; da paylaş"
 
@@ -1505,19 +1526,23 @@ msgstr "Ürün sayfalarına üst segment ürünler ekle."
 msgid "Complete the look"
 msgstr "Görünümü tamamla"
 
-#: inc/woocommerce/class-mini-cart.php:157
+#: inc/woocommerce/class-buy-now.php:100
+msgid "Buy now"
+msgstr "Hemen satın al"
+
+#: inc/woocommerce/class-mini-cart.php:168
 msgctxt "mini cart add to cart button label"
 msgid "Add"
-msgstr ""
+msgstr "Ekle"
 
 #. translators: %s: The threshold
-#: inc/woocommerce/class-shipping.php:149
-msgid "Add %s to cart and get free shipping!"
-msgstr ""
-
 #: inc/woocommerce/class-shipping.php:160
+msgid "Add %s to cart and get free shipping!"
+msgstr "Sepete %s ekleyin ve ücretsiz kargo kazanın!"
+
+#: inc/woocommerce/class-shipping.php:171
 msgid "Your order qualifies for free shipping 🎉"
-msgstr ""
+msgstr "Siparişiniz ücretsiz kargo için uygundur 🎉"
 
 #: inc/woocommerce/structure-wc-category-page.php:97
 #: inc/woocommerce/structure-wc-product-page-fields.php:31
@@ -1526,7 +1551,7 @@ msgstr "Üst içerik"
 
 #: inc/woocommerce/structure-wc-category-page.php:102
 msgid "Enter a value for this field. Shortcodes are allowed. This will be displayed at top of the category."
-msgstr ""
+msgstr "Bu alan için bir değer girin. Kısakodlar kullanılabilir. Bu, kategorinin üst kısmında görüntülenecektir."
 
 #: inc/woocommerce/structure-wc-category-page.php:119
 #: inc/woocommerce/structure-wc-product-page-fields.php:38
@@ -1535,7 +1560,7 @@ msgstr "Alt İçerik"
 
 #: inc/woocommerce/structure-wc-category-page.php:124
 msgid "Enter a value for this field. Shortcodes are allowed. This will be displayed at bottom of the category."
-msgstr ""
+msgstr "Bu alan için bir değer girin. Kısakodlar kullanılabilir. Bu, kategorinin alt kısmında görüntülenecektir."
 
 #: inc/woocommerce/structure-wc-category-page.php:152
 msgid "Choose a custom product block layout for this category."
@@ -1553,11 +1578,11 @@ msgstr "Mağaza Kenar Çubuğu"
 msgid "Product Sidebar"
 msgstr "Ürün Kenar Çubuğu"
 
-#: inc/woocommerce/structure-wc-global.php:262
+#: inc/woocommerce/structure-wc-global.php:264
 msgid "Posts found"
 msgstr "Bulunan Yazılar"
 
-#: inc/woocommerce/structure-wc-global.php:275
+#: inc/woocommerce/structure-wc-global.php:277
 msgid "Pages found"
 msgstr "Bulunan Sayfalar"
 
@@ -1583,7 +1608,7 @@ msgstr "Ekstra"
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:52
 msgid "Enable a custom bubble on this product."
-msgstr ""
+msgstr "Bu üründe bir özel balon etkinleştirin."
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:82
 msgid "Custom Tab Content"
@@ -1591,7 +1616,7 @@ msgstr "Özel Sekme İçeriği"
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:84
 msgid "Enter content for custom product tab here. Shortcodes are allowed"
-msgstr ""
+msgstr "Özel ürün sekmesi için içeriği buraya girin. Kısakodlar kullanılabilir."
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:93
 msgid "Product Video"
@@ -1599,11 +1624,11 @@ msgstr "Ürün Videosu"
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:95
 msgid "Enter a Youtube or Vimeo Url of the product video here. We recommend uploading your video to Youtube."
-msgstr ""
+msgstr "Ürün videosunun Youtube veya Vimeo URL&#39; sini buraya girin. Videonuzu Youtube&#39; a yüklemenizi öneririz."
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:110
 msgid "Select where you want to display product video."
-msgstr ""
+msgstr "Ürün videosunu nerede görüntülemek istediğinizi seçin."
 
 #: inc/woocommerce/structure-wc-product-page.php:73
 #: inc/woocommerce/structure-wc-product-page.php:139
@@ -1614,9 +1639,9 @@ msgstr "Video"
 msgid "Zoom"
 msgstr "Yakınlaştır"
 
-#: inc/woocommerce/structure-wc-product-page.php:286
+#: inc/woocommerce/structure-wc-product-page.php:287
 msgid "Select options"
-msgstr ""
+msgstr "Miktarı Seçin"
 
 #. Template Name of the theme
 msgid "Page - Full Width - Parallax Title"
@@ -1694,27 +1719,23 @@ msgstr "Gönder"
 #. translators: 1. Template
 #: template-parts/admin/envato/directory-warning.php:13
 msgid "An unusual theme directory name was detected: <em>%s</em>. The Flatsome parent theme should be installed in a directory named <em>flatsome</em> to ensure updates are handled correctly."
-msgstr ""
+msgstr "Olağandışı bir tema dizin adı tespit edildi: <em>%s</em>. Flatsome ana teması, güncellemelerin düzgün bir şekilde yapılabilmesi için <em>flatsome</em> adlı bir dizine kurulmuş olmalıdır."
 
 #: template-parts/admin/envato/register-form.php:25
 msgid "Your site is <strong>registered</strong>. Thank you! Enjoy Flatsome and one-click updates."
-msgstr ""
+msgstr "Siteniz <strong>kayıtlı</strong>. Teşekkürler! Flatsome ve tek tıklamayla güncellemelerin keyfini çıkarın."
 
-#: template-parts/admin/envato/register-form.php:39
-msgid "The selector below will show available purchase codes you can register with."
-msgstr ""
+#: template-parts/admin/envato/register-form.php:37
+msgid "Your copy of Flatsome appears to be registered using an unsupported or outdated method. Please re-register with a valid purchase code."
+msgstr "Flatsome kopyanızın, desteklenmeyen veya güncellenmemiş bir yöntem kullanılarak kaydedildiği görülüyor. Lütfen geçerli bir satın alma kodu ile yeniden kaydedin."
 
-#: template-parts/admin/envato/register-form.php:42
-msgid "Select a purchase code:"
-msgstr "Bir satın alma kodu seçin:"
-
-#: template-parts/admin/envato/register-form.php:60
+#: template-parts/admin/envato/register-form.php:52
 msgid "Registered domain:"
 msgstr "Kayıtlı alan adı:"
 
-#: template-parts/admin/envato/register-form.php:121
+#: template-parts/admin/envato/register-form.php:110
 msgid "Are you sure you want to unregister Flatsome?"
-msgstr ""
+msgstr "Flatsome kaydını kaldırmak istediğinizden emin misiniz?"
 
 #. translators: 1: Version.
 #: template-parts/admin/envato/version-info-iframe.php:15
@@ -1742,7 +1763,7 @@ msgstr "İletişim"
 #: template-parts/header/partials/element-contact-mobile.php:81
 #: template-parts/header/partials/element-contact.php:92
 msgid "WhatsApp"
-msgstr ""
+msgstr "WhatsApp"
 
 #: template-parts/header/partials/element-menu-icon.php:13
 #: template-parts/header/partials/element-menu-icon.php:17
@@ -1758,7 +1779,7 @@ msgstr "Kategoriler"
 #: template-parts/portfolio/portfolio-summary-full.php:30
 #: template-parts/portfolio/portfolio-summary.php:26
 msgid "Tags"
-msgstr ""
+msgstr "Etiketler"
 
 #: template-parts/posts/content-none.php:14
 msgid "Nothing Found"
@@ -1766,15 +1787,15 @@ msgstr "Bir şey bulunamadı"
 
 #: template-parts/posts/content-none.php:20
 msgid "Ready to publish your first post? <a href=\"%1$s\">Get started here</a>."
-msgstr ""
+msgstr "İlk gönderinizi yayınlamaya hazır mısınız? <a href=\"%1$s\">Buradan başlayın</a>."
 
 #: template-parts/posts/content-none.php:24
 msgid "Sorry, but nothing matched your search terms. Please try again with some different keywords."
-msgstr ""
+msgstr "Üzgünüz, ancak arama terimlerinizle eşleşen bir şey bulunamadı. Lütfen farklı anahtar kelimelerle tekrar deneyin."
 
 #: template-parts/posts/content-none.php:29
 msgid "It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps searching can help."
-msgstr ""
+msgstr "Aradığınızı bulamıyor gibiyiz. Belki arama yapmak yardımcı olabilir."
 
 #. translators: used between list items, there is a space after the comma
 #: template-parts/posts/content-single.php:31
@@ -1790,23 +1811,23 @@ msgstr ", "
 
 #: template-parts/posts/content-single.php:39
 msgid "This entry was posted in %1$s and tagged %2$s."
-msgstr ""
+msgstr "Bu giriş %1$s içinde yayınlandı ve %2$s olarak etiketlendi."
 
 #: template-parts/posts/content-single.php:41
 msgid "This entry was posted in %1$s. Bookmark the <a href=\"%3$s\" title=\"Permalink to %4$s\" rel=\"bookmark\">permalink</a>."
-msgstr ""
+msgstr "Bu giriş %1$s içinde yayınlandı. <a href=\"%3$s\" title=\"Permalink to %4$s\" rel=\"bookmark\">Kalıcı bağlantıyı</a> yer imlerine ekleyin."
 
 #: template-parts/posts/content.php:15
 #: template-parts/posts/content.php:19
 #: template-parts/posts/featured-posts.php:29
 msgid "Continue reading <span class=\"meta-nav\">&rarr;</span>"
-msgstr ""
+msgstr "Okumaya devam edin <span class=\"meta-nav\">&rarr;</span>"
 
 #: template-parts/posts/loop/post-simple.php:28
 msgid "%1$s Comment"
 msgid_plural "%1$s Comments"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%1$s Yorum"
+msgstr[1] "%1$s Yorum"
 
 #: template-parts/posts/partials/archive-title.php:17
 msgid "Category Archives: %s"
@@ -1838,7 +1859,7 @@ msgstr "Yıllık Arşivler: %s"
 
 #: template-parts/posts/partials/archive-title.php:47
 msgid "Asides"
-msgstr ""
+msgstr "Kenara Notlar"
 
 #: template-parts/posts/partials/archive-title.php:50
 msgid "Images"
@@ -1850,7 +1871,7 @@ msgstr "Videolar"
 
 #: template-parts/posts/partials/archive-title.php:56
 msgid "Quotes"
-msgstr ""
+msgstr "Alıntılar"
 
 #: template-parts/posts/partials/archive-title.php:59
 msgid "Links"
@@ -1859,12 +1880,12 @@ msgstr "Bağlantılar"
 #: template-parts/posts/partials/entry-footer-single.php:17
 #: template-parts/posts/partials/entry-footer.php:17
 msgid "Posted in %1$s"
-msgstr ""
+msgstr "%1$s içinde yayınlandı"
 
 #: template-parts/posts/partials/entry-footer-single.php:27
 #: template-parts/posts/partials/entry-footer.php:27
 msgid "Tagged %1$s"
-msgstr ""
+msgstr "%1$s etiketlendi"
 
 #: template-parts/posts/partials/entry-footer-single.php:33
 #: template-parts/posts/partials/entry-footer.php:33
@@ -1899,7 +1920,7 @@ msgstr "<strong>Google</strong> ile giriş yap"
 #: woocommerce/myaccount/form-login-lightbox-left-panel.php:78
 #: woocommerce/myaccount/form-login-lightbox-right-panel.php:120
 msgid "Don't have an account? Register one!"
-msgstr ""
+msgstr "Hesabınız yok mu? Bir tane oluşturun!"
 
 #: woocommerce/myaccount/form-login-lightbox-left-panel.php:79
 #: woocommerce/myaccount/form-login-lightbox-right-panel.php:121
@@ -1909,30 +1930,30 @@ msgstr "Bir Hesap Oluştur"
 #: inc/blocks/uxbuilder/block.json
 msgctxt "block title"
 msgid "UX Builder content"
-msgstr ""
+msgstr "UX Builder içeriği"
 
 #: inc/blocks/uxbuilder/block.json
 msgctxt "block description"
 msgid "This block contains content created with UX Builder."
-msgstr ""
+msgstr "Bu blok, UX Builder ile oluşturulan içeriği içerir."
 
 #: theme.json
 msgctxt "Color name"
 msgid "Primary"
-msgstr ""
+msgstr "Birincil"
 
 #: theme.json
 msgctxt "Color name"
 msgid "Secondary"
-msgstr ""
+msgstr "İkincil"
 
 #: theme.json
 msgctxt "Color name"
 msgid "Success"
-msgstr ""
+msgstr "Başarı"
 
 #: theme.json
 msgctxt "Color name"
 msgid "Alert"
-msgstr ""
+msgstr "Alarm"
 

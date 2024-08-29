@@ -1,3 +1,95 @@
+--- 3.19.5 ---
+NEW: WooCommerce 9.2 compatibility.
+
+ENHANCEMENT: Improved cleanup of cron events.
+ENHANCEMENT: Strengthen sticky add to cart $product global check.
+ENHANCEMENT: Scroll to product element if variations form is not found for sticky add to cart select options button.
+ENHANCEMENT: Various CSS improvements.
+
+FIXED: WP 6.6 Block editor 'Edit with UX Builder'.
+
+UPDATED: Google Fonts list.
+UPDATED: Language files.
+
+--- 3.19.4 ---
+NEW: WooCommerce 9.1 compatibility.
+
+ENHANCEMENT: Prevented cart coupon form from being hidden with WC Stripe Payment Gateway plugin.
+ENHANCEMENT: Various CSS improvements.
+
+FIXED: Custom product single product hooks did not apply.
+FIXED: Product zoom in RTL.
+
+Note: The cart coupon class name is changed from checkout_coupon to ux-cart-coupon for plugin compatibility.
+
+--- 3.19.3 ---
+FIXED: Custom product gallery: Vertical and 2-column style rendered default layout.
+FIXED: Background images displayed less sharply on mobile in some cases.
+
+Reverted: Heading text wrapping (balanced).
+
+--- 3.19.2 ---
+ENHANCEMENT: Support plain URL as bg attribute value for banner & section.
+
+FIXED: Resolved an issue where price filter and sorting were disabled with prices enabled in catalog mode.
+FIXED: Banner & Section background position in combination with picture tag.
+
+--- 3.19.1 ---
+FIXED: Banner & Section background position when using certain element alignment options.
+FIXED: Width of custom nodes in single product form cart.
+
+UPDATED: Language files.
+
+--- 3.19.0 ---
+NEW: WooCommerce 9.0 compatibility.
+NEW: Product quick Buy Now button.
+NEW: Product sticky gallery option.
+NEW: Icon and letter case options for Header Button 1 & Button 2 elements.
+NEW: Sorting option for product live search results.
+NEW: Threads follow link option.
+NEW: Threads share link option.
+NEW: Threads (social media) icon.
+
+ENHANCEMENT: Added most commonly used brand taxonomies in the shop archive check function.
+ENHANCEMENT: An array of catalog mode improvements.
+ENHANCEMENT: Improved accessibility on various elements.
+ENHANCEMENT: Improved heading text wrapping.
+ENHANCEMENT: Mini cart JavaScript event improvements.
+ENHANCEMENT: Only add skip-lazy class on product gallery images when Jetpack lazy load is enabled.
+ENHANCEMENT: Renamed blog post 'Custom Posts' option label to 'Posts' for clarity.
+ENHANCEMENT: Skip the main product gallery image from lazy loading.
+ENHANCEMENT: Updated cart contents count method.
+ENHANCEMENT: Various CSS improvements.
+
+FIXED: Auto open mini cart drawer on tablet/mobile in combination with mini cart dropdown on desktop.
+FIXED: Blog posts element pagination with offset value produced incorrect results.
+FIXED: Corrected Whislist text string translation domain.
+FIXED: Custom cart icon size attributes.
+FIXED: Default read more button style in the Blog posts element.
+FIXED: Header main HTML elements did not display on mobile view.
+FIXED: Product review stars in content small template did not display.
+FIXED: Resolved issue where the reveal-icon class for a button was being added when no icon was assigned.
+FIXED: Swatches default selected color is secondary and now correctly reflects custom secondary color value.
+FIXED: Tag line color with header light text.
+FIXED: Visibility setting did not affect shortcode pagination controls.
+FIXED: wishlist-added class in combination with YITH "Show Remove from list" option.
+
+CHANGED: Banner & Section backgrounds now use an img tag.
+CHANGED: instance() methods deprecated in favor of get_instance().
+CHANGED: Moved cookie function from global scope to Flatsome object.
+CHANGED: Pjax items are now declared per entry in the experimental_flatsome_pjax filter.
+
+DEV: Added flatsome_show_buy_now_button filter.
+DEV: Added new flatsome_product_box_actions_classes filter.
+DEV: Added new flatsome_product_box_classes filter.
+DEV: Added new flatsome_product_box_image_classes filter.
+DEV: Added new flatsome_product_box_text_classes filter.
+
+Note: Minimum required PHP version 7.4.
+Note: Minimum required WooCommerce version 8.3.
+Note: Minimum required WP version 6.4.
+Note: This release contains an enhanced security measure. We recommend updating your sites promptly for optimal protection.
+
 --- 3.18.7 ---
 NEW: WooCommerce 8.8 compatibility.
 NEW: Added new .l10n.php translation file format.

@@ -9,8 +9,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-04-10T12:28:40+00:00\n"
-"PO-Revision-Date: 2024-04-10 12:31\n"
+"POT-Creation-Date: 2024-08-12T17:15:49+00:00\n"
+"PO-Revision-Date: 2024-08-12 17:18\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: flatsome\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -120,7 +120,7 @@ msgstr "<span class=\"meta-nav\">&larr;</span> Předchozí"
 msgid "Next <span class=\"meta-nav\">&rarr;</span>"
 msgstr "Další <span class=\"meta-nav\">&rarr;</span>"
 
-#: inc/admin/admin-bar.php:87
+#: inc/admin/admin-bar.php:94
 msgid "Activate Theme"
 msgstr "Aktivovat šablonu"
 
@@ -133,14 +133,14 @@ msgid "Flatsome issues"
 msgstr "Flatsome problémy"
 
 #: inc/admin/admin-notice.php:38
-#: inc/functions/function-site-health.php:74
+#: inc/functions/function-site-health.php:53
 msgid "Manage registration"
 msgstr "Spravovat registraci"
 
 #: inc/admin/admin-notice.php:43
-#: inc/admin/envato_setup/envato_setup.php:2025
-#: inc/functions/function-site-health.php:79
-#: template-parts/admin/envato/register-form.php:105
+#: inc/admin/envato_setup/envato_setup.php:2019
+#: inc/functions/function-site-health.php:58
+#: template-parts/admin/envato/register-form.php:94
 msgid "Manage your licenses"
 msgstr "Správa vašich licencí"
 
@@ -284,301 +284,325 @@ msgid "Add any HTML, SVG or shortcode here."
 msgstr "Zde přidejte libovolný HTML, SVG nebo shortcode."
 
 #: inc/admin/backend/menu/class-menu.php:245
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:226
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:237
 msgid "Select image"
 msgstr "Vybrat obrázek"
 
 #: inc/admin/backend/menu/class-menu.php:250
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:227
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:238
 msgid "Remove"
 msgstr "Odstranit"
 
-#: inc/admin/classes/class-status.php:548
-#: inc/admin/classes/class-status.php:576
+#: inc/admin/classes/class-features.php:30
+msgid "Features"
+msgstr ""
+
+#: inc/admin/classes/class-features.php:37
+msgid "Experimental features"
+msgstr ""
+
+#: inc/admin/classes/class-features.php:81
+msgid "There are currently no experimental features in development."
+msgstr ""
+
+#: inc/admin/classes/class-features.php:83
+msgid "Features that are testable while they're in development. These features are likely to change, so avoid using them in production."
+msgstr ""
+
+#. translators: %s: PHP version.
+#: inc/admin/classes/class-features.php:132
+msgid "This feature requires PHP version %s or higher."
+msgstr ""
+
+#. translators: %s: WordPress version.
+#: inc/admin/classes/class-features.php:136
+msgid "This feature requires WordPress version %s or higher."
+msgstr ""
+
+#: inc/admin/classes/class-status.php:559
+#: inc/admin/classes/class-status.php:587
 msgid "Theme"
 msgstr "Šablona"
 
-#: inc/admin/classes/class-status.php:549
-#: inc/admin/classes/class-status.php:689
+#: inc/admin/classes/class-status.php:560
+#: inc/admin/classes/class-status.php:700
 msgid "WordPress environment"
 msgstr "Prostředí WordPressu"
 
-#: inc/admin/classes/class-status.php:550
-#: inc/admin/classes/class-status.php:801
+#: inc/admin/classes/class-status.php:561
+#: inc/admin/classes/class-status.php:812
 msgid "Server environment"
 msgstr "Prostředí serveru"
 
-#: inc/admin/classes/class-status.php:551
-#: inc/admin/classes/class-status.php:883
+#: inc/admin/classes/class-status.php:562
+#: inc/admin/classes/class-status.php:894
 #: inc/functions/function-site-health.php:31
-#: inc/functions/function-site-health.php:52
 msgid "Security"
 msgstr "Zabezpečení"
 
-#: inc/admin/classes/class-status.php:552
-#: inc/admin/classes/class-status.php:939
+#: inc/admin/classes/class-status.php:563
+#: inc/admin/classes/class-status.php:950
 msgid "Database"
 msgstr "Databáze"
 
-#: inc/admin/classes/class-status.php:553
-#: inc/admin/classes/class-status.php:977
+#: inc/admin/classes/class-status.php:564
+#: inc/admin/classes/class-status.php:988
 msgid "Templates"
 msgstr "Šablony"
 
-#: inc/admin/classes/class-status.php:557
+#: inc/admin/classes/class-status.php:568
 msgid "More details"
 msgstr "Další detaily"
 
-#: inc/admin/classes/class-status.php:582
+#: inc/admin/classes/class-status.php:593
 msgid "Name"
 msgstr "Název"
 
-#: inc/admin/classes/class-status.php:584
+#: inc/admin/classes/class-status.php:595
 msgid "The name of the current active theme."
 msgstr "Název aktuální aktivní šablony."
 
-#: inc/admin/classes/class-status.php:589
+#: inc/admin/classes/class-status.php:600
 msgid "Version"
 msgstr "Verze"
 
-#: inc/admin/classes/class-status.php:591
+#: inc/admin/classes/class-status.php:602
 msgid "The version of the current active theme."
 msgstr "Verze aktuální aktivní šablony."
 
-#: inc/admin/classes/class-status.php:596
+#: inc/admin/classes/class-status.php:607
 msgid "Author URL"
 msgstr "URL autora"
 
-#: inc/admin/classes/class-status.php:598
+#: inc/admin/classes/class-status.php:609
 msgid "The theme developers URL."
 msgstr "URL autora šablony."
 
-#: inc/admin/classes/class-status.php:603
+#: inc/admin/classes/class-status.php:614
 msgid "Registered"
 msgstr "Registrováno"
 
-#: inc/admin/classes/class-status.php:605
+#: inc/admin/classes/class-status.php:616
 msgid "Displays whether or not the theme is registered."
 msgstr "Zobrazuje, zda je šablona registrována či nikoli."
 
-#: inc/admin/classes/class-status.php:612
-#: inc/functions/function-site-health.php:28
+#: inc/admin/classes/class-status.php:623
 msgid "You should register Flatsome with a purchase code"
 msgstr "Šablonu Flatsome byste měli zaregistrovat pomocí nákupního kódu"
 
-#: inc/admin/classes/class-status.php:618
+#: inc/admin/classes/class-status.php:629
 msgid "Child theme"
 msgstr "Child theme"
 
-#: inc/admin/classes/class-status.php:620
+#: inc/admin/classes/class-status.php:631
 msgid "Displays whether or not the current active theme is a child theme."
 msgstr "Zobrazuje, zda je aktuální aktivní šablona podřízenou šablonou."
 
 #. translators: %s: Docs link.
-#: inc/admin/classes/class-status.php:628
+#: inc/admin/classes/class-status.php:639
 msgid "If you are modifying Flatsome on the parent theme we recommend using a child theme. See: <a href=\"%s\" target=\"_blank\">How to create a child theme</a>"
 msgstr "Pokud upravujete Flatsome v nadřazené šabloně, doporučujeme použít podřízenou šablonu. Viz: <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Jak vytvořit podřízenou šablonu</a>"
 
-#: inc/admin/classes/class-status.php:634
+#: inc/admin/classes/class-status.php:645
 msgid "Release channel"
 msgstr "Kanál verzí"
 
-#: inc/admin/classes/class-status.php:636
+#: inc/admin/classes/class-status.php:647
 msgid "Which updates to receive on this site."
 msgstr "Které aktualizace přijímat na tomto webu."
 
-#: inc/admin/classes/class-status.php:650
+#: inc/admin/classes/class-status.php:661
 msgid "Parent theme name"
 msgstr "Název nadřazené šablony"
 
-#: inc/admin/classes/class-status.php:652
+#: inc/admin/classes/class-status.php:663
 msgid "The name of the parent theme."
 msgstr "Název nadřazené šablony."
 
-#: inc/admin/classes/class-status.php:657
+#: inc/admin/classes/class-status.php:668
 msgid "Parent theme version"
 msgstr "Verze nadřazené šablony"
 
-#: inc/admin/classes/class-status.php:659
+#: inc/admin/classes/class-status.php:670
 msgid "The installed version of the parent theme."
 msgstr "Nainstalovaná verze nadřazené šablony."
 
-#: inc/admin/classes/class-status.php:664
+#: inc/admin/classes/class-status.php:675
 msgid "Parent theme author URL"
 msgstr "Adresa URL autora nadřazené šablony"
 
-#: inc/admin/classes/class-status.php:666
+#: inc/admin/classes/class-status.php:677
 msgid "The parent theme developers URL."
 msgstr "Adresa URL vývojáře nadřazené šablony."
 
-#: inc/admin/classes/class-status.php:695
+#: inc/admin/classes/class-status.php:706
 msgid "WordPress version"
 msgstr "WordPress verze"
 
-#: inc/admin/classes/class-status.php:697
+#: inc/admin/classes/class-status.php:708
 msgid "The installed WordPress version (indicates the fulfillment of the minimum required version)."
 msgstr "Nainstalovaná verze WordPressu (označuje splnění minimální požadované verze)."
 
 #. translators: %s: The minimum required WP version number.
-#: inc/admin/classes/class-status.php:706
+#: inc/admin/classes/class-status.php:717
 msgid "The theme requires WordPress version %s or above."
 msgstr "Šablona vyžaduje WordPress verze %s nebo vyšší."
 
-#: inc/admin/classes/class-status.php:718
+#: inc/admin/classes/class-status.php:729
 msgid "WooCommerce version"
 msgstr "Verze WooCommerce"
 
-#: inc/admin/classes/class-status.php:720
+#: inc/admin/classes/class-status.php:731
 msgid "The installed WooCommerce version (indicates the fulfillment of the minimum required version)."
 msgstr "Nainstalovaná verze WooCommerce (označuje splnění minimální požadované verze)."
 
 #. translators: %s: The minimum required WC version number.
-#: inc/admin/classes/class-status.php:729
+#: inc/admin/classes/class-status.php:740
 msgid "The theme requires WooCommerce version %s or above."
 msgstr "Šablona vyžaduje WooCommerce verze %s nebo vyšší."
 
-#: inc/admin/classes/class-status.php:741
+#: inc/admin/classes/class-status.php:752
 msgid "WordPress memory limit"
 msgstr "WordPress Memory Limit"
 
-#: inc/admin/classes/class-status.php:743
+#: inc/admin/classes/class-status.php:754
 msgid "The maximum amount of memory (RAM) that your site can use at one time."
 msgstr "Maximální hodnota paměti (RAM), kterou může vaše stránka najednou využít."
 
 #. translators: %1$s: Memory limit, %2$s: Docs link.
-#: inc/admin/classes/class-status.php:750
+#: inc/admin/classes/class-status.php:761
 msgid "%1$s - We recommend setting memory to at least 256MB. See: %2$s"
 msgstr "%1$s - Doporučujeme nastavit paměť alespoň na 256MB. Viz: %2$s"
 
 #. translators: %1$s: Memory limit, %2$s: Docs link.
-#: inc/admin/classes/class-status.php:750
+#: inc/admin/classes/class-status.php:761
 msgid "Increasing memory allocated to PHP"
 msgstr "Zvýšení paměti alokované pro PHP"
 
-#: inc/admin/classes/class-status.php:757
+#: inc/admin/classes/class-status.php:768
 msgid "WordPress image sizes"
 msgstr "Velikosti obrázků WordPress"
 
-#: inc/admin/classes/class-status.php:759
+#: inc/admin/classes/class-status.php:770
 msgid "The image sizes that are registered on this site."
 msgstr "Velikosti obrázků, které jsou registrovány na tomto webu."
 
-#: inc/admin/classes/class-status.php:807
+#: inc/admin/classes/class-status.php:818
 msgid "Server info"
 msgstr "Údaje serveru"
 
-#: inc/admin/classes/class-status.php:808
+#: inc/admin/classes/class-status.php:819
 msgid "Information about the web server that is currently hosting your site."
 msgstr "Informace o webovém serveru, který aktuálně hostuje vaše stránky."
 
-#: inc/admin/classes/class-status.php:812
+#: inc/admin/classes/class-status.php:823
 msgid "PHP version"
 msgstr "PHP verze"
 
-#: inc/admin/classes/class-status.php:814
+#: inc/admin/classes/class-status.php:825
 msgid "The version of PHP installed on your hosting server."
 msgstr "Verze PHP nainstalovaná na vašem serveru."
 
 #. translators: %s: The recommended PHP version number.
-#: inc/admin/classes/class-status.php:826
+#: inc/admin/classes/class-status.php:837
 msgid "We recommend using PHP version %s or above for greater performance and security."
 msgstr "Pro vyšší výkon a zabezpečení doporučujeme používat PHP verze %s nebo vyšší."
 
-#: inc/admin/classes/class-status.php:837
+#: inc/admin/classes/class-status.php:848
 msgid "PHP post max size"
 msgstr "PHP post max velikost"
 
-#: inc/admin/classes/class-status.php:839
+#: inc/admin/classes/class-status.php:850
 msgid "The largest filesize that can be contained in one post."
 msgstr "Největší velikost souboru, který je možné vložit do příspěvku."
 
-#: inc/admin/classes/class-status.php:844
+#: inc/admin/classes/class-status.php:855
 msgid "PHP time limit"
 msgstr "PHP časový limit"
 
-#: inc/admin/classes/class-status.php:846
+#: inc/admin/classes/class-status.php:857
 msgid "The amount of time (in seconds) that your site will spend on a single operation before timing out (to avoid server lockups)."
 msgstr "Doba (v sekundách), kterou bude web trávit na jedné operaci před vypršením časového limitu (aby se zabránilo zatuhnutí serveru)."
 
-#: inc/admin/classes/class-status.php:851
+#: inc/admin/classes/class-status.php:862
 msgid "PHP max input variables"
 msgstr "Maximální vstupní proměnné PHP"
 
-#: inc/admin/classes/class-status.php:853
+#: inc/admin/classes/class-status.php:864
 msgid "The maximum number of variables your server can use for a single function to avoid overloads."
 msgstr "Maximální počet proměnných, které váš server může použít pro jednu funkci, aby se zabránilo přetížení."
 
-#: inc/admin/classes/class-status.php:859
+#: inc/admin/classes/class-status.php:870
 msgid "Max upload size"
 msgstr "Maximální velikost nahrávání"
 
-#: inc/admin/classes/class-status.php:861
+#: inc/admin/classes/class-status.php:872
 msgid "The largest filesize that can be uploaded to your WordPress installation."
 msgstr "Největší velikost souboru, který je možné nahrát do WordPress instalace."
 
-#: inc/admin/classes/class-status.php:889
+#: inc/admin/classes/class-status.php:900
 msgid "Secure connection (HTTPS)"
 msgstr "Zabezpečené připojení (HTTPS)"
 
-#: inc/admin/classes/class-status.php:891
+#: inc/admin/classes/class-status.php:902
 msgid "Is the connection to your site secure?"
 msgstr "Je připojení k vašemu webu bezpečné?"
 
 #. translators: %s: Docs link.
-#: inc/admin/classes/class-status.php:900
+#: inc/admin/classes/class-status.php:911
 msgid "Your site is not using HTTPS. <a href=\"%s\" target=\"_blank\">Learn more about HTTPS and SSL Certificates</a>."
 msgstr "Váš web nepoužívá HTTPS. <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Další informace o HTTPS a certifikátech SSL</a>."
 
-#: inc/admin/classes/class-status.php:907
+#: inc/admin/classes/class-status.php:918
 msgid "Hide errors from visitors"
 msgstr "Skrýt chyby před návštěvníky"
 
-#: inc/admin/classes/class-status.php:909
+#: inc/admin/classes/class-status.php:920
 msgid "Error messages can contain sensitive information about your site environment. These should be hidden from untrusted visitors."
 msgstr "Chybové zprávy mohou obsahovat citlivé informace o prostředí vašeho webu. Ty by měly být před nedůvěryhodnými návštěvníky skryty."
 
-#: inc/admin/classes/class-status.php:916
+#: inc/admin/classes/class-status.php:927
 msgid "Error messages should not be shown to visitors."
 msgstr "Chybové zprávy by se návštěvníkům neměly zobrazovat."
 
-#: inc/admin/classes/class-status.php:945
+#: inc/admin/classes/class-status.php:956
 msgid "Flatsome database version"
 msgstr "Verze databáze Flatsome"
 
-#: inc/admin/classes/class-status.php:947
+#: inc/admin/classes/class-status.php:958
 msgid "The database version for Flatsome. This should be the same as the parent theme version."
 msgstr "Verze databáze pro Flatsome. To by mělo být stejné jako verze nadřazené šablony."
 
-#: inc/admin/classes/class-status.php:954
+#: inc/admin/classes/class-status.php:965
 msgid "This should be the same as the parent theme version."
 msgstr "To by mělo být stejné jako verze nadřazené šablony."
 
-#: inc/admin/classes/class-status.php:983
+#: inc/admin/classes/class-status.php:994
 msgid "Overrides"
 msgstr "Přepsat"
 
-#: inc/admin/classes/class-status.php:984
+#: inc/admin/classes/class-status.php:995
 msgid "This section shows any files that are overriding the default Flatsome templates."
 msgstr "Tato část zobrazuje všechny soubory, které přepisují výchozí šablony Flatsome."
 
 #. translators: %1$s: Template name, %2$s: Template version, %3$s: Core version.
-#: inc/admin/classes/class-status.php:997
+#: inc/admin/classes/class-status.php:1008
 msgid "%1$s version %2$s is out of date. The core version is %3$s"
 msgstr "%1$s verze %2$s je zastaralá. Základní verze je %3$s"
 
-#: inc/admin/envato_setup/envato_setup.php:2018
+#: inc/admin/envato_setup/envato_setup.php:2012
 msgid "Register Theme"
 msgstr "Registrovat šablonu"
 
-#: inc/admin/envato_setup/envato_setup.php:2043
+#: inc/admin/envato_setup/envato_setup.php:2037
 msgid "Continue"
 msgstr "Pokračovat"
 
-#: inc/admin/envato_setup/envato_setup.php:2044
+#: inc/admin/envato_setup/envato_setup.php:2038
 msgid "Unregister"
 msgstr "Zrušit registraci"
 
-#: inc/admin/envato_setup/envato_setup.php:2046
+#: inc/admin/envato_setup/envato_setup.php:2040
 msgid "Register"
 msgstr "Registrovat"
 
@@ -610,26 +634,26 @@ msgstr "Navigace Další/Předchozí"
 msgid "HTML after blog posts"
 msgstr "HTML po příspěvcích na blogu"
 
-#: inc/admin/options/header/options-header-cart.php:117
+#: inc/admin/options/header/options-header-cart.php:115
 msgid "Show quantity input"
 msgstr "Zobrazit pole množství"
 
-#: inc/admin/options/header/options-header-cart.php:127
+#: inc/admin/options/header/options-header-cart.php:125
 #: inc/admin/options/shop/options-shop-cart-checkout.php:81
 #: inc/admin/options/shop/options-shop-cart-checkout.php:258
 msgid "Show free shipping"
 msgstr "Zobrazit dopravu zdarma"
 
-#: inc/admin/options/header/options-header-cart.php:158
+#: inc/admin/options/header/options-header-cart.php:156
 #: inc/admin/options/styles/options-lightbox.php:30
 msgid "Drawer width"
 msgstr "Šířka menu"
 
-#: inc/admin/options/header/options-header-cart.php:167
+#: inc/admin/options/header/options-header-cart.php:165
 msgid "Sticky footer"
 msgstr "Připnout k patičce"
 
-#: inc/admin/options/header/options-header-cart.php:177
+#: inc/admin/options/header/options-header-cart.php:175
 msgid "Show cross sells"
 msgstr "Zobrazit křížový prodej"
 
@@ -714,7 +738,7 @@ msgid "Menu elements tab 2"
 msgstr "Karta prvků nabídky 2"
 
 #: inc/admin/options/header/options-header-nav-vertical.php:9
-#: inc/functions/function-setup.php:95
+#: inc/functions/function-setup.php:120
 msgid "Vertical Menu"
 msgstr "Vertikální menu"
 
@@ -798,7 +822,7 @@ msgid "Show catalog ordering"
 msgstr "Zobrazit řazení katalogu"
 
 #: inc/admin/options/shop/options-shop-category.php:766
-#: inc/admin/options/shop/options-shop-product-page.php:413
+#: inc/admin/options/shop/options-shop-product-page.php:475
 msgid "Color :selected"
 msgstr "Barva :selected"
 
@@ -808,33 +832,33 @@ msgstr "Barva :selected"
 msgid "Custom product layout"
 msgstr "Vlastní rozložení produktu"
 
-#: inc/admin/options/shop/options-shop-product-page.php:374
+#: inc/admin/options/shop/options-shop-product-page.php:436
 msgid "Layout"
 msgstr "Rozložení"
 
-#: inc/admin/options/shop/options-shop-product-page.php:386
+#: inc/admin/options/shop/options-shop-product-page.php:448
 msgid "Tooltip"
 msgstr "Vysvětlivka"
 
-#: inc/admin/options/shop/options-shop-product-page.php:387
+#: inc/admin/options/shop/options-shop-product-page.php:449
 msgid "Show a tooltip with the term or term description."
 msgstr "Zobrazit popisek s termínem nebo popisem termínu."
 
-#: inc/admin/options/shop/options-shop-product-page.php:395
+#: inc/admin/options/shop/options-shop-product-page.php:457
 msgid "Inactive out of stock"
 msgstr "Neaktivní Vyprodáno"
 
-#: inc/admin/options/shop/options-shop-product-page.php:396
+#: inc/admin/options/shop/options-shop-product-page.php:458
 msgid "Show out of stock items as inactive."
 msgstr "Označit položky, které nejsou skladem, jako neaktivní."
 
-#: inc/admin/options/shop/options-shop-product-page.php:404
+#: inc/admin/options/shop/options-shop-product-page.php:466
 msgid "Disable deselection"
 msgstr "Zakázat zrušení výběru"
 
 #: inc/admin/options/social/options-social.php:75
-#: inc/admin/options/social/options-social.php:152
-#: inc/shortcodes/follow.php:184
+#: inc/admin/options/social/options-social.php:153
+#: inc/shortcodes/follow.php:187
 msgctxt "social media"
 msgid "X"
 msgstr "X"
@@ -850,10 +874,6 @@ msgstr "Barva nápovědy"
 #: inc/admin/options/styles/options-colors.php:159
 msgid "Tooltip background color"
 msgstr "Barva pozadí nápovědy"
-
-#: inc/admin/panel/panel.php:31
-msgid "Sorry, an error occurred while accessing the API."
-msgstr "Omlouváme se, při přístupu k rozhraní API došlo k chybě."
 
 #: inc/admin/panel/sections/tab-activate.php:12
 msgid "Theme registration"
@@ -871,46 +891,17 @@ msgid "Not allowed."
 msgstr "Nepovoleno."
 
 #. translators: %s: Time left.
-#: inc/classes/class-flatsome-envato-admin.php:140
+#: inc/classes/class-flatsome-envato-admin.php:152
 msgid "Please try again in %s."
 msgstr "Zkuste to prosím znovu za %s."
 
-#: inc/classes/class-flatsome-envato-admin.php:180
+#: inc/classes/class-flatsome-envato-admin.php:192
 msgid "You must agree to the Envato License Terms."
 msgstr "Musíte souhlasit s licenčními podmínkami Envato."
 
-#: inc/classes/class-flatsome-envato-registration.php:36
-msgid "Missing token."
-msgstr "Chybějící token."
-
-#: inc/classes/class-flatsome-envato-registration.php:38
 #: inc/classes/class-flatsome-registration.php:34
 msgid "No purchase code provided."
 msgstr "Není uveden žádný nákupní kód."
-
-#: inc/classes/class-flatsome-envato-registration.php:99
-#: inc/classes/class-flatsome-registration.php:125
-#: inc/classes/class-flatsome-wupdates-registration.php:88
-msgid "No version received."
-msgstr "Nebyla přijata žádná verze."
-
-#: inc/classes/class-flatsome-envato-registration.php:103
-#: inc/classes/class-flatsome-registration.php:129
-#: inc/classes/class-flatsome-wupdates-registration.php:92
-msgid "Invalid version received."
-msgstr "Byla přijata neplatná verze."
-
-#: inc/classes/class-flatsome-envato-registration.php:133
-#: inc/classes/class-flatsome-registration.php:156
-#: inc/classes/class-flatsome-wupdates-registration.php:118
-msgid "No URL received."
-msgstr "Nebyla přijata žádná adresa URL."
-
-#: inc/classes/class-flatsome-envato-registration.php:137
-#: inc/classes/class-flatsome-registration.php:160
-#: inc/classes/class-flatsome-wupdates-registration.php:122
-msgid "Invalid URL received."
-msgstr "Byla přijata neplatná adresa URL."
 
 #: inc/classes/class-flatsome-registration.php:36
 msgid "The provided value seems to be a token. Please register with a purchase code instead."
@@ -924,28 +915,52 @@ msgstr "Neplatný kód nákupu."
 msgid "Your site is registered. But the purchase code could not be verified at the moment."
 msgstr "Vaše stránky jsou registrovány. Nákupní kód však v tuto chvíli nebylo možné ověřit."
 
-#: inc/classes/class-flatsome-registration.php:102
-#: inc/classes/class-flatsome-registration.php:145
+#: inc/classes/class-flatsome-registration.php:105
+#: inc/classes/class-flatsome-registration.php:148
 msgid "No purchase code."
 msgstr "Žádný nákupní kód."
 
-#: inc/classes/class-flatsome-relay.php:227
+#: inc/classes/class-flatsome-registration.php:128
+msgid "No version received."
+msgstr "Nebyla přijata žádná verze."
+
+#: inc/classes/class-flatsome-registration.php:132
+msgid "Invalid version received."
+msgstr "Byla přijata neplatná verze."
+
+#: inc/classes/class-flatsome-registration.php:159
+msgid "No URL received."
+msgstr "Nebyla přijata žádná adresa URL."
+
+#: inc/classes/class-flatsome-registration.php:163
+msgid "Invalid URL received."
+msgstr "Byla přijata neplatná adresa URL."
+
+#: inc/classes/class-flatsome-relay.php:230
 #: inc/extensions/flatsome-infinite-scroll/templates/button.php:2
 msgid "Load more"
 msgstr "Načíst další"
 
-#: inc/classes/class-flatsome-relay.php:238
+#: inc/classes/class-flatsome-relay.php:241
+#: inc/classes/class-flatsome-relay.php:289
+#: inc/structure/structure-posts.php:303
+#: woocommerce/loop/pagination.php:46
+#: woocommerce/single-product-reviews.php:67
 msgid "Previous"
 msgstr "Předchozí"
 
-#: inc/classes/class-flatsome-relay.php:243
+#: inc/classes/class-flatsome-relay.php:246
+#: inc/classes/class-flatsome-relay.php:288
+#: inc/structure/structure-posts.php:302
+#: woocommerce/loop/pagination.php:45
+#: woocommerce/single-product-reviews.php:66
 msgid "Next"
 msgstr "Další"
 
-#: inc/classes/class-flatsome-wupdates-registration.php:70
-#: inc/classes/class-flatsome-wupdates-registration.php:108
-msgid "Missing purchase code."
-msgstr "Chybí kód nákupu."
+#: inc/classes/class-flatsome-wupdates-registration.php:65
+#: inc/classes/class-flatsome-wupdates-registration.php:75
+msgid "Purchase code not verified."
+msgstr ""
 
 #. translators: %d: The status code.
 #: inc/classes/class-uxthemes-api.php:78
@@ -1046,68 +1061,68 @@ msgctxt "cookie notice"
 msgid "Accept"
 msgstr "Přijmout"
 
-#: inc/extensions/flatsome-live-search/flatsome-live-search.php:199
+#: inc/extensions/flatsome-live-search/flatsome-live-search.php:200
 msgid "No matches found"
 msgstr "Nebyly nalezeny žádné výsledky"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:76
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:87
 msgid "Swatch size"
 msgstr "Velikost vzorníku"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:79
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:90
 msgid "X Small"
 msgstr "Extra malé"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:80
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:91
 msgid "Small"
 msgstr "Malé"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:81
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:92
 msgid "Medium"
 msgstr "Střední"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:82
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:93
 msgid "Large"
 msgstr "Velké"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:83
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:94
 msgid "X Large"
 msgstr "Extra velké"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:85
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:96
 msgid "Determines the size of the swatches."
 msgstr "Určuje velikost vzorníku."
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:89
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:100
 msgid "Swatch shape"
 msgstr "Tvar vzorníku"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:92
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:103
 msgid "Square"
 msgstr "Čtverec"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:93
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:104
 msgid "Rounded"
 msgstr "Zaoblené"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:94
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:105
 msgid "Circle"
 msgstr "Kruh"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:96
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:107
 msgid "Determines the shape of the swatches."
 msgstr "Určuje tvar vzorníku."
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:100
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:101
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:111
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:112
 msgid "Use variation images?"
 msgstr "Použít obrázky variant?"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:102
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:113
 msgid "Enable this if you want swatches for this attribute to be auto filled with variation images."
 msgstr "Povolte, pokud chcete, aby se políčka pro tento atribut automaticky vyplňovala obrázky variant."
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:342
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:353
 msgid "Value"
 msgstr "Hodnota"
 
@@ -1128,7 +1143,7 @@ msgid "Quick View"
 msgstr "Rychlý náhled"
 
 #: inc/functions/function-custom-css.php:665
-#: inc/woocommerce/structure-wc-global.php:330
+#: inc/woocommerce/structure-wc-global.php:332
 #: inc/woocommerce/structure-wc-product-box.php:29
 msgid "New"
 msgstr "Nové"
@@ -1150,44 +1165,44 @@ msgstr "Oblíbené"
 msgid "Follow on %s"
 msgstr "Sledovat na %s"
 
-#: inc/functions/function-setup.php:89
-#: inc/functions/function-setup.php:227
+#: inc/functions/function-setup.php:114
+#: inc/functions/function-setup.php:252
 msgid "Main Menu"
 msgstr "Hlavní menu"
 
-#: inc/functions/function-setup.php:90
+#: inc/functions/function-setup.php:115
 msgid "Main Menu - Mobile"
 msgstr "Hlavní menu - Mobil"
 
-#: inc/functions/function-setup.php:91
+#: inc/functions/function-setup.php:116
 msgid "Secondary Menu"
 msgstr "Vedlejší menu"
 
-#: inc/functions/function-setup.php:92
+#: inc/functions/function-setup.php:117
 msgid "Footer Menu"
 msgstr "Menu v patičce"
 
-#: inc/functions/function-setup.php:93
+#: inc/functions/function-setup.php:118
 msgid "Top Bar Menu"
 msgstr "Menu v horním pruhu"
 
-#: inc/functions/function-setup.php:94
+#: inc/functions/function-setup.php:119
 msgid "My Account Menu"
 msgstr "Menu v  \"Můj účet\""
 
-#: inc/functions/function-setup.php:129
+#: inc/functions/function-setup.php:154
 msgid "Sidebar"
 msgstr "Postranní panel"
 
-#: inc/functions/function-setup.php:139
+#: inc/functions/function-setup.php:164
 msgid "Footer 1"
 msgstr "Patička č. 1"
 
-#: inc/functions/function-setup.php:149
+#: inc/functions/function-setup.php:174
 msgid "Footer 2"
 msgstr "Patička č. 2"
 
-#: inc/functions/function-setup.php:228
+#: inc/functions/function-setup.php:253
 #: inc/shortcodes/accordion.php:140
 #: woocommerce/single-product/tabs/accordian.php:33
 msgid "Toggle"
@@ -1197,42 +1212,38 @@ msgstr "Přepnout"
 msgid "Flatsome registration"
 msgstr "Flatsome registrace"
 
-#: inc/functions/function-site-health.php:36
-#: template-parts/admin/envato/register-form.php:38
-msgid "Your copy of Flatsome is registered with a personal Envato token. Please register Flatsome with a purchase code instead to ensure your site receives updates in the future."
-msgstr "Vaše kopie Flatsome je registrována pomocí osobního tokenu Envato. Zaregistrujte si Flatsome pomocí nákupního kódu, abyste zajistili, že Vaše stránky budou v budoucnu dostávat aktualizace."
-
-#: inc/functions/function-site-health.php:41
-msgid "Register with a purchase code now"
-msgstr "Zaregistrujte se pomocí nákupního kódu nyní"
-
-#: inc/functions/function-site-health.php:49
+#: inc/functions/function-site-health.php:28
 msgid "Flatsome is registered"
 msgstr "Flatsome je registrován"
 
-#: inc/functions/function-site-health.php:55
+#: inc/functions/function-site-health.php:34
 msgid "Register Flatsome to receive updates."
 msgstr "Zaregistrujte Flatsome, abyste mohli dostávat aktualizace."
 
-#: inc/functions/function-site-health.php:61
+#: inc/functions/function-site-health.php:40
 msgid "Flatsome is not registered"
 msgstr "Flatsome není registrován"
 
-#: inc/functions/function-site-health.php:65
+#: inc/functions/function-site-health.php:44
 msgid "Register now"
 msgstr "Zaregistrujte se nyní"
 
-#: inc/functions/function-site-health.php:69
+#: inc/functions/function-site-health.php:48
 msgid "Flatsome was unable to receive the latest update"
 msgstr "Flatsome nebyl schopen získat nejnovější aktualizaci"
 
 #: inc/integrations/wc-yith-wishlist/yith-wishlist.php:61
 #: inc/integrations/wc-yith-wishlist/yith-wishlist.php:82
+#: template-parts/header/partials/element-wishlist-mobile.php:20
+#: template-parts/header/partials/element-wishlist-mobile.php:21
+#: template-parts/header/partials/element-wishlist.php:18
+#: template-parts/header/partials/element-wishlist.php:23
+#: template-parts/header/partials/element-wishlist.php:24
 msgid "Wishlist"
 msgstr "Seznam přání"
 
 #. translators: %s: Comment count
-#: inc/shortcodes/blog_posts.php:302
+#: inc/shortcodes/blog_posts.php:318
 msgid "%s Comment"
 msgid_plural "%s Comments"
 msgstr[0] "%s komentář"
@@ -1240,97 +1251,102 @@ msgstr[1] "%s komentáře"
 msgstr[2] "%s komentářů"
 msgstr[3] "%s komentářů"
 
-#: inc/shortcodes/follow.php:124
-#: inc/shortcodes/follow.php:125
+#: inc/shortcodes/follow.php:127
+#: inc/shortcodes/follow.php:128
 msgid "Follow on Facebook"
 msgstr "Sledujte nás na Facebooku"
 
-#: inc/shortcodes/follow.php:138
-#: inc/shortcodes/follow.php:139
+#: inc/shortcodes/follow.php:141
+#: inc/shortcodes/follow.php:142
 msgid "Follow on Instagram"
 msgstr "Sledujte náš Instagram"
 
-#: inc/shortcodes/follow.php:152
-#: inc/shortcodes/follow.php:153
+#: inc/shortcodes/follow.php:155
+#: inc/shortcodes/follow.php:156
 msgid "Follow on TikTok"
 msgstr "Sledujte nás na TikToku"
 
-#: inc/shortcodes/follow.php:169
-#: inc/shortcodes/follow.php:170
+#: inc/shortcodes/follow.php:172
+#: inc/shortcodes/follow.php:173
 msgid "Follow on SnapChat"
 msgstr "Sledujte nás na SnapChatu"
 
-#: inc/shortcodes/follow.php:176
+#: inc/shortcodes/follow.php:179
 msgid "Point the SnapChat camera at this to add us to SnapChat."
 msgstr "Namiřte kameru SnapChat na toto a přidejte nás do SnapChatu."
 
-#: inc/shortcodes/follow.php:188
-#: inc/shortcodes/follow.php:189
+#: inc/shortcodes/follow.php:191
+#: inc/shortcodes/follow.php:192
 msgid "Follow on X"
 msgstr "Sledovat na X"
 
-#: inc/shortcodes/follow.php:202
-#: inc/shortcodes/follow.php:203
+#: inc/shortcodes/follow.php:205
+#: inc/shortcodes/follow.php:206
 msgid "Follow on Twitter"
 msgstr "Sledujte nás na Twitteru"
 
-#: inc/shortcodes/follow.php:216
-#: inc/shortcodes/follow.php:217
+#: inc/shortcodes/follow.php:219
+#: inc/shortcodes/follow.php:220
+msgid "Follow on Threads"
+msgstr ""
+
+#: inc/shortcodes/follow.php:233
+#: inc/shortcodes/follow.php:234
 msgid "Send us an email"
 msgstr "Pošlete nám e-mail"
 
-#: inc/shortcodes/follow.php:230
-#: inc/shortcodes/follow.php:231
+#: inc/shortcodes/follow.php:247
+#: inc/shortcodes/follow.php:248
 msgid "Call us"
 msgstr "Zavolejte nám"
 
-#: inc/shortcodes/follow.php:244
-#: inc/shortcodes/follow.php:245
+#: inc/shortcodes/follow.php:261
+#: inc/shortcodes/follow.php:262
 msgid "Follow on Pinterest"
 msgstr "Sledujte nás na Pinterestu"
 
-#: inc/shortcodes/follow.php:258
-#: inc/shortcodes/follow.php:259
+#: inc/shortcodes/follow.php:275
+#: inc/shortcodes/follow.php:276
 msgid "Subscribe to RSS"
 msgstr "Odebírat RSS"
 
-#: inc/shortcodes/follow.php:272
-#: inc/shortcodes/follow.php:273
+#: inc/shortcodes/follow.php:289
+#: inc/shortcodes/follow.php:290
 msgid "Follow on LinkedIn"
 msgstr "Sledujte nás na LinkedIn"
 
-#: inc/shortcodes/follow.php:286
-#: inc/shortcodes/follow.php:287
+#: inc/shortcodes/follow.php:303
+#: inc/shortcodes/follow.php:304
 msgid "Follow on YouTube"
 msgstr "Sledujte nás na YouTube"
 
-#: inc/shortcodes/follow.php:300
-#: inc/shortcodes/follow.php:301
+#: inc/shortcodes/follow.php:317
+#: inc/shortcodes/follow.php:318
 msgid "Flickr"
 msgstr "Flickr"
 
-#: inc/shortcodes/follow.php:314
-#: inc/shortcodes/follow.php:315
+#: inc/shortcodes/follow.php:331
+#: inc/shortcodes/follow.php:332
 msgid "Follow on 500px"
 msgstr "Sledujte nás na 500px"
 
-#: inc/shortcodes/follow.php:328
-#: inc/shortcodes/follow.php:329
+#: inc/shortcodes/follow.php:345
+#: inc/shortcodes/follow.php:346
 msgid "Follow on VKontakte"
 msgstr "Sledujte nás na VKontakte"
 
-#: inc/shortcodes/follow.php:342
-#: inc/shortcodes/follow.php:343
+#: inc/shortcodes/follow.php:359
+#: inc/shortcodes/follow.php:360
 msgid "Follow on Telegram"
 msgstr "Sledujte nás na Telegramu"
 
-#: inc/shortcodes/follow.php:356
-#: inc/shortcodes/follow.php:357
+#: inc/shortcodes/follow.php:373
+#: inc/shortcodes/follow.php:374
 msgid "Follow on Twitch"
 msgstr "Sledujte nás na Twitchi"
 
-#: inc/shortcodes/follow.php:370
-#: inc/shortcodes/follow.php:371
+#: inc/shortcodes/follow.php:387
+#: inc/shortcodes/follow.php:388
 msgid "Follow on Discord"
 msgstr "Sledujte nás na Discord"
 
@@ -1339,7 +1355,7 @@ msgstr "Sledujte nás na Discord"
 msgid "All"
 msgstr "Vše"
 
-#: inc/shortcodes/sections.php:154
+#: inc/shortcodes/sections.php:150
 msgid "Scroll for more"
 msgstr "Přejděte dolů pro více informací"
 
@@ -1363,38 +1379,43 @@ msgstr "Sdílet na X"
 msgid "Share on Twitter"
 msgstr "Sdílet na Twitteru"
 
+#: inc/shortcodes/share.php:155
+#: inc/shortcodes/share.php:156
+msgid "Share on Threads"
+msgstr ""
+
 #. translators: %s: the share link.
-#: inc/shortcodes/share.php:151
+#: inc/shortcodes/share.php:167
 msgid "Check this out: %s"
 msgstr "Podívejte se na to: %s"
 
-#: inc/shortcodes/share.php:155
-#: inc/shortcodes/share.php:156
+#: inc/shortcodes/share.php:171
+#: inc/shortcodes/share.php:172
 msgid "Email to a Friend"
 msgstr "Poslat emailem známému"
 
-#: inc/shortcodes/share.php:173
-#: inc/shortcodes/share.php:174
+#: inc/shortcodes/share.php:189
+#: inc/shortcodes/share.php:190
 msgid "Pin on Pinterest"
 msgstr "Sdílet na Pinterestu"
 
-#: inc/shortcodes/share.php:187
-#: inc/shortcodes/share.php:188
+#: inc/shortcodes/share.php:203
+#: inc/shortcodes/share.php:204
 msgid "Share on VKontakte"
 msgstr "Sdílet na VKontakte"
 
-#: inc/shortcodes/share.php:201
-#: inc/shortcodes/share.php:202
+#: inc/shortcodes/share.php:217
+#: inc/shortcodes/share.php:218
 msgid "Share on LinkedIn"
 msgstr "Sdílet na Linkedin"
 
-#: inc/shortcodes/share.php:215
-#: inc/shortcodes/share.php:216
+#: inc/shortcodes/share.php:231
+#: inc/shortcodes/share.php:232
 msgid "Share on Tumblr"
 msgstr "Sdílet na Tumblr"
 
-#: inc/shortcodes/share.php:229
-#: inc/shortcodes/share.php:230
+#: inc/shortcodes/share.php:245
+#: inc/shortcodes/share.php:246
 msgid "Share on Telegram"
 msgstr "Sdílet na Telegramu"
 
@@ -1509,17 +1530,21 @@ msgstr "Přidání upsell produktů na stránky produktů."
 msgid "Complete the look"
 msgstr "Nastavte vzhled"
 
-#: inc/woocommerce/class-mini-cart.php:157
+#: inc/woocommerce/class-buy-now.php:100
+msgid "Buy now"
+msgstr ""
+
+#: inc/woocommerce/class-mini-cart.php:168
 msgctxt "mini cart add to cart button label"
 msgid "Add"
 msgstr "Přidat"
 
 #. translators: %s: The threshold
-#: inc/woocommerce/class-shipping.php:149
+#: inc/woocommerce/class-shipping.php:160
 msgid "Add %s to cart and get free shipping!"
 msgstr "Přidejte ještě produkty v hodnotě %s do košíku a získejte dopravu zdarma!"
 
-#: inc/woocommerce/class-shipping.php:160
+#: inc/woocommerce/class-shipping.php:171
 msgid "Your order qualifies for free shipping 🎉"
 msgstr "Vaše objednávka splňuje podmínky pro dopravu zdarma 🎉"
 
@@ -1557,11 +1582,11 @@ msgstr "Postranní panel obchodu"
 msgid "Product Sidebar"
 msgstr "Postranní panel u produktu"
 
-#: inc/woocommerce/structure-wc-global.php:262
+#: inc/woocommerce/structure-wc-global.php:264
 msgid "Posts found"
 msgstr "Příspěvky nalezeny"
 
-#: inc/woocommerce/structure-wc-global.php:275
+#: inc/woocommerce/structure-wc-global.php:277
 msgid "Pages found"
 msgstr "Stránky nalezeny"
 
@@ -1618,7 +1643,7 @@ msgstr "Video"
 msgid "Zoom"
 msgstr "Přiblížení"
 
-#: inc/woocommerce/structure-wc-product-page.php:286
+#: inc/woocommerce/structure-wc-product-page.php:287
 msgid "Select options"
 msgstr "Vybrat možnosti"
 
@@ -1704,19 +1729,15 @@ msgstr "Byl zjištěn neobvyklý název adresáře šablony: <em>%s</em> . Nadř
 msgid "Your site is <strong>registered</strong>. Thank you! Enjoy Flatsome and one-click updates."
 msgstr "Vaše stránky jsou <strong>registrovány</strong> . Děkujeme! Užijte si aktualizace Flatsome na jedno kliknutí."
 
-#: template-parts/admin/envato/register-form.php:39
-msgid "The selector below will show available purchase codes you can register with."
-msgstr "Výběr níže zobrazí dostupné nákupní kódy, se kterými se můžete zaregistrovat."
+#: template-parts/admin/envato/register-form.php:37
+msgid "Your copy of Flatsome appears to be registered using an unsupported or outdated method. Please re-register with a valid purchase code."
+msgstr ""
 
-#: template-parts/admin/envato/register-form.php:42
-msgid "Select a purchase code:"
-msgstr "Vyberte nákupní kód:"
-
-#: template-parts/admin/envato/register-form.php:60
+#: template-parts/admin/envato/register-form.php:52
 msgid "Registered domain:"
 msgstr "Registrovaná doména:"
 
-#: template-parts/admin/envato/register-form.php:121
+#: template-parts/admin/envato/register-form.php:110
 msgid "Are you sure you want to unregister Flatsome?"
 msgstr "Opravdu chcete zrušit registraci šablony Flatsome?"
 

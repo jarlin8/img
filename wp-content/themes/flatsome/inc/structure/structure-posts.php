@@ -298,8 +298,10 @@ if ( !function_exists( 'flatsome_posts_pagination' ) ) {
                 $paged = ( get_query_var('paged') == 0 ) ? 1 : get_query_var('paged');
                 echo '<ul class="page-numbers nav-pagination links text-center">';
                 foreach ( $pages as $page ) {
-                        $page = str_replace("page-numbers","page-number",$page);
-                        echo "<li>$page</li>";
+					$page = str_replace("page-numbers","page-number",$page);
+					$page = str_replace( '<a class="next page-number', '<a aria-label="' . esc_attr__( 'Next', 'flatsome' ) . '" class="next page-number', $page );
+					$page = str_replace( '<a class="prev page-number', '<a aria-label="' . esc_attr__( 'Previous', 'flatsome' ) . '" class="prev page-number', $page );
+					echo "<li>$page</li>";
                 }
                echo '</ul>';
             }

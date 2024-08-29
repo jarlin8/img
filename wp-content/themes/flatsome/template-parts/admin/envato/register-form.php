@@ -3,7 +3,7 @@
  * Register form.
  *
  * @package          Flatsome\Templates
- * @flatsome-version 3.18.0
+ * @flatsome-version 3.19.0
  */
 
 if ( $args['form'] ) : ?>
@@ -31,18 +31,10 @@ if ( $args['form'] ) : ?>
 
 	<div class="flatsome-registration-form">
 
-		<?php if ( is_a( $registration, 'Flatsome_Envato_Registration' ) ) : ?>
+		<?php if ( ! $registration->is_verified() && ( ! empty( get_option( flatsome_theme_key() . '_wup_purchase_code' ) ) || ! empty( get_option( 'flatsome_envato' ) ) ) ) : ?>
 			<div class="wp-clearfix">
-				<div class="flatsome-token-migrator__errors"></div>
-				<div class="notice notice-info notice-alt inline" style="display:block!important;margin-bottom:15px!important">
-					<p><?php _e( 'Your copy of Flatsome is registered with a personal Envato token. Please register Flatsome with a purchase code instead to ensure your site receives updates in the future.', 'flatsome' ); ?></p>
-					<p><?php _e( 'The selector below will show available purchase codes you can register with.', 'flatsome' ); ?></p>
-					<div class="flatsome-token-migrator__selector" style="display:flex;max-width:500px;margin-bottom:16px;">
-						<select name="flatsome_purchase_id" class="flatsome-token-migrator__select" style="width:100%;max-width:none;padding:10px 16px;font-size:16px;">
-							<option value="" disabled selected><?php esc_html_e( 'Select a purchase code:', 'flatsome' ); ?></option>
-						</select>
-						<span class="spinner"></span>
-					</div>
+				<div class="notice notice-error notice-alt inline" style="display:block!important;margin-bottom:15px!important">
+					<p><?php esc_html_e( 'Your copy of Flatsome appears to be registered using an unsupported or outdated method. Please re-register with a valid purchase code.', 'flatsome' ); ?></p>
 				</div>
 			</div>
 		<?php endif; ?>
@@ -97,9 +89,6 @@ if ( $args['form'] ) : ?>
 				<?php endif; ?>
 			<?php else : ?>
 				<input name="flatsome_register" type="submit" class="button button-large button-primary" value="Register"/>
-			<?php endif; ?>
-			<?php if ( is_a( $registration, 'Flatsome_Envato_Registration' ) ) : ?>
-				<input name="flatsome_unregister" onclick="return onFlatsomeUnregister()" type="submit" class="button button-large button-secondary" value="Unregister token"/>
 			<?php endif; ?>
 			<a class="button button-large" href="<?php echo esc_url_raw( UXTHEMES_ACCOUNT_URL ); ?>" target="_blank" rel="noopener">
 				<?php esc_html_e( 'Manage your licenses', 'flatsome' ); ?>

@@ -38,7 +38,8 @@ function flatsome_ajax_search_posts( $args ) {
  */
 function flatsome_ajax_search_get_products( $search_type, array $args ) {
 	$order_by      = get_theme_mod( 'search_products_order_by', 'relevance' );
-	$ordering_args = WC()->query->get_catalog_ordering_args( $order_by, 'ASC' );
+	$order         = get_theme_mod( 'search_products_order', 'ASC' );
+	$ordering_args = WC()->query->get_catalog_ordering_args( $order_by, $order );
 	$defaults      = $args;
 
 	$args['post_type']  = 'product';

@@ -84,11 +84,11 @@ function ux_image( $atts, $content = null ) {
 				$image_overlay = 'rgba(0,0,0,.2)';
 			}
 		}
-		$link_start = '<a class="' . $link_class . '" href="' . $link . '"' . flatsome_parse_target_rel( $link_atts ) . '>';
+		$link_start = '<a class="' . esc_attr( $link_class ) . '" href="' . esc_url( $link ) . '"' . flatsome_parse_target_rel( $link_atts ) . '>';
 		$link_end   = '</a>';
 	} elseif ( $lightbox ) {
 		$title      = $lightbox_caption ? $image_meta['caption'] : '';
-		$link_start = '<a class="image-lightbox lightbox-gallery" title="' . esc_attr( $title ) . '" href="' . $org_img . '">';
+		$link_start = '<a class="image-lightbox lightbox-gallery" title="' . esc_attr( $title ) . '" href="' . esc_url( $org_img ) . '">';
 		$link_end   = '</a>';
 	}
 
@@ -119,7 +119,7 @@ function ux_image( $atts, $content = null ) {
 
 	// Add Parallax Attribute.
 	if ( $parallax ) {
-		$parallax = 'data-parallax-fade="true" data-parallax="' . $parallax . '"';
+		$parallax = 'data-parallax-fade="true" data-parallax="' . esc_attr( $parallax ) . '"';
 	}
 
 	// Set image height.
@@ -133,14 +133,14 @@ function ux_image( $atts, $content = null ) {
 
 	ob_start();
 	?>
-	<div class="img has-hover <?php echo $classes; ?>" id="<?php echo $_id; ?>">
+	<div class="img has-hover <?php echo esc_attr( $classes ); ?>" id="<?php echo esc_attr( $_id ); ?>">
 		<?php echo $link_start; ?>
 		<?php if ( $parallax ) echo '<div ' . $parallax . '>'; ?>
-		<?php if ( $animate ) echo '<div data-animate="' . $animate . '">'; ?>
-		<div class="<?php echo $classes_inner; ?> dark" <?php echo get_shortcode_inline_css( $css_image_height ); ?>>
+		<?php if ( $animate ) echo '<div data-animate="' . esc_attr( $animate ) . '">'; ?>
+		<div class="<?php echo esc_attr( $classes_inner ); ?> dark" <?php echo get_shortcode_inline_css( $css_image_height ); ?>>
 			<?php echo flatsome_get_image( $id, $image_size, $caption, false, $image_title ); ?>
 			<?php if ( $image_overlay ) { ?>
-				<div class="overlay" style="background-color: <?php echo $image_overlay; ?>"></div>
+				<div class="overlay" style="background-color: <?php echo esc_attr( $image_overlay ); ?>"></div>
 			<?php } ?>
 			<?php if ( $icon ) { ?>
 				<div class="absolute no-click x50 y50 md-x50 md-y50 lg-x50 lg-y50 text-shadow-2">
@@ -151,7 +151,7 @@ function ux_image( $atts, $content = null ) {
 			<?php } ?>
 
 			<?php if ( $caption ) { ?>
-				<div class="caption"><?php echo $caption; ?></div>
+				<div class="caption"><?php echo wp_kses_post( $caption ); ?></div>
 			<?php } ?>
 		</div>
 		<?php if ( $animate ) echo '</div>'; ?>

@@ -15,6 +15,7 @@ function flatsome_team_member($atts, $content = null, $tag = ''){
       'snapchat' => '',
       'x' => '',
       'twitter' => '',
+      'threads' => '',
       'email' => '',
       'phone' => '',
       'pinterest' => '',
@@ -79,7 +80,7 @@ function flatsome_team_member($atts, $content = null, $tag = ''){
     if($depth) $classes_box[] = 'box-shadow-'.$depth;
     if($depth_hover) $classes_box[] = 'box-shadow-'.$depth_hover.'-hover';
 
-	$link_start = '<a href="' . $link . '"' . flatsome_parse_target_rel( $link_atts ) . '>';
+	$link_start = '<a href="' . esc_url( $link ) . '"' . flatsome_parse_target_rel( $link_atts ) . '>';
 	$link_end   = '</a>';
 
     if($style) $classes_box[] = 'box-'.$style;
@@ -100,7 +101,7 @@ function flatsome_team_member($atts, $content = null, $tag = ''){
     if($text_size) $classes_text[] = 'is-'.$text_size;
     if($text_color == 'dark') $classes_text[] = 'dark';
 
-    if($animate) {$animate = 'data-animate="'.$animate.'"';}
+    if($animate) {$animate = 'data-animate="' . esc_attr( $animate ) . '"';}
 
      $css_args = array(
         array( 'attribute' => 'background-color', 'value' => $text_bg ),
@@ -123,6 +124,7 @@ function flatsome_team_member($atts, $content = null, $tag = ''){
 		'snapchat'  => $snapchat,
 		'x'         => $x,
 		'twitter'   => $twitter,
+		'threads'   => $threads,
 		'email'     => $email,
 		'phone'     => $phone,
 		'pinterest' => $pinterest,
@@ -136,23 +138,23 @@ function flatsome_team_member($atts, $content = null, $tag = ''){
 		'discord'   => $discord,
 	), $atts );
     ?>
-    <div class="box has-hover <?php echo implode(' ', $classes_box); ?>" <?php echo $animate; ?>>
+    <div class="box has-hover <?php echo esc_attr( implode( ' ', $classes_box ) ); ?>" <?php echo $animate; ?>>
 
          <?php if($link) echo $link_start; ?>
-         <div class="box-image <?php echo implode(' ', $classes_image); ?>" <?php echo get_shortcode_inline_css($css_image); ?>>
-           <div class="box-image-inner <?php echo implode(' ', $classes_image_inner); ?>" <?php echo get_shortcode_inline_css($css_image_inner); ?>>
+         <div class="box-image <?php echo esc_attr( implode( ' ', $classes_image ) ); ?>" <?php echo get_shortcode_inline_css($css_image); ?>>
+           <div class="box-image-inner <?php echo esc_attr( implode( ' ', $classes_image_inner ) ); ?>" <?php echo get_shortcode_inline_css($css_image_inner); ?>>
               <?php echo flatsome_get_image($img, $image_size); ?>
-              <?php if($image_overlay) { ?><div class="overlay" style="background-color:<?php echo $image_overlay; ?>"></div><?php } ?>
+              <?php if($image_overlay) { ?><div class="overlay" style="background-color:<?php echo esc_attr( $image_overlay ); ?>"></div><?php } ?>
            </div>
           </div>
          <?php if($link) echo $link_end; ?>
 
-          <div class="box-text <?php echo implode(' ', $classes_text); ?>" <?php echo get_shortcode_inline_css($css_args); ?>>
+          <div class="box-text <?php echo esc_attr( implode( ' ', $classes_text ) ); ?>" <?php echo get_shortcode_inline_css($css_args); ?>>
                 <div class="box-text-inner">
                   <h4 class="uppercase">
-                    <span class="person-name"><?php echo $name; ?></span><br/>
+                    <span class="person-name"><?php echo wp_kses_post( $name ); ?></span><br/>
                     <span class="person-title is-small thin-font op-7">
-                      <?php echo $title; ?>
+                      <?php echo wp_kses_post( $title ); ?>
                     </span>
                   </h4>
 					<?php if ( count( array_filter( $social_links ) ) > 0 ) echo flatsome_apply_shortcode( 'follow', array_merge( array( 'style' => $icon_style ), $social_links ) );
@@ -162,7 +164,7 @@ function flatsome_team_member($atts, $content = null, $tag = ''){
           </div>
     </div>
 
-	<?php if ( $style == 'overlay' || $style == 'shade' ) echo '<div class="team-member-content pt-half text-' . $text_align . '">' . do_shortcode( $content ) . '</div>'; ?>
+	<?php if ( $style == 'overlay' || $style == 'shade' ) echo '<div class="team-member-content pt-half text-' . esc_attr( $text_align ) . '">' . do_shortcode( $content ) . '</div>'; ?>
 
     <?php
     $content = ob_get_contents();

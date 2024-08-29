@@ -61,6 +61,9 @@ final class Flatsome_Registration extends Flatsome_Base_Registration {
 
 		$this->set_options( $result );
 
+		// Remove old registrations.
+		delete_option( 'flatsome_envato' );
+
 		return $result;
 	}
 

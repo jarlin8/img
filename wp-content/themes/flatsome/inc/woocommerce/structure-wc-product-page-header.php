@@ -89,7 +89,7 @@ add_action('flatsome_before_product_sidebar','flatsome_product_nav_sidebar', 0);
 
 if(!function_exists('flatsome_product_next_prev_nav')) {
   function flatsome_product_next_prev_nav($class = ''){
-        echo '<ul class="next-prev-thumbs is-small '.$class.'">';
+        echo '<ul class="next-prev-thumbs is-small ' . esc_attr( $class ) . '">';
         flatsome_next_post_link_product();
         flatsome_previous_post_link_product();
         echo '</ul>';

@@ -61,13 +61,13 @@ function flatsome_render_ux_lottie_shortcode( $atts, $content, $tag ) {
 
 	$element_atts = array(
 		'id'    => $id,
-		'class' => implode( ' ', $classes ),
+		'class' => esc_attr( implode( ' ', $classes ) ),
 	);
 
 	$link_atts = array(
 		'href'   => esc_url( $atts['link'] ),
-		'target' => $atts['target'],
-		'rel'    => $atts['rel'],
+		'target' => esc_attr( $atts['target'] ),
+		'rel'    => esc_attr( $atts['rel'] ),
 	);
 
 	$player_atts = array(

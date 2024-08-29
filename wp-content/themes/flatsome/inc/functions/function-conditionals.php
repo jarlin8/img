@@ -6,6 +6,16 @@
  * @package  Flatsome/Functions
  */
 
+/**
+ * Checks whether a feature is enabled.
+ *
+ * @param string $name The feature name.
+ */
+function flatsome_is_feature_enabled( $name ) {
+	$features = get_option( 'flatsome_features', [] );
+	return ! empty( $features[ $name ] );
+}
+
 if ( ! function_exists( 'is_nextend_facebook_login' ) ) {
 	/**
 	 * Returns true if Nextend facebook provider is enabled for v3
@@ -115,8 +125,21 @@ function flatsome_is_blog_archive() {
  */
 function flatsome_is_shop_archive() {
 	$queried_object               = get_queried_object();
-	$is_product_attribute_archive = ( $queried_object && property_exists( $queried_object, 'taxonomy' ) ) ? taxonomy_is_product_attribute( $queried_object->taxonomy ) : false;
-	$is_product_search_archive    = is_search() && is_post_type_archive( 'product' );
+	$taxonomy                     = ( $queried_object && property_exists( $queried_object, 'taxonomy' ) ) ? $queried_object->taxonomy : false;
+	$additional_taxonomy_archives = [
+		'berocket_brand',
+		'product_brand',
+		'product_brands',
+		'pwb-brand',
+		'yith_product_brand',
+	];
 
-	return apply_filters( 'flatsome_is_shop_archive', is_shop() || is_product_category() || is_product_tag() || $is_product_search_archive || $is_product_attribute_archive );
+	$is_product_search_archive      = is_search() && is_post_type_archive( 'product' );
+	$is_product_attribute_archive   = $taxonomy && taxonomy_is_product_attribute( $taxonomy );
+	$is_additional_taxonomy_archive = $taxonomy && in_array( $taxonomy, $additional_taxonomy_archives, true );
+
+	return apply_filters(
+		'flatsome_is_shop_archive',
+		is_shop() || is_product_category() || is_product_tag() || $is_product_search_archive || $is_product_attribute_archive || $is_additional_taxonomy_archive
+	);
 }

@@ -256,19 +256,22 @@ if ( ! function_exists( 'flatsome_product_box_class' ) ) {
 	/**
 	 * Add Classes to product box
 	 *
-	 * @return null/string
+	 * @return string
 	 */
 	function flatsome_product_box_class() {
 		$classes             = array();
-		$category_grid_style = get_theme_mod( 'category_grid_style', 'grid');
+		$category_grid_style = get_theme_mod( 'category_grid_style', 'grid' );
 
 		if ( $category_grid_style == 'list' ) {
 			$classes[] = 'box-vertical';
 		}
+
+		$classes = apply_filters( 'flatsome_product_box_classes', $classes );
+
 		if ( ! empty( $classes ) ) {
 			return implode( ' ', $classes );
 		}
-		return null;
+		return '';
 	}
 }
 
@@ -276,19 +279,21 @@ if ( ! function_exists( 'flatsome_product_box_image_class' ) ) {
 	/**
 	 * Add Classes to product image box
 	 *
-	 * @return null/string
+	 * @return string
 	 */
 	function flatsome_product_box_image_class() {
-		$hover_style = flatsome_option( 'product_hover' );
-		if ( $hover_style == 'fade_in_back' && $hover_style == 'zoom_in' ) {
-			return null;
-		}
+		$hover_style = get_theme_mod( 'product_hover', 'fade_in_back' );
+
 		$classes   = array();
 		$classes[] = 'image-' . $hover_style;
+
+		$classes = apply_filters( 'flatsome_product_box_image_classes', $classes );
+
 		if ( ! empty( $classes ) ) {
 			return implode( ' ', $classes );
 		}
-		return null;
+
+		return '';
 	}
 }
 
@@ -299,7 +304,20 @@ if ( ! function_exists( 'flatsome_product_box_actions_class' ) ) {
 	 * @return string
 	 */
 	function flatsome_product_box_actions_class() {
-		return 'grid-tools text-center hide-for-small bottom hover-slide-in show-on-hover';
+		$classes = apply_filters( 'flatsome_product_box_actions_classes', [
+			'grid-tools',
+			'text-center',
+			'hide-for-small',
+			'bottom',
+			'hover-slide-in',
+			'show-on-hover',
+		] );
+
+		if ( ! empty( $classes ) ) {
+			return implode( ' ', $classes );
+		}
+
+		return '';
 	}
 }
 
@@ -312,7 +330,7 @@ if ( ! function_exists( 'flatsome_product_box_text_class' ) ) {
 	function flatsome_product_box_text_class() {
 		$classes = array( 'box-text-products' );
 
-		$grid_style = flatsome_option( 'grid_style' );
+		$grid_style = get_theme_mod( 'grid_style', 'grid1' );
 
 		if ( $grid_style == 'grid2' ) {
 			$classes[] = 'text-center grid-style-2';
@@ -322,6 +340,12 @@ if ( ! function_exists( 'flatsome_product_box_text_class' ) ) {
 			$classes[] = 'flex-row align-top grid-style-3 flex-wrap';
 		}
 
-		return implode( ' ', $classes );
+		$classes = apply_filters( 'flatsome_product_box_text_classes', $classes );
+
+		if ( ! empty( $classes ) ) {
+			return implode( ' ', $classes );
+		}
+
+		return '';
 	}
 }

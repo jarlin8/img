@@ -5,7 +5,7 @@
  * This template adds My account to the sidebar.
  *
  * @package          Flatsome\Templates
- * @flatsome-version 3.16.0
+ * @flatsome-version 3.19.0
  */
 
 get_header(); ?>
@@ -25,9 +25,11 @@ get_header(); ?>
 
 					<?php do_action( 'woocommerce_before_account_navigation' ); ?>
 
-					<ul id="my-account-nav" class="account-nav nav nav-line nav-uppercase nav-vertical mt-half">
-						<?php wc_get_template( 'myaccount/account-links.php' ); ?>
-					</ul>
+					<nav class="woocommerce-MyAccount-navigation" aria-label="<?php esc_html_e( 'Account pages', 'woocommerce' ); ?>">
+						<ul id="my-account-nav" class="account-nav nav nav-line nav-uppercase nav-vertical mt-half">
+							<?php wc_get_template( 'myaccount/account-links.php' ); ?>
+						</ul>
+					</nav>
 
 					<?php do_action( 'woocommerce_after_account_navigation' ); ?>
 				</div>

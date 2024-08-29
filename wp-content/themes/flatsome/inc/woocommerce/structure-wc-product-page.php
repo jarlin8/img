@@ -250,11 +250,12 @@ function flatsome_sticky_add_to_cart_template() {
 	global $product;
 
 	if (
-		! is_product()
-		|| ! $product
+		! get_theme_mod( 'product_sticky_cart', 0 )
+		|| ! is_product()
+		|| ! is_a( $product, 'WC_Product' )
 		|| ! $product->is_purchasable()
-		|| ! get_theme_mod( 'product_sticky_cart', 0 )
-		|| ! apply_filters( 'flatsome_sticky_add_to_cart_enabled', true, $product ) ) {
+		|| ! apply_filters( 'flatsome_sticky_add_to_cart_enabled', true, $product )
+	) {
 		return;
 	}
 
@@ -296,12 +297,38 @@ function flatsome_sticky_add_to_cart_template() {
 add_action( 'wp_footer', 'flatsome_sticky_add_to_cart_template' );
 
 /**
- * Remove title attribute on product gallery images.
+ * Modifies the HTML attributes for a gallery image attachment.
+ *
+ * @param array  $atts          The existing HTML attributes.
+ * @param int    $attachment_id The ID of the attachment.
+ * @param string $image_size    The requested image size.
+ * @param bool   $main_image    Whether the image is the main gallery image.
+ *
+ * @return array                The modified HTML attributes.
  */
-function flatsome_woocommerce_gallery_image_html_attachment_image_params( $params, $attachment_id, $image_size, $main_image ) {
-	unset( $params['title'] );
+function flatsome_woocommerce_gallery_image_html_attachment_image_params( $atts, $attachment_id, $image_size, $main_image ) {
+	// Remove title attribute on product gallery images, preventing native tooltip.
+	unset( $atts['title'] );
 
-	return $params;
+	$classes = ! empty( $atts['class'] ) ? explode( ' ', $atts['class'] ) : array();
+
+	// Skip lazy load on main product gallery image, attribute fetchpriority="high" may not always be present.
+	if ( $main_image ) {
+		$classes[] = 'ux-skip-lazy';
+	}
+
+	if (
+		class_exists( 'Jetpack' )
+		&& Jetpack::is_module_active( 'lazy-images' )
+		&& ! get_theme_mod( 'product_gallery_woocommerce' )
+	) {
+		// skip-lazy, blacklist for Jetpack's lazy load.
+		$classes[] = 'skip-lazy';
+	}
+
+	$atts['class'] = implode( ' ', $classes );
+
+	return $atts;
 }
 
 add_filter( 'woocommerce_gallery_image_html_attachment_image_params', 'flatsome_woocommerce_gallery_image_html_attachment_image_params', 10, 4 );

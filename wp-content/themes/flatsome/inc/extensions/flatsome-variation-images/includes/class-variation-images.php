@@ -68,9 +68,20 @@ final class Variation_Images {
 	/**
 	 * Main instance.
 	 *
+	 * @deprecated in favor of get_instance()
 	 * @return Variation_Images
 	 */
 	public static function instance() {
+		_deprecated_function( __METHOD__, '3.19.0', 'get_instance()' );
+		return self::get_instance();
+	}
+
+	/**
+	 * Main instance.
+	 *
+	 * @return Variation_Images
+	 */
+	public static function get_instance() {
 		if ( is_null( self::$instance ) ) {
 			self::$instance = new self();
 		}
@@ -97,7 +108,7 @@ final class Variation_Images {
 	 * @return Variation_Images_Admin
 	 */
 	public function admin() {
-		return Variation_Images_Admin::instance();
+		return Variation_Images_Admin::get_instance();
 	}
 
 	/**
@@ -106,7 +117,7 @@ final class Variation_Images {
 	 * @return Variation_Images_Frontend
 	 */
 	public function frontend() {
-		return Variation_Images_Frontend::instance();
+		return Variation_Images_Frontend::get_instance();
 	}
 }
 
@@ -116,6 +127,6 @@ final class Variation_Images {
  * @return Variation_Images
  */
 function variation_images() {
-	return Variation_Images::instance();
+	return Variation_Images::get_instance();
 }
 
