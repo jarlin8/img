@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -114,15 +114,19 @@ class Measurement
         $array = $this->wp->toArray();
 
         if ($this->redis) {
-            $array += array_combine(array_map(function ($key) {
+            $redis = $this->redis->toArray();
+
+            $array += array_combine(array_map(static function ($key) {
                 return "redis-{$key}";
-            }, array_keys($redis = $this->redis->toArray())), $redis);
+            }, array_keys($redis)), $redis);
         }
 
         if ($this->relay) {
-            $array += array_combine(array_map(function ($key) {
+            $relay = $this->relay->toArray();
+
+            $array += array_combine(array_map(static function ($key) {
                 return "relay-{$key}";
-            }, array_keys($relay = $this->relay->toArray())), $relay);
+            }, array_keys($relay)), $relay);
         }
 
         return $array;

@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -23,10 +23,18 @@ use ReflectionClass;
 use RedisCachePro\Clients\ClientInterface;
 use RedisCachePro\Loggers\LoggerInterface;
 use RedisCachePro\Configuration\Configuration;
-use RedisCachePro\Exceptions\ObjectCacheException;
 use RedisCachePro\Connections\ConnectionInterface;
+
+use RedisCachePro\Exceptions\ObjectCacheException;
 use RedisCachePro\Exceptions\InvalidCacheKeyTypeException;
 
+/**
+ * @property-read int $hits
+ * @property-read int $misses
+ * @property-read int $cache_hits
+ * @property-read int $cache_misses
+ * @property-read array<string> $no_remote_groups
+ */
 abstract class ObjectCache implements ObjectCacheInterface
 {
     /**
@@ -39,7 +47,7 @@ abstract class ObjectCache implements ObjectCacheInterface
     /**
      * The connection instance.
      *
-     * @var \RedisCachePro\Connections\ConnectionInterface|null
+     * @var ?\RedisCachePro\Connections\ConnectionInterface
      */
     protected $connection;
 
@@ -58,18 +66,18 @@ abstract class ObjectCache implements ObjectCacheInterface
     protected $cache = [];
 
     /**
-     * The amount of times the cache data was already cached in memory.
+     * Holds the object cache metrics.
      *
-     * @var int
+     * @var \RedisCachePro\ObjectCaches\ObjectCacheMetrics
      */
-    protected $hits = 0;
+    protected $metrics;
 
     /**
-     * The amount of times the cache did not have the object in memory.
+     * Holds an internal cache copy of the configured prefix.
      *
-     * @var int
+     * @var ?string
      */
-    protected $misses = 0;
+    protected $prefix;
 
     /**
      * The blog id used as prefix in network environments.
@@ -88,20 +96,9 @@ abstract class ObjectCache implements ObjectCacheInterface
     /**
      * Holds an internal cache copy of whether the connection is a cluster.
      *
-     * @see self::id()
-     *
-     * @var bool|null
+     * @var ?bool
      */
-    private $isCluster;
-
-    /**
-     * Holds an internal cache copy of the configured prefix.
-     *
-     * @see self::id()
-     *
-     * @var string|null
-     */
-    private $prefix;
+    protected $isCluster;
 
     /**
      * The list of global cache groups that are not
@@ -138,6 +135,31 @@ abstract class ObjectCache implements ObjectCacheInterface
      * @var array<string, bool>
      */
     protected $nonPrefetchableGroupMatches = [];
+
+    /**
+     * Set up the object cache instance.
+     *
+     * @param  \RedisCachePro\Configuration\Configuration  $config
+     * @param  \RedisCachePro\Connections\ConnectionInterface  $connection
+     * @param  ?\RedisCachePro\ObjectCaches\ObjectCacheMetrics  $metrics
+     * @return void
+     */
+    protected function setup(
+        Configuration $config,
+        ?ConnectionInterface $connection = null,
+        ?ObjectCacheMetrics $metrics = null
+    ) {
+        $this->config = $config;
+        $this->log = $config->logger;
+
+        $this->prefix = $config->prefix ?: '';
+        $this->isCluster = (bool) $config->cluster;
+
+        $this->connection = $connection;
+
+        $this->metrics = $metrics
+            ?: new ObjectCacheMetrics($config, $connection);
+    }
 
     /**
      * Returns the configuration instance.
@@ -433,14 +455,8 @@ abstract class ObjectCache implements ObjectCacheInterface
     {
         global $wp_object_cache_errors;
 
-        $metrics = self::metrics();
-
-        /** @var \RedisCachePro\Support\ObjectCacheInfo $info */
         $info = (object) [
             'status' => false,
-            'hits' => $metrics->hits,
-            'misses' => $metrics->misses,
-            'ratio' => $metrics->ratio,
             'groups' => (object) [
                 'global' => $this->globalGroups(),
                 'non_persistent' => $this->nonPersistentGroups(),
@@ -453,38 +469,17 @@ abstract class ObjectCache implements ObjectCacheInterface
             ]),
         ];
 
-        return $info;
+        return $info; // @phpstan-ignore-line
     }
 
     /**
      * Returns metrics about the object cache.
      *
-     * @param  bool  $extended
-     * @return \RedisCachePro\Support\ObjectCacheMetrics
+     * @return \RedisCachePro\ObjectCaches\ObjectCacheMetrics
      */
-    public function metrics($extended = false)
+    public function metrics()
     {
-        $total = $this->hits + $this->misses;
-
-        /** @var \RedisCachePro\Support\ObjectCacheMetrics $metrics */
-        $metrics = (object) [
-            'hits' => $this->hits,
-            'misses' => $this->misses,
-            'ratio' => $total > 0 ? round($this->hits / ($total / 100), 2) : 100,
-        ];
-
-        if ($extended) {
-            $metrics->groups = array_map(function ($keys) {
-                return [
-                    'keys' => count($keys),
-                    'bytes' => array_sum(array_map([$this, 'get_bytes'], $keys)),
-                ];
-            }, $this->cache);
-
-            $metrics->bytes = array_sum(array_column($metrics->groups, 'bytes'));
-        }
-
-        return $metrics;
+        return $this->metrics->compute($this->cache);
     }
 
     /**
@@ -583,22 +578,6 @@ abstract class ObjectCache implements ObjectCacheInterface
     }
 
     /**
-     * Flushes the in-memory runtime cache.
-     *
-     * @deprecated  1.15.0  Use `ObjectCache::flushRuntime()` instead
-     *
-     * @return bool
-     */
-    public function flushMemory(): bool
-    {
-        if (function_exists('\_deprecated_function')) {
-            \_deprecated_function(__METHOD__, '1.15.0', __CLASS__ . '::flushRuntime()');
-        }
-
-        return $this->flushRuntime();
-    }
-
-    /**
      * Removes all in-memory cache items for a single blog in multisite environments,
      * otherwise defaults to flushing the entire in-memory cache.
      *
@@ -606,18 +585,14 @@ abstract class ObjectCache implements ObjectCacheInterface
      * will default to `network_flush` configuration option.
      *
      * @param  int  $siteId
-     * @param  string  $network_flush
+     * @param  ?string  $network_flush
      *
      * @return bool
      */
-    public function flushBlog(int $siteId, string $network_flush = null): bool
+    public function flushBlog(int $siteId, ?string $network_flush = null): bool
     {
         if (is_null($network_flush)) {
             $network_flush = $this->config->network_flush;
-        }
-
-        if (! $this->isMultisite || $network_flush === Configuration::NETWORK_FLUSH_ALL) {
-            return $this->flushRuntime();
         }
 
         $originalBlogId = $this->blogId;
@@ -647,16 +622,30 @@ abstract class ObjectCache implements ObjectCacheInterface
     }
 
     /**
+     * Whether `flushBlog()` should be called instead of `flush()`.
+     *
+     * @return bool
+     */
+    public function shouldFlushBlog(): bool
+    {
+        return $this->isMultisite
+            && in_array($this->config->network_flush, [
+                $this->config::NETWORK_FLUSH_SITE,
+                $this->config::NETWORK_FLUSH_GLOBAL,
+            ]);
+    }
+
+    /**
      * Execute the given closure without data mutations on the connection,
      * such as serialization and compression algorithms.
      *
-     * @param  Closure  $callback
+     * @param  callable  $callback
      * @return mixed
      */
-    public function withoutMutations(Closure $callback)
+    public function withoutMutations(callable $callback)
     {
         return $this->connection->withoutMutations(
-            Closure::bind($callback, $this, $this)
+            $callback instanceof Closure ? $callback->bindTo($this, $this) : $callback
         );
     }
 
@@ -675,10 +664,6 @@ abstract class ObjectCache implements ObjectCacheInterface
     {
         static $cache = [];
 
-        if (\is_null($this->prefix)) {
-            $this->prefix = $this->config->prefix ?: '';
-        }
-
         try {
             $cacheKey = $this->isMultisite
                 ? "{$this->prefix}:{$this->blogId}:{$group}:{$key}"
@@ -695,10 +680,6 @@ abstract class ObjectCache implements ObjectCacheInterface
             $this->error(InvalidCacheKeyTypeException::forKey($key));
 
             return false;
-        }
-
-        if (\is_null($this->isCluster)) {
-            $this->isCluster = (bool) $this->config->cluster;
         }
 
         $blogId = '';
@@ -747,54 +728,6 @@ abstract class ObjectCache implements ObjectCacheInterface
     }
 
     /**
-     * @internal
-     *
-     * @param  mixed  $var
-     * @return int
-     */
-    public static function get_bytes($var)
-    {
-        switch (gettype($var)) {
-            case 'integer':
-                return PHP_INT_SIZE;
-            case 'double':
-            case 'float':
-                return 8;
-            case 'boolean':
-            case 'NULL':
-                return 1;
-            case 'string':
-                return strlen($var);
-            default:
-                return strlen(serialize($var));
-        }
-    }
-
-    /**
-     * @internal
-     *
-     * @param  int[]|float[]  $values
-     * @return int|float
-     */
-    public static function array_median(array $values)
-    {
-        sort($values);
-
-        $count = count($values);
-        $middle = floor(($count - 1) / 2);
-
-        if ($count === 0) {
-            return 0;
-        }
-
-        if ($count % 2) {
-            return $values[$middle];
-        }
-
-        return ($values[$middle] + $values[$middle + 1]) / 2;
-    }
-
-    /**
      * Overload generic properties for compatibility.
      *
      * @param  string  $name
@@ -802,22 +735,21 @@ abstract class ObjectCache implements ObjectCacheInterface
      */
     public function __get($name)
     {
-        if ($name === 'cache_hits') {
-            return $this->hits;
+        switch ($name) {
+            case 'hits':
+            case 'cache_hits':
+                return $this->metrics->hits;
+            case 'misses':
+            case 'cache_misses':
+                return $this->metrics->misses;
+            case 'no_remote_groups':
+                return $this->nonPersistentGroups;
+            default:
+                trigger_error(
+                    sprintf('Undefined property: %s::$%s', get_called_class(), $name),
+                    E_USER_WARNING
+                );
         }
-
-        if ($name === 'cache_misses') {
-            return $this->misses;
-        }
-
-        if ($name === 'no_remote_groups') {
-            return $this->nonPersistentGroups;
-        }
-
-        trigger_error(
-            sprintf('Undefined property: %s::$%s', get_called_class(), $name),
-            E_USER_WARNING
-        );
     }
 
     /**
@@ -829,8 +761,11 @@ abstract class ObjectCache implements ObjectCacheInterface
     public function __isset($name)
     {
         return in_array($name, [
+            'hits',
+            'misses',
             'cache_hits',
             'cache_misses',
+            'no_remote_groups',
         ]);
     }
 }

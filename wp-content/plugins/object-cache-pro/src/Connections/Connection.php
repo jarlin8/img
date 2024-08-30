@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -45,11 +45,15 @@ abstract class Connection
     protected $client;
 
     /**
-     * The amounts of time (μs) waited for the datastore to respond.
+     * Information about the last, successfully executed command.
+     * Using a public property is a bit sloppy, but it's fast.
      *
-     * @var float[]
+     * - wait: milliseconds (ms) waited for the datastore to respond
+     * - memory: bytes allocated for retrieved result
+     *
+     * @var ?array{wait: float, memory: int}
      */
-    protected $ioWait = [];
+    public $lastCommand;
 
     /**
      * Returns the connection's client.
@@ -70,6 +74,10 @@ abstract class Connection
      */
     public function command(string $name, array $parameters = [])
     {
+        $this->lastCommand = null;
+
+        $debug = $this->config->debug || $this->config->save_commands;
+
         $method = strtolower($name);
         $command = strtoupper($name);
 
@@ -78,21 +86,18 @@ abstract class Connection
             'parameters' => $parameters,
         ];
 
-        if ($this->config->debug || $this->config->save_commands) {
+        if ($debug) {
             $context['backtrace'] = \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS);
-
-            if (\function_exists('wp_debug_backtrace_summary')) {
-                $context['backtrace_summary'] = \wp_debug_backtrace_summary(__CLASS__);
-            }
         }
 
         try {
-            $start = $this->now();
+            $start = microtime(true);
+            $memory = memory_get_usage();
 
             $result = $this->client->{$method}(...$parameters);
 
-            $time = $this->now() - $start;
-            $this->ioWait[] = $time;
+            $memory = (memory_get_usage() - $memory) ?: 1;
+            $wait = (microtime(true) - $start) * 1000;
         } catch (Throwable $exception) {
             $this->log->error("Failed to execute `{$command}` command", $context + [
                 'exception' => $exception,
@@ -101,14 +106,20 @@ abstract class Connection
             throw ConnectionException::from($exception);
         }
 
-        $arguments = \implode(' ', \array_map('json_encode', $parameters));
-        $commandWithArgs = \trim("{$command} {$arguments}");
-        $ms = \round($time * 1000, 4);
+        $this->lastCommand = [
+            'wait' => $wait,
+            'memory' => $memory,
+        ];
 
-        $this->log->info("Executed command `{$commandWithArgs}` in {$ms}ms", $context + [
-            'result' => $result,
-            'time' => $ms,
-        ]);
+        if ($debug) {
+            $ms = \round($wait, 4);
+
+            $this->log->info("Executed `{$command}` command in {$ms}ms", $context + [
+                'time' => $wait,
+                'memory' => $memory,
+                'result' => $result,
+            ]);
+        }
 
         return $result;
     }
@@ -123,35 +134,6 @@ abstract class Connection
     public function withoutMutations(callable $callback)
     {
         return $callback($this);
-    }
-
-    /**
-     * Returns the system's current time in microseconds.
-     * Will use high resolution time when available.
-     *
-     * @return float
-     */
-    protected function now()
-    {
-        static $supportsHRTime;
-
-        if (\is_null($supportsHRTime)) {
-            $supportsHRTime = \function_exists('hrtime');
-        }
-
-        return $supportsHRTime
-            ? \hrtime(true) * 1e-9 // phpcs:ignore PHPCompatibility.FunctionUse.NewFunctions.hrtimeFound
-            : \microtime(true);
-    }
-
-    /**
-     * Returns an array of microseconds (μs) waited for the datastore to respond.
-     *
-     * @return float[]
-     */
-    public function ioWait()
-    {
-        return $this->ioWait;
     }
 
     /**

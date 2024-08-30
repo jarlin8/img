@@ -1,16 +1,15 @@
 <?php
-
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -55,7 +54,13 @@ class Groups extends WP_REST_Controller
             [
                 'methods' => WP_REST_Server::READABLE,
                 'callback' => [$this, 'get_items'],
-                'permission_callback' => [$this, 'get_items_permissions_check'],
+                'permission_callback' => [$this, 'item_permissions_check'],
+            ],
+            [
+                'methods' => WP_REST_Server::DELETABLE,
+                'callback' => [$this, 'delete_item'],
+                'permission_callback' => [$this, 'item_permissions_check'],
+                'args' => $this->get_endpoint_args_for_item_schema(WP_REST_Server::DELETABLE),
             ],
             'schema' => [$this, 'get_public_item_schema'],
         ]);
@@ -67,7 +72,7 @@ class Groups extends WP_REST_Controller
      * @param  \WP_REST_Request  $request
      * @return true|\WP_Error
      */
-    public function get_items_permissions_check($request)
+    public function item_permissions_check($request)
     {
         /**
          * Filter the capability required to access REST API endpoints.
@@ -135,9 +140,58 @@ class Groups extends WP_REST_Controller
             }
         }
 
-        return $this->prepareGroupsForResponse(
-            array_map('count', $groups)
-        );
+        $groups = $this->prepareGroupsForResponse(array_map('count', $groups));
+
+        /** @var \WP_REST_Response $response */
+        $response = rest_ensure_response($groups);
+        $response->header('Cache-Control', 'no-store');
+
+        return $response;
+    }
+
+    /**
+     * Returns the REST API response for the request.
+     *
+     * @param  \WP_REST_Request  $request
+     * @return \WP_REST_Response|\WP_Error
+     */
+    public function delete_item($request)
+    {
+        global $wp_object_cache;
+
+        if (! $wp_object_cache instanceof ObjectCacheInterface) {
+            return new WP_Error(
+                'objectcache_not_supported',
+                'The object cache is not supported.',
+                ['status' => 400]
+            );
+        }
+
+        if (! $wp_object_cache->connection()) {
+            return new WP_Error(
+                'objectcache_not_connected',
+                'The object cache is not connected.',
+                ['status' => 400]
+            );
+        }
+
+        $group = $request->get_param('group');
+
+        if (! $group) {
+            return new WP_Error(
+                'no_group_provided',
+                'No cache group was provided.',
+                ['status' => 400]
+            );
+        }
+
+        wp_cache_flush_group($group);
+
+        /** @var \WP_REST_Response $response */
+        $response = rest_ensure_response(true);
+        $response->header('Cache-Control', 'no-store');
+
+        return $response;
     }
 
     /**
@@ -148,21 +202,28 @@ class Groups extends WP_REST_Controller
      */
     protected function parseGroup(string $id)
     {
-        $id = str_replace('options:alloptions:', 'options:alloptions-', $id);
-        $id = str_replace('analytics:measurements:', 'analytics:measurements-', $id);
+        if (! strpos($id, ':')) {
+            return '__ungrouped__';
+        }
 
-        return array_reverse(explode(':', $id))[1];
+        if (strpos('options:alloptions:', $id) !== false) {
+            $id = str_replace('options:alloptions:', 'options:alloptions-', $id);
+        }
+
+        return array_reverse(
+            explode(':', $id)
+        )[1];
     }
 
     /**
      * Transform the groups into the response format.
      *
      * @param  array<mixed>  $groups
-     * @return \WP_REST_Response|\WP_Error
+     * @return array<array<string, mixed>>
      */
     protected function prepareGroupsForResponse(array $groups)
     {
-        array_walk($groups, function (&$item, $group) {
+        array_walk($groups, static function (&$item, $group) {
             $item = [
                 'group' => str_replace(['{', '}'], '', (string) $group),
                 'count' => $item,
@@ -171,11 +232,11 @@ class Groups extends WP_REST_Controller
 
         $groups = array_values($groups);
 
-        usort($groups, function ($a, $b) {
+        usort($groups, static function ($a, $b) {
             return strcmp($a['group'], $b['group']);
         });
 
-        return rest_ensure_response($groups);
+        return $groups;
     }
 
     /**

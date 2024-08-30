@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -222,6 +222,11 @@ class Diagnostics implements ArrayAccess
         $this->data[self::RELAY]['relay-cache'] = $this->relayCache();
         $this->data[self::RELAY]['relay-eviction'] = $this->relayEvictionPolicy();
         $this->data[self::RELAY]['relay-license'] = $this->relayLicense();
+
+        $percentage = (int) ini_get('relay.maxmemory_pct') ?: 100;
+
+        $this->data[self::RELAY]['relay-maxmemory'] = Diagnostic::name('Relay MaxMemory')
+            ->value("{$percentage}%");
     }
 
     /**
@@ -309,21 +314,25 @@ class Diagnostics implements ArrayAccess
         $connection = $this->connection;
 
         $stats = $connection->memoize('stats');
-        $endpointId = $connection->endpointId();
 
-        $this->data[self::STATISTICS]['relay-memory'] = Diagnostic::name('Relay Memory')
-            ->value(sprintf(
-                '%s of %s',
-                size_format($stats['memory']['active']),
-                size_format($stats['memory']['total'])
-            ));
+        $humanMemory = sprintf(
+            '%s of %s',
+            size_format($stats['memory']['used']),
+            size_format($stats['memory']['total'])
+        );
 
-        $keys = array_sum(array_map(function ($connection) {
-            return $connection['keys'][$this->config->database] ?? 0;
-        }, $stats['endpoints'][$endpointId]['connections'] ?? [])) ?: null;
+        $relayMemory = Diagnostic::name('Relay Memory');
+
+        if ($this->relayAtCapacity()) {
+            $relayMemory->error($humanMemory);
+        } else {
+            $relayMemory->value($humanMemory);
+        }
+
+        $this->data[self::STATISTICS]['relay-memory'] = $relayMemory;
 
         $this->data[self::STATISTICS]['relay-keys'] = Diagnostic::name('Relay Keys')
-            ->value($keys);
+            ->value($connection->keysInMemory());
     }
 
     /**
@@ -486,24 +495,44 @@ class Diagnostics implements ArrayAccess
      */
     protected function relayLicense()
     {
-        $license = Relay::license();
+        $license = get_site_option('objectcache_relay_license');
+
+        if (! is_array($license)) {
+            $license = Relay::license();
+        }
+
         $diagnostic = Diagnostic::name('Relay License');
 
         if (! empty($license['reason'])) {
             $diagnostic->comment($license['reason']);
         }
 
-        switch ($license['state']) {
+        $state = (string) $license['state'];
+
+        switch ($state) {
             case 'licensed':
-                return $diagnostic->success(ucwords((string) $license['state']));
-            case 'unlicensed':
+                return $diagnostic->success(ucwords($state));
             case 'unknown':
-                return $diagnostic->warning(ucwords((string) $license['state']));
+                return $diagnostic->value(ucwords($state));
             case 'suspended':
-                return $diagnostic->error(ucwords((string) $license['state']));
-            default:
-                return $diagnostic->value(ucwords((string) $license['state']));
+                return $diagnostic->error(ucwords($state));
         }
+
+        // Handle `unlicensed` state
+        switch ($license['reason']) {
+            case 'NO_KEY':
+                return $diagnostic->value(ucwords($state));
+            case 'UNKNOWN_KEY':
+            case 'DEFAULT_UUID':
+            case 'EARLY_HEARTBEAT':
+            case 'BINARY_SUSPENDED':
+            case 'LICENSE_SUSPENDED':
+            case 'INVALID_HEARTBEAT':
+            case 'SUBSCRIPTION_INACTIVE':
+                return $diagnostic->error(ucwords($state));
+        }
+
+        return $diagnostic->error(ucwords($state));
     }
 
     /**
@@ -535,6 +564,16 @@ class Diagnostics implements ArrayAccess
         }
 
         return $diagnostic->value($policy);
+    }
+
+    /**
+     * Returns Relay's max-memory percentage.
+     *
+     * @return int
+     */
+    public function relayMemoryThreshold()
+    {
+        return (int) ini_get('relay.maxmemory_pct') ?: 100;
     }
 
     /**
@@ -672,7 +711,7 @@ class Diagnostics implements ArrayAccess
             return $diagnostic->error($version)->comment('Unsupported');
         }
 
-        if (version_compare($version, '5.3.5', '<')) {
+        if (version_compare($version, '5.3.7', '<')) {
             return $diagnostic->warning($version)->comment('Outdated');
         }
 
@@ -696,6 +735,10 @@ class Diagnostics implements ArrayAccess
 
         if (version_compare($version, RelayConnector::RequiredVersion, '<')) {
             return $diagnostic->error($version)->comment('Unsupported');
+        }
+
+        if (version_compare($version, '0.6.1', '<')) {
+            return $diagnostic->warning($version)->comment('Outdated');
         }
 
         return $diagnostic->value($version);
@@ -727,6 +770,11 @@ class Diagnostics implements ArrayAccess
 
         // 8.1 (security support until 25 Nov 2024)
         if (version_compare($version, '8.2', '<') && date('Y') >= 2025) {
+            return $diagnostic->warning($version)->comment('Outdated');
+        }
+
+        // 8.2 (security support until 8 Dec 2025)
+        if (version_compare($version, '8.3', '<') && date('Y') >= 2026) {
             return $diagnostic->warning($version)->comment('Outdated');
         }
 
@@ -826,7 +874,7 @@ class Diagnostics implements ArrayAccess
             return $diagnostic->warning($version)->comment('Outdated');
         }
 
-        if ($this->usingRelayCache() && version_compare($version, '6.2.8', '<')) {
+        if ($this->usingRelayCache() && version_compare($version, '6.2.7', '<')) {
             return $diagnostic->error($version)->comment('Unsupported');
         }
 
@@ -896,15 +944,35 @@ class Diagnostics implements ArrayAccess
     {
         $enabled = $this->config->relay->cache;
 
-        if (method_exists(Relay::class, 'maxMemory')) {
+        if (method_exists(Relay::class, 'maxMemory')) { // @phpstan-ignore-line
             return $enabled && Relay::maxMemory() > 0;
         }
 
-        if (method_exists(Relay::class, 'memory')) {
+        if (method_exists(Relay::class, 'memory')) { // @phpstan-ignore-line
             return $enabled && Relay::memory() > 0;
         }
 
         return true;
+    }
+
+    /**
+     * Whether Relay is running at maximum memory capacity.
+     *
+     * @return bool
+     */
+    public function relayAtCapacity()
+    {
+        if (! $this->connection instanceof RelayConnection) {
+            return false;
+        }
+
+        $stats = $this->connection->memoize('stats');
+        $percentage = $this->relayMemoryThreshold();
+        $margin = 2;
+
+        $threshold = (($percentage - $margin) / 100) * $stats['memory']['total'];
+
+        return $stats['memory']['used'] > $threshold;
     }
 
     /**
@@ -993,13 +1061,6 @@ class Diagnostics implements ArrayAccess
 
         $isValid = $dropin['PluginURI'] === $plugin['PluginURI'];
 
-        $isValid = (bool) apply_filters_deprecated(
-            'rediscache_validate_dropin',
-            [$isValid, $dropin, $plugin],
-            '1.14.0',
-            'objectcache_validate_dropin'
-        );
-
         /**
          * Filter the drop-in validation result.
          *
@@ -1026,13 +1087,6 @@ class Diagnostics implements ArrayAccess
         $dropin = $this->dropinMetadata();
 
         $upToDate = version_compare($dropin['Version'], $plugin['Version'], '>=');
-
-        $upToDate = (bool) apply_filters_deprecated(
-            'rediscache_validate_dropin_version',
-            [$upToDate, $dropin, $plugin],
-            '1.14.0',
-            'objectcache_validate_dropin_version'
-        );
 
         /**
          * Filter the drop-in version check result.
@@ -1063,7 +1117,7 @@ class Diagnostics implements ArrayAccess
         }
 
         $stub = realpath(__DIR__ . '/../../stubs/object-cache.php');
-        $temp = WP_CONTENT_DIR . '/.object-cache-test.tmp';
+        $temp = WP_CONTENT_DIR . '/object-cache.tmp';
 
         if (! $wp_filesystem->exists($stub)) {
             return new WP_Error('fs', 'Stub file does not exist');
@@ -1095,7 +1149,7 @@ class Diagnostics implements ArrayAccess
             return new WP_Error('fs', 'Size of copied test file does not match');
         }
 
-        if (! $wp_filesystem->delete($temp)) { // @phpstan-ignore-line
+        if (! $wp_filesystem->delete($temp)) {
             return new WP_Error('fs', 'Unable to delete copied test file');
         }
 
@@ -1127,12 +1181,7 @@ class Diagnostics implements ArrayAccess
     {
         $documentRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
 
-        if (
-            strpos($documentRoot, '.cloudwaysapps.com/') ||
-            strpos($documentRoot, '.cloudwaysstagingapps.com/') ||
-            isset($_SERVER['cw_allowed_ip']) ||
-            isset($_SERVER['CW_ALLOWED_IP'])
-        ) {
+         {
             return 'cloudways';
         }
 
@@ -1173,6 +1222,10 @@ class Diagnostics implements ArrayAccess
 
         if (isset($_ENV['PANTHEON_ENVIRONMENT']) || defined('PANTHEON_ENVIRONMENT')) {
             return 'pantheon';
+        }
+
+        if (! empty($_SERVER['CS_AUTH_KEY'])) {
+            return 'cloudpress';
         }
 
         if (defined('IS_PRESSABLE') && constant('IS_PRESSABLE')) {

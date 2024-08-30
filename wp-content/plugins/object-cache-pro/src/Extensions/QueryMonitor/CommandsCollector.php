@@ -1,4 +1,16 @@
 <?php
+/**
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
+ *
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
+ *
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
+ */
 
 declare(strict_types=1);
 
@@ -51,6 +63,7 @@ class CommandsCollector extends QM_Collector
         'getAllOptions' => true,
         'syncAllOptions' => true,
         'deleteAllOptions' => true,
+        'withoutMutations' => true,
     ];
 
     /**
@@ -119,10 +132,10 @@ class CommandsCollector extends QM_Collector
             return;
         }
 
-        $legacyBacktraces = defined('\QM_VERSION')
-            && version_compare(constant('\QM_VERSION'), '3.8.1', '<');
+        $backtraces = defined('\QM_VERSION')
+            && version_compare(constant('\QM_VERSION'), '3.8.1', '>=');
 
-        $this->data['commands'] = $this->buildCommands($logger, $legacyBacktraces);
+        $this->data['commands'] = $this->buildCommands($logger, $backtraces);
 
         $types = array_unique(array_column($this->data['commands'], 'command'));
         $types = array_map('strtoupper', $types);
@@ -131,8 +144,8 @@ class CommandsCollector extends QM_Collector
 
         $this->data['types'] = $types;
 
-        if (! $legacyBacktraces) {
-            $components = array_map(function ($command) {
+        if ($backtraces) {
+            $components = array_map(static function ($command) {
                 return $command['backtrace']->get_component()->name;
             }, $this->data['commands']);
 
@@ -144,10 +157,10 @@ class CommandsCollector extends QM_Collector
      * Builds the array of Redis commands.
      *
      * @param  \RedisCachePro\Loggers\ArrayLogger  $logger
-     * @param  bool  $legacyBacktraces
+     * @param  bool  $backtraces
      * @return array<int, array<string, mixed>>
      */
-    protected function buildCommands(ArrayLogger $logger, bool $legacyBacktraces)
+    protected function buildCommands(ArrayLogger $logger, bool $backtraces)
     {
         $commands = [];
         $backtraceArgs = $this->buildBacktraceArgs();
@@ -168,14 +181,14 @@ class CommandsCollector extends QM_Collector
             $commands[] = [
                 'level' => $message['level'],
                 'time' => $message['context']['time'] ?? 0,
-                'bytes' => $this->calculateBytes($message['context']),
+                'bytes' => $message['context']['memory'] ?? 0,
                 'command' => $command,
                 'parameters' => $this->formatParameters(
                     $message['context']['parameters'] ?? []
                 ),
-                'backtrace' => $legacyBacktraces
-                    ? $this->formatLegacyBacktrace($message['context']['backtrace_summary'])
-                    : new QM_Backtrace($backtraceArgs, $message['context']['backtrace']),
+                'backtrace' => $backtraces
+                    ? new QM_Backtrace($backtraceArgs, $message['context']['backtrace'] ?? null)
+                    : null,
             ];
         }
 
@@ -204,6 +217,7 @@ class CommandsCollector extends QM_Collector
                 $connection => true,
             ]),
             'ignore_method' => [
+                ObjectCache::class => self::IgnoredMethods,
                 RelayObjectCache::class => self::IgnoredMethods,
                 PhpRedisObjectCache::class => self::IgnoredMethods,
                 get_class($wp_object_cache) => self::IgnoredMethods,
@@ -220,14 +234,14 @@ class CommandsCollector extends QM_Collector
      */
     protected function formatParameters($parameters)
     {
-        $format = function ($value) {
+        $format = static function ($value) {
             return stripslashes((string) json_encode(
                 $value,
                 JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT
             ));
         };
 
-        return array_map(function ($parameter) use ($format) {
+        return array_map(static function ($parameter) use ($format) {
             $value = is_object($parameter)
                 ? get_class($parameter) . $format($parameter)
                 : $format($parameter);
@@ -235,52 +249,11 @@ class CommandsCollector extends QM_Collector
             $value = preg_replace('/\s+/', ' ', (string) $value);
             $value = trim($value, '"');
 
-            if (strlen($value) > 400) {
-                return substr($value, 0, 400) . '...';
+            if (strlen($value) > 200) {
+                return substr($value, 0, 200) . '...';
             }
 
             return $value;
         }, $parameters);
-    }
-
-    /**
-     * Converts the `wp_debug_backtrace_summary()` backtrace into human readable array for display.
-     *
-     * @param  string  $backtrace
-     * @return array<int, string>
-     */
-    protected function formatLegacyBacktrace($backtrace)
-    {
-        $backtrace = str_replace('RedisCachePro\ObjectCaches\\', '', $backtrace);
-        $backtrace = array_reverse(explode(', ', $backtrace));
-        $backtrace = array_slice($backtrace, 0, 7);
-
-        return array_filter($backtrace, function ($trace) {
-            return ! in_array($trace, [
-                'WP_Hook->apply_filters',
-                'WP_Hook->do_action',
-                "require_once('wp-includes/template-loader.php')",
-                "require_once('wp-admin/admin.php')",
-                "require_once('wp-settings.php')",
-                "require_once('wp-config.php')",
-                "require_once('wp-load.php')",
-                "require('wp-blog-header.php')",
-                "require('index.php')",
-            ]);
-        });
-    }
-
-    /**
-     * Returns an approximation of sent + received bytes.
-     *
-     * @param  array<mixed>  $context
-     * @return int
-     */
-    public function calculateBytes($context)
-    {
-        return (int) array_sum([
-            strlen(serialize($context['parameters'] ?? null)),
-            strlen(serialize($context['result'] ?? null)),
-        ]);
     }
 }

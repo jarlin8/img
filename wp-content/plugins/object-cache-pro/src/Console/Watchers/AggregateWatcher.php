@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -65,6 +65,7 @@ class AggregateWatcher extends Notify
     protected $defaultMetrics = [
         'ms-total',
         'ms-cache',
+        'ms-cache-avg',
         'ms-cache-ratio',
         'hits',
         'misses',
@@ -286,6 +287,16 @@ class AggregateWatcher extends Notify
     /**
      * @return string|null
      */
+    protected function getMsCacheAvg()
+    {
+        $msCacheAvg = $this->measurements->median('wp->msCacheAvg');
+
+        return is_null($msCacheAvg) ? null : number_format($msCacheAvg, 4, '.', '');
+    }
+
+    /**
+     * @return string|null
+     */
     protected function getMsCacheRatio()
     {
         $msCacheRatioMedian = $this->measurements->median('wp->msCacheRatio');
@@ -446,12 +457,12 @@ class AggregateWatcher extends Notify
     /**
      * @return int|void
      */
-    protected function getRelayMemoryActive()
+    protected function getRelayMemoryUsed()
     {
         if ($this->usingRelay) {
-            $memoryActive = $this->measurements->latest('relay->memoryActive');
+            $memoryUsed = $this->measurements->latest('relay->memoryUsed');
 
-            return is_null($memoryActive) ? null : (int) round($memoryActive);
+            return is_null($memoryUsed) ? null : (int) round($memoryUsed);
         }
     }
 

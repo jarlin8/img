@@ -3,7 +3,7 @@
  * Plugin Name: Object Cache Pro
  * Plugin URI: https://objectcache.pro
  * Description: A business class Redis object cache backend for WordPress.
- * Version: 1.17.1
+ * Version: 1.21.1
  * Author: Rhubarb Group
  * Author URI: https://rhubarb.group
  * License: Proprietary
@@ -31,7 +31,7 @@ if (defined('RedisCachePro\Version')) {
 /**
  * The plugin version number.
  */
-define('RedisCachePro\Version', '1.17.1');
+define('RedisCachePro\Version', '1.21.1');
 
 /**
  * The absolute path to the plugin file.
@@ -45,31 +45,6 @@ require_once ABSPATH . 'wp-admin/includes/file.php';
 require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 require_once __DIR__ . '/bootstrap.php';
-require_once __DIR__ . '/src/License.php';
-require_once __DIR__ . '/src/Plugin/Analytics.php';
-require_once __DIR__ . '/src/Plugin/Authorization.php';
-require_once __DIR__ . '/src/Plugin/Dropin.php';
-require_once __DIR__ . '/src/Plugin/Health.php';
-require_once __DIR__ . '/src/Plugin/Licensing.php';
-require_once __DIR__ . '/src/Plugin/Lifecycle.php';
-require_once __DIR__ . '/src/Plugin/Meta.php';
-require_once __DIR__ . '/src/Plugin/Network.php';
-require_once __DIR__ . '/src/Plugin/Settings.php';
-require_once __DIR__ . '/src/Plugin/Updates.php';
-require_once __DIR__ . '/src/Plugin/Widget.php';
-require_once __DIR__ . '/src/Plugin/Extensions/Debugbar.php';
-require_once __DIR__ . '/src/Plugin/Extensions/QueryMonitor.php';
-require_once __DIR__ . '/src/Plugin.php';
-
-/**
- * Register WP CLI commands when running in console.
- */
-if (defined('WP_CLI') && WP_CLI) {
-    require_once dirname(__FILE__) . '/src/Console/Watchers/LogWatcher.php';
-    require_once dirname(__FILE__) . '/src/Console/Watchers/DigestWatcher.php';
-    require_once dirname(__FILE__) . '/src/Console/Watchers/AggregateWatcher.php';
-    require_once dirname(__FILE__) . '/src/Console/Commands.php';
-}
 
 add_action('plugins_loaded', function () {
     if (! defined('RedisCachePro\Basename')) {

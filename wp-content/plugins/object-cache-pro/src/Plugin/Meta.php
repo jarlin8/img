@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -31,7 +31,7 @@ trait Meta
      */
     public function bootMeta()
     {
-        add_filter('plugins_api', [$this, 'pluginInformation'], 10, 3);
+        add_filter('plugins_api', [$this, 'pluginInformation'], 1000, 3);
 
         add_filter('plugin_row_meta', [$this, 'pluginRowMeta'], 10, 4);
 
@@ -116,10 +116,6 @@ trait Meta
      */
     public function siteActionLinks($actions, $blog_id)
     {
-        if (! $this->config->cluster) {
-            return $actions;
-        }
-
         if (! $this->blogFlushingEnabled()) {
             return $actions;
         }
@@ -170,13 +166,10 @@ trait Meta
                 $info->download_link = null;
             }
 
-            $info->icons = (array) $info->icons;
-            $info->banners = (array) $info->banners;
-            $info->sections = (array) $info->sections;
-
-            if (isset($info->contributors)) {
-                $info->contributors = array_map('get_object_vars', get_object_vars($info->contributors));
-            }
+            $info->icons = (array) $info->icons; // @phpstan-ignore-line
+            $info->banners = (array) $info->banners; // @phpstan-ignore-line
+            $info->sections = (array) $info->sections; // @phpstan-ignore-line
+            $info->contributors = array_map('get_object_vars', (array) $info->contributors); // @phpstan-ignore-line
 
             return $info;
         }

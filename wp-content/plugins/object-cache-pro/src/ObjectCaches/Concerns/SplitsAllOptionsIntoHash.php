@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -47,7 +47,7 @@ trait SplitsAllOptionsIntoHash
      */
     protected function getAllOptions(string $id)
     {
-        $this->storeReads++;
+        /** @var array<mixed>|false $alloptions */
         $alloptions = $this->connection->hgetall("{$id}:hash");
 
         return empty($alloptions) ? false : $alloptions;
@@ -72,16 +72,20 @@ trait SplitsAllOptionsIntoHash
         $removedOptions = array_keys(array_diff_key($runtimeCache, $data));
 
         if (! empty($removedOptions)) {
-            $this->storeWrites++;
             $this->connection->hdel("{$id}:hash", ...$removedOptions);
+
+            $this->metrics->write('options');
         }
 
         $changedOptions = array_diff_assoc($data, $runtimeCache);
 
         if (! empty($changedOptions)) {
-            $this->storeWrites++;
             $this->connection->hmset("{$id}:hash", $changedOptions);
+
+            $this->metrics->write('options');
         }
+
+        $this->storeInMemory($id, $data, 'options');
 
         return true;
     }
@@ -94,10 +98,11 @@ trait SplitsAllOptionsIntoHash
      */
     protected function deleteAllOptions(string $id): bool
     {
-        $this->storeWrites++;
+        $command = $this->config->async_flush ? 'unlink' : 'del';
+        $result = (bool) $this->connection->{$command}("{$id}:hash");
 
-        $command = $this->config->async_flush ? 'UNLINK' : 'DEL';
+        $this->metrics->write('options');
 
-        return (bool) $this->connection->{$command}("{$id}:hash");
+        return $result;
     }
 }

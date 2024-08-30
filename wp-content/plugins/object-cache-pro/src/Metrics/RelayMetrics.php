@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace RedisCachePro\Metrics;
 
 use RedisCachePro\Connections\RelayConnection;
-use RedisCachePro\Configuration\Configuration;
 
 class RelayMetrics
 {
@@ -57,11 +56,11 @@ class RelayMetrics
     public $keys;
 
     /**
-     * The amount of memory actually pointing to live objects.
+     * The amount of memory pointing to live objects or metadata.
      *
      * @var float
      */
-    public $memoryActive;
+    public $memoryUsed;
 
     /**
      * The total number of bytes allocated by Relay.
@@ -72,7 +71,7 @@ class RelayMetrics
 
     /**
      * The ratio of total memory allocated by Relay compared to
-     * the amount of memory actually pointing to live objects.
+     * the amount of memory pointing to live objects or metadata.
      *
      * @var float
      */
@@ -82,17 +81,13 @@ class RelayMetrics
      * Creates a new instance from given connection.
      *
      * @param  \RedisCachePro\Connections\RelayConnection  $connection
-     * @param  \RedisCachePro\Configuration\Configuration  $config
      * @return void
      */
-    public function __construct(RelayConnection $connection, Configuration $config)
+    public function __construct(RelayConnection $connection)
     {
         $stats = $connection->memoize('stats');
+        $keys = $connection->keysInMemory();
         $total = intval($stats['stats']['hits'] + $stats['stats']['misses']);
-
-        $keys = array_sum(array_map(function ($connection) use ($config) {
-            return $connection['keys'][$config->database] ?? 0;
-        }, $stats['endpoints'][$connection->endpointId()]['connections'] ?? [])) ?: null;
 
         $this->hits = $stats['stats']['hits'];
         $this->misses = $stats['stats']['misses'];
@@ -100,8 +95,8 @@ class RelayMetrics
         $this->opsPerSec = $stats['stats']['ops_per_sec'];
         $this->keys = is_null($keys) ? null : (int) $keys;
         $this->memoryTotal = $stats['memory']['total'];
-        $this->memoryActive = $stats['memory']['active'];
-        $this->memoryRatio = round(($this->memoryActive / $this->memoryTotal) * 100, 2);
+        $this->memoryUsed = $stats['memory']['used'];
+        $this->memoryRatio = round(($this->memoryUsed / $this->memoryTotal) * 100, 2);
     }
 
     /**
@@ -117,7 +112,7 @@ class RelayMetrics
             'hit-ratio' => $this->hitRatio,
             'ops-per-sec' => $this->opsPerSec,
             'keys' => $this->keys,
-            'memory-active' => $this->memoryActive,
+            'memory-used' => $this->memoryUsed,
             'memory-total' => $this->memoryTotal,
             'memory-ratio' => $this->memoryRatio,
         ];
@@ -132,7 +127,7 @@ class RelayMetrics
     {
         $metrics = $this->toArray();
 
-        return implode(' ', array_map(function ($metric, $value) {
+        return implode(' ', array_map(static function ($metric, $value) {
             return "sample#relay-{$metric}={$value}";
         }, array_keys($metrics), $metrics));
     }
@@ -163,21 +158,21 @@ class RelayMetrics
             'relay-ops-per-sec' => [
                 'title' => 'Throughput',
                 'description' => 'Number of commands processed per second.',
-                'type' => 'integer',
+                'type' => 'throughput',
             ],
             'relay-keys' => [
                 'title' => 'Keys',
                 'description' => 'The number of keys in Relay for the current database.',
                 'type' => 'integer',
             ],
-            'relay-memory-active' => [
-                'title' => 'Active memory',
-                'description' => 'The total amount of memory mapped into the allocator.',
+            'relay-memory-used' => [
+                'title' => 'Used memory',
+                'description' => 'The amount of bytes pointing to live objects including metadata.',
                 'type' => 'bytes',
             ],
             'relay-memory-total' => [
                 'title' => 'Total memory',
-                'description' => 'The total bytes of allocated memory by Relay.',
+                'description' => 'The total number of bytes of allocated memory by Relay.',
                 'type' => 'bytes',
             ],
             'relay-memory-ratio' => [
@@ -187,7 +182,7 @@ class RelayMetrics
             ],
         ];
 
-        return array_map(function ($metric) {
+        return array_map(static function ($metric) {
             $metric['group'] = 'relay';
 
             return $metric;

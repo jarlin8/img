@@ -1,4 +1,16 @@
 <?php
+/**
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
+ *
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
+ *
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
+ */
 
 declare(strict_types=1);
 
@@ -78,66 +90,46 @@ class ObjectCacheCollector extends QM_Collector
             return;
         }
 
-        /** @var \RedisCachePro\Support\ObjectCacheInfo|\RedisCachePro\Support\PhpRedisObjectCacheInfo $info */
         $info = $wp_object_cache->info();
-        $metrics = $wp_object_cache->metrics(true);
-
-        $this->data['hits'] = number_format($info->hits);
-        $this->data['misses'] = number_format($info->misses);
-        $this->data['ratio'] = $info->ratio;
-
-        if (isset($info->prefetches)) {
-            $this->data['prefetches'] = $info->prefetches;
-        }
-
-        if (isset($info->storeReads)) {
-            $this->data['store_reads'] = $info->storeReads;
-        }
-
-        if (isset($info->storeWrites)) {
-            $this->data['store_writes'] = $info->storeWrites;
-        }
-
-        if (isset($info->storeHits)) {
-            $this->data['store_hits'] = $info->storeHits;
-        }
-
-        if (isset($info->storeMisses)) {
-            $this->data['store_misses'] = $info->storeMisses;
-        }
 
         $this->data['errors'] = $info->errors;
         $this->data['meta'] = $info->meta;
         $this->data['groups'] = $info->groups;
 
-        $this->data['bytes'] = $metrics->bytes;
+        $metrics = $wp_object_cache->metrics();
+
+        $this->data['hits'] = $metrics->hits;
+        $this->data['misses'] = $metrics->misses;
+        $this->data['ratio'] = $metrics->hitRatio;
+        $this->data['memory'] = $metrics->memory;
         $this->data['cache'] = $metrics->groups;
 
-        $requestStart = $_SERVER['REQUEST_TIME_FLOAT'] ?? $timestart;
-        $requestTotal = (microtime(true) - $requestStart);
+        $requestMs = (microtime(true) - ($_SERVER['REQUEST_TIME_FLOAT'] ?? $timestart)) * 1000;
 
-        $this->data['ms_total'] = round($requestTotal * 1000, 2);
+        $waitRatio = ($metrics->storeWait / $requestMs) * 100;
 
         if ($wp_object_cache->connection()) {
-            $ioWait = $wp_object_cache->connection()->ioWait();
-            $ioWaitTotal = array_sum($ioWait);
-            $ioWaitMedian = ObjectCache::array_median($ioWait);
-            $ioWaitRatio = ($ioWaitTotal / $requestTotal) * 100;
+            $this->data['prefetches'] = $metrics->prefetches;
+            $this->data['store_reads'] = $metrics->storeReads;
+            $this->data['store_writes'] = $metrics->storeWrites;
+            $this->data['store_hits'] = $metrics->storeHits;
+            $this->data['store_misses'] = $metrics->storeMisses;
 
-            $this->data['ms_cache'] = round($ioWaitTotal * 1000, 2);
-            $this->data['ms_cache_median'] = round($ioWaitMedian * 1000, 2);
-            $this->data['ms_cache_ratio'] = round($ioWaitRatio, $ioWaitRatio < 1 ? 3 : 1);
+            $this->data['ms_request'] = round($requestMs, 2);
+            $this->data['ms_cache'] = round($metrics->storeWait, 2);
+            $this->data['ms_cache_median'] = round($metrics->storeWaitAverage, 2);
+            $this->data['ms_cache_ratio'] = round($waitRatio, $waitRatio < 1 ? 3 : 1);
         }
 
         // Used by QM itself
-        $this->data['cache_hit_percentage'] = $info->ratio;
+        $this->data['cache_hit_percentage'] = $metrics->hitRatio;
 
         if ($this->data instanceof QM_Data_Cache) {
-            $this->data->stats['cache_hits'] = $info->hits;
-            $this->data->stats['cache_misses'] = $info->misses;
+            $this->data->stats['cache_hits'] = $metrics->hits;
+            $this->data->stats['cache_misses'] = $metrics->misses;
         } else {
-            $this->data['stats']['cache_hits'] = $info->hits;
-            $this->data['stats']['cache_misses'] = $info->misses;
+            $this->data['stats']['cache_hits'] = $metrics->hits;
+            $this->data['stats']['cache_misses'] = $metrics->misses;
         }
 
         $logger = $wp_object_cache->logger();
@@ -146,7 +138,7 @@ class ObjectCacheCollector extends QM_Collector
             return;
         }
 
-        $this->data['commands'] = count(array_filter($logger->messages(), function ($message) {
+        $this->data['commands'] = count(array_filter($logger->messages(), static function ($message) {
             return isset($message['context']['command']);
         }));
     }
@@ -162,7 +154,7 @@ class ObjectCacheCollector extends QM_Collector
         $this->data['ratio'] = 0;
         $this->data['hits'] = 0;
         $this->data['misses'] = 0;
-        $this->data['bytes'] = 0;
+        $this->data['memory'] = 0;
 
         // Used by QM itself
         $this->data['object_cache_extensions'] = [];

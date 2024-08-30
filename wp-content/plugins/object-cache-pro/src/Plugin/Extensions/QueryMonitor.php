@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -38,6 +38,8 @@ trait QueryMonitor
         }
 
         add_action('init', [$this, 'registerQmCollectors']);
+        add_action('qm/constants', [$this, 'registerQmConstants']);
+
         add_filter('qm/outputter/html', [$this, 'registerQmOutputters']);
 
         add_filter('qm/component_type/unknown', [$this, 'fixUnknownQmComponentType'], 10, 2);
@@ -47,6 +49,27 @@ trait QueryMonitor
 
         add_filter('qm/component_context/plugin', [$this, 'fixUnknownQmComponentContext'], 10, 2);
         add_filter('qm/component_context/mu-plugin', [$this, 'fixUnknownQmComponentContext'], 10, 2);
+    }
+
+    /**
+     * Registers all object cache related Query Monitor constants.
+     *
+     * @param  array<string, array<string, mixed>>  $constants
+     * @return array<string, array<string, mixed>>
+     */
+    public function registerQmConstants($constants)
+    {
+        $constants['QM_OBJECTCACHE_EXPENSIVE'] = [
+            'label' => 'If an individual cache command takes longer than this time to execute, it’s considered "slow" and triggers a warning.',
+            'default' => 0.005,
+        ];
+
+        $constants['QM_OBJECTCACHE_HEAVY'] = [
+            'label' => 'If an individual cache key is larger than this in bytes, it’s considered "heavy" and triggers a warning.',
+            'default' => 1024 * 1024,
+        ];
+
+        return $constants;
     }
 
     /**
@@ -80,7 +103,7 @@ trait QueryMonitor
         }
 
         // Added in Query Monitor 3.1.0
-        if (! method_exists('QM_Output_Html', 'before_non_tabular_output')) {
+        if (! method_exists('QM_Output_Html', 'before_non_tabular_output')) { // @phpstan-ignore-line
             return;
         }
 

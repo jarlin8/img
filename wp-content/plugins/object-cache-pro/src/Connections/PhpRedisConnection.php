@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -214,7 +214,11 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
     public function flushdb($async = null)
     {
         if ($async ?? $this->config->async_flush) {
-            return $this->command('flushdb', [true]);
+            $asyncValue = \version_compare((string) \phpversion('redis'), '6.0', '<')
+                ? true // PhpRedis 4.x - 5.x
+                : false; // PhpRedis 6.x
+
+            return $this->command('flushdb', [$asyncValue]);
         }
 
         return $this->withoutTimeout(function () {
@@ -235,10 +239,10 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
     /**
      * Hijack `multi()` calls to allow command logging.
      *
-     * @param  int  $type
+     * @param  ?int  $type
      * @return \RedisCachePro\Connections\Transaction
      */
-    public function multi(int $type = null)
+    public function multi(?int $type = null)
     {
         return $type === $this->client::PIPELINE
             ? Transaction::multi($this)
@@ -329,23 +333,22 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
      */
     public function commands(Transaction $tx)
     {
-        $method = $tx->type;
+        $this->lastCommand = null;
 
+        $debug = $this->config->debug || $this->config->save_commands;
+
+        $method = $tx->type;
         $context = [
             'command' => \strtoupper($method),
             'parameters' => [],
         ];
 
-        if ($this->config->debug || $this->config->save_commands) {
+        if ($debug) {
             $context['backtrace'] = \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS);
-
-            if (\function_exists('wp_debug_backtrace_summary')) {
-                $context['backtrace_summary'] = \wp_debug_backtrace_summary(__CLASS__);
-            }
         }
 
         try {
-            $start = $this->now();
+            $start = microtime(true);
 
             $pipe = $this->client->{$method}();
 
@@ -355,10 +358,12 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
                 $context['parameters'][] = \array_merge([\strtoupper($command[0])], $command[1]);
             }
 
+            $memory = memory_get_usage();
+
             $results = $pipe->exec();
 
-            $time = $this->now() - $start;
-            $this->ioWait[] = $time;
+            $memory = memory_get_usage() - $memory;
+            $wait = (microtime(true) - $start) * 1000;
         } catch (Throwable $exception) {
             $this->log->error('Failed to execute transaction', $context + [
                 'exception' => $exception,
@@ -380,12 +385,20 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
             throw new ConnectionException("Transaction returned {$resultsCount} results but unexpected {$commandCount}");
         }
 
-        $ms = \round($time * 1000, 4);
+        $this->lastCommand = [
+            'wait' => $wait,
+            'memory' => $memory,
+        ];
 
-        $this->log->info("Executed transaction in {$ms}ms", $context + [
-            'result' => $results,
-            'time' => $ms,
-        ]);
+        if ($debug) {
+            $ms = \round($wait, 4);
+
+            $this->log->info("Executed transaction in {$ms}ms", $context + [
+                'time' => $wait,
+                'memory' => $memory,
+                'result' => $results,
+            ]);
+        }
 
         return $results;
     }

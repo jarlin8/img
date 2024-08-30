@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -70,6 +70,7 @@ class Tools extends Page
         $this->addLatencyWidget();
         $this->addGroupsWidget();
         $this->addFlushLogWidget();
+        $this->addGroupFlushLogWidget();
 
         $this->enqueueScript();
         $this->enqueueAssets();
@@ -159,6 +160,24 @@ class Tools extends Page
     }
 
     /**
+     * Adds the "Flush Group Log" widget.
+     *
+     * @return void
+     */
+    protected function addGroupFlushLogWidget()
+    {
+        add_meta_box(
+            'objectcache_groupflushlog',
+            'Group flush log',
+            function () {
+                require __DIR__ . '/../templates/widgets/tools/flushlog-groups.phtml';
+            },
+            $this->plugin->screenId(),
+            'normal'
+        );
+    }
+
+    /**
      * Returns the caller name for given flush-log backtrace.
      *
      * @param  string  $backtrace
@@ -178,10 +197,6 @@ class Tools extends Page
             $backtrace
         );
 
-        if (strpos($caller, 'Plugin->deactivate')) {
-            return 'Plugin deactivated';
-        }
-
         if (strpos($caller, 'Plugin->handleWidgetActions')) {
             return 'Dashboard widget';
         }
@@ -192,6 +207,10 @@ class Tools extends Page
 
         if (strpos($caller, 'Plugin->disableDropin')) {
             return 'Drop-in disabled';
+        }
+
+        if (strpos($caller, '->bootMetadata')) {
+            return 'Integrity protection';
         }
 
         if ($caller == 'Cache_Command->flush') {
@@ -206,15 +225,27 @@ class Tools extends Page
             return 'wp redis disable';
         }
 
+        if (strpos($caller, 'Commands->flushGroup')) {
+            return 'wp redis flush-group';
+        }
+
         if (strpos($caller, 'Commands->flush')) {
             return 'wp redis flush';
+        }
+
+        if (strpos($caller, 'Commands->reset')) {
+            return 'wp redis reset';
+        }
+
+        if (strpos($caller, 'Plugin\Api\\')) {
+            return 'REST API';
         }
 
         return $caller;
     }
 
     /**
-     * Returns a clean, formatted backtrace for flush-log entry.
+     * Returns a clean, formatted backtrace for a flushlog entry.
      *
      * @param  string  $backtrace
      * @return string
@@ -223,7 +254,15 @@ class Tools extends Page
     {
         $frames = array_reverse(explode(', ', $backtrace));
 
-        $frames = array_filter($frames, function ($frame) {
+        $stack = array_filter($frames, static function ($frame) {
+            return ! preg_match('/^(include|require)(_once)?\(/', $frame);
+        });
+
+        if (empty($stack)) {
+            $stack = $frames;
+        }
+
+        $stack = array_filter($stack, static function ($frame) {
             return ! in_array($frame, [
                 'call_user_func',
                 'call_user_func_array',
@@ -233,11 +272,14 @@ class Tools extends Page
                 'WP_Hook->apply_filters_ref_array',
                 'RedisCachePro\Plugin->flush',
                 'RedisCachePro\Plugin->maybeLogFlush',
+                'RedisCachePro\Plugin->maybeLogGroupFlush',
                 "apply_filters('pre_objectcache_flush')",
+                "apply_filters('pre_objectcache_flush_group')",
                 'wp_cache_flush',
-            ]) && ! preg_match('/^(include|require)(_once)?\(/', $frame);
+                'wp_cache_flush_group',
+            ]);
         });
 
-        return implode(', ', array_slice($frames, 0, 5));
+        return implode(', ', array_slice($stack, 0, 5));
     }
 }

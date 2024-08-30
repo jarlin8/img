@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -19,19 +19,23 @@ namespace RedisCachePro\Connectors;
 use LogicException;
 
 use Relay\Relay as RelayClient;
+use Relay\Cluster as RelayClusterClient;
 use Relay\Exception as RelayException;
 
 use RedisCachePro\Clients\Relay;
+use RedisCachePro\Clients\RelayCluster;
 
 use RedisCachePro\Configuration\Configuration;
 
 use RedisCachePro\Connections\RelayConnection;
 use RedisCachePro\Connections\ConnectionInterface;
+use RedisCachePro\Connections\RelayClusterConnection;
 use RedisCachePro\Connections\RelaySentinelsConnection;
 use RedisCachePro\Connections\RelayReplicatedConnection;
 
 use RedisCachePro\Exceptions\RelayMissingException;
 use RedisCachePro\Exceptions\RelayOutdatedException;
+use RedisCachePro\Exceptions\InvalidDatabaseException;
 use RedisCachePro\Exceptions\ConfigurationInvalidException;
 
 class RelayConnector implements ConnectorInterface
@@ -158,19 +162,19 @@ class RelayConnector implements ConnectorInterface
             $config->timeout,
             $persistentId,
             $config->retry_interval,
-            $config->read_timeout,
+            0, // set later using `setOption()`
             $context,
         ];
 
-        $retries = 0;
+        $attempt = $delay = 0;
 
         CONNECTION_RETRY: {
-            $delay = self::nextDelay($config, $retries);
+            $delay = self::nextDelay($config, $attempt, $delay);
 
             try {
                 $client->{$method}(...$arguments);
             } catch (RelayException $exception) {
-                if (++$retries >= $config->retries) {
+                if (++$attempt >= $config->retries) {
                     throw $exception;
                 }
 
@@ -179,6 +183,9 @@ class RelayConnector implements ConnectorInterface
             }
         }
 
+        // set read-timeout as option to avoid confusing hiredis error message
+        $client->setOption(RelayClient::OPT_READ_TIMEOUT, $config->read_timeout);
+
         if ($config->username && $config->password) {
             $client->auth([$config->username, $config->password]);
         } elseif ($config->password) {
@@ -186,22 +193,64 @@ class RelayConnector implements ConnectorInterface
         }
 
         if ($config->database) {
-            $client->select($config->database);
+            if (! $client->select($config->database)) {
+                throw new InvalidDatabaseException((string) $config->database);
+            }
         }
 
         return new RelayConnection($client, $config);
     }
 
     /**
-     * Create a new clustered Relay connection.
+     * Create a new Relay cluster connection.
      *
      * @param  \RedisCachePro\Configuration\Configuration  $config
-     *
-     * @throws \LogicException
+     * @return \RedisCachePro\Connections\RelayClusterConnection
      */
     public static function connectToCluster(Configuration $config): ConnectionInterface
     {
-        throw new LogicException('Relay does not yet support Redis Cluster');
+        if (\is_string($config->cluster)) {
+            $arguments = [$config->cluster];
+        } else {
+            $arguments = [
+                null,
+                \array_values($config->cluster),
+                $config->timeout,
+                $config->read_timeout,
+                $config->persistent,
+                $config->password ?? '',
+            ];
+
+            if ($config->tls_options) {
+                $arguments[] = $config->tls_options;
+            }
+        }
+
+        $client = null;
+        $attempt = $delay = 0;
+
+        CLUSTER_RETRY: {
+            $delay = self::nextDelay($config, $attempt, $delay);
+
+            try {
+                $client = new RelayCluster(function () use ($arguments) {
+                    return new RelayClusterClient(...$arguments);
+                }, $config->tracer);
+            } catch (RelayException $exception) {
+                if (++$attempt >= $config->retries) {
+                    throw $exception;
+                }
+
+                \usleep($delay * 1000);
+                goto CLUSTER_RETRY;
+            }
+        }
+
+        if ($config->cluster_failover) {
+            $client->setOption($client::OPT_SLAVE_FAILOVER, $config->getClusterFailover());
+        }
+
+        return new RelayClusterConnection($client, $config);
     }
 
     /**

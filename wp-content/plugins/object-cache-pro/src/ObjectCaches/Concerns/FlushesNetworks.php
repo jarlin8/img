@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -21,41 +21,30 @@ use Throwable;
 use RedisCachePro\Configuration\Configuration;
 
 /**
- * In non-multisite environments and when the `network_flush` configuration option is set to `all`,
- * the `FLUSHDB` command is executed when `wp_cache_flush()` is called.
+ * This is an experimental feature and not supported officially WordPress.
  *
- * When `network_flush` is set to `site`, only the current blog's cache is cleared using a Lua script.
+ * In multisite environments WordPress has no mechanism to flush an individual
+ * blog (site) and will always flush the entire network, which is inefficient.
  *
- * When `network_flush` is set to `global`, in addition to the
- * current blog's cache all global groups are flushed as well.
+ * Settings the `network_flush` configuration option to `global`, will cause
+ * Object Cache Pro to only flush the current blog's data and all global groups.
+ *
+ * Settings the `network_flush` configuration option to `site`, will cause
+ * Object Cache Pro to only flush the current blog's data.
  */
 trait FlushesNetworks
 {
     /**
-     * Returns `true` when `flushBlog()` should be called over `flush()`.
+     * Removes all cache items for an individual blog in multisite environments.
      *
+     * The `network_flush` configuration option will be used,
+     * if `$network_flush` parameter is not given.
+     *
+     * @param  ?int  $siteId
+     * @param  ?string  $network_flush
      * @return bool
      */
-    protected function shouldFlushBlog(): bool
-    {
-        return in_array($this->config->network_flush, [
-            $this->config::NETWORK_FLUSH_SITE,
-            $this->config::NETWORK_FLUSH_GLOBAL,
-        ]);
-    }
-
-    /**
-     * Removes all cache items for a single blog in multisite environments,
-     * otherwise defaults to flushing the entire database.
-     *
-     * Unless the `$network_flush` parameter is given this method
-     * will default to `network_flush` configuration option.
-     *
-     * @param  int|null  $siteId
-     * @param  string|null  $network_flush
-     * @return bool
-     */
-    public function flushBlog(int $siteId = null, string $network_flush = null): bool
+    public function flushBlog(?int $siteId = null, ?string $network_flush = null): bool
     {
         if (is_null($siteId)) {
             $siteId = $this->blogId;
@@ -63,10 +52,6 @@ trait FlushesNetworks
 
         if (is_null($network_flush)) {
             $network_flush = $this->config->network_flush;
-        }
-
-        if (! $this->isMultisite || $network_flush === Configuration::NETWORK_FLUSH_ALL) {
-            return $this->flush();
         }
 
         $originalBlogId = $this->blogId;

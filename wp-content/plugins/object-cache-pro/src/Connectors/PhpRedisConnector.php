@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -35,6 +35,7 @@ use RedisCachePro\Connections\PhpRedisClusterConnection;
 use RedisCachePro\Connections\PhpRedisSentinelsConnection;
 use RedisCachePro\Connections\PhpRedisReplicatedConnection;
 
+use RedisCachePro\Exceptions\InvalidDatabaseException;
 use RedisCachePro\Exceptions\PhpRedisMissingException;
 use RedisCachePro\Exceptions\PhpRedisOutdatedException;
 use RedisCachePro\Exceptions\ConfigurationInvalidException;
@@ -163,15 +164,15 @@ class PhpRedisConnector implements ConnectorInterface
             $arguments[] = ['stream' => $config->tls_options];
         }
 
-        $retries = 0;
+        $attempt = $delay = 0;
 
         CONNECTION_RETRY: {
-            $delay = self::nextDelay($config, $retries);
+            $delay = self::nextDelay($config, $attempt, $delay);
 
             try {
                 $client->{$method}(...$arguments);
             } catch (RedisException $exception) {
-                if (++$retries >= $config->retries) {
+                if (++$attempt >= $config->retries) {
                     throw $exception;
                 }
 
@@ -187,7 +188,9 @@ class PhpRedisConnector implements ConnectorInterface
         }
 
         if ($config->database) {
-            $client->select($config->database);
+            if (! $client->select($config->database)) {
+                throw new InvalidDatabaseException((string) $config->database);
+            }
         }
 
         if ($config->read_timeout) {
@@ -198,7 +201,7 @@ class PhpRedisConnector implements ConnectorInterface
     }
 
     /**
-     * Create a new clustered PhpRedis connection.
+     * Create a new PhpRedis cluster connection.
      *
      * @param  \RedisCachePro\Configuration\Configuration  $config
      * @return \RedisCachePro\Connections\PhpRedisClusterConnection
@@ -228,17 +231,17 @@ class PhpRedisConnector implements ConnectorInterface
         }
 
         $client = null;
-        $retries = 0;
+        $attempt = $delay = 0;
 
         CLUSTER_RETRY: {
-            $delay = self::nextDelay($config, $retries);
+            $delay = self::nextDelay($config, $attempt, $delay);
 
             try {
                 $client = new PhpRedisCluster(function () use ($arguments) {
                     return new RedisCluster(...$arguments);
                 }, $config->tracer);
             } catch (RedisClusterException $exception) {
-                if (++$retries >= $config->retries) {
+                if (++$attempt >= $config->retries) {
                     throw $exception;
                 }
 

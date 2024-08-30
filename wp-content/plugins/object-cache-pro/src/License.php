@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -71,35 +71,35 @@ class License
     /**
      * The license plan.
      *
-     * @var string
+     * @var ?string
      */
     protected $plan;
 
     /**
      * The license state.
      *
-     * @var string|null
+     * @var ?string
      */
     protected $state;
 
     /**
      * The license token.
      *
-     * @var string
+     * @var ?string
      */
     protected $token;
 
     /**
      * The license organization.
      *
-     * @var object
+     * @var ?object
      */
     protected $organization;
 
     /**
      * The minimum accessible stability.
      *
-     * @var string
+     * @var ?string
      */
     protected $stability;
 
@@ -113,21 +113,21 @@ class License
     /**
      * The last time the license was verified.
      *
-     * @var int|null
+     * @var ?int
      */
     protected $valid_as_of;
 
     /**
      * The last error associated with the license.
      *
-     * @var \WP_Error
+     * @var \WP_Error|null
      */
     protected $_error;
 
     /**
      * The license token.
      *
-     * @return string
+     * @return ?string
      */
     public function token()
     {
@@ -137,7 +137,7 @@ class License
     /**
      * The license state.
      *
-     * @return string|null
+     * @return ?string
      */
     public function state()
     {
@@ -171,7 +171,7 @@ class License
      */
     public function isValid()
     {
-        return true;
+        return $this->state === self::Valid;
     }
 
     /**
@@ -181,7 +181,7 @@ class License
      */
     public function isCanceled()
     {
-        return false;
+        return $this->state === self::Canceled;
     }
 
     /**
@@ -191,7 +191,7 @@ class License
      */
     public function isUnpaid()
     {
-        return false;
+        return $this->state === self::Unpaid;
     }
 
     /**
@@ -201,7 +201,7 @@ class License
      */
     public function isInvalid()
     {
-        return false;
+        return $this->state === self::Invalid;
     }
 
     /**
@@ -252,12 +252,12 @@ class License
     {
         return (object) [
             'plan' => $this->plan,
-            'state' => 'valid',
+            'state' => $this->state,
             'token' => $this->token,
-            'organization' => 'organization',
+            'organization' => $this->organization,
             'stability' => $this->stability,
-            'last_check' => current_time('timestamp'),
-            'valid_as_of' => current_time('timestamp'),
+            'last_check' => $this->last_check,
+            'valid_as_of' => $this->valid_as_of,
         ];
     }
 
@@ -287,10 +287,10 @@ class License
     public static function fromResponse($response)
     {
         $license = static::fromObject($response);
-        $license->last_check = current_time('timestamp');
+        $license->last_check = static::currentTimestamp();
 
         if ($license->isValid()) {
-            $license->valid_as_of = current_time('timestamp');
+            $license->valid_as_of = static::currentTimestamp();
         }
 
         if (is_null($license->state)) {
@@ -315,9 +315,9 @@ class License
         }
 
         $license->_error = $error;
-        $license->last_check = current_time('timestamp');
+        $license->last_check = static::currentTimestamp();
 
-        error_log('objectcache.warning: ' . $error->get_error_message());
+        error_log("objectcache.warning: {$error->get_error_message()}");
 
         return $license->save();
     }
@@ -341,7 +341,10 @@ class License
      */
     public function deauthorize()
     {
-        return true;
+        $this->valid_as_of = null;
+        $this->state = self::Deauthorized;
+
+        return $this->save();
     }
 
     /**
@@ -352,7 +355,12 @@ class License
      */
     public function checkFailed(WP_Error $error)
     {
-        return true;
+        $this->_error = $error;
+        $this->last_check = self::currentTimestamp();
+
+        error_log("objectcache.notice: {$error->get_error_message()}");
+
+        return $this->save();
     }
 
     /**
@@ -371,7 +379,7 @@ class License
 
         $validUntil = $this->last_check + ($minutes * MINUTE_IN_SECONDS);
 
-        return $validUntil < current_time('timestamp');
+        return $validUntil < self::currentTimestamp();
     }
 
     /**
@@ -382,7 +390,7 @@ class License
      */
     public function hoursSinceLastCheck(int $hours)
     {
-        return $this->minutesSinceLastCheck($hours * 6000000);
+        return $this->minutesSinceLastCheck($hours * 60);
     }
 
     /**
@@ -399,7 +407,7 @@ class License
 
         $validUntil = $this->valid_as_of + ($hours * HOUR_IN_SECONDS);
 
-        return $validUntil < current_time('timestamp');
+        return $validUntil < self::currentTimestamp();
     }
 
     /**
@@ -429,5 +437,40 @@ class License
     public function hostingLicense()
     {
         return (bool) preg_match('/^L\d /', (string) $this->plan);
+    }
+
+    /**
+     * Returns the error meta data.
+     *
+     * @return array<string, mixed>
+     */
+    public function errorData()
+    {
+        if (! isset($this->_error)) {
+            return [];
+        }
+
+        return array_merge([
+            'code' => $this->_error->get_error_code(),
+        ], array_diff_key(
+            $this->_error->get_error_data() ?? [],
+            ['token' => null]
+        ));
+    }
+
+    /**
+     * Retrieves the current unix timestamp safely.
+     *
+     * @return int
+     */
+    public static function currentTimestamp()
+    {
+        $time = current_time('timestamp');
+
+        if (! is_int($time) || $time < 1500000000) {
+            $time = time();
+        }
+
+        return $time;
     }
 }

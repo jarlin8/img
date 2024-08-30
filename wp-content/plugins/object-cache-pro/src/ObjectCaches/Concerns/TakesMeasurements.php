@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -55,8 +55,6 @@ trait TakesMeasurements
         $measurements = new Measurements;
 
         try {
-            $this->storeReads++;
-
             $measurements->push(
                 ...$this->connection->zRevRangeByScore(
                     (string) $this->id('measurements', 'analytics'),
@@ -68,6 +66,8 @@ trait TakesMeasurements
         } catch (Throwable $exception) {
             $this->error($exception);
         }
+
+        $this->metrics->read('analytics');
 
         return $measurements;
     }
@@ -81,11 +81,15 @@ trait TakesMeasurements
      */
     public function countMeasurements($min = '-inf', $max = '+inf')
     {
-        return $this->connection->zcount(
+        $count = $this->connection->zcount(
             (string) $this->id('measurements', 'analytics'),
             (string) $min,
             (string) $max
         );
+
+        $this->metrics->read('analytics');
+
+        return $count;
     }
 
     /**
@@ -99,15 +103,20 @@ trait TakesMeasurements
             return;
         }
 
+        $random = (mt_rand() / mt_getrandmax()) * 100;
+        $chance = max(min($this->config->analytics->sample_rate, 100), 0);
+
+        if ($random >= $chance) {
+            return;
+        }
+
         $now = time();
         $id = (string) $this->id('measurements', 'analytics');
 
         $measurement = Measurement::make();
-        $measurement->wp = new WordPressMetrics($this);
 
         try {
-            $lastSample = $this->connection->get("{$id}:sample");
-            $this->storeReads++;
+            $lastSample = $this->get('last-sample', 'analytics');
 
             if ($lastSample < $now - 3) {
                 $measurement->redis = new RedisMetrics($this);
@@ -116,15 +125,18 @@ trait TakesMeasurements
                     $this->connection instanceof RelayConnection &&
                     $this->connection->hasInMemoryCache()
                 ) {
-                    $measurement->relay = new RelayMetrics($this->connection, $this->config);
+                    $measurement->relay = new RelayMetrics($this->connection);
                 }
 
-                $this->connection->set("{$id}:sample", $now);
-                $this->storeWrites++;
+                $this->set('last-sample', $now, 'analytics');
             }
 
+            $measurement->wp = new WordPressMetrics($this);
+            $measurement->wp->storeWrites++;
+
             $this->connection->zadd($id, $measurement->timestamp, $measurement);
-            $this->storeWrites++;
+
+            $this->metrics->write('analytics');
         } catch (Throwable $exception) {
             $this->error($exception);
         }
@@ -139,48 +151,19 @@ trait TakesMeasurements
      */
     public function pruneMeasurements()
     {
-        /**
-         * Filters the analytics retention time.
-         *
-         * @param  int  $duration The retention duration
-         */
-        $retention = (int) apply_filters('objectcache_analytics_retention', $this->config->analytics->retention);
+        $retention = $this->config->analytics->retention;
 
         try {
-            $this->storeWrites++;
-
             $this->connection->zRemRangeByScore(
                 (string) $this->id('measurements', 'analytics'),
                 '-inf',
                 (string) (microtime(true) - $retention)
             );
+
+            $this->metrics->write('analytics');
         } catch (Throwable $exception) {
             $this->error($exception);
         }
-    }
-
-    /**
-     * Flush the database and restore the analytics afterwards.
-     *
-     * @return bool
-     */
-    protected function flushWithoutAnalytics()
-    {
-        $measurements = $this->dumpMeasurements();
-
-        try {
-            $flush = $this->connection->flushdb();
-        } catch (Throwable $exception) {
-            $this->error($exception);
-
-            return false;
-        }
-
-        if ($measurements) {
-            $this->restoreMeasurements($measurements);
-        }
-
-        return $flush;
     }
 
     /**
@@ -201,11 +184,15 @@ trait TakesMeasurements
         }
 
         try {
-            return $this->connection->dump(
+            $dump = $this->connection->dump(
                 (string) $this->id('measurements', 'analytics')
             );
+
+            $this->metrics->read('analytics');
+
+            return $dump;
         } catch (Throwable $exception) {
-            error_log(sprintf('objectcache.notice: Failed to dump analytics (%s)', $exception));
+            error_log("objectcache.notice: Failed to dump analytics ({$exception})");
         }
 
         return false;
@@ -220,11 +207,13 @@ trait TakesMeasurements
     protected function restoreMeasurements($measurements)
     {
         try {
-            $id = $this->id('measurements', 'analytics');
+            $result = $this->connection->restore((string) $this->id('measurements', 'analytics'), 0, $measurements);
 
-            return $this->connection->restore((string) $id, 0, $measurements);
+            $this->metrics->write('analytics');
+
+            return $result;
         } catch (Throwable $exception) {
-            error_log(sprintf('objectcache.notice: Failed to restore analytics (%s)', $exception));
+            error_log("objectcache.notice: Failed to restore analytics ({$exception})");
         }
     }
 

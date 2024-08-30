@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -19,6 +19,96 @@ namespace RedisCachePro\Support;
 class PluginApiResponse
 {
     //
+}
+
+class PluginApiUpdateResponse extends PluginApiResponse
+{
+    /** @var string */
+    public $version;
+
+    /** @var string */
+    public $php;
+
+    /** @var string */
+    public $wp;
+
+    /** @var ?string */
+    public $package;
+
+    /** @var ?object */
+    public $license;
+}
+
+class PluginApiInfoResponse extends PluginApiResponse
+{
+    /** @var string */
+    public $slug;
+
+    /** @var string */
+    public $name;
+
+    /** @var string */
+    public $homepage;
+
+    /** @var ?string */
+    public $download_link;
+
+    /** @var string */
+    public $author;
+
+    /** @var string */
+    public $author_profile;
+
+    /** @var string */
+    public $requires;
+
+    /** @var string */
+    public $requires_php;
+
+    /** @var string */
+    public $tested;
+
+    /** @var string */
+    public $added;
+
+    /** @var string */
+    public $version;
+
+    /** @var string */
+    public $last_updated;
+
+    /** @var int */
+    public $active_installs;
+
+    /** @var object */
+    public $icons;
+
+    /** @var object */
+    public $banners;
+
+    /** @var object */
+    public $sections;
+
+    /** @var object */
+    public $contributors;
+}
+
+class PluginApiLicenseResponse extends PluginApiResponse
+{
+    /** @var ?string */
+    public $token;
+
+    /** @var string */
+    public $state;
+
+    /** @var string */
+    public $stability;
+
+    /** @var ?string */
+    public $plan;
+
+    /** @var object */
+    public $organization;
 }
 
 class AnalyticsConfiguration
@@ -31,6 +121,9 @@ class AnalyticsConfiguration
 
     /** @var int */
     public $retention;
+
+    /** @var int|float */
+    public $sample_rate;
 
     /** @var bool */
     public $footnote;
@@ -59,15 +152,6 @@ class ObjectCacheInfo
     /** @var bool */
     public $status;
 
-    /** @var int */
-    public $hits;
-
-    /** @var int */
-    public $misses;
-
-    /** @var int|float */
-    public $ratio;
-
     /** @var object */
     public $groups;
 
@@ -78,56 +162,14 @@ class ObjectCacheInfo
     public $meta;
 }
 
-class PhpRedisObjectCacheInfo extends ObjectCacheInfo
-{
-    /** @var ?int */
-    public $prefetches;
-
-    /** @var int */
-    public $storeReads;
-
-    /** @var int */
-    public $storeWrites;
-
-    /** @var int */
-    public $storeHits;
-
-    /** @var int */
-    public $storeMisses;
-}
-
-class ObjectCacheMetrics
+class ObjectCacheMetricsGroup
 {
     /** @var int */
-    public $hits;
+    public $keys = 0;
 
     /** @var int */
-    public $misses;
+    public $memory = 0;
 
-    /** @var int|float */
-    public $ratio;
-
-    /** @var int|float|null */
-    public $bytes;
-
-    /** @var array<string, array{keys: int, keys: int}>|null */
-    public $groups;
-}
-
-class PhpRedisObjectCacheMetrics extends ObjectCacheMetrics
-{
-    /** @var ?int */
-    public $prefetches;
-
-    /** @var int */
-    public $storeReads;
-
-    /** @var int */
-    public $storeWrites;
-
-    /** @var int */
-    public $storeHits;
-
-    /** @var int */
-    public $storeMisses;
+    /** @var float */
+    public $wait = 0.0;
 }

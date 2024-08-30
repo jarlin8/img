@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -21,24 +21,30 @@ use RedisCachePro\Configuration\Configuration;
 trait HandlesBackoff
 {
     /**
-     * Returns the next delay for the given retry.
+     * Returns the delay in milliseconds before the next attempt.
      *
      * @param  \RedisCachePro\Configuration\Configuration  $config
-     * @param  int  $retries
+     * @param  int  $attempt
+     * @param  int  $previousDelay
      * @return int
      */
-    public static function nextDelay(Configuration $config, int $retries)
+    public static function nextDelay(Configuration $config, int $attempt, int $previousDelay)
     {
-        if ($config->backoff === Configuration::BACKOFF_NONE) {
-            return $retries ** 2;
+        $random_range = function ($min, $max) {
+            return $max < $min ? mt_rand($max, $min) : mt_rand($min, $max);
+        };
+
+        if ($config->backoff === Configuration::BACKOFF_SMART) {
+            $cap = $config->timeout * 1000;
+            $base = $config->retry_interval;
+
+            return (int) min($cap, $random_range($base, $previousDelay * 3));
         }
 
-        $retryInterval = $config->retry_interval;
-        $jitter = $retryInterval * 0.1;
+        if ($config->backoff === Configuration::BACKOFF_NONE) {
+            return $config->retry_interval;
+        }
 
-        return $retries * \mt_rand(
-            (int) \floor($retryInterval - $jitter),
-            (int) \ceil($retryInterval + $jitter)
-        );
+        return ++$attempt * $config->retry_interval;
     }
 }

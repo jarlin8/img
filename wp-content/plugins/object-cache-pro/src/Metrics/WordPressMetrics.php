@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -105,11 +105,11 @@ class WordPressMetrics
     public $msCache;
 
     /**
-     * The median amount of time (ms) waited for the datastore to respond.
+     * The average amount of time (ms) waited for the datastore to respond.
      *
      * @var float
      */
-    public $msCacheMedian;
+    public $msCacheAvg;
 
     /**
      * The percentage of time waited for the datastore to respond,
@@ -129,24 +129,19 @@ class WordPressMetrics
     {
         global $timestart;
 
-        /** @var \RedisCachePro\Support\PhpRedisObjectCacheMetrics $metrics */
-        $metrics = $cache->metrics(true);
-
-        $ioWait = $cache->connection()->ioWait();
-        $ioWaitTotal = array_sum($ioWait);
-        $ioWaitMedian = ObjectCache::array_median($ioWait);
+        $metrics = $cache->metrics();
 
         $this->hits = $metrics->hits;
         $this->misses = $metrics->misses;
-        $this->hitRatio = $metrics->ratio;
-        $this->bytes = $metrics->bytes;
+        $this->hitRatio = $metrics->hitRatio;
+        $this->bytes = $metrics->memory;
         $this->prefetches = $metrics->prefetches;
         $this->storeReads = $metrics->storeReads;
         $this->storeWrites = $metrics->storeWrites;
         $this->storeHits = $metrics->storeHits;
         $this->storeMisses = $metrics->storeMisses;
-        $this->msCache = round($ioWaitTotal * 1000, 2);
-        $this->msCacheMedian = round($ioWaitMedian * 1000, 2);
+        $this->msCache = round($metrics->storeWait, 2);
+        $this->msCacheAvg = round($metrics->storeWaitAverage, 4);
 
         $requestStart = $_SERVER['REQUEST_TIME_FLOAT'] ?? $timestart;
 
@@ -180,7 +175,7 @@ class WordPressMetrics
             'sql-queries' => $this->sqlQueries,
             'ms-total' => sprintf('%.2f', $this->msTotal),
             'ms-cache' => sprintf('%.2f', $this->msCache),
-            'ms-cache-median' => sprintf('%.2f', $this->msCacheMedian),
+            'ms-cache-avg' => sprintf('%.4f', $this->msCacheAvg),
             'ms-cache-ratio' => number_format($this->msCacheRatio, 1),
         ];
     }
@@ -194,7 +189,7 @@ class WordPressMetrics
     {
         $metrics = $this->toArray();
 
-        return implode(' ', array_map(function ($metric, $value) {
+        return implode(' ', array_map(static function ($metric, $value) {
             return "metric#{$metric}={$value}";
         }, array_keys($metrics), $metrics));
     }
@@ -267,9 +262,9 @@ class WordPressMetrics
                 'description' => 'The total amount of time (ms) waited for the datastore to respond.',
                 'type' => 'time',
             ],
-            'ms-cache-median' => [
+            'ms-cache-avg' => [
                 'title' => 'Datastore Command Time',
-                'description' => 'The median amount of time (ms) waited for the datastore to respond.',
+                'description' => 'The average amount of time (ms) waited for the datastore to respond.',
                 'type' => 'time',
             ],
             'ms-cache-ratio' => [
@@ -279,7 +274,7 @@ class WordPressMetrics
             ],
         ];
 
-        return array_map(function ($metric) {
+        return array_map(static function ($metric) {
             $metric['group'] = 'wp';
 
             return $metric;

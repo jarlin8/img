@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -140,7 +140,7 @@ class RedisMetrics
         $dbKey = "db{$cache->config()->database}";
 
         if (isset($info[$dbKey])) {
-            $keyspace = array_column(array_map(function ($value) {
+            $keyspace = array_column(array_map(static function ($value) {
                 return explode('=', $value);
             }, explode(',', $info[$dbKey])), 1, 0);
 
@@ -180,7 +180,7 @@ class RedisMetrics
     {
         $metrics = $this->toArray();
 
-        return implode(' ', array_map(function ($metric, $value) {
+        return implode(' ', array_map(static function ($metric, $value) {
             return "sample#redis-{$metric}={$value}";
         }, array_keys($metrics), $metrics));
     }
@@ -211,7 +211,7 @@ class RedisMetrics
             'redis-ops-per-sec' => [
                 'title' => 'Throughput',
                 'description' => 'Number of commands processed per second.',
-                'type' => 'integer',
+                'type' => 'throughput',
             ],
             'redis-evicted-keys' => [
                 'title' => 'Evicted keys',
@@ -260,7 +260,7 @@ class RedisMetrics
             ],
         ];
 
-        return array_map(function ($metric) {
+        return array_map(static function ($metric) {
             $metric['group'] = 'redis';
 
             return $metric;

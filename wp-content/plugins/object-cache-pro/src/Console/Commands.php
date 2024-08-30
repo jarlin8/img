@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -31,6 +31,8 @@ use function WP_CLI\Utils\proc_open_compat;
 use RedisCachePro\Diagnostics\Diagnostics;
 use RedisCachePro\Connections\RelayConnection;
 use RedisCachePro\Configuration\Configuration;
+
+use RedisCachePro\ObjectCaches\ObjectCacheInterface;
 use RedisCachePro\ObjectCaches\MeasuredObjectCacheInterface;
 
 use RedisCachePro\Plugin\Api\Analytics;
@@ -61,6 +63,9 @@ class Commands extends WP_CLI_Command
      * [--skip-flush-notice]
      * : Omit the cache flush notice.
      *
+     * [--skip-transients]
+     * : Omit deleting transients from the database.
+     *
      * ## EXAMPLES
      *
      *     # Enable the object cache.
@@ -68,6 +73,9 @@ class Commands extends WP_CLI_Command
      *
      *     # Enable the object cache and overwrite existing drop-in.
      *     $ wp redis enable --force
+     *
+     *     # Update the object cache drop-in without flushing the cache.
+     *     $ wp redis enable --force --skip-flush --skip-flush-notice
      *
      * @alias activate
      *
@@ -116,13 +124,28 @@ class Commands extends WP_CLI_Command
                     'To avoid outdated data, flush the object cache by calling `%ywp cache flush%n`.'
                 ));
             }
-
-            return;
+        } else {
+            $GLOBALS['ObjectCachePro']->resetCache()
+                ? WP_CLI::success('Object cache flushed.')
+                : WP_CLI::error('Object cache could not be flushed.');
         }
 
-        $GLOBALS['ObjectCachePro']->flush()
-            ? WP_CLI::success('Object cache flushed.')
-            : WP_CLI::error('Object cache could not be flushed.');
+        if (isset($options['skip-transients'])) {
+            WP_CLI::line(
+                WP_CLI::colorize(
+                    sprintf(
+                        'To avoid outdated data, delete transients from the database by calling `%%y%s%%n`.',
+                        is_multisite()
+                            ? 'wp transient delete --all --network && wp site list --field=url | xargs -n1 -I % wp --url=% transient delete --all'
+                            : 'wp transient delete --all'
+                    )
+                )
+            );
+        } else {
+            $GLOBALS['ObjectCachePro']->deleteTransients();
+
+            WP_CLI::success('Transients deleted from the database.');
+        }
     }
 
     /**
@@ -174,7 +197,7 @@ class Commands extends WP_CLI_Command
         WP_CLI::success('Object cache disabled.');
 
         if (! isset($options['skip-flush'])) {
-            $GLOBALS['ObjectCachePro']->flush()
+            $GLOBALS['ObjectCachePro']->resetCache()
                 ? WP_CLI::success('Object cache flushed.')
                 : WP_CLI::error('Object cache could not be flushed.');
         }
@@ -294,7 +317,7 @@ class Commands extends WP_CLI_Command
                 sprintf('%%b[%s]%%n', ucfirst($groupName))
             ));
 
-            foreach ($group as $key => $diagnostic) {
+            foreach ($group as $diagnostic) {
                 if ($groupName === Diagnostics::ERRORS) {
                     WP_CLI::log(WP_CLI::colorize("%r{$diagnostic}%n"));
                 } else {
@@ -311,19 +334,10 @@ class Commands extends WP_CLI_Command
     /**
      * Flushes the object cache.
      *
-     * Flushing the object cache will flush the cache for all sites.
-     * Beware of the performance impact when flushing the object cache in production,
-     * when not using asynchronous flushing.
-     *
-     * Errors if the object cache can't be flushed.
-     *
      * ## OPTIONS
      *
-     * [<id>...]
+     * [<site-id>...]
      * : One or more IDs of sites to flush.
-     *
-     * [--async]
-     * : Force asynchronous flush.
      *
      * ## EXAMPLES
      *
@@ -365,8 +379,7 @@ class Commands extends WP_CLI_Command
         if (empty($arguments)) {
             try {
                 $GLOBALS['ObjectCachePro']->logFlush();
-
-                $result = $wp_object_cache->connection()->flushdb(isset($options['async']));
+                $result = $wp_object_cache->flush();
             } catch (Throwable $exception) {
                 $result = false;
             }
@@ -387,7 +400,7 @@ class Commands extends WP_CLI_Command
                 WP_CLI::error($exception->getMessage());
             }
 
-            if ($result) { // @phpstan-ignore-line
+            if ($result) {
                 WP_CLI::success(WP_CLI::colorize(
                     "Object cache of site [%y{$siteId}%n] was flushed."
                 ));
@@ -397,6 +410,80 @@ class Commands extends WP_CLI_Command
                 ), false);
             }
         }
+    }
+
+    /**
+     * Flushes one or more object cache groups.
+     *
+     * In multisite environments the group is always flushed for all sites.
+     *
+     * ## OPTIONS
+     *
+     * <group>...
+     * : One or more groups to flush.
+     *
+     * ## EXAMPLES
+     *
+     *     # Flush the entire cache.
+     *     $ wp redis flush-group comments
+     *     Success: "Object cache group [comments] was flushed.
+     *
+     *     # Flush multiple groups.
+     *     $ wp redis flush-group posts post_meta
+     *     Success: "Object cache group [posts] was flushed.
+     *     Success: "Object cache group [post_meta] was flushed.
+     *
+     * @subcommand flush-group
+     *
+     * @param  array<int, string>  $arguments
+     * @param  array<mixed>  $options
+     * @return void
+     */
+    public function flushGroup($arguments, $options)
+    {
+        global $wp_object_cache;
+
+        $this->abortIfNotConnected();
+
+        foreach ($arguments as $group) {
+            try {
+                $GLOBALS['ObjectCachePro']->logGroupFlush($group);
+
+                $result = $wp_object_cache->flush_group($group);
+            } catch (Throwable $exception) {
+                WP_CLI::error($exception->getMessage());
+            }
+
+            if ($result) {
+                WP_CLI::success(WP_CLI::colorize(
+                    "Object cache group [%y{$group}%n] was flushed."
+                ));
+            } else {
+                WP_CLI::error(WP_CLI::colorize(
+                    "Object cache group [%y{$group}%n] could not be flushed."
+                ), false);
+            }
+        }
+    }
+
+    /**
+     * Resets the entire object cache database, including metadata and analytics.
+     *
+     * ## EXAMPLES
+     *
+     *     # Resets the entire cache.
+     *     $ wp redis reset
+     *     Success: The object cache was reset.
+     *
+     * @param  array<int, string>  $arguments
+     * @param  array<mixed>  $options
+     * @return void
+     */
+    public function reset($arguments, $options)
+    {
+        $GLOBALS['ObjectCachePro']->resetCache()
+            ? WP_CLI::success('Object cache reset.')
+            : WP_CLI::error('Object cache could not be reset.');
     }
 
     /**
@@ -548,7 +635,7 @@ class Commands extends WP_CLI_Command
      * * sql-queries
      * * ms-total
      * * ms-cache
-     * * ms-cache-median
+     * * ms-cache-avg
      * * ms-cache-ratio
      * * redis-hits
      * * redis-misses
@@ -568,7 +655,7 @@ class Commands extends WP_CLI_Command
      * * relay-hit-ratio
      * * relay-ops-per-sec
      * * relay-keys
-     * * relay-memory-active
+     * * relay-memory-used
      * * relay-memory-total
      * * relay-memory-human
      * * relay-memory-ratio
@@ -595,7 +682,10 @@ class Commands extends WP_CLI_Command
         $this->abortIfNotConfigured();
         $this->abortIfNotConnected();
 
-        if (! $wp_object_cache instanceof MeasuredObjectCacheInterface) {
+        if (
+            ! $wp_object_cache instanceof ObjectCacheInterface ||
+            ! $wp_object_cache instanceof MeasuredObjectCacheInterface
+        ) {
             WP_CLI::error('Object cache does not support analytics.');
         }
 
@@ -705,7 +795,7 @@ class Commands extends WP_CLI_Command
      * * sql-queries
      * * ms-total
      * * ms-cache
-     * * ms-cache-median
+     * * ms-cache-avg
      * * ms-cache-ratio
      * * redis-hits
      * * redis-misses
@@ -725,7 +815,7 @@ class Commands extends WP_CLI_Command
      * * relay-hit-ratio
      * * relay-ops-per-sec
      * * relay-keys
-     * * relay-memory-active
+     * * relay-memory-used
      * * relay-memory-total
      * * relay-memory-human
      * * relay-memory-ratio
@@ -754,7 +844,7 @@ class Commands extends WP_CLI_Command
 
         $analytics = new Analytics;
 
-        $defaults = array_map(function ($param) {
+        $defaults = array_map(static function ($param) {
             return $param['default'];
         }, $analytics->get_collection_params());
 

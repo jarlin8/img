@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -75,7 +75,7 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
         }
 
         $this->cache[$metric] = array_filter(
-            array_map(function ($item) use ($metric) {
+            array_map(static function ($item) use ($metric) {
                 return $item->{$metric};
             }, $this->items),
             function ($value) {
@@ -179,7 +179,7 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
 
         sort($values);
 
-        $middle = floor($count / 2);
+        $middle = (int) floor($count / 2);
 
         if ($count % 2) {
             return $values[$middle];
@@ -213,7 +213,7 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
             return $values[$index];
         }
 
-        return ($values[floor($index)] + $values[ceil($index)]) / 2;
+        return ($values[(int) floor($index)] + $values[(int) ceil($index)]) / 2;
     }
 
     /**
@@ -284,7 +284,7 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
      */
     public function pluck(string $metric)
     {
-        return array_map(function ($item) use ($metric) {
+        return array_map(static function ($item) use ($metric) {
             return $item->{$metric};
         }, $this->items);
     }

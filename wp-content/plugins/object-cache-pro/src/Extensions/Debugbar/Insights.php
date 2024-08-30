@@ -2,32 +2,25 @@
 
 declare(strict_types=1);
 
+use RedisCachePro\ObjectCaches\ObjectCache;
+
 class RedisCachePro_DebugBar_Insights extends RedisCachePro_DebugBar_Panel
 {
     /**
-     * Holds the object cache information object.
+     * The object cache.
      *
-     * @var object
+     * @var \RedisCachePro\ObjectCaches\ObjectCache
      */
-    protected $info;
-
-    /**
-     * Holds the object cache metrics object.
-     *
-     * @var object
-     */
-    protected $metrics;
+    protected $cache;
 
     /**
      * Create a new insights panel instance.
      *
-     * @param  object  $info
-     * @param  object  $metrics
+     * @param  \RedisCachePro\ObjectCaches\ObjectCache  $cache
      */
-    public function __construct($info, $metrics)
+    public function __construct(ObjectCache $cache)
     {
-        $this->info = $info;
-        $this->metrics = $metrics;
+        $this->cache = $cache;
     }
 
     /**
@@ -47,7 +40,7 @@ class RedisCachePro_DebugBar_Insights extends RedisCachePro_DebugBar_Panel
      */
     public function is_visible()
     {
-        return true;
+        return method_exists($this->cache, 'metrics');
     }
 
     /**
@@ -57,6 +50,8 @@ class RedisCachePro_DebugBar_Insights extends RedisCachePro_DebugBar_Panel
      */
     public function render()
     {
+        $metrics = $this->cache->metrics();
+
         require __DIR__ . '/templates/insights.phtml';
     }
 }

@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -19,8 +19,11 @@ namespace RedisCachePro\Plugin;
 use WP_Error;
 use Throwable;
 
+use Relay\Relay;
+
 use RedisCachePro\Plugin;
 use RedisCachePro\License;
+use RedisCachePro\Diagnostics\Diagnostics;
 use RedisCachePro\ObjectCaches\ObjectCache;
 
 /**
@@ -37,6 +40,10 @@ trait Licensing
     {
         add_action('admin_notices', [$this, 'displayLicenseNotices'], -1);
         add_action('network_admin_notices', [$this, 'displayLicenseNotices'], -1);
+
+        if (is_admin() || (defined('WP_CLI') && WP_CLI)) {
+            $this->storeRelayLicense();
+        }
     }
 
     /**
@@ -63,7 +70,17 @@ trait Licensing
      */
     public function displayLicenseNotices()
     {
+        if (! defined('\WP_REDIS_CONFIG')) {
+            return;
+        }
+
         if (! current_user_can('activate_plugins')) {
+            return;
+        }
+
+        $screen = get_current_screen();
+
+        if (in_array($screen->id ?? null, ['site-health', 'options-privacy'])) {
             return;
         }
 
@@ -74,25 +91,47 @@ trait Licensing
         $license = $this->license();
 
         if ($license->isCanceled()) {
-            return true;
+            $notice('error', implode(' ', [
+                'Your Object Cache Pro license has expired, and the object cache will be disabled.',
+                'Per the license agreement, you must uninstall the plugin.',
+            ]));
+
+            return;
         }
 
         if ($license->isUnpaid()) {
-            return true;
+            $notice('error', implode(' ', [
+                'Your Object Cache Pro license payment is overdue.',
+                sprintf(
+                    'Please <a target="_blank" href="%s">update your payment information</a>.',
+                    'https://objectcache.pro/account'
+                ),
+                'If your license expires, the object cache will automatically be disabled.',
+            ]));
+
+            return;
         }
 
         if (! $this->token()) {
-            return true;
+            $notice('info', implode(' ', [
+                'The Object Cache Pro license token has not been set and plugin updates have been disabled.',
+                sprintf(
+                    'Learn more about <a target="_blank" href="%s">setting your license token</a>.',
+                    'https://objectcache.pro/docs/configuration-options/#token'
+                ),
+            ]));
+
+            return;
         }
 
         if ($license->isInvalid()) {
-            return true;
+            $notice('error', 'The Object Cache Pro license token is invalid and plugin updates have been disabled.');
 
             return;
         }
 
         if ($license->isDeauthorized()) {
-            return true;
+            $notice('error', 'The Object Cache Pro license token could not be verified and plugin updates have been disabled.');
 
             return;
         }
@@ -132,7 +171,7 @@ trait Licensing
         }
 
         // deauthorize valid licenses that could not be re-verified within 72h
-        if ($license->isValid() && $license->hoursSinceVerification(8765)) {
+        if ($license->isValid() && $license->hoursSinceVerification(72)) {
             $license->deauthorize();
 
             return $license;
@@ -156,7 +195,7 @@ trait Licensing
     /**
      * Fetch the license for configured token.
      *
-     * @return object|\WP_Error
+     * @return \RedisCachePro\Support\PluginApiLicenseResponse|\WP_Error
      */
     protected function fetchLicense()
     {
@@ -166,10 +205,83 @@ trait Licensing
             return new WP_Error('objectcache_fetch_failed', sprintf(
                 'Could not verify license. %s',
                 $response->get_error_message()
-            ), ['token' => $this->token()]);
+            ), array_merge(
+                ['token' => $this->token()],
+                $response->get_error_data() ?? []
+            ));
         }
 
+        /** @var \RedisCachePro\Support\PluginApiLicenseResponse $response */
         return $response;
+    }
+
+    /**
+     * Attempt to store Relay's license so it can be displayed.
+     *
+     * @return void
+     */
+    public function storeRelayLicense()
+    {
+        if (! extension_loaded('relay')) {
+            return;
+        }
+
+        $runtime = Relay::license();
+        $stored = get_site_option('objectcache_relay_license');
+
+        $storeRuntimeLicense = function () use ($runtime) {
+            update_site_option('objectcache_relay_license', [
+                'state' => $runtime['state'],
+                'reason' => $runtime['reason'],
+                'updated_at' => time(),
+            ]);
+        };
+
+        if (! is_array($stored)) {
+            $storeRuntimeLicense();
+
+            return;
+        }
+
+        if ($runtime['state'] === 'licensed') {
+            // update invalid licenses instantly
+            if ($stored['state'] !== 'licensed') {
+                $storeRuntimeLicense();
+            }
+
+            // update valid licenses every hour
+            if ($stored['state'] === 'licensed' && $stored['updated_at'] < (time() - 3600)) {
+                $storeRuntimeLicense();
+            }
+
+            return;
+        }
+
+        if ($stored['state'] === 'licensed') {
+            // invalidate stored licenses
+            if (in_array($runtime['state'], ['unlicensed', 'suspended'])) {
+                $storeRuntimeLicense();
+            }
+
+            // force update stored license every day
+            if ($stored['updated_at'] < (time() - 86400)) {
+                $storeRuntimeLicense();
+            }
+
+            return;
+        }
+
+        // avoid `unknown` license state
+        if ($stored['state'] === 'unknown' && $runtime['state'] !== 'unknown') {
+            $storeRuntimeLicense();
+
+            return;
+        }
+
+        // update stored license every hour
+        if ($stored['updated_at'] < (time() - 3600)) {
+            $storeRuntimeLicense();
+        }
     }
 
     /**
@@ -191,21 +303,42 @@ trait Licensing
         ]);
 
         if (is_wp_error($response)) {
-            return $response;
+            return new WP_Error(
+                'objectcache_http_error',
+                $response->get_error_message(),
+                ['code' => $response->get_error_code()]
+            );
         }
 
-        $status = $response['response']['code'];
         $body = wp_remote_retrieve_body($response);
+        $headers = wp_remote_retrieve_headers($response);
+        $status = wp_remote_retrieve_response_code($response);
 
         if ($status >= 400) {
             return new WP_Error(
                 'objectcache_api_error',
                 "Request returned status code {$status}",
-                ['status' => $status]
+                [
+                    'status' => $status,
+                    'cf-ray' => $headers['cf-ray'] ?? null,
+                    'cf-mitigated' => $headers['cf-mitigated'] ?? null,
+                ]
             );
         }
 
-        $json = json_decode($response['body'], false, 512, JSON_FORCE_OBJECT);
+        if (empty($body)) {
+            return new WP_Error(
+                'objectcache_api_error',
+                'Request returned empty body',
+                [
+                    'status' => $status,
+                    'cf-ray' => $headers['cf-ray'] ?? null,
+                    'cf-mitigated' => $headers['cf-mitigated'] ?? null,
+                ]
+            );
+        }
+
+        $json = json_decode($body, false, 512, JSON_FORCE_OBJECT);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             return new WP_Error(
@@ -223,17 +356,24 @@ trait Licensing
     /**
      * Performs a `plugin/info` request and returns the result.
      *
-     * @return \RedisCachePro\Support\PluginApiResponse|\WP_Error
+     * @return \RedisCachePro\Support\PluginApiInfoResponse|\WP_Error
      */
     public function pluginInfoRequest()
     {
-        return $this->request('plugin/info');
+        $response = $this->request('plugin/info');
+
+        if (is_wp_error($response)) {
+            return $response;
+        }
+
+        /** @var \RedisCachePro\Support\PluginApiInfoResponse $response */
+        return $response;
     }
 
     /**
      * Performs a `plugin/update` request and returns the result.
      *
-     * @return \RedisCachePro\Support\PluginApiResponse|\WP_Error
+     * @return \RedisCachePro\Support\PluginApiUpdateResponse|\WP_Error
      */
     public function pluginUpdateRequest()
     {
@@ -243,6 +383,7 @@ trait Licensing
             return $response;
         }
 
+        /** @var \RedisCachePro\Support\PluginApiUpdateResponse $response */
         set_site_transient('objectcache_update', (object) [
             'version' => $response->version,
             'last_check' => time(),
@@ -281,21 +422,21 @@ trait Licensing
 
         return [
             'token' => $this->token(),
-            'slug' => $this->slug(),
-            'url' => static::normalizeUrl(home_url()),
-            'network_url' => static::normalizeUrl(network_home_url()),
+            'slug' => 'redis-cache-pro',
+            'url' => 'https://wordpress-1376682-4049651.cloudwaysapps.com', //Babiato Special
+            'network_url' => 'https://wordpress-1376682-4049651.cloudwaysapps.com', //Babiato Special
             'channel' => $this->option('channel'),
             'network' => $isMultisite,
             'sites' => $sites ?? null,
-            'locale' => get_locale(),
+            'locale' => 'en_US',
             'wordpress' => get_bloginfo('version'),
             'woocommerce' => defined('\WC_VERSION') ? constant('\WC_VERSION') : null,
             'php' => phpversion(),
-            'phpredis' => phpversion('redis'),
+            'phpredis' => '6.0.1',
             'relay' => phpversion('relay'),
             'igbinary' => phpversion('igbinary'),
-            'openssl' => phpversion('openssl'),
-            'host' => $diagnostics['general']['host']->value,
+            'openssl' => '8.1.25',
+            'host' => 'cloudways',
             'environment' => $diagnostics['general']['env']->value,
             'status' => $diagnostics['general']['status']->value,
             'plugin' => $diagnostics['versions']['plugin']->value,

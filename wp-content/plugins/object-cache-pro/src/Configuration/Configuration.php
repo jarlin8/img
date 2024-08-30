@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -78,6 +78,7 @@ use RedisCachePro\ObjectCaches\ObjectCacheInterface;
  * @property-read bool $updates
  * @property-read bool $save_commands
  * @property-read bool $debug
+ * @property-read bool $strict
  * @property-read ?\Throwable $initException
  */
 final class Configuration
@@ -172,8 +173,8 @@ final class Configuration
     const GROUP_FLUSH_INCREMENTAL = 'incremental';
 
     /**
-     * Default backoff algorithm which uses decorrelated jitter and a
-     * 500ms base for backoff computation and 750ms backoff time cap.
+     * The smart backoff algorithm uses decorrelated jitter with `retry_interval`
+     * as base for backoff computation and `read_timeout` as backoff time cap.
      *
      * @var string
      */
@@ -206,6 +207,20 @@ final class Configuration
      * @var string
      */
     const TRACER_NONE = 'none';
+
+    /**
+     * Values considered truthy.
+     *
+     * @var array<mixed>
+     */
+    const Truthy = [true, 1, '1', 'true', 'on', 'yes'];
+
+    /**
+     * Values considered falsy.
+     *
+     * @var array<mixed>
+     */
+    const Falsy = [false, 0, '0', 'false', 'off', 'no'];
 
     /**
      * The Object Cache Pro license token.
@@ -253,6 +268,7 @@ final class Configuration
         Logger::ALERT,
         Logger::CRITICAL,
         Logger::ERROR,
+        Logger::WARNING,
     ];
 
     /**
@@ -337,7 +353,7 @@ final class Configuration
      *
      * @var int
      */
-    protected $retries = 5;
+    protected $retries = 3;
 
     /**
      * The backoff algorithm.
@@ -460,6 +476,7 @@ final class Configuration
      * - `enabled`: (bool) Whether to collect and display analytics
      * - `persist`: (bool) Whether to restore analytics data after cache flushes
      * - `retention`: (int) The number of seconds to keep analytics before purging them
+     * - `sample_rate`: (float) The sample rate for analytics in the range of 0 to 100
      * - `footnote`: (bool) Whether to print a HTML comment with non-sensitive metrics
      *
      * @var \RedisCachePro\Support\AnalyticsConfiguration
@@ -468,6 +485,7 @@ final class Configuration
         'enabled' => true,
         'persist' => true,
         'retention' => 60 * 60 * 2,
+        'sample_rate' => 100,
         'footnote' => true,
     ];
 
@@ -507,6 +525,13 @@ final class Configuration
     protected $tls_options;
 
     /**
+     * Whether to enable strict mode.
+     *
+     * @var bool
+     */
+    protected $strict = true;
+
+    /**
      * Holds the exception thrown during instantiation.
      *
      * @see \RedisCachePro\Configuration\Configuration::safelyFrom()
@@ -526,11 +551,9 @@ final class Configuration
         $this->analytics = (object) $this->analytics;
 
         if (! $this->logger) {
-            if ($this->debug || $this->save_commands) {
-                $this->setLogger(ArrayLogger::class);
-            } else {
-                $this->setLogger(ErrorLogLogger::class);
-            }
+            $this->logger = $this->debug || $this->save_commands
+                ? new ArrayLogger
+                : new ErrorLogLogger;
         }
 
         if ($this->log_levels && method_exists($this->logger, 'setLevels')) {
@@ -599,7 +622,7 @@ final class Configuration
         try {
             return static::from($config);
         } catch (Throwable $exception) {
-            $instance = static::from([
+            $instance = static::fromArray([
                 'client' => false,
             ])->init();
 
@@ -618,10 +641,10 @@ final class Configuration
     protected static function fromArray(array $array): self
     {
         $config = new static;
-        $client = $array['client'] ?? 'phpredis';
+        $client = $config->determineClient($array['client'] ?? null);
 
-        // always set `client` first
-        $array = compact('client') + $array;
+        // call `setClient()` first
+        $array = ['client' => $client] + $array;
 
         foreach ($array as $name => $value) {
             $method = \str_replace('_', ' ', \strtolower($name));
@@ -932,6 +955,36 @@ final class Configuration
         }
 
         $this->host = $host;
+    }
+
+    /**
+     * Alias of `setHost()`.
+     *
+     * @param  string  $path
+     * @return void
+     */
+    public function setPath($path)
+    {
+        if (! \is_string($path) || empty($path)) {
+            throw new ConfigurationInvalidException('`path` must be a non-empty string');
+        }
+
+        $this->setHost($path);
+    }
+
+    /**
+     * Alias of `setHost()`.
+     *
+     * @param  string  $socket
+     * @return void
+     */
+    public function setSocket($socket)
+    {
+        if (! \is_string($socket) || empty($socket)) {
+            throw new ConfigurationInvalidException('`socket` must be a non-empty string');
+        }
+
+        $this->setHost($socket);
     }
 
     /**
@@ -1394,11 +1447,11 @@ final class Configuration
      */
     public function setDebug($debug)
     {
-        if (\in_array($debug, ['true', 'on', '1', 1, true], true)) {
+        if (\in_array($debug, self::Truthy, true)) {
             $debug = true;
         }
 
-        if (\in_array($debug, ['false', 'off', '0', 0, false], true)) {
+        if (\in_array($debug, self::Falsy, true)) {
             $debug = false;
         }
 
@@ -1419,11 +1472,11 @@ final class Configuration
      */
     public function setPrefetch($prefetch)
     {
-        if (\in_array($prefetch, ['true', 'on', '1', 1, true], true)) {
+        if (\in_array($prefetch, self::Truthy, true)) {
             $prefetch = true;
         }
 
-        if (\in_array($prefetch, ['false', 'off', '0', 0, false], true)) {
+        if (\in_array($prefetch, self::Falsy, true)) {
             $prefetch = false;
         }
 
@@ -1444,11 +1497,11 @@ final class Configuration
      */
     public function setUpdates($updates)
     {
-        if (\in_array($updates, ['true', 'on', '1', 1, true], true)) {
+        if (\in_array($updates, self::Truthy, true)) {
             $updates = true;
         }
 
-        if (\in_array($updates, ['false', 'off', '0', 0, false], true)) {
+        if (\in_array($updates, self::Falsy, true)) {
             $updates = false;
         }
 
@@ -1469,18 +1522,18 @@ final class Configuration
      */
     public function setAnalytics($analytics)
     {
-        if (\in_array($analytics, ['true', 'on', '1', 1, true], true)) {
+        if (\in_array($analytics, self::Truthy, true)) {
             $analytics = true;
         }
 
-        if (\in_array($analytics, ['false', 'off', '0', 0, false], true)) {
+        if (\in_array($analytics, self::Falsy, true)) {
             $analytics = false;
         }
 
         if (\is_bool($analytics)) {
             is_object($this->analytics)
                 ? $this->analytics->enabled = $analytics
-                : $this->analytics['enabled'] = $analytics; // @phpstan-ignore-line
+                : $this->analytics['enabled'] = $analytics;
 
             return;
         }
@@ -1499,6 +1552,9 @@ final class Configuration
             switch ($option) {
                 case 'retention':
                     $this->analytics[$option] = (int) $analytics[$option];
+                    break;
+                case 'sample_rate':
+                    $this->analytics[$option] = (float) $analytics[$option];
                     break;
                 default:
                     $this->analytics[$option] = (bool) $analytics[$option];
@@ -1539,11 +1595,11 @@ final class Configuration
             }
 
             if (\in_array($option, ['cache', 'listeners', 'invalidations'], true)) {
-                if (\in_array($relay[$option], ['true', 'on', '1', 1, true], true)) {
+                if (\in_array($relay[$option], self::Truthy, true)) {
                     $relay[$option] = true;
                 }
 
-                if (\in_array($relay[$option], ['false', 'off', '0', 0, false], true)) {
+                if (\in_array($relay[$option], self::Falsy, true)) {
                     $relay[$option] = false;
                 }
 
@@ -1578,11 +1634,11 @@ final class Configuration
      */
     public function setSaveCommands($save_commands)
     {
-        if (\in_array($save_commands, ['true', 'on', '1', 1, true], true)) {
+        if (\in_array($save_commands, self::Truthy, true)) {
             $save_commands = true;
         }
 
-        if (\in_array($save_commands, ['false', 'off', '0', 0, false], true)) {
+        if (\in_array($save_commands, self::Falsy, true)) {
             $save_commands = false;
         }
 
@@ -1603,11 +1659,11 @@ final class Configuration
      */
     public function setSplitAlloptions($split_alloptions)
     {
-        if (\in_array($split_alloptions, ['true', 'on', '1', 1, true], true)) {
+        if (\in_array($split_alloptions, self::Truthy, true)) {
             $split_alloptions = true;
         }
 
-        if (\in_array($split_alloptions, ['false', 'off', '0', 0, false], true)) {
+        if (\in_array($split_alloptions, self::Falsy, true)) {
             $split_alloptions = false;
         }
 
@@ -1683,6 +1739,53 @@ final class Configuration
         }
 
         $this->backoff = (string) $backoff;
+    }
+
+    /**
+     * Determine the client that should be used.
+     *
+     * @param  mixed  $client
+     * @return string
+     */
+    public function determineClient($client)
+    {
+        if ($client === false || ! empty($client)) {
+            return $client;
+        }
+
+        if (
+            \in_array(\getenv('OBJECTCACHE_PREFER_RELAY'), self::Truthy, true) &&
+            \extension_loaded('relay')
+        ) {
+            return 'Relay';
+        }
+
+        return 'PhpRedis';
+    }
+
+    /**
+     * Set whether strict mode is enabled.
+     *
+     * @param  bool  $strict
+     * @return void
+     */
+    public function setStrict($strict)
+    {
+        if (\in_array($strict, ['true', 'on', '1', 1, true], true)) {
+            $strict = true;
+        }
+
+        if (\in_array($strict, ['false', 'off', '0', 0, false], true)) {
+            $strict = false;
+        }
+
+        if (! \is_bool($strict)) {
+            throw new ConfigurationInvalidException(
+                \sprintf('`strict` must be a boolean, %s given', \gettype($strict))
+            );
+        }
+
+        $this->strict = (bool) $strict;
     }
 
     /**
@@ -1832,6 +1935,7 @@ final class Configuration
             'tls_options' => $this->tls_options,
             'updates' => $this->updates,
             'debug' => $this->debug,
+            'strict' => $this->strict,
             'save_commands' => $this->save_commands,
         ];
     }
@@ -1845,11 +1949,11 @@ final class Configuration
     {
         $config = $this->toArray();
 
-        $encodeJson = function ($value) {
+        $encodeJson = static function ($value) {
             return \json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         };
 
-        $formatter = function ($name, $value) use ($encodeJson) {
+        $formatter = static function ($name, $value) use ($encodeJson) {
             if (in_array($name, ['cluster', 'analytics', 'relay', 'tls_options'])) {
                 return [$name, $encodeJson($value)];
             }

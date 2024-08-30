@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -24,11 +24,11 @@ class ArrayObjectCache extends ObjectCache
      * Create new array object cache instance.
      *
      * @param  \RedisCachePro\Configuration\Configuration  $config
+     * @param  ?\RedisCachePro\ObjectCaches\ObjectCacheMetrics  $metrics
      */
-    public function __construct(Configuration $config)
+    public function __construct(Configuration $config, ?ObjectCacheMetrics $metrics = null)
     {
-        $this->config = $config;
-        $this->log = $this->config->logger;
+        $this->setup($config, null, $metrics);
     }
 
     /**
@@ -206,17 +206,17 @@ class ArrayObjectCache extends ObjectCache
      * @param  bool  &$found
      * @return bool|mixed
      */
-    public function get($key, string $group = 'default', bool $force = false, &$found = null)
+    public function get($key, string $group = 'default', bool $force = false, &$found = false)
     {
         if (! $this->has($key, $group)) {
             $found = false;
-            $this->misses += 1;
+            $this->metrics->misses += 1;
 
             return false;
         }
 
         $found = true;
-        $this->hits += 1;
+        $this->metrics->hits += 1;
 
         $id = $this->id($key, $group);
 

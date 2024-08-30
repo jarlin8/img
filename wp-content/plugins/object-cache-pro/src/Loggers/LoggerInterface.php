@@ -1,4 +1,16 @@
 <?php
+/**
+ * Copyright © 2019-2024 Rhubarb Tech Inc. All Rights Reserved.
+ *
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
+ *
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
+ */
 
 declare(strict_types=1);
 
@@ -13,7 +25,7 @@ namespace RedisCachePro\Loggers;
  * will be replaced by the context data in key "foo".
  *
  * The context array can contain arbitrary data. The only assumption that
- * can be made by implementors is that if an Exception instance is given
+ * can be made by implementers is that if an Exception instance is given
  * to produce a stack trace, it MUST be in a key named "exception".
  *
  * See https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md
@@ -107,7 +119,7 @@ interface LoggerInterface
     /**
      * Logs with an arbitrary level.
      *
-     * @param  mixed  $level
+     * @param  string  $level
      * @param  string  $message
      * @param  array<mixed>  $context
      * @return void
