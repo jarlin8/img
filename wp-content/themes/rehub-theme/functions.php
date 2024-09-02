@@ -4,13 +4,15 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'Direct script access denied.' );
 }
+
 update_option( 'Rehub_Key', [
 'tf_username' => 'lovegpl',
 'tf_purchase_code' => 'activated-activated',
 'tf_support_date' => '01.01.2030',
 ] );
+
 if ( !defined( 'RH_MAIN_THEME_VERSION' ) ) {
-	define('RH_MAIN_THEME_VERSION', '19.6.9');
+	define('RH_MAIN_THEME_VERSION', '19.7.2');
 }
 if(!defined('REHUB_NAME_ACTIVE_THEME')){
 	define('REHUB_NAME_ACTIVE_THEME', 'REHUB');
@@ -1620,7 +1622,7 @@ function my_theme_register_required_plugins() {
 			'slug'     				=> 'rehub-framework', // The plugin slug (typically the folder name)
 			'source'   				=> get_template_directory() . '/plugins/rehub-framework.zip', 
 			'required' 				=> true,
-			'version' 				=> '19.6.4',
+			'version' 				=> '19.7.2',
 			'force_activation' 		=> false, 
 			'force_deactivation' 	=> false, 
 			'external_url' 			=> '',

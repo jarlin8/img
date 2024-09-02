@@ -55,7 +55,7 @@ if(rehub_option('enable_brand_taxonomy') == 1){
     </figure>
     <?php do_action( 'rehub_after_grid_column_figure' ); ?>
     <div class="content_constructor<?php echo ''.$paddclass;?>">
-        <h3 class="mb15 mt0 font110 mobfont100 fontnormal lineheight20"><a href="<?php echo ''.$link;?>"<?php echo ''.$target;?>><?php the_title();?></a></h3>
+        <h2 class="mb15 mt0 font110 mobfont100 fontnormal lineheight20"><a href="<?php echo ''.$link;?>"<?php echo ''.$target;?>><?php the_title();?></a></h2>
         <?php $custom_notice = get_post_meta($post->ID, '_notice_custom', true);?>
         <?php 
             if($custom_notice){

@@ -119,13 +119,7 @@
         } ?>                         
     </div>
     <?php do_action('woocommerce_before_shop_loop_item');?> 
-    <h3 class="<?php echo getHotIconclass($post->ID, true); ?> text-clamp text-clamp-2">
-        <?php echo rh_expired_or_not($post->ID, 'span');?>
-        <?php if ( $product->is_featured() ) : ?>
-            <i class="rhicon rhi-bolt mr5 ml5 orangecolor" aria-hidden="true"></i>
-        <?php endif; ?>
-        <a href="<?php echo esc_url($woolink);?>"<?php echo ''.$wootarget;?>><?php the_title();?></a>
-    </h3>
+    <?php do_action( 'woocommerce_shop_loop_item_title' );?>
     <?php if ( ! $product->is_in_stock() ):?>
         <div class="stock out-of-stock mb5"><?php esc_html_e('Out of Stock', 'rehub-theme');?></div>
     <?php endif;?>

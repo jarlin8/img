@@ -134,13 +134,7 @@
         <?php do_action( 'rh_woo_thumbnail_loop' ); ?>
     </figure>
     <div class="woo_column_desc padd15 csstranstrans text-center">     
-        <h3 class="fontnormal mb10 mt0 lineheight25">
-            <?php echo rh_expired_or_not($post->ID, 'span');?>
-            <?php if ( $product->is_featured() ) : ?>
-                <i class="rhicon rhi-bolt mr5 ml5 orangecolor" aria-hidden="true"></i>
-            <?php endif; ?>
-            <a href="<?php echo esc_url($woolink);?>"<?php echo ''.$wootarget;?>><?php the_title();?></a>
-        </h3> 
+        <?php do_action( 'woocommerce_shop_loop_item_title' );?>
         <?php if($soldout):?>
             <?php rh_soldout_bar($post->ID);?>
         <?php endif; ?>        

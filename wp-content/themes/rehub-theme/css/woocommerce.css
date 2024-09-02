@@ -51,7 +51,7 @@ p.demo_store { position: fixed; top: 0; left: 0; right: 0; margin: 0; width: 100
 .woocommerce .col2-set .col-2{ float: right; width: 48%; }
 .woocommerce div.product{position: relative; }
 .woocommerce div.product .product_title{ clear: none; margin: 0 0 15px 0; padding: 0; }
-.woocommerce div.product .stock{ font-size: .92em; margin-bottom: 10px !important; line-height:14px; }
+.woocommerce div.product .stock{ font-size: 14px; margin-bottom: 10px !important; line-height:14px; }
 .woocommerce div.product .in-stock {color: #8bc500;}
 .woocommerce div.product .out-of-stock{ color: red; }
 
@@ -65,7 +65,7 @@ p.demo_store { position: fixed; top: 0; left: 0; right: 0; margin: 0; width: 100
 .woocommerce .products.column_woo{padding-bottom: 50px}
 .product .onsale > span {display: block;}
 .woocommerce .products .product .rehub_offer_coupon:not(.masked_coupon) {margin: 6px auto 0 auto; min-width: 100px;   padding: 6px 12px; display: block; font-size: 14px}
-.woocommerce .products .product h2{ padding: 0; margin: 0 0 15px 0; font-size: 17px; font-weight: bold; line-height: 18px }
+.woocommerce .products .product h2{ padding: 0; margin: 0 0 15px 0; font-size: 17px; font-weight: bold; line-height: 24px }
 .products_category_box h2{margin: 0; font-size: 14px; font-weight: normal; line-height: 18px}
 .woocommerce .products .product a { text-decoration: none; }
 .woocommerce .products .product figure{ margin: 0 0 15px 0; position: relative; text-align: center;}
@@ -93,7 +93,7 @@ p.demo_store { position: fixed; top: 0; left: 0; right: 0; margin: 0; width: 100
 .product-category-box:hover {box-shadow: rgba(0,0,0,0.12) 0px 3px 4px;}
 .product-category-box .woo_column_cont{padding: 17px}
 .woo_column_item{overflow: visible;position: relative; border: 1px solid transparent; border-radius: 5px 5px 0 0}
-.woo_column_item h3{font-size: 16px; }
+.woo_column_item h2{font-size: 16px; }
 .woocommerce .products .product.woo_column_item .price{font-weight: normal;}
 .woo_grid_compact:hover{border:1px solid #eee;box-shadow:0px 8px 32px 0px rgba(0,0,0,.1); background-color: #fff}
 .woo_column_item .rh_woo_star, .woo_column_item .button_action {margin: 0 auto 10px auto; display: none; }
@@ -113,7 +113,7 @@ p.demo_store { position: fixed; top: 0; left: 0; right: 0; margin: 0; width: 100
 .woocommerce .products.grid_woo .product{padding: 12px 12px 80px 12px; border:1px solid #e2e2e2; background-color: #fff}
 .woocommerce .products.grid_woo .product .woo_loop_btn_actions{text-align: center;margin-bottom: 10px;}
 .woo_loop_btn{display: inline-block;}.woo_gridloop_btn .woo_loop_btn{display: block;}
-.woocommerce .products .woo_grid_compact h3{font-size: 18px; font-weight: normal; line-height: 22px; height: 44px; margin-bottom: 15px}
+.woocommerce .products .woo_grid_compact h2{font-size: 18px; font-weight: normal; line-height: 22px; height: 44px; margin-bottom: 15px}
 .woocommerce .products .woo_grid_compact .woo_loop_btn{padding: 0; border-radius: 100px !important;font-size: 0;width: 38px;height: 38px;line-height: 38px;text-align: center; display: flex;}
 .woocommerce .products .woo_grid_compact .woo_loop_btn.loading:before{border-radius: 100px}
 .woo_grid_compact figure:not(.notresized) img{ height: 180px; }
@@ -388,8 +388,8 @@ mark.count{ background-color: transparent; opacity: 0.5; font-size: 90%}
 	.woogridrev .review-small-circle{width:27px;height:27px;line-height:27px; font-size: 80%}
 	.woocommerce .products.grid_woo .product{padding: 8px 8px 80px 8px}
 	.woocommerce .onsale, .woocommerce .onfeatured { padding: 2px 5px;}
-	.woocommerce .products .woo_grid_compact h3{line-height: 16px;height: 32px; font-size: 14px}
-	.woocommerce .products .product.woo_grid_compact .price, .woo_column_item h3{font-size: 15px}
+	.woocommerce .products .woo_grid_compact h2{line-height: 16px;height: 32px; font-size: 14px}
+	.woocommerce .products .product.woo_grid_compact .price, .woo_column_item h2{font-size: 15px}
 }
 @media only screen and (max-width: 479px) {
 	.woo_offer_list .rh_offer_list .button_action{position: static; margin: 0 0 10px 0; overflow: hidden; padding: 0; float: none}

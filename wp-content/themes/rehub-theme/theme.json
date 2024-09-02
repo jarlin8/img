@@ -179,7 +179,6 @@
                 }
             },
             "link": {
-                "color": {"text": "var(--rehub-link-color, violet)"},
                 "typography": {
                     "textDecoration": "none"
                 }

@@ -127,7 +127,7 @@
                     </div>        
                 </div>
             <?php endif;?> 
-            <h3 class="flowhidden mb10 fontnormal position-relative <?php if(rehub_option('wishlist_disable') !='1') :?><?php echo getHotIconclass($post->ID, true); ?><?php endif ;?>"><?php echo rh_expired_or_not($post->ID, 'span');?><a href="<?php echo esc_url($woolink) ;?>"<?php echo ''.$wootarget ;?>><?php the_title();?></a></h3> 
+            <?php do_action( 'woocommerce_shop_loop_item_title' );?>
             <?php if ( ! $product->is_in_stock() ):?>
                 <div class="stock out-of-stock mb5"><?php esc_html_e('Out of Stock', 'rehub-theme');?></div>
             <?php endif;?> 
