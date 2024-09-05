@@ -202,7 +202,7 @@ class Parser {
 	 * @return array
 	 */
 	private function get_video_metadata( $url, $generate_image = true ) {
-		$url = preg_replace( '/\?.*/', '', $url ); // Remove query string from URL.
+		$url = ! Str::contains( 'vimeo.com', $url ) ? preg_replace( '/\?.*/', '', $url ) : $url ; // Remove query string from URL.
 		if (
 			$url &&
 			(
