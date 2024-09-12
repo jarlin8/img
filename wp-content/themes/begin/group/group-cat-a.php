@@ -1,0 +1,89 @@
+<?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
+<?php if (zm_get_option('group_cat_a')) { ?>
+<div class="g-row g-line group-cat-a sort" name="<?php echo zm_get_option('group_cat_a_s'); ?>" <?php aos(); ?>>
+	<div class="g-col">
+		<div class="group-cat">
+			<?php $display_categories =  explode(',',zm_get_option('group_cat_a_id') ); foreach ($display_categories as $category) { ?>
+			<?php if (zm_get_option('group_no_cat_child')) { ?>
+				<?php query_posts( array('cat' => $category ) ); ?>
+				<?php query_posts( array( 'showposts' => 1, 'category__in' => array(get_query_var('cat')), 'post__not_in' => $do_not_cat ) ); ?>
+			<?php } else { ?>
+				<?php query_posts( array( 'showposts' => 1, 'cat' => $category, 'post__not_in' => $do_not_cat ) ); ?>
+			<?php } ?>
+
+			<div class="gr2">
+				<div class="gr-cat-box">
+					<h3 class="gr-cat-title" <?php aos_b(); ?>><a href="<?php echo get_category_link($category);?>"><?php single_cat_title(); ?><span class="gr-cat-more"><i class="be be-more"></i></span></a></h3>
+					<div class="clear"></div>
+					<div class="gr-cat-site">
+						<?php if (zm_get_option('group_cat_a_top')) { ?>
+							
+							<?php query_posts( array ( 'category__in' => array(get_query_var('cat')), 'meta_key' => 'cat_top', 'showposts' => 1, 'ignore_sticky_posts' => 1 ) ); while ( have_posts() ) : the_post(); $do_not_cat[] = $post->ID;?>
+								<div id="post-<?php the_ID(); ?>" class="gr-img-t">
+									<figure class="gr-thumbnail"><?php zm_long_thumbnail(); ?></figure>
+									<?php the_title( sprintf( '<h2 class="gr-title-img bgb"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
+									<div class="clear"></div>
+								</div>
+							<?php endwhile; ?>
+
+							<div class="clear"></div>
+							<div class="gr-cat-img">
+
+								<?php if (zm_get_option('group_no_cat_child')) { ?>
+									<?php query_posts( array( 'showposts' => zm_get_option('group_cat_a_n'), 'cat' => $category, 'offset' => 1, 'category__in' => array(get_query_var('cat')), 'post__not_in' => $do_not_cat ) ); ?>
+								<?php } else { ?>
+									<?php query_posts( array( 'showposts' => zm_get_option('group_cat_a_n'), 'cat' => $category, 'offset' => 1, 'post__not_in' => $do_not_cat ) ); ?>
+								<?php } ?>
+								<?php while ( have_posts() ) : the_post(); ?>
+								<div class="cat-gr2">
+									<div id="post-<?php the_ID(); ?>" class="gr-img">
+										<figure class="gr-a-thumbnail picture-cms-img" <?php aos_b(); ?>><?php zm_thumbnail(); ?></figure>
+										<?php the_title( sprintf( '<div class="gr-img-title"><a class="bgt hz" href="%s" rel="bookmark">' . t_mark(), esc_url( get_permalink() ) ), '</a></div>' ); ?>
+										<div class="clear"></div>
+									</div>
+								</div>
+								<?php endwhile; ?>
+								<?php wp_reset_query(); ?>
+							</div>
+
+
+						<?php } else { ?>
+
+							<?php while ( have_posts() ) : the_post(); ?>
+								<div id="post-<?php the_ID(); ?>" class="gr-img-t">
+									<figure class="gr-thumbnail" <?php aos_b(); ?>><?php zm_long_thumbnail(); ?></figure>
+									<?php the_title( sprintf( '<h2 class="gr-title-img bgb"><a class="bgt hz" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
+									<div class="clear"></div>
+								</div>
+							<?php endwhile; ?>
+
+							<div class="clear"></div>
+							<div class="gr-cat-img">
+								<?php if (zm_get_option('group_no_cat_child')) { ?>
+									<?php query_posts( array( 'showposts' => zm_get_option('group_cat_a_n'), 'cat' => $category, 'offset' => 1, 'category__in' => array(get_query_var('cat')), 'post__not_in' => $do_not_cat ) ); ?>
+								<?php } else { ?>
+									<?php query_posts( array( 'showposts' => zm_get_option('group_cat_a_n'), 'cat' => $category, 'offset' => 1, 'post__not_in' => $do_not_cat ) ); ?>
+								<?php } ?>
+								<?php while ( have_posts() ) : the_post(); ?>
+								<div id="post-<?php the_ID(); ?>" class="cat-gr2">
+									<div class="gr-img" <?php aos_b(); ?>>
+										<figure class="gr-a-thumbnail picture-cms-img"><?php zm_thumbnail(); ?></figure>
+										<?php the_title( sprintf( '<div class="gr-img-title"><a class="bgt hz" href="%s" rel="bookmark">' . t_mark(), esc_url( get_permalink() ) ), '</a></div>' ); ?>
+										<div class="clear"></div>
+									</div>
+								</div>
+								<?php endwhile; ?>
+								<?php wp_reset_query(); ?>
+							</div>
+
+						<?php } ?>
+					</div>
+				</div>
+
+			</div>
+			<?php } ?>
+			<div class="clear"></div>
+		</div>
+	</div>
+</div>
+<?php } ?>

@@ -1,0 +1,26 @@
+/*	
+Theme Name:OneNav
+Theme URI:https://www.iotheme.cn
+Description:一导航， 集网址、资源、资讯于一体的导航主题。 <br /> 官网：<a href="https://www.iotheme.cn">一主题</a>
+Version: 4.0325
+Requires at least: 5.6
+Tested up to: 5.8
+Requires PHP: 7.2
+Author:一为
+Author URI: https://www.iowen.cn/
+License URI: https://www.iotheme.cn/disclaimer
+Text Domain: i_theme
+Domain Path: /languages
+*/
+
+/*
+修复部分ui错误
+增加“内容显示权限”关闭选项
+增加支付功能
+增加内容付费查看下载
+增加URL自动广告
+
+TODO 书签归档页
+TODO 网站 app 书籍 归档页  
+TODO 个人标签页网址增加选项卡切换模式
+*/

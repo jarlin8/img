@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<!--[if IE 8]>    <html class="ie8" lang="zh-CN" prefix="og: https://ogp.me/ns#"> <![endif]-->
+<!--[if IE 9]>    <html class="ie9" lang="zh-CN" prefix="og: https://ogp.me/ns#"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)] lang="zh-CN" prefix="og: https://ogp.me/ns#"><![endif]-->
+<html lang="zh-CN" prefix="og: https://ogp.me/ns#">
+<head><meta charset="UTF-8" /><script>if(navigator.userAgent.match(/MSIE|Internet Explorer/i)||navigator.userAgent.match(/Trident\/7\..*?rv:11/i)){var href=document.location.href;if(!href.match(/[?&]nowprocket/)){if(href.indexOf("?")==-1){if(href.indexOf("#")==-1){document.location.href=href+"?nowprocket=1"}else{document.location.href=href.replace("#","?nowprocket=1#")}}else{if(href.indexOf("#")==-1){document.location.href=href+"&nowprocket=1"}else{document.location.href=href.replace("#","&nowprocket=1#")}}}}</script><script>class RocketLazyLoadScripts{constructor(){this.triggerEvents=["keydown","mousedown","mousemove","touchmove","touchstart","touchend","wheel"],this.userEventHandler=this._triggerListener.bind(this),this.touchStartHandler=this._onTouchStart.bind(this),this.touchMoveHandler=this._onTouchMove.bind(this),this.touchEndHandler=this._onTouchEnd.bind(this),this.clickHandler=this._onClick.bind(this),this.interceptedClicks=[],window.addEventListener("pageshow",(e=>{this.persisted=e.persisted})),window.addEventListener("DOMContentLoaded",(()=>{this._preconnect3rdParties()})),this.delayedScripts={normal:[],async:[],defer:[]},this.allJQueries=[]}_addUserInteractionListener(e){document.hidden?e._triggerListener():(this.triggerEvents.forEach((t=>window.addEventListener(t,e.userEventHandler,{passive:!0}))),window.addEventListener("touchstart",e.touchStartHandler,{passive:!0}),window.addEventListener("mousedown",e.touchStartHandler),document.addEventListener("visibilitychange",e.userEventHandler))}_removeUserInteractionListener(){this.triggerEvents.forEach((e=>window.removeEventListener(e,this.userEventHandler,{passive:!0}))),document.removeEventListener("visibilitychange",this.userEventHandler)}_onTouchStart(e){"HTML"!==e.target.tagName&&(window.addEventListener("touchend",this.touchEndHandler),window.addEventListener("mouseup",this.touchEndHandler),window.addEventListener("touchmove",this.touchMoveHandler,{passive:!0}),window.addEventListener("mousemove",this.touchMoveHandler),e.target.addEventListener("click",this.clickHandler),this._renameDOMAttribute(e.target,"onclick","rocket-onclick"))}_onTouchMove(e){window.removeEventListener("touchend",this.touchEndHandler),window.removeEventListener("mouseup",this.touchEndHandler),window.removeEventListener("touchmove",this.touchMoveHandler,{passive:!0}),window.removeEventListener("mousemove",this.touchMoveHandler),e.target.removeEventListener("click",this.clickHandler),this._renameDOMAttribute(e.target,"rocket-onclick","onclick")}_onTouchEnd(e){window.removeEventListener("touchend",this.touchEndHandler),window.removeEventListener("mouseup",this.touchEndHandler),window.removeEventListener("touchmove",this.touchMoveHandler,{passive:!0}),window.removeEventListener("mousemove",this.touchMoveHandler)}_onClick(e){e.target.removeEventListener("click",this.clickHandler),this._renameDOMAttribute(e.target,"rocket-onclick","onclick"),this.interceptedClicks.push(e),e.preventDefault(),e.stopPropagation(),e.stopImmediatePropagation()}_replayClicks(){window.removeEventListener("touchstart",this.touchStartHandler,{passive:!0}),window.removeEventListener("mousedown",this.touchStartHandler),this.interceptedClicks.forEach((e=>{e.target.dispatchEvent(new MouseEvent("click",{view:e.view,bubbles:!0,cancelable:!0}))}))}_renameDOMAttribute(e,t,n){e.hasAttribute&&e.hasAttribute(t)&&(event.target.setAttribute(n,event.target.getAttribute(t)),event.target.removeAttribute(t))}_triggerListener(){this._removeUserInteractionListener(this),"loading"===document.readyState?document.addEventListener("DOMContentLoaded",this._loadEverythingNow.bind(this)):this._loadEverythingNow()}_preconnect3rdParties(){let e=[];document.querySelectorAll("script[type=rocketlazyloadscript]").forEach((t=>{if(t.hasAttribute("src")){const n=new URL(t.src).origin;n!==location.origin&&e.push({src:n,crossOrigin:t.crossOrigin||"module"===t.getAttribute("data-rocket-type")})}})),e=[...new Map(e.map((e=>[JSON.stringify(e),e]))).values()],this._batchInjectResourceHints(e,"preconnect")}async _loadEverythingNow(){this.lastBreath=Date.now(),this._delayEventListeners(),this._delayJQueryReady(this),this._handleDocumentWrite(),this._registerAllDelayedScripts(),this._preloadAllScripts(),await this._loadScriptsFromList(this.delayedScripts.normal),await this._loadScriptsFromList(this.delayedScripts.defer),await this._loadScriptsFromList(this.delayedScripts.async);try{await this._triggerDOMContentLoaded(),await this._triggerWindowLoad()}catch(e){}window.dispatchEvent(new Event("rocket-allScriptsLoaded")),this._replayClicks()}_registerAllDelayedScripts(){document.querySelectorAll("script[type=rocketlazyloadscript]").forEach((e=>{e.hasAttribute("src")?e.hasAttribute("async")&&!1!==e.async?this.delayedScripts.async.push(e):e.hasAttribute("defer")&&!1!==e.defer||"module"===e.getAttribute("data-rocket-type")?this.delayedScripts.defer.push(e):this.delayedScripts.normal.push(e):this.delayedScripts.normal.push(e)}))}async _transformScript(e){return await this._littleBreath(),new Promise((t=>{const n=document.createElement("script");[...e.attributes].forEach((e=>{let t=e.nodeName;"type"!==t&&("data-rocket-type"===t&&(t="type"),n.setAttribute(t,e.nodeValue))})),e.hasAttribute("src")?(n.addEventListener("load",t),n.addEventListener("error",t)):(n.text=e.text,t());try{e.parentNode.replaceChild(n,e)}catch(e){t()}}))}async _loadScriptsFromList(e){const t=e.shift();return t?(await this._transformScript(t),this._loadScriptsFromList(e)):Promise.resolve()}_preloadAllScripts(){this._batchInjectResourceHints([...this.delayedScripts.normal,...this.delayedScripts.defer,...this.delayedScripts.async],"preload")}_batchInjectResourceHints(e,t){var n=document.createDocumentFragment();e.forEach((e=>{if(e.src){const i=document.createElement("link");i.href=e.src,i.rel=t,"preconnect"!==t&&(i.as="script"),e.getAttribute&&"module"===e.getAttribute("data-rocket-type")&&(i.crossOrigin=!0),e.crossOrigin&&(i.crossOrigin=e.crossOrigin),n.appendChild(i)}})),document.head.appendChild(n)}_delayEventListeners(){let e={};function t(t,n){!function(t){function n(n){return e[t].eventsToRewrite.indexOf(n)>=0?"rocket-"+n:n}e[t]||(e[t]={originalFunctions:{add:t.addEventListener,remove:t.removeEventListener},eventsToRewrite:[]},t.addEventListener=function(){arguments[0]=n(arguments[0]),e[t].originalFunctions.add.apply(t,arguments)},t.removeEventListener=function(){arguments[0]=n(arguments[0]),e[t].originalFunctions.remove.apply(t,arguments)})}(t),e[t].eventsToRewrite.push(n)}function n(e,t){let n=e[t];Object.defineProperty(e,t,{get:()=>n||function(){},set(i){e["rocket"+t]=n=i}})}t(document,"DOMContentLoaded"),t(window,"DOMContentLoaded"),t(window,"load"),t(window,"pageshow"),t(document,"readystatechange"),n(document,"onreadystatechange"),n(window,"onload"),n(window,"onpageshow")}_delayJQueryReady(e){let t=window.jQuery;Object.defineProperty(window,"jQuery",{get:()=>t,set(n){if(n&&n.fn&&!e.allJQueries.includes(n)){n.fn.ready=n.fn.init.prototype.ready=function(t){e.domReadyFired?t.bind(document)(n):document.addEventListener("rocket-DOMContentLoaded",(()=>t.bind(document)(n)))};const t=n.fn.on;n.fn.on=n.fn.init.prototype.on=function(){if(this[0]===window){function e(e){return e.split(" ").map((e=>"load"===e||0===e.indexOf("load.")?"rocket-jquery-load":e)).join(" ")}"string"==typeof arguments[0]||arguments[0]instanceof String?arguments[0]=e(arguments[0]):"object"==typeof arguments[0]&&Object.keys(arguments[0]).forEach((t=>{delete Object.assign(arguments[0],{[e(t)]:arguments[0][t]})[t]}))}return t.apply(this,arguments),this},e.allJQueries.push(n)}t=n}})}async _triggerDOMContentLoaded(){this.domReadyFired=!0,await this._littleBreath(),document.dispatchEvent(new Event("rocket-DOMContentLoaded")),await this._littleBreath(),window.dispatchEvent(new Event("rocket-DOMContentLoaded")),await this._littleBreath(),document.dispatchEvent(new Event("rocket-readystatechange")),await this._littleBreath(),document.rocketonreadystatechange&&document.rocketonreadystatechange()}async _triggerWindowLoad(){await this._littleBreath(),window.dispatchEvent(new Event("rocket-load")),await this._littleBreath(),window.rocketonload&&window.rocketonload(),await this._littleBreath(),this.allJQueries.forEach((e=>e(window).trigger("rocket-jquery-load"))),await this._littleBreath();const e=new Event("rocket-pageshow");e.persisted=this.persisted,window.dispatchEvent(e),await this._littleBreath(),window.rocketonpageshow&&window.rocketonpageshow({persisted:this.persisted})}_handleDocumentWrite(){const e=new Map;document.write=document.writeln=function(t){const n=document.currentScript,i=document.createRange(),r=n.parentElement;let o=e.get(n);void 0===o&&(o=n.nextSibling,e.set(n,o));const s=document.createDocumentFragment();i.setStart(s,0),s.appendChild(i.createContextualFragment(t)),r.insertBefore(s,o)}}async _littleBreath(){Date.now()-this.lastBreath>45&&(await this._requestAnimFrame(),this.lastBreath=Date.now())}async _requestAnimFrame(){return document.hidden?new Promise((e=>setTimeout(e))):new Promise((e=>requestAnimationFrame(e)))}static run(){const e=new RocketLazyLoadScripts;e._addUserInteractionListener(e)}}RocketLazyLoadScripts.run();</script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- feeds & pingback -->
+<link rel="profile" href="http://gmpg.org/xfn/11" />
+<link rel="pingback" href="https://m.ssgg.net/xmlrpc.php" />
+
+<!-- Rank Math PRO 提供的搜索引擎优化 - https://s.rankmath.com/home -->
+<title>RoboForex外汇交易平台开户 - 开户通</title>
+<meta name="description" content="RoboForex是一个屡获殊荣的在线交易平台，提供9,400多种交易工具，涵盖多种资产类别。他们提供一系列灵活的交易平台和账户以及交易工具和深入的市场分析."/>
+<meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:standard"/>
+<link rel="canonical" href="https://m.ssgg.net/roboforex-reviews.html" />
+<meta property="og:locale" content="zh_CN" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="RoboForex外汇交易平台开户 - 开户通" />
+<meta property="og:description" content="RoboForex是一个屡获殊荣的在线交易平台，提供9,400多种交易工具，涵盖多种资产类别。他们提供一系列灵活的交易平台和账户以及交易工具和深入的市场分析." />
+<meta property="og:url" content="https://m.ssgg.net/roboforex-reviews.html" />
+<meta property="og:site_name" content="开户通" />
+<meta property="article:section" content="平台推荐" />
+<meta property="og:image" content="https://we.laowei8.com/wp-content/uploads/2020/09/976013624f1f0f87e9d7becb33545c56.png" />
+<meta property="og:image:secure_url" content="https://we.laowei8.com/wp-content/uploads/2020/09/976013624f1f0f87e9d7becb33545c56.png" />
+<meta property="og:image:alt" content="RoboForex外汇交易平台开户" />
+<meta property="article:published_time" content="2020-08-03T13:52:20+08:00" />
+<meta property="article:modified_time" content="2020-09-11T12:19:53+08:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="RoboForex外汇交易平台开户 - 开户通" />
+<meta name="twitter:description" content="RoboForex是一个屡获殊荣的在线交易平台，提供9,400多种交易工具，涵盖多种资产类别。他们提供一系列灵活的交易平台和账户以及交易工具和深入的市场分析." />
+<meta name="twitter:image" content="https://we.laowei8.com/wp-content/uploads/2020/09/976013624f1f0f87e9d7becb33545c56.png" />
+<script type="application/ld+json" class="rank-math-schema-pro">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://m.ssgg.net/#organization","name":"\u5f00\u6237\u901a","logo":{"@type":"ImageObject","@id":"https://m.ssgg.net/#logo","url":"https://cdn.fendou.la/bluehost/fxlogan.svg","caption":"\u5f00\u6237\u901a","inLanguage":"zh-CN","width":"0","height":"0"}},{"@type":"WebSite","@id":"https://m.ssgg.net/#website","url":"https://m.ssgg.net","name":"\u5f00\u6237\u901a","publisher":{"@id":"https://m.ssgg.net/#organization"},"inLanguage":"zh-CN"},{"@type":"WebPage","@id":"https://m.ssgg.net/roboforex-reviews.html#webpage","url":"https://m.ssgg.net/roboforex-reviews.html","name":"RoboForex\u5916\u6c47\u4ea4\u6613\u5e73\u53f0\u5f00\u6237 - \u5f00\u6237\u901a","datePublished":"2022-04-14T19:55:38+08:00","dateModified":"2022-04-14T19:55:38+08:00","isPartOf":{"@id":"https://m.ssgg.net/#website"},"inLanguage":"zh-CN"},{"@type":"BlogPosting","datePublished":"2020-08-03T13:52:20+08:00","dateModified":"2020-09-11T12:19:53+08:00","author":{"@type":"Person","name":"\u5916\u6c47\u5f00\u6237\u901a"},"@id":"https://m.ssgg.net/roboforex-reviews.html#schema-6121","isPartOf":{"@id":"https://m.ssgg.net/roboforex-reviews.html#webpage"},"publisher":{"@id":"https://m.ssgg.net/#organization"},"inLanguage":"zh-CN"}]}</script>
+<!-- /Rank Math WordPress SEO 插件 -->
+
+<link rel='dns-prefetch' href='//cdn.fendou.la' />
+<link rel='dns-prefetch' href='//cdn.jsdelivr.net' />
+<link rel='dns-prefetch' href='//www.ifttt.fun' />
+
+<link href='//cdn.jsdelivr.net' rel='preconnect' />
+<link rel="alternate" type="application/rss+xml" title="开户通 &raquo; Feed" href="https://m.ssgg.net/feed" />
+<link rel="alternate" type="application/rss+xml" title="开户通 &raquo; 评论Feed" href="https://m.ssgg.net/comments/feed" />
+<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 0.07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link data-minify="1" rel='stylesheet' id='rhstyle-css'  href='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rewise/style.css?ver=1659240536' type='text/css' media='all' />
+<link data-minify="1" rel='stylesheet' id='rhslidingpanel-css'  href='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/css/slidingpanel.css?ver=1659240536' type='text/css' media='all' />
+<link data-minify="1" rel='stylesheet' id='rhcompare-css'  href='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/css/dynamiccomparison.css?ver=1659240536' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-block-library-css'  href='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-includes/css/dist/block-library/style.min.css' type='text/css' media='all' />
+<link data-minify="1" rel='stylesheet' id='wc-blocks-vendors-style-css'  href='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/plugins/woocommerce/packages/woocommerce-blocks/build/wc-blocks-vendors-style.css?ver=1659240536' type='text/css' media='all' />
+<link data-minify="1" rel='stylesheet' id='wc-blocks-style-css'  href='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/plugins/woocommerce/packages/woocommerce-blocks/build/wc-blocks-style.css?ver=1659240536' type='text/css' media='all' />
+<style id='global-styles-inline-css' type='text/css'>
+body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--color--main: var(--rehub-main-color);--wp--preset--color--secondary: var(--rehub-sec-color);--wp--preset--color--buttonmain: var(--rehub-main-btn-bg);--wp--preset--color--cyan-grey: #abb8c3;--wp--preset--color--orange-light: #fcb900;--wp--preset--color--red: #cf2e2e;--wp--preset--color--red-bright: #f04057;--wp--preset--color--vivid-green: #00d084;--wp--preset--color--orange: #ff6900;--wp--preset--color--blue: #0693e3;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--duotone--dark-grayscale: url('#wp-duotone-dark-grayscale');--wp--preset--duotone--grayscale: url('#wp-duotone-grayscale');--wp--preset--duotone--purple-yellow: url('#wp-duotone-purple-yellow');--wp--preset--duotone--blue-red: url('#wp-duotone-blue-red');--wp--preset--duotone--midnight: url('#wp-duotone-midnight');--wp--preset--duotone--magenta-yellow: url('#wp-duotone-magenta-yellow');--wp--preset--duotone--purple-green: url('#wp-duotone-purple-green');--wp--preset--duotone--blue-orange: url('#wp-duotone-blue-orange');--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--font-family--system-font: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;--wp--preset--font-family--rh-nav-font: var(--rehub-nav-font,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif);--wp--preset--font-family--rh-head-font: var(--rehub-head-font,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif);--wp--preset--font-family--rh-btn-font: var(--rehub-btn-font,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif);--wp--preset--font-family--rh-body-font: var(--rehub-body-font,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif);}body { margin: 0; }.wp-site-blocks > .alignleft { float: left; margin-right: 2em; }.wp-site-blocks > .alignright { float: right; margin-left: 2em; }.wp-site-blocks > .aligncenter { justify-content: center; margin-left: auto; margin-right: auto; }h1{font-size: 29px;line-height: 34px;margin-top: 10px;margin-bottom: 31px;}h2{font-size: 25px;line-height: 31px;margin-top: 10px;margin-bottom: 31px;}h3{font-size: 20px;line-height: 28px;margin-top: 10px;margin-bottom: 25px;}h4{font-size: 18px;line-height: 24px;margin-top: 10px;margin-bottom: 18px;}h5{font-size: 16px;line-height: 20px;margin-top: 10px;margin-bottom: 15px;}h6{font-size: 14px;line-height: 20px;margin-top: 0px;margin-bottom: 10px;}a{color: var(--rehub-link-color, violet);}.wp-block-post-title{margin-top: 4px;margin-right: 0;margin-bottom: 15px;margin-left: 0;}.wp-block-image{margin-top: 0px;margin-bottom: 31px;}.wp-block-media-text{margin-top: 0px;margin-bottom: 31px;}.wp-block-post-content{font-size: 16px;line-height: 28px;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-main-color{color: var(--wp--preset--color--main) !important;}.has-secondary-color{color: var(--wp--preset--color--secondary) !important;}.has-buttonmain-color{color: var(--wp--preset--color--buttonmain) !important;}.has-cyan-grey-color{color: var(--wp--preset--color--cyan-grey) !important;}.has-orange-light-color{color: var(--wp--preset--color--orange-light) !important;}.has-red-color{color: var(--wp--preset--color--red) !important;}.has-red-bright-color{color: var(--wp--preset--color--red-bright) !important;}.has-vivid-green-color{color: var(--wp--preset--color--vivid-green) !important;}.has-orange-color{color: var(--wp--preset--color--orange) !important;}.has-blue-color{color: var(--wp--preset--color--blue) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-main-background-color{background-color: var(--wp--preset--color--main) !important;}.has-secondary-background-color{background-color: var(--wp--preset--color--secondary) !important;}.has-buttonmain-background-color{background-color: var(--wp--preset--color--buttonmain) !important;}.has-cyan-grey-background-color{background-color: var(--wp--preset--color--cyan-grey) !important;}.has-orange-light-background-color{background-color: var(--wp--preset--color--orange-light) !important;}.has-red-background-color{background-color: var(--wp--preset--color--red) !important;}.has-red-bright-background-color{background-color: var(--wp--preset--color--red-bright) !important;}.has-vivid-green-background-color{background-color: var(--wp--preset--color--vivid-green) !important;}.has-orange-background-color{background-color: var(--wp--preset--color--orange) !important;}.has-blue-background-color{background-color: var(--wp--preset--color--blue) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-main-border-color{border-color: var(--wp--preset--color--main) !important;}.has-secondary-border-color{border-color: var(--wp--preset--color--secondary) !important;}.has-buttonmain-border-color{border-color: var(--wp--preset--color--buttonmain) !important;}.has-cyan-grey-border-color{border-color: var(--wp--preset--color--cyan-grey) !important;}.has-orange-light-border-color{border-color: var(--wp--preset--color--orange-light) !important;}.has-red-border-color{border-color: var(--wp--preset--color--red) !important;}.has-red-bright-border-color{border-color: var(--wp--preset--color--red-bright) !important;}.has-vivid-green-border-color{border-color: var(--wp--preset--color--vivid-green) !important;}.has-orange-border-color{border-color: var(--wp--preset--color--orange) !important;}.has-blue-border-color{border-color: var(--wp--preset--color--blue) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}.has-system-font-font-family{font-family: var(--wp--preset--font-family--system-font) !important;}.has-rh-nav-font-font-family{font-family: var(--wp--preset--font-family--rh-nav-font) !important;}.has-rh-head-font-font-family{font-family: var(--wp--preset--font-family--rh-head-font) !important;}.has-rh-btn-font-font-family{font-family: var(--wp--preset--font-family--rh-btn-font) !important;}.has-rh-body-font-font-family{font-family: var(--wp--preset--font-family--rh-body-font) !important;}
+</style>
+<style id='woocommerce-inline-inline-css' type='text/css'>
+.woocommerce form .form-row .required { visibility: visible; }
+</style>
+<link data-minify="1" rel='stylesheet' id='parent-style-css'  href='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/style.css?ver=1659240536' type='text/css' media='all' />
+<link data-minify="1" rel='stylesheet' id='rehubicons-css'  href='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/iconstyle.css?ver=1659240536' type='text/css' media='all' />
+<link data-minify="1" rel='stylesheet' id='rhajaxsearch-css'  href='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/css/ajaxsearch.css?ver=1659240536' type='text/css' media='all' />
+<link data-minify="1" rel='stylesheet' id='rhsingle-css'  href='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/css/single.css?ver=1659240542' type='text/css' media='all' />
+<link data-minify="1" rel='stylesheet' id='rehub-woocommerce-css'  href='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/css/woocommerce.css?ver=1659240536' type='text/css' media='all' />
+<style id='rocket-lazyload-inline-css' type='text/css'>
+.rll-youtube-player{position:relative;padding-bottom:56.23%;height:0;overflow:hidden;max-width:100%;}.rll-youtube-player:focus-within{outline: 2px solid currentColor;outline-offset: 5px;}.rll-youtube-player iframe{position:absolute;top:0;left:0;width:100%;height:100%;z-index:100;background:0 0}.rll-youtube-player img{bottom:0;display:block;left:0;margin:auto;max-width:100%;width:100%;position:absolute;right:0;top:0;border:none;height:auto;-webkit-transition:.4s all;-moz-transition:.4s all;transition:.4s all}.rll-youtube-player img:hover{-webkit-filter:brightness(75%)}.rll-youtube-player .play{height:100%;width:100%;left:0;top:0;position:absolute;background:url(https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/plugins/wp-rocket/assets/img/youtube.png) no-repeat center;background-color: transparent !important;cursor:pointer;border:none;}.wp-embed-responsive .wp-has-aspect-ratio .rll-youtube-player{position:absolute;padding-bottom:0;width:100%;height:100%;top:0;bottom:0;left:0;right:0}
+</style>
+<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-includes/js/jquery/jquery.min.js' id='jquery-core-js' defer></script>
+<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-includes/js/jquery/jquery-migrate.min.js' id='jquery-migrate-js' defer></script>
+<script type='text/javascript' id='rehub-postview-js-extra'>
+/* <![CDATA[ */
+var postviewvar = {"rhpost_ajax_url":"https:\/\/m.ssgg.net\/wp-content\/plugins\/rehub-framework\/includes\/rehub_ajax.php","post_id":"14280"};
+/* ]]> */
+</script>
+<script type="rocketlazyloadscript" data-minify="1" data-rocket-type='text/javascript' src='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/plugins/rehub-framework/assets/js/postviews.js?ver=1659240542' id='rehub-postview-js' defer></script>
+<link rel="https://api.w.org/" href="https://m.ssgg.net/wp-json/" /><link rel="alternate" type="application/json" href="https://m.ssgg.net/wp-json/wp/v2/posts/14280" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://m.ssgg.net/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-includes/wlwmanifest.xml" /> 
+<meta name="generator" content="WordPress 6.0.1" />
+<link rel='shortlink' href='https://m.ssgg.net/?p=14280' />
+<link rel="alternate" type="application/json+oembed" href="https://m.ssgg.net/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fm.ssgg.net%2Froboforex-reviews.html" />
+<link rel="alternate" type="text/xml+oembed" href="https://m.ssgg.net/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fm.ssgg.net%2Froboforex-reviews.html&#038;format=xml" />
+<link rel="preload" href="https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/themes/rehub-theme/fonts/rhicons.woff2?3oibrk" as="font" type="font/woff2" crossorigin="crossorigin"><style type="text/css"> @media (min-width:1025px){header .logo-section{padding:15px 0;}}.rate-line .filled,.rate_bar_wrap .review-top .overall-score,.rate-bar-bar,.top_rating_item .score.square_score,.radial-progress .circle .mask .fill{background-color:#ff0033;}.meter-wrapper .meter,.rate_bar_wrap_two_reviews .score_val{border-color:#ff0033;}body .user-review-criteria .rate-bar-bar{background-color:#001fff;}.userstar-rating span:before{color:#001fff;}.rate_bar_wrap_two_reviews .user-review-criteria .score_val{border-color:#001fff;}nav.top_menu > ul > li > a{padding:11px 15px 15px 15px;font-size:17px}nav.top_menu > ul > li > a{font-size:18px}nav.top_menu > ul > li > a{font-weight:normal;}header .main-nav,.main-nav.dark_style,.header_one_row .main-nav{background:none repeat scroll 0 0 #fffccb!important;box-shadow:none;}.main-nav{border-bottom:none;border-top:none;}.dl-menuwrapper .dl-menu{margin:0 !important}nav.top_menu > ul > li > a{color:#36383d !important;}nav.top_menu > ul > li > a:hover{box-shadow:none;}.responsive_nav_wrap .user-ava-intop:after,.dl-menuwrapper button i,.responsive_nav_wrap .rh-header-icon{color:#36383d !important;}.dl-menuwrapper button svg line{stroke:#36383d !important;}#main_header,.is-sticky .logo_section_wrap,.sticky-active.logo_section_wrap{background-color:#fffeeb !important}.main-nav.white_style{border-top:none}nav.top_menu > ul:not(.off-canvas) > li > a:after{top:auto;bottom:0}.header-top{border:none;}.footer-bottom{background-color:#fffeeb !important}.footer-bottom .footer_widget{border:none !important} .widget .title:after{border-bottom:2px solid #2f73ff;}.rehub-main-color-border,nav.top_menu > ul > li.vertical-menu.border-main-color .sub-menu,.rh-main-bg-hover:hover,.wp-block-quote,ul.def_btn_link_tabs li.active a,.wp-block-pullquote{border-color:#2f73ff;}.wpsm_promobox.rehub_promobox{border-left-color:#2f73ff!important;}.color_link{color:#2f73ff !important;}.featured_slider:hover .score,.top_chart_controls .controls:hover,article.post .wpsm_toplist_heading:before{border-color:#2f73ff;}.btn_more:hover,.tw-pagination .current{border:1px solid #2f73ff;color:#fff}.rehub_woo_review .rehub_woo_tabs_menu li.current{border-top:3px solid #2f73ff;}.gallery-pics .gp-overlay{box-shadow:0 0 0 4px #2f73ff inset;}.post .rehub_woo_tabs_menu li.current,.woocommerce div.product .woocommerce-tabs ul.tabs li.active{border-top:2px solid #2f73ff;}.rething_item a.cat{border-bottom-color:#2f73ff}nav.top_menu ul li ul.sub-menu{border-bottom:2px solid #2f73ff;}.widget.deal_daywoo,.elementor-widget-wpsm_woofeatured .deal_daywoo{border:3px solid #2f73ff;padding:20px;background:#fff;}.deal_daywoo .wpsm-bar-bar{background-color:#2f73ff !important} #buddypress div.item-list-tabs ul li.selected a span,#buddypress div.item-list-tabs ul li.current a span,#buddypress div.item-list-tabs ul li a span,.user-profile-div .user-menu-tab > li.active > a,.user-profile-div .user-menu-tab > li.active > a:focus,.user-profile-div .user-menu-tab > li.active > a:hover,.news_in_thumb:hover a.rh-label-string,.news_out_thumb:hover a.rh-label-string,.col-feat-grid:hover a.rh-label-string,.carousel-style-deal .re_carousel .controls,.re_carousel .controls:hover,.openedprevnext .postNavigation .postnavprev,.postNavigation .postnavprev:hover,.top_chart_pagination a.selected,.flex-control-paging li a.flex-active,.flex-control-paging li a:hover,.btn_more:hover,body .tabs-menu li:hover,body .tabs-menu li.current,.featured_slider:hover .score,#bbp_user_edit_submit,.bbp-topic-pagination a,.bbp-topic-pagination a,.custom-checkbox label.checked:after,.slider_post .caption,ul.postpagination li.active a,ul.postpagination li:hover a,ul.postpagination li a:focus,.top_theme h5 strong,.re_carousel .text:after,#topcontrol:hover,.main_slider .flex-overlay:hover a.read-more,.rehub_chimp #mc_embed_signup input#mc-embedded-subscribe,#rank_1.rank_count,#toplistmenu > ul li:before,.rehub_chimp:before,.wpsm-members > strong:first-child,.r_catbox_btn,.wpcf7 .wpcf7-submit,.wpsm_pretty_hover li:hover,.wpsm_pretty_hover li.current,.rehub-main-color-bg,.togglegreedybtn:after,.rh-bg-hover-color:hover a.rh-label-string,.rh-main-bg-hover:hover,.rh_wrapper_video_playlist .rh_video_currently_playing,.rh_wrapper_video_playlist .rh_video_currently_playing.rh_click_video:hover,.rtmedia-list-item .rtmedia-album-media-count,.tw-pagination .current,.dokan-dashboard .dokan-dash-sidebar ul.dokan-dashboard-menu li.active,.dokan-dashboard .dokan-dash-sidebar ul.dokan-dashboard-menu li:hover,.dokan-dashboard .dokan-dash-sidebar ul.dokan-dashboard-menu li.dokan-common-links a:hover,#ywqa-submit-question,.woocommerce .widget_price_filter .ui-slider .ui-slider-range,.rh-hov-bor-line > a:after,nav.top_menu > ul:not(.off-canvas) > li > a:after,.rh-border-line:after,.wpsm-table.wpsm-table-main-color table tr th,.rh-hov-bg-main-slide:before,.rh-hov-bg-main-slidecol .col_item:before{background:#2f73ff;}@media (max-width:767px){.postNavigation .postnavprev{background:#2f73ff;}}.rh-main-bg-hover:hover,.rh-main-bg-hover:hover .whitehovered,.user-profile-div .user-menu-tab > li.active > a{color:#fff !important} a,.carousel-style-deal .deal-item .priced_block .price_count ins,nav.top_menu ul li.menu-item-has-children ul li.menu-item-has-children > a:before,.top_chart_controls .controls:hover,.flexslider .fa-pulse,.footer-bottom .widget .f_menu li a:hover,.comment_form h3 a,.bbp-body li.bbp-forum-info > a:hover,.bbp-body li.bbp-topic-title > a:hover,#subscription-toggle a:before,#favorite-toggle a:before,.aff_offer_links .aff_name a,.rh-deal-price,.commentlist .comment-content small a,.related_articles .title_cat_related a,article em.emph,.campare_table table.one td strong.red,.sidebar .tabs-item .detail p a,.footer-bottom .widget .title span,footer p a,.welcome-frase strong,article.post .wpsm_toplist_heading:before,.post a.color_link,.categoriesbox:hover h3 a:after,.bbp-body li.bbp-forum-info > a,.bbp-body li.bbp-topic-title > a,.widget .title i,.woocommerce-MyAccount-navigation ul li.is-active a,.category-vendormenu li.current a,.deal_daywoo .title,.rehub-main-color,.wpsm_pretty_colored ul li.current a,.wpsm_pretty_colored ul li.current,.rh-heading-hover-color:hover h2 a,.rh-heading-hover-color:hover h3 a,.rh-heading-hover-color:hover h4 a,.rh-heading-hover-color:hover h5 a,.rh-heading-hover-color:hover h3,.rh-heading-hover-color:hover h2,.rh-heading-hover-color:hover h4,.rh-heading-hover-color:hover h5,.rh-heading-hover-color:hover .rh-heading-hover-item a,.rh-heading-icon:before,.widget_layered_nav ul li.chosen a:before,.wp-block-quote.is-style-large p,ul.page-numbers li span.current,ul.page-numbers li a:hover,ul.page-numbers li.active a,.page-link > span:not(.page-link-title),blockquote:not(.wp-block-quote) p,span.re_filtersort_btn:hover,span.active.re_filtersort_btn,.deal_daywoo .price,div.sortingloading:after{color:#2f73ff;}a{color:#2f73ff;} .page-link > span:not(.page-link-title),.widget.widget_affegg_widget .title,.widget.top_offers .title,.widget.cegg_widget_products .title,header .header_first_style .search form.search-form [type="submit"],header .header_eight_style .search form.search-form [type="submit"],.filter_home_pick span.active,.filter_home_pick span:hover,.filter_product_pick span.active,.filter_product_pick span:hover,.rh_tab_links a.active,.rh_tab_links a:hover,.wcv-navigation ul.menu li.active,.wcv-navigation ul.menu li:hover a,form.search-form [type="submit"],.rehub-sec-color-bg,input#ywqa-submit-question,input#ywqa-send-answer,.woocommerce button.button.alt,.tabsajax span.active.re_filtersort_btn,.wpsm-table.wpsm-table-sec-color table tr th,.rh-slider-arrow,.rh-hov-bg-sec-slide:before,.rh-hov-bg-sec-slidecol .col_item:before{background:#2f73ff !important;color:#fff !important;outline:0}.widget.widget_affegg_widget .title:after,.widget.top_offers .title:after,.widget.cegg_widget_products .title:after{border-top-color:#2f73ff !important;}.page-link > span:not(.page-link-title){border:1px solid #2f73ff;}.page-link > span:not(.page-link-title),.header_first_style .search form.search-form [type="submit"] i{color:#fff !important;}.rh_tab_links a.active,.rh_tab_links a:hover,.rehub-sec-color-border,nav.top_menu > ul > li.vertical-menu.border-sec-color > .sub-menu,body .rh-slider-thumbs-item--active{border-color:#2f73ff}.rh_wrapper_video_playlist .rh_video_currently_playing,.rh_wrapper_video_playlist .rh_video_currently_playing.rh_click_video:hover{background-color:#2f73ff;box-shadow:1200px 0 0 #2f73ff inset;}.rehub-sec-color{color:#2f73ff} form.search-form input[type="text"]{border-radius:4px}.news .priced_block .price_count,.blog_string .priced_block .price_count,.main_slider .price_count{margin-right:5px}.right_aff .priced_block .btn_offer_block,.right_aff .priced_block .price_count{border-radius:0 !important}form.search-form.product-search-form input[type="text"]{border-radius:4px 0 0 4px;}form.search-form [type="submit"]{border-radius:0 4px 4px 0;}.rtl form.search-form.product-search-form input[type="text"]{border-radius:0 4px 4px 0;}.rtl form.search-form [type="submit"]{border-radius:4px 0 0 4px;}.price_count,.rehub_offer_coupon,#buddypress .dir-search input[type=text],.gmw-form-wrapper input[type=text],.gmw-form-wrapper select,#buddypress a.button,.btn_more,#main_header .wpsm-button,#rh-header-cover-image .wpsm-button,#wcvendor_image_bg .wpsm-button,input[type="text"],textarea,input[type="tel"],input[type="password"],input[type="email"],input[type="url"],input[type="number"],.def_btn,input[type="submit"],input[type="button"],input[type="reset"],.rh_offer_list .offer_thumb .deal_img_wrap,.grid_onsale,.rehub-main-smooth,.re_filter_instore span.re_filtersort_btn:hover,.re_filter_instore span.active.re_filtersort_btn,#buddypress .standard-form input[type=text],#buddypress .standard-form textarea,.blacklabelprice{border-radius:4px}.news-community,.woocommerce .products.grid_woo .product,.rehub_chimp #mc_embed_signup input.email,#mc_embed_signup input#mc-embedded-subscribe,.rh_offer_list,.woo-tax-logo,#buddypress div.item-list-tabs ul li a,#buddypress form#whats-new-form,#buddypress div#invite-list,#buddypress #send-reply div.message-box,.rehub-sec-smooth,.rate-bar-bar,.rate-bar,#wcfm-main-contentainer #wcfm-content,.wcfm_welcomebox_header{border-radius:5px}#rhSplashSearch form.search-form input[type="text"],#rhSplashSearch form.search-form [type="submit"]{border-radius:0 !important} .woocommerce .woo-button-area .masked_coupon,.woocommerce a.woo_loop_btn,.woocommerce .button.checkout,.woocommerce input.button.alt,.woocommerce a.add_to_cart_button:not(.flat-woo-btn),.woocommerce-page a.add_to_cart_button:not(.flat-woo-btn),.woocommerce .single_add_to_cart_button,.woocommerce div.product form.cart .button,.woocommerce .checkout-button.button,.priced_block .btn_offer_block,.priced_block .button,.rh-deal-compact-btn,input.mdf_button,#buddypress input[type="submit"],#buddypress input[type="button"],#buddypress input[type="reset"],#buddypress button.submit,.wpsm-button.rehub_main_btn,.wcv-grid a.button,input.gmw-submit,#ws-plugin--s2member-profile-submit,#rtmedia_create_new_album,input[type="submit"].dokan-btn-theme,a.dokan-btn-theme,.dokan-btn-theme,#wcfm_membership_container a.wcfm_submit_button,.woocommerce button.button,.rehub-main-btn-bg,.woocommerce #payment #place_order,.wc-block-grid__product-add-to-cart.wp-block-button .wp-block-button__link{background:none #43c801 !important;color:#ffffff !important;fill:#ffffff !important;border:none !important;text-decoration:none !important;outline:0;box-shadow:-1px 6px 19px rgba(67,200,1,0.2) !important;border-radius:4px !important;}.rehub-main-btn-bg > a{color:#ffffff !important;}.woocommerce a.woo_loop_btn:hover,.woocommerce .button.checkout:hover,.woocommerce input.button.alt:hover,.woocommerce a.add_to_cart_button:not(.flat-woo-btn):hover,.woocommerce-page a.add_to_cart_button:not(.flat-woo-btn):hover,.woocommerce a.single_add_to_cart_button:hover,.woocommerce-page a.single_add_to_cart_button:hover,.woocommerce div.product form.cart .button:hover,.woocommerce-page div.product form.cart .button:hover,.woocommerce .checkout-button.button:hover,.priced_block .btn_offer_block:hover,.wpsm-button.rehub_main_btn:hover,#buddypress input[type="submit"]:hover,#buddypress input[type="button"]:hover,#buddypress input[type="reset"]:hover,#buddypress button.submit:hover,.small_post .btn:hover,.ap-pro-form-field-wrapper input[type="submit"]:hover,.wcv-grid a.button:hover,#ws-plugin--s2member-profile-submit:hover,.rething_button .btn_more:hover,#wcfm_membership_container a.wcfm_submit_button:hover,.woocommerce #payment #place_order:hover,.woocommerce button.button:hover,.rehub-main-btn-bg:hover,.rehub-main-btn-bg:hover > a,.wc-block-grid__product-add-to-cart.wp-block-button .wp-block-button__link:hover{background:none #43c801 !important;color:#ffffff !important;border-color:transparent;box-shadow:-1px 6px 13px rgba(67,200,1,0.4) !important;}.rehub_offer_coupon:hover{border:1px dashed #43c801;}.rehub_offer_coupon:hover i.far,.rehub_offer_coupon:hover i.fal,.rehub_offer_coupon:hover i.fas{color:#43c801}.re_thing_btn .rehub_offer_coupon.not_masked_coupon:hover{color:#43c801 !important}.woocommerce a.woo_loop_btn:active,.woocommerce .button.checkout:active,.woocommerce .button.alt:active,.woocommerce a.add_to_cart_button:not(.flat-woo-btn):active,.woocommerce-page a.add_to_cart_button:not(.flat-woo-btn):active,.woocommerce a.single_add_to_cart_button:active,.woocommerce-page a.single_add_to_cart_button:active,.woocommerce div.product form.cart .button:active,.woocommerce-page div.product form.cart .button:active,.woocommerce .checkout-button.button:active,.wpsm-button.rehub_main_btn:active,#buddypress input[type="submit"]:active,#buddypress input[type="button"]:active,#buddypress input[type="reset"]:active,#buddypress button.submit:active,.ap-pro-form-field-wrapper input[type="submit"]:active,.wcv-grid a.button:active,#ws-plugin--s2member-profile-submit:active,.woocommerce #payment #place_order:active,input[type="submit"].dokan-btn-theme:active,a.dokan-btn-theme:active,.dokan-btn-theme:active,.woocommerce button.button:active,.rehub-main-btn-bg:active,.wc-block-grid__product-add-to-cart.wp-block-button .wp-block-button__link:active{background:none #43c801 !important;box-shadow:0 1px 0 #999 !important;top:2px;color:#ffffff !important;}.rehub_btn_color,.rehub_chimp_flat #mc_embed_signup input#mc-embedded-subscribe{background-color:#43c801;border:1px solid #43c801;color:#ffffff;text-shadow:none}.rehub_btn_color:hover{color:#ffffff;background-color:#43c801;border:1px solid #43c801;}.rething_button .btn_more{border:1px solid #43c801;color:#43c801;}.rething_button .priced_block.block_btnblock .price_count{color:#43c801;font-weight:normal;}.widget_merchant_list .buttons_col{background-color:#43c801 !important;}.widget_merchant_list .buttons_col a{color:#ffffff !important;}.rehub-svg-btn-fill svg{fill:#43c801;}.rehub-svg-btn-stroke svg{stroke:#43c801;}@media (max-width:767px){#float-panel-woo-area{border-top:1px solid #43c801}}:root{--rehub-main-color:#2f73ff;--rehub-sec-color:#2f73ff;--rehub-main-btn-bg:#43c801;--rehub-link-color:#2f73ff;}@media screen and (min-width:1140px){.rh-boxed-container .rh-outer-wrap{width:1120px}.rh-container,.content{width:1080px;}.centered-container .vc_col-sm-12 > * > .wpb_wrapper,.vc_section > .vc_row,body .elementor-section.elementor-section-boxed > .elementor-container,.wp-block-cover__inner-container{max-width:1080px}.vc_row.vc_rehub_container > .vc_col-sm-8,.main-side:not(.full_width){width:755px}.vc_row.vc_rehub_container>.vc_col-sm-4,.sidebar,.side-twocol{width:300px}.side-twocol .columns{height:200px}.main_slider.flexslider .slides .slide{height:418px;line-height:418px}.main_slider.flexslider{height:418px}.main-side,.gallery-pics{width:728px;}.main_slider.flexslider{width:calc(100% - 325px);}.main_slider .flex-overlay h2{font-size:36px;line-height:34px}.offer_grid .offer_thumb img,.offer_grid figure img,figure.eq_figure img{height:130px}header .logo{max-width:300px;}.rh_video_playlist_column_full .rh_container_video_playlist{width:320px !important}.rh_video_playlist_column_full .rh_wrapper_player{width:calc(100% - 320px) !important;}.rehub_chimp h3{font-size:20px}.outer_mediad_left{margin-left:-690px !important}.outer_mediad_right{margin-left:570px !important}}.re-line-badge.badge_1,.re-ribbon-badge.badge_1 span{background:#f9cc50;}.re-line-badge.re-line-table-badge.badge_1:before{border-top-color:#f9cc50}.re-line-badge.re-line-table-badge.badge_1:after{border-bottom-color:#f9cc50}.re-line-badge.badge_2,.re-ribbon-badge.badge_2 span{background:#43c801;}.re-line-badge.re-line-table-badge.badge_2:before{border-top-color:#43c801}.re-line-badge.re-line-table-badge.badge_2:after{border-bottom-color:#43c801}.re-line-badge.badge_3,.re-ribbon-badge.badge_3 span{background:#ff0000;}.re-line-badge.re-line-table-badge.badge_3:before{border-top-color:#ff0000}.re-line-badge.re-line-table-badge.badge_3:after{border-bottom-color:#ff0000}#bprh-full-header-image{background:url("https://cdn.fendou.la/welaowei8/2019/02/orion.jpg?x-oss-process=style%2Ffull") no-repeat center top !important;background-size:cover;}</style><style>.widget {margin-bottom:0px;margin-top: 0px;}
+.eq_grid .col_item {border: 1px solid #dcdcdc85;}
+h2 {font-weight: 400;}
+#topcontrol.rehub_scroll {background: #2f73ff;}
+.wpsm-accordion h3.wpsm-accordion-trigger a {font-weight: bolder;}
+.title_single_area h1 {color: #2f73ff; text-align: center;}
+.rh-cat-list-title { margin: 0 0 8px 0; display: flex;}
+.sidebar{padding-left: 20px;}
+form.search-form input[type="text"] {border-radius: 80px;}
+.custom_search_box input[type="text"] {border: 1px solid #ececec;border-radius: 80px;}
+.custom_search_box button[type="submit"] {border-radius: 80px!important;}
+form.search-form [type="submit"] {border-radius: 80px;background: rgba(0,0,0,0)!important; color: #333!important;}
+.fa-search:before {font-size:18px;}
+.fal { font-weight: 500;line-height: unset;}
+.postNavigation a {background: #2f73ff;}
+.wpsm_toplist_heading{padding-top: 5px;}
+.re-ribbon-badge span {font: 400 16px/28px;}
+.re-line-badge.re-line-small-label {font-size: 15px;line-height: 16px; font-weight: 400;}
+.woocommerce .onfeatured {font: 500 15px/18px;}
+.woocommerce .onsale{font: 400 14px/16px;}
+.woocommerce div.product .woocommerce-tabs ul.tabs li a {font-size: 16px;}
+.toc_widget_list.no_bullets li {padding-top: 5px;border-bottom: 1px dashed #1111115e;}
+h2{color: #2f73ff;}
+.wpsm_recent_posts_list .item-small-news:not(.border-lightgrey) {padding: 2px 0;}
+.widget .tabs-item > div{padding: 5px 0;}
+.rh_post_layout_outside .title_single_area h1 {font-size: 24px;font-weight: 500;}
+.post-meta-big a {
+    text-decoration: none;
+    color: #111;
+    font-size: medium;
+    font-weight: 400;}
+.small_post .meta, .small_post h2 { font-weight: 400;}
+blockquote p {
+    margin: 0 0 5px 0 !important;
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 400;
+    padding: 0;
+    font-style: normal;
+    color: blue;}
+blockquote {padding: 8px 5% 13px 5%;}
+.title_single_area h1 {
+    font-size: 24px;
+    line-height: 30px;
+    margin: 0 0 10px 0;
+    word-break: break-word;
+    font-weight: 500;
+}
+.widget .title, .widget h2 {margin: 0 0 8px 0;}
+.widget .title {border-bottom: 1px solid #f70606;padding-bottom: 8px;}
+.sidebar .widget {margin-bottom: 15px;}
+h3 {margin: 10px 0 10px 0;}
+article strong, .post strong {font-weight: 400;}
+article p, .post p {
+    margin: 0 0 10px 0;}
+.hot.menu-item.menu-item-type-custom.menu-item-object-custom a {font: 17px;padding:11px 15px 15px;}
+nav.top_menu > ul > li > a {font-size: 18px;}
+.woocommerce-MyAccount-navigation ul li a {font-weight: 500;font-size: 16px;}
+.rh-post-layout-image-mask {position: unset;}
+.table_view_charts .top_chart_item figure a {padding-top: 38px;}
+.alignright.hideonmobile{display:none}
+.woocommerce-result-count{display:none}
+.woocommerce-ordering{display:none}
+.wpsm-cat-title{display:none}
+#mobile-trigger-sidebar{display:none}
+.re-favorites-posts + .post_share{display:none}
+.pricefont110{display:none}
+.cat_store_for_grid{display:none}
+.yith_woo_chart{display:none}
+.price-woo-compare-chart{display:none}
+.cegg-rating{display:none}
+.deal-box-price{display:none}
+.meta_for_grid{display:none}
+.woolist_meta.mb10{display:none}
+.rehub-main-font.price.font110.mb15.fontbold{display:none}
+.avatar.avatar-48.photo{display:none}
+.def_btn.fontnormal.r_show_hide{font-size: 15px;}
+.read_full.font70{font-size:90%;}
+.priced_block {margin-bottom:8px;}
+#page-9151.post.mb0{padding-bottom: 300px;}
+.woocommerce table thead th{background:#2f73ffd4;}
+.wpsm-comptable td {padding: 5px;}
+.top_table_block .top_rating_heading{background: #2f73ff;}
+.wpdt-c .wpDataTablesWrapper .dataTables_filter{border:solid 1px #0083c2;opacity:1;border-radius:6px;}
+.profile-avatar {position: inherit;}
+.mce-content-body {line-height: 20px;}
+.rehub_woo_review .rehub_woo_tabs_menu li {display:initial;padding: 10px 8px;}
+.rehub_woo_review .offer_thumb{display:none}
+.rehub_feat_block, .rehub_bordered_block {margin-top:7px;}
+.tradingview-widget-copyright{display:none}
+.search-wrap{display:none}
+.rev-in-compare-flip{display:none}
+.wpDataTablesWrapper {background:#fffeeb;padding: 0 16px 0 16px;}
+.wpsm_cons ul li:before {content: '\f057';font-weight: 900;
+}
+.table_view_charts li {padding: 7px;font-size:15px;}
+.post ul.list-unstyled {font-size: 16px;}
+.row_chart_1.heading_row_chart{display:none}
+.row_chart_8.heading_row_chart.sub_heading_row_chart{display:none}
+.row_chart_13.heading_row_chart.sub_heading_row_chart{display:none}
+.row_chart_17.heading_row_chart.sub_heading_row_chart{display:none}
+.table_view_charts .sticky-wrapper.is-sticky .row_chart_0.image_row_chart.row-is-different {height: 150px!important;}
+.listitem_column.listbuild_image{min-width:60px;}
+.font90{font-size:100%;}
+.rank-math-question{color:#006fe5;}
+.rank-math-step-title{font-weight: 500;color: #2f73ff;}
+.listitem_column.listbuild_btn {min-width: 100px;}
+.tg{border-collapse:collapse;border-color:#9ABAD9;border-spacing:0;}
+.tg td{background-color:#EBF5FF;border-color:#9ABAD9;border-style:solid;border-width:1px;color:#444;font-size:15px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#409cff;border-color:#9ABAD9;border-style:solid;border-width:1px;color:#fff;font-size:18px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+@media screen and(max-width: 860px) {.tg {width: auto !important;}.tg col {width:auto !important;}.tg-wrap {overflow-x: auto;-webkit-overflow-scrolling: touch;margin: auto 0px;}}
+.clearbox {
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 20px;
+}
+.meta_v_label.mr5.rtlml5{font-weight:800;}
+.meta_icon_label{font-weight:800;color: #d71e15;}
+.post-meta span {font-style: normal; font-weight: bolder;}
+span.date_meta:before{ font-size: 14px;line-height: 12px;vertical-align: middle; padding-right: 5px; content: "\f2f7"; font-style:normal;color: #f9cc50;}
+.rhi-ellipsis-v:before {content: "\f0ca";}
+.re-line-badge span:before {display:none}
+.re-line-badge span:after {display:none}
+.float-panel-woo-image img {width: 100%;}
+.table_view_charts .top_chart_item .sticky-wrapper.is-sticky figure {height: auto;}
+.table_view_charts .top_chart_item figure {display: inherit;
+}
+.top_rating_item h2, .top_rating_item .top_rating_title{font-size: 22px;}
+span.postview_meta:before {color: #f9cc50;}
+div.float-panel-woo-price.rh-flex-center-align.font120.rh-flex-right-align{display:none}</style>	<noscript><style>.woocommerce-product-gallery{ opacity: 1 !important; }</style></noscript>
+	<script type="rocketlazyloadscript" id="google_gtagjs" src="https://www.googletagmanager.com/gtag/js?id=UA-127707061-2" async="async" data-rocket-type="text/javascript"></script>
+<script type="rocketlazyloadscript" id="google_gtagjs-inline" data-rocket-type="text/javascript">
+window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'UA-127707061-2', {} );
+</script>
+<noscript><style id="rocket-lazyload-nojs-css">.rll-youtube-player, [data-lazy-src]{display:none !important;}</style></noscript></head>
+<body class="post-template-default single single-post postid-14280 single-format-standard wp-embed-responsive theme-rehub-theme woocommerce-no-js">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-dark-grayscale"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0 0.49803921568627" /><feFuncG type="table" tableValues="0 0.49803921568627" /><feFuncB type="table" tableValues="0 0.49803921568627" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-grayscale"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0 1" /><feFuncG type="table" tableValues="0 1" /><feFuncB type="table" tableValues="0 1" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-purple-yellow"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0.54901960784314 0.98823529411765" /><feFuncG type="table" tableValues="0 1" /><feFuncB type="table" tableValues="0.71764705882353 0.25490196078431" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-blue-red"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0 1" /><feFuncG type="table" tableValues="0 0.27843137254902" /><feFuncB type="table" tableValues="0.5921568627451 0.27843137254902" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-midnight"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0 0" /><feFuncG type="table" tableValues="0 0.64705882352941" /><feFuncB type="table" tableValues="0 1" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-magenta-yellow"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0.78039215686275 1" /><feFuncG type="table" tableValues="0 0.94901960784314" /><feFuncB type="table" tableValues="0.35294117647059 0.47058823529412" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-purple-green"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0.65098039215686 0.40392156862745" /><feFuncG type="table" tableValues="0 1" /><feFuncB type="table" tableValues="0.44705882352941 0.4" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-blue-orange"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0.098039215686275 1" /><feFuncG type="table" tableValues="0 0.66274509803922" /><feFuncB type="table" tableValues="0.84705882352941 0.41960784313725" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg>	               
+<!-- Outer Start -->
+<div class="rh-outer-wrap">
+    <div id="top_ankor"></div>
+    <!-- HEADER -->
+            <header id="main_header" class="white_style width-100p position-relative">
+            <div class="header_wrap">
+                                                                                    <!-- Logo section -->
+<div class="rh-stickme header_five_style logo_section_wrap header_one_row">
+    <div class="rh-container tabletblockdisplay mb0 disabletabletpadding">
+        <div class="logo-section rh-flex-center-align tabletblockdisplay disabletabletpadding mb0">
+            <div class="logo hideontablet">
+                                    <a href="https://m.ssgg.net" class="logo_image"><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20180%2028'%3E%3C/svg%3E" alt="开户通" height="28" width="180" data-lazy-src="https://cdn.fendou.la/bluehost/fxlogan.svg" /><noscript><img src="https://cdn.fendou.la/bluehost/fxlogan.svg" alt="开户通" height="28" width="180" /></noscript></a>
+                       
+            </div> 
+            <!-- Main Navigation -->
+            <div class="main-nav mob-logo-enabled rh-flex-grow1 rh-flex-center-align rh-flex-justify-center  white_style">      
+                <nav class="top_menu"><ul id="menu-%e5%af%bc%e8%88%aa%e8%8f%9c%e5%8d%95" class="menu"><li id="menu-item-246" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home"><a href="https://m.ssgg.net/">首页</a></li>
+<li id="menu-item-245" class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://m.ssgg.net/brokers">平台测评</a></li>
+<li id="menu-item-335" class="menu-item menu-item-type-custom menu-item-object-custom"><a href="https://m.ssgg.net/compare?compareids=197,202,199,192,201">经纪商对比</a></li>
+</ul></nav>                <div class="responsive_nav_wrap rh_mobile_menu">
+                    <div id="dl-menu" class="dl-menuwrapper rh-flex-center-align">
+                        <button id="dl-trigger" class="dl-trigger" aria-label="Menu">
+                            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                                <g>
+                                    <line stroke-linecap="round" id="rhlinemenu_1" y2="7" x2="29" y1="7" x1="3"/>
+                                    <line stroke-linecap="round" id="rhlinemenu_2" y2="16" x2="18" y1="16" x1="3"/>
+                                    <line stroke-linecap="round" id="rhlinemenu_3" y2="25" x2="26" y1="25" x1="3"/>
+                                </g>
+                            </svg>
+                        </button>
+                        <div id="mobile-menu-icons" class="rh-flex-center-align rh-flex-right-align">
+                            <button class='icon-search-onclick' aria-label='Search'><i class='rhicon rhi-search'></i></button>
+                        </div>
+                    </div>
+                                    </div>
+            </div>  
+             
+                    
+            <div class="header-actions-logo">
+                <div class="rh-flex-center-align">
+                                                                                                                                                                <span class="act-rehub-login-popup wpsm-button white medium  rh-flex-right-align mobileinmenu ml10 mr5" data-type="login"><i class="rhicon rhi-sign-in"></i><span>登陆/注册</span></span> 
+                                         
+                      
+                                                                               
+                                         
+                </div> 
+            </div>                        
+            <!-- /Main Navigation -->                                                        
+        </div>
+    </div>
+</div>
+<!-- /Logo section -->  
+                
+
+            </div>  
+        </header>
+            
+
+    <!-- CONTENT -->
+<div class="rh-container"> 
+    <div class="rh-content-wrap clearfix">
+	    <!-- Main Side -->
+        <div class="main-side single full_width clearfix"> 
+            <div class="rh-post-wrapper">           
+                                                        <article class="post-inner post post-14280 type-post status-publish format-standard has-post-thumbnail hentry category-brokers-review" id="post-14280">
+                        <style scoped>
+                .full_width .post-inner{max-width:960px; margin-left:auto; margin-right:auto}
+            </style> 
+                        <!-- Title area -->
+                        <div class="rh_post_layout_default rh_post_layout_center text-center">
+                            <div class="title_single_area mb15">
+                                <div class="rh-cat-list-title"><a class="rh-cat-label-title rh-cat-104" href="https://m.ssgg.net/category/brokers-review" title="查看该项目的所有评测平台推荐">平台推荐</a></div>            
+                                <h1>RoboForex外汇交易平台开户</h1>                                
+                                <div class="meta post-meta mb20 flowhidden">
+                                     		<span class="date_meta">
+  			 				2022-04-14 			 		</span>	
+						<span class="postview_meta">115 </span>
+			
+	 
+                                </div>       
+                            </div>
+                                                            <div class="top_share">
+                                    	<div class="post_share">
+	    <div class="social_icon  row_social_inpost"><div class="favour_in_row favour_btn_red"><div class="heart_thumb_wrap text-center"><span class="flowhidden cell_wishlist"><span class="heartplus" data-post_id="14280" data-informer="0"><span class="ml5 rtlmr5 wishaddwrap" id="wishadd14280">Save</span><span class="ml5 rtlmr5 wishaddedwrap" id="wishadded14280">Saved</span><span class="ml5 rtlmr5 wishremovedwrap" id="wishremoved14280">已删除</span> </span></span><span id="wishcount14280" class="thumbscount">0</span> </div></div><span data-href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fm.ssgg.net%2Froboforex-reviews.html" class="fb share-link-image" data-service="facebook"><i class="rhicon rhi-facebook"></i></span><span data-href="https://twitter.com/share?url=https%3A%2F%2Fm.ssgg.net%2Froboforex-reviews.html&text=RoboForex%E5%A4%96%E6%B1%87%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0%E5%BC%80%E6%88%B7" class="tw share-link-image" data-service="twitter"><i class="rhicon rhi-twitter"></i></span><span data-href="https://pinterest.com/pin/create/button/?url=https%3A%2F%2Fm.ssgg.net%2Froboforex-reviews.html&amp;media=&amp;description=RoboForex%E5%A4%96%E6%B1%87%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0%E5%BC%80%E6%88%B7" class="pn share-link-image" data-service="pinterest"><i class="rhicon rhi-pinterest-p"></i></span><span data-href="mailto:?subject=RoboForex%E5%A4%96%E6%B1%87%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0%E5%BC%80%E6%88%B7&body=退房 https%3A%2F%2Fm.ssgg.net%2Froboforex-reviews.html - %E5%BC%80%E6%88%B7%E9%80%9A" class="in share-link-image" data-service="email"><i class="rhicon rhi-envelope"></i></span></div>	</div>
+                                </div>
+                                <div class="clearfix"></div> 
+                                                    </div>
+                        
+                        										                        
+                                       
+                          
+
+                        <span style="color:red">[wbcr_text_snippet]: Text snippets error (not passed the snippet ID)</span>
+<hr />
+<span style="color:red">[wbcr_text_snippet]: Text snippets error (not passed the snippet ID)</span>
+<span style="color:red">[wbcr_text_snippet]: Text snippets error (not passed the snippet ID)</span>
+<p>RoboForex是一个屡获殊荣的在线交易平台，提供9,400多种交易工具，涵盖多种资产类别。他们提供一系列灵活的交易平台和账户以及交易工具和深入的市场分析.</p>
+<h5>RoboForex回顾2020年，优点和缺点</h5>
+<ul>
+<li>
+<p>独立的客户资金</p>
+</li>
+<li>
+<p>负平衡保护</p>
+</li>
+<li>
+<p>金融委员会成员</p>
+</li>
+<li>
+<p>验证我的交易</p>
+</li>
+<li>
+<p>9,400多个交易工具</p>
+</li>
+<li>
+<p>多种交易平台</p>
+</li>
+<li>
+<p>灵活账户类型</p>
+</li>
+<li>
+<p>分析中心</p>
+</li>
+<li>
+<p>多次获奖</p>
+</li>
+<li>
+<p>没有美国客户</p>
+</li>
+<li>
+<p>对欧盟客户的杠杆作用受到限制</p>
+</li>
+<li>
+<p>无固定点差账户</p>
+</li>
+</ul>
+<p>在这个详细的RoboForex评论中，我们的在线交易平台研究团队已经涵盖了一些最重要的方面，当您选择最好的交易平台来满足您的在线交易需求时，您可以考虑。</p>
+<p>RoboForex没有被列入我们的最佳外汇交易平台，最佳股票交易平台，最佳cfd交易平台，最佳加密交易平台或最佳在线交易平台类别。您可以使用我们免费的交易平台比较工具来比较包括RoboForex在内的在线交易平台.</p>
+<h2>RoboForex的评测:总结</h2>
+<p>RoboForex成立于2009年, 是一个屡获殊荣的在线交易平台, 为全球的交易者提供超过9400种交易工具, 包括外汇, 商品, 加密货币, 股票, 股票, 指数, 金属, 能源, ETFs &amp; CFDs.</p>
+<p>RoboForex使用8个流动性供应商(LPs), 提供0点差起，良好的执行速度和高达1:1000的杠杆.他们声称在169个国家有超过800,000个客户, 开设了超过200万个交易账户.</p>
+<p>RoboForex提供流行的MetaTrader平台, 专业的cTrader平台和他们自己独有的R Trader平台, 提供舒适的交易体验和满足不同交易者的需求.平台可用于桌面，网络和手机。</p>
+<p>经验丰富的RoboForex团队专注于实施最新的创新技术，为所有客户提供最好的交易条件，无论他们的经验水平或投资规模如何。</p>
+<p>RoboForex的客户可以使用一系列的交易工具, 教育材料, 市场分析, 促销和交易信号.提供24/7的支持和有20种灵活的资金选择.</p>
+<p>RoboForex是一家快速扩张的在线交易平台，已经获得了金融行业的认可，获得了20多个奖项和称号，包括2018年最安全交易平台（伦敦投资者展），2018年最佳加密交易平台（曼彻斯特投资者展），2017年最佳投资产品（伦敦外汇展），2016年最佳ECN交易平台（IAFT奖）和2015年最佳零售外汇交易平台（梅纳第十五届外汇展）。</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/976013624f1f0f87e9d7becb33545c56.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/976013624f1f0f87e9d7becb33545c56.png" alt="" /></noscript></p>
+<p>RoboForex公司评测:屡获殊荣的交易平台</p>
+<h2>RoboForex评测:监管</h2>
+<p>RoboForex公司是一家国际交易平台, 是RoboMarkets/RoboForex集团的成员.RoboForex公司的总部设在伯利兹.</p>
+<p>RoboForex公司受国际金融服务委员会(IFSC)监管, 许可证IFSC/60/271/TS.IFSC是伯利兹政府机构, 监管金融市场服务和执行法规以保护投资者和确保公司以透明和负责任的方式运作.IFSC伯利兹遵循国际反洗钱（AML）政策。</p>
+<p>RoboForex公司是金融委员会的&quot;A&quot;类成员，金融委员会是一个国际组织，旨在通过替代性解决方案解决其成员和客户之间的争议。他们也是金融委员会赔偿基金的参与者，为符合条件的交易者提供高达20,000欧元的保险.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/f9e0f57a3cd6cc32c5d3c96f9992c4da.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/f9e0f57a3cd6cc32c5d3c96f9992c4da.png" alt="" /></noscript></p>
+<p>RoboForex评测:金融委员会</p>
+<p>自2018年以来，RoboForex有限公司定期使用验证我的交易（VMT）服务，该服务提供了订单执行的质量审计审查，以评估他们如何执行客户订单。RoboForex有限公司每月发送5000笔非个性化的客户交易给VMT进行分析，并与其他交易平台进行比较。为了获得质量证书,结果应该符合市场平均价值.RoboForex公司已经收到了执行质量证书,确认符合金融委员会对其会员交易平台的严格要求.</p>
+<p>RoboForex公司为客户提供负余额保护，可以防止账户在波动的市场条件下进入负余额。在这种情况下,他们会自动将账户余额归零,而客户不需要为这项服务支付任何费用.</p>
+<p>客户的资金将与公司的资金分开存放在独立的账户中，以确保他们的安全，不用于任何其他目的，如公司的运营成本。</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/0b96268da2d32f7c7ea9aae1b199f502.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/0b96268da2d32f7c7ea9aae1b199f502.png" alt="" /></noscript></p>
+<p>RoboForex评测:监管和安全</p>
+<h2>RoboForex的评测:国家</h2>
+<p>RoboForex公司不向美国, 加拿大, 日本和澳大利亚的居民提供服务.一些RoboForex交易平台的功能和产品在此RoboForex评论中提到，由于法律限制，可能不适用特定国家的交易者。</p>
+<p>如果您正在寻找一个特定国家的交易商, 请查看我们的最佳交易平台美国, 最佳交易平台英国, 最佳交易平台澳大利亚, 最佳交易平台南非, 最佳交易平台加拿大或我们所有其他国家的最佳交易平台.</p>
+<h2>RoboForex评测:交易平台</h2>
+<p>RoboForex已经考虑到不同交易者的需求并提供灵活的平台以满足个人需求.每个交易平台都提供了一个舒适和高效的交易环境.</p>
+<p>RoboForex提供流行和广泛使用的MetaTrader 4 (MT4)和MetaTrader 5 (MT5)交易平台，适用于桌面(Windows / Mac), 网络和移动(iPhone / iPad / Android / Tablet).</p>
+<p>还有cTrader平台，为需要直接STP进入市场的专业交易者提供服务。他们还提供自己的内部平台。R Trader桌面版, R WebTrader和R MobileTrader.</p>
+<p>除了提供的交易平台，还有2个提供和复制信号的平台。它们分别是CopyFX和RAMM平台。</p>
+<h3>MetaTrader 4 (MT4)</h3>
+<p>MT4是全球新老交易者最常用的平台之一。它有一个直观的界面和许多内置的功能和工具，方便交易。</p>
+<p>有3种订单执行类型，9个图表时间框架，50多个集成技术指标，图形对象，自动交易功能，策略测试器，一键交易，市场，新闻，警报等。</p>
+<p>有一个大型的在线MetaTrader社区，用户在这里分享想法，模板，指标和自动系统。MetaTrader市场有许多专家顾问（EA），指标和信号可供选择。有些是免费的，有些是可以购买的.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: MetaTrader 4 (MT4) Platform" title="RoboForex Review: MetaTrader 4 (MT4) Platform" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/23d5726bf104fe57ffca633b7b87fc19-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/23d5726bf104fe57ffca633b7b87fc19-3.png" alt="RoboForex Review: MetaTrader 4 (MT4) Platform" title="RoboForex Review: MetaTrader 4 (MT4) Platform" /></noscript></p>
+<p>RoboForex评测:MetaTrader 4 (MT4)平台</p>
+<h3>MetaTrader 4 (MT4) 移动应用程序</h3>
+<p>MT4可在安卓和iOS设备上下载，这样用户可以在世界任何地方进行交易。它拥有和桌面平台一样熟悉的界面，同样的嵌入式功能和工具，让您的交易灵活自如。</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: MetaTrader 4 (MT4) Mobile Platform" title="RoboForex Review: MetaTrader 4 (MT4) Mobile Platform" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/a4fee6c87995c5f6accd1fff264fb3d3-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/a4fee6c87995c5f6accd1fff264fb3d3-3.png" alt="RoboForex Review: MetaTrader 4 (MT4) Mobile Platform" title="RoboForex Review: MetaTrader 4 (MT4) Mobile Platform" /></noscript></p>
+<p>RoboForex评测:MetaTrader 4 (MT4) 移动平台</p>
+<h3>MetaTrader 4 (MT4) 网络平台</h3>
+<p>MT4网络平台可直接在大多数流行的网络浏览器中运行，无需下载或安装任何其他软件。它保持了与桌面平台相同的功能、工具和性能，并可在世界任何地方通过互联网连接自由使用。</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: MetaTrader 4 (MT4) Web Platform" title="RoboForex Review: MetaTrader 4 (MT4) Web Platform" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/c6139eb6927f8fc6d8ae65f08d50624c-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/c6139eb6927f8fc6d8ae65f08d50624c-3.png" alt="RoboForex Review: MetaTrader 4 (MT4) Web Platform" title="RoboForex Review: MetaTrader 4 (MT4) Web Platform" /></noscript></p>
+<p>RoboForex评测:MetaTrader 4 (MT4) 网络平台</p>
+<h3>MetaTrader 5 (MT5)</h3>
+<p>MT5是MetaTrader平台较新的高级版本，界面相似，一些额外的工具和功能，包括4种订单执行方式，6种挂单方式，更多的时间段，更多的技术指标，市场深度，多货币策略测试器等。</p>
+<p>用户可以进入MetaTrader市场，有超过1500个专家顾问（EA）和技术指标可供选择。MT5还具有灵活的净额结算和对冲功能。</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: MetaTrader 5 (MT5) Platform" title="RoboForex Review: MetaTrader 5 (MT5) Platform" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/522d9719720c559878ebf03e7486ad40-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/522d9719720c559878ebf03e7486ad40-3.png" alt="RoboForex Review: MetaTrader 5 (MT5) Platform" title="RoboForex Review: MetaTrader 5 (MT5) Platform" /></noscript></p>
+<p>RoboForex评测:MetaTrader 5 (MT5) 平台</p>
+<h3>MetaTrader 5 (MT5) 移动应用程序</h3>
+<p>MT5可在Android和iOS设备上下载，因此您可以在旅途中访问您的交易账户。移动应用程序包含与桌面平台相同的功能和特点.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: MetaTrader 5 (MT5) Mobile Platform" title="RoboForex Review: MetaTrader 5 (MT5) Mobile Platform" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/b89959ccbf62970dfd578051779f0037-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/b89959ccbf62970dfd578051779f0037-3.png" alt="RoboForex Review: MetaTrader 5 (MT5) Mobile Platform" title="RoboForex Review: MetaTrader 5 (MT5) Mobile Platform" /></noscript></p>
+<p>RoboForex评测:MetaTrader 5 (MT5) 移动平台</p>
+<h3>MetaTrader 5 (MT5) 网络平台</h3>
+<p>MT5网络平台让您可以在世界任何地方通过最流行的网络浏览器在平台上进行交易，只要有互联网连接。您不需要下载或安装任何额外的软件，它包含与其他MT5平台相同的功能.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: MetaTrader 5 (MT5) Web Platform" title="RoboForex Review: MetaTrader 5 (MT5) Web Platform" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/14e7e79181d455c5c21f9a1f33f5672e-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/14e7e79181d455c5c21f9a1f33f5672e-3.png" alt="RoboForex Review: MetaTrader 5 (MT5) Web Platform" title="RoboForex Review: MetaTrader 5 (MT5) Web Platform" /></noscript></p>
+<p>RoboForex评测:MetaTrader 5 (MT5) 网络平台</p>
+<h3>R交易员</h3>
+<p>RoboForex公司有他们自己独有的RoboForex平台，在金融图表上进行多资产交易，内置先进的技术分析交易工具。用户可以使用超过9400种交易工具和许多功能来满足不同交易者的需求和技术水平.该平台用户友好，易于浏览。</p>
+<p>R Trader的设计是为了方便交易，并且可以完全定制。它包括二级市场深度、独特的观察列表、多个窗口、多种图表布局、可定制的查看方式、从图表中交易、模板策略、技术指标、市场新闻和一键交易。有一个自动策略构建器，用于创建和测试交易策略，其历史数据可一直追溯到1970年。</p>
+<p>使用R Trader平台没有费用或最低交易量要求，在线24/7支持随时为您提供帮助。</p>
+<p>RoboForex评测:R Trader平台</p>
+<h3>R MobileTrader</h3>
+<p>R MobileTrader可在安卓和iOS系统上下载，对于那些希望在世界任何地方通过互联网连接的移动设备方便地进行交易的人来说非常有用。它保持了与桌面平台相同的功能，并可从相关应用商店免费下载。</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: R MobileTrader" title="RoboForex Review: R MobileTrader" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/21cade4a229405dd0153859b30377bac-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/21cade4a229405dd0153859b30377bac-3.png" alt="RoboForex Review: R MobileTrader" title="RoboForex Review: R MobileTrader" /></noscript></p>
+<p>RoboForex评测:R移动交易商</p>
+<h3>R WebTrader</h3>
+<p>R WebTrader具有与桌面版相同的功能和特点，但却可以直接在大多数现代桌面和移动网络浏览器中运行。这对于那些需要在世界任何地方进行交易的人来说非常有用。该网络终端不需要任何软件下载或更新。</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: R WebTrader" title="RoboForex Review: R WebTrader" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/54c6730e1f2ef827656ab4a61b091d63-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/54c6730e1f2ef827656ab4a61b091d63-3.png" alt="RoboForex Review: R WebTrader" title="RoboForex Review: R WebTrader" /></noscript></p>
+<p>RoboForex评测:R WebTrader</p>
+<h3>cTrader</h3>
+<p>RoboForex公司为专业交易者提供cTrader平台,为他们提供直接的STP进入全球市场的机会.cTrader通常是那些需要稀有类型的订单,二级价格和卓越的执行速度的经验丰富的交易者的选择.</p>
+<p>cTrader的功能包括50多个技术指标，9种高级互动图表，14种时间框架，警报等。您可以使用cTrader Automate用C#创建自己的交易机器人和指标。</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: cTrader Platform" title="RoboForex Review: cTrader Platform" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/6a40d75d63b5a3c97ae7d7678f8f4bd3-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/6a40d75d63b5a3c97ae7d7678f8f4bd3-3.png" alt="RoboForex Review: cTrader Platform" title="RoboForex Review: cTrader Platform" /></noscript></p>
+<p>RoboForex评测: cTrader平台</p>
+<h3>cTrader移动版</h3>
+<p>cTrader手机版与桌面版功能相同，可在Android和iOS设备上下载。您可以在移动应用程序中设置通知并在世界任何地方方便地管理您的账户.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: cTrader Mobile" title="RoboForex Review: cTrader Mobile" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/5b63aba72bd2826d2fb7015f9fc67831-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/5b63aba72bd2826d2fb7015f9fc67831-3.png" alt="RoboForex Review: cTrader Mobile" title="RoboForex Review: cTrader Mobile" /></noscript></p>
+<p>RoboForex评测: cTrader移动版</p>
+<h3>cTrader网站</h3>
+<p>cTrader网络平台可在大多数现代浏览器中运行，无需下载任何额外软件。它的功能与桌面平台运行的灵活性和独立的网络界面相同.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: cTrader Web" title="RoboForex Review: cTrader Web" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/eadeef34e42531c4fa5cb952870f3174-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/eadeef34e42531c4fa5cb952870f3174-3.png" alt="RoboForex Review: cTrader Web" title="RoboForex Review: cTrader Web" /></noscript></p>
+<p>RoboForex评测: cTrader网络平台</p>
+<h3>RAMM平台</h3>
+<p>RAMM平台可以让交易者投资其他交易策略，增加对风险的控制和按比例分配利润。它有一个直观的用户界面，您可以选择订阅或提供自己的策略。您可以选择您希望投资的金额，并随时删除或添加策略。重要的是要注意，以前的结果和性能绝不是未来性能的任何指示或保证。</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: RAMM Platform" title="RoboForex Review: RAMM Platform" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/e23dcef376cbe6487f66deef916c64f4-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/e23dcef376cbe6487f66deef916c64f4-3.png" alt="RoboForex Review: RAMM Platform" title="RoboForex Review: RAMM Platform" /></noscript></p>
+<p>RoboForex评论。RAMM平台</p>
+<h3>CopyFX平台</h3>
+<p>CopyFX平台允许交易者复制其他交易者的交易或提供策略供他人复制.用户可以在RoboForex会员区内指定条件并创建订阅。需要注意的是，之前的结果和表现绝不是未来表现的任何指示或保证。</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: CopyFX Platform" title="RoboForex Review: CopyFX Platform" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/30b73ddde92eab711a42a055af87747e-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/30b73ddde92eab711a42a055af87747e-3.png" alt="RoboForex Review: CopyFX Platform" title="RoboForex Review: CopyFX Platform" /></noscript></p>
+<p>RoboForex评测:复制外汇平台</p>
+<h2>RoboForex评测:交易工具</h2>
+<p>RoboForex有大量的独立交易工具提供给客户.这包括市场分析工具, 计算器, 日历和VPS服务.</p>
+<h3>RoboForex公司分析中心</h3>
+<p>RoboForex分析中心在一个地方提供所有的分析，并且对所有RoboForex客户是免费的.它可以从您的浏览器访问，或者您可以下载Android和iOS应用程序从您的移动设备进行分析.</p>
+<p>分析中心支持13种语言并提供大量最新的金融市场分析信息，包括市场情绪，技术和基本面分析.它是独立于交易终端访问的，具有用户友好的紧凑显示，交互式数据布局和完全可定制的过滤器。</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/3d01e7099ae645171cc9380781518452.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/3d01e7099ae645171cc9380781518452.png" alt="" /></noscript></p>
+<p>RoboForex评测:分析中心</p>
+<h4>FEED订阅</h4>
+<p>FEED订阅部分提供了一个整体的市场概况，显示了基本面、技术面和波浪分析、斐波那契回调、一目均衡云、一周预测和商业新闻。在这个部分您可以找到最新的经济数据和基于关键参数的交易建议.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/72243cec1ca62cb16f395d7fe9765bba-1.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/72243cec1ca62cb16f395d7fe9765bba-1.png" alt="" /></noscript></p>
+<p>RoboForex评测:分析中心饲料</p>
+<h4>日历</h4>
+<p>经济日历显示最新的基本面数据和指标，包括最新的市场新闻、公众假期日期、银行利率、全球经济指标、交易时段和全球主要公司注册地固定的日期。每个分项都可以根据用户的要求进行过滤和搜索。</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: Analytics Center Calendar" title="RoboForex Review: Analytics Center Calendar" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/18365bf3841f419196ca00451eb5a750-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/18365bf3841f419196ca00451eb5a750-3.png" alt="RoboForex Review: Analytics Center Calendar" title="RoboForex Review: Analytics Center Calendar" /></noscript></p>
+<p>RoboForex评测:分析中心日历</p>
+<h4>信号</h4>
+<p>信号部分以表格形式显示信号，以及从1分钟到每日7个时间段的数据。使用的技术指标包括多条移动平均线, 布林线, Ichimoku, Stochastics, William`s, ZigZag和市场情绪图.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/fa015d1a9f89910cee66497b8a826aed-1.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/fa015d1a9f89910cee66497b8a826aed-1.png" alt="" /></noscript></p>
+<p>RoboForex评测:分析中心信号</p>
+<h4>工具类</h4>
+<p>本节包含历史波动图、支点位计算、斐波那契回调等工具。数据显示方便，以协助进行市场分析，基于每个工具的计算。</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: Analytics Center Tools" title="RoboForex Review: Analytics Center Tools" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/0a53145323315490d301c75ea608286b-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/0a53145323315490d301c75ea608286b-3.png" alt="RoboForex Review: Analytics Center Tools" title="RoboForex Review: Analytics Center Tools" /></noscript></p>
+<p>RoboForex评测:分析中心工具</p>
+<h4>聊天</h4>
+<p>在聊天区，您可以阅读其他用户的问题和答案，也可以向经验丰富的分析师提出自己的问题。</p>
+<h4>教育方面</h4>
+<p>教育部分有针对不同交易风格的现成交易策略，以及来自MetaQuotes的视频教程，深入了解专家顾问、信号、托管等。</p>
+<h4>视频教程</h4>
+<p>视频部分包含一些最流行的交易工具的每周视频预测。</p>
+<h3>R交易者策略生成器</h3>
+<p>RoboForex公司有一个免费和易于使用的策略构建工具，在这里您可以创建您自己的自动交易系统，而不需要进行任何复杂的编码。策略生成器有一个简单的使用点和点击的界面，在这里您可以设计，回溯测试和部署基于您自己的策略的自动交易系统.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: R Trader Strategy Builder" title="RoboForex Review: R Trader Strategy Builder" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/999b379907bb104757351845cca2b9b9-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/999b379907bb104757351845cca2b9b9-3.png" alt="RoboForex Review: R Trader Strategy Builder" title="RoboForex Review: R Trader Strategy Builder" /></noscript></p>
+<p>RoboForex评测:R Trader策略生成器</p>
+<p>自动策略从服务器上保存和运行，因此执行延迟最小。由于策略生成器将策略托管在安全的云服务器上，不需要VPS，可以随时随地访问。您可以使用预先设计的模板来熟悉或扩展策略生成器。</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: R Trader Strategy Builder Design" title="RoboForex Review: R Trader Strategy Builder Design" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/71fa067f9bb86ce0a76fcc096294c410-3.jpg" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/71fa067f9bb86ce0a76fcc096294c410-3.jpg" alt="RoboForex Review: R Trader Strategy Builder Design" title="RoboForex Review: R Trader Strategy Builder Design" /></noscript></p>
+<p>RoboForex评测:R交易者策略生成器设计</p>
+<p>您可以在不同的市场和时间段对您的策略进行回溯测试。从1970年开始的回溯测试数据可用于长期测试，但值得注意的是，历史结果并不能保证未来的表现。支持是在手，以协助您与策略构建器相关的问题.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: R Trader Strategy Builder Back Test" title="RoboForex Review: R Trader Strategy Builder Back Test" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/0227f6d76974f61e9539a34ba9824727-3.jpg" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/0227f6d76974f61e9539a34ba9824727-3.jpg" alt="RoboForex Review: R Trader Strategy Builder Back Test" title="RoboForex Review: R Trader Strategy Builder Back Test" /></noscript></p>
+<p>RoboForex评测:R交易者策略生成器回溯测试</p>
+<h3>交易计算器</h3>
+<p>交易计算器允许您根据工具、杠杆、手数和账户货币计算您的仓位参数。这可以帮助规划和交易决策.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: Trading Calculator" title="RoboForex Review: Trading Calculator" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/f45f5de3897300ba5762a363c32a3163-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/f45f5de3897300ba5762a363c32a3163-3.png" alt="RoboForex Review: Trading Calculator" title="RoboForex Review: Trading Calculator" /></noscript></p>
+<p>RoboForex评测:交易计算器</p>
+<h3>经济日历</h3>
+<p>RoboForex有一个经济日历,显示最新的金融新闻事件.这经常被用作基本面分析的一部分.关键事件和亮点被显示，如新闻报道，价格指数和金融指标，最新的通货膨胀和失业率读数。您可以查看全球金融监管机构负责人的演讲和报告的日期和时间。新闻可以按影响（低，中，高），日期和国家过滤.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: Economic Calendar" title="RoboForex Review: Economic Calendar" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/b1860a4ffb1dacad04a507897ef9b0f3-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/b1860a4ffb1dacad04a507897ef9b0f3-3.png" alt="RoboForex Review: Economic Calendar" title="RoboForex Review: Economic Calendar" /></noscript></p>
+<p>RoboForex评测:经济日历</p>
+<h3>虚拟专用服务器(VPS)</h3>
+<p>VPS可以让您24/7远程运行您的交易平台，这样您就不需要总是开着电脑。它们通常用于需要全天候运行自动交易系统的地方，或者如果本地互联网连接不可靠，而您需要最少的停机时间。</p>
+<p>VPS的可以通过台式机，笔记本电脑或移动设备同时访问.RoboForex公司为符合条件的客户提供免费的VPS.要想获得免费的VPS, 客户需要保持至少300美元的账户余额和每月至少3标准手的交易量.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: VPS" title="RoboForex Review: VPS" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/b4c50bd73904b8b3e5376addd96ed1b4-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/b4c50bd73904b8b3e5376addd96ed1b4-3.png" alt="RoboForex Review: VPS" title="RoboForex Review: VPS" /></noscript></p>
+<p>RoboForex公司评测:VPS</p>
+<h2>RoboForex评测:教育</h2>
+<p>RoboForex有一些适合不同技术水平的交易者的教育材料.有市场分析, 视频教程, 常见问题和交易技巧.</p>
+<h3>分析和预测</h3>
+<p>分析和预测部分包含经常更新和详细的不同市场的技术和基本面分析。</p>
+<h3>教育视频</h3>
+<p>RoboForex的客户可以从分析中心免费获得一些视频教程.这些视频对初学者特别有用，因为涵盖的主题包括市场基础知识，技术和基本面分析，交易心理学和风险管理.</p>
+<h3>常见问题</h3>
+<p>在RoboForex网站上有一个巨大的常见问题区域，涵盖了从他们提供的服务和产品到一般交易问题的一系列主题.</p>
+<h3>交易技巧</h3>
+<p>在RoboForex网站上有一个交易提示的部分，有一些安全交易的有用提示，最大限度地降低风险和为自己做准备.</p>
+<h3>RoboForex博客</h3>
+<p>经常更新的RoboForex博客有丰富的文章，涵盖不同的主题，如分析，教育，市场和更多。</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: Blog" title="RoboForex Review: Blog" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/5efd07df90ffcd9b9ee5e2cc6d3dc574-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/5efd07df90ffcd9b9ee5e2cc6d3dc574-3.png" alt="RoboForex Review: Blog" title="RoboForex Review: Blog" /></noscript></p>
+<p>RoboForex的评测:博客</p>
+<h2>RoboForex评测:交易工具</h2>
+<p>RoboForex公司有一个非常大的选择，超过9,400+交易工具，来自多个市场，包括外汇，商品，货币，股票，股票，指数，金属，能源，ETF和差价合约。</p>
+<h3>外汇交易</h3>
+<p>RoboForex提供40多种主要，次要和外来货币对的外汇交易，包括欧元兑美元，英镑兑美元，美元兑日元，欧元兑英镑和美元兑瑞士法郎。杠杆率高达1:1000，点差0点起，执行速度0.1秒起.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/4adcfc93350f81ee6a0107488458415b-3.jpg" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/4adcfc93350f81ee6a0107488458415b-3.jpg" alt="" /></noscript></p>
+<p>RoboForex评测:外汇交易工具</p>
+<h3>股票</h3>
+<p>RoboForex公司提供差价合约(CFD)交易美国,德国和瑞士的股票.客户可以接触到超过9,400多只股票，如苹果，亚马逊，Facebook，谷歌，特斯拉和更多。有实时在线报价，证券交易所图表和杠杆高达1:20。</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/7d4d348dc01528c5e8d9ccea997614ca-2.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/7d4d348dc01528c5e8d9ccea997614ca-2.png" alt="" /></noscript></p>
+<p>RoboForex评测:股票</p>
+<h3>指数</h3>
+<p>RoboForex的客户可以使用流行的指数,点差从0点开始,执行速度从0.1秒开始.提供的工具包括道琼斯, 纳斯达克, TSX和SPX.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: Indices" title="RoboForex Review: Indices" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/76862aae3608079b50ea3d1469478b7f-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/76862aae3608079b50ea3d1469478b7f-3.png" alt="RoboForex Review: Indices" title="RoboForex Review: Indices" /></noscript></p>
+<p>RoboForex评测:指数</p>
+<h3>ETF</h3>
+<p>RoboForex提供超过1,000+交易所交易基金(ETFs)的交易，杠杆高达1:20，点差0点起.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/39992a2be956d0219737dcd342d188fc-2.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/39992a2be956d0219737dcd342d188fc-2.png" alt="" /></noscript></p>
+<p>RoboForex公司评测:交易所交易基金(ETFs)</p>
+<h3>软商品</h3>
+<p>RoboForex客户可以以1:20的杠杆投资于100多种软商品的ETF，如可可，咖啡，玉米，小麦，糖，大豆和水果。</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: Soft Commodities" title="RoboForex Review: Soft Commodities" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/6c15f1c281412fc90dc5f63882e5ae8b-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/6c15f1c281412fc90dc5f63882e5ae8b-3.png" alt="RoboForex Review: Soft Commodities" title="RoboForex Review: Soft Commodities" /></noscript></p>
+<p>RoboForex评测:软商品</p>
+<h3>金属</h3>
+<p>RoboForex为交易者提供黄金(XAU/美元), 白银(XAG/美元), 以及黄金, 钯金, 铂金和白银的ETFs.点差低至0点，订单执行速度0.1秒起.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: Metals" title="RoboForex Review: Metals" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/9566b1b8792f7dec8b7053ca40adf842-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/9566b1b8792f7dec8b7053ca40adf842-3.png" alt="RoboForex Review: Metals" title="RoboForex Review: Metals" /></noscript></p>
+<p>RoboForex评测:金属</p>
+<h3>能源</h3>
+<p>客户可以交易能源商品的ETF和差价合约，包括石油（WTI、布伦特）、天然气和乙醇。点差从0点开始，杠杆率高达1:100.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/61e5cde41ea3fe1fd264fe82b1f5d44e-2.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/61e5cde41ea3fe1fd264fe82b1f5d44e-2.png" alt="" /></noscript></p>
+<p>RoboForex评测:能源</p>
+<h3>加密货币</h3>
+<p>RoboForex客户可以交易26种以上加密货币的CFD，包括比特币，比特币现金，Dash，EOS，Ethereum，Litecoin和Ripple。加密货币可以24/7交易，杠杆率高达1:50。</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: Cryptocurrencies" title="RoboForex Review: Cryptocurrencies" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/c69aa2e07aa0da3c7a92c4399824cdd1-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/c69aa2e07aa0da3c7a92c4399824cdd1-3.png" alt="RoboForex Review: Cryptocurrencies" title="RoboForex Review: Cryptocurrencies" /></noscript></p>
+<p>RoboForex评测:加密货币</p>
+<h3>加密指数</h3>
+<p>RoboForex客户可以通过Cryptoindexes, Crypto.TOP和Crypto.ALT进入全球加密市场.当购买Cryptoindexes时,您投资的是整个加密货币市场的增长,而不仅仅是单个工具.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: Cryptoindexes" title="RoboForex Review: Cryptoindexes" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/214412ecf424e3d03dc1fa6487521720-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/214412ecf424e3d03dc1fa6487521720-3.png" alt="RoboForex Review: Cryptoindexes" title="RoboForex Review: Cryptoindexes" /></noscript></p>
+<p>RoboForex评测:Cryptoindexes</p>
+<h2>RoboForex评测:交易账户和费用</h2>
+<p>RoboForex公司有几种灵活的账户类型来满足不同交易者的要求.账户之间的主要区别是，一些账户提供较低的可变点差，并收取佣金，而另一些账户则提供标明的可变点差，但不收取佣金.模拟账户可以在开立真实账户之前测试不同的交易平台和条件.在开立真实账户之前，可以使用模拟账户来测试不同的交易平台和条件。符合伊斯兰教法的免费掉期伊斯兰账户可以根据要求提供。</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/566b65acdd4c2cf5f1ccc67bf7fe07e9-2.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/566b65acdd4c2cf5f1ccc67bf7fe07e9-2.png" alt="" /></noscript></p>
+<p>RoboForex评测:账户类型</p>
+<h3>专业标准账户</h3>
+<p>该账户要求最低入金10美元，点差1.3点起，不收取佣金。最大杠杆为1:1000，最小订单规模为0.01手，最大订单规模为100手。</p>
+<h3>ECN-Pro账户</h3>
+<p>该账户要求最低入金10美元，点差0点起，每100万交易量收取20美元的佣金。最大杠杆为1:300，最小订单规模为0.01手，最大订单规模为50手。</p>
+<h3>主要账户</h3>
+<p>该账户要求最低入金5000美元，点差从0点开始浮动，每100万交易量收取15美元佣金。最大杠杆为1:100，最小订单规模为0.01手，最大订单规模为50手。</p>
+<h3>专业美分账户</h3>
+<p>该账户与专业账户类似，但使用美分而非美元。它要求最低存款10美元，有1.3点起的可变点差，不收取佣金。最大杠杆为1:1000，最小订单规模为0.1手，最大订单规模为500手。</p>
+<h3>联盟账户</h3>
+<p>有专业标准和ECN-专业账户的联盟版本，为接受RoboForex合作伙伴额外服务的客户增加了点差和佣金.</p>
+<h3>R交易者账户</h3>
+<p>该账户提供超过9400种工具，要求最低存款100美元。它有0.01点起的可变点差和最低1.5美元的佣金。最大的杠杆率可以达到1:200，最小订单量为1只股票，最大订单量为2000只股票。</p>
+<p>由于交易平台的费用可能会有变化，可能会有额外的费用，这些费用没有在RoboForex的评论中列出。当务之急是确保在您开RoboForex交易平台账户进行在线交易之前，检查并了解所有最新信息.</p>
+<h2>RoboForex公司的评测:客戶服務</h2>
+<p>RoboForex公司提供11种语言的24/7专业支持.支持通过在线聊天,电话和电子邮件回答您的问题.还有电话回访服务,您可以留下您的号码让他们直接联系您.也有一个电话回访服务，您可以留下您的号码让他们直接与您联系.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/84bd45d8f78ee1c256c515c54f167156-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/84bd45d8f78ee1c256c515c54f167156-3.png" alt="" /></noscript></p>
+<p>RoboForex公司的评测:客户支持</p>
+<h2>RoboForex评测:存款和取款</h2>
+<p>RoboForex公司有超过20种支付系统,您可以使用这些系统从您的交易账户中存入和提取资金.您可以选择对您最方便的方法.存款和取款是0%的佣金，因为所有的费用都由RoboForex公司承担.他们也会补偿客户每月两次的取款佣金.</p>
+<p>资金选择包括银行电汇，信用卡和在线支付系统，如Neteller和Skrill.请注意，一些方法可能只适用于特定国家.</p>
+<p>提款请求会在当天内处理，如果在工作时间以外，则在下一天处理。提款时间可能会因支付机构和方法的不同而有所不同。银行转账可能需要几个工作日才能到账，而有些方法可以即时到账。</p>
+<p>一些支付系统可能会有交易限额、限制和要求，这些都在其各自的网站上注明。在某些国家，您可能需要验证您的账户，以消除对特定方法的限制。</p>
+<p>账户可以用欧元，美元，人民币，卢布，BTC，ETH，黄金开户。不同的货币选择是有益的，因为当使用您自己的货币账户时，不适用货币转换费用。</p>
+<p>账户有两步验证，以提高安全性。这有助于保护您的个人信息和资金，通过使用短信验证和备份代码.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/858f36340b4d7c8c9bb926355aaa2c5d-2.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/858f36340b4d7c8c9bb926355aaa2c5d-2.png" alt="" /></noscript></p>
+<p>RoboForex评测:存款和取款方法</p>
+<h2>RoboForex评测:开户</h2>
+<p>在RoboForex开立交易账户是一个快速和简单的过程.您只需完成简短的在线注册表格就可以进入会员区.完成后您可以申请一个交易账户，这将需要您上传一些文件用于KYC目的.这些文件可以是身份证明，如护照或驾驶执照和地址证明，如水电费单。一旦您的文件被验证, 您将能够为您的交易账户充值并开始交易.</p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="RoboForex Review: Account Opening" title="RoboForex Review: Account Opening" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/007088d9e638526cae1087356e10a231-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/007088d9e638526cae1087356e10a231-3.png" alt="RoboForex Review: Account Opening" title="RoboForex Review: Account Opening" /></noscript></p>
+<p>RoboForex评测:开设账户</p>
+<h2>RoboForex评测:结论</h2>
+<p>RoboForex是一个屡获殊荣的在线交易平台，提供多种资产类别的大量交易工具.他们提供了一个灵活的交易平台和账户类型以及资金选项的良好选择.有一系列的交易工具来协助交易和大量的经常更新的详细市场分析。</p>
+<p><em>在交易杠杆产品（如外汇/CFDs）时，涉及的风险水平很高。您不应该冒超过您能承受的损失的风险，您有可能会损失您账户的全部余额。除非您完全了解您所面临的损失风险的真实程度，否则您不应该进行交易或投资。在交易或投资时，您必须始终考虑到您的经验水平。由于此类产品的性质，复制交易服务意味着您的投资将面临额外的风险。如果您对所涉及的风险不清楚，请向外部专家申请独立建议。</em></p>
+<p><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="" data-lazy-src="https://we.laowei8.com/wp-content/uploads/2020/09/f66bd533541bb7dace57a951afb880b5-3.png" /><noscript><img src="https://we.laowei8.com/wp-content/uploads/2020/09/f66bd533541bb7dace57a951afb880b5-3.png" alt="" /></noscript></p>
+<h4>最低<strong>10元</strong>存款</h4>
+<p>RoboForex公司是一个屡获殊荣的在线交易平台，提供9,400多种交易工具，涵盖多种资产类别.他们提供一系列灵活的交易平台&amp; 账户以及交易工具&amp; 市场分析.他们提供一系列灵活的交易平台和账户以及交易工具和市场分析.</p>
+<hr />
+<p><a href="https://we.laowei8.com/best-auusd-broker.html" target="_blank" rel="noopener">2020最佳贵金属交易平台推荐</a></p>
+<p><a href="https://we.laowei8.com/does-forex-rich.html" target="_blank" rel="noopener">做外汇交易的到底赚不赚钱？</a></p>
+<p><a href="https://we.laowei8.com/thinkmarkets-reviews.html" target="_blank" rel="noopener">ThinkMarkets智汇交易平台开户测评</a></p>
+<p>大陆居民如何开香港银行账户「2020版」</p>
+<p><a href="https://we.laowei8.com/novox-review.html" target="_blank" rel="noopener">Novox诺亚国际外汇交易平台</a></p>
+<p><a href="https://we.laowei8.com/novox-review.html" target="_blank" rel="noopener">Novox诺亚国际外汇交易平台</a></p>
+<p><a href="https://we.laowei8.com/how-to-learn-forex.html" target="_blank" rel="noopener">外汇新手如何系统的学习外汇交易?「2020版」</a></p>
+<p><a href="https://we.laowei8.com/fxtm-review.html" target="_blank" rel="noopener">FXTM外汇开户指南-FXTM富拓外汇开户前必读「2020版」</a></p>
+<p><a href="https://we.laowei8.com/ausforex-review.html" target="_blank" rel="noopener">AUSFOREX外汇开户指南-澳汇开户前必读「2020版」</a></p>
+<p><a href="https://we.laowei8.com/top-10-brokers.html" target="_blank" rel="noopener">全球外汇十大平台排名是什么？</a></p>
+                        <div class="clearfix"></div>
+                        
+
+
+                 
+
+
+               
+
+    		<div class="related_articles pt25 border-top mb0 clearfix">
+		<div class="related_title rehub-main-font font120 fontbold mb35">
+							你可能喜欢的文章 					</div>
+		<div class="columned_grid_module rh-flex-eq-height col_wrap_fourth mb0" >
+																	  
+<article class="col_item column_grid rh-heading-hover-color rh-bg-hover-color no-padding two_column_mobile"> 
+    <div class="button_action abdposright pr5 pt5">
+        <div class="floatleft mr5">
+                                    <div class="heart_thumb_wrap text-center"><span class="flowhidden cell_wishlist"><span class="heartplus" data-post_id="14174" data-informer="-1"><span class="ml5 rtlmr5 wishaddedwrap" id="wishadded14174">已赞</span><span class="ml5 rtlmr5 wishremovedwrap" id="wishremoved14174">取赞</span> </span></span><span id="wishcount14174" class="thumbscount">-1</span> </div>  
+        </div>                                                           
+    </div> 
+        
+    <figure class="mb20 position-relative text-center">             
+        <a href="https://m.ssgg.net/windsor-review.html" class="">
+                                                                                    </a>
+    </figure>
+        <div class="content_constructor">
+        <h3 class="mb15 mt0 font110 mobfont100 fontnormal lineheight20"><a href="https://m.ssgg.net/windsor-review.html">Windsor温莎外汇交易平台</a></h3>
+                                 
+         
+                            <div class="rh-flex-center-align mb15 mobileblockdisplay">
+                                                <div >
+                    						
+		 
+				    			
+	            
+                </div>
+                               
+            </div>
+         
+            </div>                                   
+</article>																	  
+<article class="col_item column_grid rh-heading-hover-color rh-bg-hover-color no-padding two_column_mobile"> 
+    <div class="button_action abdposright pr5 pt5">
+        <div class="floatleft mr5">
+                                    <div class="heart_thumb_wrap text-center"><span class="flowhidden cell_wishlist"><span class="heartplus" data-post_id="14185" data-informer="0"><span class="ml5 rtlmr5 wishaddedwrap" id="wishadded14185">已赞</span><span class="ml5 rtlmr5 wishremovedwrap" id="wishremoved14185">取赞</span> </span></span><span id="wishcount14185" class="thumbscount">0</span> </div>  
+        </div>                                                           
+    </div> 
+        
+    <figure class="mb20 position-relative text-center">             
+        <a href="https://m.ssgg.net/rockfort-review.html" class="">
+                                                <img width="336" height="220" src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20336%20220'%3E%3C/svg%3E" class="" alt="" emptyimage="https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/themes/rehub-theme/images/default/noimage_336_220.png" no_thumb="https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/themes/rehub-theme/images/default/noimage_336_220.png" data-lazy-src="https://cdn.fendou.la/bluehost/mt4-336x220.png" /><noscript><img width="336" height="220" src="https://cdn.fendou.la/bluehost/mt4-336x220.png" class="" alt="" emptyimage="https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/themes/rehub-theme/images/default/noimage_336_220.png" no_thumb="https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/themes/rehub-theme/images/default/noimage_336_220.png" /></noscript>                                    </a>
+    </figure>
+        <div class="content_constructor">
+        <h3 class="mb15 mt0 font110 mobfont100 fontnormal lineheight20"><a href="https://m.ssgg.net/rockfort-review.html">RockFort石头证券外汇交易平台</a></h3>
+                                 
+         
+                            <div class="rh-flex-center-align mb15 mobileblockdisplay">
+                                                <div >
+                    						
+		 
+				    			
+	            
+                </div>
+                               
+            </div>
+         
+            </div>                                   
+</article>																	  
+<article class="col_item column_grid rh-heading-hover-color rh-bg-hover-color no-padding two_column_mobile"> 
+    <div class="button_action abdposright pr5 pt5">
+        <div class="floatleft mr5">
+                                    <div class="heart_thumb_wrap text-center"><span class="flowhidden cell_wishlist"><span class="heartplus" data-post_id="25594" data-informer="0"><span class="ml5 rtlmr5 wishaddedwrap" id="wishadded25594">已赞</span><span class="ml5 rtlmr5 wishremovedwrap" id="wishremoved25594">取赞</span> </span></span><span id="wishcount25594" class="thumbscount">0</span> </div>  
+        </div>                                                           
+    </div> 
+        
+    <figure class="mb20 position-relative text-center">             
+        <a href="https://m.ssgg.net/plus500-reviews.html" class="">
+                                                                                    </a>
+    </figure>
+        <div class="content_constructor">
+        <h3 class="mb15 mt0 font110 mobfont100 fontnormal lineheight20"><a href="https://m.ssgg.net/plus500-reviews.html">Plus500是黑平台吗?资金安全评测</a></h3>
+                                 
+         
+                            <div class="rh-flex-center-align mb15 mobileblockdisplay">
+                                                <div >
+                    						
+		 
+				    			
+	            
+                </div>
+                               
+            </div>
+         
+            </div>                                   
+</article>																	  
+<article class="col_item column_grid rh-heading-hover-color rh-bg-hover-color no-padding two_column_mobile"> 
+    <div class="button_action abdposright pr5 pt5">
+        <div class="floatleft mr5">
+                                    <div class="heart_thumb_wrap text-center"><span class="flowhidden cell_wishlist"><span class="heartplus" data-post_id="14304" data-informer="0"><span class="ml5 rtlmr5 wishaddedwrap" id="wishadded14304">已赞</span><span class="ml5 rtlmr5 wishremovedwrap" id="wishremoved14304">取赞</span> </span></span><span id="wishcount14304" class="thumbscount">0</span> </div>  
+        </div>                                                           
+    </div> 
+        
+    <figure class="mb20 position-relative text-center">             
+        <a href="https://m.ssgg.net/ofm-reviews.html" class="">
+                                                                                    </a>
+    </figure>
+        <div class="content_constructor">
+        <h3 class="mb15 mt0 font110 mobfont100 fontnormal lineheight20"><a href="https://m.ssgg.net/ofm-reviews.html">OFM欧福市场外汇交易平台</a></h3>
+                                 
+         
+                            <div class="rh-flex-center-align mb15 mobileblockdisplay">
+                                                <div >
+                    						
+		 
+				    			
+	            
+                </div>
+                               
+            </div>
+         
+            </div>                                   
+</article>		</div></div>   
+                    </article>                   
+                                <div id="comments" class="clearfix">
+</div>            </div>
+		</div>	
+        <!-- /Main Side -->  
+        <!-- Sidebar -->
+                <!-- /Sidebar -->
+    </div>
+</div>
+<!-- /CONTENT -->      
+
+<!-- FOOTER -->
+			
+		
+	 				<div class="footer-bottom white_style">
+							<style scoped>
+              .footer-bottom.white_style{border-top: 1px solid #eee;}
+              .footer-bottom.white_style .footer_widget {color: #111;}
+              .footer-bottom.white_style .footer_widget .title, .footer-bottom.white_style .footer_widget h2, .footer-bottom.white_style .footer_widget a, .footer-bottom .footer_widget.white_style ul li a{color: #000;}
+
+            </style>						<div class="rh-container clearfix">
+									
+			</div>	
+		</div>
+				<footer id='theme_footer' class="pt20 pb20 white_style">
+							<style scoped>
+              footer#theme_footer.white_style { background: none #fff; border-top: 1px solid #eee;}
+              footer#theme_footer.white_style div.f_text, footer#theme_footer.white_style div.f_text a:not(.rehub-main-color) {color: #000;}
+            </style>						<div class="rh-container clearfix">
+				<div class="footer_most_bottom mobilecenterdisplay mobilepadding">
+					<div class="f_text font80">
+						<span class="f_text_span"><p style="text-align:center;font-size: 14px;"> © 2012-2022   <a href="https://we.laowei8.com/question" target="_blank"> 问答FAQ</a>     <a href="https://we.laowei8.com/category/compare-forex-brokers" target="_blank">外汇平台对比</a>  <a href="https://we.laowei8.com/category/best-broker" target="_blank">最佳平台推荐</a>    <a href="https://we.laowei8.com/category/forex-college" target="_blank">交易学院</a>    <a href="https://we.laowei8.com/category/how-to" target="_blank">如何选交易平台</a></p></span>
+							
+					</div>		
+				</div>
+			</div>
+		</footer>
+					<!-- FOOTER -->
+</div><!-- Outer End -->
+<span class="rehub_scroll" id="topcontrol" data-scrollto="#top_ankor"><i class="rhicon rhi-chevron-up"></i></span>
+    <div id="logo_mobile_wrapper"><a href="https://m.ssgg.net" class="logo_image_mobile"><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20160%2050'%3E%3C/svg%3E" alt="开户通" width="160" height="50" data-lazy-src="https://cdn.fendou.la/bluehost/fxlogan.svg" /><noscript><img src="https://cdn.fendou.la/bluehost/fxlogan.svg" alt="开户通" width="160" height="50" /></noscript></a></div>   
+
+                 
+
+    <div id="rhmobpnlcustom" class="rhhidden"><div id="rhmobtoppnl" style="background-color: #ffffff;" class="pr15 pl15 pb15 pt15"><div class="text-center"><a href="https://m.ssgg.net"><img id="mobpanelimg" src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20150%2045'%3E%3C/svg%3E" alt="Logo" width="150" height="45" data-lazy-src="https://cdn.fendou.la/bluehost/fxlogan.svg" /><noscript><img id="mobpanelimg" src="https://cdn.fendou.la/bluehost/fxlogan.svg" alt="Logo" width="150" height="45" /></noscript></a></div></div></div>    
+     
+	<div id="rhslidingMenu">
+		<div id="slide-menu-mobile"></div>
+	</div>
+	<div id="rhSplashSearch">
+		<div class="search-header-contents">
+			<div id="close-src-splash" class="rh-close-btn rh-hovered-scale position-relative text-center cursorpointer rh-circular-hover abdposright rtlposleft mt15 mr20 ml30" style="z-index:999"><span><i class="rhicon rhi-times whitebg roundborder50p rh-shadow4" aria-hidden="true"></i></span></div>
+			<form  role="search" method="get" class="search-form" action="https://m.ssgg.net/">
+  	<input type="text" name="s" placeholder="搜索......" class="re-ajax-search" autocomplete="off" data-posttype="post,page,product">
+  	<input type="hidden" name="post_type" value="post,page,product" />  	<button type="submit" class="btnsearch hideonmobile" aria-label="搜索......"><i class="rhicon rhi-search"></i></button>
+</form>
+<div class="re-aj-search-wrap rhscrollthin"></div>  
+		</div>
+	</div>
+
+							
+					<div id="rehub-login-popup-block" class="rhhidden">
+									<!-- Register form -->
+					<div id="rehub-register-popup">
+					<div class="rehub-register-popup">	 
+						<div class="re_title_inmodal">注册新帐户</div>
+												<form id="rehub_registration_form_modal" action="https://m.ssgg.net/" method="POST">
+														<div class="re-form-group mb20">
+								<label>用户名</label>
+								<input class="re-form-input required" name="rehub_user_login" type="text"/>
+							</div>
+							<div class="re-form-group mb20">
+								<label for="rehub_user_email">邮箱</label>
+								<input class="re-form-input required" name="rehub_user_email" id="rehub_user_email" type="email"/>
+							</div>
+							<div class="re-form-group mb20">
+								<label for="rehub_user_signonpassword">密码<span class="alignright font90">最少6个符号</span></label>
+								<input class="re-form-input required" name="rehub_user_signonpassword" id="rehub_user_signonpassword" type="password"/>
+							</div>
+							<div class="re-form-group mb20">
+								<label for="rehub_user_confirmpassword">确认密码</label>
+								<input class="re-form-input required" name="rehub_user_confirmpassword" id="rehub_user_confirmpassword" type="password"/>
+							</div>										
+							
+							<div class="re-form-group mb20">
+								<input type="hidden" name="action" value="rehub_register_member_popup_function"/>
+								<button class="wpsm-button rehub_main_btn" type="submit">注册</button>
+							</div>
+							<input type="hidden" id="register-security" name="register-security" value="caedbbf5b2" /><input type="hidden" name="_wp_http_referer" value="/roboforex-reviews.html" />						</form>
+						<div class="rehub-errors"></div>
+						<div class="rehub-login-popup-footer">已经有账号？ <span class="act-rehub-login-popup color_link" data-type="login">登录</span></div>
+					</div>
+					</div>
+				
+				<!-- Login form -->
+				<div id="rehub-login-popup">
+			 	<div class="rehub-login-popup">
+					<div class="re_title_inmodal">登录</div>
+															
+					<form id="rehub_login_form_modal" action="https://m.ssgg.net/" method="post">
+												<div class="re-form-group mb20">
+							<label>用户名</label>
+							<input class="re-form-input required" name="rehub_user_login" type="text"/>
+						</div>
+						<div class="re-form-group mb20">
+							<label for="rehub_user_pass">密码</label>
+							<input class="re-form-input required" name="rehub_user_pass" id="rehub_user_pass" type="password"/>
+															<a href="https://m.ssgg.net/my-account/lost-password" class="alignright">忘记密码？</a>
+														
+						</div>
+						<div class="re-form-group mb20">
+							<label for="rehub_remember"><input name="rehub_remember" id="rehub_remember" type="checkbox" value="forever" />
+							记住我</label>
+						</div>						
+						<div class="re-form-group mb20">
+							<input type="hidden" name="action" value="rehub_login_member_popup_function"/>
+							<button class="wpsm-button rehub_main_btn" type="submit">登录</button>
+						</div>
+						<input type="hidden" id="loginsecurity" name="loginsecurity" value="caedbbf5b2" /><input type="hidden" name="_wp_http_referer" value="/roboforex-reviews.html" />					</form>
+					<div class="rehub-errors"></div>
+					<div class="rehub-login-popup-footer">没有账号？ 
+											<span class="act-rehub-login-popup color_link" data-type="register">注册</span>
+										</div>
+				</div>
+				</div>
+
+				<!-- Lost Password form -->
+				<div id="rehub-reset-popup">
+			 	<div class="rehub-reset-popup">
+					<div class="re_title_inmodal">重设密码</div>
+					<form id="rehub_reset_password_form_modal" action="https://m.ssgg.net/" method="post">
+						<div class="re-form-group mb20">
+							<label for="rehub_user_or_email">用户名或邮箱</label>
+							<input class="re-form-input required" name="rehub_user_or_email" id="rehub_user_or_email" type="text"/>
+						</div>
+						<div class="re-form-group mb20">
+							<input type="hidden" name="action" value="rehub_reset_password_popup_function"/>
+							<button class="wpsm-button rehub_main_btn" type="submit">获取新密码</button>
+						</div>
+						<input type="hidden" id="password-security" name="password-security" value="caedbbf5b2" /><input type="hidden" name="_wp_http_referer" value="/roboforex-reviews.html" />					</form>
+					<div class="rehub-errors"></div>
+					<div class="rehub-login-popup-footer">已经有账号？ <span class="act-rehub-login-popup color_link" data-type="login">登录</span></div>
+				</div>
+				</div>
+			</div>
+			
+				<div id="re-compare-bar" class="from-right rh-sslide-panel">
+			<div id="re-compare-bar-wrap" class="rh-sslide-panel-wrap">
+				<div id="re-compare-bar-heading" class="rh-sslide-panel-heading">
+					<h5 class="rehub-main-color pt15 pb15 pr15 pl20 mt0 mb0 font120">预比较の外汇平台<i class="blackcolor closecomparepanel rh-sslide-close-btn cursorpointer floatright font130 rhi-times-circle rhicon" aria-hidden="true"></i></h5>
+				</div>
+				<div id="re-compare-bar-tabs" class="rh-sslide-panel-tabs abdfullwidth mt30 pb30 pt30 width-100p">
+											<ul class="rhhidden"><li class="re-compare-tab-326 no-multicats" data-page="326" data-url="https://m.ssgg.net/compare">总计 (<span>0</span>)</li></ul>
+						<div><div class="rh-sslide-panel-inner mt10 re-compare-wrap pr20 pl20 re-compare-wrap-326"></div></div>
+										<span class="re-compare-destin wpsm-button rehub_main_btn" data-compareurl="">对比<i class="rhi-arrow-circle-right rhicon" aria-hidden="true"></i></span>
+				</div>
+			</div>
+		</div>
+					<div id="re-compare-icon-fixed" class="rhhidden">
+				<span class="re-compare-icon-toggle position-relative"><i class="rhicon rhi-shuffle"></i><span class="re-compare-notice rehub-main-color-bg">4</span></span>			</div>
+						
+		<script type="rocketlazyloadscript" data-rocket-type="text/javascript">
+		(function () {
+			var c = document.body.className;
+			c = c.replace(/woocommerce-no-js/, 'woocommerce-js');
+			document.body.className = c;
+		})();
+	</script>
+	<link data-minify="1" rel='stylesheet' id='rhcomments-css'  href='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/css/comments.css?ver=1659240542' type='text/css' media='all' />
+<script data-minify="1" type='text/javascript' src='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/js/tablechart.js?ver=1659240536' id='rehubtablechart-js' defer></script>
+<script type='text/javascript' id='rehubcompare-js-extra'>
+/* <![CDATA[ */
+var comparechart = {"item_error_add":"\u8bf7\u5c06\u9879\u76ee\u6dfb\u52a0\u5230\u6b64\u6bd4\u8f83\u7ec4\u6216\u9009\u62e9\u4e0d\u662f\u7a7a\u7ec4","item_error_comp":"\u8bf7\u6dfb\u52a0\u66f4\u591a\u9879\u76ee\u8fdb\u884c\u6bd4\u8f83","comparenonce":"260017ca12"};
+/* ]]> */
+</script>
+<script data-minify="1" type='text/javascript' src='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/js/comparechart.js?ver=1659240536' id='rehubcompare-js' defer></script>
+<script type="rocketlazyloadscript" data-rocket-type='text/javascript' id='rocket-browser-checker-js-after'>
+"use strict";var _createClass=function(){function defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||!1,descriptor.configurable=!0,"value"in descriptor&&(descriptor.writable=!0),Object.defineProperty(target,descriptor.key,descriptor)}}return function(Constructor,protoProps,staticProps){return protoProps&&defineProperties(Constructor.prototype,protoProps),staticProps&&defineProperties(Constructor,staticProps),Constructor}}();function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor))throw new TypeError("Cannot call a class as a function")}var RocketBrowserCompatibilityChecker=function(){function RocketBrowserCompatibilityChecker(options){_classCallCheck(this,RocketBrowserCompatibilityChecker),this.passiveSupported=!1,this._checkPassiveOption(this),this.options=!!this.passiveSupported&&options}return _createClass(RocketBrowserCompatibilityChecker,[{key:"_checkPassiveOption",value:function(self){try{var options={get passive(){return!(self.passiveSupported=!0)}};window.addEventListener("test",null,options),window.removeEventListener("test",null,options)}catch(err){self.passiveSupported=!1}}},{key:"initRequestIdleCallback",value:function(){!1 in window&&(window.requestIdleCallback=function(cb){var start=Date.now();return setTimeout(function(){cb({didTimeout:!1,timeRemaining:function(){return Math.max(0,50-(Date.now()-start))}})},1)}),!1 in window&&(window.cancelIdleCallback=function(id){return clearTimeout(id)})}},{key:"isDataSaverModeOn",value:function(){return"connection"in navigator&&!0===navigator.connection.saveData}},{key:"supportsLinkPrefetch",value:function(){var elem=document.createElement("link");return elem.relList&&elem.relList.supports&&elem.relList.supports("prefetch")&&window.IntersectionObserver&&"isIntersecting"in IntersectionObserverEntry.prototype}},{key:"isSlowConnection",value:function(){return"connection"in navigator&&"effectiveType"in navigator.connection&&("2g"===navigator.connection.effectiveType||"slow-2g"===navigator.connection.effectiveType)}}]),RocketBrowserCompatibilityChecker}();
+</script>
+<script type='text/javascript' id='rocket-preload-links-js-extra'>
+/* <![CDATA[ */
+var RocketPreloadLinksConfig = {"excludeUris":"\/(?:.+\/)?feed(?:\/(?:.+\/?)?)?$|\/(?:.+\/)?embed\/|\/checkout(.*)|\/cart|\/my-account(.*)|\/wc-api\/v(.*)|(\/[^\/]+)?\/(index\\.php\/)?wp\\-json(\/.*|$)|\/wp-admin|\/logout|\/wp-login.php|\/refer\/|\/go\/|\/recommend\/|\/recommends\/","usesTrailingSlash":"","imageExt":"jpg|jpeg|gif|png|tiff|bmp|webp|avif|pdf|doc|docx|xls|xlsx|php","fileExt":"jpg|jpeg|gif|png|tiff|bmp|webp|avif|pdf|doc|docx|xls|xlsx|php|html|htm","siteUrl":"https:\/\/m.ssgg.net","onHoverDelay":"100","rateThrottle":"3"};
+/* ]]> */
+</script>
+<script type="rocketlazyloadscript" data-rocket-type='text/javascript' id='rocket-preload-links-js-after'>
+(function() {
+"use strict";var r="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},e=function(){function i(e,t){for(var n=0;n<t.length;n++){var i=t[n];i.enumerable=i.enumerable||!1,i.configurable=!0,"value"in i&&(i.writable=!0),Object.defineProperty(e,i.key,i)}}return function(e,t,n){return t&&i(e.prototype,t),n&&i(e,n),e}}();function i(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}var t=function(){function n(e,t){i(this,n),this.browser=e,this.config=t,this.options=this.browser.options,this.prefetched=new Set,this.eventTime=null,this.threshold=1111,this.numOnHover=0}return e(n,[{key:"init",value:function(){!this.browser.supportsLinkPrefetch()||this.browser.isDataSaverModeOn()||this.browser.isSlowConnection()||(this.regex={excludeUris:RegExp(this.config.excludeUris,"i"),images:RegExp(".("+this.config.imageExt+")$","i"),fileExt:RegExp(".("+this.config.fileExt+")$","i")},this._initListeners(this))}},{key:"_initListeners",value:function(e){-1<this.config.onHoverDelay&&document.addEventListener("mouseover",e.listener.bind(e),e.listenerOptions),document.addEventListener("mousedown",e.listener.bind(e),e.listenerOptions),document.addEventListener("touchstart",e.listener.bind(e),e.listenerOptions)}},{key:"listener",value:function(e){var t=e.target.closest("a"),n=this._prepareUrl(t);if(null!==n)switch(e.type){case"mousedown":case"touchstart":this._addPrefetchLink(n);break;case"mouseover":this._earlyPrefetch(t,n,"mouseout")}}},{key:"_earlyPrefetch",value:function(t,e,n){var i=this,r=setTimeout(function(){if(r=null,0===i.numOnHover)setTimeout(function(){return i.numOnHover=0},1e3);else if(i.numOnHover>i.config.rateThrottle)return;i.numOnHover++,i._addPrefetchLink(e)},this.config.onHoverDelay);t.addEventListener(n,function e(){t.removeEventListener(n,e,{passive:!0}),null!==r&&(clearTimeout(r),r=null)},{passive:!0})}},{key:"_addPrefetchLink",value:function(i){return this.prefetched.add(i.href),new Promise(function(e,t){var n=document.createElement("link");n.rel="prefetch",n.href=i.href,n.onload=e,n.onerror=t,document.head.appendChild(n)}).catch(function(){})}},{key:"_prepareUrl",value:function(e){if(null===e||"object"!==(void 0===e?"undefined":r(e))||!1 in e||-1===["http:","https:"].indexOf(e.protocol))return null;var t=e.href.substring(0,this.config.siteUrl.length),n=this._getPathname(e.href,t),i={original:e.href,protocol:e.protocol,origin:t,pathname:n,href:t+n};return this._isLinkOk(i)?i:null}},{key:"_getPathname",value:function(e,t){var n=t?e.substring(this.config.siteUrl.length):e;return n.startsWith("/")||(n="/"+n),this._shouldAddTrailingSlash(n)?n+"/":n}},{key:"_shouldAddTrailingSlash",value:function(e){return this.config.usesTrailingSlash&&!e.endsWith("/")&&!this.regex.fileExt.test(e)}},{key:"_isLinkOk",value:function(e){return null!==e&&"object"===(void 0===e?"undefined":r(e))&&(!this.prefetched.has(e.href)&&e.origin===this.config.siteUrl&&-1===e.href.indexOf("?")&&-1===e.href.indexOf("#")&&!this.regex.excludeUris.test(e.href)&&!this.regex.images.test(e.href))}}],[{key:"run",value:function(){"undefined"!=typeof RocketPreloadLinksConfig&&new n(new RocketBrowserCompatibilityChecker({capture:!0,passive:!0}),RocketPreloadLinksConfig).init()}}]),n}();t.run();
+}());
+</script>
+<script data-minify="1" type='text/javascript' src='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/js/inview.js?ver=1659240536' id='rhinview-js' defer></script>
+<script data-minify="1" type='text/javascript' src='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/js/pgwmodal.js?ver=1659240536' id='rhpgwmodal-js' defer></script>
+<script data-minify="1" type='text/javascript' src='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/js/unveil.js?ver=1659240536' id='rhunveil-js' defer></script>
+<script data-minify="1" type='text/javascript' src='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/js/hoverintent.js?ver=1659240536' id='rhhoverintent-js' defer></script>
+<script data-minify="1" type='text/javascript' src='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/js/countdown.js?ver=1659240536' id='rhcountdown-js' defer></script>
+<script type='text/javascript' id='rehub-js-extra'>
+/* <![CDATA[ */
+var wishcached = {"rh_ajax_url":"https:\/\/m.ssgg.net\/wp-content\/plugins\/rehub-framework\/includes\/rehub_ajax.php","userid":"0"};
+var rhscriptvars = {"back":"\u8fd4\u56de","ajax_url":"\/wp-admin\/admin-ajax.php","fin":"\u5c31\u8fd9\u6837","noresults":"\u672a\u627e\u5230\u7ed3\u679c","your_rating":"\u4f60\u7684\u8bc4\u5206:","addedcart":"Added to Cart","nonce":"d603137a4a","hotnonce":"282c76d90c","wishnonce":"80af784f29","searchnonce":"3f835afdd0","filternonce":"0883afdb0a","rating_tabs_id":"b3a21297a0","max_temp":"500","min_temp":"-500","helpnotnonce":"719b1a6760"};
+/* ]]> */
+</script>
+<script data-minify="1" type='text/javascript' src='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/js/custom.js?ver=1659240536' id='rehub-js' defer></script>
+<script type="rocketlazyloadscript" data-rocket-type='text/javascript' id='rehub-js-after'>window.addEventListener('DOMContentLoaded', function() {
+            jQuery(document).ready(function($) {
+            	var retina = window.devicePixelRatio > 1 ? true : false;
+            	if(retina) {
+                	jQuery(".logo_image img").attr("src", "https://cdn.fendou.la/bluehost/fxlogan.svg");
+            	}
+            });
+});</script>
+<script data-minify="1" type='text/javascript' src='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/js/jquery.sticky.js?ver=1659240536' id='rhsticky-js' defer></script>
+<script type="rocketlazyloadscript" data-minify="1" data-rocket-type='text/javascript' src='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/js/ajaxsearch.js?ver=1659240536' id='rehubajaxsearch-js' defer></script>
+<script type="rocketlazyloadscript" data-rocket-type='text/javascript' src='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-includes/js/comment-reply.min.js' id='comment-reply-js' defer></script>
+<script type="rocketlazyloadscript" data-minify="1" data-rocket-type='text/javascript' src='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/js/userlogin.js?ver=1659240536' id='rehubuserlogin-js' defer></script>
+<script data-minify="1" type='text/javascript' src='https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/cache/min/1/wp-content/themes/rehub-theme/js/wishcount.js?ver=1659240536' id='rhwishcount-js' defer></script>
+<script>window.lazyLoadOptions=[{elements_selector:"img[data-lazy-src],.rocket-lazyload,iframe[data-lazy-src]",data_src:"lazy-src",data_srcset:"lazy-srcset",data_sizes:"lazy-sizes",class_loading:"lazyloading",class_loaded:"lazyloaded",threshold:300,callback_loaded:function(element){if(element.tagName==="IFRAME"&&element.dataset.rocketLazyload=="fitvidscompatible"){if(element.classList.contains("lazyloaded")){if(typeof window.jQuery!="undefined"){if(jQuery.fn.fitVids){jQuery(element).parent().fitVids()}}}}}},{elements_selector:".rocket-lazyload",data_src:"lazy-src",data_srcset:"lazy-srcset",data_sizes:"lazy-sizes",class_loading:"lazyloading",class_loaded:"lazyloaded",threshold:300,}];window.addEventListener('LazyLoad::Initialized',function(e){var lazyLoadInstance=e.detail.instance;if(window.MutationObserver){var observer=new MutationObserver(function(mutations){var image_count=0;var iframe_count=0;var rocketlazy_count=0;mutations.forEach(function(mutation){for(var i=0;i<mutation.addedNodes.length;i++){if(typeof mutation.addedNodes[i].getElementsByTagName!=='function'){continue}
+if(typeof mutation.addedNodes[i].getElementsByClassName!=='function'){continue}
+images=mutation.addedNodes[i].getElementsByTagName('img');is_image=mutation.addedNodes[i].tagName=="IMG";iframes=mutation.addedNodes[i].getElementsByTagName('iframe');is_iframe=mutation.addedNodes[i].tagName=="IFRAME";rocket_lazy=mutation.addedNodes[i].getElementsByClassName('rocket-lazyload');image_count+=images.length;iframe_count+=iframes.length;rocketlazy_count+=rocket_lazy.length;if(is_image){image_count+=1}
+if(is_iframe){iframe_count+=1}}});if(image_count>0||iframe_count>0||rocketlazy_count>0){lazyLoadInstance.update()}});var b=document.getElementsByTagName("body")[0];var config={childList:!0,subtree:!0};observer.observe(b,config)}},!1)</script><script data-no-minify="1" async src="https://cdn.jsdelivr.net/gh/jarlin8/img@master/wp-content/plugins/wp-rocket/assets/js/lazyload/17.5/lazyload.min.js"></script><script>function lazyLoadThumb(e){var t='<img data-lazy-src="https://i.ytimg.com/vi/ID/hqdefault.jpg" alt="" width="480" height="360"><noscript><img src="https://i.ytimg.com/vi/ID/hqdefault.jpg" alt="" width="480" height="360"></noscript>',a='<button class="play" aria-label="play Youtube video"></button>';return t.replace("ID",e)+a}function lazyLoadYoutubeIframe(){var e=document.createElement("iframe"),t="ID?autoplay=1";t+=0===this.parentNode.dataset.query.length?'':'&'+this.parentNode.dataset.query;e.setAttribute("src",t.replace("ID",this.parentNode.dataset.src)),e.setAttribute("frameborder","0"),e.setAttribute("allowfullscreen","1"),e.setAttribute("allow", "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"),this.parentNode.parentNode.replaceChild(e,this.parentNode)}document.addEventListener("DOMContentLoaded",function(){var e,t,p,a=document.getElementsByClassName("rll-youtube-player");for(t=0;t<a.length;t++)e=document.createElement("div"),e.setAttribute("data-id",a[t].dataset.id),e.setAttribute("data-query", a[t].dataset.query),e.setAttribute("data-src", a[t].dataset.src),e.innerHTML=lazyLoadThumb(a[t].dataset.id),a[t].appendChild(e),p=e.querySelector('.play'),p.onclick=lazyLoadYoutubeIframe});</script></body>
+</html>
+<!-- This website is like a Rocket, isn't it? Performance optimized by WP Rocket. Learn more: https://wp-rocket.me - Debug: cached@1659340314 -->

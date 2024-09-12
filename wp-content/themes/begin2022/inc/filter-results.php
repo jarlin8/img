@@ -1,0 +1,8 @@
+<?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
+<div class="filter-box da ms bk" <?php aos_a(); ?>>
+	<div class="filter-t weight"><i class="be be-sort"></i><span><?php echo zm_get_option('filter_t'); ?></span></div>
+		<div class="filter-box-main">
+		<?php require get_template_directory() . '/inc/filter-core.php'; ?>
+		<div class="clear"></div>
+	</div>
+</div>

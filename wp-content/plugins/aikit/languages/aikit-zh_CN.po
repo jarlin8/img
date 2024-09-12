@@ -1,0 +1,3443 @@
+# Copyright (C) 2024 
+# This file is distributed under the same license as the AIKit plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: AIKit 4.15.3\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/aikit\n"
+"POT-Creation-Date: 2024-05-16 23:53+0800\n"
+"PO-Revision-Date: 2024-05-17 10:34+0800\n"
+"Last-Translator: 奋斗啦 <jarlin@laowei8.com>\n"
+"Language-Team: \n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
+"X-Domain: aikit\n"
+
+#. Plugin Name of the plugin
+#: includes/admin.php:262
+msgid "AIKit"
+msgstr "AIKit"
+
+#. Plugin URI of the plugin
+msgid "https://getaikit.com"
+msgstr "https://getAIkit.com"
+
+#. Description of the plugin
+msgid ""
+"AIKit is your WordPress AI assistant, powered by OpenAI's GPT, DALL.E & "
+"StabilityAI's Stable Diffusion."
+msgstr "AIKit 是您的 WordPress AI 助手，由 OpenAI 的 GPT、DALL.E 提供支持"
+
+#: aikit.php:111
+msgid ""
+"Thank you for using AIKit! Please consider entering your OpenAI key in order "
+"to start leveraging AI content generation."
+msgstr ""
+"感谢您使用 AIKit！请考虑输入您的 OpenAI 密钥，以便开始利用 AI 内容生成。"
+
+#: aikit.php:115
+msgid "Configure AIKit"
+msgstr "AIKit配置"
+
+#: includes/admin.php:51
+msgid "English"
+msgstr "英语"
+
+#: includes/admin.php:55
+msgid "German"
+msgstr "德语"
+
+#: includes/admin.php:59
+msgid "French"
+msgstr "法语"
+
+#: includes/admin.php:63
+msgid "Spanish"
+msgstr "西班牙语"
+
+#: includes/admin.php:67
+msgid "Italian"
+msgstr "意大利语"
+
+#: includes/admin.php:71
+msgid "Portuguese"
+msgstr "葡萄牙语"
+
+#: includes/admin.php:75
+msgid "Dutch"
+msgstr "荷兰语"
+
+#: includes/admin.php:79
+msgid "Polish"
+msgstr "波兰语"
+
+#: includes/admin.php:83
+msgid "Russian"
+msgstr "俄语"
+
+#: includes/admin.php:87
+msgid "Japanese"
+msgstr "日语"
+
+#: includes/admin.php:91
+msgid "Chinese"
+msgstr "中文"
+
+#: includes/admin.php:95
+msgid "Brazilian Portuguese"
+msgstr "巴西葡萄牙语"
+
+#: includes/admin.php:99
+msgid "Turkish"
+msgstr "土耳其语"
+
+#: includes/admin.php:103
+msgid "Arabic"
+msgstr "阿拉伯语"
+
+#: includes/admin.php:107
+msgid "Korean"
+msgstr "韩语"
+
+#: includes/admin.php:111
+msgid "Hindi"
+msgstr "印地语"
+
+#: includes/admin.php:115
+msgid "Indonesian"
+msgstr "印度尼西亚语"
+
+#: includes/admin.php:119
+msgid "Swedish"
+msgstr "瑞典语"
+
+#: includes/admin.php:123
+msgid "Danish"
+msgstr "丹麦语"
+
+#: includes/admin.php:127
+msgid "Finnish"
+msgstr "芬兰语"
+
+#: includes/admin.php:131
+msgid "Norwegian"
+msgstr "挪威语"
+
+#: includes/admin.php:135
+msgid "Romanian"
+msgstr "罗马尼亚语"
+
+#: includes/admin.php:139
+msgid "Georgian"
+msgstr "格鲁吉亚语"
+
+#: includes/admin.php:143
+msgid "Vietnamese"
+msgstr "越南语"
+
+#: includes/admin.php:147
+msgid "Hungarian"
+msgstr "匈牙利语"
+
+#: includes/admin.php:151
+msgid "Bulgarian"
+msgstr "保加利亚语"
+
+#: includes/admin.php:155
+msgid "Greek"
+msgstr "希腊语"
+
+#: includes/admin.php:159
+msgid "Persian"
+msgstr "波斯语"
+
+#: includes/admin.php:163
+msgid "Slovak"
+msgstr "斯洛伐克语"
+
+#: includes/admin.php:167
+msgid "Czech"
+msgstr "捷克语"
+
+#: includes/admin.php:171
+msgid "Lithuanian"
+msgstr "立陶宛语"
+
+#: includes/admin.php:175
+msgid "Catalan"
+msgstr "加泰罗尼亚语"
+
+#: includes/admin.php:179
+msgid "Croatian"
+msgstr "克罗地亚语"
+
+#: includes/admin.php:183
+msgid "Ukrainian"
+msgstr "乌克兰语"
+
+#: includes/admin.php:187
+msgid "Hebrew"
+msgstr "希伯来语"
+
+#: includes/admin.php:261
+msgid "AIKit Writer"
+msgstr "AIKit Writer"
+
+#: includes/admin.php:271 includes/admin.php:272
+msgid "Auto Writer"
+msgstr "Auto Writer"
+
+#: includes/admin.php:280 includes/admin.php:281
+msgid "Scheduler"
+msgstr "计划"
+
+#: includes/admin.php:289 includes/admin.php:290
+#: includes/openai/repurposer/repurposer.php:901
+msgid "Repurpose"
+msgstr "改写"
+
+#: includes/admin.php:298 includes/admin.php:299
+#: includes/openai/comments/comments.php:237
+msgid "AI Comments"
+msgstr "AI 评论"
+
+#: includes/admin.php:307 includes/admin.php:308
+msgid "RSS"
+msgstr "RSS"
+
+#: includes/admin.php:316 includes/admin.php:317
+#: includes/openai/embeddings/embeddings.php:468
+msgid "Embeddings"
+msgstr "嵌入式"
+
+#: includes/admin.php:325 includes/admin.php:326
+#: includes/openai/chatbot/chatbot-settings.php:77
+msgid "Chatbot"
+msgstr "Chatbot"
+
+#: includes/admin.php:334 includes/admin.php:335
+#: includes/openai/fine-tuner/fine-tuner.php:621
+msgid "Fine-tune Models"
+msgstr "微调模型"
+
+#: includes/admin.php:343 includes/admin.php:344
+#: includes/tts/text-to-speech.php:83
+msgid "Text to Speech"
+msgstr "文本转语音"
+
+#: includes/admin.php:352
+msgid "Add/Edit AI Menu Prompts"
+msgstr "添加/编辑 AI 菜单提示词"
+
+#: includes/admin.php:353
+msgid "AI Menu Prompts"
+msgstr "AI 提示词"
+
+#: includes/admin.php:361
+msgid "AIKit Settings"
+msgstr "AIKit 设置"
+
+#: includes/admin.php:362
+msgid "Settings"
+msgstr "设置"
+
+#: includes/admin.php:370 includes/admin.php:371
+msgid "Export/Import Settings"
+msgstr "导出\\导入设置"
+
+#: includes/admin.php:395 includes/admin.php:1434 includes/admin.php:1645
+msgid "OpenAI"
+msgstr "OpenAI"
+
+#: includes/admin.php:398
+msgid "StabilityAI"
+msgstr "StabilityAI"
+
+#: includes/admin.php:401 includes/admin.php:1430
+msgid "Eleven Labs"
+msgstr "Eleven Labs"
+
+#: includes/admin.php:404 includes/openai/embeddings/embeddings.php:744
+#: includes/openai/embeddings/embeddings.php:1017
+msgid "Qdrant"
+msgstr "Qdrant"
+
+#: includes/admin.php:407
+msgid "Rapid API"
+msgstr "Rapid API"
+
+#: includes/admin.php:410
+msgid "Image Generation"
+msgstr "图片生成"
+
+#: includes/admin.php:413
+msgid "Text-to-Speech"
+msgstr "文本转语音"
+
+#: includes/admin.php:416
+msgid "General"
+msgstr "通用"
+
+#: includes/admin.php:443
+msgid "Audio Player Preview:"
+msgstr "音频播放器预览:"
+
+#: includes/admin.php:456 includes/admin.php:750
+#: includes/openai/chatbot/chatbot-settings.php:597
+msgid "Save Settings"
+msgstr "保存设置"
+
+#: includes/admin.php:577
+msgid ""
+"Here you can edit or add new prompts that would appear in the \"AI\" "
+"dropdown menu. You can also reorder the prompts by dragging and dropping "
+"them in the order you wish. "
+msgstr ""
+"您可以在此处编辑或添加将出现在“AI”下拉菜单中的新提示。您还可以通过按您希望的"
+"顺序拖放提示来重新排序提示。"
+
+#: includes/admin.php:578
+msgid ""
+"There are lots of online resources that could help and give you tips & trick "
+"on how to best edit prompts. Simply search YouTube/Google for \"Prompt "
+"engineering\" to gain more knowledge on the topic."
+msgstr ""
+"有很多在线资源可以为您提供帮助和提示如何写好提示词。只需在 YouTube/Google 中"
+"搜索“Prompt Engineering”即可获得有关该主题的更多知识。"
+
+#: includes/admin.php:583
+msgid "Add Prompt"
+msgstr "添加提示词"
+
+#: includes/admin.php:585
+msgid ""
+"Resetting prompts will remove all changes you made in this screen, and will "
+"bring back the builtin prompts that AIKit provides out of the box. Are you "
+"sure you want to proceed?"
+msgstr ""
+"重置提示将删除您在此屏幕中所做的所有更改，并将恢复 AIKit 提供的开箱即用的内置"
+"提示。您确定要继续吗？"
+
+#: includes/admin.php:586
+msgid "Reset Prompts"
+msgstr "重置提示词"
+
+#: includes/admin.php:608 includes/admin.php:762
+msgid "Are you sure you want to remove this prompt?"
+msgstr "你确定要移除这个提示词?"
+
+#: includes/admin.php:617 includes/admin.php:772
+msgid "Requires text selection"
+msgstr "需要选择文本"
+
+#: includes/admin.php:620 includes/admin.php:775
+msgid ""
+"Choose this option if you want to enforce text selection in the text editor. "
+"Most of the time you will want to leave this option selected. Deselect it "
+"only if you are adding a prompt that doesn't require input from author, like "
+"if you want OpenAI to generate text about random topic for example."
+msgstr ""
+"如果您想在文本编辑器中强制选择文本，请选择此选项。大多数时候您会希望选择此选"
+"项。仅当您添加不需要作者输入的提示时才取消选择它，例如您希望 OpenAI 生成有关"
+"随机主题的文本。"
+
+#: includes/admin.php:627 includes/admin.php:783
+msgid "Temperature"
+msgstr "温度:"
+
+#: includes/admin.php:633 includes/admin.php:789
+msgid ""
+"Controls randomness: Lowering results in less random completions. As the "
+"temperature approaches zero, the model will become deterministic and "
+"repetitive."
+msgstr ""
+"控制随机性：降低会导致较少的随机完成。当温度接近零时，模型将变得确定性和重复"
+"性。"
+
+#: includes/admin.php:640 includes/admin.php:799
+msgid "Number of words to generate"
+msgstr "要生成的单词数"
+
+#: includes/admin.php:649 includes/admin.php:808
+msgid "Fixed number of words"
+msgstr "固定字数"
+
+#: includes/admin.php:654 includes/admin.php:813
+msgid "Number of words"
+msgstr "字数"
+
+#: includes/admin.php:660 includes/admin.php:819
+msgid ""
+"Choose this option if you want to generate a fixed number of words, "
+"regardless of how long the selected text is. This is helpful for certain "
+"types of prompts, like generating a paragraph on a certain topic for example."
+msgstr ""
+"如果您想要生成固定数量的单词，无论所选文本有多长，请选择此选项。这对于某些类"
+"型的提示很有帮助，例如生成有关特定主题的段落。"
+
+#: includes/admin.php:672 includes/admin.php:831
+msgid "Relative to length of text selected"
+msgstr "相对于所选文本的长度"
+
+#: includes/admin.php:677 includes/admin.php:836
+msgid "Multiplier"
+msgstr "Multiplier"
+
+#: includes/admin.php:686 includes/admin.php:845
+msgid ""
+"Choose this option if you want to calculate the length of the generated "
+"words relative to the length of words selected. 1x = same length as select "
+"text, 2x means two times, etc. Summarization is a good candidate to use this "
+"option for."
+msgstr ""
+"如果您想要计算生成的单词相对于所选单词长度的长度，请选择此选项。 1x = 与选择"
+"文本的长度相同，2x 表示两次，等等。摘要是使用此选项的一个很好的选择。"
+
+#: includes/admin.php:696 includes/admin.php:856
+#: includes/openai/auto-writer/auto-writer-form.php:306
+#: includes/openai/fine-tuner/fine-tuner.php:731
+#: includes/openai/fine-tuner/fine-tuner.php:1040
+#: includes/openai/fine-tuner/fine-tuner.php:1147
+#: includes/openai/repurposer/repurposer.php:911
+#: includes/openai/rss/rss.php:509
+msgid "Prompts"
+msgstr "提示词"
+
+#: includes/admin.php:713 includes/admin.php:715 includes/admin.php:873
+#: includes/admin.php:875
+msgid "Menu title"
+msgstr "菜单标题"
+
+#: includes/admin.php:718 includes/admin.php:878
+msgid "This is title that will appear in the AI menu for this prompt."
+msgstr "这是将出现在该提示的 AI 菜单中的标题。"
+
+#: includes/admin.php:725 includes/admin.php:886
+#: includes/openai/comments/comments.php:351
+#: includes/openai/comments/comments.php:695
+msgid "Prompt"
+msgstr "提示词"
+
+#: includes/admin.php:728 includes/admin.php:889
+msgid "If this prompt requires text selection, the phrase"
+msgstr "如果此提示需要文本选择，则短语"
+
+#: includes/admin.php:730 includes/admin.php:891
+msgid ""
+"will be replaced by the selected text before doing the request. Make sure to "
+"include it in your prompt."
+msgstr "将在执行请求之前替换为所选文本。确保将其包含在您的提示中。"
+
+#: includes/admin.php:731 includes/admin.php:892
+msgid "You can also add"
+msgstr "你也可以添加"
+
+#: includes/admin.php:733 includes/admin.php:894
+msgid ""
+"to include the title of the post in the prompt to give AI more context of "
+"what you write about."
+msgstr "在提示中包含文章的标题，为 AI 提供有关您所写内容的更多背景信息。"
+
+#: includes/admin.php:919
+msgid "Text Generation Settings"
+msgstr "文本生成设置"
+
+#: includes/admin.php:926 includes/admin.php:1244
+msgid "Image Generation Settings"
+msgstr "图片生成设置"
+
+#: includes/admin.php:933
+msgid "Text-to-Speech Generation Settings"
+msgstr "文本转语音通用设置"
+
+#: includes/admin.php:940
+msgid "OpenAI Settings"
+msgstr "OpenAI 设置"
+
+#: includes/admin.php:950
+msgid "OpenAI Key"
+msgstr "OpenAI Key"
+
+#: includes/admin.php:959
+msgid "RapidAPI Settings"
+msgstr "RapidAPI 设置"
+
+#: includes/admin.php:968
+msgid "Rapid API Key"
+msgstr "Rapid API Key"
+
+#: includes/admin.php:979
+msgid "Text Generation Model"
+msgstr "文本生成模型"
+
+#: includes/admin.php:990
+msgid "Language for text generation"
+msgstr "文本生成的语言"
+
+#: includes/admin.php:1000
+msgid "OpenAI System Message"
+msgstr "OpenAI 系统信息"
+
+#: includes/admin.php:1011
+msgid "Max Tokens Multiplier (text length)"
+msgstr "最大Token乘数（文本长度）"
+
+#: includes/admin.php:1022 includes/openai/fine-tuner/fine-tuner.php:868
+#: includes/openai/fine-tuner/fine-tuner.php:1367
+msgid "Prompt Stop Sequence"
+msgstr "提示停止顺序"
+
+#: includes/admin.php:1033 includes/openai/fine-tuner/fine-tuner.php:887
+#: includes/openai/fine-tuner/fine-tuner.php:1385
+msgid "Completion Stop Sequence"
+msgstr "完成停止顺序"
+
+#: includes/admin.php:1043
+msgid "Image Generation Model"
+msgstr "图片生成模型"
+
+#: includes/admin.php:1053
+msgid "Image Preferred Quality"
+msgstr "图片首选质量"
+
+#: includes/admin.php:1063
+msgid "Image Preferred Style"
+msgstr "图片首选样式"
+
+#: includes/admin.php:1073
+msgid "Text-to-Speech Generation Model"
+msgstr "文本转语音生成模型"
+
+#: includes/admin.php:1082
+msgid "Text-to-Speech Voice"
+msgstr "文本转语音"
+
+#: includes/admin.php:1104
+msgid "General Settings"
+msgstr "常规设置"
+
+#: includes/admin.php:1113
+msgid "Elementor support"
+msgstr "Elementor支持"
+
+#: includes/admin.php:1124
+msgid "StabilityAI Settings"
+msgstr "StabilityAI 设置"
+
+#: includes/admin.php:1133
+msgid "StabilityAI Key"
+msgstr "StabilityAI Key"
+
+#: includes/admin.php:1143
+msgid "StabilityAI Default Engine"
+msgstr "StabilityAI 默认引擎"
+
+#: includes/admin.php:1153
+msgid "StabilityAI Default Sampler"
+msgstr "StabilityAI 默认采样器"
+
+#: includes/admin.php:1163
+msgid "StabilityAI Default Steps"
+msgstr "StabilityAI 默认步数"
+
+#: includes/admin.php:1173
+msgid "StabilityAI Default Cfg Scale"
+msgstr "StabilityAI 默认Cfg Scale"
+
+#: includes/admin.php:1183
+msgid "StabilityAI Default Seed"
+msgstr "StabilityAI 默认种子"
+
+#: includes/admin.php:1194
+msgid "Text-to-Speech Settings"
+msgstr "文本转语音设置"
+
+#: includes/admin.php:1203
+msgid "Default Text-to-Speech API"
+msgstr "默认文本转语音API"
+
+#: includes/admin.php:1213
+msgid "Audio Player Primary Color"
+msgstr "音频播放器原色"
+
+#: includes/admin.php:1223
+msgid "Audio Player Secondary Color"
+msgstr "音频播放器辅助颜色"
+
+#: includes/admin.php:1233
+msgid "Audio Player Message"
+msgstr "音频播放器消息"
+
+#: includes/admin.php:1253
+msgid "Default Image Generation API"
+msgstr "默认图片生成API"
+
+#: includes/admin.php:1263
+msgid "Image sizes available"
+msgstr "可用的图片尺寸"
+
+#: includes/admin.php:1318
+msgid "Image counts for each size"
+msgstr "每种尺寸的图片计数"
+
+#: includes/admin.php:1328
+msgid "Image generation styles"
+msgstr "图片生成风格"
+
+#: includes/admin.php:1339
+msgid "Qdrant Settings (Embeddings)"
+msgstr "Qdrant 设置 (嵌入式)"
+
+#: includes/admin.php:1348
+msgid "Qdrant Host (Cluster URL)"
+msgstr "Qdrant Host (Cluster URL)"
+
+#: includes/admin.php:1358
+msgid "Qdrant API Key"
+msgstr "Qdrant API Key"
+
+#: includes/admin.php:1370
+msgid "Eleven Labs Settings"
+msgstr "Eleven Labs 设置"
+
+#: includes/admin.php:1379
+msgid "Eleven Labs API Key"
+msgstr "Eleven Labs API Key"
+
+#: includes/admin.php:1389
+msgid "Eleven Labs Model"
+msgstr "Eleven Labs 模型"
+
+#: includes/admin.php:1399
+msgid "Eleven Labs Voice"
+msgstr "Eleven Labs声音"
+
+#: includes/admin.php:1408
+msgid ""
+"These settings are used for text-to-speech generation and audio player "
+"customization."
+msgstr "这些设置用于文本转语音生成和音频播放器自定义。"
+
+#: includes/admin.php:1412
+msgid "These settings are used for text generation."
+msgstr "该设置用于文本生成"
+
+#: includes/admin.php:1417
+msgid "These settings are used for image generation."
+msgstr "该设置用于图片生成"
+
+#: includes/admin.php:1422
+msgid "These settings are used for text-to-speech generation."
+msgstr "该设置用于文本转语音生成"
+
+#: includes/admin.php:1438
+msgid ""
+"This is the default API that will be used for text-to-speech generation."
+msgstr "该API将用于文本转语音的生成"
+
+#: includes/admin.php:1458
+msgid "This is the OpenAI model that will be used to generate the audio."
+msgstr "这是将用于生成音频的 OpenAI 模型。"
+
+#: includes/admin.php:1479
+msgid ""
+"This is the OpenAI voice that will be used to generate the audio. For easier "
+"selection you can listen to the voices here:"
+msgstr ""
+"这是将用于生成音频的 OpenAI 语音。为了更容易选择，您可以在此处收听声音："
+
+#: includes/admin.php:1505
+msgid "Standard definition"
+msgstr "标准"
+
+#: includes/admin.php:1506
+msgid "High Definition"
+msgstr "高清"
+
+#: includes/admin.php:1510
+msgid ""
+"Currently only \"dalle.e 3\" model supports high definition image generation."
+msgstr "目前只有“dalle.e 3”模型支持高清图片生成。"
+
+#: includes/admin.php:1520
+msgid "Natural"
+msgstr "自然"
+
+#: includes/admin.php:1521
+msgid "Vivid"
+msgstr "生动"
+
+#: includes/admin.php:1525
+msgid "Currently only \"dalle.e 3\" model supports image styles."
+msgstr "目前只有“dalle.e 3”模型支持图片样式。"
+
+#: includes/admin.php:1546
+msgid "This is the Eleven Labs model that will be used to generate the audio."
+msgstr "这是将用于生成音频的 Eleven Labs 模型。"
+
+#: includes/admin.php:1566
+msgid ""
+"This is the Eleven Labs voice that will be used to generate the audio. "
+"Please try available voices "
+msgstr "这是将用于生成音频的Eleven Labs voice。请尝试可用的声音"
+
+#: includes/admin.php:1566 includes/openai/auto-writer/auto-writer.php:806
+msgid "here"
+msgstr "此处"
+
+#: includes/admin.php:1576
+msgid "This is the primary color of the audio player."
+msgstr "这是音频播放器的主要颜色。"
+
+#: includes/admin.php:1586
+msgid "This is the secondary color of the audio player."
+msgstr "这是音频播放器的辅助颜色。"
+
+#: includes/admin.php:1596
+msgid "This is the message that will be displayed in the audio player."
+msgstr "这是将在音频播放器中显示的消息。"
+
+#: includes/admin.php:1602
+msgid ""
+"provides one of the best and human-like AI text-to-speech and voice cloning "
+"services."
+msgstr "提供最好的、类人的人工智能文本转语音和语音克隆服务之一。"
+
+#: includes/admin.php:1610
+msgid "You can get your ElevenLabs API key from your "
+msgstr "您可以从您的网站获取 ElevenLabs API 密钥"
+
+#: includes/admin.php:1610
+msgid "Eleven Labs account"
+msgstr "Eleven Labs 账号"
+
+#: includes/admin.php:1616
+msgid ""
+"is a vector search engine. It is used to store and query embeddings, which "
+"allow you to do similarity search and can be used along with AIKit Chatbot "
+"to efficiently answer your users' questions around your product or services."
+msgstr ""
+"是一个矢量搜索引擎。它用于存储和查询嵌入，允许您进行相似性搜索，并可以与 "
+"AIKit Chatbot一起使用，以有效地回答用户有关您的产品或服务的问题。"
+
+#: includes/admin.php:1624
+msgid "You can get your Qdrant host address from your "
+msgstr "您可以从您的 Qdrant 主机地址获取"
+
+#: includes/admin.php:1624 includes/admin.php:1634
+msgid "Qdrant account"
+msgstr "Qdrant 账号"
+
+#: includes/admin.php:1634
+msgid "You can get your API key from your "
+msgstr "您可以获取你API key，从"
+
+#: includes/admin.php:1635
+msgid "Leave empty if you are using a hosted instance with no API key."
+msgstr "如果您使用没有 API 密钥的托管实例，请保留为空。"
+
+#: includes/admin.php:1649
+msgid "Stability.ai"
+msgstr "Stability.AI"
+
+#: includes/admin.php:1654
+msgid ""
+"Select the default image generation API. This is the image generation API "
+"that will be used in the background jobs like auto writer and repurposing "
+"jobs."
+msgstr ""
+"选择默认的图片生成API。这是图片生成 API，将在自动写入和重新利用任务等后台任务"
+"中使用。"
+
+#: includes/admin.php:1662
+msgid "Here you can adjust general settings for image generation."
+msgstr "您可以在此处调整图片生成的常规设置。"
+
+#: includes/admin.php:1666
+msgid ""
+"is a Stable Diffusion based AI image generator. It is a great alternative to "
+"OpenAI for image generation. Here you can adjust the settings for the "
+"StabilityAI."
+msgstr ""
+"是一个基于稳定扩散的 AI 图片生成器。它是 OpenAI 图片生成的绝佳替代品。您可以"
+"在此处调整 StabilityAI 的设置。"
+
+#: includes/admin.php:1675
+msgid ""
+"Please enter your StabilityAI key here. You can get your key from the "
+"StabilityAI website."
+msgstr "请在此处输入您的 StabilityAI 密钥。您可以从 StabilityAI 网站获取密钥。"
+
+#: includes/admin.php:1694
+msgid ""
+"The default model that will be used when generating an image using Stability."
+"ai."
+msgstr "使用 Stability.AI 生成图片时将使用的默认模型。"
+
+#: includes/admin.php:1719
+msgid ""
+"A sampler determines how the image is \"calculated\". A sampler processes an "
+"input (prompt) to produce an output (image). Since these samplers are "
+"different mathematically, they will produce difference results for the same "
+"prompt."
+msgstr ""
+"采样器决定如何“计算”图片。采样器处理输入（提示）以产生输出（图片）。由于这些"
+"采样器在数学上是不同的，因此它们对于相同的提示会产生不同的结果。"
+
+#: includes/admin.php:1733
+msgid ""
+"Generation steps control how many times the image is sampled. Increasing the "
+"number of steps might give you better results, up to a point where there're "
+"diminishing returns. More steps would also cost you more."
+msgstr ""
+"生成步骤控制图片采样的次数。增加步数可能会带来更好的结果，但达到收益递减的程"
+"度。更多步骤也会花费更多。"
+
+#: includes/admin.php:1746
+msgid ""
+"Prompt strength (CFG scale) controls how much the final image will adhere to "
+"your prompt. Lower values would give the model more \"creativity\", while "
+"higher values will produce a final image that's close to your prompt."
+msgstr ""
+"提示强度（CFG 比例）控制最终图片遵循提示的程度。较低的值会给模型带来更多的“创"
+"造力”，而较高的值将产生接近您的提示的最终图片。"
+
+#: includes/admin.php:1758
+msgid ""
+"Seed is a number used to initialize the image generation. Using a certain "
+"seed with same settings will produce the same image. \"0\" means a random "
+"seed will be used everytime."
+msgstr ""
+"种子是用于初始化图片生成的数字。使用具有相同设置的特定种子将产生相同的图片。 "
+"“0”表示每次都会使用随机种子。"
+
+#: includes/admin.php:1765
+msgid "Adjust the plugin to your needs by editing the settings here."
+msgstr "通过编辑此处的设置来根据您的需要调整插件。"
+
+#: includes/admin.php:1774 includes/openai/chatbot/chatbot-settings.php:335
+msgid ""
+"Please set this only if you are using a fine-tuned model. Leave empty if you "
+"are using any of the built-in models. Prompt stop sequence is used to mark "
+"the stop of the prompt."
+msgstr ""
+"仅当您使用微调模型时请设置此项。如果您使用任何内置模型，请保留为空。提示停止"
+"序列用于标记提示的停止。"
+
+#: includes/admin.php:1786 includes/openai/chatbot/chatbot-settings.php:350
+msgid ""
+"Please set this only if you are using a fine-tuned model. Leave empty if you "
+"are using any of the built-in models. Completion stop sequence is used to "
+"mark the stop of the completion."
+msgstr ""
+"仅当您使用微调模型时请设置此项。如果您使用任何内置模型，请保留为空。完成停止"
+"序列用于标记完成的停止。"
+
+#: includes/admin.php:1798
+msgid "Enter your RapidAPI key for"
+msgstr "输入您的 RapidAPI 密钥用于"
+
+#: includes/admin.php:1799
+msgid "Subtitles for YouTube"
+msgstr "YouTube 字幕"
+
+#: includes/admin.php:1800
+msgid ""
+" here. This API is used to read YouTube video subtitles to allow you to "
+"fetch the content of videos and repurpose/spin them and create posts based "
+"on them in your website."
+msgstr ""
+"这里。此 API 用于读取 YouTube 视频字幕，以便您获取视频内容并重新利用/旋转它"
+"们，并在您的网站上根据它们创建文章。"
+
+#: includes/admin.php:1801 includes/openai/repurposer/repurposer.php:796
+msgid ""
+"\"Subtitles for YouTube\" API offers a generous 100 free requests per day "
+"which will be enough for most users."
+msgstr ""
+"“Subtitles for YouTube”API 每天提供大量的 100 个免费请求，这对于大多数用户来"
+"说已经足够了。"
+
+#: includes/admin.php:1802 includes/openai/repurposer/repurposer.php:797
+msgid "If you would like to repurpose videos, please"
+msgstr "如果您想重新调整视频的用途，请"
+
+#: includes/admin.php:1803 includes/openai/repurposer/repurposer.php:798
+msgid "subscribe"
+msgstr "订阅"
+
+#: includes/admin.php:1804
+msgid "to a plan, then enter your API key here."
+msgstr "计划，然后在此处输入您的 API 密钥。"
+
+#: includes/admin.php:1815
+msgid "Elementor supported?"
+msgstr "Elementor 支持？"
+
+#: includes/admin.php:1819
+msgid ""
+"When this is enabled, you will be able to use AIKit right inside Elementor "
+"editor using a widget called \"AIKit Editor\"."
+msgstr ""
+"启用此功能后，您将能够使用名为“AIKit Editor”的小部件在 Elementor 编辑器中直接"
+"使用 AIKit。"
+
+#: includes/admin.php:1852
+msgid ""
+"Image styles are phrases that will be added at the end an image's prompt to "
+"change the look of the image. You can use it to maintain a certain style of "
+"images for your posts. If you like colorful images, you can add "
+"\"colourful\" as one of the styles. If you want to appear as if they were "
+"drawn by leonardo davinci, add \"by leonardo davinci\" as a style. Each line "
+"would be considered a different style and AIKit will choose a random style "
+"out of this list each time it generates an image and append it at the end of "
+"the prompt. "
+msgstr ""
+"图片样式是将添加在图片提示末尾以更改图片外观的短语。您可以使用它来维护文章的"
+"特定图片风格。如果您喜欢彩色图片，可以添加“彩色”作为样式之一。如果您想让它们"
+"看起来像是由莱昂纳多·达芬奇绘制的，请添加“by leonardo davinci”作为样式。每行"
+"都将被视为不同的样式，AIKit 每次生成图片时都会从该列表中选择一个随机样式并将"
+"其附加到提示的末尾。"
+
+#: includes/admin.php:1888
+msgid ""
+"This controls the number of image you want to generate for each image size, "
+"these will appear as options in the AI image generation menu. Enter comma-"
+"separated numbers. Example: \"1,2,4\". Maximum allowed number is 10."
+msgstr ""
+"这控制您想要为每个图片尺寸生成的图片数量，这些将作为选项出现在 AI 图片生成菜"
+"单中。输入以逗号分隔的数字。示例：“1,2,4”。允许的最大数量为 10。"
+
+#: includes/admin.php:1900
+msgid "Small"
+msgstr "小"
+
+#: includes/admin.php:1900
+msgid "Only available for Dall.e 2"
+msgstr "仅适用于 Dall.e 2"
+
+#: includes/admin.php:1904
+msgid ""
+"This controls the size of the images generated. If you want to have the "
+"option to generate small images in the AI image generation menu, check this "
+"box."
+msgstr ""
+"这控制生成的图片的大小。如果您想在 AI 图片生成菜单中选择生成小图片，请选中此"
+"框。"
+
+#: includes/admin.php:1918
+msgid "Medium"
+msgstr "中"
+
+#: includes/admin.php:1918
+msgid "Only available for Dall.e 2 & Stable Diffusion"
+msgstr "仅适用于 Dall.e 2"
+
+#: includes/admin.php:1923
+msgid ""
+"If you want to have the option to generate medium images in the AI image "
+"generation menu, check this box."
+msgstr "如果您想在 AI 图像生成菜单中选择生成中等图像，请选中此框。"
+
+#: includes/admin.php:1936
+msgid "Large"
+msgstr "大"
+
+#: includes/admin.php:1936
+msgid "Available for all Dall.e & Stable Diffusion models."
+msgstr "适用于所有 Dall.e"
+
+#: includes/admin.php:1941
+msgid ""
+"If you want to have the option to generate large images in the AI image "
+"generation menu, check this box."
+msgstr "如果您想在 AI 图片生成菜单中选择生成大图片，请选中此框。"
+
+#: includes/admin.php:1955 includes/admin.php:1974 includes/admin.php:1993
+msgid " X Large"
+msgstr "加大"
+
+#: includes/admin.php:1955 includes/admin.php:1974
+msgid "Only available for Dall.e 3"
+msgstr "仅适用于 Dall.e 3"
+
+#: includes/admin.php:1960
+msgid ""
+"If you want to have the option to generate x large images (landscape) in the "
+"AI image generation menu, check this box."
+msgstr "如果您想在 AI 图片生成菜单中选择生成 x 大图片（横向），请选中此框。"
+
+#: includes/admin.php:1979 includes/admin.php:1998
+msgid ""
+"If you want to have the option to generate x large images (portrait) in the "
+"AI image generation menu, check this box."
+msgstr "如果您想在 AI 图片生成菜单中选择生成 x 大图片（肖像），请选中此框。"
+
+#: includes/admin.php:1993
+msgid "Only available for Stable Diffusion \"SDXL\" model"
+msgstr "仅适用于稳定扩散“SDXL”型号"
+
+#: includes/admin.php:2015
+msgid "The OpenAI key is invalid. Make sure you have entered the correct key."
+msgstr "OpenAI 密钥无效。确保您输入了正确的密钥。"
+
+#: includes/admin.php:2022
+msgid "The OpenAI key is valid."
+msgstr "OpenAI 密钥有效。"
+
+#: includes/admin.php:2033
+msgid "For instructions on how to get an OpenAI key, please visit "
+msgstr "有关如何获取 OpenAI 密钥的说明，请访问"
+
+#: includes/admin.php:2064
+msgid "The language of the text you want to generate."
+msgstr "您要生成的文本的语言。"
+
+#: includes/admin.php:2068
+msgid ""
+" For consistent autocomplete results, make sure that the text you write in "
+"your post is written in the same language you picked here."
+msgstr ""
+"为了获得一致的自动完成结果，请确保您在文章中编写的文本是使用您在此处选择的相"
+"同语言编写的。"
+
+#: includes/admin.php:2090
+msgid "\"Dall.e 3\" is currently the most capable image generation model."
+msgstr "“Dall.e 3”是目前最强大的图片生成模型。"
+
+#: includes/admin.php:2092 includes/admin.php:2132
+msgid " For more information, see "
+msgstr "有关更多信息，请参阅"
+
+#: includes/admin.php:2130
+msgid ""
+"Some models are more capable than others. For example, the \"gpt-3.5-turbo\" "
+"model provides good balance between cost and value right now."
+msgstr ""
+"有些模型比其他模型更有能力。例如，“gpt-3.5-turbo”模型目前在成本和价值之间提供"
+"了良好的平衡。"
+
+#: includes/admin.php:2148
+msgid ""
+"AIKit's builtin prompts are already preconfigured to generate a sensible "
+"number of words depending on the prompt.\n"
+"                However, if you want to change the number of words "
+"generated, you can do so here. The slider is a multiplier of the number of "
+"tokens that AIKit\n"
+"                would normally generate. For example, if a request would "
+"normally generate 100 words, you can set the multiplier to 2x and AIKit will "
+"generate 200 words instead."
+msgstr ""
+"AIKit 的内置提示已预先配置为根据提示生成合理数量的单词\n"
+"                但是，如果您想更改生成的单词数，可以在此处执行此操作。滑块是 "
+"AIKit 所使用的Token数量的乘数\n"
+"                通常会生成。例如，如果请求通常会生成 100 个单词，您可以将乘数"
+"设置为 2x，AIKit 将生成 200 个单词。"
+
+#: includes/admin.php:2157
+msgid ""
+"Think of this as a global way to increase/decrease the length of generated "
+"text for all existing autocomplete options/prompts at once."
+msgstr ""
+"将此视为一次性增加/减少所有现有自动完成选项/提示的生成文本长度的全局方法。"
+
+#: includes/admin.php:2170
+msgid "Green"
+msgstr "绿"
+
+#: includes/admin.php:2171
+msgid "Blue"
+msgstr "蓝"
+
+#: includes/admin.php:2172
+msgid "Red"
+msgstr "红"
+
+#: includes/admin.php:2173
+msgid "Orange"
+msgstr "橙"
+
+#: includes/admin.php:2174
+msgid "Purple"
+msgstr "紫"
+
+#: includes/admin.php:2179
+msgid ""
+"If you prefer to have the autocompleted text stand out more, you can choose "
+"a background color for the autocompleted text."
+msgstr "如果您希望自动完成的文本更加突出，您可以为自动完成的文本选择背景颜色。"
+
+#: includes/admin.php:2193
+msgid ""
+"System message help set the behaviour of the model. You can use it to ask "
+"the model to mimic a certain style or take a certain perspective for all "
+"text generations. For example, if you set this to \"Shakespeare' style\", "
+"the mode will follow the style of Shakespeare in all text generations when "
+"possible. System message should work ONLY with GPT-4 and to a lesser extent "
+"with gpt-3.5-turbo models."
+msgstr ""
+"系统消息帮助设置模型的行为。您可以使用它来要求模型模仿某种风格或对所有文本生"
+"成采取某种观点。例如，如果您将其设置为“莎士比亚风格”，则该模式将尽可能在所有"
+"文本生成中遵循莎士比亚的风格。系统消息应仅适用于 GPT-4，并且在较小程度上适用"
+"于 gpt-3.5-turbo 型号。"
+
+#: includes/import-export.php:128
+msgid "AIKit Export/Import Settings"
+msgstr "AIKit 导出/导入设置"
+
+#: includes/import-export.php:129
+msgid "Export Settings"
+msgstr "导出设置"
+
+#: includes/import-export.php:130
+msgid "Download the current settings and prompts as a json file."
+msgstr "将当前设置和提示下载为 json 文件。"
+
+#: includes/import-export.php:131
+msgid "Export All Settings + Prompts"
+msgstr "导出所有设置+提示"
+
+#: includes/import-export.php:133
+msgid "Export Prompts only"
+msgstr "仅导出提示"
+
+#: includes/import-export.php:135 includes/import-export.php:143
+msgid "Import Settings"
+msgstr "导入设置"
+
+#: includes/import-export.php:136
+msgid "Upload a settings json file to import settings and/or prompts."
+msgstr "上传设置 json 文件以导入设置和/或提示。"
+
+#: includes/import-export.php:137
+#: includes/openai/auto-writer/auto-writer.php:805
+#: includes/openai/fine-tuner/fine-tuner.php:1106
+msgid "Important:"
+msgstr "重要："
+
+#: includes/import-export.php:137
+msgid ""
+"It's highly recommended to backup your current settings before importing new "
+"settings, so you can revert back if needed."
+msgstr "强烈建议您在导入新设置之前备份当前设置，以便您可以在需要时恢复。"
+
+#: includes/import-export.php:159
+msgid "Settings were imported successfully."
+msgstr "设置已成功导入。"
+
+#: includes/import-export.php:161
+msgid "File must be a json file."
+msgstr "文件必须是 json 文件。"
+
+#: includes/import-export.php:164
+msgid "File not uploaded."
+msgstr "文件未上传。"
+
+#: includes/integration/elementor-editor.php:36
+msgid "AIKit Editor"
+msgstr "AIKit 编辑器"
+
+#: includes/openai/auto-writer/auto-writer-form.php:53
+#: includes/openai/repurposer/repurposer.php:735
+#: includes/openai/rss/rss.php:346
+msgid "Draft"
+msgstr "草稿"
+
+#: includes/openai/auto-writer/auto-writer-form.php:54
+#: includes/openai/repurposer/repurposer.php:736
+#: includes/openai/rss/rss.php:347
+msgid "Publish"
+msgstr "发布"
+
+#: includes/openai/auto-writer/auto-writer-form.php:58
+#: includes/openai/auto-writer/auto-writer.php:1219
+#: includes/openai/repurposer/repurposer.php:1033
+#: includes/openai/rss/rss.php:351 includes/openai/rss/rss.php:733
+msgid "Active"
+msgstr "启用"
+
+#: includes/openai/auto-writer/auto-writer-form.php:59
+#: includes/openai/auto-writer/auto-writer.php:1219
+#: includes/openai/repurposer/repurposer.php:1033
+#: includes/openai/rss/rss.php:352 includes/openai/rss/rss.php:733
+msgid "Inactive"
+msgstr "未启用"
+
+#: includes/openai/auto-writer/auto-writer-form.php:63
+msgid "Scheduled"
+msgstr "已计划"
+
+#: includes/openai/auto-writer/auto-writer-form.php:64
+msgid "scheduled Successfully."
+msgstr "已安排成功。"
+
+#: includes/openai/auto-writer/auto-writer-form.php:65
+msgid "AI Auto Writer"
+msgstr "AI Auto Writer"
+
+#: includes/openai/auto-writer/auto-writer-form.php:79
+#: includes/openai/repurposer/repurposer.php:759
+#: includes/openai/rss/rss.php:383
+msgid "Selected language:"
+msgstr "所选语言："
+
+#: includes/openai/auto-writer/auto-writer-form.php:81
+#: includes/openai/repurposer/repurposer.php:761
+#: includes/openai/rss/rss.php:385
+msgid "Change language"
+msgstr "更改语言"
+
+#: includes/openai/auto-writer/auto-writer-form.php:89
+msgid "« Back to Scheduler"
+msgstr "« 返回Scheduler"
+
+#: includes/openai/auto-writer/auto-writer-form.php:95
+#: includes/openai/auto-writer/auto-writer.php:176
+#: includes/openai/auto-writer/auto-writer.php:899
+#: includes/openai/repurposer/repurposer.php:1128
+msgid "Type"
+msgstr "类型"
+
+#: includes/openai/auto-writer/auto-writer-form.php:98
+msgid "Single Topic"
+msgstr "单主题"
+
+#: includes/openai/auto-writer/auto-writer-form.php:102
+msgid "Multiple Topics"
+msgstr "多主题"
+
+#: includes/openai/auto-writer/auto-writer-form.php:105
+msgid ""
+"If you have multiple topics that you want to write about, select \"Multiple "
+"Topics\". In this case you will need to enter the topics in the \"Topics\" "
+"field below, one topic per line, then AIKit will choose a random topic from "
+"the list for each article it generates. This is useful when you want to add "
+"variety to your content, particularly for scheduled generations."
+msgstr ""
+"如果您想撰写多个主题，请选择“多个主题”。在这种情况下，您需要在下面的“主题”字"
+"段中输入主题，每行一个主题，然后 AIKit 将从列表中为它生成的每篇文章选择一个随"
+"机主题。当您想要增加内容的多样性时，特别是对于预定的生成，这非常有用。"
+
+#: includes/openai/auto-writer/auto-writer-form.php:111
+msgid "Strategy"
+msgstr "策略"
+
+#: includes/openai/auto-writer/auto-writer-form.php:114
+msgid "Random"
+msgstr "随机"
+
+#: includes/openai/auto-writer/auto-writer-form.php:118
+msgid "Visit every topic once"
+msgstr "每个主题访问一次"
+
+#: includes/openai/auto-writer/auto-writer-form.php:121
+msgid ""
+"If you have multiple topics that you want to write about, you can choose to "
+"have AIKit visit each topic once, or choose \"Random\" to have AIKit choose "
+"a random topic from the list for each article it generates."
+msgstr ""
+"如果您想要撰写多个主题，您可以选择让 AIKit 访问每个主题一次，或者选择“随"
+"机”让 AIKit 从其生成的每篇文章的列表中选择一个随机主题。"
+
+#: includes/openai/auto-writer/auto-writer-form.php:128
+msgid "Please enter a brief description of the topic you want to write about."
+msgstr "请输入您要撰写的主题的简短描述。"
+
+#: includes/openai/auto-writer/auto-writer-form.php:129
+msgid ""
+"Write a brief description of the topic you want to write about, or one topic "
+"description per line if you have multiple topics..."
+msgstr ""
+"写下您要写的主题的简短描述，或者如果您有多个主题，则每行写一个主题描述..."
+
+#: includes/openai/auto-writer/auto-writer-form.php:137
+#: includes/openai/auto-writer/auto-writer-form.php:138
+#: includes/openai/repurposer/repurposer.php:839
+#: includes/openai/repurposer/repurposer.php:840
+msgid "SEO keywords to focus on (comma-separated)"
+msgstr "要关注的 SEO 关键词（以逗号分隔）"
+
+#: includes/openai/auto-writer/auto-writer-form.php:144
+#: includes/openai/auto-writer/auto-writer-form.php:145
+#: includes/openai/auto-writer/auto-writer-form.php:273
+#: includes/openai/auto-writer/auto-writer-form.php:274
+msgid "How many times to run (0=infinity)"
+msgstr "运行多少次（0=无穷大）"
+
+#: includes/openai/auto-writer/auto-writer-form.php:159
+#: includes/openai/repurposer/repurposer.php:850
+#: includes/openai/rss/rss.php:467
+msgid "Model"
+msgstr "模型"
+
+#: includes/openai/auto-writer/auto-writer-form.php:169
+#: includes/openai/repurposer/repurposer.php:873
+#: includes/openai/rss/rss.php:435
+msgid "Post type"
+msgstr "文章类型"
+
+#: includes/openai/auto-writer/auto-writer-form.php:179
+#: includes/openai/repurposer/repurposer.php:883
+#: includes/openai/rss/rss.php:445
+msgid "Post category"
+msgstr "文章分类"
+
+#: includes/openai/auto-writer/auto-writer-form.php:189
+#: includes/openai/repurposer/repurposer.php:893
+#: includes/openai/rss/rss.php:457
+msgid "Post status"
+msgstr "文章状态"
+
+#: includes/openai/auto-writer/auto-writer-form.php:206
+#: includes/openai/auto-writer/auto-writer.php:1173
+#: includes/openai/comments/comments.php:333
+#: includes/openai/comments/comments.php:424
+#: includes/openai/embeddings/embeddings.php:732
+#: includes/openai/embeddings/embeddings.php:1086
+#: includes/openai/fine-tuner/fine-tuner.php:811
+#: includes/openai/fine-tuner/fine-tuner.php:1415
+#: includes/openai/repurposer/repurposer.php:1003
+#: includes/openai/rss/rss.php:487 includes/openai/rss/rss.php:704
+#: includes/tts/text-to-speech.php:194 includes/tts/text-to-speech.php:276
+msgid "Status"
+msgstr "状态"
+
+#: includes/openai/auto-writer/auto-writer-form.php:215
+msgid "Articles: "
+msgstr "文章: "
+
+#: includes/openai/auto-writer/auto-writer-form.php:219
+msgid "Sections per article: "
+msgstr "每篇文章的章节："
+
+#: includes/openai/auto-writer/auto-writer-form.php:223
+msgid "Maximum words per section: "
+msgstr "每节最大字数："
+
+#: includes/openai/auto-writer/auto-writer-form.php:233
+msgid "Include outline"
+msgstr "包括大纲"
+
+#: includes/openai/auto-writer/auto-writer-form.php:238
+msgid "Include featured article image"
+msgstr "包括特色文章图片"
+
+#: includes/openai/auto-writer/auto-writer-form.php:243
+msgid "Include section images"
+msgstr "包括章节图片"
+
+#: includes/openai/auto-writer/auto-writer-form.php:248
+msgid "Include conclusion"
+msgstr "包含总结"
+
+#: includes/openai/auto-writer/auto-writer-form.php:253
+msgid "Include TL;DR"
+msgstr "包含TL;DR"
+
+#: includes/openai/auto-writer/auto-writer-form.php:261
+#: includes/openai/rss/rss.php:496
+msgid "Update"
+msgstr "更新"
+
+#: includes/openai/auto-writer/auto-writer-form.php:281
+msgid "Cancel"
+msgstr "删除"
+
+#: includes/openai/auto-writer/auto-writer-form.php:282
+msgid "Confirm Schedule"
+msgstr "确认计划"
+
+#: includes/openai/auto-writer/auto-writer-form.php:289
+msgid "Schedule"
+msgstr "计划"
+
+#: includes/openai/auto-writer/auto-writer-form.php:290
+msgid "Generate"
+msgstr "生成"
+
+#: includes/openai/auto-writer/auto-writer-form.php:297
+msgid "Please don't close this page until generation is done."
+msgstr "在生成完成之前请不要关闭此页面。"
+
+#: includes/openai/auto-writer/auto-writer-form.php:301
+#: includes/openai/repurposer/repurposer.php:906
+#: includes/openai/rss/rss.php:504
+msgid ""
+"If you like to edit the prompts used by the AI, click on the accordion below."
+msgstr "如果您想编辑 AI 使用的提示，请单击下面的手风琴。"
+
+#: includes/openai/auto-writer/auto-writer-form.php:327
+#: includes/openai/repurposer/repurposer.php:932
+#: includes/openai/rss/rss.php:530
+msgid " uses"
+msgstr " uses"
+
+#: includes/openai/auto-writer/auto-writer-form.php:335
+#: includes/openai/repurposer/repurposer.php:940
+#: includes/openai/rss/rss.php:538
+msgid "Save prompts for future use (for currently-selected language)."
+msgstr "保存提示以供将来使用（针对当前选择的语言）。"
+
+#: includes/openai/auto-writer/auto-writer-form.php:340
+#: includes/openai/repurposer/repurposer.php:945
+#: includes/openai/rss/rss.php:543
+msgid "Are you sure you want to reset saved prompts?"
+msgstr "您确定要重置已保存的提示吗？"
+
+#: includes/openai/auto-writer/auto-writer-form.php:340
+#: includes/openai/repurposer/repurposer.php:945
+#: includes/openai/rss/rss.php:543
+msgid "Reset prompts to default"
+msgstr "将提示重置为默认值"
+
+#: includes/openai/auto-writer/auto-writer-form.php:344
+#: includes/openai/repurposer/repurposer.php:949
+#: includes/openai/rss/rss.php:547
+msgid "You can use the following placeholders in your prompts:"
+msgstr "您可以在提示中使用以下占位符："
+
+#: includes/openai/auto-writer/auto-writer-form.php:348
+msgid "this will be replaced with you article description/topic."
+msgstr "这将替换为您的文章描述/主题。"
+
+#: includes/openai/auto-writer/auto-writer-form.php:349
+msgid "this will be replaced with the text of generated section."
+msgstr "这将替换为生成部分的文本。"
+
+#: includes/openai/auto-writer/auto-writer-form.php:350
+#: includes/openai/repurposer/repurposer.php:953
+#: includes/openai/rss/rss.php:551
+msgid "this will be replaced with text needed for that prompt."
+msgstr "这将替换为该提示所需的文本。"
+
+#: includes/openai/auto-writer/auto-writer-form.php:351
+msgid ""
+"this will be replaced with the suggested headlines for the sections about to "
+"be generated."
+msgstr "这将替换为即将生成的部分的建议标题。"
+
+#: includes/openai/auto-writer/auto-writer-form.php:352
+#: includes/openai/repurposer/repurposer.php:955
+#: includes/openai/rss/rss.php:553
+msgid "this will be replaced with the SEO keywords you entered."
+msgstr "这将替换为您输入的 SEO 关键字。"
+
+#: includes/openai/auto-writer/auto-writer-form.php:353
+msgid ""
+"this will be replaced with the number of headlines for the article section."
+msgstr "这将替换为文章部分的标题数量。"
+
+#: includes/openai/auto-writer/auto-writer-form.php:373
+msgid "Every 30 minutes"
+msgstr "每半小时"
+
+#: includes/openai/auto-writer/auto-writer-form.php:374
+#: includes/openai/rss/rss.php:650
+msgid "Hourly"
+msgstr "每小时"
+
+#: includes/openai/auto-writer/auto-writer-form.php:375
+#: includes/openai/rss/rss.php:651
+msgid "Twice daily"
+msgstr "每天两次"
+
+#: includes/openai/auto-writer/auto-writer-form.php:376
+#: includes/openai/rss/rss.php:652
+msgid "Daily"
+msgstr "每天"
+
+#: includes/openai/auto-writer/auto-writer-form.php:377
+msgid "Every other day"
+msgstr "每隔一天"
+
+#: includes/openai/auto-writer/auto-writer-form.php:378
+msgid "Twice weekly"
+msgstr "一周两次"
+
+#: includes/openai/auto-writer/auto-writer-form.php:379
+msgid "Weekly"
+msgstr "每周"
+
+#: includes/openai/auto-writer/auto-writer-form.php:380
+msgid "Fortnightly"
+msgstr "半月"
+
+#: includes/openai/auto-writer/auto-writer-form.php:381
+msgid "Monthly"
+msgstr "每月"
+
+#: includes/openai/auto-writer/auto-writer-form.php:385
+msgid "Once"
+msgstr "单次"
+
+#: includes/openai/auto-writer/auto-writer-form.php:406
+#: includes/openai/auto-writer/auto-writer.php:1174
+msgid "Interval"
+msgstr "间隔"
+
+#: includes/openai/auto-writer/auto-writer.php:151
+msgid "AIKit Auto Writer"
+msgstr "AIKit Auto Writer"
+
+#: includes/openai/auto-writer/auto-writer.php:152
+msgid ""
+"AIKit Auto Writer is a tool helps you write drafts quickly, but please "
+"review and edit before publishing for best results. This is not a substitute "
+"for human editing, but a drafting aid. Happy writing!"
+msgstr ""
+"AIKit Auto Writer 是一款帮助您快速撰写草稿的工具，但请在发布前进行审查和编辑"
+"以获得最佳效果。这不是人工编辑的替代品，而是绘图辅助工具。写作愉快！"
+
+#: includes/openai/auto-writer/auto-writer.php:177
+#: includes/openai/auto-writer/auto-writer.php:900
+#: includes/openai/chatbot/chatbot-settings.php:456
+#: includes/openai/repurposer/repurposer.php:1129
+#: includes/openai/repurposer/repurposer.php:1160
+msgid "Title"
+msgstr "标题"
+
+#: includes/openai/auto-writer/auto-writer.php:178
+#: includes/openai/auto-writer/auto-writer.php:901
+#: includes/openai/comments/comments.php:425
+#: includes/openai/embeddings/embeddings.php:1087
+#: includes/openai/fine-tuner/fine-tuner.php:1416
+#: includes/openai/repurposer/repurposer.php:1007
+#: includes/openai/repurposer/repurposer.php:1130
+#: includes/openai/rss/rss.php:586 includes/openai/rss/rss.php:705
+#: includes/tts/text-to-speech.php:277
+msgid "Date created"
+msgstr "创建日期"
+
+#: includes/openai/auto-writer/auto-writer.php:213
+msgid "No auto-written posts found."
+msgstr "未找到自动撰写的文章。"
+
+#: includes/openai/auto-writer/auto-writer.php:226
+#: includes/openai/auto-writer/auto-writer.php:1244
+#: includes/openai/chatbot/chatbot-settings.php:730
+#: includes/openai/comments/comments.php:488
+#: includes/openai/embeddings/embeddings.php:1144
+#: includes/openai/fine-tuner/fine-tuner.php:1475
+#: includes/openai/repurposer/repurposer.php:1055
+#: includes/openai/rss/rss.php:752 includes/tts/text-to-speech.php:338
+msgid "« Previous"
+msgstr "« 上一个"
+
+#: includes/openai/auto-writer/auto-writer.php:227
+#: includes/openai/auto-writer/auto-writer.php:1259
+#: includes/openai/chatbot/chatbot-settings.php:745
+#: includes/openai/comments/comments.php:503
+#: includes/openai/embeddings/embeddings.php:1159
+#: includes/openai/fine-tuner/fine-tuner.php:1490
+#: includes/openai/repurposer/repurposer.php:1070
+#: includes/openai/rss/rss.php:767 includes/tts/text-to-speech.php:353
+msgid "Next »"
+msgstr "下一个 »"
+
+#: includes/openai/auto-writer/auto-writer.php:278
+msgid "Please enter a topic."
+msgstr "请输入主题。"
+
+#: includes/openai/auto-writer/auto-writer.php:698
+msgid "There was an error scheduling the post generation."
+msgstr "安排后期生成时出错。"
+
+#: includes/openai/auto-writer/auto-writer.php:704
+msgid "Post generation scheduled."
+msgstr "后期生成已安排。"
+
+#: includes/openai/auto-writer/auto-writer.php:744
+msgid "Post generation edited."
+msgstr "后期生成编辑。"
+
+#: includes/openai/auto-writer/auto-writer.php:788
+msgid "AIKit Scheduled AI Generators"
+msgstr "AIKit Scheduled 的 AI 生成器"
+
+#: includes/openai/auto-writer/auto-writer.php:792
+msgid ""
+"AIKit Scheduled AI Generators allow you to schedule content to be generated "
+"by AI. Please review and edit before publishing for best results. This is "
+"not a substitute for human editing, but a drafting aid. Happy writing!"
+msgstr ""
+"AIKit Scheduled AI 生成器允许您计划由 AI 生成的内容。请在发布前进行审查和编"
+"辑，以获得最佳效果。这不是人工编辑的替代品，而是绘图辅助工具。写作愉快！"
+
+#: includes/openai/auto-writer/auto-writer.php:793
+#: includes/openai/comments/comments.php:239
+#: includes/openai/embeddings/embeddings.php:470
+#: includes/openai/repurposer/repurposer.php:683
+#: includes/openai/rss/rss.php:282 includes/tts/text-to-speech.php:85
+msgid "How to setup?"
+msgstr "如何设置？"
+
+#: includes/openai/auto-writer/auto-writer.php:796
+#: includes/openai/comments/comments.php:245
+#: includes/openai/embeddings/embeddings.php:486
+#: includes/openai/repurposer/repurposer.php:687
+#: includes/openai/rss/rss.php:286 includes/tts/text-to-speech.php:95
+msgid "Note:"
+msgstr "注："
+
+#: includes/openai/auto-writer/auto-writer.php:797
+msgid ""
+"By default, WordPress scheduled jobs only runs when someone visits your "
+"site. To ensure that your scheduled AI generators runs even if nobody visits "
+"your site, you can set up a cron job on your server to call the WordPress "
+"cron system at regular intervals. Please ask your host provider to do that "
+"for you. Here is the cron job definition:"
+msgstr ""
+"默认情况下，WordPress 计划任务仅在有人访问您的网站时运行。为了确保即使没有人"
+"访问您的网站，您的预定 AI 生成器也能运行，您可以在服务器上设置一个 cron 任"
+"务，以定期调用 WordPress cron 系统。请要求您的主机提供商为您执行此操作。这是 "
+"cron 任务的定义："
+
+#: includes/openai/auto-writer/auto-writer.php:806
+msgid ""
+"Please consider the rate limits of your OpenAI account when setting up "
+"generators in order to avoid errors. You can find the rate limits "
+msgstr ""
+"设置生成器时请考虑您的 OpenAI 帐户的速率限制，以避免错误。您可以找到速率限制"
+
+#: includes/openai/auto-writer/auto-writer.php:821
+#: includes/openai/repurposer/repurposer.php:987
+msgid "Are you sure you want to activate all jobs?"
+msgstr "您确定要激活所有任务吗？"
+
+#: includes/openai/auto-writer/auto-writer.php:821
+#: includes/openai/repurposer/repurposer.php:987
+msgid "Activate all"
+msgstr "全部激活"
+
+#: includes/openai/auto-writer/auto-writer.php:822
+#: includes/openai/repurposer/repurposer.php:988
+msgid "Are you sure you want to deactivate all jobs?"
+msgstr "您确定要停用所有任务吗？"
+
+#: includes/openai/auto-writer/auto-writer.php:822
+#: includes/openai/repurposer/repurposer.php:988
+msgid "Deactivate all"
+msgstr "全部停用"
+
+#: includes/openai/auto-writer/auto-writer.php:823
+#: includes/openai/repurposer/repurposer.php:989
+msgid "Are you sure you want to delete all jobs?"
+msgstr "您确定要删除所有任务吗？"
+
+#: includes/openai/auto-writer/auto-writer.php:823
+#: includes/openai/repurposer/repurposer.php:989
+msgid "Delete all"
+msgstr "删除所有"
+
+#: includes/openai/auto-writer/auto-writer.php:828
+msgid "Add new"
+msgstr "新增"
+
+#: includes/openai/auto-writer/auto-writer.php:843
+msgid "No record found."
+msgstr "没有找到记录"
+
+#: includes/openai/auto-writer/auto-writer.php:849
+msgid "AIKit Scheduled AI Generator"
+msgstr "AIKit Scheduled AI Generator"
+
+#: includes/openai/auto-writer/auto-writer.php:849
+msgid " - Edit"
+msgstr "- 修改"
+
+#: includes/openai/auto-writer/auto-writer.php:887
+#: includes/openai/repurposer/repurposer.php:1113
+msgid "Generated Posts"
+msgstr "生成的文章"
+
+#: includes/openai/auto-writer/auto-writer.php:890
+#: includes/openai/comments/comments.php:324
+#: includes/openai/embeddings/embeddings.php:714
+#: includes/openai/fine-tuner/fine-tuner.php:793
+#: includes/openai/repurposer/repurposer.php:1119
+#: includes/openai/rss/rss.php:574 includes/tts/text-to-speech.php:185
+msgid "Logs"
+msgstr "日志"
+
+#: includes/openai/auto-writer/auto-writer.php:907
+#: includes/openai/repurposer/repurposer.php:1136
+msgid "No posts generated yet."
+msgstr "尚未生成文章。"
+
+#: includes/openai/auto-writer/auto-writer.php:927
+#: includes/openai/comments/comments.php:379
+#: includes/openai/embeddings/embeddings.php:780
+#: includes/openai/fine-tuner/fine-tuner.php:988
+#: includes/openai/repurposer/repurposer.php:1169
+#: includes/openai/rss/rss.php:612 includes/tts/text-to-speech.php:231
+msgid ""
+"API errors can happen due to many reasons (such as API being down or rate "
+"limits have been exceeded, etc). In case of errors, do not worry, AIKit will "
+"keep retrying the job till it succeeds."
+msgstr ""
+"API 错误的发生可能有多种原因（例如 API 关闭或超出速率限制等）。如果出现错误，"
+"不用担心，AIKit 会不断重试任务，直到成功。"
+
+#: includes/openai/auto-writer/auto-writer.php:933
+#: includes/openai/comments/comments.php:385
+#: includes/openai/embeddings/embeddings.php:786
+#: includes/openai/fine-tuner/fine-tuner.php:996
+#: includes/openai/repurposer/repurposer.php:1174
+#: includes/openai/rss/rss.php:618 includes/tts/text-to-speech.php:237
+msgid "No logs found."
+msgstr "没有找到日志。"
+
+#: includes/openai/auto-writer/auto-writer.php:1171
+msgid "Topic(s)"
+msgstr "主题"
+
+#: includes/openai/auto-writer/auto-writer.php:1172
+#: includes/openai/repurposer/repurposer.php:1001
+msgid "Keywords"
+msgstr "关键词"
+
+#: includes/openai/auto-writer/auto-writer.php:1175
+msgid "Last generation"
+msgstr "最近生成"
+
+#: includes/openai/auto-writer/auto-writer.php:1176
+msgid "Next generation"
+msgstr "下次生成"
+
+#: includes/openai/auto-writer/auto-writer.php:1177
+#: includes/openai/repurposer/repurposer.php:1005
+msgid "Is running"
+msgstr "运行中"
+
+#: includes/openai/auto-writer/auto-writer.php:1178
+msgid "Run count"
+msgstr "运行次数"
+
+#: includes/openai/auto-writer/auto-writer.php:1179
+msgid "Max run count"
+msgstr "最大运行次数"
+
+#: includes/openai/auto-writer/auto-writer.php:1180
+#: includes/openai/comments/comments.php:427
+#: includes/openai/embeddings/embeddings.php:1088
+#: includes/openai/fine-tuner/fine-tuner.php:1417
+#: includes/openai/repurposer/repurposer.php:1008
+#: includes/openai/rss/rss.php:706 includes/tts/text-to-speech.php:278
+msgid "Actions"
+msgstr "操作"
+
+#: includes/openai/auto-writer/auto-writer.php:1194
+#: includes/openai/chatbot/chatbot-settings.php:700
+#: includes/openai/comments/comments.php:447
+#: includes/openai/embeddings/embeddings.php:1112
+#: includes/openai/fine-tuner/fine-tuner.php:1441
+#: includes/openai/repurposer/repurposer.php:1018
+#: includes/openai/rss/rss.php:720 includes/tts/text-to-speech.php:298
+msgid "No entries found"
+msgstr "没有找到条目"
+
+#: includes/openai/auto-writer/auto-writer.php:1223
+#: includes/openai/chatbot/chatbot-settings.php:214
+#: includes/openai/chatbot/chatbot-settings.php:229
+#: includes/openai/chatbot/chatbot-settings.php:259
+#: includes/openai/chatbot/chatbot-settings.php:362
+#: includes/openai/repurposer/repurposer.php:1034
+#: includes/openai/repurposer/repurposer.php:1035
+#: includes/openai/repurposer/repurposer.php:1036
+msgid "Yes"
+msgstr "是"
+
+#: includes/openai/auto-writer/auto-writer.php:1223
+#: includes/openai/chatbot/chatbot-settings.php:215
+#: includes/openai/chatbot/chatbot-settings.php:230
+#: includes/openai/chatbot/chatbot-settings.php:260
+#: includes/openai/chatbot/chatbot-settings.php:363
+#: includes/openai/repurposer/repurposer.php:1034
+#: includes/openai/repurposer/repurposer.php:1035
+msgid "No"
+msgstr "否"
+
+#: includes/openai/auto-writer/auto-writer.php:1227
+#: includes/openai/embeddings/embeddings.php:684
+msgid "Edit"
+msgstr "编辑"
+
+#: includes/openai/auto-writer/auto-writer.php:1228
+#: includes/openai/comments/comments.php:471
+#: includes/openai/embeddings/embeddings.php:1127
+#: includes/openai/fine-tuner/fine-tuner.php:1458
+#: includes/openai/repurposer/repurposer.php:1040
+#: includes/openai/rss/rss.php:737 includes/tts/text-to-speech.php:321
+msgid "Delete"
+msgstr "删除"
+
+#: includes/openai/auto-writer/auto-writer.php:1228
+msgid "Are you sure you want to delete this scheduled generator?"
+msgstr "您确定要删除此预定生成器吗？"
+
+#: includes/openai/chatbot/chatbot-settings.php:79
+msgid ""
+"AIKit Chatbot allows you to create a chatbot that can be used on your "
+"website. You, or your users can use it to answer questions and provide "
+"support about your products or services."
+msgstr ""
+"AIKit Chatbot允许您创建可在您的网站上使用的Chatbot。您或您的用户可以使用它来"
+"回答问题并提供有关您的产品或服务的支持。"
+
+#: includes/openai/chatbot/chatbot-settings.php:96
+#: includes/openai/fine-tuner/fine-tuner.php:1077
+msgid ""
+"Please set your OpenAI API key in the AIKit settings page in order to use "
+"Chatbot."
+msgstr "请在 AIKit 设置页面中设置您的 OpenAI API 密钥才能使用 Chatbot。"
+
+#: includes/openai/chatbot/chatbot-settings.php:109
+#: includes/openai/fine-tuner/fine-tuner.php:1090
+msgid ""
+"Please make sure you are using a valid OpenAI API key to be able to load all "
+"available models."
+msgstr "请确保您使用有效的 OpenAI API 密钥，以便能够加载所有可用模型。"
+
+#: includes/openai/chatbot/chatbot-settings.php:137
+msgid "Frontend Only"
+msgstr "仅前端"
+
+#: includes/openai/chatbot/chatbot-settings.php:138
+msgid "Admin Panel Only"
+msgstr "仅限后端"
+
+#: includes/openai/chatbot/chatbot-settings.php:139
+msgid "Admin Panel & Frontend"
+msgstr "前端和后端"
+
+#: includes/openai/chatbot/chatbot-settings.php:140
+msgid "Only using shortcode"
+msgstr "仅使用简码"
+
+#: includes/openai/chatbot/chatbot-settings.php:174
+msgid "Select Embedding"
+msgstr "选择嵌入"
+
+#: includes/openai/chatbot/chatbot-settings.php:193
+msgid "Chatbot Settings"
+msgstr "Chatbot 设置"
+
+#: includes/openai/chatbot/chatbot-settings.php:196
+msgid "Chatbot Conversation History"
+msgstr "Chatbot对话历史记录"
+
+#: includes/openai/chatbot/chatbot-settings.php:206
+msgid "General settings"
+msgstr "通用设置"
+
+#: includes/openai/chatbot/chatbot-settings.php:212
+msgid "Enable Chatbot"
+msgstr "启用Chatbot"
+
+#: includes/openai/chatbot/chatbot-settings.php:227
+msgid "Enable Voice (Speech to text)"
+msgstr "使用声音(声音转文字)"
+
+#: includes/openai/chatbot/chatbot-settings.php:242
+msgid "Default view"
+msgstr "默认视图"
+
+#: includes/openai/chatbot/chatbot-settings.php:244
+msgid "Collapsed"
+msgstr "折叠"
+
+#: includes/openai/chatbot/chatbot-settings.php:245
+msgid "Expanded"
+msgstr "展开"
+
+#: includes/openai/chatbot/chatbot-settings.php:257
+msgid "Log messages"
+msgstr "日志信息"
+
+#: includes/openai/chatbot/chatbot-settings.php:274
+msgid "To include Chatbot in any specific page, you can use the shortcode: "
+msgstr "要将Chatbot包含在任何特定页面中，您可以使用短代码："
+
+#: includes/openai/chatbot/chatbot-settings.php:276
+msgid ""
+"If you want to display the chatbot inside the page (inline) instead of on "
+"the side, pass the inline parameter to the shotcode like this:"
+msgstr ""
+"如果您想在页面内（内联）而不是侧面显示Chatbot，请将内联参数传递给shotcode，如"
+"下所示："
+
+#: includes/openai/chatbot/chatbot-settings.php:288
+msgid "Chatbot model"
+msgstr "Chatbot 模型"
+
+#: includes/openai/chatbot/chatbot-settings.php:291
+msgid "For best results, please use chat models like gpt-3.5-turbo or gpt-4."
+msgstr "为了获得最佳结果，请使用 gpt-3.5-turbo 或 gpt-4 等聊天模型。"
+
+#: includes/openai/chatbot/chatbot-settings.php:299
+msgid "Show Chatbot on"
+msgstr "Chatbot展示在"
+
+#: includes/openai/chatbot/chatbot-settings.php:310
+msgid "Max response tokens"
+msgstr "最大响应Token数"
+
+#: includes/openai/chatbot/chatbot-settings.php:328
+msgid "Prompt stop sequence (Optional)"
+msgstr "提示停止顺序（可选）"
+
+#: includes/openai/chatbot/chatbot-settings.php:343
+msgid "Completion stop sequence (Optional)"
+msgstr "完成停止顺序（可选）"
+
+#: includes/openai/chatbot/chatbot-settings.php:360
+msgid "Use embeddings"
+msgstr "使用嵌入式"
+
+#: includes/openai/chatbot/chatbot-settings.php:368
+msgid "Watch tutorial video"
+msgstr "观看教程视频"
+
+#: includes/openai/chatbot/chatbot-settings.php:378
+msgid "Embedding"
+msgstr "嵌入"
+
+#: includes/openai/chatbot/chatbot-settings.php:381
+msgid ""
+"Select the embedding you want to use to answer user questions. If you don't "
+"find your embedding in the list, please make sure the embedding creation "
+"process is already complete."
+msgstr ""
+"选择您想要用来回答用户问题的嵌入。如果您在列表中没有找到您的嵌入，请确保嵌入"
+"创建过程已完成。"
+
+#: includes/openai/chatbot/chatbot-settings.php:391
+msgid "Embedding Answer Formulation Prompt"
+msgstr "嵌入答案表述提示"
+
+#: includes/openai/chatbot/chatbot-settings.php:393
+msgid ""
+"Embedding Answer formulation prompt will be used to formulate the answer to "
+"the user question along with the result of the embedding semantic search. "
+"What happens is the following. A user asks a question in the Chatbot, then "
+"using embeddings, a semantic search (search by meaning) occurs to retrieve "
+"the closest answer to the user question. Then, the answer formulation prompt "
+"is used to formulate the answer to the user question. For example, if the "
+"user asks \"How much does your service cost?\", the semantic search will "
+"retrieve the closest answer to this question, for example \"Our prices start "
+"at $10 per month and you get a discount if you pay annually.\". Then, the "
+"answer formulation prompt will be used to formulate the answer to the user "
+"question, for example \"Service cost starts at $10 per month\"."
+msgstr ""
+"嵌入答案制定提示将用于制定用户问题的答案以及嵌入语义搜索的结果。发生的情况如"
+"下。用户在Chatbot中提出问题，然后使用嵌入进行语义搜索（按含义搜索）以检索最接"
+"近用户问题的答案。然后，使用答案制定提示来制定用户问题的答案。例如，如果用户"
+"询问“您的服务费用是多少？”，语义搜索将检索与该问题最接近的答案，例如“我们的价"
+"格从每月 10 美元起，如果您每年支付，您将获得折扣。” 。然后，答案制定提示将用"
+"于制定用户问题的答案，例如“服务费用从每月10美元起”。"
+
+#: includes/openai/chatbot/chatbot-settings.php:394
+msgid "Make sure to include the following placeholders in your prompt: "
+msgstr "确保在提示中包含以下占位符："
+
+#: includes/openai/chatbot/chatbot-settings.php:394
+msgid " and "
+msgstr "和"
+
+#: includes/openai/chatbot/chatbot-settings.php:394
+msgid ""
+". These placeholders will be replaced with the result (from vector database) "
+"and the question (asked by user) respectively."
+msgstr ""
+"。这些占位符将分别替换为结果（来自矢量数据库）和问题（用户提出的问题）。"
+
+#: includes/openai/chatbot/chatbot-settings.php:409
+msgid "Chatbot Context"
+msgstr "Chatbot 上下文"
+
+#: includes/openai/chatbot/chatbot-settings.php:411
+msgid ""
+"You can use this field to set the behaviour of the chatbot. For example, use "
+"something like \"You are a helpful assistant.\" or \"Answer in the style of "
+"Shakespeare.\" ."
+msgstr ""
+"您可以使用此字段来设置Chatbot的行为。例如，使用“你是一个有用的助手”之类的内"
+"容。或“以莎士比亚的风格回答”。 。"
+
+#: includes/openai/chatbot/chatbot-settings.php:422
+msgid "Show Chatbot only for user role"
+msgstr "仅显示用户角色的Chatbot"
+
+#: includes/openai/chatbot/chatbot-settings.php:435
+msgid "Page content aware?"
+msgstr "页面内容感知?"
+
+#: includes/openai/chatbot/chatbot-settings.php:437
+msgid ""
+"If enabled, the chatbot will be able to use the content of the current page "
+"to generate better responses. Important: it will increase your API costs!"
+msgstr ""
+"如果启用，Chatbot将能够使用当前页面的内容来生成更好的响应。重要提示：这会增加"
+"您的 API 成本！"
+
+#: includes/openai/chatbot/chatbot-settings.php:443
+msgid "Please select an embedding from embedding list."
+msgstr "请从嵌入列表中选择一个嵌入。"
+
+#: includes/openai/chatbot/chatbot-settings.php:447
+msgid "Appearance"
+msgstr "外观"
+
+#: includes/openai/chatbot/chatbot-settings.php:469
+msgid "Input text placeholder"
+msgstr "输入文本占位符"
+
+#: includes/openai/chatbot/chatbot-settings.php:482
+msgid "Start Message"
+msgstr "开始留言"
+
+#: includes/openai/chatbot/chatbot-settings.php:496
+msgid "Main Color"
+msgstr "主色"
+
+#: includes/openai/chatbot/chatbot-settings.php:508
+msgid "Secondary Color"
+msgstr "次色"
+
+#: includes/openai/chatbot/chatbot-settings.php:522
+msgid "Title Color"
+msgstr "标题颜色"
+
+#: includes/openai/chatbot/chatbot-settings.php:537
+msgid "AI Message Bubble Color"
+msgstr "AI消息气泡颜色"
+
+#: includes/openai/chatbot/chatbot-settings.php:549
+msgid "AI Message Text Color"
+msgstr "AI消息文字颜色"
+
+#: includes/openai/chatbot/chatbot-settings.php:562
+msgid "User Message Bubble Color"
+msgstr "用户消息气泡颜色"
+
+#: includes/openai/chatbot/chatbot-settings.php:574
+msgid "User Message Text Color"
+msgstr "用户消息文本颜色"
+
+#: includes/openai/chatbot/chatbot-settings.php:584
+msgid "Reset Colors"
+msgstr "重置颜色"
+
+#: includes/openai/chatbot/chatbot-settings.php:622
+msgid "« Back to History"
+msgstr "« 返回历史"
+
+#: includes/openai/chatbot/chatbot-settings.php:629
+msgid "Please select a conversation."
+msgstr "请选择一个对话。"
+
+#: includes/openai/chatbot/chatbot-settings.php:636
+msgid "No messages found for this conversation."
+msgstr "没有找到此对话的消息。"
+
+#: includes/openai/chatbot/chatbot-settings.php:646
+#: includes/openai/chatbot/chatbot-settings.php:675
+msgid "User"
+msgstr "用户"
+
+#: includes/openai/chatbot/chatbot-settings.php:649
+msgid "AI"
+msgstr "AI"
+
+#: includes/openai/chatbot/chatbot-settings.php:674
+msgid "User IP Address"
+msgstr "用户的ip地址"
+
+#: includes/openai/chatbot/chatbot-settings.php:676
+msgid "Date"
+msgstr "日期"
+
+#: includes/openai/chatbot/chatbot.php:217
+msgid ""
+"Error 190: An error occurred while generating the response, please try again "
+"later."
+msgstr "错误190：生成响应时发生错误，请稍后重试。"
+
+#: includes/openai/chatbot/chatbot.php:282
+msgid ""
+"Error 200: An error occurred while generating the response, please try again."
+msgstr "错误200：生成响应时发生错误，请重试。"
+
+#: includes/openai/chatbot/chatbot.php:468
+msgid "Could not get permission to use your mic."
+msgstr "无法获得使用麦克风的权限。"
+
+#: includes/openai/chatbot/chatbot.php:491
+msgid "Can you please help me with..."
+msgstr "你能帮我吗..."
+
+#: includes/openai/comments/comments.php:240
+msgid ""
+"AIKit AI comments allows you to automatically generate comments for your "
+"posts using AI to increase engagement and SEO."
+msgstr ""
+"AIKit AI 评论允许您使用 AI 自动为您的文章生成评论，以提高参与度和 SEO。"
+
+#: includes/openai/comments/comments.php:246
+msgid ""
+"AIKit AI comments creation jobs run in the background as scheduled jobs."
+msgstr "AIKit AI 注释创建任务作为计划任务在后台运行。"
+
+#: includes/openai/comments/comments.php:247
+msgid ""
+"By default, WordPress scheduled jobs only run when someone visits your site. "
+"To ensure that your comment generation jobs run even if nobody visits your "
+"site, you can set up a cron job on your server to call the WordPress cron "
+"system at regular intervals. Please ask your host provider to do that for "
+"you. Here is the cron job definition:"
+msgstr ""
+"默认情况下，WordPress 计划任务仅在有人访问您的网站时运行。为了确保即使没有人"
+"访问您的网站，您的评论生成任务也能运行，您可以在服务器上设置一个 cron 任务，"
+"以定期调用 WordPress cron 系统。请要求您的主机提供商为您执行此操作。这是 "
+"cron 任务的定义："
+
+#: includes/openai/comments/comments.php:256
+#: includes/openai/embeddings/embeddings.php:497
+#: includes/openai/fine-tuner/fine-tuner.php:628
+#: includes/openai/repurposer/repurposer.php:700
+#: includes/openai/rss/rss.php:299 includes/tts/text-to-speech.php:106
+msgid "Jobs"
+msgstr "任务"
+
+#: includes/openai/comments/comments.php:283
+#: includes/openai/embeddings/embeddings.php:529
+#: includes/openai/fine-tuner/fine-tuner.php:660
+#: includes/openai/rss/rss.php:315 includes/tts/text-to-speech.php:148
+msgid "Job not found."
+msgstr "没找到任务"
+
+#: includes/openai/comments/comments.php:291
+msgid ""
+"Please set back and relax while the your comment generation job is being "
+"processed. Status of the job will change to reflect when this is done."
+msgstr ""
+"在处理您的评论生成任务时，请放松心情。任务的状态将发生变化以反映此操作何时完"
+"成。"
+
+#: includes/openai/comments/comments.php:294
+msgid ""
+"Congratulations! Your text to comment generation job is processed "
+"successfully and the generated comments have been added to your post."
+msgstr "恭喜！您的文本评论生成任务已成功处理，生成的评论已添加到您的文章中。"
+
+#: includes/openai/comments/comments.php:321
+#: includes/openai/embeddings/embeddings.php:711
+#: includes/openai/fine-tuner/fine-tuner.php:790
+#: includes/tts/text-to-speech.php:182
+msgid "Job Info"
+msgstr "任务信息"
+
+#: includes/openai/comments/comments.php:339
+msgid "Comments to generate"
+msgstr "要生成的评论"
+
+#: includes/openai/comments/comments.php:345
+msgid "Post"
+msgstr "文章"
+
+#: includes/openai/comments/comments.php:359
+msgid "Generated comments"
+msgstr "生成的评论"
+
+#: includes/openai/comments/comments.php:414
+#: includes/tts/text-to-speech.php:266
+msgid "Are you sure you want to delete all pending jobs?"
+msgstr "您确定要删除所有待处理的任务吗？"
+
+#: includes/openai/comments/comments.php:414
+#: includes/tts/text-to-speech.php:266
+msgid "Delete all pending jobs"
+msgstr "删除所有待处理的任务"
+
+#: includes/openai/comments/comments.php:423
+#: includes/tts/text-to-speech.php:275
+msgid "Post title"
+msgstr "文章标题"
+
+#: includes/openai/comments/comments.php:426
+msgid "Comment count to generate"
+msgstr "要生成的评论数"
+
+#: includes/openai/comments/comments.php:457
+#: includes/tts/text-to-speech.php:308
+msgid "(no title)"
+msgstr "(无标题)"
+
+#: includes/openai/comments/comments.php:470
+#: includes/openai/embeddings/embeddings.php:1126
+#: includes/openai/fine-tuner/fine-tuner.php:1457
+#: includes/openai/repurposer/repurposer.php:1039
+#: includes/openai/rss/rss.php:736 includes/tts/text-to-speech.php:320
+msgid "View"
+msgstr "阅读"
+
+#: includes/openai/comments/comments.php:471
+msgid "Are you sure you want to delete this comments jobs?"
+msgstr "您确定要删除此评论任务吗？"
+
+#: includes/openai/comments/comments.php:589
+msgid "AIKit AI Comments"
+msgstr "AIKit AI 评论"
+
+#: includes/openai/comments/comments.php:600
+#: includes/tts/text-to-speech.php:409
+msgid "Pending"
+msgstr "待执行"
+
+#: includes/openai/comments/comments.php:601
+#: includes/openai/embeddings/embeddings.php:1183
+#: includes/openai/fine-tuner/fine-tuner.php:1515
+#: includes/tts/text-to-speech.php:410
+msgid "Completed"
+msgstr "完成"
+
+#: includes/openai/comments/comments.php:656
+msgid "Job(s) already exist for this post:"
+msgstr "该文章下面的任务已存在"
+
+#: includes/openai/comments/comments.php:683
+msgid "Generate more AI comments"
+msgstr "生成更多AI评论"
+
+#: includes/openai/comments/comments.php:683
+msgid "Generate AI comments"
+msgstr "生成AI评论"
+
+#: includes/openai/comments/comments.php:688
+msgid "Number of comments to generate"
+msgstr "要生成的评论数量"
+
+#: includes/openai/comments/comments.php:702
+msgid "Selected Language"
+msgstr "所选语言"
+
+#: includes/openai/comments/comments.php:709
+msgid "Change Language"
+msgstr "更改语言"
+
+#: includes/openai/comments/comments.php:715
+msgid "Save prompt for future use"
+msgstr "保存提示以供将来使用"
+
+#: includes/openai/comments/comments.php:721
+msgid "Reset prompt to default"
+msgstr "将提示重置为默认值"
+
+#: includes/openai/comments/comments.php:727
+msgid "AIKit AI Comments generates AI comments for your post."
+msgstr "AIKit AI Comments 为您的文章生成 AI 评论。"
+
+#: includes/openai/comments/comments.php:730
+msgid "Make sure to include the "
+msgstr "确保包括"
+
+#: includes/openai/comments/comments.php:732
+msgid ""
+" phrase in your prompt as this will be replaced with the post content before "
+"doing the AI reneration request."
+msgstr "提示中的短语，因为这将在执行 AI 重新生成请求之前替换为文章内容。"
+
+#: includes/openai/embeddings/embeddings.php:322
+msgid ""
+"This embedding is currently selected for the chatbot. Please select another "
+"embedding for the chatbot before deleting this one."
+msgstr ""
+"当前为Chatbot选择了此嵌入。请先为Chatbot选择另一个嵌入，然后再删除此嵌入。"
+
+#: includes/openai/embeddings/embeddings.php:462
+#: includes/openai/fine-tuner/fine-tuner.php:616
+msgid "View / Edit Job"
+msgstr "查看/编辑任务"
+
+#: includes/openai/embeddings/embeddings.php:462
+msgid "Create Embeddings Job"
+msgstr "创建嵌入任务"
+
+#: includes/openai/embeddings/embeddings.php:471
+#: includes/tts/text-to-speech.php:86
+msgid "Watch Video"
+msgstr "查看视频"
+
+#: includes/openai/embeddings/embeddings.php:472
+msgid ""
+"AIKit Embeddings allows you to turn your data into vector representation "
+"which can be used to build improved Chatbot experience to answer your "
+"customers' questions about your product or service."
+msgstr ""
+"AIKit Embeddings 允许您将数据转换为矢量表示，可用于构建改进的Chatbot体验，以"
+"回答客户有关您的产品或服务的问题。"
+
+#: includes/openai/embeddings/embeddings.php:477
+msgid ""
+"To use embeddings, you can either choose to store your data locally, which "
+"it the cheaper option (for small to moderate datasets), or use Qdrant in "
+"case you have much data to store and process. If you choose to store data "
+"locally, then you don't need to do anything. If you choode the Qdrant "
+"router, them you need to create an account, you can create one for free at"
+msgstr ""
+"要使用嵌入，您可以选择在本地存储数据，这是更便宜的选择（对于中小型数据集），"
+"或者在您有大量数据需要存储和处理时使用 Qdrant。如果您选择在本地存储数据，则无"
+"需执行任何操作。如果您选择 Qdrant 路由器，则需要创建一个帐户，您可以在以下位"
+"置免费创建一个帐户"
+
+#: includes/openai/embeddings/embeddings.php:481
+msgid ""
+"Once you have you account created, Qdrant gives you a free forever cluster "
+"that can be used to store and query your data (embeddings). To connect to "
+"your cluster you need to enter the host URL and the API key of it in the "
+msgstr ""
+"创建帐户后，Qdrant 将为您提供一个永久免费的集群，可用于存储和查询您的数据（嵌"
+"入）。要连接到您的集群，您需要在以下地址中输入主机 URL 及其 API 密钥"
+
+#: includes/openai/embeddings/embeddings.php:481
+#: includes/openai/embeddings/embeddings.php:1063
+msgid "AIKit settings page"
+msgstr "AIKit 设置页"
+
+#: includes/openai/embeddings/embeddings.php:487
+msgid "AIKit embedding creation jobs run in the background as scheduled jobs."
+msgstr "AIKit 嵌入创建任务作为计划任务在后台运行。"
+
+#: includes/openai/embeddings/embeddings.php:488
+msgid ""
+"By default, WordPress scheduled jobs only run when someone visits your site. "
+"To ensure that your embedding creation jobs run even if nobody visits your "
+"site, you can set up a cron job on your server to call the WordPress cron "
+"system at regular intervals. Please ask your host provider to do that for "
+"you. Here is the cron job definition:"
+msgstr ""
+"默认情况下，WordPress 计划任务仅在有人访问您的网站时运行。为了确保即使没有人"
+"访问您的站点，您的嵌入创建任务也能运行，您可以在服务器上设置一个 cron 任务，"
+"以定期调用 WordPress cron 系统。请要求您的主机提供商为您执行此操作。这是 "
+"cron 任务的定义："
+
+#: includes/openai/embeddings/embeddings.php:573
+msgid ""
+"Please set back and relax while the data is being collected from your posts/"
+"pages. Status of the job will change to reflect when this operation is done."
+msgstr ""
+"从您的文章/页面收集数据时，请放松心情。任务的状态将发生变化以反映此操作何时完"
+"成。"
+
+#: includes/openai/embeddings/embeddings.php:587
+msgid ""
+"Unfortunately, the embedding creation job failed. Please check the logs "
+"below for more information."
+msgstr "不幸的是，嵌入创建任务失败。请检查下面的日志以获取更多信息。"
+
+#: includes/openai/embeddings/embeddings.php:602
+msgid ""
+"Please set back and relax while the your embedding is being created. Status "
+"of the job will change to reflect when this is done."
+msgstr "在创建嵌入时请退后并放松。任务的状态将发生变化以反映此操作何时完成。"
+
+#: includes/openai/embeddings/embeddings.php:615
+msgid ""
+"Please have a look at the collected data and approve them. Feel free to edit "
+"them as you see fit."
+msgstr "请查看收集的数据并批准它们。请随意编辑您认为合适的内容。"
+
+#: includes/openai/embeddings/embeddings.php:626
+#: includes/openai/embeddings/embeddings.php:809
+msgid "No data found."
+msgstr "没有找到数据"
+
+#: includes/openai/embeddings/embeddings.php:632
+msgid "Collected data"
+msgstr "收集的数据"
+
+#: includes/openai/embeddings/embeddings.php:656
+msgid "Create Embedding"
+msgstr "创建嵌入"
+
+#: includes/openai/embeddings/embeddings.php:677
+msgid ""
+"Congratulations! Your embedding is ready to be used. You you should see it "
+"in the list of embeddings available in the Chatbot setting page in case you "
+"want to use it in the Chatbot."
+msgstr ""
+"恭喜！您的嵌入已准备好可以使用。如果您想在Chatbot中使用它，您应该在Chatbot设"
+"置页面的可用嵌入列表中看到它。"
+
+#: includes/openai/embeddings/embeddings.php:692
+msgid ""
+"This embedding is currently used with the Chatbot. Please select another "
+"embedding for the Chatbot before editing this one."
+msgstr ""
+"此嵌入当前与Chatbot一起使用。请先为Chatbot选择另一种嵌入，然后再编辑此嵌入。"
+
+#: includes/openai/embeddings/embeddings.php:721
+msgid "Entered / Collected Data"
+msgstr "输入/收集的数据"
+
+#: includes/openai/embeddings/embeddings.php:741
+#: includes/openai/embeddings/embeddings.php:1014
+msgid "Embeddings Storage Type"
+msgstr "嵌入存储类型"
+
+#: includes/openai/embeddings/embeddings.php:743
+#: includes/openai/embeddings/embeddings.php:1016
+msgid "Local"
+msgstr "本地"
+
+#: includes/openai/embeddings/embeddings.php:761
+#: includes/openai/embeddings/embeddings.php:1031
+#: includes/openai/embeddings/embeddings.php:1085
+msgid "Name"
+msgstr "名称"
+
+#: includes/openai/embeddings/embeddings.php:816
+#: includes/openai/fine-tuner/fine-tuner.php:1011
+msgid "Export as CSV"
+msgstr "导出为 CSV"
+
+#: includes/openai/embeddings/embeddings.php:822
+msgid "Here is the data collected so far."
+msgstr "这是迄今为止收集的数据。"
+
+#: includes/openai/embeddings/embeddings.php:824
+msgid "Here is the data you entered."
+msgstr "这是您输入的数据。"
+
+#: includes/openai/embeddings/embeddings.php:834
+msgid "Data"
+msgstr "数据"
+
+#: includes/openai/embeddings/embeddings.php:861
+msgid ""
+"Enter your embedding data. This data will be transformed into vectors later "
+"and stored in the embeddings store (Qdrant). In Chatbot, when your user asks "
+"a question, a similarity search will be done against this data to find the "
+"closest text to answer that question, then the result will be fed into a GPT "
+"model (of your choice) to answer that question using your data."
+msgstr ""
+"输入您的嵌入数据。该数据稍后将被转换为向量并存储在嵌入存储（Qdrant）中。在"
+"Chatbot中，当您的用户提出问题时，将针对此数据进行相似性搜索，以找到最接近的文"
+"本来回答该问题，然后将结果输入到（您选择的）GPT 模型中，以使用您的数据。"
+
+#: includes/openai/embeddings/embeddings.php:862
+msgid ""
+"Each paragraph should be short and concise and discusses some information "
+"about your product or service."
+msgstr "每个段落都应该简短明了，并讨论有关您的产品或服务的一些信息。"
+
+#: includes/openai/embeddings/embeddings.php:872
+msgid "Choose the source of your embeddings data"
+msgstr "选择嵌入数据的来源"
+
+#: includes/openai/embeddings/embeddings.php:874
+#: includes/openai/fine-tuner/fine-tuner.php:1120
+msgid "Manual"
+msgstr "手动"
+
+#: includes/openai/embeddings/embeddings.php:875
+#: includes/openai/fine-tuner/fine-tuner.php:1121
+msgid "Posts / Pages"
+msgstr "文章/页面"
+
+#: includes/openai/embeddings/embeddings.php:887
+msgid ""
+"Please enter your embeddings data below. Keep writing and new inputs will be "
+"added automatically so you can fill in your data."
+msgstr ""
+"请在下面输入您的嵌入数据。继续书写，新的输入将自动添加，以便您可以填写数据。"
+
+#: includes/openai/embeddings/embeddings.php:892
+#: includes/openai/fine-tuner/fine-tuner.php:1138
+msgid "Have a CSV file? Import it!"
+msgstr "有 CSV 文件吗？导入它！"
+
+#: includes/openai/embeddings/embeddings.php:901
+msgid "Paragraphs"
+msgstr "段落"
+
+#: includes/openai/embeddings/embeddings.php:941
+msgid ""
+"AIKit allows you to pick posts and pages from your site to use as embeddings "
+"data. The content of these pages & posts will be divided into paragraphs, "
+"and AIKit will feed it into the vector database."
+msgstr "AIKit 允许您从站点中选择文章和页面作为嵌入数据。这些页面的内容"
+
+#: includes/openai/embeddings/embeddings.php:943
+msgid ""
+"You will have a chance to review and edit this data once it is divided into "
+"paragraphs and before storing it into the vector database."
+msgstr ""
+"将数据分为段落后并将其存储到矢量数据库之前，您将有机会查看和编辑该数据。"
+
+#: includes/openai/embeddings/embeddings.php:953
+msgid ""
+"Please select the posts/pages you want to use as embeddings data. You can "
+"filter by post type and search for a specific post/page."
+msgstr ""
+"请选择您想要用作嵌入数据的文章/页面。您可以按文章类型进行过滤并搜索特定的文"
+"章/页面。"
+
+#: includes/openai/embeddings/embeddings.php:965
+#: includes/openai/fine-tuner/fine-tuner.php:1265
+msgid "Count Tokens"
+msgstr "Token统计"
+
+#: includes/openai/embeddings/embeddings.php:966
+msgid "Number of tokens:"
+msgstr "tokens数量"
+
+#: includes/openai/embeddings/embeddings.php:978
+msgid "Create Embeddings"
+msgstr "创建嵌入"
+
+#: includes/openai/embeddings/embeddings.php:979
+#: includes/openai/fine-tuner/fine-tuner.php:1285
+msgid "Preprocess Data"
+msgstr "预处理数据"
+
+#: includes/openai/embeddings/embeddings.php:980
+#: includes/openai/fine-tuner/fine-tuner.php:1286
+msgid "Save & Continue Later"
+msgstr "保存 & 稍后继续"
+
+#: includes/openai/embeddings/embeddings.php:1006
+msgid ""
+"Creating an embedding is the first step in turning your data into vectors "
+"(numbers). This can allow you to do semantic search (search by meaning, not "
+"exact words), and that can be used to answer user questions with the most "
+"relevant data from your website. You can create embeddings from text data "
+"(manual input) or from posts and pages on your site."
+msgstr ""
+"创建嵌入是将数据转换为向量（数字）的第一步。这可以让您进行语义搜索（按含义搜"
+"索，而不是确切的单词），并且可以使用您网站上最相关的数据来回答用户问题。您可"
+"以从文本数据（手动输入）或网站上的文章和页面创建嵌入。"
+
+#: includes/openai/embeddings/embeddings.php:1020
+msgid ""
+"Local embeddings are stored in your WordPress database. Qdrant embeddings "
+"are stored in the Qdrant vector database. Local storage is enough for small "
+"to moderate data sizes, but you can use Qdrant to store and process your "
+"embeddings in case your dataset is huge and experience increased Chatbot "
+"response times. Always start with \"Local\" and then upgrade to use Qdrant "
+"if necessary."
+msgstr ""
+"本地嵌入存储在您的 WordPress 数据库中。 Qdrant 嵌入存储在 Qdrant 矢量数据库"
+"中。本地存储足以满足中小型数据大小，但您可以使用 Qdrant 来存储和处理嵌入，以"
+"防您的数据集很大并且Chatbot响应时间增加。始终从“本地”开始，然后在必要时升级以"
+"使用 Qdrant。"
+
+#: includes/openai/embeddings/embeddings.php:1038
+msgid "Enter a name for your embedding."
+msgstr "输入嵌入的名称。"
+
+#: includes/openai/embeddings/embeddings.php:1039
+msgid "Please enter a name for your embedding."
+msgstr "请输入嵌入的名称。"
+
+#: includes/openai/embeddings/embeddings.php:1048
+msgid ""
+"AIKit will use the \"text-embedding-ada-002\" model for embeddings from "
+"OpenAI since it's the most recommended in terms of performance and the "
+"cheapest from cost perspective."
+msgstr ""
+"AIKit 将使用 OpenAI 的“text-embedding-ada-002”模型进行嵌入，因为它在性能方面"
+"是最推荐的，从成本角度来看也是最便宜的。"
+
+#: includes/openai/embeddings/embeddings.php:1063
+msgid ""
+"Qdrant host is not set. In order to use embedding please set the Qdrant host "
+"(and API key if needed) in the "
+msgstr ""
+"未设置 Qdrant 主机。为了使用嵌入，请在以下位置设置 Qdrant 主机（以及 API 密"
+"钥，如果需要）"
+
+#: includes/openai/embeddings/embeddings.php:1073
+msgid "Add Data"
+msgstr "添加数据"
+
+#: includes/openai/embeddings/embeddings.php:1127
+msgid "Are you sure you want to delete this embeddings job?"
+msgstr "确认要删除该嵌入式任务吗?"
+
+#: includes/openai/embeddings/embeddings.php:1178
+#: includes/openai/fine-tuner/fine-tuner.php:1509
+msgid "New"
+msgstr "新"
+
+#: includes/openai/embeddings/embeddings.php:1179
+msgid "Pending data"
+msgstr "待执行数据"
+
+#: includes/openai/embeddings/embeddings.php:1180
+#: includes/openai/fine-tuner/fine-tuner.php:1511
+msgid "Collecting data from posts"
+msgstr "从文章中收集数据"
+
+#: includes/openai/embeddings/embeddings.php:1181
+msgid "Pending final approval on collected data"
+msgstr "收集的数据有待最终批准"
+
+#: includes/openai/embeddings/embeddings.php:1182
+msgid "Creation in progress"
+msgstr "创作进行中"
+
+#: includes/openai/embeddings/embeddings.php:1184
+msgid "Failed"
+msgstr "失败"
+
+#: includes/openai/fine-tuner/fine-tuner.php:616
+msgid "Create Fine-tune Job"
+msgstr "创建微调任务"
+
+#: includes/openai/fine-tuner/fine-tuner.php:623
+msgid ""
+"AIKit Fine-tuner is a tool that allows you to fine-tune your AI models. Fine-"
+"tuning a model allows you to feed in data about your product or service and "
+"train the model on it so that it can generate better results for your "
+"specific use case. You can use it to create a new model based on your "
+"existing model, or to improve your existing model by adding new data to it."
+msgstr ""
+"AIKit Fine-tuner 是一个可让您微调 AI 模型的工具。微调模型允许您输入有关您的产"
+"品或服务的数据并在其上训练模型，以便它可以为您的特定用例生成更好的结果。您可"
+"以使用它根据现有模型创建新模型，或者通过向现有模型添加新数据来改进现有模型。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:687
+msgid ""
+"Please set back and relax while the prompt/completion pairs are being "
+"generated for your training data. Status of the job will change to reflect "
+"when the generation is done."
+msgstr ""
+"在为您的训练数据生成提示/完成对时，请放松身心。任务的状态将发生变化以反映生成"
+"何时完成。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:701
+msgid ""
+"Please set back and relax while the your model is being fine-tuned. Status "
+"of the job will change to reflect when this is done."
+msgstr ""
+"在对模型进行微调时，请放松身心。任务的状态将发生变化以反映此操作何时完成。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:714
+msgid ""
+"Please have a look at the generated prompt/completion pairs and approve "
+"them. Feel free to edit them as you see fit."
+msgstr "请查看生成的提示/完成对并批准它们。请随意编辑您认为合适的内容。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:725
+#: includes/openai/fine-tuner/fine-tuner.php:1022
+msgid "No pairs found."
+msgstr "未找到配对"
+
+#: includes/openai/fine-tuner/fine-tuner.php:734
+#: includes/openai/fine-tuner/fine-tuner.php:1043
+#: includes/openai/fine-tuner/fine-tuner.php:1150
+msgid "Completions"
+msgstr "完成"
+
+#: includes/openai/fine-tuner/fine-tuner.php:762
+#: includes/openai/fine-tuner/fine-tuner.php:1284
+msgid "Start Fine-tuning"
+msgstr "开始微调"
+
+#: includes/openai/fine-tuner/fine-tuner.php:775
+msgid ""
+"Congratulations! Your model is ready to be used. You you should see it in "
+"the list of models in the settings page or in the Chatbot setting page."
+msgstr ""
+"恭喜！您的模型已准备好可供使用。您应该在设置页面或Chatbot设置页面的模型列表中"
+"看到它。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:777
+msgid ""
+"For best results, please make sure to set the same \"Prompt Stop Sequence\" "
+"and \"Completion Stop Sequence\" in the settings page or Chatbot settings "
+"page when using this model."
+msgstr ""
+"为了获得最佳效果，请确保在使用此模型时在设置页面或Chatbot设置页面中设置相同"
+"的“提示停止顺序”和“完成停止顺序”。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:800
+msgid "Prompt / Completion Pairs"
+msgstr "提示/完成对"
+
+#: includes/openai/fine-tuner/fine-tuner.php:823
+#: includes/openai/fine-tuner/fine-tuner.php:1413
+msgid "Model Name"
+msgstr "模型名称"
+
+#: includes/openai/fine-tuner/fine-tuner.php:845
+#: includes/openai/fine-tuner/fine-tuner.php:1349
+#: includes/openai/fine-tuner/fine-tuner.php:1412
+msgid "Model Name Suffix"
+msgstr "模型名称后缀"
+
+#: includes/openai/fine-tuner/fine-tuner.php:907
+#: includes/openai/fine-tuner/fine-tuner.php:1336
+#: includes/openai/fine-tuner/fine-tuner.php:1414
+msgid "Base Model"
+msgstr "基础模型"
+
+#: includes/openai/fine-tuner/fine-tuner.php:928
+msgid "Source of your training data"
+msgstr "训练数据的来源"
+
+#: includes/openai/fine-tuner/fine-tuner.php:950
+msgid "Prompt / Completion Generation Model"
+msgstr "提示/完成生成模型"
+
+#: includes/openai/fine-tuner/fine-tuner.php:970
+#: includes/openai/fine-tuner/fine-tuner.php:1220
+msgid "How Many Prompt/Completion Pairs To Generate Per Paragraph"
+msgstr "每段生成多少个提示/完成对"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1028
+msgid "Here are the prompt/completion pairs generated so far."
+msgstr "以下是迄今为止生成的提示/完成对。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1031
+msgid "Here are the prompt/completion pairs you entered."
+msgstr "以下是您输入的提示/完成对。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1102
+msgid ""
+"OpenAI expects the training data to be formatted in a prompt/completion pair "
+"format. This will be used to fine-tune the model, where each prompt is kinda "
+"like a question, and the completion could be the answer to that question."
+msgstr ""
+"OpenAI 希望训练数据采用提示/完成对格式。这将用于微调模型，其中每个提示都有点"
+"像一个问题，完成可能是该问题的答案。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1103
+msgid ""
+"Each prompt (question) could be a question about your product or service, "
+"where the completion is the best (answer) response to that question."
+msgstr ""
+"每个提示（问题）可能是关于您的产品或服务的问题，完成是对该问题的最佳（答案）"
+"回答。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1107
+msgid ""
+"OpenAI recommends 500 pairs of prompts/completions for best fine-tuning "
+"results."
+msgstr "OpenAI 建议使用 500 对提示/完成，以获得最佳微调结果。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1108
+msgid "For more information, please refer to the"
+msgstr "欲了解更多信息，请参阅"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1108
+msgid "OpenAI fine-tuning guide"
+msgstr "OpenAI 微调指南"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1118
+msgid "Choose the source of your training data"
+msgstr "选择训练数据的来源"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1133
+msgid ""
+"Please enter your training data below. Keep writing and new inputs will be "
+"added automatically to fill in your data."
+msgstr "请在下面输入您的训练数据。继续书写，新的输入将自动添加以填写您的数据。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1196
+msgid ""
+"AIKit allows you to pick posts and pages from your site to use as training "
+"data. The content of these pages & posts will be divided into paragraphs, "
+"and AIKit will generate prompt/completion pairs based on them by using the "
+"model you select below."
+msgstr ""
+"AIKit 允许你从网站中选择文章和页面作为训练数据。这些页面和文章的内容会被分成"
+"段落，AIKit 会根据你选择的模型生成相应的提示/完成对。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1198
+msgid ""
+"These prompt/completion pairs (question & answers about your content) will "
+"be put together and sent to OpenAI as the training data to fine-tune your "
+"model. You will have a chance to review and edit these pairs once they are "
+"generated and before the fine-tuning process starts in the next step."
+msgstr ""
+"这些提示/完成对（关于你内容的问答）会被整理在一起，并作为微调模型的训练数据发"
+"送给 OpenAI。在生成这些问答对后，你将有机会在下一步开始微调过程之前对其进行审"
+"查和编辑。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1206
+msgid "Prompt/Completion Generation Model"
+msgstr "提示/完成生成模型"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1209
+msgid ""
+"As part of preparing your training data, this model will be used to generate "
+"one or more prompt/completion pairs, which will be used to train the final "
+"model. It's highly recommended to choose a capable model here, like "
+"\"gpt-3.5-turbo\" or better in order for the generated prompt/completion "
+"pairs to be as good as possible."
+msgstr ""
+"作为准备训练数据的一部分，该模型将用于生成一个或多个提示/完成对，这些对将用于"
+"训练最终模型。强烈建议在这里选择一个有能力的模型，例如“gpt-3.5-turbo”或更好的"
+"模型，以便生成的提示/完成对尽可能好。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1227
+msgid ""
+"Choose how many prompt/completion pairs to generate per paragraph. The more "
+"pairs you generate, the more training data you will have which will improve "
+"the quality of your fine-tuned model, but it will affect the time it takes "
+"to fine-tune your model and the costs of that."
+msgstr ""
+"选择每个段落生成多少个提示/完成对。生成的对越多，您将拥有的训练数据就越多，这"
+"将提高微调模型的质量，但会影响微调模型所需的时间及其成本。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1238
+msgid "Generation Prompt"
+msgstr "生成提示"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1240
+msgid ""
+"This prompt will be used to generate the prompt/completion pairs. You can "
+"use the following variables in your prompt: [[number]] (the number of pairs "
+"to generate), [[paragraph]] (the paragraph to generate pairs for)."
+msgstr ""
+"该提示将用于生成提示/完成对。您可以在提示中使用以下变量：[[number]]（要生成的"
+"对的数量）、[[paragraph]]（要为其生成对的段落）。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1253
+msgid ""
+"Please select the posts/pages you want to use as training data. You can "
+"filter by post type and search for a specific post/page."
+msgstr ""
+"请选择您想要用作训练数据的文章/页面。您可以按文章类型进行过滤并搜索特定的文"
+"章/页面。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1266
+msgid "Number of training tokens:"
+msgstr "训练Token数量："
+
+#: includes/openai/fine-tuner/fine-tuner.php:1278
+msgid ""
+"Token count is multiplied by 4 to reflect actual tokens used in training "
+"(with epoch=4). You can use the number of tokens to calculate the costs you "
+"will pay to fine-tune your model. Check "
+msgstr ""
+"Token计数乘以 4 以反映训练中使用的实际Token（epoch=4）。您可以使用Token数量来"
+"计算微调模型所需支付的成本。查看"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1278
+msgid "OpenAI pricing"
+msgstr "OpenAI 价格"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1278
+msgid "for more information."
+msgstr "获得更多信息."
+
+#: includes/openai/fine-tuner/fine-tuner.php:1328
+msgid ""
+"Fine-tuning allows you to train your own AI model based on an existing "
+"model. You can use this feature to create a model that is more specific to "
+"your needs, for example: to answer questions about your products or services."
+msgstr ""
+"微调允许您基于现有模型训练自己的 AI 模型。您可以使用此功能创建更适合您的需求"
+"的模型，例如：回答有关您的产品或服务的问题。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1339
+msgid ""
+"Select a model as a base for your fine-tuning. The base model used in fine-"
+"tuning will greatly affect the quality of the results you will get. "
+"\"davinci\" is currently the most capable model while also being the most "
+"expensive to fine-tune. Please around and try different models to find the "
+"best model for your case."
+msgstr ""
+"选择一个模型作为微调的基础。微调中使用的基本模型将极大地影响您获得的结果的质"
+"量。 “davinci”是目前功能最强大的模型，同时也是微调成本最高的模型。请四处尝试"
+"不同的型号，找到最适合您情况的型号。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1356
+msgid ""
+"Enter a suffix name for your fine-tuned model. This will be used along with "
+"the base model name to generate a unique name for your model automatically."
+msgstr ""
+"输入微调模型的后缀名称。这将与基本模型名称一起使用，自动为您的模型生成唯一的"
+"名称。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1357
+msgid "Please enter a name for your fine-tuned model"
+msgstr "请输入您的微调模型的名称"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1374
+msgid ""
+"Enter a sequence of characters that will be used to stop the prompt. Please "
+"leave default value if you are not sure what to enter."
+msgstr "输入将用于停止提示的字符序列。如果您不确定要输入什么，请保留默认值。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1375
+msgid ""
+"Please enter a sequence of characters that will be used to stop the prompt"
+msgstr "请输入用于停止提示的字符序列"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1392
+msgid ""
+"Enter a sequence of characters that will be used to stop the completion. "
+"Please leave default value if you are not sure what to enter."
+msgstr "输入将用于停止完成的字符序列。如果您不确定要输入什么，请保留默认值。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1393
+msgid ""
+"Please enter a sequence of characters that will be used to stop the "
+"completion"
+msgstr "请输入将用于停止完成的字符序列"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1399
+msgid "Add Training Data"
+msgstr "添加训练数据"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1458
+msgid "Are you sure you want to delete this fine-tune job?"
+msgstr "确认删除该微调任务吗？"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1510
+msgid "Pending training data"
+msgstr "待训练数据"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1512
+msgid "Generating prompt completion pairs"
+msgstr "生成提示完成对"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1513
+msgid "Pending final approval on generated prompt completion pairs"
+msgstr "正在等待对生成的提示完成对的最终批准。"
+
+#: includes/openai/fine-tuner/fine-tuner.php:1514
+msgid "Training in progress"
+msgstr "训练中"
+
+#: includes/openai/post-finder.php:65
+msgid "Any"
+msgstr "任何"
+
+#: includes/openai/post-finder.php:82
+msgid "Search for a post/page"
+msgstr "搜索文章/页面"
+
+#: includes/openai/post-finder.php:93
+msgid "Post Type"
+msgstr "文章类型"
+
+#: includes/openai/post-finder.php:101
+msgid "Search"
+msgstr "搜索"
+
+#: includes/openai/post-finder.php:113
+msgid "Search Results"
+msgstr "搜索结果"
+
+#: includes/openai/post-finder.php:114
+msgid "Add All"
+msgstr "全部添加"
+
+#: includes/openai/post-finder.php:119
+msgid "Selected Posts"
+msgstr "选择的文章"
+
+#: includes/openai/repurposer/repurposer.php:559
+msgid "URL is empty."
+msgstr "URL 为空。"
+
+#: includes/openai/repurposer/repurposer.php:577
+msgid "Could not extract text from URL."
+msgstr "无法从 URL 中提取文本。"
+
+#: includes/openai/repurposer/repurposer.php:594
+msgid "Could not create job."
+msgstr "无法创建任务"
+
+#: includes/openai/repurposer/repurposer.php:599
+#: includes/openai/rss/rss.php:146
+msgid "Job created."
+msgstr "任务已创建"
+
+#: includes/openai/repurposer/repurposer.php:679
+msgid "AIKit Repurpose"
+msgstr "AIKit 改写"
+
+#: includes/openai/repurposer/repurposer.php:681
+msgid ""
+"AIKit repurposing jobs allow you to automatically create new posts out of "
+"existing content."
+msgstr "AIKit 改编任务让你可以根据现有内容自动创建新文章。"
+
+#: includes/openai/repurposer/repurposer.php:682
+#: includes/openai/rss/rss.php:281
+msgid ""
+"Please review and edit before publishing for best results. This is not a "
+"substitute for human editing, but a drafting aid. Happy writing!"
+msgstr ""
+"发布之前请仔细检查和编辑，以获得最佳效果。这只是一个写作辅助工具，不能替代人"
+"工编辑。祝你写作愉快！"
+
+#: includes/openai/repurposer/repurposer.php:688
+msgid "AIKit repurposing jobs run in the background as scheduled jobs."
+msgstr "AIKit 重新利用任务在后台作为计划任务运行。"
+
+#: includes/openai/repurposer/repurposer.php:689
+msgid ""
+"By default, WordPress scheduled jobs only run when someone visits your site. "
+"To ensure that your repurposing jobs run even if nobody visits your site, "
+"you can set up a cron job on your server to call the WordPress cron system "
+"at regular intervals. Please ask your host provider to do that for you. Here "
+"is the cron job definition:"
+msgstr ""
+"默认情况下，WordPress 定时任务只会在有人访问你的网站时运行。为了确保你的视频"
+"改编任务即使在没有人访问你的网站时也能运行，你可以在服务器上设置一个 cron 任"
+"务，定期调用 WordPress 的 cron 系统。请联系你的主机提供商为你设置。以下是 "
+"cron 任务的定义："
+
+#: includes/openai/repurposer/repurposer.php:697
+msgid "Create Repurpose Job"
+msgstr "创建改写任务"
+
+#: includes/openai/repurposer/repurposer.php:740
+#: includes/openai/rss/rss.php:356
+msgid "Created"
+msgstr "已创建"
+
+#: includes/openai/repurposer/repurposer.php:741
+msgid "Repurpose job"
+msgstr "改写任务"
+
+#: includes/openai/repurposer/repurposer.php:742
+#: includes/openai/rss/rss.php:359
+msgid "created Successfully."
+msgstr "创建成功"
+
+#: includes/openai/repurposer/repurposer.php:770
+#: includes/openai/rss/rss.php:394
+msgid "« Back to Jobs"
+msgstr "« 返回任务"
+
+#: includes/openai/repurposer/repurposer.php:777
+msgid "Choose content type:"
+msgstr "选择内容类型"
+
+#: includes/openai/repurposer/repurposer.php:780
+msgid "Post or article"
+msgstr "Post/article"
+
+#: includes/openai/repurposer/repurposer.php:784
+msgid "YouTube video"
+msgstr "YouTube视频"
+
+#: includes/openai/repurposer/repurposer.php:785
+msgid "How to setup"
+msgstr "如何设置"
+
+#: includes/openai/repurposer/repurposer.php:793
+msgid ""
+"To repurpose a YouTube video, AIKit needs to read the subtitles of the "
+"video. To do so, you need to connect to "
+msgstr ""
+"为了重新利用 YouTube 视频，AIKit 需要读取视频的字幕。为此，你需要连接到… "
+
+#: includes/openai/repurposer/repurposer.php:794
+msgid "Subtitles for YouTube."
+msgstr "YouTube 的字幕。"
+
+#: includes/openai/repurposer/repurposer.php:795
+msgid ""
+"This API is used to read YouTube video subtitles to allow you to fetch the "
+"content of videos and repurpose/spin them and create posts based on them in "
+"your website."
+msgstr ""
+"这个 API 用于读取 YouTube 视频字幕，让你可以获取视频内容并对其进行改编/重组，"
+"然后根据这些内容在你的网站上创建文章。 "
+
+#: includes/openai/repurposer/repurposer.php:799
+msgid "to a plan, then enter your API key in the"
+msgstr "计划，然后在中输入您的 API 密钥"
+
+#: includes/openai/repurposer/repurposer.php:800
+msgid "settings page."
+msgstr "设置页面"
+
+#: includes/openai/repurposer/repurposer.php:808
+#: includes/openai/repurposer/repurposer.php:809
+msgid "URL of article, post or video"
+msgstr "文章、文章或视频的 URL"
+
+#: includes/openai/repurposer/repurposer.php:808
+msgid "Please enter a valid URL"
+msgstr "请输入有效网址"
+
+#: includes/openai/repurposer/repurposer.php:818
+msgid ""
+"Have a quick look at the extracted text to make sure it looks good and "
+"remove any unnecessary parts."
+msgstr "快速查看提取的文本，确保其看起来不错并删除任何不必要的部分。"
+
+#: includes/openai/repurposer/repurposer.php:819
+msgid ""
+"Try to combine the text related to the same topic into one paragraph for "
+"better results."
+msgstr "尝试将与同一主题相关的文本合并到一个段落中以获得更好的效果。"
+
+#: includes/openai/repurposer/repurposer.php:822
+#: includes/openai/repurposer/repurposer.php:823
+msgid "Extracted title"
+msgstr "提取的标题"
+
+#: includes/openai/repurposer/repurposer.php:828
+#: includes/openai/repurposer/repurposer.php:829
+#: includes/openai/repurposer/repurposer.php:1116
+msgid "Extracted text"
+msgstr "提取的文本"
+
+#: includes/openai/repurposer/repurposer.php:855
+#: includes/openai/rss/rss.php:474
+msgid "Include featured image"
+msgstr "包括特色图片"
+
+#: includes/openai/repurposer/repurposer.php:862
+#: includes/openai/repurposer/repurposer.php:863
+#: includes/openai/rss/rss.php:422 includes/openai/rss/rss.php:423
+msgid "Posts to generate: "
+msgstr "要生成的文章："
+
+#: includes/openai/repurposer/repurposer.php:954
+#: includes/openai/rss/rss.php:552
+msgid ""
+"this will be replaced with the combination of all the summaries of all parts "
+"of the post."
+msgstr "这将由文章所有部分的摘要组合替换。"
+
+#: includes/openai/repurposer/repurposer.php:999
+#: includes/openai/rss/rss.php:584
+msgid "URL"
+msgstr "链接"
+
+#: includes/openai/repurposer/repurposer.php:1000
+msgid "Job Type"
+msgstr "任务类型"
+
+#: includes/openai/repurposer/repurposer.php:1002
+msgid "RSS Parent Job"
+msgstr "RSS 父任务"
+
+#: includes/openai/repurposer/repurposer.php:1004
+msgid "Done"
+msgstr "完成"
+
+#: includes/openai/repurposer/repurposer.php:1006
+msgid "Had errors"
+msgstr "有错误"
+
+#: includes/openai/repurposer/repurposer.php:1036
+msgid "-"
+msgstr "-"
+
+#: includes/openai/repurposer/repurposer.php:1040
+msgid "Are you sure you want to delete this repurposing job?"
+msgstr "确认要删除该改写任务吗？"
+
+#: includes/openai/repurposer/repurposer.php:1041
+msgid "Pause"
+msgstr "暂停"
+
+#: includes/openai/repurposer/repurposer.php:1041
+msgid "Resume"
+msgstr "恢复"
+
+#: includes/openai/repurposer/repurposer.php:1090
+msgid "Invalid ID"
+msgstr "无效ID"
+
+#: includes/openai/repurposer/repurposer.php:1097
+msgid "Job not found"
+msgstr "没找到任务"
+
+#: includes/openai/repurposer/repurposer.php:1163
+msgid "Text"
+msgstr "文本"
+
+#: includes/openai/rss/rss.php:89
+msgid "Invalid RSS feed."
+msgstr "RSS feed无效."
+
+#: includes/openai/rss/rss.php:95
+msgid "Valid RSS feed."
+msgstr "RSS feed有效."
+
+#: includes/openai/rss/rss.php:152
+msgid "Failed to create job."
+msgstr "创建任务失败"
+
+#: includes/openai/rss/rss.php:187
+msgid "Job updated."
+msgstr "任务已更新"
+
+#: includes/openai/rss/rss.php:193
+msgid "Failed to update job."
+msgstr "任务更新失败"
+
+#: includes/openai/rss/rss.php:219
+msgid "Job deleted."
+msgstr "任务被删除"
+
+#: includes/openai/rss/rss.php:278
+msgid "RSS Automatic Content Generation"
+msgstr "RSS自动内容生成"
+
+#: includes/openai/rss/rss.php:280
+msgid ""
+"AIKit RSS automatic generation jobs allow you to automatically create new "
+"posts out of articles extracted from RSS feeds. Whenever an article is added "
+"to RSS feed, a job will be scheduled to generate a post based on it in your "
+"site. "
+msgstr ""
+"AIKit RSS 自动生成任务允许您从 RSS 提要中提取的文章自动创建新文章。每当将文章"
+"添加到 RSS 源时，就会安排一个任务在您的站点中根据该文章生成文章。"
+
+#: includes/openai/rss/rss.php:287
+msgid "AIKit RSS generation jobs run in the background as scheduled jobs."
+msgstr "AIKit RSS 生成任务作为计划任务在后台运行。"
+
+#: includes/openai/rss/rss.php:288
+msgid ""
+"By default, WordPress scheduled jobs only run when someone visits your site. "
+"To ensure that your jobs run even if nobody visits your site, you can set up "
+"a cron job on your server to call the WordPress cron system at regular "
+"intervals. Please ask your host provider to do that for you. Here is the "
+"cron job definition:"
+msgstr ""
+"默认情况下，WordPress 计划任务仅在有人访问您的网站时运行。为了确保即使没有人"
+"访问您的网站，您的任务也能运行，您可以在服务器上设置一个 cron 任务，以定期调"
+"用 WordPress cron 系统。请要求您的主机提供商为您执行此操作。这是 cron 任务的"
+"定义："
+
+#: includes/openai/rss/rss.php:296 includes/openai/rss/rss.php:498
+msgid "Add RSS Job"
+msgstr "添加 RSS 任务"
+
+#: includes/openai/rss/rss.php:357
+msgid "Updated"
+msgstr "已更新"
+
+#: includes/openai/rss/rss.php:358
+msgid "RSS job"
+msgstr "RSS 任务"
+
+#: includes/openai/rss/rss.php:360
+msgid "updated Successfully."
+msgstr "更新成功"
+
+#: includes/openai/rss/rss.php:401 includes/openai/rss/rss.php:402
+#: includes/openai/rss/rss.php:701
+msgid "RSS URL"
+msgstr "RSS URL"
+
+#: includes/openai/rss/rss.php:401
+msgid "Please enter a valid RSS URL"
+msgstr "请输入有效的 RSS 网址"
+
+#: includes/openai/rss/rss.php:416 includes/openai/rss/rss.php:417
+msgid "Time to wait between generating articles (minutes)"
+msgstr "生成文章之间的等待时间（分钟）"
+
+#: includes/openai/rss/rss.php:571
+msgid "RSS Posts"
+msgstr "RSS 文章"
+
+#: includes/openai/rss/rss.php:585
+msgid "Repurpose Job"
+msgstr "改写任务"
+
+#: includes/openai/rss/rss.php:592
+msgid "No RSS post fetched yet."
+msgstr "尚未获取 RSS 文章。"
+
+#: includes/openai/rss/rss.php:599
+msgid "Open"
+msgstr "打开"
+
+#: includes/openai/rss/rss.php:662
+msgid "How often to check for new articles in RSS feed"
+msgstr "检查 RSS 源中新文章的频率"
+
+#: includes/openai/rss/rss.php:702
+msgid "Refresh Interval"
+msgstr "刷新间隔"
+
+#: includes/openai/rss/rss.php:703
+msgid "Next Refresh"
+msgstr "下次刷新"
+
+#: includes/openai/rss/rss.php:732
+msgid "In few minutes"
+msgstr "几分钟后"
+
+#: includes/openai/rss/rss.php:737
+msgid "Are you sure you want to delete this RSS job?"
+msgstr "您确定要删除此 RSS 任务吗？"
+
+#: includes/tts/text-to-speech.php:87
+msgid ""
+"AIKit Text to Speech allows you to convert your post content to audio and "
+"can then add an audio player to your post to allow your visitors to listen "
+"to your post content."
+msgstr ""
+"AIKit 文本转语音 允许您将文章内容转换为音频，然后可以向您的文章添加音频播放"
+"器，以允许访问者收听您的文章内容。"
+
+#: includes/tts/text-to-speech.php:90
+msgid ""
+"AIKit uses ElevenLabs to turn text to speech, and due to the maximum "
+"limitations on characters that can be processed per request, an article can "
+"be divided into different audio files that will be properly played in "
+"correct sequence in the audio player. AIKit also will make its best effort "
+"not to regenerate all the article audio in case it's updated, but rather "
+"regenerate only the updated paragraphs."
+msgstr ""
+"AIKit 使用 ElevenLabs 将文本转换为语音，并且由于每个请求可以处理的字符的最大"
+"限制，一篇文章可以分为不同的音频文件，这些文件将在音频播放器中以正确的顺序正"
+"确播放。 AIKit 还将尽最大努力不重新生成所有文章音频（以防更新），而是仅重新生"
+"成更新的段落。"
+
+#: includes/tts/text-to-speech.php:96
+msgid ""
+"AIKit text to speech creation jobs run in the background as scheduled jobs."
+msgstr "AIKit 文本转语音创建任务按照计划任务在后台运行。"
+
+#: includes/tts/text-to-speech.php:97
+msgid ""
+"By default, WordPress scheduled jobs only run when someone visits your site. "
+"To ensure that your text to speech creation jobs run even if nobody visits "
+"your site, you can set up a cron job on your server to call the WordPress "
+"cron system at regular intervals. Please ask your host provider to do that "
+"for you. Here is the cron job definition:"
+msgstr ""
+"默认情况下，WordPress 计划任务仅在有人访问您的网站时运行。为了确保即使没有人"
+"访问您的站点，您的文本转语音创建任务也能运行，您可以在服务器上设置一个 cron "
+"任务，以定期调用 WordPress cron 系统。请要求您的主机提供商为您执行此操作。这"
+"是 cron 任务的定义："
+
+#: includes/tts/text-to-speech.php:156
+msgid ""
+"Please set back and relax while the your text to speech is being processed. "
+"Status of the job will change to reflect when this is done."
+msgstr ""
+"在处理您的文本到语音的过程中，请退后并放松。任务的状态将发生变化以反映此操作"
+"何时完成。"
+
+#: includes/tts/text-to-speech.php:159
+msgid ""
+"Congratulations! Your text to speech job is processed. If you chose to "
+"include the audio player in the post automatically, you don't need to do "
+"anything else. Otherwise, you can include the shortcode "
+"\"[aikit_audio_player]\" in your post to display the audio player."
+msgstr ""
+"恭喜！您的文本转语音任务已处理。如果您选择自动在文章中包含音频播放器，则无需"
+"执行任何其他操作。否则，您可以在文章中包含短代码“[AIkit_audio_player]”以显示"
+"音频播放器。"
+
+#: includes/tts/text-to-speech.php:207
+msgid "Generated audio files:"
+msgstr "生成的音频文件："
+
+#: includes/tts/text-to-speech.php:321
+msgid "Are you sure you want to delete this text to speech job?"
+msgstr "您确定要删除此文本转语音任务吗？"
+
+#: includes/tts/text-to-speech.php:703
+msgid "AIKit Text-to-Speech"
+msgstr "AIKit 文本转语音"
+
+#: includes/tts/text-to-speech.php:719
+msgid "A job already exists for this post with status "
+msgstr "该文章已存在任务，其状态为"
+
+#: includes/tts/text-to-speech.php:727
+msgid "Force regenerate audio"
+msgstr "强制生成音频"
+
+#: includes/tts/text-to-speech.php:727
+msgid "Generate audio"
+msgstr "生成音频"
+
+#: includes/tts/text-to-speech.php:732
+msgid "Add audio player to post (once ready)"
+msgstr "添加要发布的音频播放器（准备好后）"
+
+#: includes/tts/text-to-speech.php:737
+msgid ""
+"If you select this option, once the audio is ready, the shortcode will be "
+"replaced on top of the post to show the audio player."
+msgstr ""
+"如果您选择此选项，一旦音频准备好，短代码将被替换在文章顶部以显示音频播放器。"
+
+#: fe/build/index.js:1 fe/src/components/aiKitControls.js:429
+msgid "small image(s)"
+msgstr "小图片"
+
+#: fe/build/index.js:1 fe/src/components/aiKitControls.js:430
+msgid "medium image(s)"
+msgstr "中等图片"
+
+#: fe/build/index.js:1 fe/src/components/aiKitControls.js:431
+msgid "large image(s)"
+msgstr "大图片"
+
+#: fe/build/index.js:1 fe/src/components/aiKitControls.js:432
+msgid "x large (landscape) image(s)"
+msgstr "x 大（横向）图片"
+
+#: fe/build/index.js:1 fe/src/components/aiKitControls.js:433
+msgid "large (portrait) image(s)"
+msgstr "大（肖像）图片"
+
+#: fe/build/index.js:1 fe/src/components/aiKitControls.js:434
+msgid "DALL·E"
+msgstr "DALL·E"
+
+#: fe/build/index.js:1 fe/src/components/aiKitControls.js:435
+msgid "Stable Diffusion"
+msgstr "Stable Diffusion"
+
+#: fe/build/index.js:1 fe/src/components/aiKitControls.js:472
+msgid "Select how do you want AI to edit your content"
+msgstr "选择您希望 AI 如何编辑您的内容"
+
+#: fe/build/index.js:1 fe/src/components/aiKitControls.js:505
+msgid "Generate AI Images using AIKit"
+msgstr "使用 AIKit 生成 AI 图片"
+
+#: fe/build/index.js:1 fe/src/components/aiKitControls.js:531
+msgid "Missing Text Selection"
+msgstr "未选择任何文本"
+
+#: fe/build/index.js:1 fe/src/components/aiKitControls.js:533
+msgid ""
+"Please make sure to select the text you want to use for AIKit to edit (or "
+"operate on)."
+msgstr "请确保选择您想要用于 AIKit 编辑（或操作）的文本。"
+
+#: fe/build/index.js:1 fe/src/components/aiKitControls.js:537
+msgid "Ok"
+msgstr "OK"
+
+#: fe/build/index.js:1 fe/src/components/aiKitControls.js:543
+msgid "AIKit is not properly configured"
+msgstr "AIKit 未正确配置"
+
+#: fe/build/index.js:1 fe/src/components/aiKitControls.js:545
+msgid ""
+"It seems that AIKit is not configured correctly. Please make sure to enter a "
+"valid API key in the settings."
+msgstr "看来AIKit配置不正确。请确保在设置中输入有效的 API 密钥。"
+
+#: fe/build/index.js:1 fe/src/components/aiKitControls.js:549
+msgid "Go to settings"
+msgstr "前往设置"
