@@ -5,35 +5,34 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  */
 get_header(); ?>
 
-<div id="primary" class="content-area">
+<?php if ( zm_get_option( 'ajax_layout_code_d_r' ) ) { ?><div class="ajax-content-area content-area"><?php } else { ?><div id="primary" class="ajax-content-area content-area"><?php } ?>
 	<main id="main" class="site-main ajax-site-main<?php if ( zm_get_option( 'post_no_margin') ) { ?> domargin<?php } ?>" role="main">
 		<?php 
-			if ( ! zm_get_option( 'ajax_code_d_orderby' ) || ( zm_get_option( 'ajax_code_d_orderby' ) == 'date' ) ) {
-				$orderby = 'date';
-				$meta_key = '';
-			}
-			if ( zm_get_option( 'ajax_code_d_orderby' ) == 'modified' ) {
-				$orderby = 'modified';
-				$meta_key = '';
-			}
-			if ( zm_get_option( 'ajax_code_d_orderby' ) == 'comment_count' ) {
-				$orderby = 'comment_count';
-				$meta_key = '';
-			}
-			if ( zm_get_option( 'ajax_code_d_orderby' ) == 'views' ) {
-				$orderby = 'meta_value_num';
-				$meta_key = 'views';
+			$orderby = 'date';
+			$meta_key = '';
+
+			switch ( zm_get_option( 'ajax_code_d_orderby' ) ) {
+				case 'modified':
+					$orderby = 'modified';
+					break;
+				case 'comment_count':
+					$orderby = 'comment_count';
+					break;
+				case 'views':
+					$orderby = 'meta_value_num';
+					$meta_key = 'views';
+					break;
 			}
 
-			if ( zm_get_option( 'ajax_layout_code_d_btn' ) ) {
-				$btns = be_cat_btn();
-			} else {
-				$btns = 'no';
-			}
-			echo do_shortcode( '[be_ajax_post posts_per_page="' . zm_get_option( 'ajax_layout_code_d_n' ) . '" style="default" cat="' . get_query_var( 'cat' ) . ',' . be_subcat_id() . '" btn="' . $btns . '" btn_all= "no" more="' . zm_get_option( 'nav_btn_d' ) . '" infinite="' . zm_get_option( 'more_infinite_d' ) . '" meta_key="' . $meta_key . '" orderby="' . $orderby . '" order="DESC"]' );
+			$btns     = zm_get_option( 'ajax_layout_code_d_btn' ) ? be_cat_btn() : 'no';
+			$children = ( zm_get_option('ajax_layout_code_d_chil' ) == 'false' ) ? 'false' : 'true';
+
+			echo do_shortcode( '[be_ajax_post posts_per_page="' . zm_get_option( 'ajax_layout_code_d_n' ) . '" style="default" cat="' . get_query_var( 'cat' ) . ',' . be_subcat_id() . '" btn="' . $btns . '" btn_all= "no" more="' . zm_get_option( 'nav_btn_d' ) . '" infinite="' . zm_get_option( 'more_infinite_d' ) . '" meta_key="' . $meta_key . '" orderby="' . $orderby . '" children="' . $children . '" order="DESC"]' );
 		?>
 	</main>
 	<div class="clear"></div>
 </div>
+<?php if ( ! zm_get_option( 'ajax_layout_code_d_r' ) ) { ?>
 <?php get_sidebar(); ?>
+<?php } ?>
 <?php get_footer(); ?>

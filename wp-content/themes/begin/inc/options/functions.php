@@ -7,28 +7,28 @@
  * @version 1.0.0
  *
  */
-if ( ! function_exists( 'csf_get_icons' ) ) {
-  function csf_get_icons() {
+if ( ! function_exists( 'zmop_get_icons' ) ) {
+  function zmop_get_icons() {
 
     $nonce = ( ! empty( $_POST[ 'nonce' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ 'nonce' ] ) ) : '';
 
-    if ( ! wp_verify_nonce( $nonce, 'csf_icon_nonce' ) ) {
-      wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'csf' ) ) );
+    if ( ! wp_verify_nonce( $nonce, 'zmop_icon_nonce' ) ) {
+      wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'zmop' ) ) );
     }
 
     ob_start();
 
-    $icon_library = ( apply_filters( 'csf_fa4', false ) ) ? 'fa4' : 'fa5';
+    $icon_library = ( apply_filters( 'zmop_fa4', false ) ) ? 'fa4' : 'fa5';
 
-    CSF::include_plugin_file( 'fields/icon/'. $icon_library .'-icons.php' );
+    ZMOP::include_plugin_file( 'fields/icon/'. $icon_library .'-icons.php' );
 
-    $icon_lists = apply_filters( 'csf_field_icon_add_icons', csf_get_default_icons() );
+    $icon_lists = apply_filters( 'zmop_field_icon_add_icons', zmop_get_default_icons() );
 
     if ( ! empty( $icon_lists ) ) {
 
       foreach ( $icon_lists as $list ) {
 
-        echo ( count( $icon_lists ) >= 2 ) ? '<div class="csf-icon-title">'. esc_attr( $list['title'] ) .'</div>' : '';
+        echo ( count( $icon_lists ) >= 2 ) ? '<div class="zmop-icon-title">'. esc_attr( $list['title'] ) .'</div>' : '';
 
         foreach ( $list['icons'] as $icon ) {
           echo '<i title="'. esc_attr( $icon ) .'" class="'. esc_attr( $icon ) .'"></i>';
@@ -38,7 +38,7 @@ if ( ! function_exists( 'csf_get_icons' ) ) {
 
     } else {
 
-      echo '<div class="csf-error-text">'. esc_html__( 'No data available.', 'csf' ) .'</div>';
+      echo '<div class="zmop-error-text">'. esc_html__( 'No data available.', 'zmop' ) .'</div>';
 
     }
 
@@ -47,7 +47,7 @@ if ( ! function_exists( 'csf_get_icons' ) ) {
     wp_send_json_success( array( 'content' => $content ) );
 
   }
-  add_action( 'wp_ajax_csf-get-icons', 'csf_get_icons' );
+  add_action( 'wp_ajax_zmop-get-icons', 'zmop_get_icons' );
 }
 
 /**
@@ -58,23 +58,23 @@ if ( ! function_exists( 'csf_get_icons' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! function_exists( 'csf_export' ) ) {
-  function csf_export() {
+if ( ! function_exists( 'zmop_export' ) ) {
+  function zmop_export() {
 
     $nonce  = ( ! empty( $_GET[ 'nonce' ] ) ) ? sanitize_text_field( wp_unslash( $_GET[ 'nonce' ] ) ) : '';
     $unique = ( ! empty( $_GET[ 'unique' ] ) ) ? sanitize_text_field( wp_unslash( $_GET[ 'unique' ] ) ) : '';
 
-    if ( ! wp_verify_nonce( $nonce, 'csf_backup_nonce' ) ) {
-      die( esc_html__( 'Error: Invalid nonce verification.', 'csf' ) );
+    if ( ! wp_verify_nonce( $nonce, 'zmop_backup_nonce' ) ) {
+      die( esc_html__( 'Error: Invalid nonce verification.', 'zmop' ) );
     }
 
     if ( empty( $unique ) ) {
-      die( esc_html__( 'Error: Invalid key.', 'csf' ) );
+      die( esc_html__( 'Error: Invalid key.', 'zmop' ) );
     }
 
     // Export
     header('Content-Type: application/json');
-    header('Content-disposition: attachment; filename=backup-'. gmdate( 'd-m-Y' ) .'.json');
+    header('Content-disposition: attachment; filename=主题选项备份-'. gmdate( 'Y-m-d' ) .'.json');
     header('Content-Transfer-Encoding: binary');
     header('Pragma: no-cache');
     header('Expires: 0');
@@ -84,7 +84,118 @@ if ( ! function_exists( 'csf_export' ) ) {
     die();
 
   }
-  add_action( 'wp_ajax_csf-export', 'csf_export' );
+  add_action( 'wp_ajax_zmop-export', 'zmop_export' );
+}
+
+/**
+ *
+ * 导出首页
+ *
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ */
+if ( ! function_exists( 'zmop_export_be' ) ) {
+	function zmop_export_be() {
+
+		$nonce  = ( ! empty( $_GET[ 'nonce' ] ) ) ? sanitize_text_field( wp_unslash( $_GET[ 'nonce' ] ) ) : '';
+		$unique = ( ! empty( $_GET[ 'unique' ] ) ) ? sanitize_text_field( wp_unslash( $_GET[ 'unique' ] ) ) : '';
+
+		if ( ! wp_verify_nonce( $nonce, 'zmop_backup_nonce' ) ) {
+			die( esc_html__( 'Error: Invalid nonce verification.', 'zmop' ) );
+		}
+
+		if ( empty( $unique ) ) {
+			die( esc_html__( 'Error: Invalid key.', 'zmop' ) );
+		}
+
+		// Export
+		header('Content-Type: application/json');
+		header('Content-disposition: attachment; filename=首页设置备份-'. gmdate( 'Y-m-d' ) .'.json');
+		header('Content-Transfer-Encoding: binary');
+		header('Pragma: no-cache');
+		header('Expires: 0');
+
+		echo json_encode( get_option( $unique ) );
+
+		die();
+
+	}
+	add_action( 'wp_ajax_zmop-export-be', 'zmop_export_be' );
+}
+
+/**
+ *
+ * 导出公司主页
+ *
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ */
+if ( ! function_exists( 'zmop_export_co' ) ) {
+	function zmop_export_co() {
+
+		$nonce  = ( ! empty( $_GET[ 'nonce' ] ) ) ? sanitize_text_field( wp_unslash( $_GET[ 'nonce' ] ) ) : '';
+		$unique = ( ! empty( $_GET[ 'unique' ] ) ) ? sanitize_text_field( wp_unslash( $_GET[ 'unique' ] ) ) : '';
+
+		if ( ! wp_verify_nonce( $nonce, 'zmop_backup_nonce' ) ) {
+			die( esc_html__( 'Error: Invalid nonce verification.', 'zmop' ) );
+		}
+
+		if ( empty( $unique ) ) {
+			die( esc_html__( 'Error: Invalid key.', 'zmop' ) );
+		}
+
+		// Export
+		header('Content-Type: application/json');
+		header('Content-disposition: attachment; filename=公司主页备份-'. gmdate( 'Y-m-d' ) .'.json');
+		header('Content-Transfer-Encoding: binary');
+		header('Pragma: no-cache');
+		header('Expires: 0');
+
+		echo json_encode( get_option( $unique ) );
+
+		die();
+
+	}
+	add_action( 'wp_ajax_zmop-export-co', 'zmop_export_co' );
+}
+
+/**
+ *
+ * 导出辅助设置
+ *
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ */
+if ( ! function_exists( 'zmop_export_sub' ) ) {
+	function zmop_export_sub() {
+
+		$nonce  = ( ! empty( $_GET[ 'nonce' ] ) ) ? sanitize_text_field( wp_unslash( $_GET[ 'nonce' ] ) ) : '';
+		$unique = ( ! empty( $_GET[ 'unique' ] ) ) ? sanitize_text_field( wp_unslash( $_GET[ 'unique' ] ) ) : '';
+
+		if ( ! wp_verify_nonce( $nonce, 'zmop_backup_nonce' ) ) {
+			die( esc_html__( 'Error: Invalid nonce verification.', 'zmop' ) );
+		}
+
+		if ( empty( $unique ) ) {
+			die( esc_html__( 'Error: Invalid key.', 'zmop' ) );
+		}
+
+		// Export
+		header('Content-Type: application/json');
+		header('Content-disposition: attachment; filename=辅助设置备份-'. gmdate( 'Y-m-d' ) .'.json');
+		header('Content-Transfer-Encoding: binary');
+		header('Pragma: no-cache');
+		header('Expires: 0');
+
+		echo json_encode( get_option( $unique ) );
+
+		die();
+
+	}
+	add_action( 'wp_ajax_zmop-export-sub', 'zmop_export_sub' );
 }
 
 /**
@@ -95,23 +206,23 @@ if ( ! function_exists( 'csf_export' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! function_exists( 'csf_import_ajax' ) ) {
-  function csf_import_ajax() {
+if ( ! function_exists( 'zmop_import_ajax' ) ) {
+  function zmop_import_ajax() {
 
     $nonce  = ( ! empty( $_POST[ 'nonce' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ 'nonce' ] ) ) : '';
     $unique = ( ! empty( $_POST[ 'unique' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ 'unique' ] ) ) : '';
     $data   = ( ! empty( $_POST[ 'data' ] ) ) ? wp_kses_post_deep( json_decode( wp_unslash( trim( $_POST[ 'data' ] ) ), true ) ) : array();
 
-    if ( ! wp_verify_nonce( $nonce, 'csf_backup_nonce' ) ) {
-      wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'csf' ) ) );
+    if ( ! wp_verify_nonce( $nonce, 'zmop_backup_nonce' ) ) {
+      wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'zmop' ) ) );
     }
 
     if ( empty( $unique ) ) {
-      wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid key.', 'csf' ) ) );
+      wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid key.', 'zmop' ) ) );
     }
 
     if ( empty( $data ) || ! is_array( $data ) ) {
-      wp_send_json_error( array( 'error' => esc_html__( 'Error: The response is not a valid JSON response.', 'csf' ) ) );
+      wp_send_json_error( array( 'error' => esc_html__( 'Error: The response is not a valid JSON response.', 'zmop' ) ) );
     }
 
     // Success
@@ -120,7 +231,7 @@ if ( ! function_exists( 'csf_import_ajax' ) ) {
     wp_send_json_success();
 
   }
-  add_action( 'wp_ajax_csf-import', 'csf_import_ajax' );
+  add_action( 'wp_ajax_zmop-import', 'zmop_import_ajax' );
 }
 
 /**
@@ -131,14 +242,14 @@ if ( ! function_exists( 'csf_import_ajax' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! function_exists( 'csf_reset_ajax' ) ) {
-  function csf_reset_ajax() {
+if ( ! function_exists( 'zmop_reset_ajax' ) ) {
+  function zmop_reset_ajax() {
 
     $nonce  = ( ! empty( $_POST[ 'nonce' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ 'nonce' ] ) ) : '';
     $unique = ( ! empty( $_POST[ 'unique' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ 'unique' ] ) ) : '';
 
-    if ( ! wp_verify_nonce( $nonce, 'csf_backup_nonce' ) ) {
-      wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'csf' ) ) );
+    if ( ! wp_verify_nonce( $nonce, 'zmop_backup_nonce' ) ) {
+      wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'zmop' ) ) );
     }
 
     // Success
@@ -147,7 +258,7 @@ if ( ! function_exists( 'csf_reset_ajax' ) ) {
     wp_send_json_success();
 
   }
-  add_action( 'wp_ajax_csf-reset', 'csf_reset_ajax' );
+  add_action( 'wp_ajax_zmop-reset', 'zmop_reset_ajax' );
 }
 
 /**
@@ -158,35 +269,35 @@ if ( ! function_exists( 'csf_reset_ajax' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! function_exists( 'csf_chosen_ajax' ) ) {
-  function csf_chosen_ajax() {
+if ( ! function_exists( 'zmop_chosen_ajax' ) ) {
+  function zmop_chosen_ajax() {
 
     $nonce = ( ! empty( $_POST[ 'nonce' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ 'nonce' ] ) ) : '';
     $type  = ( ! empty( $_POST[ 'type' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ 'type' ] ) ) : '';
     $term  = ( ! empty( $_POST[ 'term' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ 'term' ] ) ) : '';
     $query = ( ! empty( $_POST[ 'query_args' ] ) ) ? wp_kses_post_deep( $_POST[ 'query_args' ] ) : array();
 
-    if ( ! wp_verify_nonce( $nonce, 'csf_chosen_ajax_nonce' ) ) {
-      wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'csf' ) ) );
+    if ( ! wp_verify_nonce( $nonce, 'zmop_chosen_ajax_nonce' ) ) {
+      wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'zmop' ) ) );
     }
 
     if ( empty( $type ) || empty( $term ) ) {
-      wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid term ID.', 'csf' ) ) );
+      wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid term ID.', 'zmop' ) ) );
     }
 
-    $capability = apply_filters( 'csf_chosen_ajax_capability', 'manage_options' );
+    $capability = apply_filters( 'zmop_chosen_ajax_capability', 'manage_options' );
 
     if ( ! current_user_can( $capability ) ) {
-      wp_send_json_error( array( 'error' => esc_html__( 'Error: You do not have permission to do that.', 'csf' ) ) );
+      wp_send_json_error( array( 'error' => esc_html__( 'Error: You do not have permission to do that.', 'zmop' ) ) );
     }
 
     // Success
-    $options = CSF_Fields::field_data( $type, $term, $query );
+    $options = ZMOP_Fields::field_data( $type, $term, $query );
 
     wp_send_json_success( $options );
 
   }
-  add_action( 'wp_ajax_csf-chosen', 'csf_chosen_ajax' );
+  add_action( 'wp_ajax_zmop-chosen', 'zmop_chosen_ajax' );
 }
 
 /**
@@ -197,9 +308,9 @@ if ( ! function_exists( 'csf_chosen_ajax' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'WP_Customize_Panel_CSF' ) && class_exists( 'WP_Customize_Panel' ) ) {
-  class WP_Customize_Panel_CSF extends WP_Customize_Panel {
-    public $type = 'csf';
+if ( ! class_exists( 'WP_Customize_Panel_ZMOP' ) && class_exists( 'WP_Customize_Panel' ) ) {
+  class WP_Customize_Panel_ZMOP extends WP_Customize_Panel {
+    public $type = 'zmop';
   }
 }
 
@@ -211,9 +322,9 @@ if ( ! class_exists( 'WP_Customize_Panel_CSF' ) && class_exists( 'WP_Customize_P
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'WP_Customize_Section_CSF' ) && class_exists( 'WP_Customize_Section' ) ) {
-  class WP_Customize_Section_CSF extends WP_Customize_Section {
-    public $type = 'csf';
+if ( ! class_exists( 'WP_Customize_Section_ZMOP' ) && class_exists( 'WP_Customize_Section' ) ) {
+  class WP_Customize_Section_ZMOP extends WP_Customize_Section {
+    public $type = 'zmop';
   }
 }
 
@@ -225,10 +336,10 @@ if ( ! class_exists( 'WP_Customize_Section_CSF' ) && class_exists( 'WP_Customize
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'WP_Customize_Control_CSF' ) && class_exists( 'WP_Customize_Control' ) ) {
-  class WP_Customize_Control_CSF extends WP_Customize_Control {
+if ( ! class_exists( 'WP_Customize_Control_ZMOP' ) && class_exists( 'WP_Customize_Control' ) ) {
+  class WP_Customize_Control_ZMOP extends WP_Customize_Control {
 
-    public $type   = 'csf';
+    public $type   = 'zmop';
     public $field  = '';
     public $unique = '';
 
@@ -265,8 +376,8 @@ if ( ! class_exists( 'WP_Customize_Control_CSF' ) && class_exists( 'WP_Customize
         $depend .= ' data-value="'. esc_attr( $data_value ) .'"';
         $depend .= ( ! empty( $data_global ) ) ? ' data-depend-global="true"' : '';
 
-        $visible  = ' csf-dependency-control';
-        $visible .= ( ! empty( $depend_visible ) ) ? ' csf-depend-visible' : ' csf-depend-hidden';
+        $visible  = ' zmop-dependency-control';
+        $visible .= ( ! empty( $depend_visible ) ) ? ' zmop-depend-visible' : ' zmop-depend-hidden';
 
       }
 
@@ -281,7 +392,7 @@ if ( ! class_exists( 'WP_Customize_Control_CSF' ) && class_exists( 'WP_Customize
 
     public function render_field_content() {
 
-      $complex = apply_filters( 'csf_customize_complex_fields', array(
+      $complex = apply_filters( 'zmop_customize_complex_fields', array(
         'accordion',
         'background',
         'border',
@@ -307,7 +418,7 @@ if ( ! class_exists( 'WP_Customize_Control_CSF' ) && class_exists( 'WP_Customize
       $field_id   = ( ! empty( $this->field['id'] ) ) ? $this->field['id'] : '';
       $custom     = ( ! empty( $this->field['customizer'] ) ) ? true : false;
       $is_complex = ( in_array( $this->field['type'], $complex ) ) ? true : false;
-      $class      = ( $is_complex || $custom ) ? ' csf-customize-complex' : '';
+      $class      = ( $is_complex || $custom ) ? ' zmop-customize-complex' : '';
       $atts       = ( $is_complex || $custom ) ? ' data-unique-id="'. esc_attr( $this->unique ) .'" data-option-id="'. esc_attr( $field_id ) .'"' : '';
 
       if ( ! $is_complex && ! $custom ) {
@@ -318,9 +429,9 @@ if ( ! class_exists( 'WP_Customize_Control_CSF' ) && class_exists( 'WP_Customize
 
       $this->field['dependency'] = array();
 
-      echo '<div class="csf-customize-field'. esc_attr( $class ) .'"'. $atts .'>';
+      echo '<div class="zmop-customize-field'. esc_attr( $class ) .'"'. $atts .'>';
 
-      CSF::field( $this->field, $this->value(), $this->unique, 'customize' );
+      ZMOP::field( $this->field, $this->value(), $this->unique, 'customize' );
 
       echo '</div>';
 
@@ -337,8 +448,8 @@ if ( ! class_exists( 'WP_Customize_Control_CSF' ) && class_exists( 'WP_Customize
  * @version 1.0.0
  *
  */
-if ( ! function_exists( 'csf_array_search' ) ) {
-  function csf_array_search( $array, $key, $value ) {
+if ( ! function_exists( 'zmop_array_search' ) ) {
+  function zmop_array_search( $array, $key, $value ) {
 
     $results = array();
 
@@ -348,7 +459,7 @@ if ( ! function_exists( 'csf_array_search' ) ) {
       }
 
       foreach ( $array as $sub_array ) {
-        $results = array_merge( $results, csf_array_search( $sub_array, $key, $value ) );
+        $results = array_merge( $results, zmop_array_search( $sub_array, $key, $value ) );
       }
 
     }
@@ -366,8 +477,8 @@ if ( ! function_exists( 'csf_array_search' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! function_exists( 'csf_timeout' ) ) {
-  function csf_timeout( $timenow, $starttime, $timeout = 30 ) {
+if ( ! function_exists( 'zmop_timeout' ) ) {
+  function zmop_timeout( $timenow, $starttime, $timeout = 30 ) {
     return ( ( $timenow - $starttime ) < $timeout ) ? true : false;
   }
 }
@@ -380,8 +491,8 @@ if ( ! function_exists( 'csf_timeout' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! function_exists( 'csf_wp_editor_api' ) ) {
-  function csf_wp_editor_api() {
+if ( ! function_exists( 'zmop_wp_editor_api' ) ) {
+  function zmop_wp_editor_api() {
     global $wp_version;
     return version_compare( $wp_version, '4.8', '>=' );
   }
@@ -396,8 +507,8 @@ if ( ! function_exists( 'csf_wp_editor_api' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! function_exists( 'csf_sanitize_replace_a_to_b' ) ) {
-  function csf_sanitize_replace_a_to_b( $value ) {
+if ( ! function_exists( 'zmop_sanitize_replace_a_to_b' ) ) {
+  function zmop_sanitize_replace_a_to_b( $value ) {
     return str_replace( 'a', 'b', $value );
   }
 }
@@ -410,8 +521,8 @@ if ( ! function_exists( 'csf_sanitize_replace_a_to_b' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! function_exists( 'csf_sanitize_title' ) ) {
-  function csf_sanitize_title( $value ) {
+if ( ! function_exists( 'zmop_sanitize_title' ) ) {
+  function zmop_sanitize_title( $value ) {
     return sanitize_title( $value );
   }
 }
@@ -424,11 +535,11 @@ if ( ! function_exists( 'csf_sanitize_title' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! function_exists( 'csf_validate_email' ) ) {
-  function csf_validate_email( $value ) {
+if ( ! function_exists( 'zmop_validate_email' ) ) {
+  function zmop_validate_email( $value ) {
 
     if ( ! filter_var( $value, FILTER_VALIDATE_EMAIL ) ) {
-      return esc_html__( 'Please enter a valid email address.', 'csf' );
+      return esc_html__( 'Please enter a valid email address.', 'zmop' );
     }
 
   }
@@ -442,11 +553,11 @@ if ( ! function_exists( 'csf_validate_email' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! function_exists( 'csf_validate_numeric' ) ) {
-  function csf_validate_numeric( $value ) {
+if ( ! function_exists( 'zmop_validate_numeric' ) ) {
+  function zmop_validate_numeric( $value ) {
 
     if ( ! is_numeric( $value ) ) {
-      return esc_html__( 'Please enter a valid number.', 'csf' );
+      return esc_html__( 'Please enter a valid number.', 'zmop' );
     }
 
   }
@@ -460,11 +571,11 @@ if ( ! function_exists( 'csf_validate_numeric' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! function_exists( 'csf_validate_required' ) ) {
-  function csf_validate_required( $value ) {
+if ( ! function_exists( 'zmop_validate_required' ) ) {
+  function zmop_validate_required( $value ) {
 
     if ( empty( $value ) ) {
-      return esc_html__( 'This field is required.', 'csf' );
+      return esc_html__( 'This field is required.', 'zmop' );
     }
 
   }
@@ -478,11 +589,11 @@ if ( ! function_exists( 'csf_validate_required' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! function_exists( 'csf_validate_url' ) ) {
-  function csf_validate_url( $value ) {
+if ( ! function_exists( 'zmop_validate_url' ) ) {
+  function zmop_validate_url( $value ) {
 
     if ( ! filter_var( $value, FILTER_VALIDATE_URL ) ) {
-      return esc_html__( 'Please enter a valid URL.', 'csf' );
+      return esc_html__( 'Please enter a valid URL.', 'zmop' );
     }
 
   }
@@ -496,11 +607,11 @@ if ( ! function_exists( 'csf_validate_url' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! function_exists( 'csf_customize_validate_email' ) ) {
-  function csf_customize_validate_email( $validity, $value, $wp_customize ) {
+if ( ! function_exists( 'zmop_customize_validate_email' ) ) {
+  function zmop_customize_validate_email( $validity, $value, $wp_customize ) {
 
     if ( ! sanitize_email( $value ) ) {
-      $validity->add( 'required', esc_html__( 'Please enter a valid email address.', 'csf' ) );
+      $validity->add( 'required', esc_html__( 'Please enter a valid email address.', 'zmop' ) );
     }
 
     return $validity;
@@ -516,11 +627,11 @@ if ( ! function_exists( 'csf_customize_validate_email' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! function_exists( 'csf_customize_validate_numeric' ) ) {
-  function csf_customize_validate_numeric( $validity, $value, $wp_customize ) {
+if ( ! function_exists( 'zmop_customize_validate_numeric' ) ) {
+  function zmop_customize_validate_numeric( $validity, $value, $wp_customize ) {
 
     if ( ! is_numeric( $value ) ) {
-      $validity->add( 'required', esc_html__( 'Please enter a valid number.', 'csf' ) );
+      $validity->add( 'required', esc_html__( 'Please enter a valid number.', 'zmop' ) );
     }
 
     return $validity;
@@ -536,11 +647,11 @@ if ( ! function_exists( 'csf_customize_validate_numeric' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! function_exists( 'csf_customize_validate_required' ) ) {
-  function csf_customize_validate_required( $validity, $value, $wp_customize ) {
+if ( ! function_exists( 'zmop_customize_validate_required' ) ) {
+  function zmop_customize_validate_required( $validity, $value, $wp_customize ) {
 
     if ( empty( $value ) ) {
-      $validity->add( 'required', esc_html__( 'This field is required.', 'csf' ) );
+      $validity->add( 'required', esc_html__( 'This field is required.', 'zmop' ) );
     }
 
     return $validity;
@@ -556,11 +667,11 @@ if ( ! function_exists( 'csf_customize_validate_required' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! function_exists( 'csf_customize_validate_url' ) ) {
-  function csf_customize_validate_url( $validity, $value, $wp_customize ) {
+if ( ! function_exists( 'zmop_customize_validate_url' ) ) {
+  function zmop_customize_validate_url( $validity, $value, $wp_customize ) {
 
     if ( ! filter_var( $value, FILTER_VALIDATE_URL ) ) {
-      $validity->add( 'required', esc_html__( 'Please enter a valid URL.', 'csf' ) );
+      $validity->add( 'required', esc_html__( 'Please enter a valid URL.', 'zmop' ) );
     }
 
     return $validity;
@@ -576,8 +687,8 @@ if ( ! function_exists( 'csf_customize_validate_url' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'CSF_Walker_Nav_Menu_Edit' ) && class_exists( 'Walker_Nav_Menu_Edit' ) ) {
-  class CSF_Walker_Nav_Menu_Edit extends Walker_Nav_Menu_Edit {
+if ( ! class_exists( 'ZMOP_Walker_Nav_Menu_Edit' ) && class_exists( 'Walker_Nav_Menu_Edit' ) ) {
+  class ZMOP_Walker_Nav_Menu_Edit extends Walker_Nav_Menu_Edit {
 
     public function start_el( &$output, $item, $depth = 0, $args = array(), $id = 0 ) {
 
@@ -594,4 +705,37 @@ if ( ! class_exists( 'CSF_Walker_Nav_Menu_Edit' ) && class_exists( 'Walker_Nav_M
     }
 
   }
+}
+
+// 菜单
+if ( current_user_can( 'manage_options' ) ) {
+	add_action( 'admin_bar_menu', 'begin_options_menu', 88 );
+}
+function begin_options_menu( $wp_admin_bar ) {
+	$wp_admin_bar->add_menu( array(
+		'id'    => 'beginptions',
+		'title' => '<i class="cx cx-begin"></i>主题选项',
+		'href'  => home_url( '/' ) . 'wp-admin/admin.php?page=begin-options'
+	) );
+
+	$wp_admin_bar->add_menu( array(
+		'parent' => 'beginptions',
+		'id'     => 'begin-options',
+		'title'  => '<i class="cx cx-begin"></i>首页设置',
+		'href'   => home_url( '/' ) . 'wp-admin/admin.php?page=be-options'
+	) );
+
+	$wp_admin_bar->add_menu( array(
+		'parent' => 'beginptions',
+		'id'     => 'be-options',
+		'title'  => '<i class="cx cx-begin"></i>公司主页',
+		'href'   => home_url( '/' ) . 'wp-admin/admin.php?page=co-options'
+	) );
+
+	$wp_admin_bar->add_menu( array(
+		'parent' => 'beginptions',
+		'id'     => 'cx-options',
+		'title'  => '<i class="cx cx-begin"></i>辅助设置',
+		'href'   => home_url( '/' ) . 'wp-admin/admin.php?page=cx-options'
+	) );
 }

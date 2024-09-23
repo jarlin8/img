@@ -1,28 +1,17 @@
 <?php 
 if ( ! defined( 'ABSPATH' ) ) exit;
+// 个人主页
 get_header(); ?>
 
-<section id="primary" class="content-area">
-	<main id="main" class="be-main site-main<?php if (zm_get_option('post_no_margin')) { ?> domargin<?php } ?>" role="main">
-		<?php if ( have_posts() ) : ?>
-
-		<?php while ( have_posts() ) : the_post(); ?>
-			<?php get_template_part( 'template/content', get_post_format() ); ?>
-
-			<?php get_template_part('ad/ads', 'archive'); ?>
-
-		<?php endwhile; ?>
-
-		<?php else : ?>
-			<?php get_template_part( 'template/content', 'none' ); ?>
-
-		<?php endif; ?>
-
-	</main><!-- .site-main -->
-
-	<?php begin_pagenav(); ?>
-
-</section><!-- .content-area -->
-
-<?php get_sidebar(); ?>
+<div class="ajax-content-area content-area">
+	<main id="main" class="site-main ajax-site-main" role="main">
+		<?php if ( ! zm_get_option( 'user_inf_page' ) || ( zm_get_option( "user_inf_page" ) == 'grid' ) ) { ?>
+			<?php echo do_shortcode( '[be_ajax_post posts_per_page="21" column="3" style="grid" btn="no" btn_all= "no" more="more"]' ); ?>
+		<?php } ?>
+		<?php if ( zm_get_option( 'user_inf_page' ) == 'img' ) { ?>
+			<?php echo do_shortcode( '[be_ajax_post posts_per_page="25" column="5" img="0" btn="no" btn_all= "no" more="more"]' ); ?>
+		<?php } ?>
+	</main>
+	<div class="clear"></div>
+</div>
 <?php get_footer(); ?>

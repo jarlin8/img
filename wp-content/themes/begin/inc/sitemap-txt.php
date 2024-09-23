@@ -1,136 +1,104 @@
 <?php 
-function begin_get_txt_sitemap() {
-	ob_start();
-?>
-<?php echo get_home_url(); ?>
+if ( ! defined( 'ABSPATH' ) ) exit;
+// 文章
+function begin_sitemap_post_txt() {
+	if ( zm_get_option( 'sitemap_split' ) ) {
+		$batchSize = zm_get_option( 'sitemap_n' );
+		$totalPosts = wp_count_posts()->publish;
+		$totalBatches = ceil( $totalPosts / $batchSize );
 
-<?php 
-	$posts = get_posts( 'numberposts=' . zm_get_option( 'sitemap_n' ) . '&offset=' .zm_get_option( 'offset_n' ) . '&orderby=post_date&order=DESC' );
-	foreach($posts as $post) : 
-?>
-<?php echo get_permalink( $post->ID ); ?>
+		for ( $i = 0; $i < $totalBatches; $i++ ) {
+			$offset = $i * $batchSize;
+			$file = ABSPATH . zm_get_option( 'sitemap_name' );
+			$file .= ( $i > 0 ) ? '-' . $i : '';
+			$file .= '.txt';
 
-<?php endforeach; ?>
-<?php if ( zm_get_option( 'no_sitemap_pages' ) ) { ?>
-<?php $pages = get_pages(); foreach ( $pages as $page ){ ?>
-<?php echo get_page_link( $page->ID ); ?>
+			$sitemap = get_home_url() . "\r\n";
 
-<?php } ?>
-<?php } ?>
-<?php if ( zm_get_option('no_sitemap_type' ) ) { ?>
-<?php if (zm_get_option('no_bulletin')) { ?>
-<?php 
-	$posts = get_posts( 'post_type=bulletin&numberposts=' . zm_get_option( 'sitemap_n' ) . '&orderby=post_date&order=DESC' );
-	foreach($posts as $post) : 
-?>
-<?php echo get_permalink($post->ID); ?>
+			$post_types = ! empty( zm_get_option( 'sitemap_type' ) ) ? ( array ) zm_get_option( 'sitemap_type' ) : get_post_types( array( 'public' => true ) );
+		    $args = array(
+				'post_type'           => $post_types,
+				'offset'              => $offset,
+				'posts_per_page'      => $batchSize,
+				'post_status'         => 'publish',
+				'orderby'             => 'date',
+				'order'               => 'DESC',
+				'ignore_sticky_posts' => true,
+			);
 
-<?php endforeach; ?>
-<?php } ?>
-<?php if ( zm_get_option( 'no_gallery' ) ) { ?>
-<?php 
-	$posts = get_posts( 'post_type=picture&numberposts=' .zm_get_option( 'sitemap_n' ) . '&orderby=post_date&order=DESC' );
-	foreach( $posts as $post ) : 
-?>
-<?php echo get_permalink( $post->ID ); ?>
+			$query = new WP_Query( $args );
+			if ( $query->have_posts() ) {
+				file_put_contents( $file, $sitemap );
 
-<?php endforeach; ?>
-<?php } ?>
-<?php if ( zm_get_option( 'no_videos' ) ) { ?>
-<?php 
-	$posts = get_posts( 'post_type=video&numberposts=' . zm_get_option( 'sitemap_n' ) . '&orderby=post_date&order=DESC' );
-	foreach( $posts as $post ) : 
-?>
-<?php echo get_permalink( $post->ID ); ?>
+				while ( $query->have_posts() ) {
+					$query->the_post();
+					file_put_contents( $file, get_the_permalink() . "\r\n", FILE_APPEND );
+				}
+				wp_reset_postdata();
+			}
 
-<?php endforeach; ?>
-<?php } ?>
-<?php if (zm_get_option('no_tao')) { ?>
-<?php 
-	$posts = get_posts( 'post_type=tao&numberposts=' . zm_get_option( 'sitemap_n' ) . '&orderby=post_date&order=DESC' );
-	foreach($posts as $post) : 
-?>
-<?php echo get_permalink( $post->ID ); ?>
+			// 在第一个批次添加分类
+			if ( $i === 0 && is_array( zm_get_option( 'sitemap_cat_tag' ) ) && in_array( 'cat', zm_get_option( 'sitemap_cat_tag') ) ) {
+				$categorys = get_terms( 'category', 'orderby=name&hide_empty=0' );
+				foreach ( $categorys as $category ) {
+					file_put_contents( $file, get_term_link( $category, $category->slug ) . "\r\n", FILE_APPEND );
+				}
+			}
 
-<?php endforeach; ?>
-<?php } ?>
-<?php if ( zm_get_option( 'no_products' ) ) { ?>
-<?php 
-	$posts = get_posts( 'post_type=show&numberposts=' . zm_get_option( 'sitemap_n' ) . '&orderby=post_date&order=DESC' );
-	foreach($posts as $post) : 
-?>
-<?php echo get_permalink( $post->ID ); ?>
+			// 在第二个批次添加标签
+			if ( $i === 1 && is_array( zm_get_option( 'sitemap_cat_tag' ) ) && in_array( 'tag', zm_get_option( 'sitemap_cat_tag') ) ) {
+				$tags = get_terms( 'post_tag', 'orderby=name&hide_empty=0' );
+				foreach ( $tags as $tag ) {
+					file_put_contents( $file, get_term_link( $tag, $tag->slug ) . "\r\n", FILE_APPEND );
+				}
+			}
 
-<?php endforeach; ?>
-<?php } ?>
-<?php } ?>
-<?php if ( zm_get_option( 'no_sitemap_cat' ) ) { ?>
-<?php 
-	$categorys = get_terms( 'category', 'orderby=name&hide_empty=0' );
-	foreach ( $categorys as $category ) : 
-?>
-<?php echo get_term_link( $category, $category->slug ); ?>
+			// 延迟处理下一个批次
+			sleep( zm_get_option( 'sitemap_delay' ) );
+		}
 
-<?php endforeach; ?>
-<?php } ?>
-<?php if ( zm_get_option( 'no_sitemap_tag' ) ) { ?>
-<?php 
-	$tags = get_terms( 'post_tag', 'orderby=name&hide_empty=0' );
-	foreach ( $tags as $tag ) : 
-?>
-<?php echo get_term_link( $tag, $tag->slug ); ?>
+	} else {
+		$file = ABSPATH . zm_get_option( 'sitemap_name' ) . '.txt';
 
-<?php endforeach; ?>
-<?php } ?>
-<?php if ( zm_get_option( 'no_sitemap_cat' ) ) { ?>
-<?php if ( zm_get_option( 'no_bulletin' ) ) { ?>
-<?php 
-	$categorys = get_terms( 'notice', 'orderby=name&hide_empty=0' );
-	foreach ( $categorys as $category ) : 
-?>
-<?php echo get_term_link( $category, $category->slug ); ?>
+		$sitemap = get_home_url() . "\r\n";
+		$post_types = ! empty( zm_get_option( 'sitemap_type' ) ) ? ( array ) zm_get_option( 'sitemap_type' ) : get_post_types( array( 'public' => true ) );
+		$args = array(
+			'post_type'           => $post_types,
+			'posts_per_page'      => zm_get_option( 'sitemap_n' ),
+			'post_status'         => 'publish',
+			'orderby'             => 'date',
+			'order'               => 'DESC',
+			'ignore_sticky_posts' => true,
+		);
 
-<?php endforeach; ?>
-<?php } ?>
-<?php if ( zm_get_option('no_gallery' ) ) { ?>
-<?php 
-	$categorys = get_terms( 'gallery', 'orderby=name&hide_empty=0' );
-	foreach ( $categorys as $category ) : 
-?>
-<?php echo get_term_link( $category, $category->slug ); ?>
+		$query = new WP_Query( $args );
+		if ( $query->have_posts() ) {
 
-<?php endforeach; ?>
-<?php } ?>
-<?php if ( zm_get_option( 'no_videos' ) ) { ?>
-<?php 
-	$categorys = get_terms( 'videos', 'orderby=name&hide_empty=0' );
-	foreach ( $categorys as $category ) : 
-?>
-<?php echo get_term_link( $category, $category->slug ); ?>
+			file_put_contents( $file, $sitemap );
 
-<?php endforeach; ?>
-<?php } ?>
-<?php if ( zm_get_option( 'no_tao' ) ) { ?>
-<?php 
-	$categorys = get_terms( 'taobao', 'orderby=name&hide_empty=0' );
-	foreach ( $categorys as $category ) : 
-?>
-<?php echo get_term_link( $category, $category->slug ); ?>
+			while ( $query->have_posts() ) {
+				$query->the_post();
+				file_put_contents( $file, get_the_permalink() . "\r\n", FILE_APPEND );
+			}
+			wp_reset_postdata();
+		}
 
-<?php endforeach; ?>
-<?php } ?>
-<?php if ( zm_get_option( 'no_products' ) ) { ?>
-<?php 
-	$categorys = get_terms( 'products', 'orderby=name&hide_empty=0' );
-	foreach ( $categorys as $category ) : 
-?>
-<?php echo get_term_link( $category, $category->slug ); ?>
+		// 分类
+		if ( is_array( zm_get_option( 'sitemap_cat_tag' ) ) && in_array( 'cat', zm_get_option( 'sitemap_cat_tag') ) ) {
+			$categorys = get_terms( 'category', 'orderby=name&hide_empty=0' );
+			foreach ( $categorys as $category ) {
+				file_put_contents( $file, get_term_link( $category, $category->slug ) . "\r\n", FILE_APPEND );
+			}
+		}
 
-<?php endforeach; ?>
-<?php } ?>
-<?php } ?>
-<?php 
-	$sitemap_txt = ob_get_contents();
-	ob_clean();
-	return $sitemap_txt;
+		// 标签
+		if ( is_array( zm_get_option( 'sitemap_cat_tag' ) ) && in_array( 'tag', zm_get_option( 'sitemap_cat_tag') ) ) {
+			$tags = get_terms( 'post_tag', 'orderby=name&hide_empty=0' );
+			foreach ( $tags as $tag ) {
+				file_put_contents( $file, get_term_link( $tag, $tag->slug ) . "\r\n", FILE_APPEND );
+			}
+		}
+	}
 }
+
+add_action( 'be_sitemap_generate', 'begin_sitemap_post_txt' );

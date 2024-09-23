@@ -4,7 +4,7 @@
 }
 
 #masthead {
-	background: #fff;
+	background: var(--be-bg-white);
 }
 
 .bread,.header-sub,.scroll-c {
@@ -17,7 +17,7 @@
 
 .show-header-box {
 	position: relative;
-	background: #f1f1f1;
+	background: var(--be-bg-white);
 	overflow: hidden;
 	margin-top: -2px;
 }
@@ -93,13 +93,12 @@
 }
 
 .show-grey {
-	background: #f1f1f1;
+	background: var(--be-bg-body);
 }
 
 .show-white {
-	background: #fff;
+	background: var(--be-bg-white);
 }
-
 
 @media screen and (max-width:1440px) {
 	.show-big-img img {
@@ -139,6 +138,37 @@
 	}
 }
 
-.night .show-comments .bk {
-	border: 1px solid #262626 !important;
+@media screen and (max-width: 1025px) {
+	.show-hui .group-contact-main {
+		height: 100%;
+	}
+}
+
+.show-area .group-title h1 {
+	font-size: 26px;
+	font-size: 2.6rem;
+	line-height: 30px;
+	text-align: center;
+	margin: 10px 0 15px 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.show-area .group-title h1:before {
+	background: linear-gradient(to right, transparent, #666);
+	content: "";
+	height: 1px;
+	width: 60px;
+	margin: 0 10px 0 0;
+	display: inline-block;
+}
+
+.show-area .group-title h1:after {
+	background: linear-gradient(to right, #666, transparent);
+	content: "";
+	height: 1px;
+	width: 60px;
+	margin: 0 0 0 10px;
+	display: inline-block;
 }

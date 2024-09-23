@@ -2,7 +2,9 @@
 class Linksclick {
 	// Constructor
 	public function __construct() {
-		//register_activation_hook( __FILE__, 'flush_rewrite_rules' );
+		add_action( 'after_switch_theme', function() {
+			flush_rewrite_rules();
+		} );
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_action( 'manage_posts_custom_column', array( $this, 'columns_data' ) );
 		add_filter( 'manage_edit-surl_columns', array( $this, 'columns_filter' ) );
@@ -10,6 +12,7 @@ class Linksclick {
 		add_action( 'admin_menu', array( $this, 'add_meta_box' ) );
 		add_action( 'save_post', array( $this, 'meta_box_save' ), 1, 2 );
 		add_action( 'template_redirect', array( $this, 'count_and_redirect' ) );
+		add_action( 'admin_footer', array( $this, 'add_javascript' ) ); // 调用add_javascript方法
 	}
 
 	public function register_post_type() {
@@ -48,14 +51,38 @@ class Linksclick {
 		register_post_type( $slug,
 			array(
 				'labels'        => $labels,
-				'public'        => true,
-				'query_var'     => true,
-				'menu_position' => 57,
-				'menu_icon'     => 'dashicons-editor-unlink',
-				'supports'      => array( 'title', 'custom-fields' ),
-				'rewrite'       => array( 'slug' => $rewrite_slug, 'with_front' => false ),
+				'public'             => true,
+				'publicly_queryable' => true,
+				'show_ui'            => true,
+				'show_in_menu'       => true,
+				'query_var'          => true,
+				'menu_position'      => 57,
+				'menu_icon'          => 'dashicons-pets',
+				'supports'           => array( 'title', 'custom-fields' ),
+				'rewrite'            => array( 'slug' => $rewrite_slug, 'with_front' => false ),
 			)
 		);
+	}
+
+	// 添加JavaScript代码块
+	public function add_javascript() {
+		?>
+		<script>
+		function copyToClipboard() {
+			const quote = document.querySelector('.short-link').textContent;
+			const copiedText = quote;
+			const tempTextArea = document.createElement('textarea');
+			tempTextArea.value = copiedText;
+			document.body.appendChild(tempTextArea);
+			tempTextArea.select();
+			document.execCommand('copy');
+			document.body.removeChild(tempTextArea);
+
+			const successElement = document.querySelector('.success');
+			successElement.classList.remove('hidden');
+		}
+		</script>
+		<?php
 	}
 
 	public function columns_filter( $columns ) {
@@ -105,13 +132,21 @@ class Linksclick {
 
 	public function meta_box() {
 		global $post;
-		printf( '<input type="hidden" name="_surl_nonce" value="%s" />', wp_create_nonce( plugin_basename(__FILE__) ) );
-		printf( '<p><label for="%s">%s</label></p>', '_surl_redirect', '重定向链接');
-		printf( '<p><input style="%s" type="text" name="%s" id="%s" value="%s" /></p>', 'width: 99%;', '_surl_redirect', '_surl_redirect', esc_attr( get_post_meta( get_the_ID(), '_surl_redirect', true ) ) );
-		printf( '<p><label for="%s">%s</label></p>', '', '重定向后，实际的访问链接' );
-		$count = isset( $post->ID ) ? get_post_meta(get_the_ID(), 'surl_count', true) : 0;
-		echo '<p>' . sprintf( '该链接已被点击 %d 次', esc_attr( $count ) ) . '</p>';
-	}
+	?>
+		<input type="hidden" name="_surl_nonce" value="<?php echo wp_create_nonce( plugin_basename(__FILE__) ); ?>" />
+		<p><label for="_surl_redirect">输入重定向后跳转的链接：</label></p>
+		<p><input style="width: 99%;" type="text" name="_surl_redirect" id="_surl_redirect" value="<?php echo esc_attr( get_post_meta( get_the_ID(), '_surl_redirect', true ) ); ?>" /></p>
+
+		<div>编辑标题下面的固定链接，添加到用于计数或跳转链接中：</div>
+		<p class="short-link" style="background:#f6f7f7;min-width:30%;float:left;padding:5px 15px 5px 10px;border-radius:5px;border:1px solid #ddd;"><?php echo get_permalink(); ?></p>
+		<p class="copy-to-clipboard-container">
+			<button type="button" class="button button-small copy-attachment-url" data-clipboard-target="#attachment-details-two-column-copy-link" onclick="copyToClipboard()">复制网址至剪贴板</button>
+			<span class="success hidden" aria-hidden="true">已复制！</span>
+		</p>
+
+		<?php $count = isset( $post->ID ) ? get_post_meta( get_the_ID(), 'surl_count', true ) : 0; ?>
+		<p><?php echo sprintf( '点击 %d 次', esc_attr( $count ) ); ?></p>
+	<?php }
 
 	public function meta_box_save( $post_id, $post ) {
 		$key = '_surl_redirect';

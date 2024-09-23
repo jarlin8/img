@@ -1,4 +1,5 @@
 (function() {
+	// 代码高亮
 	tinymce.create('tinymce.plugins.becode', {
 		init: function(ed, url) {
 			ed.addCommand('becode',
@@ -18,8 +19,7 @@
 			ed.addButton('becode', {
 				title: '代码高亮',
 				cmd: 'becode',
-				icon: 'code'
-
+				classes: 'becode',
 			});
 		},
 		createControl: function(n, cm) {

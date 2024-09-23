@@ -42,13 +42,13 @@ function begin_comment($comment, $args, $depth) {
 ?>
 
 	<li class="comments-anchor"><ul id="anchor-comment-<?php comment_ID() ?>"></ul></li>
-	<<?php echo $tag ?> <?php comment_class( empty( $args['has_children'] ) ? 'ms bk' : 'parent ms bk' ) ?> id="comment-<?php comment_ID() ?>" <?php aos_a(); ?>>
+	<<?php echo $tag ?> <?php comment_class( empty( $args['has_children'] ) ? 'ms' : 'parent ms' ) ?> id="comment-<?php comment_ID() ?>" <?php aos_a(); ?>>
 	<?php if ( 'div' != $args['style'] ) : ?>
 		<div id="div-comment-<?php comment_ID() ?>" class="comment-body">
 	<?php endif; ?>
 	<div class="comment-author vcard">
 		<?php if ( get_option( 'show_avatars' ) ) { ?>
-			<div class="comment-avatar load<?php if ( get_option( 'show_avatars' ) ) { ?> comment-avatar-show bk dah<?php } ?>">
+			<div class="comment-avatar load<?php if ( get_option( 'show_avatars' ) ) { ?> comment-avatar-show<?php } ?>">
 				<?php if (zm_get_option('cache_avatar')) { ?>
 					<?php echo begin_avatar( $comment->comment_author_email, 96, '', get_comment_author() ); ?>
 				<?php } else { ?>
@@ -77,7 +77,7 @@ function begin_comment($comment, $args, $depth) {
 		<?php } ?>
 
 		<?php 
-			if ($comment->comment_author_email == get_option('admin_email')) {
+			if ( user_can( $comment->user_id, 'manage_options' ) ) {
 				echo '<span class="author-mark author-admin"><i class="be be-personoutline" title="'. sprintf(__( '管理员', 'begin' )) .'"></i></span>';
 			} else {
 				$post_author = begin_comment_by_post_author( $comment );
@@ -104,7 +104,7 @@ function begin_comment($comment, $args, $depth) {
 				<?php
 					if ( current_user_can('level_10') ) {
 						$url = home_url();
-						echo '<a id="delete-'. $comment->comment_ID .'" href="' . wp_nonce_url( admin_url( "comment.php?action=deletecomment&p=" . $comment->comment_post_ID . '&c=' . $comment->comment_ID ), 'delete-comment_' . $comment->comment_ID) . '" title="' . sprintf(__( '删除', 'begin' )) . '" class="comment-del ease bgt"><span class="dashicons dashicons-ellipsis"></span></a>';
+						echo '<a id="delete-'. $comment->comment_ID .'" href="' . wp_nonce_url( admin_url( "comment.php?action=deletecomment&p=" . $comment->comment_post_ID . '&c=' . $comment->comment_ID ), 'delete-comment_' . $comment->comment_ID) . '" title="' . sprintf(__( '删除', 'begin' )) . '" class="comment-del ease"><span class="dashicons dashicons-ellipsis"></span></a>';
 					}
 				?>
 				<?php } ?>
@@ -121,9 +121,9 @@ function begin_comment($comment, $args, $depth) {
 				<?php if ( zm_get_option( 'comment_region' ) ) { ?>
 					<?php 
 						if ( function_exists( 'be_convert_ip' ) ) {
-							$my_id = $comment->user_id;
-							$user_info = get_userdata( $my_id );
-							if ( $my_id && $user_info->remark ) {
+							$comment_user_id = $comment->user_id;
+							$user_info = get_userdata( $comment_user_id );
+							if ( user_can( $comment_user_id, 'manage_options' ) && $comment_user_id && $user_info->remark ) {
 								$user_region = $user_info->remark;
 							} else {
 								$user_region = be_convert_ip( get_comment_author_ip() );
@@ -162,7 +162,7 @@ function begin_comment($comment, $args, $depth) {
 				<br />
 				<?php if ($args['max_depth']!=$depth) { ?>
 					<?php if ( get_option( 'comment_registration' ) && ! is_user_logged_in() ) { ?>
-						<?php if ( ! zm_get_option( 'login_reply_btn' ) ) { ?><span class="reply login-reply login-show show-layer" data-show-layer="login-layer" role="button"><i class="be be-stack"> </i><?php _e( '登录回复', 'begin' ); ?></span><?php } ?>
+						<?php if ( ! zm_get_option( 'login_reply_btn' ) ) { ?><span class="reply login-reply login-show show-layer"><i class="be be-stack"> </i><?php _e( '登录回复', 'begin' ); ?></span><?php } ?>
 					<?php } else { ?>
 						<?php
 						comment_reply_link(

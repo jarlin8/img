@@ -7,8 +7,8 @@
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'CSF_Field_backup' ) ) {
-  class CSF_Field_backup extends CSF_Fields {
+if ( ! class_exists( 'ZMOP_Field_backup' ) ) {
+  class ZMOP_Field_backup extends ZMOP_Fields {
 
     public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
       parent::__construct( $field, $value, $unique, $where, $parent );
@@ -17,20 +17,116 @@ if ( ! class_exists( 'CSF_Field_backup' ) ) {
     public function render() {
 
       $unique = $this->unique;
-      $nonce  = wp_create_nonce( 'csf_backup_nonce' );
-      $export = add_query_arg( array( 'action' => 'csf-export', 'unique' => $unique, 'nonce' => $nonce ), admin_url( 'admin-ajax.php' ) );
+      $nonce  = wp_create_nonce( 'zmop_backup_nonce' );
+      $export = add_query_arg( array( 'action' => 'zmop-export', 'unique' => $unique, 'nonce' => $nonce ), admin_url( 'admin-ajax.php' ) );
 
       echo $this->field_before();
 
-      //echo '<textarea readonly="readonly" class="csf-export-data">'. esc_attr( json_encode( get_option( $unique ) ) ) .'</textarea>';
-      echo '<a href="'. esc_url( $export ) .'" class="button button-primary csf-export" target="_blank">导出设置</a>';
-      echo '<div class="csf-field-import csf-field-content"></div>';
-      echo '<textarea name="csf_import_data" class="csf-import-data" placeholder="将导出的 json 文件用记事本打开，复制数据粘贴到此，执行导入！"></textarea>';
-      echo '<button type="submit" class="button button-primary csf-confirm csf-import" data-unique="'. esc_attr( $unique ) .'" data-nonce="'. esc_attr( $nonce ) .'">导入设置</button>';
+      //echo '<textarea readonly="readonly" class="zmop-export-data">'. esc_attr( json_encode( get_option( $unique ) ) ) .'</textarea>';
+      //echo '<div class="zmop-field-import zmop-field-content"></div>';
+      echo '<textarea name="zmop_import_data" class="zmop-import-data" placeholder="复制数据粘贴到此，执行导入！"></textarea>';
+      echo '<a href="'. esc_url( $export ) .'" class="button button-primary zmop-export" target="_blank">导出选项</a>';
+      echo '<button type="submit" class="button button-primary zmop-confirm zmop-import" data-unique="'. esc_attr( $unique ) .'" data-nonce="'. esc_attr( $nonce ) .'">导入选项</button>';
       echo $this->field_after();
     }
 
   }
+}
+
+/**
+ *
+ * Field: 首页备份
+ *
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ */
+if ( ! class_exists( 'ZMOP_Field_backup_be' ) ) {
+	class ZMOP_Field_backup_be extends ZMOP_Fields {
+
+		public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
+			parent::__construct( $field, $value, $unique, $where, $parent );
+		}
+
+		public function render() {
+
+			$unique = $this->unique;
+			$nonce  = wp_create_nonce( 'zmop_backup_nonce' );
+			$export = add_query_arg( array( 'action' => 'zmop-export-be', 'unique' => $unique, 'nonce' => $nonce ), admin_url( 'admin-ajax.php' ) );
+
+			echo $this->field_before();
+
+			//echo '<div class="zmop-field-import zmop-field-content"></div>';
+			echo '<textarea name="zmop_import_data" class="zmop-import-data" placeholder="复制数据粘贴到此，执行导入！"></textarea>';
+			echo '<a href="'. esc_url( $export ) .'" class="button button-primary zmop-export" target="_blank">导出设置</a>';
+			echo '<button type="submit" class="button button-primary zmop-confirm zmop-import" data-unique="'. esc_attr( $unique ) .'" data-nonce="'. esc_attr( $nonce ) .'">导入设置</button>';
+			echo $this->field_after();
+		}
+	}
+}
+
+/**
+ *
+ * Field: 公司主页
+ *
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ */
+if ( ! class_exists( 'ZMOP_Field_backup_co' ) ) {
+	class ZMOP_Field_backup_co extends ZMOP_Fields {
+
+		public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
+			parent::__construct( $field, $value, $unique, $where, $parent );
+		}
+
+		public function render() {
+
+			$unique = $this->unique;
+			$nonce  = wp_create_nonce( 'zmop_backup_nonce' );
+			$export = add_query_arg( array( 'action' => 'zmop-export-co', 'unique' => $unique, 'nonce' => $nonce ), admin_url( 'admin-ajax.php' ) );
+
+			echo $this->field_before();
+
+			//echo '<div class="zmop-field-import zmop-field-content"></div>';
+			echo '<textarea name="zmop_import_data" class="zmop-import-data" placeholder="复制数据粘贴到此，执行导入！"></textarea>';
+			echo '<a href="'. esc_url( $export ) .'" class="button button-primary zmop-export" target="_blank">导出设置</a>';
+			echo '<button type="submit" class="button button-primary zmop-confirm zmop-import" data-unique="'. esc_attr( $unique ) .'" data-nonce="'. esc_attr( $nonce ) .'">导入设置</button>';
+			echo $this->field_after();
+		}
+	}
+}
+
+/**
+ *
+ * Field: 辅助设置
+ *
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ */
+if ( ! class_exists( 'ZMOP_Field_backup_sub' ) ) {
+	class ZMOP_Field_backup_sub extends ZMOP_Fields {
+
+		public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
+			parent::__construct( $field, $value, $unique, $where, $parent );
+		}
+
+		public function render() {
+
+			$unique = $this->unique;
+			$nonce  = wp_create_nonce( 'zmop_backup_nonce' );
+			$export = add_query_arg( array( 'action' => 'zmop-export-sub', 'unique' => $unique, 'nonce' => $nonce ), admin_url( 'admin-ajax.php' ) );
+
+			echo $this->field_before();
+
+			//echo '<div class="zmop-field-import zmop-field-content"></div>';
+			echo '<textarea name="zmop_import_data" class="zmop-import-data" placeholder="复制数据粘贴到此，执行导入！"></textarea>';
+			echo '<a href="'. esc_url( $export ) .'" class="button button-primary zmop-export" target="_blank">导出设置</a>';
+			echo '<button type="submit" class="button button-primary zmop-confirm zmop-import" data-unique="'. esc_attr( $unique ) .'" data-nonce="'. esc_attr( $nonce ) .'">导入设置</button>';
+			echo $this->field_after();
+		}
+	}
 }
 
 /**
@@ -41,8 +137,8 @@ if ( ! class_exists( 'CSF_Field_backup' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'CSF_Field_callback' ) ) {
-  class CSF_Field_callback extends CSF_Fields {
+if ( ! class_exists( 'ZMOP_Field_callback' ) ) {
+  class ZMOP_Field_callback extends ZMOP_Fields {
 
     public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
       parent::__construct( $field, $value, $unique, $where, $parent );
@@ -71,8 +167,8 @@ if ( ! class_exists( 'CSF_Field_callback' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'CSF_Field_color' ) ) {
-  class CSF_Field_color extends CSF_Fields {
+if ( ! class_exists( 'ZMOP_Field_color' ) ) {
+  class ZMOP_Field_color extends ZMOP_Fields {
 
     public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
       parent::__construct( $field, $value, $unique, $where, $parent );
@@ -83,7 +179,7 @@ if ( ! class_exists( 'CSF_Field_color' ) ) {
       $default_attr = ( ! empty( $this->field['default'] ) ) ? ' data-default-color="'. esc_attr( $this->field['default'] ) .'"' : '';
 
       echo $this->field_before();
-      echo '<input type="text" name="'. esc_attr( $this->field_name() ) .'" value="'. esc_attr( $this->value ) .'" class="csf-color"'. $default_attr . $this->field_attributes() .'/>';
+      echo '<input type="text" name="'. esc_attr( $this->field_name() ) .'" value="'. esc_attr( $this->value ) .'" class="zmop-color"'. $default_attr . $this->field_attributes() .'/>';
       echo $this->field_after();
 
     }
@@ -123,8 +219,8 @@ if ( ! class_exists( 'CSF_Field_color' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'CSF_Field_content' ) ) {
-  class CSF_Field_content extends CSF_Fields {
+if ( ! class_exists( 'ZMOP_Field_content' ) ) {
+  class ZMOP_Field_content extends ZMOP_Fields {
 
     public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
       parent::__construct( $field, $value, $unique, $where, $parent );
@@ -151,8 +247,8 @@ if ( ! class_exists( 'CSF_Field_content' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'CSF_Field_fieldset' ) ) {
-  class CSF_Field_fieldset extends CSF_Fields {
+if ( ! class_exists( 'ZMOP_Field_fieldset' ) ) {
+  class ZMOP_Field_fieldset extends ZMOP_Fields {
 
     public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
       parent::__construct( $field, $value, $unique, $where, $parent );
@@ -162,7 +258,7 @@ if ( ! class_exists( 'CSF_Field_fieldset' ) ) {
 
       echo $this->field_before();
 
-      echo '<div class="csf-fieldset-content" data-depend-id="'. esc_attr( $this->field['id'] ) .'">';
+      echo '<div class="zmop-fieldset-content" data-depend-id="'. esc_attr( $this->field['id'] ) .'">';
 
       foreach ( $this->field['fields'] as $field ) {
 
@@ -171,7 +267,7 @@ if ( ! class_exists( 'CSF_Field_fieldset' ) ) {
         $field_value   = ( isset( $this->value[$field_id] ) ) ? $this->value[$field_id] : $field_default;
         $unique_id     = ( ! empty( $this->unique ) ) ? $this->unique .'['. $this->field['id'] .']' : $this->field['id'];
 
-        CSF::field( $field, $field_value, $unique_id, 'field/fieldset' );
+        ZMOP::field( $field, $field_value, $unique_id, 'field/fieldset' );
 
       }
 
@@ -192,8 +288,8 @@ if ( ! class_exists( 'CSF_Field_fieldset' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'CSF_Field_number' ) ) {
-  class CSF_Field_number extends CSF_Fields {
+if ( ! class_exists( 'ZMOP_Field_number' ) ) {
+  class ZMOP_Field_number extends ZMOP_Fields {
 
     public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
       parent::__construct( $field, $value, $unique, $where, $parent );
@@ -209,9 +305,9 @@ if ( ! class_exists( 'CSF_Field_number' ) ) {
       ) );
 
       echo $this->field_before();
-      echo '<div class="csf--wrap">';
+      echo '<div class="zmop--wrap">';
       echo '<input type="number" name="'. esc_attr( $this->field_name() ) .'" value="'. esc_attr( $this->value ) .'"'. $this->field_attributes() .' min="'. esc_attr( $args['min'] ) .'" max="'. esc_attr( $args['max'] ) .'" step="'. esc_attr( $args['step'] ) .'"/>';
-      echo ( ! empty( $args['unit'] ) ) ? '<span class="csf--unit">'. esc_attr( $args['unit'] ) .'</span>' : '';
+      echo ( ! empty( $args['unit'] ) ) ? '<span class="zmop--unit">'. esc_attr( $args['unit'] ) .'</span>' : '';
       echo '</div>';
       echo $this->field_after();
 
@@ -255,8 +351,8 @@ if ( ! class_exists( 'CSF_Field_number' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'CSF_Field_radio' ) ) {
-  class CSF_Field_radio extends CSF_Fields {
+if ( ! class_exists( 'ZMOP_Field_radio' ) ) {
+  class ZMOP_Field_radio extends ZMOP_Fields {
 
     public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
       parent::__construct( $field, $value, $unique, $where, $parent );
@@ -269,7 +365,7 @@ if ( ! class_exists( 'CSF_Field_radio' ) ) {
         'query_args' => array(),
       ) );
 
-      $inline_class = ( $args['inline'] ) ? ' class="csf--inline-list"' : '';
+      $inline_class = ( $args['inline'] ) ? ' class="zmop--inline-list"' : '';
 
       echo $this->field_before();
 
@@ -294,7 +390,7 @@ if ( ! class_exists( 'CSF_Field_radio' ) ) {
                     echo '<li>';
                     echo '<label>';
                     echo '<input type="radio" name="'. esc_attr( $this->field_name() ) .'" value="'. esc_attr( $sub_key ) .'"'. $this->field_attributes() . esc_attr( $checked ) .'/>';
-                    echo '<span class="csf--text">'. esc_attr( $sub_value ) .'</span>';
+                    echo '<span class="zmop--text">'. esc_attr( $sub_value ) .'</span>';
                     echo '</label>';
                     echo '</li>';
                   }
@@ -308,7 +404,7 @@ if ( ! class_exists( 'CSF_Field_radio' ) ) {
               echo '<li>';
               echo '<label>';
               echo '<input type="radio" name="'. esc_attr( $this->field_name() ) .'" value="'. esc_attr( $option_key ) .'"'. $this->field_attributes() . esc_attr( $checked ) .'/>';
-              echo '<span class="csf--text">'. esc_attr( $option_value ) .'</span>';
+              echo '<span class="zmop--text">'. esc_attr( $option_value ) .'</span>';
               echo '</label>';
               echo '</li>';
 
@@ -328,7 +424,7 @@ if ( ! class_exists( 'CSF_Field_radio' ) ) {
 
         $label = ( isset( $this->field['label'] ) ) ? $this->field['label'] : '';
         echo '<label><input type="radio" name="'. esc_attr( $this->field_name() ) .'" value="1"'. $this->field_attributes() . esc_attr( checked( $this->value, 1, false ) ) .'/>';
-        echo ( ! empty( $this->field['label'] ) ) ? '<span class="csf--text">'. esc_attr( $this->field['label'] ) .'</span>' : '';
+        echo ( ! empty( $this->field['label'] ) ) ? '<span class="zmop--text">'. esc_attr( $this->field['label'] ) .'</span>' : '';
         echo '</label>';
 
       }
@@ -348,8 +444,8 @@ if ( ! class_exists( 'CSF_Field_radio' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'CSF_Field_select' ) ) {
-  class CSF_Field_select extends CSF_Fields {
+if ( ! class_exists( 'ZMOP_Field_select' ) ) {
+  class ZMOP_Field_select extends ZMOP_Fields {
 
     public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
       parent::__construct( $field, $value, $unique, $where, $parent );
@@ -375,7 +471,7 @@ if ( ! class_exists( 'CSF_Field_select' ) ) {
 
         if ( ! empty( $args['ajax'] ) ) {
           $args['settings']['data']['type']  = $args['options'];
-          $args['settings']['data']['nonce'] = wp_create_nonce( 'csf_chosen_ajax_nonce' );
+          $args['settings']['data']['nonce'] = wp_create_nonce( 'zmop_chosen_ajax_nonce' );
           if ( ! empty( $args['query_args'] ) ) {
             $args['settings']['data']['query_args'] = $args['query_args'];
           }
@@ -384,10 +480,10 @@ if ( ! class_exists( 'CSF_Field_select' ) ) {
         $chosen_rtl       = ( is_rtl() ) ? ' chosen-rtl' : '';
         $multiple_name    = ( $args['multiple'] ) ? '[]' : '';
         $multiple_attr    = ( $args['multiple'] ) ? ' multiple="multiple"' : '';
-        $chosen_sortable  = ( $args['chosen'] && $args['sortable'] ) ? ' csf-chosen-sortable' : '';
-        $chosen_ajax      = ( $args['chosen'] && $args['ajax'] ) ? ' csf-chosen-ajax' : '';
+        $chosen_sortable  = ( $args['chosen'] && $args['sortable'] ) ? ' zmop-chosen-sortable' : '';
+        $chosen_ajax      = ( $args['chosen'] && $args['ajax'] ) ? ' zmop-chosen-ajax' : '';
         $placeholder_attr = ( $args['chosen'] && $args['placeholder'] ) ? ' data-placeholder="'. esc_attr( $args['placeholder'] ) .'"' : '';
-        $field_class      = ( $args['chosen'] ) ? ' class="csf-chosen'. esc_attr( $chosen_rtl . $chosen_sortable . $chosen_ajax ) .'"' : '';
+        $field_class      = ( $args['chosen'] ) ? ' class="zmop-chosen'. esc_attr( $chosen_rtl . $chosen_sortable . $chosen_ajax ) .'"' : '';
         $field_name       = $this->field_name( $multiple_name );
         $field_attr       = $this->field_attributes();
         $maybe_options    = $this->field['options'];
@@ -405,7 +501,7 @@ if ( ! class_exists( 'CSF_Field_select' ) ) {
 
           if ( ! empty( $args['chosen'] ) && ! empty( $args['multiple'] ) ) {
 
-            echo '<select name="'. $field_name .'" class="csf-hide-select hidden"'. $multiple_attr . $field_attr .'>';
+            echo '<select name="'. $field_name .'" class="zmop-hide-select hidden"'. $multiple_attr . $field_attr .'>';
             foreach ( $this->value as $option_key ) {
               echo '<option value="'. esc_attr( $option_key ) .'" selected>'. esc_attr( $option_key ) .'</option>';
             }
@@ -480,8 +576,8 @@ if ( ! class_exists( 'CSF_Field_select' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'CSF_Field_subheading' ) ) {
-  class CSF_Field_subheading extends CSF_Fields {
+if ( ! class_exists( 'ZMOP_Field_subheading' ) ) {
+  class ZMOP_Field_subheading extends ZMOP_Fields {
 
     public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
       parent::__construct( $field, $value, $unique, $where, $parent );
@@ -504,8 +600,8 @@ if ( ! class_exists( 'CSF_Field_subheading' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'CSF_Field_switcher' ) ) {
-  class CSF_Field_switcher extends CSF_Fields {
+if ( ! class_exists( 'ZMOP_Field_switcher' ) ) {
+  class ZMOP_Field_switcher extends ZMOP_Fields {
 
     public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
       parent::__construct( $field, $value, $unique, $where, $parent );
@@ -513,21 +609,21 @@ if ( ! class_exists( 'CSF_Field_switcher' ) ) {
 
     public function render() {
 
-      $active     = ( ! empty( $this->value ) ) ? ' csf--active' : '';
-      $text_on    = ( ! empty( $this->field['text_on'] ) ) ? $this->field['text_on'] : esc_html__( 'On', 'csf' );
-      $text_off   = ( ! empty( $this->field['text_off'] ) ) ? $this->field['text_off'] : esc_html__( 'Off', 'csf' );
+      $active     = ( ! empty( $this->value ) ) ? ' zmop--active' : '';
+      $text_on    = ( ! empty( $this->field['text_on'] ) ) ? $this->field['text_on'] : esc_html__( 'On', 'zmop' );
+      $text_off   = ( ! empty( $this->field['text_off'] ) ) ? $this->field['text_off'] : esc_html__( 'Off', 'zmop' );
       $text_width = ( ! empty( $this->field['text_width'] ) ) ? ' style="width: '. esc_attr( $this->field['text_width'] ) .'px;"': '';
 
       echo $this->field_before();
 
-      echo '<div class="csf--switcher'. esc_attr( $active ) .'"'. $text_width .'>';
-      echo '<span class="csf--on">'. esc_attr( $text_on ) .'</span>';
-      echo '<span class="csf--off">'. esc_attr( $text_off ) .'</span>';
-      echo '<span class="csf--ball"></span>';
+      echo '<div class="zmop--switcher'. esc_attr( $active ) .'"'. $text_width .'>';
+      echo '<span class="zmop--on">'. esc_attr( $text_on ) .'</span>';
+      echo '<span class="zmop--off">'. esc_attr( $text_off ) .'</span>';
+      echo '<span class="zmop--ball"></span>';
       echo '<input type="hidden" name="'. esc_attr( $this->field_name() ) .'" value="'. esc_attr( $this->value ) .'"'. $this->field_attributes() .' />';
       echo '</div>';
 
-      echo ( ! empty( $this->field['label'] ) ) ? '<span class="csf--label">'. esc_attr( $this->field['label'] ) . '</span>' : '';
+      echo ( ! empty( $this->field['label'] ) ) ? '<span class="zmop--label">'. esc_attr( $this->field['label'] ) . '</span>' : '';
 
       echo $this->field_after();
 
@@ -544,8 +640,8 @@ if ( ! class_exists( 'CSF_Field_switcher' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'CSF_Field_text' ) ) {
-  class CSF_Field_text extends CSF_Fields {
+if ( ! class_exists( 'ZMOP_Field_text' ) ) {
+  class ZMOP_Field_text extends ZMOP_Fields {
 
     public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
       parent::__construct( $field, $value, $unique, $where, $parent );
@@ -574,8 +670,8 @@ if ( ! class_exists( 'CSF_Field_text' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'CSF_Field_textarea' ) ) {
-  class CSF_Field_textarea extends CSF_Fields {
+if ( ! class_exists( 'ZMOP_Field_textarea' ) ) {
+  class ZMOP_Field_textarea extends ZMOP_Fields {
 
     public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
       parent::__construct( $field, $value, $unique, $where, $parent );
@@ -598,11 +694,11 @@ if ( ! class_exists( 'CSF_Field_textarea' ) ) {
 
         foreach ( $instances as $instance_key ) {
 
-          if ( isset( CSF::$shortcode_instances[$instance_key] ) ) {
+          if ( isset( ZMOP::$shortcode_instances[$instance_key] ) ) {
 
-            $button_title = CSF::$shortcode_instances[$instance_key]['button_title'];
+            $button_title = ZMOP::$shortcode_instances[$instance_key]['button_title'];
 
-            echo '<a href="#" class="button button-primary csf-shortcode-button" data-modal-id="'. esc_attr( $instance_key ) .'">'. $button_title .'</a>';
+            echo '<a href="#" class="button button-primary zmop-shortcode-button" data-modal-id="'. esc_attr( $instance_key ) .'">'. $button_title .'</a>';
 
           }
 
@@ -622,8 +718,8 @@ if ( ! class_exists( 'CSF_Field_textarea' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'CSF_Field_upload' ) ) {
-  class CSF_Field_upload extends CSF_Fields {
+if ( ! class_exists( 'ZMOP_Field_upload' ) ) {
+  class ZMOP_Field_upload extends ZMOP_Fields {
 
     public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
       parent::__construct( $field, $value, $unique, $where, $parent );
@@ -655,18 +751,18 @@ if ( ! class_exists( 'CSF_Field_upload' ) ) {
         $preview_style  = ( ! empty( $preview_width ) || ! empty( $preview_height ) ) ? ' style="'. esc_attr( $preview_width . $preview_height ) .'"': '';
         $preview_hidden = ( empty( $preview_src ) ) ? ' hidden' : '';
 
-        echo '<div class="csf--preview'. esc_attr( $preview_hidden ) .'">';
-        echo '<div class="csf-image-preview"'. $preview_style .'>';
-        echo '<i class="csf--remove dashicons dashicons-dismiss"></i><span><img src="'. esc_url( $preview_src ) .'" class="csf--src" /></span>';
+        echo '<div class="zmop--preview'. esc_attr( $preview_hidden ) .'">';
+        echo '<div class="zmop-image-preview"'. $preview_style .'>';
+        echo '<i class="zmop--remove dashicons dashicons-dismiss"></i><span><img src="'. esc_url( $preview_src ) .'" class="zmop--src" /></span>';
         echo '</div>';
         echo '</div>';
 
       }
 
-      echo '<div class="csf--wrap">';
+      echo '<div class="zmop--wrap">';
       echo '<input type="text" name="'. esc_attr( $this->field_name() ) .'" value="'. esc_attr( $this->value ) .'"'. $this->field_attributes() .'/>';
-      echo '<a href="#" class="button button-primary csf--button" data-library="'. esc_attr( $library ) .'">'. $args['button_title'] .'</a>';
-      echo '<a href="#" class="button button-secondary csf-warning-primary csf--remove'. esc_attr( $hidden ) .'">'. $args['remove_title'] .'</a>';
+      echo '<a href="#" class="button button-primary zmop--button" data-library="'. esc_attr( $library ) .'">'. $args['button_title'] .'</a>';
+      echo '<a href="#" class="button button-secondary zmop-warning-primary zmop--remove'. esc_attr( $hidden ) .'">'. $args['remove_title'] .'</a>';
       echo '</div>';
 
       echo $this->field_after();
@@ -683,8 +779,8 @@ if ( ! class_exists( 'CSF_Field_upload' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'CSF_Field_wp_editor' ) ) {
-  class CSF_Field_wp_editor extends CSF_Fields {
+if ( ! class_exists( 'ZMOP_Field_wp_editor' ) ) {
+  class ZMOP_Field_wp_editor extends ZMOP_Fields {
 
     public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
       parent::__construct( $field, $value, $unique, $where, $parent );
@@ -717,11 +813,11 @@ if ( ! class_exists( 'CSF_Field_wp_editor' ) ) {
 
       echo $this->field_before();
 
-      echo ( csf_wp_editor_api() ) ? '<div class="csf-wp-editor" data-editor-settings="'. esc_attr( json_encode( $editor_settings ) ) .'">' : '';
+      echo ( zmop_wp_editor_api() ) ? '<div class="zmop-wp-editor" data-editor-settings="'. esc_attr( json_encode( $editor_settings ) ) .'">' : '';
 
       echo '<textarea name="'. esc_attr( $this->field_name() ) .'"'. $this->field_attributes( $attributes ) . $editor_height .'>'. $this->value .'</textarea>';
 
-      echo ( csf_wp_editor_api() ) ? '</div>' : '';
+      echo ( zmop_wp_editor_api() ) ? '</div>' : '';
 
       echo $this->field_after();
 
@@ -729,7 +825,7 @@ if ( ! class_exists( 'CSF_Field_wp_editor' ) ) {
 
     public function enqueue() {
 
-      if ( csf_wp_editor_api() && function_exists( 'wp_enqueue_editor' ) ) {
+      if ( zmop_wp_editor_api() && function_exists( 'wp_enqueue_editor' ) ) {
 
         wp_enqueue_editor();
 
@@ -755,7 +851,7 @@ if ( ! class_exists( 'CSF_Field_wp_editor' ) ) {
       $media_buttons = ob_get_clean();
 
       echo '<script type="text/javascript">';
-      echo 'var csf_media_buttons = '. json_encode( $media_buttons ) .';';
+      echo 'var zmop_media_buttons = '. json_encode( $media_buttons ) .';';
       echo '</script>';
 
     }
@@ -763,17 +859,17 @@ if ( ! class_exists( 'CSF_Field_wp_editor' ) ) {
     // Setup wp editor settings
     public function setup_wp_editor_settings() {
 
-      if ( csf_wp_editor_api() && class_exists( '_WP_Editors') ) {
+      if ( zmop_wp_editor_api() && class_exists( '_WP_Editors') ) {
 
-        $defaults = apply_filters( 'csf_wp_editor', array(
+        $defaults = apply_filters( 'zmop_wp_editor', array(
           'tinymce' => array(
             'wp_skip_init' => true
           ),
         ) );
 
-        $setup = _WP_Editors::parse_settings( 'csf_wp_editor', $defaults );
+        $setup = _WP_Editors::parse_settings( 'zmop_wp_editor', $defaults );
 
-        _WP_Editors::editor_settings( 'csf_wp_editor', $setup );
+        _WP_Editors::editor_settings( 'zmop_wp_editor', $setup );
 
       }
 
@@ -790,8 +886,8 @@ if ( ! class_exists( 'CSF_Field_wp_editor' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'CSF_Field_background' ) ) {
-  class CSF_Field_background extends CSF_Fields {
+if ( ! class_exists( 'ZMOP_Field_background' ) ) {
+  class ZMOP_Field_background extends ZMOP_Fields {
 
     public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
       parent::__construct( $field, $value, $unique, $where, $parent );
@@ -844,17 +940,17 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
 
       echo $this->field_before();
 
-      echo '<div class="csf--background-colors">';
+      echo '<div class="zmop--background-colors">';
 
       //
       // Background Color
       if ( ! empty( $args['background_color'] ) ) {
 
-        echo '<div class="csf--color">';
+        echo '<div class="zmop--color">';
 
-        echo ( ! empty( $args['background_gradient'] ) ) ? '<div class="csf--title">'. esc_html__( 'From', 'csf' ) .'</div>' : '';
+        echo ( ! empty( $args['background_gradient'] ) ) ? '<div class="zmop--title">'. esc_html__( 'From', 'zmop' ) .'</div>' : '';
 
-        CSF::field( array(
+        ZMOP::field( array(
           'id'      => 'background-color',
           'type'    => 'color',
           'default' => $default_value['background-color'],
@@ -868,11 +964,11 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
       // Background Gradient Color
       if ( ! empty( $args['background_gradient_color'] ) && ! empty( $args['background_gradient'] ) ) {
 
-        echo '<div class="csf--color">';
+        echo '<div class="zmop--color">';
 
-        echo ( ! empty( $args['background_gradient'] ) ) ? '<div class="csf--title">'. esc_html__( 'To', 'csf' ) .'</div>' : '';
+        echo ( ! empty( $args['background_gradient'] ) ) ? '<div class="zmop--title">'. esc_html__( 'To', 'zmop' ) .'</div>' : '';
 
-        CSF::field( array(
+        ZMOP::field( array(
           'id'      => 'background-gradient-color',
           'type'    => 'color',
           'default' => $default_value['background-gradient-color'],
@@ -886,19 +982,19 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
       // Background Gradient Direction
       if ( ! empty( $args['background_gradient_direction'] ) && ! empty( $args['background_gradient'] ) ) {
 
-        echo '<div class="csf--color">';
+        echo '<div class="zmop--color">';
 
-        echo ( ! empty( $args['background_gradient'] ) ) ? '<div class="csf---title">'. esc_html__( 'Direction', 'csf' ) .'</div>' : '';
+        echo ( ! empty( $args['background_gradient'] ) ) ? '<div class="zmop---title">'. esc_html__( 'Direction', 'zmop' ) .'</div>' : '';
 
-        CSF::field( array(
+        ZMOP::field( array(
           'id'          => 'background-gradient-direction',
           'type'        => 'select',
           'options'     => array(
-            ''          => esc_html__( 'Gradient Direction', 'csf' ),
-            'to bottom' => esc_html__( '&#8659; top to bottom', 'csf' ),
-            'to right'  => esc_html__( '&#8658; left to right', 'csf' ),
-            '135deg'    => esc_html__( '&#8664; corner top to right', 'csf' ),
-            '-135deg'   => esc_html__( '&#8665; corner top to left', 'csf' ),
+            ''          => esc_html__( 'Gradient Direction', 'zmop' ),
+            'to bottom' => esc_html__( '&#8659; top to bottom', 'zmop' ),
+            'to right'  => esc_html__( '&#8658; left to right', 'zmop' ),
+            '135deg'    => esc_html__( '&#8664; corner top to right', 'zmop' ),
+            '-135deg'   => esc_html__( '&#8665; corner top to left', 'zmop' ),
           ),
         ), $this->value['background-gradient-direction'], $this->field_name(), 'field/background' );
 
@@ -912,12 +1008,12 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
       // Background Image
       if ( ! empty( $args['background_image'] ) ) {
 
-        echo '<div class="csf--background-image">';
+        echo '<div class="zmop--background-image">';
 
-        CSF::field( array(
+        ZMOP::field( array(
           'id'          => 'background-image',
           'type'        => 'media',
-          'class'       => 'csf-assign-field-background',
+          'class'       => 'zmop-assign-field-background',
           'library'     => $args['background_image_library'],
           'preview'     => $args['background_image_preview'],
           'placeholder' => $args['background_image_placeholder'],
@@ -928,29 +1024,29 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
 
       }
 
-      $auto_class   = ( ! empty( $args['background_auto_attributes'] ) ) ? ' csf--auto-attributes' : '';
-      $hidden_class = ( ! empty( $args['background_auto_attributes'] ) && empty( $this->value['background-image']['url'] ) ) ? ' csf--attributes-hidden' : '';
+      $auto_class   = ( ! empty( $args['background_auto_attributes'] ) ) ? ' zmop--auto-attributes' : '';
+      $hidden_class = ( ! empty( $args['background_auto_attributes'] ) && empty( $this->value['background-image']['url'] ) ) ? ' zmop--attributes-hidden' : '';
 
-      echo '<div class="csf--background-attributes'. esc_attr( $auto_class . $hidden_class ) .'">';
+      echo '<div class="zmop--background-attributes'. esc_attr( $auto_class . $hidden_class ) .'">';
 
       //
       // Background Position
       if ( ! empty( $args['background_position'] ) ) {
 
-        CSF::field( array(
+        ZMOP::field( array(
           'id'              => 'background-position',
           'type'            => 'select',
           'options'         => array(
-            ''              => esc_html__( 'Background Position', 'csf' ),
-            'left top'      => esc_html__( 'Left Top', 'csf' ),
-            'left center'   => esc_html__( 'Left Center', 'csf' ),
-            'left bottom'   => esc_html__( 'Left Bottom', 'csf' ),
-            'center top'    => esc_html__( 'Center Top', 'csf' ),
-            'center center' => esc_html__( 'Center Center', 'csf' ),
-            'center bottom' => esc_html__( 'Center Bottom', 'csf' ),
-            'right top'     => esc_html__( 'Right Top', 'csf' ),
-            'right center'  => esc_html__( 'Right Center', 'csf' ),
-            'right bottom'  => esc_html__( 'Right Bottom', 'csf' ),
+            ''              => esc_html__( 'Background Position', 'zmop' ),
+            'left top'      => esc_html__( 'Left Top', 'zmop' ),
+            'left center'   => esc_html__( 'Left Center', 'zmop' ),
+            'left bottom'   => esc_html__( 'Left Bottom', 'zmop' ),
+            'center top'    => esc_html__( 'Center Top', 'zmop' ),
+            'center center' => esc_html__( 'Center Center', 'zmop' ),
+            'center bottom' => esc_html__( 'Center Bottom', 'zmop' ),
+            'right top'     => esc_html__( 'Right Top', 'zmop' ),
+            'right center'  => esc_html__( 'Right Center', 'zmop' ),
+            'right bottom'  => esc_html__( 'Right Bottom', 'zmop' ),
           ),
         ), $this->value['background-position'], $this->field_name(), 'field/background' );
 
@@ -960,15 +1056,15 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
       // Background Repeat
       if ( ! empty( $args['background_repeat'] ) ) {
 
-        CSF::field( array(
+        ZMOP::field( array(
           'id'          => 'background-repeat',
           'type'        => 'select',
           'options'     => array(
-            ''          => esc_html__( 'Background Repeat', 'csf' ),
-            'repeat'    => esc_html__( 'Repeat', 'csf' ),
-            'no-repeat' => esc_html__( 'No Repeat', 'csf' ),
-            'repeat-x'  => esc_html__( 'Repeat Horizontally', 'csf' ),
-            'repeat-y'  => esc_html__( 'Repeat Vertically', 'csf' ),
+            ''          => esc_html__( 'Background Repeat', 'zmop' ),
+            'repeat'    => esc_html__( 'Repeat', 'zmop' ),
+            'no-repeat' => esc_html__( 'No Repeat', 'zmop' ),
+            'repeat-x'  => esc_html__( 'Repeat Horizontally', 'zmop' ),
+            'repeat-y'  => esc_html__( 'Repeat Vertically', 'zmop' ),
           ),
         ), $this->value['background-repeat'], $this->field_name(), 'field/background' );
 
@@ -978,13 +1074,13 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
       // Background Attachment
       if ( ! empty( $args['background_attachment'] ) ) {
 
-        CSF::field( array(
+        ZMOP::field( array(
           'id'       => 'background-attachment',
           'type'     => 'select',
           'options'  => array(
-            ''       => esc_html__( 'Background Attachment', 'csf' ),
-            'scroll' => esc_html__( 'Scroll', 'csf' ),
-            'fixed'  => esc_html__( 'Fixed', 'csf' ),
+            ''       => esc_html__( 'Background Attachment', 'zmop' ),
+            'scroll' => esc_html__( 'Scroll', 'zmop' ),
+            'fixed'  => esc_html__( 'Fixed', 'zmop' ),
           ),
         ), $this->value['background-attachment'], $this->field_name(), 'field/background' );
 
@@ -994,14 +1090,14 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
       // Background Size
       if ( ! empty( $args['background_size'] ) ) {
 
-        CSF::field( array(
+        ZMOP::field( array(
           'id'        => 'background-size',
           'type'      => 'select',
           'options'   => array(
-            ''        => esc_html__( 'Background Size', 'csf' ),
-            'cover'   => esc_html__( 'Cover', 'csf' ),
-            'contain' => esc_html__( 'Contain', 'csf' ),
-            'auto'    => esc_html__( 'Auto', 'csf' ),
+            ''        => esc_html__( 'Background Size', 'zmop' ),
+            'cover'   => esc_html__( 'Cover', 'zmop' ),
+            'contain' => esc_html__( 'Contain', 'zmop' ),
+            'auto'    => esc_html__( 'Auto', 'zmop' ),
           ),
         ), $this->value['background-size'], $this->field_name(), 'field/background' );
 
@@ -1011,14 +1107,14 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
       // Background Origin
       if ( ! empty( $args['background_origin'] ) ) {
 
-        CSF::field( array(
+        ZMOP::field( array(
           'id'            => 'background-origin',
           'type'          => 'select',
           'options'       => array(
-            ''            => esc_html__( 'Background Origin', 'csf' ),
-            'padding-box' => esc_html__( 'Padding Box', 'csf' ),
-            'border-box'  => esc_html__( 'Border Box', 'csf' ),
-            'content-box' => esc_html__( 'Content Box', 'csf' ),
+            ''            => esc_html__( 'Background Origin', 'zmop' ),
+            'padding-box' => esc_html__( 'Padding Box', 'zmop' ),
+            'border-box'  => esc_html__( 'Border Box', 'zmop' ),
+            'content-box' => esc_html__( 'Content Box', 'zmop' ),
           ),
         ), $this->value['background-origin'], $this->field_name(), 'field/background' );
 
@@ -1028,14 +1124,14 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
       // Background Clip
       if ( ! empty( $args['background_clip'] ) ) {
 
-        CSF::field( array(
+        ZMOP::field( array(
           'id'            => 'background-clip',
           'type'          => 'select',
           'options'       => array(
-            ''            => esc_html__( 'Background Clip', 'csf' ),
-            'border-box'  => esc_html__( 'Border Box', 'csf' ),
-            'padding-box' => esc_html__( 'Padding Box', 'csf' ),
-            'content-box' => esc_html__( 'Content Box', 'csf' ),
+            ''            => esc_html__( 'Background Clip', 'zmop' ),
+            'border-box'  => esc_html__( 'Border Box', 'zmop' ),
+            'padding-box' => esc_html__( 'Padding Box', 'zmop' ),
+            'content-box' => esc_html__( 'Content Box', 'zmop' ),
           ),
         ), $this->value['background-clip'], $this->field_name(), 'field/background' );
 
@@ -1045,21 +1141,21 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
       // Background Blend Mode
       if ( ! empty( $args['background_blend_mode'] ) ) {
 
-        CSF::field( array(
+        ZMOP::field( array(
           'id'            => 'background-blend-mode',
           'type'          => 'select',
           'options'       => array(
-            ''            => esc_html__( 'Background Blend Mode', 'csf' ),
-            'normal'      => esc_html__( 'Normal', 'csf' ),
-            'multiply'    => esc_html__( 'Multiply', 'csf' ),
-            'screen'      => esc_html__( 'Screen', 'csf' ),
-            'overlay'     => esc_html__( 'Overlay', 'csf' ),
-            'darken'      => esc_html__( 'Darken', 'csf' ),
-            'lighten'     => esc_html__( 'Lighten', 'csf' ),
-            'color-dodge' => esc_html__( 'Color Dodge', 'csf' ),
-            'saturation'  => esc_html__( 'Saturation', 'csf' ),
-            'color'       => esc_html__( 'Color', 'csf' ),
-            'luminosity'  => esc_html__( 'Luminosity', 'csf' ),
+            ''            => esc_html__( 'Background Blend Mode', 'zmop' ),
+            'normal'      => esc_html__( 'Normal', 'zmop' ),
+            'multiply'    => esc_html__( 'Multiply', 'zmop' ),
+            'screen'      => esc_html__( 'Screen', 'zmop' ),
+            'overlay'     => esc_html__( 'Overlay', 'zmop' ),
+            'darken'      => esc_html__( 'Darken', 'zmop' ),
+            'lighten'     => esc_html__( 'Lighten', 'zmop' ),
+            'color-dodge' => esc_html__( 'Color Dodge', 'zmop' ),
+            'saturation'  => esc_html__( 'Saturation', 'zmop' ),
+            'color'       => esc_html__( 'Color', 'zmop' ),
+            'luminosity'  => esc_html__( 'Luminosity', 'zmop' ),
           ),
         ), $this->value['background-blend-mode'], $this->field_name(), 'field/background' );
 
@@ -1130,8 +1226,8 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'CSF_Field_checkbox' ) ) {
-  class CSF_Field_checkbox extends CSF_Fields {
+if ( ! class_exists( 'ZMOP_Field_checkbox' ) ) {
+  class ZMOP_Field_checkbox extends ZMOP_Fields {
 
     public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
       parent::__construct( $field, $value, $unique, $where, $parent );
@@ -1141,10 +1237,12 @@ if ( ! class_exists( 'CSF_Field_checkbox' ) ) {
 
       $args = wp_parse_args( $this->field, array(
         'inline'     => false,
+        'all'        => false,
         'query_args' => array(),
       ) );
 
-      $inline_class = ( $args['inline'] ) ? ' class="csf--inline-list"' : '';
+      $inline_class = ( $args['inline'] ) ? ' class="zmop--inline-list"' : '';
+      $selectall = ( $args['all'] ) ? '<li><label><input type="checkbox" class="selectall" style="display: none;"><span class="all-text">全选</span></label></li>' : '';
 
       echo $this->field_before();
 
@@ -1157,6 +1255,7 @@ if ( ! class_exists( 'CSF_Field_checkbox' ) ) {
         if ( is_array( $options ) && ! empty( $options ) ) {
 
           echo '<ul'. $inline_class .'>';
+          echo $selectall;
 
           foreach ( $options as $option_key => $option_value ) {
 
@@ -1170,7 +1269,7 @@ if ( ! class_exists( 'CSF_Field_checkbox' ) ) {
                     echo '<li>';
                     echo '<label>';
                     echo '<input type="checkbox" name="'. esc_attr( $this->field_name( '[]' ) ) .'" value="'. esc_attr( $sub_key ) .'"'. $this->field_attributes() . esc_attr( $checked ) .'/>';
-                    echo '<span class="csf--text">'. esc_attr( $sub_value ) .'</span>';
+                    echo '<span class="zmop--text">'. esc_attr( $sub_value ) .'</span>';
                     echo '</label>';
                     echo '</li>';
                   }
@@ -1183,8 +1282,8 @@ if ( ! class_exists( 'CSF_Field_checkbox' ) ) {
 
               echo '<li>';
               echo '<label>';
-              echo '<input type="checkbox" name="'. esc_attr( $this->field_name( '[]' ) ) .'" value="'. esc_attr( $option_key ) .'"'. $this->field_attributes() . esc_attr( $checked ) .'/>';
-              echo '<span class="csf--text">'. esc_attr( $option_value ) .'</span>';
+              echo '<input type="checkbox" class="item" name="'. esc_attr( $this->field_name( '[]' ) ) .'" value="'. esc_attr( $option_key ) .'"'. $this->field_attributes() . esc_attr( $checked ) .'/>';
+              echo '<span class="zmop--text">'. esc_attr( $option_value ) .'</span>';
               echo '</label>';
               echo '</li>';
 
@@ -1196,16 +1295,16 @@ if ( ! class_exists( 'CSF_Field_checkbox' ) ) {
 
         } else {
 
-          echo ( ! empty( $this->field['empty_message'] ) ) ? esc_attr( $this->field['empty_message'] ) : esc_html__( 'No data available.', 'csf' );
+          echo ( ! empty( $this->field['empty_message'] ) ) ? esc_attr( $this->field['empty_message'] ) : esc_html__( 'No data available.', 'zmop' );
 
         }
 
       } else {
 
-        echo '<label class="csf-checkbox">';
-        echo '<input type="hidden" name="'. esc_attr( $this->field_name() ) .'" value="'. $this->value .'" class="csf--input"'. $this->field_attributes() .'/>';
-        echo '<input type="checkbox" name="_pseudo" class="csf--checkbox"'. esc_attr( checked( $this->value, 1, false ) ) . $this->field_attributes() .'/>';
-        echo ( ! empty( $this->field['label'] ) ) ? '<span class="csf--text">'. esc_attr( $this->field['label'] ) .'</span>' : '';
+        echo '<label class="zmop-checkbox">';
+        echo '<input type="hidden" name="'. esc_attr( $this->field_name() ) .'" value="'. $this->value .'" class="zmop--input"'. $this->field_attributes() .'/>';
+        echo '<input type="checkbox" name="_pseudo" class="zmop--checkbox"'. esc_attr( checked( $this->value, 1, false ) ) . $this->field_attributes() .'/>';
+        echo ( ! empty( $this->field['label'] ) ) ? '<span class="zmop--text">'. esc_attr( $this->field['label'] ) .'</span>' : '';
         echo '</label>';
 
       }
@@ -1216,3 +1315,340 @@ if ( ! class_exists( 'CSF_Field_checkbox' ) ) {
 
   }
 }
+
+/**
+ *
+ * Field: group
+ *
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ */
+if ( ! class_exists( 'ZMOP_Field_group' ) ) {
+  class ZMOP_Field_group extends ZMOP_Fields {
+
+    public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
+      parent::__construct( $field, $value, $unique, $where, $parent );
+    }
+
+    public function render() {
+
+      $args = wp_parse_args( $this->field, array(
+        'max'                       => 0,
+        'min'                       => 0,
+        'fields'                    => array(),
+        'button_title'              => '<i class="dashicons dashicons-insert"></i>',
+        'accordion_title_prefix'    => '',
+        'accordion_title_number'    => false,
+        'accordion_title_auto'      => true,
+        'accordion_title_by'        => array(),
+        'accordion_title_by_prefix' => ' ',
+      ) );
+
+      $title_prefix    = ( ! empty( $args['accordion_title_prefix'] ) ) ? $args['accordion_title_prefix'] : '';
+      $title_number    = ( ! empty( $args['accordion_title_number'] ) ) ? true : false;
+      $title_auto      = ( ! empty( $args['accordion_title_auto'] ) ) ? true : false;
+      $title_first     = ( isset( $this->field['fields'][0]['id'] ) ) ? $this->field['fields'][0]['id'] : $this->field['fields'][1]['id'];
+      $title_by        = ( is_array( $args['accordion_title_by'] ) ) ? $args['accordion_title_by'] : (array) $args['accordion_title_by'];
+      $title_by        = ( empty( $title_by ) ) ? array( $title_first ) : $title_by;
+      $title_by_prefix = ( ! empty( $args['accordion_title_by_prefix'] ) ) ? $args['accordion_title_by_prefix'] : '';
+
+      if ( preg_match( '/'. preg_quote( '['. $this->field['id'] .']' ) .'/', $this->unique ) ) {
+
+        echo '<div class="zmop-notice zmop-notice-danger">'. esc_html__( 'Error: Field ID conflict.', 'zmop' ) .'</div>';
+
+      } else {
+
+        echo $this->field_before();
+
+        echo '<div class="zmop-cloneable-item zmop-cloneable-hidden" data-depend-id="'. esc_attr( $this->field['id'] ) .'">';
+
+          echo '<div class="zmop-cloneable-helper">';
+          echo '<i class="zmop-cloneable-sort dashicons dashicons-move"></i>';
+          echo '<i class="zmop-cloneable-clone dashicons dashicons-admin-page"></i>';
+          echo '<i class="zmop-cloneable-remove zmop-confirm dashicons dashicons-no" data-confirm="'. esc_html__( '确定要删除吗？', 'zmop' ) .'"></i>';
+          echo '</div>';
+
+          echo '<h4 class="zmop-cloneable-title">';
+          echo '<span class="zmop-cloneable-text">';
+          echo ( $title_number ) ? '<span class="zmop-cloneable-title-number"></span>' : '';
+          echo ( $title_prefix ) ? '<span class="zmop-cloneable-title-prefix">'. esc_attr( $title_prefix ) .'</span>' : '';
+          echo ( $title_auto ) ? '<span class="zmop-cloneable-value"><span class="zmop-cloneable-placeholder"></span></span>' : '';
+          echo '</span>';
+          echo '</h4>';
+
+          echo '<div class="zmop-cloneable-content">';
+          foreach ( $this->field['fields'] as $field ) {
+
+            $field_default = ( isset( $field['default'] ) ) ? $field['default'] : '';
+            $field_unique  = ( ! empty( $this->unique ) ) ? $this->unique .'['. $this->field['id'] .'][0]' : $this->field['id'] .'[0]';
+
+            ZMOP::field( $field, $field_default, '___'. $field_unique, 'field/group' );
+
+          }
+          echo '</div>';
+
+        echo '</div>';
+
+        echo '<div class="zmop-cloneable-wrapper zmop-data-wrapper" data-title-by="'. esc_attr( json_encode( $title_by ) ) .'" data-title-by-prefix="'. esc_attr( $title_by_prefix ) .'" data-title-number="'. esc_attr( $title_number ) .'" data-field-id="['. esc_attr( $this->field['id'] ) .']" data-max="'. esc_attr( $args['max'] ) .'" data-min="'. esc_attr( $args['min'] ) .'">';
+
+        if ( ! empty( $this->value ) ) {
+
+          $num = 0;
+
+          foreach ( $this->value as $value ) {
+
+            $title = '';
+
+            if ( ! empty( $title_by ) ) {
+
+              $titles = array();
+
+              foreach ( $title_by as $title_key ) {
+                if ( isset( $value[ $title_key ] ) ) {
+                  $titles[] = $value[ $title_key ];
+                }
+              }
+
+              $title = join( $title_by_prefix, $titles );
+
+            }
+
+            $title = ( is_array( $title ) ) ? reset( $title ) : $title;
+
+            echo '<div class="zmop-cloneable-item">';
+
+              echo '<div class="zmop-cloneable-helper">';
+              echo '<i class="zmop-cloneable-sort dashicons dashicons-move"></i>';
+              echo '<i class="zmop-cloneable-clone dashicons dashicons-admin-page"></i>';
+              echo '<i class="zmop-cloneable-remove zmop-confirm dashicons dashicons-no" data-confirm="确定要删除吗？"></i>';
+              echo '</div>';
+
+              echo '<h4 class="zmop-cloneable-title">';
+              echo '<span class="zmop-cloneable-text">';
+              echo ( $title_number ) ? '<span class="zmop-cloneable-title-number">'. esc_attr( $num+1 ) .'.</span>' : '';
+              echo ( $title_prefix ) ? '<span class="zmop-cloneable-title-prefix">'. esc_attr( $title_prefix ) .'</span>' : '';
+              echo ( $title_auto ) ? '<span class="zmop-cloneable-value">' . esc_attr( $title ) .'</span>' : '';
+              echo '</span>';
+              echo '</h4>';
+
+              echo '<div class="zmop-cloneable-content">';
+
+              foreach ( $this->field['fields'] as $field ) {
+
+                $field_unique = ( ! empty( $this->unique ) ) ? $this->unique .'['. $this->field['id'] .']['. $num .']' : $this->field['id'] .'['. $num .']';
+                $field_value  = ( isset( $field['id'] ) && isset( $value[$field['id']] ) ) ? $value[$field['id']] : '';
+
+                ZMOP::field( $field, $field_value, $field_unique, 'field/group' );
+
+              }
+
+              echo '</div>';
+
+            echo '</div>';
+
+            $num++;
+
+          }
+
+        }
+
+        echo '</div>';
+
+        echo '<div class="zmop-cloneable-alert zmop-cloneable-max">不能再添加了</div>';
+        echo '<div class="zmop-cloneable-alert zmop-cloneable-min">不能删除</div>';
+        echo '<a href="#" class="button button-primary zmop-cloneable-add">'. $args['button_title'] .'</a>';
+
+        echo $this->field_after();
+
+      }
+
+    }
+
+    public function enqueue() {
+
+      if ( ! wp_script_is( 'jquery-ui-accordion' ) ) {
+        wp_enqueue_script( 'jquery-ui-accordion' );
+      }
+
+      if ( ! wp_script_is( 'jquery-ui-sortable' ) ) {
+        wp_enqueue_script( 'jquery-ui-sortable' );
+      }
+
+    }
+
+  }
+}
+
+/**
+ *
+ * Field: repeater
+ *
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ */
+if ( ! class_exists( 'ZMOP_Field_repeater' ) ) {
+	class ZMOP_Field_repeater extends ZMOP_Fields {
+
+	public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
+		parent::__construct( $field, $value, $unique, $where, $parent );
+	}
+
+	public function render() {
+
+		$args = wp_parse_args( $this->field, array(
+			'max'          => 0,
+			'min'          => 0,
+			'button_title' => '<i class="dashicons dashicons-insert"></i>',
+		) );
+
+		if ( preg_match( '/'. preg_quote( '['. $this->field['id'] .']' ) .'/', $this->unique ) ) {
+
+			echo '<div class="zmop-notice zmop-notice-danger">'. esc_html__( 'Error: Field ID conflict.', 'zmop' ) .'</div>';
+
+		} else {
+
+			echo $this->field_before();
+
+		echo '<div class="zmop-repeater-item zmop-repeater-hidden" data-depend-id="'. esc_attr( $this->field['id'] ) .'">';
+        echo '<div class="zmop-repeater-content">';
+        foreach ( $this->field['fields'] as $field ) {
+
+          $field_default = ( isset( $field['default'] ) ) ? $field['default'] : '';
+          $field_unique  = ( ! empty( $this->unique ) ) ? $this->unique .'['. $this->field['id'] .'][0]' : $this->field['id'] .'[0]';
+
+          ZMOP::field( $field, $field_default, '___'. $field_unique, 'field/repeater' );
+
+        }
+        echo '</div>';
+        echo '<div class="zmop-repeater-helper">';
+        echo '<div class="zmop-repeater-helper-inner">';
+        echo '<i class="zmop-repeater-sort dashicons dashicons-move"></i>';
+        echo '<i class="zmop-repeater-clone dashicons dashicons-admin-page"></i>';
+        echo '<i class="zmop-repeater-remove zmop-confirm dashicons dashicons-no" data-confirm="'. esc_html__( '确定要删除吗？', 'zmop' ) .'"></i>';
+        echo '</div>';
+        echo '</div>';
+        echo '</div>';
+
+        echo '<div class="zmop-repeater-wrapper zmop-data-wrapper" data-field-id="['. esc_attr( $this->field['id'] ) .']" data-max="'. esc_attr( $args['max'] ) .'" data-min="'. esc_attr( $args['min'] ) .'">';
+
+        if ( ! empty( $this->value ) && is_array( $this->value ) ) {
+
+          $num = 0;
+
+          foreach ( $this->value as $key => $value ) {
+
+            echo '<div class="zmop-repeater-item">';
+            echo '<div class="zmop-repeater-content">';
+            foreach ( $this->field['fields'] as $field ) {
+
+              $field_unique = ( ! empty( $this->unique ) ) ? $this->unique .'['. $this->field['id'] .']['. $num .']' : $this->field['id'] .'['. $num .']';
+              $field_value  = ( isset( $field['id'] ) && isset( $this->value[$key][$field['id']] ) ) ? $this->value[$key][$field['id']] : '';
+
+              ZMOP::field( $field, $field_value, $field_unique, 'field/repeater' );
+
+            }
+            echo '</div>';
+            echo '<div class="zmop-repeater-helper">';
+            echo '<div class="zmop-repeater-helper-inner">';
+            echo '<i class="zmop-repeater-sort dashicons dashicons-move"></i>';
+            echo '<i class="zmop-repeater-clone dashicons dashicons-admin-page"></i>';
+            echo '<i class="zmop-repeater-remove zmop-confirm dashicons dashicons-no" data-confirm="'. esc_html__( '确定要删除吗？', 'zmop' ) .'"></i>';
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
+
+            $num++;
+
+          }
+
+        }
+
+        echo '</div>';
+
+        echo '<div class="zmop-repeater-alert zmop-repeater-max">'. esc_html__( 'You cannot add more.', 'zmop' ) .'</div>';
+        echo '<div class="zmop-repeater-alert zmop-repeater-min">'. esc_html__( 'You cannot remove more.', 'zmop' ) .'</div>';
+        echo '<a href="#" class="button button-primary zmop-repeater-add">'. $args['button_title'] .'</a>';
+
+        echo $this->field_after();
+
+      }
+
+    }
+
+    public function enqueue() {
+
+      if ( ! wp_script_is( 'jquery-ui-sortable' ) ) {
+        wp_enqueue_script( 'jquery-ui-sortable' );
+      }
+
+    }
+
+  }
+}
+
+/**
+ *
+ * Field: tabbed
+ *
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ */
+if ( ! class_exists( 'ZMOP_Field_tabbed' ) ) {
+  class ZMOP_Field_tabbed extends ZMOP_Fields {
+
+    public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {
+      parent::__construct( $field, $value, $unique, $where, $parent );
+    }
+
+    public function render() {
+
+      $unallows = array( 'tabbed' );
+
+      echo $this->field_before();
+
+      echo '<div class="zmop-tabbed-nav" data-depend-id="'. esc_attr( $this->field['id'] ) .'">';
+      foreach ( $this->field['tabs'] as $key => $tab ) {
+
+        $tabbed_icon   = ( ! empty( $tab['icon'] ) ) ? '<i class="zmop--icon '. esc_attr( $tab['icon'] ) .'"></i>' : '';
+        $tabbed_active = ( empty( $key ) ) ? 'zmop-tabbed-active' : '';
+
+        echo '<a href="#" class="'. esc_attr( $tabbed_active ) .'"">'. $tabbed_icon . esc_attr( $tab['title'] ) .'</a>';
+
+      }
+      echo '</div>';
+
+      echo '<div class="zmop-tabbed-contents">';
+      foreach ( $this->field['tabs'] as $key => $tab ) {
+
+        $tabbed_hidden = ( ! empty( $key ) ) ? ' hidden' : '';
+
+        echo '<div class="zmop-tabbed-content'. esc_attr( $tabbed_hidden ) .'">';
+
+        foreach ( $tab['fields'] as $field ) {
+
+          if ( in_array( $field['type'], $unallows ) ) { $field['_notice'] = true; }
+
+          $field_id      = ( isset( $field['id'] ) ) ? $field['id'] : '';
+          $field_default = ( isset( $field['default'] ) ) ? $field['default'] : '';
+          $field_value   = ( isset( $this->value[$field_id] ) ) ? $this->value[$field_id] : $field_default;
+          $unique_id     = ( ! empty( $this->unique ) ) ? $this->unique .'['. $this->field['id'] .']' : $this->field['id'];
+
+          ZMOP::field( $field, $field_value, $unique_id, 'field/tabbed' );
+
+        }
+
+        echo '</div>';
+
+      }
+      echo '</div>';
+
+      echo $this->field_after();
+
+    }
+
+  }
+}
+

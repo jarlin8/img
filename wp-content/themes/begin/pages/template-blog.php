@@ -6,52 +6,37 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 ?>
 <?php get_header(); ?>
 <?php blog_template(); ?>
-	<?php if ( zm_get_option( 'order_btu' ) && ! is_paged() && ! zm_get_option( 'blog_ajax' ) ) { ?><?php be_order_btu(); ?><?php } ?>
-	<div class="blog-main">
-		<?php
-			if (is_front_page()){
-				$paged = get_query_var( 'page' ) ? get_query_var( 'page' ) : 1;
-			}else{
-				$paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
-			}
+	<?php if ( be_get_option( 'order_btu' ) && ! be_get_option( 'blog_ajax' ) && ! is_paged() ) { ?><?php be_order_btu(); ?><?php } ?>
+	<div class="blog-main betip">
 
-			$cms_top = 'cms_top';
-			$compare = 'NOT EXISTS';
-			$paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
-			if ( zm_get_option( 'blog_not_cat' ) ) {
-				$notcat = implode( ',', zm_get_option( 'blog_not_cat' ) );
-			} else {
-				$notcat = '';
-			}
-			$args = array(
-				'category__not_in' => explode( ',',$notcat ),
-				'ignore_sticky_posts' => 0, 
-				'paged' => $paged,
-				'meta_query' => array(
-					array(
-						'key' => $cms_top,
-						'compare' => $compare
-					)
-				)
-			);
-			query_posts( $args );
-
-			if ( is_front_page() ){
-				if ( zm_get_option( 'order_btu' ) ) {
-					be_order();
-				}
-			}
-		?>
-		<?php if ( zm_get_option( 'blog_ajax' ) ) { ?>
+		<?php if ( be_get_option( 'blog_ajax' ) ) { ?>
 			<?php 
-				if ( zm_get_option( 'blog_ajax_id' ) ) {
-					$cat_ids = implode( ',', zm_get_option( 'blog_ajax_id' ) );
-				} else {
-					$cat_ids = '';
-				}
-				echo do_shortcode( '[be_ajax_post terms="' . $cat_ids . '" posts_per_page="' . zm_get_option( 'blog_ajax_n' ) . '" style="' . zm_get_option( 'blog_ajax_cat_style' ) . '" btn="' . zm_get_option( 'blog_ajax_cat_btn' ) . '" more="' . zm_get_option( 'blog_ajax_nav_btn' ) . '" infinite="' . zm_get_option( 'blog_ajax_infinite' ) . '" column="2"]' );
+				$cat_ids  = be_get_option( 'blog_ajax_id' ) ? implode( ',', be_get_option('blog_ajax_id' ) ) : '';
+				$children = ( be_get_option( 'blog_ajax_cat_chil' ) == 'false' ) ? 'false' : 'true';
+				echo do_shortcode( '[be_ajax_post terms="' . $cat_ids . '" posts_per_page="' . be_get_option( 'blog_ajax_n' ) . '" style="' . be_get_option( 'blog_ajax_cat_style' ) . '" btn="' . be_get_option( 'blog_ajax_cat_btn' ) . '" more="' . be_get_option( 'blog_ajax_nav_btn' ) . '" infinite="' . be_get_option( 'blog_ajax_infinite' ) . '" children="' . $children . '" column="2"]' );
 			?>
+
+			<?php be_help( $text = '首页设置 → 博客布局 → Ajax模式' ); ?>
+
 		<?php } else { ?>
+			<?php
+				if (is_front_page()){
+					$paged = get_query_var( 'page' ) ? get_query_var( 'page' ) : 1;
+				}else{
+					$paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
+				}
+				$notcat = be_get_option( 'blog_not_cat' ) ? implode( ',', be_get_option( 'blog_not_cat' ) ) : '';
+				$top_id = be_get_option( 'blog_top' ) ? explode( ',', be_get_option( 'blog_top_id' ) ) : '';
+
+				$args = array(
+					'category__not_in'    => explode( ',', $notcat ),
+					'post__not_in'        => $top_id,
+					'ignore_sticky_posts' => 0, 
+					'paged'               => $paged
+				);
+				query_posts( $args );
+			?>
+
 			<?php if ( have_posts() ) : ?>
 			<?php while ( have_posts() ) : the_post(); ?>
 				<?php get_template_part( 'template/content', get_post_format() ); ?>
@@ -66,7 +51,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		<?php } ?>
 	</div>
 </main>
-<?php if ( ! zm_get_option( 'blog_ajax' ) ) { ?>
+<?php if ( ! be_get_option( 'blog_ajax' ) ) { ?>
 	<?php begin_pagenav(); ?>
 	<?php wp_reset_query(); ?>
 <?php } ?>

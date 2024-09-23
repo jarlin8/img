@@ -2,12 +2,13 @@
 <?php if (zm_get_option('ad_h_t')) { ?>
 <?php if (zm_get_option('ad_h_t_h')) { ?>
 <?php if ( is_front_page()){ ?>
-	<div class="header-sub">
+	<div class="header-sub betip">
 		<?php if ( wp_is_mobile() ) { ?>
 			<?php if ( zm_get_option('ad_ht_m') ) { ?><div class="tg-m tg-site"><?php echo stripslashes( zm_get_option('ad_ht_m') ); ?></div><?php } ?>
 		<?php } else { ?>
 			<?php if ( zm_get_option('ad_ht_c') ) { ?><div class="tg-pc tg-site"><?php echo stripslashes( zm_get_option('ad_ht_c') ); ?></div><?php } ?>
 		<?php } ?>
+		<?php be_help( $text = '主题选项 → 广告位 → 头部通栏广告位' ); ?>
 		<div class="clear"></div>
 	</div>
 <?php } ?>
@@ -18,6 +19,7 @@
 		<?php } else { ?>
 			<?php if ( zm_get_option('ad_ht_c') ) { ?><div class="tg-pc tg-site"><?php echo stripslashes( zm_get_option('ad_ht_c') ); ?></div><?php } ?>
 		<?php } ?>
+		<?php be_help( $text = '主题选项 → 广告位 → 头部通栏广告位' ); ?>
 		<div class="clear"></div>
 	</div>
 <?php } ?>

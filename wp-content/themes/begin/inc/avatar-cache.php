@@ -43,17 +43,17 @@ function begin_avatar( $email = 'aaaaa@aaaaaa.com', $size = '96', $default = '',
 
 	if (!zm_get_option('avatar_url') || (zm_get_option("avatar_url") == 'letter_img')) {
 		if ( !zm_get_option( 'avatar_load' ) ) {
-			$avatar = "<img alt='{$alt}' src='{$a}' class='avatar avatar-{$size} photo".$letter."' height='{$size}' width='{$size}' />";
+			$avatar = "<img alt='{$alt}' src='{$a}' class='avatar avatar-{$size} photo".$letter."' height='{$size}' width='{$size}'>";
 		} else {
-			$avatar = "<img alt='{$alt}' src='data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=' data-original='{$a}' class='avatar avatar-{$size} photo".$letter."' height='{$size}' width='{$size}' />";
+			$avatar = "<img alt='{$alt}' src='data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=' data-original='{$a}' class='avatar avatar-{$size} photo".$letter."' height='{$size}' width='{$size}'>";
 		}
 	}
 
 	if (zm_get_option('avatar_url') == 'rand_img') {
 		if ( !zm_get_option( 'avatar_load' ) ) {
-			$avatar = "<img alt='{$alt}' src='{$a}' class='avatar avatar-{$size} photo' height='{$size}' width='{$size}' />";
+			$avatar = "<img alt='{$alt}' src='{$a}' class='avatar avatar-{$size} photo' height='{$size}' width='{$size}'>";
 		} else {
-			$avatar = "<img alt='{$alt}' src='data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=' data-original='{$a}' class='avatar avatar-{$size} photo' height='{$size}' width='{$size}' />";
+			$avatar = "<img alt='{$alt}' src='data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=' data-original='{$a}' class='avatar avatar-{$size} photo' height='{$size}' width='{$size}'>";
 		}
 	}
 

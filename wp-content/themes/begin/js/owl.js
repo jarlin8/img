@@ -26,6 +26,86 @@ jQuery(document).ready(function($){
 		onTranslated: startProgressBar
 	});
 
+
+	$('.group-video-text').owlCarousel({
+		items: 1,
+		lazyLoad: false,
+		loop: true,
+		nav: false,
+		dots: false,
+		animateOut: 'fadeOut',
+		margin: 10,
+		autoplay: true,
+		responsiveClass: true,
+		responsiveRefreshRate: 200,
+		responsiveBaseElement: window,
+		autoplayTimeout: 8000,
+		autoplayHoverPause: true,
+		onInitialized: startProgressBar,
+		onTranslate: resetProgressBar,
+		onTranslated: startProgressBar
+	});
+
+
+	$('.slides-text').each(function(index) {
+		var autoplayTimeout = 6200;
+		if (index === 1) {
+			autoplayTimeout = 8300;
+		} else if (index === 2) {
+			autoplayTimeout = 6500;
+		} else if (index === 3) {
+			autoplayTimeout = 9100;
+		} else if (index === 4) {
+			autoplayTimeout = 6300;
+		}
+
+		$(this).owlCarousel({
+			items: 1,
+			lazyLoad: true,
+			loop: true,
+			nav: true,
+			navText: ["<i class='bz be be-arrowleft'></i>", "<i class='bz be be-arrowright'></i>"],
+			animateOut: false,
+			margin: 10,
+			autoplay: true,
+			responsiveClass: true,
+			responsiveRefreshRate: 200,
+			responsiveBaseElement: window,
+			autoplayTimeout: autoplayTimeout,
+			autoplayHoverPause: true,
+			onInitialized: startProgressBar,
+			onTranslate: resetProgressBar,
+			onTranslated: startProgressBar
+		});
+	});
+
+	// Lazy load for videos
+	var modalSlider = $('.slider-home, .slider-group');
+
+	modalSlider.on('changed.owl.carousel',
+	function(event) {
+		var current = event.item.index;
+		var currentVideo = $(event.target).find('.owl-item').eq(current).find('video');
+		var currentVideoSource = currentVideo.find('source');
+
+		// Pause all videos
+		var videos = modalSlider.find('video');
+
+		if (videos.length) {
+			videos.each(function() {
+				$(this)[0].pause();
+			});
+		}
+
+		// Play if video found
+		if (currentVideo.length) {
+			var currentVideoSrc = currentVideoSource.attr('data-src');
+			currentVideoSource.attr('src', currentVideoSrc);
+			currentVideo[0].load();
+			currentVideo[0].play();
+		}
+	});
+
 	function startProgressBar() {
 		$(".slide-progress").addClass("planned");
 		$(".slide-progress").removeClass("again");
@@ -64,6 +144,10 @@ jQuery(document).ready(function($){
 				items: flexisel_f
 			}
 		}
+	});
+
+	$('.slider-rolling-lazy').owlCarousel({
+		lazyLoad: false,
 	});
 
 	$('.single-rolling').owlCarousel({
@@ -165,7 +249,6 @@ jQuery(document).ready(function($){
 		navText: ["<i class='bz be be-arrowleft'></i>", "<i class='bz be be-arrowright'></i>"],
 		animateOut: 'fadeOut',
 		margin: 10,
-		autoplay: true,
 		responsiveRefreshRate: 200,
 		responsiveClass: true,
 		autoplayTimeout: 4200,
@@ -230,5 +313,33 @@ jQuery(document).ready(function($){
 		responsiveClass: true,
 		autoplayTimeout: 6000,
 		autoplayHoverPause: true
+	});
+
+	$('.special-slider').owlCarousel({
+		lazyLoad: true,
+		margin: 10,
+		nav: true,
+		navText: ["<i class='bz be be-arrowleft'></i>", "<i class='bz be be-arrowright'></i>"],
+		loop: true,
+		autoplay: true,
+		responsiveRefreshRate: 200,
+		responsiveBaseElement: window,
+		responsiveClass: true,
+		autoplayTimeout: 5200,
+		autoplayHoverPause: true,
+		responsive: {
+			0 : {
+				items: 1
+			},
+			345 : {
+				items: 2
+			},
+			600 : {
+				items: 3
+			},
+			1000 : {
+				items: 4
+			}
+		}
 	});
 })

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 get_header(); ?>
 <?php if ( get_post_meta( get_the_ID(), 'special_img', true ) ) { ?>
 	<?php special_single_content(); ?>
-	<section id="picture" class="picture-area content-area grid-cat-<?php echo zm_get_option( 'img_f' ); ?>">
+	<section id="picture" class="picture-area content-area grid-cat-<?php echo be_get_option( 'img_f' ); ?>">
 		<main id="main" class="be-main site-main" role="main">
 			<?php
 				$paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
@@ -15,7 +15,7 @@ get_header(); ?>
 				if ( $term !== 0 && $term !== null ) {
 					$args = array(
 						'tag' => $special,
-					    'ignore_sticky_posts' => 0,
+					    'ignore_sticky_posts' => 1,
 						'paged' => $paged
 					);
 				} else {
@@ -27,15 +27,15 @@ get_header(); ?>
 			?>
 			<?php if ( have_posts() ) : ?>
 			<?php while ( have_posts() ) : the_post(); ?>
-				<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class( 'picture' ); ?>>
-					<div class="picture-box sup ms bk">
+				<article id="post-<?php the_ID(); ?>" class="post-item-list post picture" <?php aos_a(); ?>>
+					<div class="picture-box sup ms">
 						<figure class="picture-img">
 							<?php echo be_img_excerpt(); ?>
 
 							<?php if ( get_post_meta( get_the_ID(), 'direct', true ) ) { ?>
-								<?php zm_thumbnail_link(); ?>
+								<?php echo zm_thumbnail_link(); ?>
 							<?php } else { ?>
-								<?php zm_thumbnail(); ?>
+								<?php echo zm_thumbnail(); ?>
 							<?php } ?>
 
 							<?php if ( has_post_format( 'video' ) ) { ?><a rel="bookmark" href="<?php echo esc_url( get_permalink() ); ?>"><i class="be be-play"></i></a><?php } ?>
@@ -74,7 +74,7 @@ get_header(); ?>
 				</article>
 			<?php endwhile;?>
 			<?php else : ?>
-				<div class="be-none da bk"><?php _e( '未添加文章', 'begin' ); ?></div>
+				<div class="be-none"><?php _e( '未添加文章', 'begin' ); ?></div>
 			<?php endif; ?>
 		</main>
 		<div><?php begin_pagenav(); ?></div>
@@ -111,7 +111,7 @@ get_header(); ?>
 				<?php get_template_part('ad/ads', 'archive'); ?>
 			<?php endwhile; ?>
 		<?php else : ?>
-			<div class="be-none da bk"><?php _e( '未添加文章', 'begin' ); ?></div>
+			<div class="be-none"><?php _e( '未添加文章', 'begin' ); ?></div>
 		<?php endif; ?>
 	</main>
 	<div class="pagenav-clear pagenav-special"><?php begin_pagenav(); ?></div>

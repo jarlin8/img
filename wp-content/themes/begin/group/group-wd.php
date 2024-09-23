@@ -1,73 +1,92 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-<?php if (zm_get_option('group_wd')) { ?>
-<?php $display_categories =  explode(',',zm_get_option('group_wd_id') ); foreach ($display_categories as $category) { ?>
-<div class="g-row grl-img g-line sort" name="<?php echo zm_get_option('group_wd_s'); ?>" <?php aos(); ?>>
-	<div class="g-col">
-		<div class="gr-wd-box">
-
-			<?php $do_not_cat[] = ''; query_posts( array( 'showposts' => 1, 'cat' => $category, 'post__not_in' => $do_not_cat ) ); ?>
-			<div class="gr-wd-b">
-				<div class="gr-wd gr-wd-img">
-					<?php if (zm_get_option('group_no_cat_child')) { ?>
-						<?php query_posts( array('cat' => $category ) ); ?>
-						<?php query_posts( array ( 'category__in' => array(get_query_var('cat')), 'meta_key' => 'cat_top', 'showposts' => 1, 'ignore_sticky_posts' => 1 ) ); ?>
-					<?php } else { ?>
-						<?php query_posts( array ( 'cat' => $category, 'meta_key' => 'cat_top', 'showposts' => 1, 'ignore_sticky_posts' => 1 ) ); ?>
-					<?php } ?>
-					<?php while ( have_posts() ) : the_post(); $do_not_cat[] = $post->ID; ?>
-						<div class="group-top-img" <?php aos_b(); ?>>
-							<?php gr_wd_thumbnail(); ?>
-							<div class="gr-cat-wd">
-								<div class="gr-cat-wd-title"><a href="<?php echo get_category_link($category);?>"><?php single_cat_title(); ?></a></div>
-								<div class="clear"></div>
-							</div>
+<?php if ( co_get_option( 'group_wd' ) ) {
+	if ( ! co_get_option( 'wd_bg' ) || ( co_get_option( 'wd_bg' ) == 'auto' ) ) {
+		$bg = '';
+	}
+	if ( co_get_option( 'wd_bg' ) == 'white' ) {
+		$bg = ' group-white';
+	}
+	if ( co_get_option( 'wd_bg' ) == 'gray' ) {
+		$bg = ' group-gray';
+	}
+?>
+	<?php $display_categories =  explode( ',', co_get_option( 'group_wd_id' ) ); foreach ( $display_categories as $category ) {
+		$cat = co_get_option( 'group_no_cat_child' ) ? 'category' : 'category__in';
+	?>
+		<div class="g-row grl-img g-line<?php echo $bg; ?>" <?php aos(); ?>>
+			<div class="g-col">
+				<div class="gr-wd-box">
+					<div class="gr-wd-b">
+						<div class="gr-wd gr-wd-img">
+							<?php
+								$wdtop = [];
+								$wdimg = get_posts( array(
+									'meta_key'       => 'cat_top',
+									'posts_per_page' => 1,
+									'post_status'    => 'publish',
+									$cat             => $category,
+								) );
+							?>
+							<?php foreach ( $wdimg as $post ) : setup_postdata( $post ); $wdtop[] = $post->ID; ?>
+								<div class="group-top-img" <?php aos_b(); ?>>
+									<?php echo gr_wd_thumbnail(); ?>
+									<div class="gr-cat-wd">
+										<div class="gr-cat-wd-title"><a href="<?php echo get_category_link( $category ); ?>" rel="bookmark" <?php echo goal(); ?>><?php echo get_cat_name( $category ); ?></a></div>
+										<div class="clear"></div>
+									</div>
+								</div>
+							<?php endforeach; ?>
+							<?php wp_reset_postdata(); ?>
 						</div>
-					<?php endwhile; ?>
+
+						<div class="gr-wd gr-wd-w" <?php aos_f(); ?>>
+							<?php
+								$excerpt = get_posts( array(
+									'posts_per_page' => 1,
+									'post_status'    => 'publish',
+									$cat             => $category,
+									'post__not_in'   => isset( $wdtop ) ? $wdtop : []
+								) );
+							?>
+							<?php foreach ( $excerpt as $post ) : setup_postdata( $post ); $wdtop[] = $post->ID; ?>
+								<?php the_title( sprintf( '<h2 class="gr-title gr-wd-title"><a href="%s" rel="bookmark" ' . goal() . '>', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
+								<p class="be-aos" <?php aos_f(); ?>>
+									<?php if (has_excerpt('')){
+											echo wp_trim_words( get_the_excerpt(), 92, '...' );
+										} else {
+											$content = get_the_content();
+											$content = wp_strip_all_tags(str_replace(array('[',']'),array('<','>'),$content));
+											echo wp_trim_words( $content, 95, '...' );
+									    }
+									?>
+								</p>
+
+							<?php endforeach; ?>
+							<?php wp_reset_postdata(); ?>
+
+							<ul <?php aos_f(); ?>>
+								<?php
+									$posts = get_posts( array(
+										'posts_per_page' => 5,
+										'post_status'    => 'publish',
+										$cat             => $category,
+										'offset'         => 1,
+										'post__not_in'   => isset( $wdtop ) ? $wdtop : [],
+									) );
+								?>
+								<?php foreach ( $posts as $post ) : setup_postdata( $post ); $wdtop[] = $post->ID; ?>
+									<?php the_title( sprintf( '<li class="list-title"><h2 class="group-list-title"><a href="%s" rel="bookmark" ' . goal() . '>', esc_url( get_permalink() ) ), '</a></h2></li>' ); ?>
+								<?php endforeach; ?>
+								<?php wp_reset_postdata(); ?>
+							</ul>
+
+						</div>
+						<div class="clear"></div>
+					</div>
 				</div>
-
-				<div class="gr-wd gr-wd-w" <?php aos_b(); ?>>
-					<?php if (zm_get_option('group_no_cat_child')) { ?>
-						<?php query_posts( array('cat' => $category ) ); ?>
-						<?php query_posts( array ( 'category__in' => array(get_query_var('cat')), 'meta_key' => 'cat_top', 'showposts' => 1, 'ignore_sticky_posts' => 1 ) ); ?>
-					<?php } else { ?>
-						<?php query_posts( array ( 'cat' => $category, 'meta_key' => 'cat_top', 'showposts' => 1, 'ignore_sticky_posts' => 1 ) ); ?>
-					<?php } ?>
-
-					<?php while ( have_posts() ) : the_post(); $do_not_cat[] = $post->ID; ?>
-					<?php the_title( sprintf( '<h3 class="gr-title gr-wd-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h3>' ); ?>
-
-					<p class="be-aos" <?php aos_b(); ?>>
-						<?php if (has_excerpt('')){
-								echo wp_trim_words( get_the_excerpt(), 92, '...' );
-							} else {
-								$content = get_the_content();
-								$content = wp_strip_all_tags(str_replace(array('[',']'),array('<','>'),$content));
-								echo wp_trim_words( $content, 95, '...' );
-						    }
-						?>
-					</p>
-
-					<?php endwhile; ?>
-
-					<ul <?php aos_b(); ?>>
-						<?php if (zm_get_option('group_no_cat_child')) { ?>
-							<?php query_posts( array('cat' => $category ) ); ?>
-							<?php query_posts( array( 'showposts' => '5', 'category__in' => array(get_query_var('cat')), 'offset' => 0, 'post__not_in' => $do_not_cat ) ); ?>
-						<?php } else { ?>
-							<?php query_posts( array( 'showposts' => '5', 'cat' => $category, 'offset' => 0, 'post__not_in' => $do_not_cat ) ); ?>
-						<?php } ?>
-						<?php while ( have_posts() ) : the_post(); ?>
-							<?php the_title( sprintf( '<li class="list-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></li>' ); ?>
-						<?php endwhile; ?>
-						<?php wp_reset_query(); ?>
-					</ul>
-
-				</div>
+				<?php co_help( $text = '公司主页 → 分类左右图', $number = 'group_wd_s' ); ?>
 				<div class="clear"></div>
 			</div>
 		</div>
-		<div class="clear"></div>
-	</div>
-</div>
-<?php } ?>
+	<?php } ?>
 <?php } ?>

@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		<main id="main" class="be-main site-main" role="main">
 
 			<?php while ( have_posts() ) : the_post(); ?>
-				<article id="post-<?php the_ID(); ?>" <?php post_class('bk da'); ?>>
+				<article id="post-<?php the_ID(); ?>" class="post-item post">
 					<div id="message" class="message-page gaimg">
 						<ul>
 							<?php 

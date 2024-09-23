@@ -51,7 +51,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 }
 
 .menu-list .menu li a {
-	background: #fff;
+	background: var(--be-bg-white);
 	display: block;
 	text-align: center;
 	white-space: nowrap;

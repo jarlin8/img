@@ -31,11 +31,11 @@ get_header(); ?>
 }
 
 .child-img {
-	background: #fff;
 	margin: 0 0 10px 0;
 	overflow: hidden;
 	border-radius: 8px;
-	border: 1px solid #e7e7e7;
+	background: var(--be-bg-white);
+	box-shadow: 0 0 0 1px var(--be-shadow);
 }
 
 .child-img-box img {
@@ -67,16 +67,17 @@ get_header(); ?>
 						'numberposts' => 8,
 					));
 					if (!empty($posts)){
-						echo '<h3 class="grid-cat-title" data-aos="zoom-in"><a href="'.get_category_link($the_cat).'">'.$the_cat->name.'</a></h3><div class="clear"></div>';
+						echo '<h3 class="grid-cat-title" data-aos="zoom-in"><a href="' . get_category_link($the_cat) . '">' . $the_cat->name . '</a></h3><div class="clear"></div>';
 						foreach($posts as $post) {
-							echo '<div class="child-img-box child-img-'. zm_get_option('img_f') .'" ';
+							echo '<div class="child-img-box child-img-'. be_get_option( 'img_f' ) .'" ';
 							echo aos_a();
 							echo '>';
-							echo '<div class="child-img sup ms bk">';
+							echo '<div class="boxs1">';
+							echo '<div class="child-img ms">';
 							echo '<figure class="picture-img">';
-							zm_thumbnail();
+							echo zm_grid_thumbnail();
 							echo '</figure>';
-							echo '<h2 class="grid-title"><a href="'.get_permalink($post->ID).'">'.$post->post_title.'</a></h2></div></div>';
+							echo '<h2 class="grid-title"><a href="' . get_permalink($post->ID) . '" rel="bookmark" ' . goal() . '>'.$post->post_title.'</a></h2></div></div></div>';
 						}
 					}
 				}

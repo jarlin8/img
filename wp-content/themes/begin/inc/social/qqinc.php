@@ -68,12 +68,12 @@ class BeginloginQQ {
 				$login_name = "qq_".wp_create_nonce($a);
 				$username = $uinfo->nickname;
 				$userdata=array(
-				  'user_login' => $login_name,
-				  'user_email' => $login_name.'@qq.com',
-				  'display_name' => $username,
-				  'nickname' => $username,
-				  'user_pass' => $pass,
-				  'role' => get_option('default_role')
+					'user_login'   => $login_name,
+					'user_email'   => '',
+					'display_name' => $username,
+					'nickname'     => $username,
+					'user_pass'    => $pass,
+					'role'         => get_option('default_role')
 				);
 				$user_id = wp_insert_user( $userdata );
 				if ( is_wp_error( $user_id ) ) {

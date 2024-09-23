@@ -7,21 +7,14 @@ get_header(); ?>
 <link rel="stylesheet" href="<?php bloginfo('template_url'); ?>/css/line.css" />
 <section id="timeline" class="container">
 	<main id="main" class="be-main site-main" role="main">
-		<?php if ( ( zm_get_option( 'no_child' ) ) && is_category() ) { ?>
-			<?php 
-				$paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
-				query_posts( array( 'category__in' => array( get_query_var( 'cat' ) ), 'paged' => $paged ) );
-			?>
-		<?php } ?>
-
-		<?php if ( zm_get_option( 'order_btu' ) ) { ?><?php be_order(); ?><?php } ?>
+		<?php be_exclude_child_cats(); ?>
 
 		<?php while ( have_posts() ) : the_post(); ?>
-			<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class('timeline-block scl'); ?>>
-				<div class="timeline-time da bk">
+			<article id="post-<?php the_ID(); ?>" class="post-item-list post timeline-block scl" <?php aos_a(); ?>>
+				<div class="timeline-time">
 					<?php the_time( 'd' ) ?>
 				</div>
-				<div class="timeline-content sup da bk">
+				<div class="timeline-content boxs1">
 					<div class="jt"></div>
 
 					<?php if (zm_get_option('no_rand_img')) { ?>
@@ -31,17 +24,17 @@ get_header(); ?>
 								$n = count($strResult[1]);
 								if ($n > 0) { ?>
 								<figure class="thumbnail timeline-thum">
-									<?php zm_thumbnail(); ?>
+									<?php echo zm_thumbnail(); ?>
 								</figure>
 							<?php } ?>
 
 					<?php } else { ?>
 						<figure class="thumbnail timeline-thum">
-							<?php zm_thumbnail(); ?>
+							<?php echo zm_thumbnail(); ?>
 						</figure>
 					<?php } ?>
 
-					<?php the_title( sprintf( '<h2 class="entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
+					<?php the_title( sprintf( '<h2 class="entry-title"><a href="%s" rel="bookmark" ' . goal() . '>', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
 					<?php begin_trim_words(); ?>
 					<span class="date"><?php the_time( 'Y年m月' ); ?></span>
 					<div class="clear"></div>

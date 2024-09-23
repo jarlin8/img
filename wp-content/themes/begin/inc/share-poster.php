@@ -64,8 +64,8 @@ class BEGIN_Front {
 		$inline_script = '';
 
 		if (zm_get_option('shar_donate')) {
-			$tab_html .= '<div class="share-tab-nav-item item-alipay current da"><i class="cx cx-alipay"></i><span class="bgt">\u652f\u4ed8\u5b9d</span></div>';
-			$tab_html .= '<div class="share-tab-nav-item item-weixin da"><i class="cx cx-weixin"></i><span class="bgt">\u5fae\u4fe1</span></div>';
+			$tab_html .= '<div class="share-tab-nav-item item-alipay current"><i class="cx cx-alipay"></i><span class="wyc">\u652f\u4ed8\u5b9d</span></div>';
+			$tab_html .= '<div class="share-tab-nav-item item-weixin"><i class="cx cx-weixin"></i><span class="wyc">\u5fae\u4fe1</span></div>';
 			$cont_html .= '<div class="share-tab-cont current"><div class="give-qr"><img src="' . zm_get_option('qr_b') . '" alt="\u652f\u4ed8\u5b9d\u4e8c\u7ef4\u7801"></div><p>\u652f\u4ed8\u5b9d\u626b\u63cf\u4e8c\u7ef4\u7801\u6253\u8d4f\u4f5c\u8005</p></div>';
 			$cont_html .= '<div class="share-tab-cont"><div class="give-qr"><img src="' . zm_get_option('qr_a') . '" alt="\u5fae\u4fe1\u4e8c\u7ef4\u7801"></div><p>\u5fae\u4fe1\u626b\u63cf\u4e8c\u7ef4\u7801\u6253\u8d4f\u4f5c\u8005</p></div>';
 			$inline_script .= 'var be_beshare_donate_html=\'<div class="tab-navs">'.$tab_html.'</div><div class="share-tab-conts">'.$cont_html.'</div>\';';
@@ -85,10 +85,10 @@ class BEGIN_Front {
 		$be_share_html = '';
 
 		$be_share_html = '<div class="be-share-list" data-cover="' . $share_cover . '">';
-		$be_share_html .= '<a class="share-logo ico-weixin bk" data-cmd="weixin" title="\u5206\u4eab\u5230\u5fae\u4fe1" rel="external nofollow"></a>';
-		$be_share_html .= '<a class="share-logo ico-weibo bk" data-cmd="weibo" title="\u5206\u4eab\u5230\u5fae\u535a" rel="external nofollow"></a>';
-		$be_share_html .= '<a class="share-logo ico-qzone bk" data-cmd="qzone" title="\u5206\u4eab\u5230QQ\u7a7a\u95f4" rel="external nofollow"></a>';
-		$be_share_html .= '<a class="share-logo ico-qq bk" data-cmd="qq" title="\u5206\u4eab\u5230QQ" rel="external nofollow"></a>';
+		$be_share_html .= '<a class="share-logo ico-weixin" data-cmd="weixin" title="\u5206\u4eab\u5230\u5fae\u4fe1" rel="external nofollow"></a>';
+		$be_share_html .= '<a class="share-logo ico-weibo" data-cmd="weibo" title="\u5206\u4eab\u5230\u5fae\u535a" rel="external nofollow"></a>';
+		$be_share_html .= '<a class="share-logo ico-qzone" data-cmd="qzone" title="\u5206\u4eab\u5230QQ\u7a7a\u95f4" rel="external nofollow"></a>';
+		$be_share_html .= '<a class="share-logo ico-qq" data-cmd="qq" title="\u5206\u4eab\u5230QQ" rel="external nofollow"></a>';
 
 		$inline_script .= 'var be_share_html=\''.$be_share_html.'\';';
 		wp_add_inline_script( 'social-share', $inline_script,'before' );
@@ -160,24 +160,24 @@ class BEGIN_Front {
 				$site_tagline = get_bloginfo( 'description' );
 			}
 			if ( has_excerpt( '' ) ) {
-				if ( zm_get_option( 'languages_en' ) ) {
+				if ( get_bloginfo( 'language' ) === 'en-US' ) {
 					$excerpt = wp_trim_words( get_the_excerpt(), '22', '...' );
 				} else {
 					$excerpt = wp_trim_words( get_the_excerpt(), '56', '...' );
 				}
 
 			} else {
-				$content = get_the_content();
+				$content = strip_shortcodes( get_the_content() );
 				$content = wp_strip_all_tags( str_replace( array( '[',']' ),array('<','>' ),$content ) );
 
-				if ( zm_get_option( 'languages_en' ) ) {
+				if ( get_bloginfo( 'language' ) === 'en-US' ) {
 					$excerpt = wp_trim_words( $content, '22', '...' );
 				} else {
 					$excerpt = wp_trim_words( $content, '56', '...' );
 				}
 			}
 
-			if ( zm_get_option( 'languages_en' ) ) {
+			if ( get_bloginfo( 'language' ) === 'en-US' ) {
 				$titles = wp_trim_words( get_the_title(), 10 );
 			} else {
 				$titles = wp_trim_words( get_the_title(), 34 );
@@ -255,20 +255,21 @@ function begin_share_social() {
 }
 
 function share_poster() { ?>
-<div class="sharing-box" data-aos="zoom-in">
+<div class="sharing-box betip" data-aos="zoom-in">
+	<?php if ( zm_get_option( 'copy_post' ) && is_single() ) { ?><span class="tooltip be-btn-beshare be-copy-content  use-beshare-link-btn copy-content"><span class="sharetip bz"><?php _e( '复制文章', 'begin' ); ?></span></span><?php } ?>
 	<?php if ( function_exists( 'be_toc' ) ) { ?>
 		<?php if ( is_active_widget( '', '', 'be_toc_widget' ) ) { ?>
-			<a class="toc-widget be-btn-beshare be-beshare-toc tocno bk dah" rel="external nofollow"><span class="be-beshare-toc-txt<?php if ( zm_get_option( 'languages_en' ) ) { ?> toc-txt-en<?php } else { ?> toc-txt-cn<?php } ?>"></span></a>
+			<a class="toc-widget be-btn-beshare be-beshare-toc tocno" rel="external nofollow"><span class="be-beshare-toc-txt<?php if ( get_bloginfo( 'language' ) === 'en-US' ) { ?> toc-txt-en<?php } else { ?> toc-txt-cn<?php } ?>"></span></a>
 		<?php } ?>
 	<?php } ?>
-	<?php if (zm_get_option('shar_donate')) { ?><a class="be-btn-beshare be-btn-donate use-beshare-donate-btn bk dah" rel="external nofollow" data-hover="<?php _e( '打赏', 'begin' ); ?>"><div class="arrow-share"></div></a><?php } ?>
-	<?php if (zm_get_option('shar_like')) { ?><a class="be-btn-beshare be-btn-like use-beshare-like-btn bk dah" data-count="<?php global $wpdb, $post; $zm_like = get_post_meta( get_the_ID(), 'zm_like', true );{echo $zm_like;}?>" rel="external nofollow">
+	<?php if ( zm_get_option( 'shar_donate' ) ) { ?><a class="be-btn-beshare be-btn-donate use-beshare-donate-btn" rel="external nofollow" data-hover="<?php _e( '打赏', 'begin' ); ?>"><div class="arrow-share"></div></a><?php } ?>
+	<?php if ( zm_get_option( 'shar_like' ) ) { ?><a class="be-btn-beshare be-btn-like use-beshare-like-btn" data-count="<?php global $wpdb, $post; $zm_like = get_post_meta( get_the_ID(), 'zm_like', true );{echo $zm_like;}?>" rel="external nofollow">
 		<span class="sharetip bz like-number">
 			<?php 
 				global $wpdb, $post;
-				if ( get_post_meta( get_the_ID(),'zm_like',true ) ){
+				if ( get_post_meta( get_the_ID(), 'zm_like',true ) ){
 					echo '';
-					echo get_post_meta( get_the_ID(),'zm_like',true );
+					echo get_post_meta( get_the_ID(), 'zm_like',true );
 				} else {
 					echo sprintf( __( '点赞', 'begin' ) ) ;
 				}
@@ -277,21 +278,22 @@ function share_poster() { ?>
 		<div class="triangle-down"></div>
 	</a><?php } ?>
 	<?php if ( function_exists( 'keep_button' ) ) like_button(); ?>
-	<?php if ( zm_get_option( 'shar_share' ) ) { ?><a class="be-btn-beshare be-btn-share use-beshare-social-btn bk dah" rel="external nofollow" data-hover="<?php _e( '分享', 'begin' ); ?>"><div class="arrow-share"></div></a><?php } ?>
+	<?php if ( zm_get_option( 'shar_share' ) ) { ?><a class="be-btn-beshare be-btn-share use-beshare-social-btn" rel="external nofollow" data-hover="<?php _e( '分享', 'begin' ); ?>"><div class="arrow-share"></div></a><?php } ?>
 	<?php if ( zm_get_option( 'shar_link' ) ) { ?>
 		<span class="post-link"><?php echo get_permalink(); ?></span>
 		<?php if ( zm_get_option( 'like_left' ) ) { ?>
 			<?php if ( wp_is_mobile() ) { ?>
 				<span class="be-btn-link-b copytip"></span>
 			<?php } ?>
-			<a class="tooltip be-btn-beshare be-btn-link be-btn-link-b use-beshare-link-btn bk dah" rel="external nofollow" onclick="myFunction()" onmouseout="outFunc()"><span class="sharetip bz copytip"><?php _e( '复制链接', 'begin' ); ?></span></a>
-			<a class="tooltip be-btn-beshare be-btn-link be-btn-link-l use-beshare-link-btn bk dah" rel="external nofollow" onclick="myFunction()" onmouseout="outFunc()"><span class="sharetip bz copytipl"><?php _e( '复制链接', 'begin' ); ?></span></a>
+			<a class="tooltip be-btn-beshare be-btn-link be-btn-link-b use-beshare-link-btn" rel="external nofollow" onclick="myFunction()" onmouseout="outFunc()"><span class="sharetip bz copytip"><?php _e( '复制链接', 'begin' ); ?></span></a>
+			<a class="tooltip be-btn-beshare be-btn-link be-btn-link-l use-beshare-link-btn" rel="external nofollow" onclick="myFunction()" onmouseout="outFunc()"><span class="sharetip bz copytipl"><?php _e( '复制链接', 'begin' ); ?></span></a>
 		<?php } else { ?>
 			<span class="be-btn-link-l copytip"></span>
 			<span class="be-btn-link-l copytipl"></span>
-			<a class="tooltip be-btn-beshare be-btn-link be-btn-link-b use-beshare-link-btn bk dah" rel="external nofollow" onclick="myFunction()" onmouseout="outFunc()"><span class="sharetip bz copytip"><?php _e( '复制链接', 'begin' ); ?></span></a>
+			<a class="tooltip be-btn-beshare be-btn-link be-btn-link-b use-beshare-link-btn" rel="external nofollow" onclick="myFunction()" onmouseout="outFunc()"><span class="sharetip bz copytip"><?php _e( '复制链接', 'begin' ); ?></span></a>
 		<?php } ?>
 	<?php } ?>
-	<?php if ( zm_get_option( 'shar_poster' ) ) { ?><a class="be-btn-beshare be-share-poster use-beshare-poster-btn bk dah" rel="external nofollow" data-hover="<?php _e( '海报', 'begin' ); ?>"><div class="arrow-share"></div></a><?php } ?>
+	<?php if ( zm_get_option( 'shar_poster' ) ) { ?><a class="be-btn-beshare be-share-poster use-beshare-poster-btn" rel="external nofollow" data-hover="<?php _e( '海报', 'begin' ); ?>"><div class="arrow-share"></div></a><?php } ?>
+	<?php echo be_help( $text = '主题选项 → 文章设置 → 点赞分享' ); ?>
 </div>
 <?php }

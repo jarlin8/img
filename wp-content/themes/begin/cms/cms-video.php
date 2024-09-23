@@ -1,57 +1,72 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-<?php if (zm_get_option('video_box')) { ?>
-<?php if (zm_get_option('video')) { ?>
-	<div class="line-four line-four-video-item sort" name="<?php echo zm_get_option('video_s'); ?>">
-		<?php
-			$args = array(
-				'post_type' => 'video',
-				'showposts' => zm_get_option('video_n'), 
-			);
+<?php if ( be_get_option( 'video_box' ) ) { ?>
+	<div class="line-four line-four-video-item sort betip">
+		<?php if ( be_get_option( 'video_post_id') ) { ?>
+			<?php
+				if ( be_get_option( 'no_cat_top' ) ) {
+					$top_id = be_get_option( 'cms_top' ) ? explode( ',', be_get_option( 'cms_top_id' ) ) : [];
+					$exclude_posts = array_merge( $do_not_duplicate, $top_id );
+				} else {
+					$exclude_posts = '';
+				}
 
-			if (zm_get_option('video_id')) {
-				$args = array(
-					'showposts' => zm_get_option('video_n'), 
-					'tax_query' => array(
-						array(
-							'taxonomy' => 'videos',
-							'terms' => explode(',',zm_get_option('video_id') )
-						),
-					)
-				);
-			}
-		?>
-		<?php $be_query = new WP_Query($args); while ($be_query->have_posts()) : $be_query->the_post(); ?>
-		<div class="xl4 xm4">
-			<div class="picture-cms ms bk" <?php aos_a(); ?>>
-				<figure class="picture-cms-img">
-					<?php videos_thumbnail(); ?>
-					<a rel="external nofollow" href="<?php echo esc_url( get_permalink() ); ?>"><i class="be be-play"></i></a>
-				</figure>
-				<?php the_title( sprintf( '<h2 class="picture-cms-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
-			</div>
-		</div>
+				$tax = get_taxonomies();
+				$tax_terms = get_terms( $tax , array(
+					'include' => explode( ',', be_get_option( 'video_post_id' ) ),
+					'orderby' => 'include',
+					'order'   => 'ASC',
+				));
 
-		<?php endwhile; ?>
-		<?php wp_reset_query(); ?>
-		<div class="clear"></div>
+				if ( $tax_terms ) {
+					foreach ( $tax_terms as $tax_term ) {
+						$args = array(
+							'post_type' => 'any',
+							'tax_query' => array(
+								array(
+									'taxonomy' => $tax_term->taxonomy,
+									'field'    => 'term_id',
+									'terms'    => $tax_term->term_id,
+								),
+							),
+
+							'post_status'    => 'publish',
+							'posts_per_page' => be_get_option( 'video_n' ),
+							'post__not_in'   => $exclude_posts,
+							'orderby'        => 'date',
+							'order'          => 'DESC',
+							'ignore_sticky_posts' => 1,
+ 						);
+
+					$be_query = new WP_Query( $args );
+					if ( $be_query->have_posts() ) { ?>
+						<div class="cms-picture-box">
+							<h3 class="cms-picture-cat-title"><a href="<?php echo get_category_link( $tax_term ); ?>" rel="bookmark" <?php echo goal(); ?>><?php echo $tax_term->name; ?></a></h3>
+
+							<?php while ( $be_query->have_posts() ) : $be_query->the_post(); ?>
+
+							<div class="xl4 xm<?php echo be_get_option( 'cms_video_fl' ); ?>" <?php aos_a(); ?>>
+								<div class="boxs1">
+									<div class="picture-cms ms<?php echo fill_class(); ?>"<?php echo be_img_fill(); ?>>
+										<figure class="picture-cms-img">
+											<?php if ( get_post_type() == 'video' ) { ?>
+												<?php echo videos_thumbnail(); ?>
+											<?php } else { ?>
+												<?php echo img_thumbnail(); ?>
+											<?php } ?>
+												<i class="be be-play"></i>
+										</figure>
+										<?php the_title( sprintf( '<h2 class="picture-cms-title"><a href="%s" rel="bookmark" ' . goal() . '>', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
+									</div>
+								</div>
+							</div>
+							<?php endwhile; wp_reset_postdata(); ?>
+							<div class="clear"></div>
+						</div>
+					<?php } ?>
+				<?php } ?>
+			<?php } ?>
+			<div class="clear"></div>
+		<?php } ?>
+		<?php cms_help( $text = '首页设置 → 杂志布局 → 视频模块', $number = 'video_s' ); ?>
 	</div>
-<?php } ?>
-
-<?php if (zm_get_option('video_post')) { ?>
-<div class="line-four line-four-video-item sort" name="<?php echo zm_get_option('video_s'); ?>">
-	<?php query_posts('showposts='.zm_get_option('video_n').'&category__and='.zm_get_option('video_post_id')); while (have_posts()) : the_post(); ?>
-	<div class="xl4 xm4">
-		<div class="picture-cms ms bk" <?php aos_a(); ?>>
-			<figure class="picture-cms-img">
-				<?php zm_thumbnail(); ?>
-				<a rel="external nofollow" href="<?php echo esc_url( get_permalink() ); ?>"><i class="be be-play"></i></a>
-			</figure>
-			<?php the_title( sprintf( '<h2 class="picture-cms-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
-		</div>
-	</div>
-	<?php endwhile; ?>
-	<?php wp_reset_query(); ?>
-	<div class="clear"></div>
-</div>
-<?php } ?>
 <?php } ?>

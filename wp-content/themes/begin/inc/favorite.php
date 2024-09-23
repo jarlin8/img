@@ -57,10 +57,10 @@ class Begin_Favorite_Posts {
 		$user_id = get_current_user_id();
 		if ( !$this->get_post_status( $post_id, $user_id ) ) {
 			$this->insert_favorite( $post_id, $user_id );
-			wp_send_json_success( '<span class="keep-favorite dah" title="'. sprintf(__( '取消收藏', 'begin' )) .'"></span>' );
+			wp_send_json_success( '<span class="keep-favorite" title="'. sprintf(__( '取消收藏', 'begin' )) .'"></span>' );
 		} else {
 			$this->delete_favorite( $post_id, $user_id );
-			wp_send_json_success( '<span class="keep-not-favorite dah" title="'. sprintf(__( '收藏', 'begin' )) .'"></span>' );
+			wp_send_json_success( '<span class="keep-not-favorite" title="'. sprintf(__( '收藏', 'begin' )) .'"></span>' );
 		}
 	}
 
@@ -104,11 +104,11 @@ class Begin_Favorite_Posts {
 		$status = $this->get_post_status( $post_id, get_current_user_id() );
 		?>
 		<span class="favorite-box">
-		<a class="keep-favorite-link be-btn-beshare bk" href="#" data-id="<?php echo $post_id; ?>">
+		<a class="keep-favorite-link be-btn-beshare" href="#" data-id="<?php echo $post_id; ?>">
 			<?php if ( $status ) { ?>
-				<span class="keep-favorite be-btn-favorite dah" data-hover="<?php _e( '取消收藏', 'begin' ); ?>"><span class="arrow-share"></span></span>
+				<span class="keep-favorite be-btn-favorite" data-hover="<?php _e( '取消收藏', 'begin' ); ?>"><span class="arrow-share"></span></span>
 			<?php } else { ?>
-				<span class="keep-not-favorite be-btn-favorite dah" data-hover="<?php _e( '收藏', 'begin' ); ?>"><span class="arrow-share"></span></span>
+				<span class="keep-not-favorite be-btn-favorite" data-hover="<?php _e( '收藏', 'begin' ); ?>"><span class="arrow-share"></span></span>
 			<?php } ?>
 		</a>
 		</span>
@@ -171,7 +171,7 @@ function like_button() {
 		if ( is_user_logged_in() ) {
 			keep_button();
 		} else {
-			echo '<span class="favorite-box show-layer" data-show-layer="login-layer"><a class="be-btn-beshare bk no-favorite dah" rel="external nofollow"><span class="like-number sharetip bz">'. sprintf(__( '登录收藏', 'begin' )) .'</span><div class="triangle-down"></div></a></span>';
+			echo '<span class="favorite-box show-layer"><a class="be-btn-beshare no-favorite" rel="external nofollow"><span class="like-number sharetip bz">'. sprintf(__( '登录收藏', 'begin' )) .'</span><div class="triangle-down"></div></a></span>';
 		}
 	}
 }

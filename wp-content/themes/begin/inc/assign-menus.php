@@ -131,9 +131,9 @@ class BE_Conditional_Menus {
 			'nav_menus' => array_keys( $_wp_registered_nav_menus ),
 			'options' => $this->get_options(),
 			'lang' => array(
-				'conditions' =>'选择',
-				'add_assignment' =>'<span class="dashicons dashicons-plus-alt2"></span>添加',
-				'disable_menu' => '禁用菜单',
+				'conditions'     => '<span class="dashicons dashicons-saved"></span> 指派',
+				'add_assignment' => '<span class="dashicons dashicons-plus-alt2"></span> 添加',
+				'disable_menu'   => '禁用菜单',
 			),
 		) );
 	}
@@ -147,7 +147,6 @@ class BE_Conditional_Menus {
 				</div>
 				<a href="#" class="button uncheck-all">取消所有</a>
 				<a href="#" class="button button-primary be-cm-save alignright">保存</a>
-			</div>
 			</div>
 			<div id="be-cm-overlay"></div>
 		';
@@ -440,7 +439,7 @@ class BE_Conditional_Menus {
 					$num_of_single_pages = count( $terms );
 					$num_of_pages        = (int) ceil( $num_of_single_pages / $posts_per_page );
 					$output              .= '<div class="be-visibility-items-inner" data-items="' . $num_of_single_pages . '" data-pages="' . $num_of_pages . '">';
-					$output		   		 .= '<label class="tf_cm_select_sub"><input data-type="category" type="checkbox" />应用到子分类</label>';
+					$output              .= '<label class="tf_cm_select_sub"><input data-type="category" type="checkbox" />应用到子分类</label>';
 					$output              .= '<div class="be-visibility-items-page be-visibility-items-page-' . $page_id . '">';
 					foreach ( $terms as $term ) :
 						$data = ' data-slug="'.$term->slug.'"';

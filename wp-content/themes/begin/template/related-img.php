@@ -1,6 +1,6 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <?php if ( zm_get_option('related_mode' ) == 'slider_grid' ) { ?>
-<div id="related-img" class="ms dai bk" <?php aos_a(); ?>>
+<div id="related-img" class="ms" <?php aos_a(); ?>>
 <?php } ?>
 <?php if ( ! zm_get_option( 'related_mode' ) || ( zm_get_option( 'related_mode' ) == 'related_normal' ) ) { ?>
 <div class="related-article">

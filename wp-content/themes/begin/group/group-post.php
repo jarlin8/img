@@ -1,23 +1,33 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-<?php if (zm_get_option('group_post')) { ?>
+<?php if ( co_get_option( 'group_post' ) ) {
+	if ( ! co_get_option( 'post_bg' ) || ( co_get_option( 'post_bg' ) == 'auto' ) ) {
+		$bg = '';
+	}
+	if ( co_get_option( 'post_bg' ) == 'white' ) {
+		$bg = ' group-white';
+	}
+	if ( co_get_option( 'post_bg' ) == 'gray' ) {
+		$bg = ' group-gray';
+	}
+?>
 <?php
 	$posts = get_posts( array(
 		'post_type' => 'any',
-		'include' => explode(',',zm_get_option('group_post_id') ),
+		'include' => explode(',',co_get_option('group_post_id') ),
 		'ignore_sticky_posts' => 1
 	) );
 ?>
 <?php if ($posts) : foreach( $posts as $post ) : setup_postdata( $post ); ?>
-<div class="g-row g-line grl sort" name="<?php echo zm_get_option('group_post_s'); ?>" <?php aos(); ?>>
+<div class="g-row g-line grl<?php echo $bg; ?>" <?php aos(); ?>>
 	<div class="g-col">
 		<div class="group-post-box">
 			<article id="post-<?php the_ID(); ?>" class="group-post-list">
 				<div class="group-post-img" <?php aos_b(); ?>>
-					<?php gr_wd_thumbnail(); ?>
+					<?php echo gr_wd_thumbnail(); ?>
 					<div class="group-post-img-cat"><?php zm_category(); ?></div>
 				</div>
-				<div class="group-post-content" <?php aos_b(); ?>>
-					<?php the_title( sprintf( '<h3 class="group-post-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h3>' ); ?>
+				<div class="group-post-content" <?php aos_f(); ?>>
+					<?php the_title( sprintf( '<h2 class="group-post-title"><a href="%s" rel="bookmark" ' . goal() . '>', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
 
 					<div class="group-post-excerpt">
 						<?php if (has_excerpt('')){
@@ -34,10 +44,11 @@
 				<div class="clear"></div>
 			</article>
 		</div>
-		<div class="group-post-more bk da"><a href="<?php the_permalink(); ?>" title="<?php _e( '详细查看', 'begin' ); ?>" rel="external nofollow"><i class="be be-more"></i></a></div>
+		<div class="group-post-more"><a href="<?php the_permalink(); ?>" title="<?php _e( '详细查看', 'begin' ); ?>" rel="bookmark" <?php echo goal(); ?>><i class="be be-more"></i></a></div>
+		<?php co_help( $text = '公司主页 → 描述', $number = 'group_post_s' ); ?>
 		<div class="clear"></div>
 	</div>
 </div>
 <?php endforeach; endif; ?>
-<?php wp_reset_query(); ?>
+<?php wp_reset_postdata(); ?>
 <?php } ?>

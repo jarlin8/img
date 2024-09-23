@@ -1,8 +1,6 @@
 <?php
-/*
-Name: Widget Logic
-*/
 if ( ! defined( 'ABSPATH' ) ) exit;
+// 条件判断
 if (is_admin()){
 	add_filter( 'in_widget_form', 'begin_widget_logic_in_widget_form', 10, 3 );
 	add_filter( 'widget_update_callback', 'begin_widget_logic_update_callback', 10, 4);
@@ -21,12 +19,11 @@ function begin_widget_logic_in_widget_form( $widget, $return, $instance ){
 	?>
 		<p>
 			<label for="<?php echo $widget->get_field_id('begin_widget_logic'); ?>">条件判断</label>
-			<textarea class="widefat" name="<?php echo $widget->get_field_name('begin_widget_logic'); ?>" id="<?php echo $widget->get_field_id('begin_widget_logic'); ?>"><?php echo esc_textarea( $logic ) ?></textarea>
+			<textarea class="widefat" style="height: 30px;" name="<?php echo $widget->get_field_name('begin_widget_logic'); ?>" id="<?php echo $widget->get_field_id('begin_widget_logic'); ?>"><?php echo esc_textarea( $logic ) ?></textarea>
 		</p>
 	<?php
 	return;
 }
-
 
 function begin_widget_logic_by_id( $widget_id ){
 	global $wl_options;

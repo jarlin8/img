@@ -1,15 +1,25 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-<?php if ( zm_get_option( 'g_tao_h' ) ) { ?>
+<?php if ( co_get_option( 'g_tao_h' ) ) {
+	if ( ! co_get_option( 'tao_bg' ) || ( co_get_option( 'tao_bg' ) == 'auto' ) ) {
+		$bg = '';
+	}
+	if ( co_get_option( 'tao_bg' ) == 'white' ) {
+		$bg = ' group-white';
+	}
+	if ( co_get_option( 'tao_bg' ) == 'gray' ) {
+		$bg = ' group-gray';
+	}
+?>
 	<?php
 	$tax = 'taobao';
-	$tax_terms = get_terms( $tax, array( 'orderby' => 'menu_order', 'order' => 'ASC', 'include' => explode( ',',zm_get_option('g_tao_h_id' ) ) ) );
+	$tax_terms = get_terms( $tax, array( 'orderby' => 'menu_order', 'order' => 'ASC', 'include' => explode( ',',co_get_option('g_tao_h_id' ) ) ) );
 	if ( $tax_terms ) { ?>
 		<?php foreach ( $tax_terms as $tax_term ) { ?>
 			<?php
-				if ( !zm_get_option( 'g_tao_sort' ) || ( zm_get_option( 'g_tao_sort' ) == 'time' ) ) {
+				if ( !co_get_option( 'g_tao_sort' ) || ( co_get_option( 'g_tao_sort' ) == 'time' ) ) {
 					$orderby = 'date';
 				}
-				if ( zm_get_option( 'g_tao_sort' ) == 'views' ) {
+				if ( co_get_option( 'g_tao_sort' ) == 'views' ) {
 					$orderby = 'meta_value';
 				}
 
@@ -17,7 +27,7 @@
 					'post_type'        => 'tao',
 					"$tax"             => $tax_term->slug,
 					'post_status'      => 'publish',
-					'posts_per_page'   => zm_get_option( 'g_tao_h_n' ),
+					'posts_per_page'   => co_get_option( 'g_tao_h_n' ),
 					'meta_key'         => 'views',
 					'orderby'          => $orderby, 
 					'order'            => 'DESC', 
@@ -33,7 +43,7 @@
 				$catquery = new WP_Query( $args );
 			?>
 			<?php if ( $be_query->have_posts() ) { ?>
-				<div class="line-tao g-row g-line sort" name="<?php echo zm_get_option( 'g_tao_s' ); ?>" <?php aos(); ?>>
+				<div class="line-tao g-row g-line<?php echo $bg; ?>" <?php aos(); ?>>
 					<div class="g-col">
 						<div class="cms-picture-box">
 							<?php while ( $catquery->have_posts() ) : $catquery->the_post(); ?>
@@ -42,19 +52,22 @@
 									<div class="group-des"><?php echo $tax_term->description; ?></div>
 									<div class="clear"></div>
 								</div>
-							<?php endwhile; wp_reset_query(); ?>
+							<?php endwhile; wp_reset_postdata(); ?>
 
 							<?php while ( $be_query->have_posts() ) : $be_query->the_post(); ?>
-								<?php get_template_part( '/template/tao-home' ); ?>
-							<?php endwhile;wp_reset_query(); ?>
+								<div class="tao-home-area tao-home-fl tao-home-fl-<?php echo co_get_option( 'g_tao_home_f' ); ?>">
+									<?php get_template_part( '/template/tao-home' ); ?>
+								</div>
+							<?php endwhile;wp_reset_postdata(); ?>
 							<div class="clear"></div>
 						</div>
 
 						<?php while ( $catquery->have_posts() ) : $catquery->the_post(); ?>
-							<div class="group-post-more da">
-								<a href="<?php echo get_term_link($tax_term); ?>" title="<?php _e( '更多', 'begin' ); ?>" rel="external nofollow"><i class="be be-more"></i></a>
+							<div class="group-post-more">
+								<a href="<?php echo get_term_link($tax_term); ?>" title="<?php _e( '更多', 'begin' ); ?>" rel="bookmark" <?php echo goal(); ?>><i class="be be-more"></i></a>
 							</div>
-						<?php endwhile; wp_reset_query(); ?>
+						<?php endwhile; wp_reset_postdata(); ?>
+						<?php co_help( $text = '公司主页 → 商品模块', $number = 'g_tao_s' ); ?>
 					</div>
 				</div>
 			<?php } ?>

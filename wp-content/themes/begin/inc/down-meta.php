@@ -51,7 +51,7 @@ function begin_show_down( $content ) {
 
 		if ( ! get_post_meta( get_the_ID(), 'start_down', true ) && !get_post_meta( get_the_ID(), 'down_url_free', true ) ) {
 			if ( $down_demo ) {
-				$demo_content .= '<a class="yanshibtn" rel="external nofollow" href="'.get_template_directory_uri().'/preview.php?id='.base64_encode( get_the_ID() ).'" target="_blank" title="'.$down_demo.' "><i class="be be-eye" ></i>'. sprintf(__( '查看演示', 'begin' )) .'</a>';
+				$demo_content .= '<a class="yanshibtn" rel="external nofollow" href="'.get_template_directory_uri().'/preview.php?id='.base64_encode( get_the_ID() ).'" target="_blank" title="'.$down_demo.' "><div class="btnico"><i class="be be-skyatlas"></i></div><div class="btntxt">' . sprintf( __( '查看演示', 'begin' ) ) . '</div></a>';
 			}
 		}
 
@@ -83,7 +83,7 @@ function begin_show_down( $content ) {
 				<span class="wechat-t">'.zm_get_option('wechat_fans').'</span>
 			</span>';
 		}
-		if ( zm_get_option( 'root_down_url' ) ) {
+		if ( cx_get_option( 'root_down_url' ) ) {
 			$url   = home_url();
 			$files = 'download';
 		} else {
@@ -98,9 +98,9 @@ function begin_show_down( $content ) {
 			}
 		} else {
 			if ( $password_down ) {
-				$down_password .=  '[down]<span class="down"><a title="'.$begin_name.'" href="' . $url . '/' . $files . '.php?id='.base64_encode( get_the_ID() ).'" rel="external nofollow" target="_blank"><i class="be be-download"></i>'. sprintf( __( '下载地址', 'begin' ) ) .'</a></span>[/down]';
+				$down_password .=  '[down]<span class="down"><a title="'.$begin_name.'" href="' . $url . '/' . $files . '.php?id='.base64_encode( get_the_ID() ).'" rel="external nofollow" target="_blank"><div class="btnico"><i class="be be-clouddownload"></i></div><div class="btntxt">' . sprintf( __( '下载地址', 'begin' ) ) . '</div></a></span>[/down]';
 			} else {
-				$down_password .=  '<span class="down"><a title="'.$begin_name.'" href="' . $url . '/' . $files . '.php?id='.base64_encode( get_the_ID() ).'" rel="external nofollow" target="_blank"><i class="be be-download"></i>'. sprintf( __( '下载地址', 'begin' ) ) .'</a></span>';
+				$down_password .=  '<span class="down"><a title="'.$begin_name.'" href="' . $url . '/' . $files . '.php?id='.base64_encode( get_the_ID() ).'" rel="external nofollow" target="_blank"><div class="btnico"><i class="be be-clouddownload"></i></div><div class="btntxt">' . sprintf( __( '下载地址', 'begin' ) ) . '</div></a></span>';
 			}
 		}
 

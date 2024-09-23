@@ -5,7 +5,7 @@ Template Name: 商品分类
 if ( ! defined( 'ABSPATH' ) ) exit;
 ?>
 <?php get_header(); ?>
-<section id="tao" class="picture-area content-area grid-cat-4">
+<section id="tao" class="picture-area content-area grid-cat-<?php echo be_get_option( 'img_f' ); ?>">
 	<main id="main" class="be-main site-main" role="main">
 		<?php
 		$taxonomy = 'taobao';
@@ -23,26 +23,35 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		</div>
 		<div class="clear"></div>
 		<?php while ($query->have_posts()) : $query->the_post();?>
-			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-				<div class="tao-box ms bk" <?php aos_a(); ?>>
+			<article id="post-<?php the_ID(); ?>" class="post-item-list post">
+				<div class="tao-box ms" <?php aos_a(); ?>>
 					<figure class="tao-img">
-						<?php tao_thumbnail(); ?>
+						<?php echo tao_thumbnail(); ?>
 						<?php if ( get_post_meta( get_the_ID(), 'tao_img_t', true ) ) : ?>
 							<div class="tao-dis"><?php $tao_img_t = get_post_meta( get_the_ID(), 'tao_img_t', true );{ echo $tao_img_t; } ?></div>
 						<?php endif; ?>
 					</figure>
 					<div class="product-box">
-						<?php the_title( sprintf( '<h2><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
-						<div class="product-i over"><?php $price = get_post_meta( get_the_ID(), 'product', true );{ echo $price; } ?></div>
+						<?php the_title( sprintf( '<h2 class="product-title over"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
 						<div class="ded">
 							<ul class="price">
-								<li class="pricex"><strong>￥ <?php $price = get_post_meta( get_the_ID(), 'pricex', true );{ echo $price; } ?>元</strong></li>
+								<?php echo be_vip_meta(); ?>
+								<?php 
+									$pricex = get_post_meta( get_the_ID(), 'pricex', true );
+									if ( $pricex ) {
+										echo '<li class="pricex">';
+										echo '<strong>';
+										echo $pricex . '元';
+										echo '</strong>';
+										echo '</li>';
+									} 
+								?>
 								<li class="pricey">
 									<?php if ( !get_post_meta( get_the_ID(), 'pricey', true ) && !get_post_meta( get_the_ID(), 'spare_t', true ) ){ ?>
-										已售：<?php views_tao(); ?>
+
 									<?php } else { ?>
 										<?php if ( get_post_meta( get_the_ID(), 'pricey', true ) ) : ?>
-											<del>市场价：<?php $price = get_post_meta( get_the_ID(), 'pricey', true );{ echo $price; } ?>元</del>
+											<del><?php $price = get_post_meta( get_the_ID(), 'pricey', true );{ echo $price; } ?>元</del>
 										<?php endif; ?>
 
 										<?php if ( get_post_meta( get_the_ID(), 'spare_t', true ) ) : ?>
@@ -75,7 +84,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		<?php endwhile; ?>
 		<div class="clear"></div>
 		<div class="grid-cat-more" <?php aos_a(); ?>><a href="<?php echo get_term_link( $cat ); ?>" title="<?php _e( '更多', 'begin' ); ?>"><i class="be be-more"></i></a></div>
-		<?php } wp_reset_query(); ?>
+		<?php } wp_reset_postdata(); ?>
 		<?php } ?>
 	</main>
 	<div class="clear"></div>

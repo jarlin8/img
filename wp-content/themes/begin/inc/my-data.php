@@ -6,17 +6,17 @@
 global $current_user, $wp_roles;
 $error = array();
 if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POST['action'] == 'update-user' ) {
-	if ( !empty($_POST['pass1'] )) {
+	if ( ! empty($_POST['pass1'] )) {
 		if ( $_POST['pass1'] == $_POST['pass2'] )
 			wp_update_user( array( 'ID' => $current_user->ID, 'user_pass' => esc_attr( $_POST['pass1'] ) ) );
 		else
 		$error[] = __('错误：密码不一致，请输入正确的重复密码！', 'begin');
 	}
 
-	if ( !empty( $_POST['url'] ) )
+	if ( ! empty( $_POST['url'] ) )
 		wp_update_user( array( 'ID' => $current_user->ID, 'user_url' => esc_url( $_POST['url'] ) ) );
 
-	if ( !empty( $_POST['email'] ) ){
+	if ( ! empty( $_POST['email'] ) ){
 		if (!is_email(esc_attr( $_POST['email'] )))
 			$error[] = __('错误：您输入的电子邮件地址不正确！', 'begin');
 		elseif ( email_exists(esc_attr( $_POST['email'] ) ) && email_exists(esc_attr( $_POST['email'] )) != $current_user->ID )
@@ -29,31 +29,50 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POS
 	// if ( !empty( $_POST['nickname'] ) )
 		// update_user_meta($current_user->ID, 'nickname', esc_attr( $_POST['nickname'] ) );
 
-	if ( !empty( $_POST['nickname'] ) ) {
+	if ( ! empty( $_POST['nickname'] ) ) {
 		wp_update_user( array ('ID' => $current_user->id, 'display_name' => esc_attr( $_POST['nickname'] ) ) ) ;
 		update_user_meta($current_user->id, 'nickname', esc_attr( $_POST['nickname'] ) );
 		update_user_meta($current_user->id, 'display_name', esc_attr( $_POST['nickname'] ) );
 	}
 
-	if ( !empty( $_POST['first_name'] ) ) {
+	if ( ! empty( $_POST['first_name'] ) ) {
 		wp_update_user( array ('ID' => $current_user->id, 'display_name' => esc_attr( $_POST['first_name'] ) ) ) ;
 		update_user_meta($current_user->id, 'first_name', esc_attr( $_POST['first_name'] ) );
 		update_user_meta($current_user->id, 'display_name', esc_attr( $_POST['first_name'] ) );
 	}
 
-	if ( !empty( $_POST['display_name'] ) ) {
+	if ( ! empty( $_POST['display_name'] ) ) {
 		wp_update_user( array ('ID' => $current_user->id, 'display_name' => esc_attr( $_POST['display_name'] ) ) ) ;
 		update_user_meta($current_user->id, 'display_name', esc_attr( $_POST['display_name'] ) );
 		update_user_meta($current_user->id, 'display_name', esc_attr( $_POST['display_name'] ) );
 	}
 
-	if ( !empty( $_POST['description'] ) )
+	if ( ! empty( $_POST['description'] ) )
+		wp_update_user( array ('ID' => $current_user->id, 'description' => esc_attr( $_POST['description'] ) ) ) ;
 		update_user_meta( $current_user->ID, 'description', esc_attr( $_POST['description'] ) );
 
-	if ( !empty( $_POST['userimg'] ) )
+	if ( ! empty( $_POST['userimg'] ) )
+		wp_update_user( array ('ID' => $current_user->id, 'userimg' => esc_attr( $_POST['userimg'] ) ) ) ;
 		update_user_meta( $current_user->ID, 'userimg', esc_attr( $_POST['userimg'] ) );
 
-	if ( !empty( $_POST['remark'] ) )
+	if ( ! empty( $_POST['qq'] ) )
+		wp_update_user( array ('ID' => $current_user->id, 'qq' => esc_attr( $_POST['qq'] ) ) ) ;
+		update_user_meta( $current_user->ID, 'qq', esc_attr( $_POST['qq'] ) );
+
+	if ( ! empty( $_POST['weixin'] ) )
+		wp_update_user( array ('ID' => $current_user->id, 'weixin' => esc_attr( $_POST['weixin'] ) ) ) ;
+		update_user_meta( $current_user->ID, 'weixin', esc_attr( $_POST['weixin'] ) );
+
+	if ( ! empty( $_POST['weixinqr'] ) )
+		wp_update_user( array ('ID' => $current_user->id, 'weixinqr' => esc_attr( $_POST['weixinqr'] ) ) ) ;
+		update_user_meta( $current_user->ID, 'weixinqr', esc_attr( $_POST['weixinqr'] ) );
+
+	if ( ! empty( $_POST['phone'] ) )
+		wp_update_user( array ('ID' => $current_user->id, 'phone' => esc_attr( $_POST['phone'] ) ) ) ;
+		update_user_meta( $current_user->ID, 'phone', esc_attr( $_POST['phone'] ) );
+
+	if ( ! empty( $_POST['remark'] ) )
+		wp_update_user( array ('ID' => $current_user->id, 'remark' => esc_attr( $_POST['remark'] ) ) ) ;
 		update_user_meta( $current_user->ID, 'remark', esc_attr( $_POST['remark'] ) );
 
 	if ( count($error) == 0 ) {
@@ -78,15 +97,15 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POS
 		<form name="profile" id="your-profile" action="" method="post" autocomplete="off" enctype="multipart/form-data">
 			<p class="fp form-username">
 				<label for="nickname"><?php _e( '用户名', 'begin' ); ?></label>
-				<input class="text-input bky" name="user_login" type="text" id="user_login" disabled="disabled" value="<?php echo $current_user->user_login; ?>" /><span class="description"><?php _e( '不可更改', 'begin' ); ?></span>
+				<input class="text-input" name="user_login" type="text" id="user_login" disabled="disabled" value="<?php echo $current_user->user_login; ?>" /><span class="description"><?php _e( '不可更改', 'begin' ); ?></span>
 			</p>
 			<p class="fp form-username">
 				<label for="nickname"><?php _e( '昵称', 'begin' ); ?><i class="be be-star"></i></label>
-				<input class="text-input dah" name="nickname" type="text" id="nickname" value="<?php the_author_meta( 'nickname', $current_user->ID ); ?>" />
+				<input class="text-input" name="nickname" type="text" id="nickname" value="<?php the_author_meta( 'nickname', $current_user->ID ); ?>" required="required" /><span class="description"><?php _e( '必填', 'begin' ); ?></span>
 			</p>
 			<p class="fp form-username">
 				<label for="first_name"><?php _e( '名字', 'begin' ); ?></label>
-				<input class="text-input dah" name="first_name" type="text" id="first_name" value="<?php the_author_meta( 'first_name', $current_user->ID ); ?>" /><span class="description"><?php _e( '字母或数字', 'begin' ); ?></span>
+				<input class="text-input" name="first_name" type="text" id="first_name" value="<?php the_author_meta( 'first_name', $current_user->ID ); ?>" />
 			</p>
 			<p class="fp form-username">
 				<label for="display_name"><?php _e( '公开显示名', 'begin' ); ?></label>
@@ -102,75 +121,96 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POS
 					<?php endforeach; ?>
 				</select>
 			</p>
+			<p class="fp form-email<?php $current_user = wp_get_current_user(); if ( empty( $current_user->user_email ) ) { ?> bind-tip"<?php } ?>">
+				<label for="email"><?php _e( '邮箱地址', 'begin' ); ?><i class="be be-star"></i></label>
+				<input class="text-input" name="email" type="text" id="email" value="<?php the_author_meta( 'user_email', $current_user->ID ); ?>" required="required" /><span class="description"><?php _e( '必填', 'begin' ); ?></span>
+			</p>
 			<!--
 			<p class="fp form-username">
 				<label for="display_name"><?php _e( '输入显示名', 'begin' ); ?></label>
-				<input class="text-input dah" name="display_name" type="text" id="display_name" value="<?php the_author_meta( 'display_name', $current_user->ID ); ?>" />
+				<input class="text-input" name="display_name" type="text" id="display_name" value="<?php the_author_meta( 'display_name', $current_user->ID ); ?>" />
 			</p>
 			-->
 			<p class="fp form-password">
 				<label for="pass1"><?php _e( '新密码', 'begin' ); ?></label>
-				<input class="text-input user_pwd1 dah" name="pass1" type="password" id="pass1" />
+				<input class="text-input user_pwd1" name="pass1" type="password" id="pass1" />
 				<span class="togglepass"><i class="be be-eye"></i></span>
 			</p>
 			<p class="fp form-password">
 				<label for="pass2"><?php _e( '重复密码', 'begin' ); ?></label>
-				<input class="text-input user_pwd2 dah" name="pass2" type="password" id="pass2" />
+				<input class="text-input user_pwd2" name="pass2" type="password" id="pass2" />
 				<span class="togglepass"><i class="be be-eye"></i></span>
-			</p>
-			<p class="fp form-email">
-				<label for="email"><?php _e( '电子邮件', 'begin' ); ?><i class="be be-star"></i></label>
-				<input class="text-input dah" name="email" type="text" id="email" value="<?php the_author_meta( 'user_email', $current_user->ID ); ?>" />
 			</p>
 			<p class="fp form-userimg">
 				<label for="url"><?php _e( '我的图片', 'begin' ); ?></label>
-				<input class="text-input dah" name="userimg" type="text" id="userimg" value="<?php the_author_meta( 'userimg', $current_user->ID ); ?>" />
+				<input class="text-input" name="userimg" type="text" id="userimg" value="<?php the_author_meta( 'userimg', $current_user->ID ); ?>" />
 			</p>
 			<p class="fp form-url">
 				<label for="url"><?php _e( '我的网站', 'begin' ); ?></label>
-				<input class="text-input dah" name="url" type="text" id="url" value="<?php the_author_meta( 'user_url', $current_user->ID ); ?>" />
+				<input class="text-input" name="url" type="text" id="url" value="<?php the_author_meta( 'user_url', $current_user->ID ); ?>" />
 			</p>
+
+			<p class="fp form-qq">
+				<label for="qq"><?php _e( '我的QQ', 'begin' ); ?></label>
+				<input class="text-input" name="qq" type="text" id="qq" value="<?php the_author_meta( 'qq', $current_user->ID ); ?>" />
+			</p>
+			<p class="fp form-weixin">
+				<label for="weixin"><?php _e( '我的微信', 'begin' ); ?></label>
+				<input class="text-input" name="weixin" type="text" id="weixin" value="<?php the_author_meta( 'weixin', $current_user->ID ); ?>" />
+			</p>
+			<p class="fp form-weixinqr">
+				<label for="weixinqr"><?php _e( '微信二维码', 'begin' ); ?></label>
+				<input class="text-input" name="weixinqr" type="text" id="weixinqr" value="<?php the_author_meta( 'weixinqr', $current_user->ID ); ?>" />
+			</p>
+
+			<p class="fp form-phone">
+				<label for="phone"><?php _e( '我的电话', 'begin' ); ?></label>
+				<input class="text-input" name="phone" type="text" id="phone" value="<?php the_author_meta( 'phone', $current_user->ID ); ?>" />
+			</p>
+
 			<p class="fp form-userimg">
 				<label for="remark"><?php _e( '备注信息', 'begin' ); ?></label>
-				<input class="text-input dah" name="remark" type="text" id="remark" value="<?php the_author_meta( 'remark', $current_user->ID ); ?>" />
+				<input class="text-input" name="remark" type="text" id="remark" value="<?php the_author_meta( 'remark', $current_user->ID ); ?>" />
 			</p>
 			<p class="fp form-textarea">
 				<label for="description"><?php _e( '个人说明', 'begin' ); ?></label>
-				<textarea name="description" id="description" class="des-textarea dah" rows="3"><?php the_author_meta( 'description', $current_user->ID ); ?></textarea>
+				<textarea name="description" id="description" class="des-textarea" rows="3"><?php the_author_meta( 'description', $current_user->ID ); ?></textarea>
 			</p>
+				
+			<?php if ( get_option( 'show_avatars' ) ) { ?>
+				<p class="fp form-textarea">
+					<?php _e( '设置头像', 'begin' ); ?>
+				</p>
 
-			<p class="fp form-textarea">
-				<?php _e( '设置头像', 'begin' ); ?>
-			</p>
+				<p class="form-avatar load">
+					<?php 
+						global $current_user; wp_get_current_user();
+						if (zm_get_option('cache_avatar')):
+							echo begin_avatar( $current_user->user_email, 96, '', $current_user->display_name);
+						else :
+							echo get_avatar( $current_user->user_email, 96, '', $current_user->display_name);
+						endif;
+					?>
+					<?php do_action('be_show_user_profile', $current_user); ?>
 
-			<p class="form-avatar load">
-				<?php 
-					global $current_user; wp_get_current_user();
-					if (zm_get_option('cache_avatar')):
-						echo begin_avatar( $current_user->user_email, 96, '', $current_user->display_name);
-					else :
-						echo get_avatar( $current_user->user_email, 96, '', $current_user->display_name);
-					endif;
-				?>
-				<?php do_action('be_show_user_profile', $current_user); ?>
+					<?php if ( get_option( 'show_avatars' ) ) { ?>
+						<div class="my-gravatar-apply">
+							<?php 
+								if ( zm_get_option( 'gravatar_url' ) == 'avatar_zh' ) {
+									$gravatarurl = 'https://weavatar.com/';
+								} else {
+									$gravatarurl = 'https://cn.gravatar.com/';
+								}
+								echo '<a class="bet-btn" href="' . $gravatarurl . '" rel="external nofollow" target="_blank">' . sprintf(__( '申请头像', 'begin' )) . '</a>';
+							?>
+						</div>
+					<?php } ?>
 
-				<?php if ( get_option( 'show_avatars' ) ) { ?>
-					<div class="my-gravatar-apply">
-						<?php 
-							if ( zm_get_option( 'gravatar_url' ) == 'zh' ) {
-								$gravatarurl = 'https://cravatar.cn/';
-							} else {
-								$gravatarurl = 'https://cn.gravatar.com/';
-							}
-							echo '<a class="bk bet-btn dah" href="' . $gravatarurl . '" rel="external nofollow" target="_blank">' . sprintf(__( '申请头像', 'begin' )) . '</a>';
-						?>
-					</div>
-				<?php } ?>
-
-				<p class="clear"></p>
-			</p>
+					<p class="clear"></p>
+				</p>
+			<?php } ?>
 			<p class="form-submit">
-				<input name="updateuser" type="submit" id="updateuser" class="submit button dah hz bet-btn<?php echo cur(); ?>" value="<?php _e( '更新个人信息', 'begin' ); ?>" />
+				<input name="updateuser" type="submit" id="updateuser" class="submit button bet-btn<?php echo cur(); ?>" value="<?php _e( '更新个人信息', 'begin' ); ?>" />
 				<?php wp_nonce_field( 'update-user' ) ?>
 				<input name="action" type="hidden" id="action" value="update-user" />
 			</p>

@@ -2,19 +2,26 @@
 <div class="clear"></div>
 <div class="begin-tabs-content" <?php aos_a(); ?>>
 	<?php 
-		if ( ! zm_get_option( 'tabs_mode' ) || ( zm_get_option( 'tabs_mode' ) == 'imglist' ) ) {
+		if ( ! be_get_option( 'tabs_mode' ) || ( be_get_option( 'tabs_mode' ) == 'imglist' ) ) {
 			$style = 'imglist';
 		}
-		if ( zm_get_option( 'tabs_mode' ) == 'grid' ) {
+		if ( be_get_option( 'tabs_mode' ) == 'grid' ) {
 			$style = 'grid';
 		}
-		if ( zm_get_option( 'tabs_mode' ) == 'default' ) {
+		if ( be_get_option( 'tabs_mode' ) == 'default' ) {
 			$style = 'default';
 		}
-		if ( zm_get_option( 'tabs_mode' ) == 'photo' ) {
+		if ( be_get_option( 'tabs_mode' ) == 'photo' ) {
 			$style = 'photo';
 		}
-		echo do_shortcode( '[be_ajax_post style="' . $style .'" terms="' . zm_get_option( 'home_tab_cat_id' ) . '" posts_per_page="' . zm_get_option( 'tab_b_n' ) . '" column="' . zm_get_option( 'home_tab_code_f' ) . '" btn_all="no"]' );
+		if ( ! be_get_option( 'home_tab_cat_chil' ) || ( be_get_option( 'home_tab_cat_chil' ) == 'true' ) ) {
+			$children = 'true';
+		}
+		if ( be_get_option( 'home_tab_cat_chil' ) == 'false' ) {
+			$children = 'false';
+		}
+		$top = be_get_option( 'no_cat_top' ) ? '1' : '0';
+		echo do_shortcode( '[be_ajax_post style="' . $style .'" terms="' . be_get_option( 'home_tab_cat_id' ) . '" posts_per_page="' . be_get_option( 'tab_b_n' ) . '" column="' . be_get_option( 'home_tab_code_f' ) . '" children="' . $children . '" mid="1" btn_all="no" top="' .$top . '"]' );
 	?>
 	<div class="clear"></div>
 </div>

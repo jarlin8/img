@@ -1,63 +1,70 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-<?php if ( zm_get_option( 'group_assist' ) ) { ?>
-<div class="g-row g-line group-assist-line sort" name="<?php echo zm_get_option( 'group_assist_s' ); ?>" <?php aos(); ?>>
+<?php if ( co_get_option( 'group_assist' ) ) {
+	if ( ! co_get_option( 'assist_bg' ) || ( co_get_option( 'assist_bg' ) == 'auto' ) ) {
+		$bg = '';
+	}
+	if ( co_get_option( 'assist_bg' ) == 'white' ) {
+		$bg = ' group-white';
+	}
+	if ( co_get_option( 'assist_bg' ) == 'gray' ) {
+		$bg = ' group-gray';
+	}
+?>
+<div class="g-row g-line group-assist-line<?php echo $bg; ?>" <?php aos(); ?>>
 	<div class="g-col">
 		<div class="group-assist-box">
 			<div class="group-title" <?php aos_b(); ?>>
-				<?php if ( ! zm_get_option( 'group_assist_t') == '' ) { ?>
-					<h3><?php echo zm_get_option( 'group_assist_t' ); ?></h3>
+				<?php if ( ! co_get_option( 'group_assist_t') == '' ) { ?>
+					<h3><?php echo co_get_option( 'group_assist_t' ); ?></h3>
 				<?php } ?>
-				<?php if ( ! zm_get_option('group_assist_des') == '' ) { ?>
-					<div class="group-des"><?php echo zm_get_option( 'group_assist_des' ); ?></div>
+				<?php if ( ! co_get_option('group_assist_des') == '' ) { ?>
+					<div class="group-des"><?php echo co_get_option( 'group_assist_des' ); ?></div>
 				<?php } ?>
 				<div class="clear"></div>
 			</div>
 			<div class="group-assist-wrap">
 				<?php 
-					$i = 0;
-					$posts = get_posts(
-						array(
-							'post_type' => 'any',
-							'orderby' => 'menu_order',
-							'orderby' => 'date',
-							'order' => 'ASC',
-							'meta_key' => 'assist_ico',
-							'numberposts' => '60'
-						)
-					);
-
-					if ( $posts ) : foreach( $posts as $post ) : setup_postdata( $post );
-					$i++;
+					$assist = ( array ) co_get_option( 'group_assist_item' );
+					foreach ( $assist as $items ) {
 				?>
-				<?php
-					$assist_ico = get_post_meta( get_the_ID(), 'assist_ico', true );
-				?>
+					<div class="group-assist-main-box">
+						<div class="boxs6">
+							<div class="group-assist-main">
+								<?php if ( ! empty( $items['group_assist_url'] ) ) { ?>
+									<a href="<?php echo $items['group_assist_url']; ?>" rel="bookmark" <?php echo goal(); ?>>
+								<?php } ?>
 
-				<div class="group-assist-main-box">
-					<div class="group-assist-main bkh ass-<?php echo $i; ?>" <?php aos_b(); ?>>
-						<?php if ( zm_get_option( 'group_assist_url' ) ) { ?><a href="<?php echo get_permalink(); ?>" rel="bookmark"><?php } ?>
-						<div class="group-assist">
-							<div class="group-assist-content">
-								<h4 class="group-assist-title gat"><?php the_title(); ?></h4>
-								<div class="group-assist-des">
-									<?php
-										$content = get_the_content();
-										$content = strip_shortcodes( $content );
-										echo wp_trim_words( $content, '260', '' );
-									?>
+								<div class="group-assist" <?php aos_b(); ?>>
+									<div class="group-assist-content">
+										<h4 class="group-assist-title gat">
+											<?php if ( ! empty( $items['group_assist_title'] ) ) { ?>
+												<?php echo $items['group_assist_title']; ?>
+											<?php } ?>
+										</h4>
+
+										<div class="group-assist-des">
+											<?php if ( ! empty( $items['group_assist_des'] ) ) { ?>
+												<?php echo $items['group_assist_des']; ?>
+											<?php } ?>
+										</div>
+
+									</div>
+
+									<div class="clear"></div>
 								</div>
+								<div class="group-assist-ico">
+									<?php if ( ! empty( $items['group_assist_ico'] ) ) { ?>
+										<i class="<?php echo $items['group_assist_ico']; ?>" style="color:<?php echo $items['group_assist_color']; ?>"></i>
+									<?php } ?>
+								</div>
+								<?php if ( ! empty( $items['group_assist_url'] ) ) { ?></a><?php } ?>
 							</div>
-							<div class="group-assist-ico"><i class="<?php echo $assist_ico; ?>"></i></div>
-							<div class="clear"></div>
 						</div>
-						<?php if (zm_get_option( 'group_assist_url' ) ) { ?></a><?php } ?>
-						<?php edit_post_link('<i class="be be-editor"></i>', '<span class="edit-assist-but group-edit bgt">', '</span>' ); ?>
 					</div>
-				</div>
-				<?php endforeach; endif; ?>
-				<?php wp_reset_query(); ?>
+				<?php } ?>
 			</div>
 		</div>
+		<?php co_help( $text = '公司主页 → 支持', $number = 'group_assist_s' ); ?>
 	</div>
 </div>
 <?php } ?>

@@ -1,63 +1,91 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-<?php if (zm_get_option('group_cat_c')) { ?>
-<div class="g-row g-line group-cat-c sort" name="<?php echo zm_get_option('group_cat_c_s'); ?>" <?php aos(); ?>>
+<?php if ( co_get_option( 'group_cat_c' ) ) {
+	if ( ! co_get_option( 'cat_c_bg' ) || ( co_get_option( 'cat_c_bg' ) == 'auto' ) ) {
+		$bg = '';
+	}
+	if ( co_get_option( 'cat_c_bg' ) == 'white' ) {
+		$bg = ' group-white';
+	}
+	if ( co_get_option( 'cat_c_bg' ) == 'gray' ) {
+		$bg = ' group-gray';
+	}
+?>
+<div class="g-row g-line group-cat-c<?php echo $bg; ?>" <?php aos(); ?>>
 	<div class="g-col">
 		<div class="group-cat">
-			<?php $display_categories =  explode(',',zm_get_option('group_cat_c_id') ); foreach ($display_categories as $category) { ?>
-			<?php if (zm_get_option('group_no_cat_child')) { ?>
-				<?php query_posts( array('cat' => $category ) ); ?>
-				<?php query_posts( array( 'showposts' => 1, 'category__in' => array(get_query_var('cat')), 'post__not_in' => $do_not_cat ) ); ?>
-			<?php } else { ?>
-				<?php query_posts( array( 'showposts' => 1, 'cat' => $category, 'post__not_in' => $do_not_cat ) ); ?>
-			<?php } ?>
+			<?php $categories =  explode(',', co_get_option( 'group_cat_c_id' ) );
+				foreach ( $categories as $category ) {
+				$cat = co_get_option( 'group_no_cat_child' ) ? 'category' : 'category__in';
+				$becat = $category;
+				if ( function_exists( 'icl_object_id' ) && defined( 'ICL_LANGUAGE_CODE' ) ) {
+					$becat = icl_object_id( $category, 'category', true );
+				}
+			?>
 
-			<div class="gr2">
-				<div class="gr-cat-box">
-					<h3 class="gr-cat-title" <?php aos_b(); ?>><a href="<?php echo get_category_link($category);?>"><?php single_cat_title(); ?><span class="gr-cat-more"><i class="be be-more"></i></span></a></h3>
-					<div class="clear"></div>
-					<div class="gr-cat-site">
-						<?php if (zm_get_option('group_cat_c_img')) { ?>
-							<?php while ( have_posts() ) : the_post(); ?>
-								<figure class="gr-thumbnail" <?php aos_b(); ?>><?php zm_long_thumbnail(); ?></figure>
-								<div class="be-aos" <?php aos_b(); ?>><?php the_title( sprintf( '<h2 class="gr-title"><a class="srm" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?></div>
-							<?php endwhile; ?>
+				<div class="gr2">
+					<div class="gr-cat-box">
+						<h3 class="gr-cat-title" <?php aos_f(); ?>><a href="<?php echo get_category_link( $category ); ?>" rel="bookmark" <?php echo goal(); ?>><?php echo get_cat_name( $becat ); ?><span class="gr-cat-more"><i class="be be-more"></i></span></a></h3>
+						<div class="clear"></div>
+						<div class="gr-cat-area">
+							<?php if (co_get_option('group_cat_c_img')) { ?>
+								<?php
+									$imgt = get_posts( array(
+										'posts_per_page' => 1,
+										'post_status'    => 'publish',
+										$cat             => $category,
+										'post__not_in'   => $do_not_cat,
+									) );
+								?>
 
-							<div class="clear"></div>
-							<ul class="gr-cat-list" <?php aos_b(); ?>>
-								<?php if (zm_get_option('group_no_cat_child')) { ?>
-									<?php query_posts( array( 'showposts' => zm_get_option('group_cat_c_n'), 'cat' => $category, 'offset' => 1, 'category__in' => array(get_query_var('cat')), 'post__not_in' => $do_not_cat ) ); ?>
-								<?php } else { ?>
-									<?php query_posts( array( 'showposts' => zm_get_option('group_cat_c_n'), 'cat' => $category, 'offset' => 1, 'post__not_in' => $do_not_cat ) ); ?>
-								<?php } ?>
-								<?php while ( have_posts() ) : the_post(); ?>
-									<li class="list-date"><time datetime="<?php echo get_the_date('Y-m-d'); ?> <?php echo get_the_time('H:i:s'); ?>"><?php the_time('m/d') ?></time></li>
-									<?php the_title( sprintf( '<li class="list-title"><a class="srm" href="%s" rel="bookmark">' . t_mark(), esc_url( get_permalink() ) ), '</a></li>' ); ?>
-								<?php endwhile; ?>
-								<?php wp_reset_query(); ?>
-							</ul>
-						<?php } else { ?>
-							<div class="clear"></div>
-							<ul class="gr-cat-list" <?php aos_b(); ?>>
-								<?php if (zm_get_option('group_no_cat_child')) { ?>
-									<?php query_posts( array( 'showposts' => zm_get_option('group_cat_c_n'), 'cat' => $category, 'offset' => 0, 'category__in' => array(get_query_var('cat')),  'post__not_in' => $do_not_cat ) ); ?>
-								<?php } else { ?>
-									<?php query_posts( array( 'showposts' => zm_get_option('group_cat_c_n'), 'cat' => $category, 'offset' => 0, 'post__not_in' => $do_not_cat ) ); ?>
-								<?php } ?>
-								<?php while ( have_posts() ) : the_post(); ?>
-									<li class="list-date"><?php the_time('m/d') ?></li>
-									<?php the_title( sprintf( '<li class="list-title"><a class="srm" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></li>' ); ?>
-								<?php endwhile; ?>
-								<?php wp_reset_query(); ?>
-							</ul>
+								<?php foreach ( $imgt as $post ) : setup_postdata( $post ); ?>
+									<figure class="gr-thumbnail" <?php aos_b(); ?>><?php echo zm_long_thumbnail(); ?></figure>
+									<div class="be-aos" <?php aos_f(); ?>><?php the_title( sprintf( '<h2 class="gr-title"><a class="srm" href="%s" rel="bookmark" ' . goal() . '>', esc_url( get_permalink() ) ), '</a></h2>' ); ?></div>
+								<?php endforeach; ?>
+								<?php wp_reset_postdata(); ?>
 
-						<?php } ?>
+								<div class="clear"></div>
+								<ul class="gr-cat-list" <?php aos_f(); ?>>
+									<?php
+										$imgt = get_posts( array(
+											'posts_per_page' => co_get_option( 'group_cat_c_n' ),
+											'post_status'    => 'publish',
+											$cat             => $category,
+											'post__not_in'   => $do_not_cat,
+											'offset'         => 1,
+										) );
+									?>
+
+									<?php foreach ( $imgt as $post ) : setup_postdata( $post ); ?>
+										<li class="list-date"><time datetime="<?php echo get_the_date( 'Y-m-d' ); ?> <?php echo get_the_time( 'H:i:s' ); ?>"><?php the_time( 'm/d' ) ?></time></li>
+										<?php the_title( sprintf( '<li class="list-title"><h2 class="group-list-title"><a class="srm" href="%s" rel="bookmark" ' . goal() . '>' . t_mark(), esc_url( get_permalink() ) ), '</a></h2></li>' ); ?>
+									<?php endforeach; ?>
+									<?php wp_reset_postdata(); ?>
+								</ul>
+							<?php } else { ?>
+								<div class="clear"></div>
+								<ul class="gr-cat-list" <?php aos_f(); ?>>
+									<?php
+										$imgb = get_posts( array(
+											'posts_per_page' => co_get_option( 'group_cat_c_n' ),
+											'post_status'    => 'publish',
+											$cat             => $category,
+											'post__not_in'   => $do_not_cat,
+										) );
+									?>
+									<?php foreach ( $imgb as $post ) : setup_postdata( $post ); ?>
+										<li class="list-date"><time datetime="<?php echo get_the_date( 'Y-m-d' ); ?> <?php echo get_the_time( 'H:i:s' ); ?>"><?php the_time( 'm/d' ) ?></time></li>
+										<?php the_title( sprintf( '<li class="list-title"><h2 class="group-list-title"><a class="srm" href="%s" rel="bookmark" ' . goal() . '>', esc_url( get_permalink() ) ), '</a></h2></li>' ); ?>
+									<?php endforeach; ?>
+									<?php wp_reset_postdata(); ?>
+								</ul>
+							<?php } ?>
+						</div>
 					</div>
 				</div>
-
-			</div>
 			<?php } ?>
 			<div class="clear"></div>
 		</div>
+		<?php co_help( $text = '公司主页 → 新闻资讯C', $number = 'group_cat_c_s' ); ?>
 	</div>
 </div>
 <?php } ?>

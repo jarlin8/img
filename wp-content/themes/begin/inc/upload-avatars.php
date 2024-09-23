@@ -70,7 +70,7 @@ class be_user_avatars {
 		}
 
 		$author_class = is_author( $user_id ) ? ' current-author' : '' ;
-		$avatar = "<img alt='" . esc_attr( $alt ) . "' src='" . $local_avatars[$size] . "' class='avatar avatar-{$size}{$author_class} photo' height='{$size}' width='{$size}' />";
+		$avatar = "<img alt='" . esc_attr( $alt ) . "' src='" . $local_avatars[$size] . "' class='avatar avatar-{$size}{$author_class} photo' height='{$size}' width='{$size}'>";
 
 		return apply_filters( 'be_user_avatar', $avatar, $user_id );
 	}
@@ -118,9 +118,9 @@ class be_user_avatars {
 				if ( zm_get_option('all_local_avatars') || current_user_can( 'upload_files' ) ) {
 					wp_nonce_field( 'be_user_avatar_nonce', '_be_user_avatar_nonce', false );
 					if ( empty( $profileuser->be_user_avatar ) ) {
-						echo '<p><label for="be-local-avatar" class="update-avatar dah bk bet-btn' . cur() . '">' . sprintf(__( '上传头像', 'begin' )). '</label><input type="text" name="userdefinedFile" id="userfile" class="bky" value="' . sprintf(__( '未选择文件', 'begin' )). '"><input type="file" name="be-user-avatar" id="be-local-avatar" style="display: none;" /></p>';
+						echo '<p><label for="be-local-avatar" class="update-avatar bet-btn' . cur() . '">' . sprintf(__( '上传头像', 'begin' )). '</label><input type="text" name="userdefinedFile" id="userfile" value="' . sprintf(__( '未选择文件', 'begin' )). '"><input type="file" name="be-user-avatar" id="be-local-avatar" style="display: none;" /></p>';
 					} else {
-						echo '<p><label for="be-local-avatar" class="update-avatar dah bk bet-btn' . cur() . '">' . sprintf(__( '更换头像', 'begin' )). '</label><input type="text" name="userdefinedFile" id="userfile" class="bky" value="' . sprintf(__( '未选择文件', 'begin' )). '"><input type="file" name="be-user-avatar" id="be-local-avatar" style="display: none;" /></p>';
+						echo '<p><label for="be-local-avatar" class="update-avatar bet-btn' . cur() . '">' . sprintf(__( '更换头像', 'begin' )). '</label><input type="text" name="userdefinedFile" id="userfile" value="' . sprintf(__( '未选择文件', 'begin' )). '"><input type="file" name="be-user-avatar" id="be-local-avatar" style="display: none;" /></p>';
 					}
 					if ( empty( $profileuser->be_user_avatar ) ) {
 						echo '<p class="no-avatar">' . sprintf(__( '未设置本地头像', 'begin' )). '</p>';

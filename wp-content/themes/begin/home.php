@@ -1,18 +1,17 @@
 <?php 
 if ( ! defined( 'ABSPATH' ) ) exit;
-if ( ! zm_get_option( 'layout' ) || ( zm_get_option( 'layout' ) == 'blog' ) ) {
+if ( ! be_get_option( 'layout' ) || ( be_get_option( 'layout' ) == 'blog' ) ) {
 	get_template_part( 'template/blog' );
 }
-if ( zm_get_option( 'layout' ) == 'img' ) {
+if ( be_get_option( 'layout' ) == 'img' ) {
 	get_template_part( 'template/grid' );
 }
-if ( zm_get_option( 'layout' ) == 'grid' ) {
+if ( be_get_option( 'layout' ) == 'grid' ) {
 	get_template_part( 'template/grid-cat' );
 }
-if ( zm_get_option( 'layout' ) == 'cms' ) {
+if ( be_get_option( 'layout' ) == 'cms' ) {
 	get_template_part( 'template/cms' );
 }
-if ( zm_get_option( 'layout' ) == 'group' ) {
+if ( be_get_option( 'layout' ) == 'group' ) {
 	get_template_part( 'template/group' );
 }
-?>

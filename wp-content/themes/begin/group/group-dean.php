@@ -1,53 +1,73 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-<?php if (zm_get_option('dean')) { ?>
-<div class="g-row g-line deanm-line sort" name="<?php echo zm_get_option('dean_s'); ?>" <?php aos(); ?>>
+<?php if ( co_get_option( 'dean' ) ) {
+	if ( ! co_get_option( 'dean_bg' ) || ( co_get_option( 'dean_bg' ) == 'auto' ) ) {
+		$bg = '';
+	}
+	if ( co_get_option( 'dean_bg' ) == 'white' ) {
+		$bg = ' group-white';
+	}
+	if ( co_get_option( 'dean_bg' ) == 'gray' ) {
+		$bg = ' group-gray';
+	}
+?>
+<div class="g-row g-line deanm-line<?php echo $bg; ?>" <?php aos(); ?>>
 	<div class="g-col">
 		<div class="deanm">
 			<div class="group-title" <?php aos_b(); ?>>
-				<?php if ( ! zm_get_option('dean_t') == '' ) { ?>
-					<h3><?php echo zm_get_option('dean_t'); ?></h3>
+				<?php if ( ! co_get_option( 'dean_t' ) == '' ) { ?>
+					<h3><?php echo co_get_option( 'dean_t' ); ?></h3>
 				<?php } ?>
-				<?php if ( ! zm_get_option('dean_des') == '' ) { ?>
-					<div class="group-des"><?php echo zm_get_option('dean_des'); ?></div>
+				<?php if ( ! co_get_option( 'dean_des' ) == '' ) { ?>
+					<div class="group-des"><?php echo co_get_option( 'dean_des' ); ?></div>
 				<?php } ?>
 				<div class="clear"></div>
 			</div>
 			<div class="deanm-main">
-				<?php $posts = get_posts( array( 'post_type' => 'any', 'orderby' => 'menu_order', 'order' => 'ASC', 'meta_key' => 'pr_a', 'numberposts' => '60') ); if ($posts) : foreach( $posts as $post ) : setup_postdata( $post ); ?>
-					<?php 
-						$pr_a = get_post_meta(get_the_ID(), 'pr_a', true);
-						$pr_b = get_post_meta(get_the_ID(), 'pr_b', true);
-						$pr_c = get_post_meta(get_the_ID(), 'pr_c', true);
-						$pr_d = get_post_meta(get_the_ID(), 'pr_d', true);
-						$pr_e = get_post_meta(get_the_ID(), 'pr_e', true);
-						$pr_f = get_post_meta(get_the_ID(), 'pr_f', true);
-					?>
-				<div class="deanm deanmove edit-buts deanmove-<?php echo zm_get_option('deanm_f'); ?> <?php if ( !zm_get_option('deanm_fm') ) { ?> deanm-jd<?php } else { ?> deanm-fm<?php } ?>">
-					<div class="deanm-box da">
-						<?php edit_post_link('<i class="be be-editor"></i>', '<span class="edit-link-but group-edit">', '</span>' ); ?>
-						<div class="deanquan">
-							<div class="de-back lazy">
-								<div class="thumbs-de-back" style="background-image: url(<?php if ( get_post_meta(get_the_ID(), 'pr_f', true) ) { ?><?php echo $pr_f; ?><?php } else { ?><?php echo get_template_directory_uri() . '/img/default/random/320.jpg'; ?><?php } ?>);" <?php aos_g(); ?>></div>
-								<div class="de-b bgt bz"><?php echo $pr_a; ?></div>
+				<?php 
+					$deanm = ( array ) co_get_option( 'group_dean_item' );
+					foreach ( $deanm as $items ) {
+				?>
+					<div class="deanm deanmove begd edit-buts deanmove-<?php echo co_get_option( 'deanm_f' ); ?><?php if ( co_get_option( 'deanm_fm' ) ) { ?> deanm-jd<?php } else { ?> deanm-fm<?php } ?>">
+						<div class="boxs6">
+							<div class="deanm-box">
+
+								<div class="de-a" <?php aos_b(); ?>>
+									<?php if ( ! empty( $items['group_dean_t1'] ) ) { ?>
+										<?php echo $items['group_dean_t1']; ?>
+									<?php } ?>
+								</div>
+						
+								<div class="deanquan begd">
+									<div class="de-back lazy<?php if ( ! empty( $items['group_dean_title'] ) ) { ?> de-back-fd<?php } ?>">
+										<?php if ( ! empty( $items['group_dean_img'] ) ) { ?>
+											<div class="thumbs-de-back" style="background-image: url(<?php echo $items['group_dean_img']; ?>);" <?php aos_g(); ?>></div>
+										<?php } ?>
+										<?php if ( ! empty( $items['group_dean_title'] ) ) { ?>
+											<div class="de-b"><?php echo $items['group_dean_title']; ?></div>
+										<?php } ?>
+									</div>
+								</div>
+								<div class="clear"></div>
+								<?php if ( ! empty( $items['group_dean_t2'] ) ) { ?>
+									<div class="de-c<?php if ( ! empty( $items['group_dean_l'] ) ) { ?> de-c-l<?php } ?>" <?php aos_b(); ?>><?php echo wpautop( $items['group_dean_t2'] ); ?></div>
+								<?php } ?>
+
+								<?php if ( ! empty( $items['group_dean_btn'] ) ) { ?>
+									<div class="button-top"></div>
+									<div class="de-button" <?php aos_b(); ?>>
+										<a class="dah fd" href="<?php echo $items['group_dean_url']; ?>" target="_blank" rel="external nofollow"><?php echo $items['group_dean_btn']; ?></a>
+									</div>
+									<div class="button-bottom"></div>
+								<?php } ?>
+								<div class="deanm-bottom"></div>
 							</div>
 						</div>
-						<div class="clear"></div>
-						<div class="de-a" <?php aos_b(); ?>><?php echo $pr_b; ?></div>
-						<div class="de-c" <?php aos_b(); ?>><?php echo $pr_c; ?></div>
-						<?php if ( get_post_meta(get_the_ID(), 'pr_e', true) ) { ?>
-							<div class="de-button" <?php aos_b(); ?>>
-								<a class="dah fd" href="<?php echo $pr_d; ?>" target="_blank" rel="external nofollow"><?php echo $pr_e; ?></a>
-							</div>
-						<?php } else { ?>
-							<div class="de-button-seat"></div>
-						<?php } ?>
 					</div>
-				</div>
-				<?php endforeach; endif; ?>
-				<?php wp_reset_query(); ?>
-				<div class="clear"></div>
+					<div class="clear"></div>
+				<?php } ?>
 			</div>
 		</div>
+		<?php co_help( $text = '公司主页 → 服务项目', $number = 'dean_s' ); ?>
 		<div class="clear"></div>
 	</div>
 </div>

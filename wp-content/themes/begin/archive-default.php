@@ -7,15 +7,9 @@ get_header(); ?>
 
 <section id="primary" class="content-area">
 	<main id="main" class="be-main site-main<?php if (zm_get_option('post_no_margin')) { ?> domargin<?php } ?>" role="main">
-	<?php get_template_part( 'template/cat-top' ); ?>
-		<?php if ( ( zm_get_option( 'no_child' ) ) && is_category() ) { ?>
-			<?php 
-				$paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
-				query_posts( array( 'category__in' => array( get_query_var( 'cat' ) ), 'paged' => $paged ) );
-			?>
-		<?php } ?>
+		<?php get_template_part( 'template/cat-top' ); ?>
 
-		<?php if ( zm_get_option( 'order_btu' ) ) { ?><?php be_order(); ?><?php } ?>
+		<?php be_exclude_child_cats(); ?>
 
 		<?php if ( have_posts() ) : ?>
 

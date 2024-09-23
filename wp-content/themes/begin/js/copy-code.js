@@ -1,6 +1,6 @@
 jQuery(document).ready(function() {
-	var copy_text_label = '<i class="be be-stack"></i>';
-	var copied_text_label = '<span class="dashicons dashicons-yes"></span> <i class="be be-clipboard"></i>';
+	var copy_text_label = '<i class="be be-clipboard"></i>';
+	var copied_text_label = '<span class="dashicons dashicons-yes"></span>';
 	var copyButton = '<div class="btn-clipboard bgt" title="Copy">' + copy_text_label + '</div>';
 	jQuery('pre').each(function() {
 		jQuery(this).wrap('<div class="codebox"/>');
@@ -22,7 +22,7 @@ jQuery(document).ready(function() {
 			event.trigger.innerHTML = copy_text_label;
 			jQuery('.codebox').removeClass('pre-loading');
 		},
-		1000);
+		500);
 	});
 
 	copyCode.on('error',

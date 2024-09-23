@@ -48,13 +48,13 @@ class BeginloginWEIBO {
 				$username = $str->screen_name;
 				$description = $str->description;
 				$userdata=array(
-					'user_login' => $login_name,
-					'user_email' => $login_name.'@sina.com',
+					'user_login'   => $login_name,
+					'user_email'   => '',
 					'display_name' => $username,
-					'user_pass' => $pass,
-					'role' => get_option('default_role'),
-					'nickname' => $username,
-					'description'=> $description
+					'user_pass'    => $pass,
+					'role'         => get_option('default_role'),
+					'nickname'     => $username,
+					'description'  => $description
 				);
 				$user_id = wp_insert_user( $userdata );
 				if ( is_wp_error( $user_id ) ) {

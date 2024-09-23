@@ -1,161 +1,93 @@
 <?php 
-// 首页幻灯
 if ( ! defined( 'ABSPATH' ) ) exit; ?>
-<?php if ( zm_get_option( 'slider' ) ) { ?>
-<div class="slideshow-box<?php if ( zm_get_option( 'slide_post' ) ) { ?> slide-post-box<?php } ?><?php if ( zm_get_option( 'slide_post_m' ) ) { ?> slide-post-m<?php } ?>">
+<?php if ( be_get_option( 'slider' ) ) {
+	$slider = ( array ) be_get_option( 'slider_home' );
+	foreach ( $slider as $items ) {
+		$slider_count = count( $slider );
+	}
+?>
+<div class="slideshow-box<?php if ( be_get_option( 'slide_post' ) ) { ?><?php if ( be_get_option( 'slide_post_m' ) ? ! wp_is_mobile() : true ) { ?> slide-post-box<?php } ?><?php } ?>">
 	<div id="slideshow" class="slideshow">
-		<?php if ( ! zm_get_option( 'slider_only_img' ) ) { ?>
-			<?php if ( ! zm_get_option( 'show_slider_video' ) ) { ?>
-				<div id="slider-home" class="owl-carousel slider-home slider-current be-wol">
-					<?php
-						$posts = get_posts( array(
-							'numberposts' => zm_get_option( 'slider_n' ),
-							'post_type' => 'any',
-							'meta_key' => 'show',
-							'orderby' => 'menu_order', 
-							'order' => 'DESC',
-							'ignore_sticky_posts' => 1
-						) );
-					?>
 
-					<?php if ($posts) : foreach( $posts as $post ) : setup_postdata( $post ); $do_not_duplicate[] = $post->ID; $do_show[] = $post->ID; ?>
-						<div id="post-<?php the_ID(); ?>" <?php post_class( 'post' ); ?>>
-							<?php $image = get_post_meta( get_the_ID(), 'show', true ); ?>
-							<?php $go_url = get_post_meta( get_the_ID(), 'show_url', true ); ?>
-							<?php $video = get_post_meta( get_the_ID(), 'slider_video', true ); ?>
+		<?php if ( ! be_get_option( 'show_slider_video' ) ) { ?>
+			<?php 
+				$slider = ( array ) be_get_option( 'slider_home' );
+				echo '<div id="slider-home" class="owl-carousel slider-home slider-current be-wol">';
+				foreach ( $slider as $items ) {
+					if ( ! empty( $items['slider_home_video'] ) ) {
+						$muted = ! $items['slider_home_audio'] ? ' muted' : '';
+						$autoplay = ( $slider_count < 2 ) ? ' autoplay' : '';
+						echo '<div class="slider-item slider-video-area">';
+						echo '<video loop' . $autoplay . ' controls' . $muted . '><source src="' . $items['slider_home_video'] . '" type="video/mp4"></video>';
+						echo '</div>';
 
-							<?php if ( get_post_meta( get_the_ID(), 'slider_video', true ) ) { ?>
-								<a data-fancybox class="slider-video-a" href="<?php echo $video; ?>">
-									<div class="slider-video-play slider-video-play-show">
-										<div class="slider-video-ico"></div>
-									</div>
-								</a>
-							<?php } ?>
+					} else {
+						if ( ! empty( $items['slider_home_img'] ) ) {
+							echo '<div class="slider-item">';
 
-							<?php if ( zm_get_option( 'slider_edit' ) ) { ?>
-								<a href="<?php the_permalink(); ?>" rel="bookmark"><img class="owl-lazy" data-src="<?php echo $image; ?>" alt="<?php the_title(); ?>" /></a>
-							<?php } else { ?>
-								<?php if ( zm_get_option('show_img_crop' ) ) { ?>
-									<?php if ( get_post_meta( get_the_ID(), 'show_url', true ) ) : ?>
-									<a href="<?php echo $go_url; ?>" target="_blank"><img class="owl-lazy" data-src="<?php echo get_template_directory_uri().'/prune.php?src='.$image.'&w='.zm_get_option( 'img_h_w' ).'&h='.zm_get_option( 'img_h_h' ).'&a='.zm_get_option( 'crop_top' ).'&zc=1'; ?>" alt="<?php the_title(); ?>" /></a>
-									<?php else: ?>
-									<a href="<?php the_permalink(); ?>" rel="bookmark"><img class="owl-lazy" data-src="<?php echo get_template_directory_uri().'/prune.php?src='.$image.'&w='.zm_get_option( 'img_h_w' ).'&h='.zm_get_option( 'img_h_h' ).'&a='.zm_get_option( 'crop_top' ).'&zc=1'; ?>" alt="<?php the_title(); ?>" /></a>
-									<?php endif; ?>
-								<?php } else { ?>
-									<?php if ( get_post_meta( get_the_ID(), 'show_url', true ) ) : ?>
-									<a href="<?php echo $go_url; ?>" target="_blank"><img class="owl-lazy" data-src="<?php echo $image; ?>" alt="<?php the_title(); ?>" /></a>
-									<?php else: ?>
-									<a href="<?php the_permalink(); ?>" rel="bookmark"><img class="owl-lazy" data-src="<?php echo $image; ?>" alt="<?php the_title(); ?>" /></a>
-									<?php endif; ?>
-								<?php } ?>
-							<?php } ?>
+							if ( be_get_option('show_img_crop' ) ) {
+								echo '<a href="' . $items['slider_home_url'] . '" rel="bookmark" ' . goal() . '><img class="owl-lazy" data-src="' . get_template_directory_uri() . '/prune.php?src=' . $items['slider_home_img'] . '&w=' . be_get_option( 'img_h_w' ) . '&h=' . be_get_option( 'img_h_h' ) . '&a=' . be_get_option( 'crop_top' ) . '&zc=1" alt="' . $items['slider_home_title'] . '"></a>';
+							} else {
+								echo '<a href="' . $items['slider_home_url'] . '" rel="bookmark" ' . goal() . '><img class="owl-lazy" data-src="' . $items['slider_home_img'] . '" alt="' . $items['slider_home_title'] . '"></a>';
+							}
 
-							<?php if ( get_post_meta( get_the_ID(), 'no_slide_title', true ) ) : ?>
-							<?php else: ?>
-								<?php if ( get_post_meta( get_the_ID(), 'slide_title', true ) ) : ?>
-								<?php $slide_title = get_post_meta( get_the_ID(), 'slide_title', true ); ?>
-									<p class="slider-home-title hz slider-home-title-custom"><?php echo $slide_title; ?></p>
-								<?php else: ?>
-									<p class="slider-home-title hz"><?php the_title(); ?></p>
-								<?php endif; ?>
-							<?php endif; ?>
-						</div>
-					<?php endforeach; ?>
-					<?php else : ?>
-						<div class="load slider-play">
-							<img class="show-slider-img ms bk" src="<?php echo zm_get_option( 'show_slider_img' ); ?>" alt="show">
-							<p class="slider-home-title hz"><?php _e( '暂无文章', 'begin' ); ?></p>
-						</div>
-					<?php endif; ?>
-					<?php wp_reset_query(); ?>
-				</div>
+							if ( ! empty( $items['slider_home_title'] ) ) {
+								echo '<p class="slider-home-title">' . $items['slider_home_title'] . '</p>';
+							}
+							echo '</div>';
+						}
+					}
+				}
+				echo '</div>';
 
-				<?php
-					$posts = get_posts( array(
-						'numberposts' => 1,
-						'post_type' => 'any',
-						'meta_key' => 'show',
-						'orderby' => 'menu_order', 
-						'order' => 'DESC',
-						'ignore_sticky_posts' => 1
-					) );
-				?>
+				echo '<div class="lazy-img ajax-owl-loading">';
+					foreach ( $slider as $items ) {
+						if ( be_get_option('show_img_crop' ) ) {
+							echo '<img src="' . get_template_directory_uri() . '/prune.php?src=' . $items['slider_home_img'] . '&w=' . be_get_option( 'img_h_w' ) . '&h=' . be_get_option( 'img_h_h' ) . '&a=' . be_get_option( 'crop_top' ) . '&zc=1" alt="lazy-img">';
+						} else {
+							echo '<img src="' . $items['slider_home_img'] . '" alt="lazy-img">';
+						}
+						break;
+					}
+				echo '</div>';
+			?>
 
-				<?php if ( $posts ) : foreach( $posts as $post ) : setup_postdata( $post ); ?>
-					<?php $image = get_post_meta( get_the_ID(), 'show', true ); ?>
-					<div class="lazy-img ajax-owl-loading">
-						<?php if ( zm_get_option( 'show_img_crop' ) ) { ?>
-							<img src="<?php echo get_template_directory_uri().'/prune.php?src='.$image.'&w='.zm_get_option( 'img_h_w' ).'&h='.zm_get_option( 'img_h_h' ).'&a='.zm_get_option( 'crop_top' ).'&zc=1'; ?>" />
-						<?php } else { ?>
-							<img src="<?php echo $image; ?>" />
-						<?php } ?>
-					</div>
-				<?php endforeach; endif; ?>
-				<?php wp_reset_query(); ?>
-
-			<?php } else { ?>
-				<div class="slider-video-box">
-					<?php echo do_shortcode( '[video mp4 = ' . zm_get_option( 'show_slider_video_url' ) . ' loop = "on" autoplay = 1 class = slider-video]' ); ?>
-				</div>
-			<?php } ?>
 		<?php } else { ?>
-			<div class="load slider-play">
-				<?php if ( zm_get_option( 'show_slider_video_url' ) ) { ?>
-					<a data-fancybox href="<?php echo zm_get_option( 'show_slider_video_url' ); ?>">
-				<?php } else { ?>
-					<a href="<?php echo zm_get_option( 'show_slider_img_url' ); ?>" rel="external nofollow" >
-				<?php } ?>
-				<img class="show-slider-img ms bk" src="<?php echo zm_get_option('show_slider_img'); ?>" alt="show">
-				<?php if ( zm_get_option('show_slider_video_url' ) ) { ?><div class="slider-video-ico"></div><?php } ?></a>
+
+			<div class="slider-video-box slider-videos">
+				<video class="slider-video" src="<?php echo be_get_option( 'show_slider_video_url' ); ?>" poster="<?php echo be_get_option( 'show_slider_video_img' ); ?>" autoplay="" loop="" muted="muted" playsinline="" controlslist="nodownload"></video>
 			</div>
 		<?php } ?>
-		<?php if ( zm_get_option( 'slide_progress') && !zm_get_option( 'show_slider_video' ) && !zm_get_option( 'slider_only_img' ) ) { ?><div class="slide-mete"><div class="slide-progress"></div></div><?php } ?>
+
+		<?php if ( be_get_option( 'slide_progress') && ! be_get_option( 'show_slider_video' ) && ! be_get_option( 'slider_only_img' ) && $slider_count !== 1 ) { ?><div class="slide-mete"><div class="slide-progress" style="-webkit-transition: width <?php echo be_get_option( 'owl_time' ); ?>ms;transition: width <?php echo be_get_option( 'owl_time' ); ?>ms;"></div></div><?php } ?>
 		<div class="clear"></div>
 	</div>
-	<?php if ( zm_get_option( 'slide_post' ) ) { ?>
-		<div class="slide-post-main">
-			<div class="slide-post-item">
-				<?php
-					$posts = get_posts( array(
-						'post_type'   => 'any',
-						'include'     => explode(',',zm_get_option('slide_post_id') ),
-						'orderby'     => 'menu_order', 
-						'order'       => 'DESC',
-						'ignore_sticky_posts' => 1
-					) );
-				?>
-				<?php if ($posts) : foreach( $posts as $post ) : setup_postdata( $post ); ?>
-					<div class="slide-post bk">
-						<?php echo zm_menu_img(); ?>
-						<a href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
-							<div class="slide-post-txt">
-								<h3 class="slide-post-title bgt over bz"><?php the_title(); ?></h3>
-							</div>
-						</a>
-					</div>
-				<?php endforeach;?>
-				<?php else : ?>
-					<div class="slide-post bk">
-						<img src="<?php echo zm_get_option( 'reg_img' ); ?>">
-						<a class="bgt over" href="#">
-							<div class="slide-post-txt">
-								<h3 class="slide-post-title bgt over bz">首页幻灯→右侧模块<br/>添加文章ID</h3>
-							</div>
-						</a>
-					</div>
-					<div class="slide-post bk">
-						<img src="<?php echo zm_get_option( 'reg_img' ); ?>">
-						<a class="bgt over" href="#">
-							<div class="slide-post-txt">
-								<h3 class="slide-post-title bgt over bz">首页幻灯→右侧模块<br/>添加文章ID</h3>
-							</div>
-						</a>
-					</div>
-				<?php endif; ?>
-				<?php wp_reset_query(); ?>
-			</div>
-		</div>
+
+	<?php if ( be_get_option( 'slide_post' ) && ( be_get_option( 'slide_post_m' ) ? ! wp_is_mobile() : true ) ) { ?>
+		<?php 
+			$post = ( array ) be_get_option( 'slider_home_post' );
+			echo '<div class="slide-post-main slide-post-' . be_get_option( 'slide_post_n' ). '">';
+			echo '<div class="slide-post-item">';
+			foreach ( $post as $items ) {
+				if ( ! empty( $items['slider_post_img'] ) ) {
+					echo '<div class="slide-post">';
+					echo '<a rel="bookmark" ' . goal() . ' href="' . $items['slider_post_url'] . '"><img src="' . $items['slider_post_img'] . '" alt="' . $items['slider_post_title'] . '"></a>';
+					echo '<a href="' . $items['slider_post_url'] . '" rel="bookmark" ' . goal() . '>';
+					if ( ! empty( $items['slider_post_title'] ) ) {
+						echo '<div class="slide-post-txt">';
+						echo '<h3 class="slide-post-title over">' . $items['slider_post_title'] . '</h3>';
+						echo '</div>';
+					}
+					echo '</a>';
+					echo '</div>';
+				}
+			}
+			echo '</div>';
+			be_help( $text = '首页设置 → 首页幻灯 → 右侧模块' );
+			echo '</div>';
+		?>
 	<?php } ?>
+	<?php be_help( $text = '首页设置→首页幻灯' ); ?>
 	<div class="clear"></div>
 </div>
 <?php } ?>

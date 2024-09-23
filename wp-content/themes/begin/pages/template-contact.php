@@ -8,7 +8,7 @@ get_header(); ?>
 <div id="primary-contact" class="content-area primary-contact">
 	<main id="main" class="be-main site-main" role="main">
 		<?php while ( have_posts() ) : the_post(); ?>
-		<article id="post-<?php the_ID(); ?>" <?php post_class('bk da'); ?>>
+		<article id="post-<?php the_ID(); ?>" class="post-item post">
 			<?php if ( ! get_post_meta( get_the_ID(), 'header_bg', true ) && ! get_post_meta( get_the_ID(), 'header_img', true ) ) { ?>
 				<header class="entry-header"><?php the_title( '<h1 class="entry-title">', '</h1>' ); ?></header>
 			<?php } ?>

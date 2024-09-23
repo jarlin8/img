@@ -146,10 +146,10 @@ $tmp_c = get_comment($tmp_c->comment_parent);
 
 ?>
 <div class="ajax-comment-body">
-	<li <?php comment_class('da bk ms'); ?> id="li-comment-<?php comment_ID(); ?>">
+	<li <?php comment_class('ms'); ?> id="li-comment-<?php comment_ID(); ?>">
 	<div class="comment-author vcard">
 		<?php if ( get_option( 'show_avatars' ) ) { ?>
-			<div class="comment-avatar comment-avatar-show bk">
+			<div class="comment-avatar comment-avatar-show">
 				<?php if (zm_get_option('cache_avatar')) { ?>
 					<img alt="留言" src="<?php echo zm_get_option( 'logo_small_b' ); ?>" class="avatar avatar-96 photo" height="96" width="96">
 				<?php } else { ?>

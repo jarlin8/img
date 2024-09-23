@@ -7,16 +7,16 @@ class LoginAjax {
 	public static $url_remember;
 	public static $url_register;
 
-	public static function init(){
+	public static function init() {
 		self::$current_user = wp_get_current_user();
-		if ( !empty( $_REQUEST["zml"] ) ) {
+		if ( ! empty( $_REQUEST["zml"] ) ) {
 		    self::ajax();
-		}elseif ( isset( $_REQUEST["login-widget"] ) ) {
-			$instance['profile_link'] = ( !empty( $_REQUEST["zml_profile_link"] ) ) ? $_REQUEST['zml_profile_link']:0;
+		} elseif ( isset( $_REQUEST["login-widget"] ) ) {
+			$instance['profile_link'] = ( ! empty( $_REQUEST["zml_profile_link"] ) ) ? $_REQUEST['zml_profile_link'] : 0;
 			self::widget( $instance );
 			exit();
-		}else{
-			if ( !is_admin() ) {
+		} else {
+			if ( ! is_admin() ) {
 				$schema = is_ssl() ? 'https':'http';
 				$js_vars = array( 'ajaxurl' => admin_url( 'admin-ajax.php', $schema ) );
 				wp_localize_script( 'login-ajax', 'ZML', apply_filters( 'zml_js_vars', $js_vars ) );
@@ -49,25 +49,33 @@ class LoginAjax {
 	}
 
 	// 登录提示信息
-	public static function login(){
+	public static function login() {
 		$return = array();
-		if ( !empty( $_REQUEST['log'] ) && !empty( $_REQUEST['pwd'] ) && trim( $_REQUEST['log'] ) != '' && trim( $_REQUEST['pwd'] != '' ) ) {
+		if ( ! empty( $_REQUEST['log'] ) && ! empty( $_REQUEST['pwd'] ) && trim( $_REQUEST['log'] ) != '' && trim( $_REQUEST['pwd'] != '' ) ) {
 			$loginResult = wp_signon();
-			if ( strtolower(get_class($loginResult)) == 'wp_user' ) {
+			if ( strtolower( get_class( $loginResult ) ) == 'wp_user' ) {
 				self::$current_user = $loginResult;
 				$return['result'] = true;
-				$return['message'] = '<div class="message-tips message-ok log-wait">' . __('登录成功，请稍候...', 'begin') . '</div>';
-			} elseif ( strtolower( get_class( $loginResult ) ) == 'wp_error' ) {
+				$return['message'] = '<div class="message-tips message-ok log-wait"><span class="dashicons dashicons-yes-alt"></span>' . __( '登录成功，请稍候...', 'begin' ) . '</div>';
+			} else { 
 				$return['result'] = false;
-				$return['error'] = '<div class="message-tips">' . $loginResult->get_error_message() . '</div>';
-			} else {
-				$return['result'] = false;
-				$return['error'] = '<div class="message-tips">' . __( '出错了', 'begin' ) . '</div>';
+				$error_message = $loginResult->get_error_message();
+				if (strpos( $error_message, 'Password') !== false ) {
+					$return['error'] = '<div class="message-tips">' . cx_get_option( 'reg_password_error' ) . '</div>';
+				} else {
+					$return['error'] = '<div class="message-tips">' . $error_message . '</div>';
+				}
 			}
-		}else{
-			$return['result'] = false;
-			$return['error'] = '<div class="message-tips">' . __( '请输入用户名和密码','begin' ) . '</div>';
+		} else {
+			if ( empty( $_REQUEST['log'] ) ) {
+				$return['result'] = false;
+				$return['error'] = '<div class="message-tips">' . cx_get_option( 'reg_name' ) . '</div>';
+			} elseif ( empty( $_REQUEST['pwd'] ) ) {
+				$return['result'] = false;
+				$return['error'] = '<div class="message-tips">' . cx_get_option( 'reg_password' ) . '</div>';
+			}
 		}
+
 		$return['action'] = 'login';
 		return $return;
 	}
@@ -75,26 +83,46 @@ class LoginAjax {
 	// 注册提示信息
 	public static function register(){
 		$return = array();
-		if ( get_option('users_can_register') ){
+		if ( get_option( 'users_can_register' ) ) {
 			$errors = register_new_user( $_REQUEST['user_login'], $_REQUEST['user_email'] );
-			if ( !is_wp_error($errors) ) {
+			if ( ! is_wp_error($errors) ) {
+				// 注册成功后自动登录
+				if ( zm_get_option( 'go_reg' ) ) {
+					$user_data = array(
+						'user_login'    => $_REQUEST['user_login'],
+						'user_password' => $_REQUEST['user_pass'],
+						'remember'      => true
+					);
+					$user_signon = wp_signon( $user_data, false );
+
+					if ( ! is_wp_error( $user_signon ) ) {
+						wp_set_current_user( $user_signon->ID, $user_signon->user_login );
+						wp_set_auth_cookie( $user_signon->ID );
+						do_action( 'wp_login', $user_signon->user_login );
+					}
+
+					@header( 'Content-Type: application/javascript; charset=UTF-8', true );
+					echo self::json_encode( apply_filters( 'zml_ajax_'.$_REQUEST["login-ajax"], $return ) );
+					exit();
+				}
+
 				$return['result'] = true;
 				if ( zm_get_option( 'go_reg' ) ) {
-					$return['message'] = '<div class="message-tips message-ok">' . __( '注册成功！','begin' ) . '</div>';
-				}else{
-					$return['message'] = '<div class="message-tips message-ok">' . __( '注册成功！请查看您的邮箱','begin' ) . '</div>';
+					$return['message'] = '<div class="message-tips message-ok"><span class="dashicons dashicons-yes-alt"></span>' . __( '注册成功！','begin' ) . '</div>';
+				} else {
+					$return['message'] = '<div class="message-tips message-ok"><span class="dashicons dashicons-yes-alt"></span>' . __( '注册成功！请查看您的邮箱','begin' ) . '</div>';
 				}
 				if ( is_multisite() ){
-				add_user_to_blog( get_current_blog_id(), $errors, get_option( 'default_role' ) );
+					add_user_to_blog( get_current_blog_id(), $errors, get_option( 'default_role' ) );
 				}
-			}else{
+			} else {
 				$return['result'] = false;
 				$return['error'] = '<div class="message-tips">' . $errors->get_error_message() . '</div>';
 			}
 			$return['action'] = 'register';
 		}else{
 			$return['result'] = false;
-			$return['error'] = '<div class="message-tips">' . __('注册已被禁用', 'begin') . '</div>';
+			$return['error'] = '<div class="message-tips">' . __( '注册已关闭', 'begin' ) . '</div>';
 		}
 		return $return;
 	}

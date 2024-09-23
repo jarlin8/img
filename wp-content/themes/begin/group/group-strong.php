@@ -1,61 +1,59 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-<?php if (zm_get_option('group_strong')) { ?>
-<div class="g-row g-line group-strong-line sort" name="<?php echo zm_get_option( 'group_strong_s' ); ?>" <?php aos(); ?>>
+<?php if (co_get_option('group_strong')) {
+	if ( ! co_get_option( 'strong_bg' ) || ( co_get_option( 'strong_bg' ) == 'auto' ) ) {
+		$bg = '';
+	}
+	if ( co_get_option( 'strong_bg' ) == 'white' ) {
+		$bg = ' group-white';
+	}
+	if ( co_get_option( 'strong_bg' ) == 'gray' ) {
+		$bg = ' group-gray';
+	}
+?>
+<div class="g-row g-line group-strong-line<?php echo $bg; ?>" <?php aos(); ?>>
 	<div class="g-col">
-		<div class="group-strong-box bgt">
-			<div class="group-title bgt" <?php aos_b(); ?>>
-				<?php if ( ! zm_get_option('group_strong_t') == '' ) { ?>
-					<h3 class="bgt"><?php echo zm_get_option('group_strong_t'); ?></h3>
+		<div class="group-strong-box">
+			<div class="group-title" <?php aos_b(); ?>>
+				<?php if ( ! co_get_option('group_strong_t') == '' ) { ?>
+					<h3><?php echo co_get_option('group_strong_t'); ?></h3>
 				<?php } ?>
-				<?php if ( ! zm_get_option('group_strong_des') == '' ) { ?>
-					<div class="group-des bgt"><?php echo zm_get_option('group_strong_des'); ?></div>
+				<?php if ( ! co_get_option('group_strong_des') == '' ) { ?>
+					<div class="group-des"><?php echo co_get_option('group_strong_des'); ?></div>
 				<?php } ?>
 				<div class="clear"></div>
 			</div>
 
-			<div class="group-strong-content bgt" <?php aos_b(); ?>>
-				<?php echo zm_get_option('group_strong_inf'); ?>
+			<div class="group-strong-content single-content sanitize" <?php aos_f(); ?>>
+				<div class="text-back be-text"><?php echo wpautop( co_get_option( 'group_strong_inf' ) ); ?></div>
 			</div>
 
-			<div class="group-strong-slider owl-carousel slider-strong bgt">
+			<div class="group-strong-slider owl-carousel slider-strong">
 				<?php 
 					$posts = get_posts(
 						array(
 							'post_type' => 'any',
-							'orderby' => 'menu_order',
-							'orderby' => 'date',
-							'order' => 'ASC',
-							'meta_key' => 'group_strong',
-							'numberposts' => '60'
+							'orderby'   => 'post__in', 
+							'order'     => 'DESC',
+							'post__in'  => explode( ',', co_get_option( 'group_strong_id' ) ),
 						)
 					);
 					if ( $posts ) : foreach( $posts as $post ) : setup_postdata( $post );
 				?>
 
-				<?php 
-				if ( zm_get_option( 'group_carousel_c' ) ) {
-					$title = ' group-strong-title';
-				} else {
-					$title = '';
-				}
-				?>
-
-				<div class="strong-strong-post bkh da">
-					<div class="strong-thumbnail"><?php zm_thumbnail_scrolling(); ?></div>
+				<div class="strong-strong-post" <?php aos_f(); ?>>
+					<div class="strong-thumbnail"><?php echo zm_thumbnail_scrolling(); ?></div>
 					<div class="clear"></div>
 					<?php 
-					if ( zm_get_option( 'group_strong_title_c' ) ) {
-						$title = ' group-strong-title-c';
-					} else {
-						$title = '';
-					}
-					the_title( sprintf( '<h2 class="group-strong-title bgt over' . $title . '"><a class="bgt" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
+						$title = co_get_option( 'group_strong_title_c' ) ? ' group-strong-title-c' : '';
+						the_title( sprintf( '<h2 class="group-strong-title over' . $title . '"><a href="%s" rel="bookmark" ' . goal() . '>', esc_url( get_permalink() ) ), '</a></h2>' );
+					?>
 					<div class="clear"></div>
 				</div>
 				<?php endforeach; endif; ?>
-				<?php wp_reset_query(); ?>
+				<?php wp_reset_postdata(); ?>
 			</div>
 		</div>
+		<?php co_help( $text = '公司主页 → 咨询', $number = 'group_strong_s' ); ?>
 	</div>
 </div>
 <?php } ?>

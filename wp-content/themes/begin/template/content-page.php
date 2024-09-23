@@ -1,11 +1,6 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-<?php if ( is_single() ) : ?>
-<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class('ms bk da'); ?>>
-<?php else : ?>
-<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class('post ms bk da scl'); ?>>
-<?php endif; ?>
-	<?php if ( get_post_meta(get_the_ID(), 'header_img', true) || get_post_meta(get_the_ID(), 'header_bg', true) ) { ?>
-	<?php } else { ?>
+<article id="post-<?php the_ID(); ?>" class="post-item post ms scl">
+	<?php if ( ! get_post_meta( get_the_ID(), 'img_title', true ) && ! get_post_meta( get_the_ID(), 'show_title', true ) ) { ?>
 		<header class="entry-header">
 			<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
 		</header>

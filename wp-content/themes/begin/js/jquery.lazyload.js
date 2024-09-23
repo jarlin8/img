@@ -9,7 +9,7 @@
 
 function lazy() {
 jQuery(document).ready(function($){
-	$(".load img, .single-content img").lazyload({
+	$(".load img, .single-content img[decoding='async']").lazyload({
 		skip_invisible : false,
 		effect: "fadeIn",
 		threshold: 200,
@@ -36,10 +36,12 @@ jQuery(document).ready(function($){
 
 
 	var placeholder_img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8+B8AAucB8kTMRj8AAAAASUVORK5CYII=";
-	$('.lazy, .lazy a, .site-lazy, .thumbs-de-back, .cat-rec-back, .bgimg').Lazy({
+	$('.lazy, .lazy a, .site-lazy, .thumbs-de-back, .cat-rec-back, .bgimg, .novel-inf-cover, .novel-cove-img').Lazy({
 		effect: 'fadeIn',
 		placeholder: placeholder_img,
-		effectTime: 250
+		effectTime: 250,
+		combined: true,
+		delay: 5000,
 	});
 
 	$('#sidr-main .lazy').lazy({

@@ -5,7 +5,7 @@
 <title>图文模块</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <link rel='stylesheet' href='list-box.css' type='text/css' media='all' />
-</head>	
+</head>
 <body>
 <form onsubmit="InsertValue();return false;" id="form-table">
 

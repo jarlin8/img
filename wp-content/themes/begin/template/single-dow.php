@@ -8,13 +8,13 @@
 	<div class="tl4 tm4">
 		<div class="single-goods-main">
 			<figure class="single-goods-img">
-				<?php tao_thumbnail(); ?>
+				<?php echo tao_thumbnail(); ?>
 			</figure>
 			<div class="clear"></div>
 		</div>
 	</div>
 
 	<?php endwhile; ?>
-	<?php wp_reset_query(); ?>
+	<?php wp_reset_postdata(); ?>
 	<div class="clear"></div>
 </div>

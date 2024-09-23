@@ -1,7 +1,7 @@
 <?php
 /*
 Template Name: 留言板
-Template Post Type: post, page
+Template Post Type: page
 */
 if ( ! defined( 'ABSPATH' ) ) exit;
 get_header(); ?>

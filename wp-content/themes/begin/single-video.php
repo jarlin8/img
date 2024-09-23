@@ -3,10 +3,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 get_header(); ?>
 
 	<?php begin_primary_class(); ?>
-		<main id="main" class="be-main site-main<?php if (zm_get_option('p_first') ) { ?> p-em<?php } ?>" role="main">
+		<main id="main" class="be-main site-main<?php if ( zm_get_option( 'p_first' ) ) { ?> p-em<?php } ?><?php if ( zm_get_option( 'code_css' ) ) { ?> code-css<?php } ?>" role="main">
 
 			<?php while ( have_posts() ) : the_post(); ?>
-				<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class('ms bk'); ?>>
+				<article id="post-<?php the_ID(); ?>" class="post-item post ms" <?php aos_a(); ?>>
 
 						<?php header_title(); ?>
 						<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
@@ -20,7 +20,7 @@ get_header(); ?>
 							<div class="videos-content">
 								<div class="video-img-box">
 									<div class="video-img">
-										<?php videos_thumbnail(); ?>
+										<?php echo videos_thumbnail(); ?>
 									</div>
 									<div class="clear"></div>
 								</div>
@@ -76,7 +76,7 @@ get_header(); ?>
 				<?php type_nav_single(); ?>
 
 				<?php if (zm_get_option('related_img')) { ?>
-					<div id="related-img" class="ms bk da" <?php aos_a(); ?>>
+					<div id="related-img" class="ms" <?php aos_a(); ?>>
 						<?php 
 							$loop = new WP_Query( array( 'post_type' => 'video', 'posts_per_page' => zm_get_option('related_n'), 'post__not_in' => array($post->ID) ) );
 							while ( $loop->have_posts() ) : $loop->the_post();
@@ -84,13 +84,13 @@ get_header(); ?>
 						<div class="r4">
 							<div class="related-site">
 								<figure class="related-site-img">
-									<?php videos_thumbnail(); ?>
+									<?php echo videos_thumbnail(); ?>
 								 </figure>
 								<div class="related-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></div>
 							</div>
 						</div>
 						<?php endwhile; ?>
-						<?php wp_reset_query(); ?>
+						<?php wp_reset_postdata(); ?>
 						<div class="clear"></div>
 					</div>
 				<?php } ?>

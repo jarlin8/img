@@ -11,9 +11,9 @@ if (! defined('FILE_CACHE_ENABLED') )            define ('FILE_CACHE_ENABLED', T
 if (! defined('FILE_CACHE_TIME_BETWEEN_CLEANS')) define ('FILE_CACHE_TIME_BETWEEN_CLEANS', 604800);
 
 if (! defined('FILE_CACHE_MAX_FILE_AGE') )       define ('FILE_CACHE_MAX_FILE_AGE', 604800);
-if (! defined('FILE_CACHE_SUFFIX') )             define ('FILE_CACHE_SUFFIX', '.txt');
+if (! defined('FILE_CACHE_SUFFIX') )             define ('FILE_CACHE_SUFFIX', '.jpg');
 if (! defined('FILE_CACHE_PREFIX') )             define ('FILE_CACHE_PREFIX', 'begin');
-if (! defined('FILE_CACHE_DIRECTORY') )          define ('FILE_CACHE_DIRECTORY', '../../thumbnail');
+if (! defined('FILE_CACHE_DIRECTORY') )          define ('FILE_CACHE_DIRECTORY', '../../uploads/thumbnail');
 if (! defined('MAX_FILE_SIZE') )                         define ('MAX_FILE_SIZE', 10485760);
 if (! defined('CURL_TIMEOUT') )                          define ('CURL_TIMEOUT', 20);
 if (! defined('WAIT_BETWEEN_FETCH_ERRORS') )     define ('WAIT_BETWEEN_FETCH_ERRORS', 3600);
@@ -65,29 +65,12 @@ if (! isset($ALLOWED_SITES)){
 		'i1.wp.com',
 		'i2.wp.com',
 		'i3.wp.com',
-		'ww1.sinaimg.cn',
-		'ww2.sinaimg.cn',
-		'ww3.sinaimg.cn',
-		'ww4.sinaimg.cn',
-		'wx1.sinaimg.cn',
-		'wx2.sinaimg.cn',
-		'wx3.sinaimg.cn',
-		'wx4.sinaimg.cn',
-		'tva1.sinaimg.cn',
-		'tva2.sinaimg.cn',
-		'tva3.sinaimg.cn',
-		'tva4.sinaimg.cn',
-		'tvax1.sinaimg.cn',
-		'tvax2.sinaimg.cn',
-		'tvax3.sinaimg.cn',
-		'tvax4.sinaimg.cn',
-		'n.sinaimg.cn',
 		's2.ax1x.com',
 		's1.ax1x.com',
 		'img.maocdn.cn',
 		's2.loli.net',
 		'desk-fd.zol-img.com.cn',
-		'img.wtuce.com',
+		's1.imagehub.cc',
 		'xxxxxxxxxxx',
 	);
 }

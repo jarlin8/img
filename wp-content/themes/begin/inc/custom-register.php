@@ -1,11 +1,11 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
-if ( !is_admin() && !isset( $_SESSION ) ) {
+if ( ! is_admin() && ( ! session_id() || ! isset( $_SESSION ) ) ) {
 	session_start();
 	session_regenerate_id( TRUE );
 }
 
-if ( !function_exists( 'wp_new_user_notification' ) ) :
+if ( ! function_exists( 'wp_new_user_notification' ) ) :
 	function wp_new_user_notification( $user_id, $plaintext_pass = '', $flag='' ) {
 		if ( func_num_args() > 1 && $flag !== 1 )
 			return;
@@ -40,16 +40,17 @@ function be_show_password_field() { ?>
 
 <div class="pass-input zml-ico">
 	<div class="togglepass"><i class="be be-eye"></i></div>
-	<input class="user_pwd1 input dah bk" type="password" size="25" value="<?php if (isset($_POST['user_pass'])) {$_POST['user_pass'];} ?>" name="user_pass" placeholder="<?php _e( '密码', 'begin' ); ?>" onfocus="this.placeholder=''" onblur="this.placeholder='<?php _e( '密码', 'begin' ); ?>'" autocomplete="off" />
+	<input type="text" style="display:none;">
+	<input class="user_pwd1 input" type="password" size="25" value="<?php if (isset($_POST['user_pass'])) {$_POST['user_pass'];} ?>" name="user_pass" placeholder="<?php _e( '密码', 'begin' ); ?>" onfocus="this.placeholder=''" onblur="this.placeholder='<?php _e( '密码', 'begin' ); ?>'" autocomplete="off" />
 </div>
 <div class="pass-input pass2-input zml-ico">
 	<div class="togglepass"><i class="be be-eye"></i></div>
-	<input class="user_pwd2 input dah bk" type="password" size="25" value="<?php if (isset($_POST['user_pass2'])) {$_POST['user_pass2'];} ?>" name="user_pass2" placeholder="<?php _e( '重复密码', 'begin' ); ?>" onfocus="this.placeholder=''" onblur="this.placeholder='<?php _e( '重复密码', 'begin' ); ?>'" autocomplete="off" />
+	<input class="user_pwd2 input" type="password" size="25" value="<?php if (isset($_POST['user_pass2'])) {$_POST['user_pass2'];} ?>" name="user_pass2" placeholder="<?php _e( '再次输入密码', 'begin' ); ?>" onfocus="this.placeholder=''" onblur="this.placeholder='<?php _e( '重复密码', 'begin' ); ?>'" autocomplete="off" />
 </div>
 
 <?php if ( zm_get_option( 'reg_captcha' ) ) { ?>
 	<p class="label-captcha zml-ico captcha-ico email-captcha-ico">
-		<input id="captcha_code" type="text" name="captcha_code" class="input captcha-input dah bk" value="" placeholder="<?php _e( '邮件验证码', 'begin' ); ?>" onfocus="this.placeholder=''" onblur="this.placeholder='<?php _e( '邮件验证码', 'begin' ); ?>'">
+		<input id="captcha_code" type="text" name="captcha_code" class="input captcha-input" value="" placeholder="<?php _e( '邮件验证码', 'begin' ); ?>" onfocus="this.placeholder=''" onblur="this.placeholder='<?php _e( '邮件验证码', 'begin' ); ?>'">
 		<a href="javascript:void(0)" onclick="javascript:;" class="be-email-code"><?php _e( '获取邮件验证码', 'begin' ); ?></a>
 	</p>
 	<div class="reg-captcha-message"></div>
@@ -86,25 +87,31 @@ function be_check_fields( $login, $email, $errors ) {
 		unset( $_SESSION['EER_captcha_email'] );
 	}
 
-	if ( strlen($_POST['user_pass']) < 6 )
+	if ( empty( $_POST['user_pass'] ) )
+		$errors->add( 'password_empty', '' . sprintf( __( '密码不能为空', 'begin' ) ) . '' );
+	elseif ( strlen($_POST['user_pass']) < 6 )
 		$errors->add( 'password_length', '' . sprintf( __( '密码长度至少6位', 'begin' ) ) . '' );
+	elseif ( empty( $_POST['user_pass2'] ) )
+		$errors->add( 'password2_empty', '' . sprintf( __( '请再次输入密码', 'begin' ) ) . '' );
 	elseif ( $_POST['user_pass'] != $_POST['user_pass2'] )
 		$errors->add( 'password_error', '' . sprintf( __( '两次输入的密码必须一致', 'begin' ) ) . '' );
-
 }
 
 /* 保存表单提交的数据 */
 function be_register_extra_fields( $user_id, $password="", $meta=array() ) {
 	$userdata = array();
 	$userdata['ID'] = $user_id;
-	$userdata['user_pass'] = $_POST['user_pass'];
+	if( isset( $_POST['user_pass'] ) ) {
+		$userdata['user_pass'] = $_POST['user_pass'];
+	}
 
 	$pattern = '/[一-龥]/u';
 	if ( preg_match( $pattern, $_POST['user_login'] ) ) {
 		$userdata['user_nicename'] = $user_id;
 	}
-
-	wp_new_user_notification( $user_id, $_POST['user_pass'], 1 );
+	if( isset( $_POST['user_pass'] ) ) {
+		wp_new_user_notification( $user_id, $_POST['user_pass'], 1 );
+	}
 	wp_update_user( $userdata );
 }
 
@@ -129,13 +136,12 @@ function be_mail_captcha_js() {
 	echo '<script>window._betip = { uri:"' . $url .'/" }</script>';
 	wp_enqueue_script( 'login', get_template_directory_uri() . '/js/captcha-email.js', array(), version, true );
 }
-if ( zm_get_option( 'reg_captcha' ) ) {
 add_action( 'login_footer', 'be_mail_captcha_js' );
 add_action( 'wp_footer', 'be_mail_captcha_js' );
-}
 add_filter( 'send_password_change_email', '__return_false' );
 add_filter( 'gettext', 'be_register_change_translated_text', 20, 3 );
 add_action( 'admin_init', 'be_remove_default_password' );
-add_action( 'register_form','be_show_password_field' );
+add_action( 'be_register_form','be_show_password_field' );
+// add_action( 'register_form','be_show_password_field' );
 add_action( 'register_post','be_check_fields',10,3 );
 add_action( 'user_register', 'be_register_extra_fields' );

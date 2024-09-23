@@ -1,0 +1,557 @@
+<wpml-config>
+	<admin-texts>
+		<!-- 主题选项 -->
+        <key name="begin">
+			<key name="user_url" />
+			<key name="tou_url" />
+			<key name="tou_txt" />
+			<key name="ecx_link_id" />
+			<key name="more_w" />
+			<key name="direct_w" />
+			<key name="custom_placard_title" />
+			<key name="custom_placard_content" />
+			<key name="wel_come" />
+			<key name="reg_notice_text" />
+			<key name="reg_clause" />
+			<key name="login_clause" />
+			<key name="reset_clause" />
+			<key name="be_maintain_text" />
+			<key name="description" />
+			<key name="keyword" />
+			<key name="home_title" />
+			<key name="home_info" />
+			<key name="copyright_statement" />
+			<key name="copyright_indicate" />
+			<key name="comment_hint" />
+			<key name="site_name_size" />
+			<key name="site_des_size" />
+			<key name="down_assets_inf" />
+			<key name="down_name_inf" />
+			<key name="down_os_inf" />
+			<key name="down_versions_inf" />
+			<key name="down_size_inf" />
+			<key name="down_sold_inf" />
+			<key name="down_update_inf" />
+			<key name="email_name" />
+			<key name="filter_t" />
+			<key name="filters_a_t" />
+			<key name="filters_b_t" />
+			<key name="filters_c_t" />
+			<key name="filters_d_t" />
+			<key name="filters_e_t" />
+			<key name="filters_f_t" />
+			<key name="filters_g_t" />
+			<key name="filters_h_t" />
+			<key name="filters_i_t" />
+			<key name="filters_j_t" />
+			<key name="mail_name" />
+			<key name="mail_email" />
+			<key name="mail_phone" />
+			<key name="mail_subject" />
+			<key name="mail_message" />
+			<key name="weixing_us_t" />
+			<key name="weixing_us" />
+			<key name="usqq_t" />
+			<key name="usshang_t" />
+			<key name="us_phone" />
+			<key name="usshang_url" />
+			<key name="us_phone_t" />
+			<key name="qq_name" />
+			<key name="weixing_t" />
+			<key name="reply_read_t" />
+			<key name="reply_read_c" />
+			<key name="login_read_t" />
+			<key name="login_read_c" />
+			<key name="role_visible_t" />
+			<key name="role_visible_w" />
+			<key name="role_visible_c" />
+			<key name="note_notice" />
+			<key name="tab_bio_a" />
+			<key name="tab_bio_b" />
+			<key name="copyright_content" />
+			<key name="copyright_content_down" />
+			<key name="poster_site_name" />
+			<key name="poster_site_tagline" />
+			<key name="404_t" />
+			<key name="404_c" />
+			<key name="footer_inf_t" />
+			<key name="logo" />
+			<key name="logo_small_b" />
+			<key name="nav_weixin_id" />
+			<key name="nav_weixin_img" />
+			<key name="weixin_h" />
+			<key name="weixin_h_w" />
+			<key name="weixin_s_id" />
+			<key name="weixin_h_img" />
+			<key name="weixin_g" />
+			<key name="weixin_g_w" />
+			<key name="weixin_g_id" />
+			<key name="weixin_g_img" />
+			<key name="qq_name" />
+			<key name="qq_id" />
+			<key name="m_phone" />
+			<key name="weixing_t" />
+			<key name="weixing_qr" />
+			<key name="weixin_h_tip" />
+			<key name="weixin_g_tip" />
+			<key name="nav_weixin_tip" />
+			<key name="weixing_us_tip" />
+			<key name="ad_ht_c" />
+			<key name="ad_ht_m" />
+			<key name="ad_h_c" />
+			<key name="ad_h_c_m" />
+			<key name="ad_h_cr" />
+			<key name="ad_a_c" />
+			<key name="ad_a_c_m" />
+			<key name="ad_s_c" />
+			<key name="ad_s_c_m" />
+			<key name="ad_s_c_b" />
+			<key name="ad_s_c_b_m" />
+			<key name="ad_c_c" />
+			<key name="ad_c_c_m" />
+			<key name="ad_s_z" />
+			<key name="ad_s_z_m" />
+			<key name="ad_down" />
+			<key name="ad_down_file" />
+			<key name="copyright_content" />
+			<key name="copyright_content_down" />
+			<key name="weixing_us_tip" />
+			<key name="weixing_us_tip" />
+			<key name="custom_css" />
+			<key name="logic_notice">
+				<key name="*">
+					<key name="logic_notice_txt" />
+					<key name="logic_notice_visual" />
+				</key>
+			</key>
+			<!-- 选择模板 -->
+			<key name="ajax_layout_code_d" />
+			<key name="ajax_layout_code_a" />
+			<key name="ajax_layout_code_b" />
+			<key name="ajax_layout_code_c" />
+			<key name="ajax_layout_code_f" />
+			<key name="ajax_layout_code_g" />
+			<key name="ajax_layout_code_e" />
+			<key name="cat_layout_default" />
+			<key name="cat_layout_noside" />
+			<key name="cat_layout_img" />
+			<key name="cat_layout_img_s" />
+			<key name="cat_layout_grid" />
+			<key name="cat_layout_play" />
+			<key name="cat_layout_full" />
+			<key name="cat_layout_list" />
+			<key name="cat_layout_novel" />
+			<key name="cat_layout_square" />
+			<key name="cat_layout_line" />
+			<key name="cat_layout_fall" />
+			<key name="cat_layout_child_tdk" />
+			<key name="cat_layout_display" />
+			<key name="cat_layout_note" />
+			<key name="cat_layout_notes" />
+			<key name="cat_layout_assets" />
+			<key name="cat_child_cover" />
+			<key name="cat_child_nav" />
+			<key name="cat_child_portfolio" />
+			<key name="cat_child_hot" />
+			<key name="cat_child_novel" />
+			<key name="cat_layout_child" />
+			<key name="cat_layout_child_img" />
+			<key name="single_layout_qa" />
+			<key name="single_layout_down" />
+			<key name="single_layout_vip" />
+			<key name="single_layout_display" />
+			<key name="single_layout_full" />
+			<key name="single_layout_note" />
+			<key name="single_layout_notes" />
+			<key name="single_layout_bio" />
+			<key name="novel_layout" />
+			<key name="ajax_special_code_a" />
+			<key name="ajax_special_code_b" />
+			<key name="ajax_special_code_c" />
+			<key name="ajax_special_code_d" />
+			<key name="all_special_item" />
+			<key name="default_cat_template" />
+			<key name="default_tag_template" />
+        </key>
+		<!-- 首页设置 -->
+        <key name="be_home">
+			<!-- 友情链接 -->
+			<key name="link_f_cat" />
+			<key name="add_link_text" />
+			<key name="link_url" />
+			<!-- 幻灯显示 -->
+			<key name="slider_home">
+				<key name="*">
+					<key name="slider_home_title" />
+				</key>
+			</key>
+			<key name="slider_home_post">
+				<key name="*">
+					<key name="slider_post_title" />
+				</key>
+			</key>
+			<key name="slider_btn">
+				<key name="*">
+					<key name="slider_btn_title" />
+				</key>
+			</key>
+			<!-- 组合推荐 -->
+			<key name="rectab">
+				<key name="cms_collect_new_t" />
+				<key name="cms_collect_views_t" />
+				<key name="cms_collect_comment_t" />
+				<key name="cms_collect_cat_t" />
+				<key name="cms_collect_asset_t" />
+				<key name="cms_collect_qa_t" />
+			</key>
+			<!-- 小说书籍 -->
+			<key name="cms_novel_mark" />
+			<key name="novel_author_t" />
+			<key name="novel_status_t" />
+			<key name="novel_views_t" />
+			<!-- 特色模块 -->
+			<key name="cms_ico_item">
+				<key name="*">
+					<key name="cms_ico_title" />
+					<key name="cms_ico_txt" />
+					<key name="cms_ico_url" />
+				</key>
+			</key>
+			<!-- 工具模块 -->
+			<key name="cms_tool_item">
+				<key name="*">
+					<key name="cms_tool_title" />
+					<key name="cms_tool_txt" />
+					<key name="cms_tool_btn" />
+					<key name="cms_tool_url" />
+				</key>
+			</key>
+			<!-- 热门推荐 -->
+			<key name="cms_hot_item">
+				<key name="*">
+					<key name="cms_hot_title" />
+					<key name="cms_hot_more" />
+				</key>
+			</key>
+			<!-- 书籍封面 -->
+			<key name="cms_novel_cover_cat">
+				<key name="*">
+					<key name="cms_novel_cover_mark" />
+				</key>
+			</key>
+			<!-- RSS聚合 -->
+			<key name="cms_rss_item">
+				<key name="*">
+					<key name="cms_rss_title" />
+				</key>
+			</key>
+			<!-- 图文幻灯 -->
+			<key name="cms_slides_a_add">
+				<key name="*">
+					<key name="cms_slides_a_item">
+						<key name="*">
+							<key name="cms_slides_a_title" />
+							<key name="cms_slides_a_des" />
+							<key name="cms_slides_a_btn" />
+							<key name="cms_slides_a_btn_url" />
+						</key>
+					</key>
+				</key>
+			</key>
+			<!-- 图文卡片 -->
+			<key name="cms_each_add">
+				<key name="*">
+					<key name="cms_each_des" />
+					<key name="cms_each_img_url" />
+				</key>
+			</key>
+			<key name="letter_t" />
+			<key name="cms_down_btn_text" />
+			<key name="add_link_text" />
+        </key>
+		<!-- 公司主页 -->
+		<key name="co_home">
+			<!-- 公司幻灯 -->
+			<key name="slider_group">
+				<key name="*">
+					<key name="slider_group_title_a" />
+					<key name="slider_group_title_b" />
+					<key name="slider_group_title_c" />
+					<key name="slider_group_btu" />
+					<key name="slider_group_btu_url" />
+				</key>
+			</key>
+			<key name="group_video">
+				<key name="*">
+					<key name="group_video_text" />
+					<key name="group_video_btn" />
+					<key name="group_video_url" />
+				</key>
+			</key>
+			<!-- 关于我们 -->
+			<key name="group_contact_item">
+				<key name="*">
+					<key name="group_contact_t" />
+					<key name="contact_p" />
+					<key name="group_more_z" />
+					<key name="group_contact_z" />
+					<key name="group_more_url" />
+					<key name="group_contact_url" />
+				</key>
+			</key>
+			<!-- 说明 -->
+			<key name="group_explain_item">
+				<key name="*">
+					<key name="group_explain_t" />
+					<key name="group_explain_des" />
+					<key name="explain_p" />
+					<key name="explain_content_t" />
+					<key name="group_explain_more" />
+					<key name="group_explain_url" />
+				</key>
+			</key>
+			<!-- 关于本站 -->
+			<key name="group_about_t" />
+			<key name="group_about_content" />
+			<key name="group_about_more" />
+			<key name="group_about_url" />
+			<!-- 公示板 -->
+			<key name="group_notice_t" />
+			<key name="group_notice_des" />
+			<key name="group_notice_inf" />
+			<!-- 服务项目 -->
+			<key name="dean_t" />
+			<key name="dean_des" />
+			<key name="group_dean_item">
+				<key name="*">
+					<key name="group_dean_t1" />
+					<key name="group_dean_title" />
+					<key name="group_dean_t2" />
+					<key name="group_dean_btn" />
+					<key name="group_dean_url" />
+				</key>
+			</key>
+			<!-- 推荐 -->
+			<key name="foldimg_t" />
+			<key name="foldimg_des" />
+			<key name="group_foldimg_item">
+				<key name="*">
+					<key name="group_foldimg_title" />
+					<key name="group_foldimg_des" />
+					<key name="group_foldimg_btn" />
+					<key name="group_foldimg_url" />
+				</key>
+			</key>
+			<!-- 流程 -->
+			<key name="process_t" />
+			<key name="process_des" />
+			<key name="group_process_item">
+				<key name="*">
+					<key name="group_process_title" />
+					<key name="group_process_des" />
+				</key>
+			</key>
+			<!-- 支持 -->
+			<key name="group_assist_t" />
+			<key name="group_assist_des" />
+			<key name="group_assist_item">
+				<key name="*">
+					<key name="group_assist_title" />
+					<key name="group_assist_des" />
+					<key name="group_assist_url" />
+				</key>
+			</key>
+			<!-- 咨询 -->
+			<key name="group_strong_t" />
+			<key name="group_strong_des" />
+			<key name="group_strong_inf" />
+			<!-- 帮助 -->
+			<key name="group_help_t" />
+			<key name="group_help_des" />
+			<key name="group_help_item">
+				<key name="*">
+					<key name="group_help_title" />
+					<key name="group_help_text" />
+				</key>
+			</key>
+			<!-- 工具 -->
+			<key name="tool_t" />
+			<key name="tool_des" />
+			<key name="group_tool_item">
+				<key name="*">
+					<key name="group_tool_title" />
+					<key name="group_tool_txt" />
+					<key name="group_tool_btn" />
+					<key name="group_tool_url" />
+				</key>
+			</key>
+			<!-- 项目模块 -->
+			<key name="group_show_t" />
+			<key name="group_show_des" />
+			<key name="group_show_url" />
+			<!-- 服务宗旨 -->
+			<key name="service_t" />
+			<key name="service_des" />
+			<key name="service_c_txt" />
+			<key name="group_service_l">
+				<key name="*">
+					<key name="group_service_title_l" />
+					<key name="group_service_txt_l" />
+				</key>
+			</key>
+			<key name="group_service_r">
+				<key name="*">
+					<key name="group_service_title_r" />
+					<key name="group_service_txt_r" />
+				</key>
+			</key>
+			<!-- WOO产品 -->
+			<key name="g_product_t" />
+			<key name="g_product_des" />
+			<!-- 特色 -->
+			<key name="group_ico_t" />
+			<key name="group_ico_des" />
+			<key name="group_ico_item">
+				<key name="*">
+					<key name="group_ico_title" />
+					<key name="group_ico_txt" />
+					<key name="group_ico_url" />
+				</key>
+			</key>
+			<!-- 简介 -->
+			<key name="features_t" />
+			<key name="features_des" />
+			<key name="features_url" />
+			<!-- 计数器 -->
+			<key name="group_counter_item">
+				<key name="*">
+					<key name="group_counter_title" />
+					<key name="group_counter_unit" />
+				</key>
+			</key>
+			<!-- 合作 -->
+			<key name="group_coop_t" />
+			<key name="group_coop_des" />
+			<key name="group_coop_item">
+				<key name="*">
+					<key name="group_coop_title" />
+					<key name="group_coop_url" />
+					<key name="group_coop_img" />
+					<key name="group_coop_bg" />
+				</key>
+			</key>
+			<!-- 最新文章 -->
+			<key name="group_new_t" />
+			<key name="group_new_des" />
+			<!-- AJAX分类 -->
+			<key name="group_tab_t" />
+			<key name="group_tab_des" />
+			<!-- 展望 -->
+			<key name="group_outlook_t" />
+			<key name="group_outlook_content" />
+			<key name="group_outlook_more" />
+			<key name="group_outlook_btn" />
+			<key name="group_outlook_url" />
+			<key name="group_btn_url" />
+			<!-- 热门推荐 -->
+			<key name="group_carousel_t" />
+			<key name="carousel_des" />
+			<!-- 会员商品 -->
+			<key name="group_assets_t" />
+			<key name="group_assets_des" />
+			<!-- 软件下载 -->
+			<key name="group_down_t" />
+			<key name="group_down_des" />
+			<key name="group_down_btn_text" />
+			<!-- 图文幻灯 -->
+			<key name="group_slides_a_add">
+				<key name="*">
+					<key name="group_slides_a_item">
+						<key name="*">
+							<key name="group_slides_a_title" />
+							<key name="group_slides_a_des" />
+							<key name="group_slides_a_btn" />
+							<key name="group_slides_a_btn_url" />
+						</key>
+					</key>
+				</key>
+			</key>
+			<!-- 幻灯图文 -->
+			<key name="group_slides_b_add">
+				<key name="*">
+					<key name="group_slides_b_item">
+						<key name="*">
+							<key name="group_slides_b_title" />
+							<key name="group_slides_b_des" />
+							<key name="group_slides_b_btn" />
+							<key name="group_slides_b_btn_url" />
+						</key>
+					</key>
+				</key>
+			</key>
+			<!-- 解决方案 -->
+			<key name="group_scheme_t" />
+			<key name="group_scheme_des" />
+			<key name="group_scheme_add">
+				<key name="*">
+					<key name="group_scheme_number" />
+					<key name="group_scheme_title" />
+					<key name="group_scheme_text" />
+					<key name="group_scheme_url" />
+				</key>
+			</key>
+			<!-- 联系我们 -->
+			<key name="group_email_t" />
+			<key name="group_email_inf" />
+			<!-- 行业新闻 -->
+			<key name="group_each_add">
+				<key name="*">
+					<key name="group_each_t" />
+					<key name="group_each_des" />
+					<key name="group_each_title" />
+					<key name="group_each_img_url" />
+				</key>
+			</key>
+			<!-- 图片说明 -->
+			<key name="group_des_item">
+				<key name="*">
+					<key name="group_des_t" />
+					<key name="group_des_text" />
+					<key name="group_des_btn" />
+					<key name="group_des_btn_url" />
+				</key>
+			</key>
+			<!-- 专题新闻 -->
+			<key name="group_special_item">
+				<key name="*">
+					<key name="group_special_name" />
+					<key name="group_special_des" />
+				</key>
+			</key>
+			<!-- 广告信息 -->
+			<key name="group_ads_item">
+				<key name="*">
+					<key name="group_ads_visual" />
+					<key name="group_ads_txt" />
+				</key>
+			</key>
+		</key>
+		<!-- 辅助设置 -->
+		<key name="begin_cx">
+			<!-- 信息提交 -->
+			<key name="message_name" />
+			<key name="message_form_add">
+				<key name="*">
+					<key name="message_title" />
+					<key name="message_select" />
+					<key name="message_text" />
+					<key name="message_option">
+						<key name="*">
+							<key name="select_value" />
+						</key>
+					</key>
+				</key>
+			</key>
+		</key>
+	</admin-texts>
+</wpml-config>

@@ -6,8 +6,8 @@ get_header(); ?>
 	<main id="main" class="be-main site-main" role="main">
 		<?php if ( have_posts() ) : ?>
 		<?php while ( have_posts() ) : the_post(); ?>
-		<?php if (!zm_get_option('notice_m') || (zm_get_option('notice_m') == 'notice_s')) { ?>
-			<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class('post ms bk shuo-site scl'); ?>>
+		<?php if ( ! zm_get_option( 'notice_m' ) || ( zm_get_option( 'notice_m' ) == 'notice_s' ) ) { ?>
+			<article id="post-<?php the_ID(); ?>" class="post-item-list post ms shuo-site scl" <?php aos_a(); ?>>
 				<div class="entry-content shuo-entry">
 					<div class="meta-author-avatar shuo-avatar">
 						<?php 
@@ -17,30 +17,33 @@ get_header(); ?>
 								echo get_avatar( get_the_author_meta('email'), '96', '', get_the_author() );
 							}
 						?>
-						<?php 
-							$author_id = get_the_author_meta( 'ID' );
-							if (be_check_user_role(array('administrator'), $author_id)) {
-								echo '<span class="shuo-the-role shuo-the-role1"></span>';
-							}
-							if (be_check_user_role(array('editor'), $author_id)) {
-								echo '<span class="shuo-the-role shuo-the-role2">'. __( '编辑', 'begin' ) .'</span>';
-							}
-							if (be_check_user_role(array('author'), $author_id)) {
-								echo '<span class="shuo-the-role shuo-the-role3">'. __( '专栏作者', 'begin' ) .'</span>';
-							}
-							if (be_check_user_role(array('contributor'), $author_id)) {
-								echo '<span class="shuo-the-role shuo-the-role4">'. __( '自由撰稿人', 'begin' ) .'</span>';
-							}
-						?>
+
 					</div>
 					<div class="shuo-entry-meta">
 						<span class="shuo-author">
 							<?php the_author(); ?>
+							<?php 
+								$author_id = get_the_author_meta( 'ID' );
+								if (be_check_user_role(array('administrator'), $author_id)) {
+									echo '<span class="shuo-the-role shuo-the-role1"></span>';
+								}
+								if (be_check_user_role(array('editor'), $author_id)) {
+									echo '<span class="shuo-the-role shuo-the-role2">'. __( '编辑', 'begin' ) .'</span>';
+								}
+								if (be_check_user_role(array('author'), $author_id)) {
+									echo '<span class="shuo-the-role shuo-the-role3">'. __( '专栏作者', 'begin' ) .'</span>';
+								}
+								if (be_check_user_role(array('contributor'), $author_id)) {
+									echo '<span class="shuo-the-role shuo-the-role4">'. __( '自由撰稿人', 'begin' ) .'</span>';
+								}
+							?>
 						</span>
 						<span class="clear"></span>
-						<span class="shuo-inf shuo-date"><?php time_ago( $time_type ='post' ); ?></span>
-						<span class="shuo-inf shuo-time"><?php echo get_the_time('H:i:s'); ?></span>
-						<span class="shuo-inf shuo-cat"><i class="be be-sort"></i><?php echo get_the_term_list( get_the_ID(), 'notice'); ?></span>
+						<span class="shuo-inf shuo-date">
+							<time datetime="<?php echo get_the_date('Y-m-d'); ?> <?php echo get_the_time('H:i:s'); ?>">
+								<?php time_ago( $time_type ='post' ); ?> <?php echo get_the_time('H:i:s'); ?> <?php echo get_the_term_list( get_the_ID(), 'notice'); ?>
+							</time>
+						</span>
 					</div>
 					<div class="shuo-inf shuo-remark">
 						<?php 
@@ -60,21 +63,21 @@ get_header(); ?>
 			</article>
 		<?php } ?>
 
-		<?php if (zm_get_option('notice_m') == 'notice_d') { ?>
-			<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class('post ms bk scl'); ?>>
+		<?php if ( zm_get_option( 'notice_m' ) == 'notice_d' ) { ?>
+			<article id="post-<?php the_ID(); ?>" class="post-item-list post ms scl" <?php aos_a(); ?>>
 				<?php 
 					$content = $post->post_content;
 					preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 					$n = count($strResult[1]);
 					if ($n > 0) { ?>
 					<figure class="thumbnail">
-						<?php zm_thumbnail(); ?>
-						<?php if (zm_get_option('no_thumbnail_cat')) { ?><span class="cat cat-roll"><?php } else { ?><span class="cat"><?php } ?><?php echo get_the_term_list( $post->ID,  'notice', '' ); ?></span>
+						<?php echo zm_thumbnail(); ?>
+						<span class="cat<?php if ( zm_get_option( 'no_thumbnail_cat' ) ) { ?> cat-roll<?php } ?><?php if ( zm_get_option( 'merge_cat' ) ) { ?> merge-cat<?php } ?>"><?php echo get_the_term_list( $post->ID,  'notice', '' ); ?></span>
 					</figure>
 				<?php } ?>
 
 				<?php header_title(); ?>
-					<?php the_title( sprintf( '<h2 class="entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
+					<?php the_title( sprintf( '<h2 class="entry-title"><a href="%s" rel="bookmark" ' . goal() . '>', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
 				</header><!-- .entry-header -->
 
 				<div class="entry-content">

@@ -790,10 +790,11 @@ class be_invitation_code_admin {
 be_invitation_code_admin::get_instance();
 
 // 前端
-add_action('register_form','be_invitation_code_form');
+add_action('be_register_form','be_invitation_code_form');
+// add_action('register_form','be_invitation_code_form');
 function be_invitation_code_form() { ?>
 	<div class="invitation-box zml-ico">
-	<input name="be_invitation_code" type="text" id="be_invitation_code" class="be_invitation_code input dah bk" style="text-transform: uppercase" required="required" placeholder="<?php _e( '邀请码', 'begin' ); ?>" onfocus="this.placeholder=''" onblur="this.placeholder='<?php _e( '邀请码', 'begin' ); ?>'" />
+	<input name="be_invitation_code" type="text" id="be_invitation_code" class="be_invitation_code input" style="text-transform: uppercase" required="required" placeholder="<?php _e( '邀请码', 'begin' ); ?>" onfocus="this.placeholder=''" onblur="this.placeholder='<?php _e( '邀请码', 'begin' ); ?>'" />
 
 	<?php
 		$be_invitation_code_options = get_option('be_invitation_code');
@@ -801,7 +802,7 @@ function be_invitation_code_form() { ?>
 			if ( !empty($be_invitation_code_options['get_invite']) ){
 				$get_invite = stripslashes($be_invitation_code_options['get_invite']);
 				$get_invite = htmlspecialchars_decode($get_invite, ENT_QUOTES);
-				echo '<div class="to-code dah">';
+				echo '<div class="to-code">';
 				echo '<a href="'.$get_invite.'" target="_blank">'.sprintf(__( '获取', 'begin' )).'</a>';
 				echo '</div>';
 			}
@@ -882,19 +883,17 @@ function be_invitation_codes_all() {
 
 // 邀请码
 function be_invite_list() { ?>
-<div class="codes-list-box">
-	<div class="codes-list">
-		<?php
-			$args = array(
-				'status'=>'available',
-				'per_page' => '10000',
-			);
-			$be_invitation_codes = be_get_invitation_codes( $args );
-			foreach ( $be_invitation_codes as $code ) { ?>
-				<div class="bk"><?php echo $code['code']; ?></div>
-			<?php }
-		?>
-	</div>
+<div class="invite-list">
+	<?php
+		$args = array(
+			'status'=>'available',
+			'per_page' => '10000',
+		);
+		$be_invitation_codes = be_get_invitation_codes( $args );
+		foreach ( $be_invitation_codes as $code ) { ?>
+			<div class="invite-list-item"><span class="invite-list-area"><span class="invite-copy" title="<?php _e( '复制', 'begin' ); ?>"><i class="be be-clipboard"></i></span><span class="invite"><?php echo $code['code']; ?></span></span></div>
+		<?php }
+	?>
 </div>
 <?php }
 

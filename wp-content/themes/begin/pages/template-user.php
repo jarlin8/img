@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 Template Name: 用户中心
 */
 ?>
-<?php if (is_user_logged_in()){?>
+<?php if ( is_user_logged_in() ) { ?>
 <?php get_header(); ?>
 <link rel="stylesheet" href="<?php bloginfo('template_url'); ?>/css/user-center.css" />
 <script type="text/javascript" src="<?php bloginfo('template_directory'); ?>/js/responsive-tabs.js"></script>
@@ -27,17 +27,21 @@ jQuery(document).ready(function($){
 });
 </script>
 
-<div id="personal" class="da">
-	<div class="personal-top dah bkxy">
+<div id="personal" class="personal">
+	<div class="personal-top dahxy">
 		<?php global $current_user, $userdata, $user_identity; wp_get_current_user();
-			echo '<div class="personal-img bgt load">';
-			if (zm_get_option('cache_avatar')):
-				echo begin_avatar($userdata->user_email, 96, '', $user_identity);
-			else :
-				echo be_avatar_user();
-			endif;
+			echo '<div class="personal-img load">';
+			if ( get_option( 'show_avatars' ) ) {
+				if ( zm_get_option( 'cache_avatar' ) ){
+					echo begin_avatar($userdata->user_email, 96, '', $user_identity);
+				} else {
+					echo be_avatar_user();
+				}
+			} else {
+				echo '<i class="be be-timerauto"></i>';
+			}
 			echo '</div>';
-			echo '<div class="personal-name bgt"><span class="bgt">' . __('欢迎回来！', 'begin' ) . '</strong>' . '</span>';
+			echo '<div class="personal-name"><span class="personal-name-text">' . __('欢迎回来！', 'begin' ) . '</strong>' . '</span>';
 			echo '' . $current_user->display_name . "\n";
 			echo '</div>';
 		?>
@@ -62,11 +66,11 @@ jQuery(document).ready(function($){
 					<li><i class="be be-favoriteoutline"></i><?php _e( '我的收藏', 'begin' ); ?></li>
 				<?php } ?>
 				<?php if ( !zm_get_option('tou_url') == '' ) { ?>
-				<li class="tou-url"><a href="<?php echo get_permalink( zm_get_option('tou_url') ); ?>" target="_blank"><i class="be be-editor"></i><?php _e( '我要投稿', 'begin' ); ?></a></li>
+				<li class="tou-url"><a href="<?php echo get_permalink( zm_get_option( 'tou_url' ) ); ?>" target="_blank"><i class="be be-editor"></i><?php echo zm_get_option( 'tou_txt' ); ?></a></li>
 				<?php } ?>
 			</ul>
 
-			<div class="resp-tabs-container hor_1 da">
+			<div class="resp-tabs-container hor_1">
 
 				<div>
 					<h4><?php _e( '我的信息', 'begin' ); ?></h4>
@@ -107,7 +111,7 @@ jQuery(document).ready(function($){
 					<div class="my-user"><?php my_comment(); ?></div>
 				</div>
 
-				<?php if (zm_get_option('shar_favorite')) { ?>
+				<?php if ( zm_get_option( 'shar_favorite' ) ) { ?>
 					<div>
 						<h4><?php _e( '我的收藏', 'begin' ); ?></h4>
 							<div class="my-user"><?php my_favorite(); ?></div>
@@ -115,9 +119,9 @@ jQuery(document).ready(function($){
 					</div>
 				<?php } ?>
 
-				<?php if ( !zm_get_option('tou_url') == '' ) { ?>
+				<?php if ( ! zm_get_option('tou_url') == '' ) { ?>
 					<div>
-						<h4><?php _e( '我要投稿', 'begin' ); ?></h4>
+						<h4><?php echo zm_get_option( 'tou_txt' ); ?></h4>
 							<div class="my-user"><?php my_tou(); ?></div>
 						<div class="clear"></div>
 					</div>
@@ -131,7 +135,7 @@ jQuery(document).ready(function($){
 
 
 <?php get_footer(); ?>
-<?php }else{
- wp_redirect( home_url() );
- exit;
-}?>
+<?php } else {
+	wp_redirect( home_url() );
+	exit;
+} ?>

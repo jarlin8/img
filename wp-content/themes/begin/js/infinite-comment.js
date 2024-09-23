@@ -7,7 +7,7 @@ jQuery(document).ready(function($){
 	});
 	ias.extension(new IASTriggerExtension({
 		text: '<i class="be be-circledown"></i>',
-		offset: 0,
+		offset: -20,
 	}));
 	ias.extension(new IASSpinnerExtension());
 	ias.extension(new IASNoneLeftExtension({

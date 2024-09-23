@@ -23,10 +23,11 @@ get_header(); ?>
 
 .child-post {
 	position: relative;
-	background: #fff;
+	background: var(--be-bg-white);
+	overflow: hidden;
 	margin: 0 0 10px 0;
 	border-radius: 8px;
-	border: 1px solid #ececec;
+	box-shadow: 0 0 0 1px var(--be-shadow);
 }
 
 .child-inf {
@@ -35,9 +36,10 @@ get_header(); ?>
 }
 
 .ch3 .cat-title {
-	float: left;
-	background: #f8f8f8;
-	width: 100%;
+	background: var(--be-bg-grey-f8);
+	height: 38px;
+	line-height: 38px;
+	margin: 1px 1px 0 1px;
 	border-radius: 8px 8px 0 0;
 }
 
@@ -49,7 +51,7 @@ get_header(); ?>
 }
 
 .child-list {
-	padding: 50px 15px 15px 15px;
+	padding: 15px;
 }
 
 .child-list li {
@@ -89,30 +91,30 @@ get_header(); ?>
 			<?php
 				global $cat;
 				$cats = get_categories(array(
-					'child_of' => $cat,
-					'parent' => $cat,
+					'child_of'   => $cat,
+					'parent'     => $cat,
 					'hide_empty' => 0
 				 ));
-				foreach($cats as $the_cat){
+				foreach( $cats as $the_cat ){
 					$posts = get_posts(array(
-						'category' => $the_cat->cat_ID,
+						'category'    => $the_cat->cat_ID,
 						'numberposts' => 8,
 					));
 					if (!empty($posts)){
 						echo '<div class="ch3" ';
 						echo aos_a();
 						echo '>';
-						echo '<div class="child-post ms bk da">';
-						echo '<h3 class="child-title cat-title bkx"><a href="'.get_category_link($the_cat).'">';
+						echo '<div class="child-post ms">';
+						echo '<h3 class="child-title cat-title"><a href="' . get_category_link( $the_cat ) . '" rel="bookmark" ' . goal() . '>';
 						echo title_i();
 						echo $the_cat->name;
 						echo more_i();
-						echo '</a></h3>';
+						echo '</a></h3><div class="clear"></div>';
 						echo '
 							<ul class="child-list">';
-								foreach($posts as $post){
-									echo '<i class="child-inf">'.mysql2date('d/m', $post->post_date).'</i>
-										<li class="list-title"><a class="srm" href="'.get_permalink($post->ID).'">'.$post->post_title.'</a></li>';
+								foreach( $posts as $post ){
+									echo '<i class="child-inf">' . mysql2date( 'd/m', $post->post_date ) . '</i>
+									<li class="list-title"><a class="srm" href="' . get_permalink( $post->ID ) . '" rel="bookmark" ' . goal() . '>' . $post->post_title . '</a></li>';
 								}
 							echo '</ul>';
 						echo '</div></div>';

@@ -1,1184 +1,1736 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
-if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( "img_way") == 'd_img' ) || ( zm_get_option( "img_way") == 'o_img' ) || ( zm_get_option( "img_way") == 'q_img' ) || ( zm_get_option( "img_way") == 'upyun' ) || ( zm_get_option( "img_way") == 'cos_img' ) ) {
+function textimg() {
+	if ( zm_get_option('img_text' ) ) {
+		return '<div class="textimg">' . get_the_title() . '</div>';
+	}
+}
+if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way') == 'd_img' ) || ( zm_get_option( 'img_way') == 's_img' ) || ( zm_get_option( 'img_way') == 'o_img' ) || ( zm_get_option( 'img_way') == 'q_img' ) || ( zm_get_option( 'img_way') == 'upyun' ) || ( zm_get_option( 'img_way') == 'cos_img' ) ) {
+function be_lazy_thumb( $width = '', $height = '' ) {
+	if ( zm_get_option( 'img_way' ) == 'o_img' ) {
+		return zm_get_option( 'lazy_thumb' ) . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+	}
+	elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+		return zm_get_option( 'lazy_thumb' ) . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+	}
+	elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+		return zm_get_option( 'lazy_thumb' ) . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+	}
+	elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+		return zm_get_option( 'lazy_thumb' ) . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
+	}
+	else {
+		return be_resize( zm_get_option( 'lazy_thumb' ), $width, $height, true );
+	}
+}
+
+function is_ext_img( $strResult, $parseResult, $domains ) {
+	$img_way = zm_get_option('img_way');
+	return ( strpos( $strResult[1][0], $_SERVER['HTTP_HOST'] ) !== false || ( isset($parseResult['host']) && in_array( $parseResult['host'], $domains ) ) || in_array( $img_way, ['s_img', 'o_img', 'q_img', 'upyun', 'cos_img'] ) );
+}
+
 // 标准缩略图
 function zm_thumbnail() {
 	global $post;
-	$random_img = explode( ',', zm_get_option( 'random_image_url' ) );
-	$random_img_array = array_rand( $random_img );
-	$src = $random_img[$random_img_array];
+	$html = '';
+	$html .= textimg();
+	$domains = explode( ',', zm_get_option( 'allowed_domains' ) );
+	$beimg   = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_image_url' ) ) );
+	$src = $beimg[array_rand( $beimg )];
+	$width   = zm_get_option( 'img_w' );
+	$height  = zm_get_option( 'img_h' );
+	$loadimg = be_lazy_thumb( $width, $height );
+	$fancy   = get_post_meta( get_the_ID(), 'fancy_box', true );
+	$rel     = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
 
-	$fancy_box = get_post_meta( get_the_ID(), 'fancy_box', true );
 	if ( get_post_meta( get_the_ID(), 'fancy_box', true ) ) {
-		echo '<a class="fancy-box" rel="external nofollow" href="' . $fancy_box . '"></a>';
+		$html .= '<a class="fancy-box" rel="' . $rel . '" href="' . $fancy . '"></a>';
 	}
 
-	// 手动
-	if ( get_post_meta( get_the_ID(), 'thumbnail', true ) ) {
-		$image = get_post_meta( get_the_ID(), 'thumbnail', true );
-		if ( zm_get_option('lazy_s' ) ) {
-			echo '<span class="load"><a class="sc" rel="external nofollow" href="' . get_permalink() . '"><img src="' . get_template_directory_uri() . '/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w=' . zm_get_option( 'img_w' ) . '&h=' . zm_get_option( 'img_h' ) . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" data-original="';
+	if ( ! zm_get_option( 'rand_only' ) ) {
+		// 手动
+		if ( get_post_meta( get_the_ID(), 'thumbnail', true ) ) {
+			$image = get_post_meta( get_the_ID(), 'thumbnail', true );
+			if ( zm_get_option('lazy_s' ) ) {
+				$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
+			} else {
+				$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
+			}
+
+			if ( ! zm_get_option( 'thumbnail_crop' ) ) {
+				$html .= $image . '"';
+			} else {
+				if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+					$html .= get_template_directory_uri() . '/prune.php?src=' . $image . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
+				}
+
+				elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+					$html .= be_get_image_url( attachment_url_to_postid( $image ), array( $width, $height ), true ) . '"';
+				}
+
+				elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+					$html .= $image . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+				}
+
+				elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+					$html .= $image . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+				}
+
+				elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+					$html .= $image . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+				}
+
+				elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+					$html .= $image . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
+				}
+			}
+
+			$html .= ' alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 		} else {
-			echo '<a class="sc" rel="external nofollow" href="' . get_permalink() . '"><img src="';
-		}
-		if ( zm_get_option( 'manual_thumbnail' ) ) {
-			echo get_template_directory_uri() . '/prune.php?src=' . $image . '&w=' . zm_get_option( 'img_w' ) . '&h=' . zm_get_option( 'img_h' ) . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
-		} else {
-			echo $image . '"';
-		}
-		echo ' alt="' . $post->post_title . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" /></a>';
-		if ( zm_get_option( 'lazy_s' ) ) {
-			echo '</span>';
+			// 特色
+			if ( has_post_thumbnail() ) {
+				$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'content');
+				if ( zm_get_option( 'lazy_s' ) ) {
+					$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
+				} else {
+					$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
+				}
+
+				$html .= be_get_image_url( attachment_url_to_postid( $full_image_url[0] ), array( $width, $height ), true ) . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '">';
+				$html .= '</a>';
+			} else {
+				// 自动
+				$content = $post->post_content;
+				preg_match_all( '/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER );
+				$n = count( $strResult[1] );
+				if ( $n > 0 && !get_post_meta( get_the_ID(), 'rand_img', true ) ) {
+
+					if ( zm_get_option( 'lazy_s' ) ) {
+						$be_get_img = 'data-src="' . $strResult[1][0] . '"';
+					} else {
+						$be_get_img = 'style="background-image: url(' . $strResult[1][0] . ');"';
+					}
+
+					$parseResult = wp_parse_url( $strResult[1][0] );
+					if ( is_ext_img( $strResult, $parseResult, $domains ) ) {
+						if ( zm_get_option( 'lazy_s' ) ) {
+							$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
+						} else {
+							$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
+						}
+		
+						if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+							$html .= get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+						}
+
+						if ( zm_get_option( 'img_way' ) == 's_img' ) {
+							$html .= be_get_image_url( attachment_url_to_postid( $strResult[1][0] ), array( $width, $height ), true ) . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+						}
+					} else {
+						$html .= '<div class="thumbs-b lazy"><a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '" ' . $be_get_img . '></a></div>';
+					}
+
+					if ( zm_get_option( 'img_way' ) == 'o_img' ) {
+						$html .= $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+					}
+
+					if ( zm_get_option( 'img_way' ) == 'q_img' ) {
+						$html .= $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+					}
+
+					if ( zm_get_option( 'img_way' ) == 'upyun' ) {
+						$html .= $strResult[1][0] . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+					}
+
+					if ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+						$html .= $strResult[1][0] . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+					}
+					if ( is_ext_img( $strResult, $parseResult, $domains ) && zm_get_option( 'lazy_s' ) ) {
+						$html .= '</span>';
+					}
+				} else { 
+					// 随机
+					if ( zm_get_option( 'lazy_s' ) ) {
+						$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
+					} else {
+						$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
+					}
+
+					if ( ! zm_get_option( 'randimg_crop' ) ) {
+						$html .= $src . '"';
+					} else {
+						if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+							$html .= get_template_directory_uri() . '/prune.php?src=' . $src . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
+						}
+
+						elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+							$html .= be_get_image_url( attachment_url_to_postid( $src ), array( $width, $height ), true ) . '"';
+						}
+
+						elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+							$html .= $src . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+						}
+
+						elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+							$html .= $src . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+						}
+
+						elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+							$html .= $src . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+						}
+
+						elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+							$html .= $src . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
+						}
+					}
+
+					$html .= ' alt="' . $post->post_title .'" width="' . $width . '" height="' . $height . '"></a>';
+				}
+			}
 		}
 	} else {
-		// 特色
-		if ( has_post_thumbnail() ) {
-			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'content');
-			if ( zm_get_option( 'lazy_s' ) ) {
-				echo '<span class="load"><a class="sc" rel="external nofollow" href="' . get_permalink() . '">';
-			} else {
-				echo '<a class="sc" rel="external nofollow" href="' . get_permalink() . '">';
-			}
-			if ( zm_get_option( 'clipping_thumbnails' ) ) {
-				if ( zm_get_option( 'lazy_s' ) ) {
-					echo '<img src="' . get_template_directory_uri() . '/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w=' . zm_get_option('img_w') . '&h=' . zm_get_option( 'img_h' ) . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" data-original="';
-				} else {
-					echo '<img src="';
-				}
-				echo get_template_directory_uri() . '/prune.php?src=' . $full_image_url[0] . '&w=' . zm_get_option( 'img_w' ) . '&h=' . zm_get_option( 'img_h' ) . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . get_the_title() . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" >';
-			} else {
-				if ( zm_get_option( 'lazy_s' ) ) {
-					echo '<img src="' . get_template_directory_uri() . '/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w=' . zm_get_option( 'img_w' ).'&h=' . zm_get_option( 'img_h' ) . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" data-original="' . $full_image_url[0] . '" alt="' . get_the_title() . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" >';
-				} else {
-					the_post_thumbnail( 'content', array( 'alt' => get_the_title() ) );
-				}
-			}
-			if ( zm_get_option( 'lazy_s' ) ) {
-				echo '</a></span>';
-			} else {
-				echo '</a>';
-			}
+		// 随机
+		if ( zm_get_option( 'lazy_s' ) ) {
+			$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
 		} else {
-			// 自动
-			$content = $post->post_content;
-			preg_match_all( '/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER );
-			$n = count( $strResult[1] );
-			if ( $n > 0 && !get_post_meta( get_the_ID(), 'rand_img', true ) ) {
-				if ( zm_get_option( 'lazy_s' ) ) {
-					echo '<span class="load"><a class="sc" rel="external nofollow" href="' . get_permalink() . '"><img src="' . get_template_directory_uri() . '/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_w').'&h=' . zm_get_option('img_h') . '&a=' . zm_get_option('crop_top') . '&zc=1" data-original="';
-				} else {
-					echo '<a class="sc" rel="external nofollow" href="' . get_permalink() . '"><img src="';
-				}
+			$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
+		}
 
-				if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( "img_way") == 'd_img' ) ) {
-					echo get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . zm_get_option( 'img_w' ) . '&h=' . zm_get_option( 'img_h' ) . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" /></a>';
-				}
+		if ( ! zm_get_option( 'randimg_crop' ) ) {
+			$html .= $src . '"';
+		} else {
+			if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+				$html .= get_template_directory_uri() . '/prune.php?src=' . $src . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
+			}
 
-				if ( zm_get_option( 'img_way' ) == 'o_img' ) {
-					echo $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . zm_get_option( 'img_w' ) . ' ,h_' . zm_get_option( 'img_h' ) . ', limit_0" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" /></a>';
-				}
+			elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+				$html .= be_get_image_url( attachment_url_to_postid( $src ), array( $width, $height ), true ) . '"';
+			}
 
-				if ( zm_get_option( 'img_way' ) == 'q_img' ) {
-					echo $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . zm_get_option( 'img_w' ) . 'x' . zm_get_option( 'img_h' ) . '" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" /></a>';
-				}
+			elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+				$html .= $src . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+			}
 
-				if ( zm_get_option( 'img_way' ) == 'upyun' ) {
-					echo $strResult[1][0] . '!/both/' . zm_get_option( 'img_w' ) . 'x' . zm_get_option( 'img_h' ) . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" /></a>';
-				}
+			elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+				$html .= $src . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+			}
 
-				if ( zm_get_option( 'img_way' ) == 'cos_img' ) {
-					echo $strResult[1][0] . '?imageView2/1/w/' . zm_get_option( 'img_w' ) . '/h/' . zm_get_option( 'img_h' ) . '/q/85" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" /></a>';
-				}
+			elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+				$html .= $src . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+			}
 
-				if ( zm_get_option( 'lazy_s' ) ) {
-					echo '</span>';
-				}
-			} else { 
-				// 随机
-				if ( zm_get_option( 'rand_img_n' ) ) {
-					$random = mt_rand( 1, zm_get_option( 'rand_img_n' ) );
-				} else {
-					$random = mt_rand( 1, 5 );
-				}
-				if ( zm_get_option( 'clipping_rand_img' ) ) {
-					if ( zm_get_option( 'lazy_s' ) ) {
-						echo '<span class="load"><a class="sc" rel="external nofollow" href="' . get_permalink().'"><img src="' . get_template_directory_uri() . '/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w=' . zm_get_option( 'img_w' ) . '&h=' . zm_get_option( 'img_h' ) . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" data-original="';
-					} else {
-						echo '<a class="sc" rel="external nofollow" href="' . get_permalink() . '"><img src="';
-					}
-					echo get_template_directory_uri() . '/prune.php?src=' . $src . '&w=' . zm_get_option( 'img_w' ) . '&h=' . zm_get_option( 'img_h' ) . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '"/></a>';
-					if (zm_get_option('lazy_s')) {
-						echo '</span>';
-					}
-				} else {
-					if ( zm_get_option( 'lazy_s' ) ) {
-						echo '<span class="load"><a class="sc" rel="external nofollow" href="' . get_permalink() . '"><img src="' . get_template_directory_uri() . '/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w=' . zm_get_option( 'img_w' ) . '&h=' . zm_get_option( 'img_h' ) . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" data-original="' . $src . '" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" /></a></span>';
-					} else {
-						echo '<a class="sc" rel="external nofollow" href="' . get_permalink() . '"><img src="' . $src . '" alt="' . $post->post_title .'" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option('img_h') . '" /></a>';
-					}
-				}
+			elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+				$html .= $src . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
 			}
 		}
+
+		$html .= ' alt="' . $post->post_title .'" width="' . $width . '" height="' . $height . '"></a>';
 	}
+	return $html;
 }
 
 // 分类模块宽缩略图
 function zm_long_thumbnail() {
-	$random_img = explode(',' , zm_get_option('random_long_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
 	global $post;
-	if ( get_post_meta(get_the_ID(), 'long_thumbnail', true) ) {
-		$image = get_post_meta(get_the_ID(), 'long_thumbnail', true);
-		if (zm_get_option('lazy_s')) {
-			echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_k_w').'&h='.zm_get_option('img_k_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
+	$html = '';
+	$domains = explode( ',', zm_get_option( 'allowed_domains' ) );
+	$beimg   = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_long_url' ) ) );
+	$src     = $beimg[array_rand( $beimg )];
+	$width   = zm_get_option( 'img_k_w' );
+	$height  = zm_get_option( 'img_k_h' );
+	$loadimg = be_lazy_thumb( $width, $height );
+	$rel     = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
+
+	if ( get_post_meta( get_the_ID(), 'long_thumbnail', true ) ) {
+		$image = get_post_meta( get_the_ID(), 'long_thumbnail', true );
+		if (zm_get_option( 'lazy_s' ) ) {
+			$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
 		} else {
-			echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="';
+			$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
 		}
-		if (zm_get_option('manual_thumbnail')) {
-			echo get_template_directory_uri().'/prune.php?src='.$image.'&w='.zm_get_option('img_k_w').'&h='.zm_get_option('img_k_h').'&a='.zm_get_option('crop_top').'&zc=1"';
+
+		if ( ! zm_get_option( 'thumbnail_crop' ) ) {
+			$html .= $image . '"';
 		} else {
-			echo $image . '"';
+			if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+				$html .= get_template_directory_uri() . '/prune.php?src=' . $image . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+				$html .= be_get_image_url( attachment_url_to_postid( $image ), array( $width, $height ), true ) . '"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+				$html .= $image . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+				$html .= $image . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+				$html .= $image . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+				$html .= $image . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
+			}
 		}
-		echo ' alt="'.$post->post_title .'" width="'.zm_get_option('img_k_w').'" height="'.zm_get_option('img_k_h').'" /></a>';
-		if (zm_get_option('lazy_s')) {
-			echo '</span>';
-		}
+
+		$html .= ' alt="'.$post->post_title .'" width="'. $width .'" height="' . $height . '"></a>';
 	} else {
 		if ( has_post_thumbnail() ) {
-			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'long');
+			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'long' );
 			if (zm_get_option('lazy_s')) {
-				echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'">';
+				$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '">';
 			} else {
-				echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'">';
+				$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '">';
 			}
-			if (zm_get_option('clipping_thumbnails')) {
+
 				if (zm_get_option('lazy_s')) {
-					echo '<img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_k_w').'&h='.zm_get_option('img_k_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
+					$html .= '<img src="' . $loadimg . '" data-original="'.$full_image_url[0].'" alt="'.get_the_title().'">';
 				} else {
-					echo '<img src="';
+					$html .= '<img src="' . $full_image_url[0] . '" alt="' . get_the_title() . '" width="' . $width . '" height="' . $height . '" >';
 				}
-				echo get_template_directory_uri().'/prune.php?src='.$full_image_url[0].'&w='.zm_get_option('img_k_w').'&h='.zm_get_option('img_k_h').'&a='.zm_get_option('crop_top').'&zc=1" alt="'.get_the_title().'" width="'.zm_get_option('img_k_w').'" height="'.zm_get_option('img_k_h').'">';
-			} else {
-				if (zm_get_option('lazy_s')) {
-					echo '<img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_k_w').'&h='.zm_get_option('img_k_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="'.$full_image_url[0].'" alt="'.get_the_title().'">';
-				} else {
-					the_post_thumbnail('long', array('alt' => get_the_title()));
-				}
-			}
-			if (zm_get_option('lazy_s')) {
-				echo '</a></span>';
-			} else {
-				echo '</a>';
-			}
+
+			$html .= '</a>';
 		} else {
 			$content = $post->post_content;
 			preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 			$n = count($strResult[1]);
 			if ($n > 0 && !get_post_meta( get_the_ID(), 'rand_img', true )) {
-				if (zm_get_option('lazy_s')) {
-					echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_k_w').'&h='.zm_get_option('img_k_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
+
+				if ( zm_get_option( 'lazy_s' ) ) {
+					$be_get_img = 'data-src="' . $strResult[1][0] . '"';
 				} else {
-					echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="';
+					$be_get_img = 'style="background-image: url(' . $strResult[1][0] . ');"';
 				}
 
-				if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( "img_way") == 'd_img' ) ) {
-					echo get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . zm_get_option( 'img_k_w' ) . '&h=' . zm_get_option( 'img_k_h' ) . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_k_w' ) . '" height="' . zm_get_option( 'img_k_h' ) . '" /></a>';
+				$parseResult = wp_parse_url( $strResult[1][0] );
+				if ( is_ext_img( $strResult, $parseResult, $domains ) ) {
+					if (zm_get_option('lazy_s')) {
+						$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
+					} else {
+						$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
+					}
+
+					if ( ! zm_get_option( 'img_way' ) || ( zm_get_option('img_way' ) == 'd_img' ) ) {
+						$html .= get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+					}
+
+					if ( zm_get_option( 'img_way' ) == 's_img' ) {
+						$html .= be_get_image_url( attachment_url_to_postid( $strResult[1][0]  ), array( $width, $height ), true ) . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+					}
+				} else {
+					$html .= '<div class="thumbs-f lazy"><a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '" ' . $be_get_img . '></a></div>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'o_img' ) {
-					echo $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . zm_get_option( 'img_k_w' ) . ' ,h_' . zm_get_option( 'img_k_h' ) . ', limit_0" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_k_w' ) . '" height="' . zm_get_option( 'img_k_h' ) . '" /></a>';
+					$html .= $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'q_img' ) {
-					echo $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . zm_get_option( 'img_k_w' ) . 'x' . zm_get_option( 'img_k_h' ) . '" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_k_w' ) . '" height="' . zm_get_option( 'img_k_h' ) . '" /></a>';
+					$html .= $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'upyun' ) {
-					echo $strResult[1][0] . '!/both/' . zm_get_option( 'img_k_w' ) . 'x' . zm_get_option( 'img_k_h' ) . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_k_w' ) . '" height="' . zm_get_option( 'img_k_h' ) . '" /></a>';
+					$html .= $strResult[1][0] . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'cos_img' ) {
-					echo $strResult[1][0] . '?imageView2/1/w/' . zm_get_option( 'img_k_w' ) . '/h/' . zm_get_option( 'img_k_h' ) . '/q/85" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_k_w' ) . '" height="' . zm_get_option( 'img_k_h' ) . '" /></a>';
-				}
-
-				if (zm_get_option('lazy_s')) {
-					echo '</span>';
+					$html .= $strResult[1][0] . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 			} else { 
-				if ( zm_get_option('rand_img_n') ) {
-					$random = mt_rand(1, zm_get_option('rand_img_n'));
-				} else { 
-					$random = mt_rand(1, 5);
+				if ( zm_get_option( 'lazy_s' ) ) {
+					$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
+				} else {
+					$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
 				}
-				if (zm_get_option('clipping_rand_img')) {
-					if (zm_get_option('lazy_s')) {
-						echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_k_w').'&h='.zm_get_option('img_k_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
-					} else {
-						echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="';
+
+				if ( ! zm_get_option( 'randimg_crop' ) ) {
+					$html .= $src . '"';
+				} else {
+					if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+						$html .= get_template_directory_uri() . '/prune.php?src=' . $src . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
 					}
-					echo get_template_directory_uri().'/prune.php?src='.$src.'&w='.zm_get_option('img_k_w').'&h='.zm_get_option('img_k_h').'&a='.zm_get_option('crop_top').'&zc=1" alt="'.$post->post_title .'" width="'.zm_get_option('img_k_w').'" height="'.zm_get_option('img_k_h').'" /></a>';
-					if (zm_get_option('lazy_s')) {
-						echo '</span>';
+
+					elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+						$html .= be_get_image_url( attachment_url_to_postid( $src ), array( $width, $height ), true ) . '"';
 					}
-				} else { 
-					if (zm_get_option('lazy_s')) {
-						echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_k_w').'&h='.zm_get_option('img_k_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="'. $src .'" alt="'.$post->post_title .'" width="'.zm_get_option('img_k_w').'" height="'.zm_get_option('img_k_h').'" /></a></span>';
-					} else {
-						echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. $src .'" alt="'.$post->post_title .'" width="'.zm_get_option('img_k_w').'" height="'.zm_get_option('img_k_h').'" /></a>';
+
+					elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+						$html .= $src . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+						$html .= $src . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+						$html .= $src . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+						$html .= $src . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
 					}
 				}
+	
+				$html .= ' alt="' . $post->post_title .'" width="' . $width . '" height="' . $height . '"></a>';
 			}
 		}
 	}
+	return $html;
 }
 
 // 图片缩略图
 function img_thumbnail() {
 	global $post;
-	$random_img = explode(',' , zm_get_option('random_image_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
-
-	$fancy_box = get_post_meta( get_the_ID(), 'fancy_box', true );
+	$html = '';
+	$domains = explode( ',', zm_get_option( 'allowed_domains' ) );
+	$beimg   = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_image_url' ) ) );
+	$src     = $beimg[array_rand( $beimg )];
+	$width   = zm_get_option( 'img_i_w' );
+	$height  = zm_get_option( 'img_i_h' );
+	$loadimg = be_lazy_thumb( $width, $height );
+	$fancy   = get_post_meta( get_the_ID(), 'fancy_box', true );
+	$rel     = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
 	if ( get_post_meta( get_the_ID(), 'fancy_box', true ) ) {
-		echo '<a class="fancy-box" rel="external nofollow" href="'. $fancy_box . '"></a>';
+		$html .= '<a class="fancy-box" rel="' . $rel . '" href="'. $fancy . '"></a>';
 	}
 
 	if ( get_post_meta(get_the_ID(), 'thumbnail', true) ) {
 		$image = get_post_meta(get_the_ID(), 'thumbnail', true);
-		if (zm_get_option('lazy_s')) {
-			echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_i_w').'&h='.zm_get_option('img_i_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
+		if ( zm_get_option( 'lazy_s' ) ) {
+			$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
 		} else {
-			echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="';
+			$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
 		}
-		if (zm_get_option('manual_thumbnail')) {
-			echo get_template_directory_uri().'/prune.php?src='.$image.'&w='.zm_get_option('img_i_w').'&h='.zm_get_option('img_i_h').'&a='.zm_get_option('crop_top').'&zc=1"';
+
+		if ( ! zm_get_option( 'thumbnail_crop' ) ) {
+			$html .= $image . '"';
 		} else {
-			echo $image . '"';
-		}
-		echo ' alt="'.$post->post_title .'" width="'.zm_get_option('img_i_w').'" height="'.zm_get_option('img_i_h').'" /></a>';
-		if (zm_get_option('lazy_s')) {
-			echo '</span>';
+			if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+				$html .= get_template_directory_uri() . '/prune.php?src=' . $image . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+				$html .= be_get_image_url( attachment_url_to_postid( $image ), array( $width, $height ), true ) . '"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+				$html .= $image . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+				$html .= $image . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+				$html .= $image . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+				$html .= $image . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
+			}
 		}
 	} else {
 		if ( has_post_thumbnail() ) {
 			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'content');
-			if (zm_get_option('lazy_s')) {
-				echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'">';
+			if ( zm_get_option( 'lazy_s' ) ) {
+				$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
 			} else {
-				echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'">';
+				$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
 			}
-			if (zm_get_option('clipping_thumbnails')) {
-				if (zm_get_option('lazy_s')) {
-					echo '<img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_i_w').'&h='.zm_get_option('img_i_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
-				} else {
-					echo '<img src="';
-				}
-				echo get_template_directory_uri().'/prune.php?src='.$full_image_url[0].'&w='.zm_get_option('img_i_w').'&h='.zm_get_option('img_i_h').'&a='.zm_get_option('crop_top').'&zc=1" alt="'.get_the_title().'" width="'.zm_get_option('img_i_w').'" height="'.zm_get_option('img_i_h').'" >';
-			} else {
-				if (zm_get_option('lazy_s')) {
-					echo '<img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_w').'&h='.zm_get_option('img_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="'.$full_image_url[0].'" alt="'.get_the_title().'" width="'.zm_get_option('img_i_w').'" height="'.zm_get_option('img_i_h').'" >';
-				} else {
-					the_post_thumbnail('content', array('alt' => get_the_title()));
-				}
-			}
-			if (zm_get_option('lazy_s')) {
-				echo '</a></span>';
-			} else {
-				echo '</a>';
-			}
+
+			$html .= be_get_image_url( attachment_url_to_postid( $full_image_url[0] ), array( $width, $height ), true ) . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '">';
+			$html .= '</a>';
 		} else {
 			$content = $post->post_content;
 			preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 			$n = count($strResult[1]);
 			if ($n > 0) {
-				if (zm_get_option('lazy_s')) {
-					echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_i_w').'&h='.zm_get_option('img_i_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
+
+				if ( zm_get_option( 'lazy_s' ) ) {
+					$be_get_img = 'data-src="' . $strResult[1][0] . '"';
 				} else {
-					echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="';
+					$be_get_img = 'style="background-image: url(' . $strResult[1][0] . ');"';
 				}
 
-				if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( "img_way") == 'd_img' ) ) {
-					echo get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . zm_get_option( 'img_i_w' ) . '&h=' . zm_get_option( 'img_i_h' ) . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_i_w' ) . '" height="' . zm_get_option( 'img_i_h' ) . '" /></a>';
+				$parseResult = wp_parse_url( $strResult[1][0] );
+				if ( is_ext_img( $strResult, $parseResult, $domains ) ) {
+					if (zm_get_option('lazy_s')) {
+						$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
+					} else {
+						$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
+					}
+
+					if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+							$html .= get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+					}
+
+					if ( zm_get_option( 'img_way' ) == 's_img' ) {
+						$html .= be_get_image_url( attachment_url_to_postid( $strResult[1][0]  ), array( $width, $height ), true ) . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+					}
+
+				} else {
+					$html .= '<div class="thumbs-i lazy"><a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '" ' . $be_get_img . '></a></div>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'o_img' ) {
-					echo $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . zm_get_option( 'img_i_w' ) . ' ,h_' . zm_get_option( 'img_i_h' ) . ', limit_0" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_i_w' ) . '" height="' . zm_get_option( 'img_i_h' ) . '" /></a>';
+					$html .= $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'q_img' ) {
-					echo $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . zm_get_option( 'img_i_w' ) . 'x' . zm_get_option( 'img_i_h' ) . '" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_i_w' ) . '" height="' . zm_get_option( 'img_i_h' ) . '" /></a>';
+					$html .= $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'upyun' ) {
-					echo $strResult[1][0] . '!/both/' . zm_get_option( 'img_i_w' ) . 'x' . zm_get_option( 'img_i_h' ) . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_i_w' ) . '" height="' . zm_get_option( 'img_i_h' ) . '" /></a>';
+					$html .= $strResult[1][0] . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'cos_img' ) {
-					echo $strResult[1][0] . '?imageView2/1/w/' . zm_get_option( 'img_i_w' ) . '/h/' . zm_get_option( 'img_i_h' ) . '/q/85" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_i_w' ) . '" height="' . zm_get_option( 'img_i_h' ) . '" /></a>';
-				}
-
-				if (zm_get_option('lazy_s')) {
-					echo '</span>';
+					$html .= $strResult[1][0] . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 			} else { 
-				if ( zm_get_option('rand_img_n') ) {
-					$random = mt_rand(1, zm_get_option('rand_img_n'));
-				} else { 
-					$random = mt_rand(1, 5);
+				if ( zm_get_option( 'lazy_s' ) ) {
+					$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
+				} else {
+					$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
 				}
-				if (zm_get_option('clipping_rand_img')) {
-					if (zm_get_option('lazy_s')) {
-						echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_i_w').'&h='.zm_get_option('img_i_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
-					} else {
-						echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="';
+
+				if ( ! zm_get_option( 'randimg_crop' ) ) {
+					$html .= $src . '"';
+				} else {
+					if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+						$html .= get_template_directory_uri() . '/prune.php?src=' . $src . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
 					}
-					echo get_template_directory_uri().'/prune.php?src='.$src.'&w='.zm_get_option('img_i_w').'&h='.zm_get_option('img_i_h').'&a='.zm_get_option('crop_top').'&zc=1" alt="'.$post->post_title .'" width="'.zm_get_option('img_i_w').'" height="'.zm_get_option('img_i_h').'" /></a>';
-					if (zm_get_option('lazy_s')) {
-						echo '</span>';
+
+					elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+						$html .= be_get_image_url( attachment_url_to_postid( $src ), array( $width, $height ), true ) . '"';
 					}
-				} else { 
-					if (zm_get_option('lazy_s')) {
-						echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_i_w').'&h='.zm_get_option('img_i_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="'. $src .'" alt="'.$post->post_title .'" width="'.zm_get_option('img_i_w').'" height="'.zm_get_option('img_i_h').'" /></a></span>';
-					} else {
-						echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. $src .'" alt="'.$post->post_title .'" width="'.zm_get_option('img_i_w').'" height="'.zm_get_option('img_i_h').'" /></a>';
+
+					elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+						$html .= $src . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+						$html .= $src . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+						$html .= $src . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+						$html .= $src . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
 					}
 				}
+	
+				$html .= ' alt="' . $post->post_title .'" width="' . $width . '" height="' . $height . '"></a>';
 			}
 		}
 	}
+	return $html;
 }
 
 // 视频缩略图
 function videos_thumbnail() {
-	$random_img = explode(',' , zm_get_option('random_image_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
 	global $post;
+	$html = '';
+	$domains = explode( ',', zm_get_option( 'allowed_domains' ) );
+	$beimg   = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_image_url' ) ) );
+	$src     = $beimg[array_rand( $beimg )];
+	$width   = zm_get_option( 'img_v_w' );
+	$height  = zm_get_option( 'img_v_h' );
+	$loadimg = be_lazy_thumb( $width, $height );
+	$rel     = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
+
 	if ( get_post_meta(get_the_ID(), 'small', true) ) {
 		$image = get_post_meta(get_the_ID(), 'small', true);
 		if (zm_get_option('lazy_s')) {
-			echo '<span class="load"><a class="sc" rel="external nofollow" class="videos" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_v_w').'&h='.zm_get_option('img_v_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
+			$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' class="videos" href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
 		} else {
-			echo '<a class="sc" rel="external nofollow" class="videos" href="'.get_permalink().'"><img src="';
+			$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' class="videos" href="' . get_permalink() . '"><img src="';
 		}
-		if (zm_get_option('manual_thumbnail')) {
-			echo get_template_directory_uri().'/prune.php?src='.$image.'&w='.zm_get_option('img_v_w').'&h='.zm_get_option('img_v_h').'&a='.zm_get_option('crop_top').'&zc=1"';
+
+		if ( ! zm_get_option( 'thumbnail_crop' ) ) {
+			$html .= $image . '"';
 		} else {
-			echo $image . '"';
+			if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+				$html .= get_template_directory_uri() . '/prune.php?src=' . $image . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+				$html .= be_get_image_url( attachment_url_to_postid( $image ), array( $width, $height ), true ) . '"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+				$html .= $image . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+				$html .= $image . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+				$html .= $image . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+				$html .= $image . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
+			}
 		}
-		echo ' alt="'.$post->post_title .'" width="'.zm_get_option('img_v_w').'" height="'.zm_get_option('img_v_h').'" /><i class="be be-play"></i></a>';
-		if (zm_get_option('lazy_s')) {
-			echo '</span>';
-		}
+
+		$html .= ' alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a>';
 	} else {
 		if ( has_post_thumbnail() ) {
-			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'content');
-			if (zm_get_option('lazy_s')) {
-				echo '<span class="load"><a class="sc" rel="external nofollow" class="videos" href="'.get_permalink().'">';
+			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'content');
+
+			if ( zm_get_option( 'lazy_s' ) ) {
+				$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
 			} else {
-				echo '<a class="sc" rel="external nofollow" class="videos" href="'.get_permalink().'">';
+				$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
 			}
-			if (zm_get_option('clipping_thumbnails')) {
-				if (zm_get_option('lazy_s')) {
-					echo '<img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_v_w').'&h='.zm_get_option('img_v_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
-				} else {
-					echo '<img src="';
-				}
-				echo get_template_directory_uri().'/prune.php?src='.$full_image_url[0].'&w='.zm_get_option('img_v_w').'&h='.zm_get_option('img_v_h').'&a='.zm_get_option('crop_top').'&zc=1" alt="'.get_the_title().'" width="'.zm_get_option('img_v_w').'" height="'.zm_get_option('img_v_h').'" >';
-			} else {
-				if (zm_get_option('lazy_s')) {
-					echo '<img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_v_w').'&h='.zm_get_option('img_v_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="'.$full_image_url[0].'" alt="'.get_the_title().'" width="'.zm_get_option('img_v_w').'" height="'.zm_get_option('img_v_h').'" >';
-				} else {
-					the_post_thumbnail('content', array('alt' => get_the_title()));
-				}
-			}
-			if (zm_get_option('lazy_s')) {
-				echo '<i class="be be-play"></i></a></span>';
-			} else {
-				echo '<i class="be be-play"></i></a>';
-			}
+
+			$html .= be_get_image_url( attachment_url_to_postid( $full_image_url[0] ), array( $width, $height ), true ) . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '">';
+			$html .= '<i class="be be-play"></i></a>';
 		} else {
 			$content = $post->post_content;
 			preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 			$n = count($strResult[1]);
 			if ($n > 0) {
-				if (zm_get_option('lazy_s')) {
-					echo '<span class="load"><a class="sc" rel="external nofollow" class="videos" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_v_w').'&h='.zm_get_option('img_v_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
+				if ( zm_get_option( 'lazy_s' ) ) {
+					$be_get_img = 'data-src="' . $strResult[1][0] . '"';
 				} else {
-					echo '<a class="sc" rel="external nofollow" class="videos" href="'.get_permalink().'"><img src="';
+					$be_get_img = 'style="background-image: url(' . $strResult[1][0] . ');"';
 				}
 
-				if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( "img_way") == 'd_img' ) ) {
-					echo get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . zm_get_option( 'img_v_w' ) . '&h=' . zm_get_option( 'img_v_h' ) . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_v_w' ) . '" height="' . zm_get_option( 'img_v_h' ) . '" /><i class="be be-play"></i></a>';
+				$parseResult = wp_parse_url( $strResult[1][0] );
+				if ( is_ext_img( $strResult, $parseResult, $domains ) ) {
+					if (zm_get_option('lazy_s')) {
+						$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' class="videos" href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
+					} else {
+						$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' class="videos" href="' . get_permalink() . '"><img src="';
+					}
+
+					if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+						$html .= get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"><i class="be be-play"></i></a>';
+					}
+
+					if ( zm_get_option( 'img_way' ) == 's_img' ) {
+						$html .= be_get_image_url( attachment_url_to_postid( $strResult[1][0]  ), array( $width, $height ), true ) . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+					}
+
+				} else {
+					$html .= '<div class="thumbs-v lazy"><a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '" ' . $be_get_img . '></a></div>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'o_img' ) {
-					echo $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . zm_get_option( 'img_v_w' ) . ' ,h_' . zm_get_option( 'img_v_h' ) . ', limit_0" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_v_w' ) . '" height="' . zm_get_option( 'img_v_h' ) . '" /><i class="be be-play"></i></a>';
+					$html .= $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'q_img' ) {
-					echo $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . zm_get_option( 'img_v_w' ) . 'x' . zm_get_option( 'img_v_h' ) . '" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_v_w' ) . '" height="' . zm_get_option( 'img_v_h' ) . '" /><i class="be be-play"></i></a>';
+					$html .= $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'upyun' ) {
-					echo $strResult[1][0] . '!/both/' . zm_get_option( 'img_v_w' ) . 'x' . zm_get_option( 'img_v_h' ) . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_v_w' ) . '" height="' . zm_get_option( 'img_v_h' ) . '" /><i class="be be-play"></i></a>';
+					$html .= $strResult[1][0] . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'cos_img' ) {
-					echo $strResult[1][0] . '?imageView2/1/w/' . zm_get_option( 'img_v_w' ) . '/h/' . zm_get_option( 'img_v_h' ) . '/q/85" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_v_w' ) . '" height="' . zm_get_option( 'img_v_h' ) . '" /><i class="be be-play"></i></a>';
-				}
-
-				if (zm_get_option('lazy_s')) {
-					echo '</span>';
+					$html .= $strResult[1][0] . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 			} else { 
-				if ( zm_get_option('rand_img_n') ) {
-					$random = mt_rand(1, zm_get_option('rand_img_n'));
-				} else { 
-					$random = mt_rand(1, 5);
+				if ( zm_get_option( 'lazy_s' ) ) {
+					$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
+				} else {
+					$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
 				}
-				if (zm_get_option('clipping_rand_img')) {
-					if (zm_get_option('lazy_s')) {
-						echo '<span class="load"><a class="sc" rel="external nofollow" class="videos" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_v_w').'&h='.zm_get_option('img_v_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
-					} else {
-						echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="';
+
+				if ( ! zm_get_option( 'randimg_crop' ) ) {
+					$html .= $src . '"';
+				} else {
+					if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+						$html .= get_template_directory_uri() . '/prune.php?src=' . $src . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
 					}
-					echo get_template_directory_uri().'/prune.php?src='.$src.'&w='.zm_get_option('img_v_w').'&h='.zm_get_option('img_v_h').'&a='.zm_get_option('crop_top').'&zc=1" alt="'.$post->post_title .'" width="'.zm_get_option('img_v_w').'" height="'.zm_get_option('img_v_h').'" /><i class="be be-play"></i></a>';
-					if (zm_get_option('lazy_s')) {
-						echo '</span>';
+
+					elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+						$html .= be_get_image_url( attachment_url_to_postid( $src ), array( $width, $height ), true ) . '"';
 					}
-				} else { 
-					if (zm_get_option('lazy_s')) {
-						echo '<span class="load"><a class="sc" rel="external nofollow" class="videos" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_v_w').'&h='.zm_get_option('img_v_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="'. $src .'" alt="'.$post->post_title .'" /><i class="be be-play"></i></a></span>';
-					} else {
-						echo '<a class="sc" rel="external nofollow" class="videos" href="'.get_permalink().'"><img src="'. $src .'" alt="'.$post->post_title .'" width="'.zm_get_option('img_v_w').'" height="'.zm_get_option('img_v_h').'" /><i class="be be-play"></i></a>';
+
+					elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+						$html .= $src . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+						$html .= $src . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+						$html .= $src . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+						$html .= $src . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
 					}
 				}
+	
+				$html .= ' alt="' . $post->post_title .'" width="' . $width . '" height="' . $height . '"><i class="be be-play"></i></a>';
 			}
 		}
 	}
+	return $html;
 }
 
 // 商品缩略图
 function tao_thumbnail() {
 	global $post;
-	$random_img = explode(',' , zm_get_option('random_image_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
-
-	$fancy_box = get_post_meta( get_the_ID(), 'fancy_box', true );
+	$html = '';
+	$domains = explode( ',', zm_get_option( 'allowed_domains' ) );
+	$beimg   = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_image_url' ) ) );
+	$src     = $beimg[array_rand( $beimg )];
+	$width   = zm_get_option( 'img_t_w' );
+	$height  = zm_get_option( 'img_t_h' );
+	$loadimg = be_lazy_thumb( $width, $height );
+	$fancy   = get_post_meta( get_the_ID(), 'fancy_box', true );
+	$rel     = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
 	if ( get_post_meta( get_the_ID(), 'fancy_box', true ) ) {
-		echo '<a class="fancy-box" rel="external nofollow" href="'. $fancy_box . '"></a>';
+		$html .= '<a class="fancy-box" rel="' . $rel . '" href="'. $fancy . '"></a>';
 	}
 
 	$url = get_post_meta(get_the_ID(), 'taourl', true);
 	if ( get_post_meta(get_the_ID(), 'thumbnail', true) ) {
 		$image = get_post_meta(get_the_ID(), 'thumbnail', true);
+
 		if (zm_get_option('lazy_s')) {
-			echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_t_w').'&h='.zm_get_option('img_t_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
+			$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
 		} else {
-			echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="';
+			$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
 		}
-		if (zm_get_option('manual_thumbnail')) {
-			echo get_template_directory_uri().'/prune.php?src='.$image.'&w='.zm_get_option('img_t_w').'&h='.zm_get_option('img_t_h').'&a='.zm_get_option('crop_top').'&zc=1"';
+
+		if ( ! zm_get_option( 'thumbnail_crop' ) ) {
+			$html .= $image . '"';
 		} else {
-			echo $image . '"';
+			if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+				$html .= get_template_directory_uri() . '/prune.php?src=' . $image . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+				$html .= be_get_image_url( attachment_url_to_postid( $image ), array( $width, $height ), true ) . '"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+				$html .= $image . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+				$html .= $image . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+				$html .= $image . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+				$html .= $image . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
+			}
 		}
-		echo ' alt="'.$post->post_title .'" width="'.zm_get_option('img_t_w').'" height="'.zm_get_option('img_t_h').'" /></a>';
-		if (zm_get_option('lazy_s')) {
-			echo '</span>';
-		}
+
+		$html .= ' alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a>';
 	} else {
 		if ( has_post_thumbnail() ) {
 			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'tao');
 			if (zm_get_option('lazy_s')) {
-				echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'">';
+				$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '">';
 			} else {
-				echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'">';
+				$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '">';
 			}
-			if (zm_get_option('clipping_thumbnails')) {
-				if (zm_get_option('lazy_s')) {
-					echo '<img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_t_w').'&h='.zm_get_option('img_t_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
-				} else {
-					echo '<img src="';
-				}
-				echo get_template_directory_uri().'/prune.php?src='.$full_image_url[0].'&w='.zm_get_option('img_t_w').'&h='.zm_get_option('img_t_h').'&a='.zm_get_option('crop_top').'&zc=1" alt="'.get_the_title().'" width="'.zm_get_option('img_t_w').'" height="'.zm_get_option('img_t_h').'" >';
+			if ( zm_get_option( 'lazy_s' ) ) {
+				$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
 			} else {
-				if (zm_get_option('lazy_s')) {
-					echo '<img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_t_w').'&h='.zm_get_option('img_t_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="'.$full_image_url[0].'" alt="'.get_the_title().'" width="'.zm_get_option('img_t_w').'" height="'.zm_get_option('img_t_h').'">';
-				} else {
-					the_post_thumbnail('tao', array('alt' => get_the_title()));
-				}
+				$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
 			}
-			if (zm_get_option('lazy_s')) {
-				echo '</a></span>';
-			} else {
-				echo '</a>';
-			}
+
+			$html .= be_get_image_url( attachment_url_to_postid( $full_image_url[0] ), array( $width, $height ), true ) . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '">';
+			$html .= '</a>';
 		} else {
 			$content = $post->post_content;
 			preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 			$n = count($strResult[1]);
 			if ($n > 0) {
-				if (zm_get_option('lazy_s')) {
-					echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_t_w').'&h='.zm_get_option('img_t_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
+				if ( zm_get_option( 'lazy_s' ) ) {
+					$be_get_img = 'data-src="' . $strResult[1][0] . '"';
 				} else {
-					echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="';
+					$be_get_img = 'style="background-image: url(' . $strResult[1][0] . ');"';
 				}
 
-				if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( "img_way") == 'd_img' ) ) {
-					echo get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . zm_get_option( 'img_t_w' ) . '&h=' . zm_get_option( 'img_t_h' ) . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_t_w' ) . '" height="' . zm_get_option( 'img_t_h' ) . '" /></a>';
+				$parseResult = wp_parse_url( $strResult[1][0] );
+				if ( is_ext_img( $strResult, $parseResult, $domains ) ) {
+					if (zm_get_option('lazy_s')) {
+						$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
+					} else {
+						$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
+					}
+
+					if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+						$html .= get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+					}
+
+					if ( zm_get_option( 'img_way' ) == 's_img' ) {
+						$html .= be_get_image_url( attachment_url_to_postid( $strResult[1][0]  ), array( $width, $height ), true ) . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+					}
+
+				} else {
+					$html .= '<div class="thumbs-t lazy"><a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '" ' . $be_get_img . '></a></div>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'o_img' ) {
-					echo $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . zm_get_option( 'img_t_w' ) . ' ,h_' . zm_get_option( 'img_t_h' ) . ', limit_0" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_t_w' ) . '" height="' . zm_get_option( 'img_t_h' ) . '" /></a>';
+					$html .= $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'q_img' ) {
-					echo $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . zm_get_option( 'img_t_w' ) . 'x' . zm_get_option( 'img_t_h' ) . '" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_t_w' ) . '" height="' . zm_get_option( 'img_t_h' ) . '" /></a>';
+					$html .= $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'upyun' ) {
-					echo $strResult[1][0] . '!/both/' . zm_get_option( 'img_t_w' ) . 'x' . zm_get_option( 'img_t_h' ) . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_t_w' ) . '" height="' . zm_get_option( 'img_t_h' ) . '" /></a>';
+					$html .= $strResult[1][0] . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'cos_img' ) {
-					echo $strResult[1][0] . '?imageView2/1/w/' . zm_get_option( 'img_t_w' ) . '/h/' . zm_get_option( 'img_t_h' ) . '/q/85" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_t_w' ) . '" height="' . zm_get_option( 'img_t_h' ) . '" /></a>';
-				}
-
-				if (zm_get_option('lazy_s')) {
-					echo '</span>';
+					$html .= $strResult[1][0] . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 			} else { 
-				if ( zm_get_option('rand_img_n') ) {
-					$random = mt_rand(1, zm_get_option('rand_img_n'));
-				} else { 
-					$random = mt_rand(1, 5);
+				if ( zm_get_option( 'lazy_s' ) ) {
+					$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
+				} else {
+					$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
 				}
-				if (zm_get_option('clipping_rand_img')) {
-					if (zm_get_option('lazy_s')) {
-						echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_t_w').'&h='.zm_get_option('img_t_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
-					} else {
-						echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="';
+
+				if ( ! zm_get_option( 'randimg_crop' ) ) {
+					$html .= $src . '"';
+				} else {
+					if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+						$html .= get_template_directory_uri() . '/prune.php?src=' . $src . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
 					}
-					echo get_template_directory_uri().'/prune.php?src='.$src.'&w='.zm_get_option('img_t_w').'&h='.zm_get_option('img_t_h').'&a='.zm_get_option('crop_top').'&zc=1" alt="'.$post->post_title .'" width="'.zm_get_option('img_t_w').'" height="'.zm_get_option('img_t_h').'" /></a>';
-					if (zm_get_option('lazy_s')) {
-						echo '</span>';
+
+					elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+						$html .= be_get_image_url( attachment_url_to_postid( $src ), array( $width, $height ), true ) . '"';
 					}
-				} else { 
-					if (zm_get_option('lazy_s')) {
-						echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_t_w').'&h='.zm_get_option('img_t_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="'. $src .'" alt="'.$post->post_title .'" width="'.zm_get_option('img_t_w').'" height="'.zm_get_option('img_t_h').'" /></a></span>';
-					} else {
-						echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. $src .'" alt="'.$post->post_title .'" width="'.zm_get_option('img_t_w').'" height="'.zm_get_option('img_t_h').'" /></a>';
+
+					elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+						$html .= $src . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+						$html .= $src . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+						$html .= $src . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+						$html .= $src . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
 					}
 				}
+	
+				$html .= ' alt="' . $post->post_title .'" width="' . $width . '" height="' . $height . '"></a>';
 			}
 		}
 	}
+	return $html;
 }
 
 // 图像日志缩略图
 function format_image_thumbnail() {
 	global $post;
-	$content = $post->post_content;
-	preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
-	$n = count($strResult[1]);
+	$html = '';
 	$img_a = '';
 	$img_b = '';
 	$img_c = '';
 	$img_d = '';
-	if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( "img_way") == 'd_img' ) ) {
-		$img_a = get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . zm_get_option( 'img_w' ) . '&h=' . zm_get_option( 'img_h' ) . '&a='.zm_get_option( 'crop_top' ) . '&zc=1';
-		$img_b = get_template_directory_uri() . '/prune.php?src=' . $strResult[1][1] . '&w=' . zm_get_option( 'img_w' ) . '&h=' . zm_get_option( 'img_h' ) . '&a='.zm_get_option( 'crop_top' ) . '&zc=1';
-		$img_c = get_template_directory_uri() . '/prune.php?src=' . $strResult[1][2] . '&w=' . zm_get_option( 'img_w' ) . '&h=' . zm_get_option( 'img_h' ) . '&a='.zm_get_option( 'crop_top' ) . '&zc=1';
-		$img_d = get_template_directory_uri() . '/prune.php?src=' . $strResult[1][3] . '&w=' . zm_get_option( 'img_w' ) . '&h=' . zm_get_option( 'img_h' ) . '&a='.zm_get_option( 'crop_top' ) . '&zc=1';
-	}
+	$domains  = explode( ',', zm_get_option( 'allowed_domains' ) );
+	$width    = zm_get_option( 'img_w' );
+	$height   = zm_get_option( 'img_h' );
+	$loadimg  = be_lazy_thumb( $width, $height );
+	$rel      = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
+	$content  = $post->post_content;
+	preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
+	$n = count($strResult[1]);
+	if ( $n > 3 ) {
+		if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way') == 'd_img' ) ) {
+			$parseResult = wp_parse_url( $strResult[1][0] );
+			if ( is_ext_img( $strResult, $parseResult, $domains ) ) {
+				$img_a = get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . $width . '&h=' . $height . '&a='.zm_get_option( 'crop_top' ) . '&zc=1';
+				$img_b = get_template_directory_uri() . '/prune.php?src=' . $strResult[1][1] . '&w=' . $width . '&h=' . $height . '&a='.zm_get_option( 'crop_top' ) . '&zc=1';
+				$img_c = get_template_directory_uri() . '/prune.php?src=' . $strResult[1][2] . '&w=' . $width . '&h=' . $height . '&a='.zm_get_option( 'crop_top' ) . '&zc=1';
+				$img_d = get_template_directory_uri() . '/prune.php?src=' . $strResult[1][3] . '&w=' . $width . '&h=' . $height . '&a='.zm_get_option( 'crop_top' ) . '&zc=1';
 
-	if ( zm_get_option( 'img_way' ) == 'o_img' ) {
-		$img_a = $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . zm_get_option( 'img_w' ) . ' ,h_' . zm_get_option( 'img_h' ) . ', limit_0';
-		$img_b = $strResult[1][1] . '?x-oss-process=image/resize,m_fill,w_' . zm_get_option( 'img_w' ) . ' ,h_' . zm_get_option( 'img_h' ) . ', limit_0';
-		$img_c = $strResult[1][2] . '?x-oss-process=image/resize,m_fill,w_' . zm_get_option( 'img_w' ) . ' ,h_' . zm_get_option( 'img_h' ) . ', limit_0';
-		$img_d = $strResult[1][3] . '?x-oss-process=image/resize,m_fill,w_' . zm_get_option( 'img_w' ) . ' ,h_' . zm_get_option( 'img_h' ) . ', limit_0';
-	}
+				if ( zm_get_option( 'lazy_s' ) ) {
+					$html .= '<div class="f4"><div class="format-img"><a class="sc load" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $loadimg . '" data-original="' . $img_a . '" alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a></div></div>';
+					$html .= '<div class="f4"><div class="format-img"><a class="sc load" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $loadimg . '" data-original="' . $img_b . '" alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a></div></div>';
+					$html .= '<div class="f4"><div class="format-img"><a class="sc load" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $loadimg . '" data-original="' . $img_c . '" alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a></div></div>';
+					$html .= '<div class="f4"><div class="format-img"><a class="sc load" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $loadimg . '" data-original="' . $img_d . '" alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a></div></div>';
+				} else {
+					$html .= '<div class="f4"><div class="format-img"><a class="sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $img_a . '" alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a></div></div>';
+					$html .= '<div class="f4"><div class="format-img"><a class="sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $img_b . '" alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a></div></div>';
+					$html .= '<div class="f4"><div class="format-img"><a class="sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $img_c . '" alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a></div></div>';
+					$html .= '<div class="f4"><div class="format-img"><a class="sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $img_d . '" alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a></div></div>';
+				}
+			} else {
+				if ( zm_get_option( 'lazy_s' ) ) {
+					$be_get_img_a = 'data-src="' . $strResult[1][0] . '"';
+					$be_get_img_b = 'data-src="' . $strResult[1][1] . '"';
+					$be_get_img_c = 'data-src="' . $strResult[1][2] . '"';
+					$be_get_img_d = 'data-src="' . $strResult[1][3] . '"';
+				} else {
+					$be_get_img_a = 'style="background-image: url(' . $strResult[1][0] . ');"';
+					$be_get_img_b = 'style="background-image: url(' . $strResult[1][1] . ');"';
+					$be_get_img_c = 'style="background-image: url(' . $strResult[1][2] . ');"';
+					$be_get_img_d = 'style="background-image: url(' . $strResult[1][3] . ');"';
+				}
 
-	if ( zm_get_option( 'img_way' ) == 'q_img' ) {
-		$img_a = $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . zm_get_option( 'img_w' ) . 'x' . zm_get_option( 'img_h' );
-		$img_b = $strResult[1][1] . '?imageMogr2/gravity/Center/crop/' . zm_get_option( 'img_w' ) . 'x' . zm_get_option( 'img_h' );
-		$img_c = $strResult[1][2] . '?imageMogr2/gravity/Center/crop/' . zm_get_option( 'img_w' ) . 'x' . zm_get_option( 'img_h' );
-		$img_d = $strResult[1][3] . '?imageMogr2/gravity/Center/crop/' . zm_get_option( 'img_w' ) . 'x' . zm_get_option( 'img_h' );
-	}
-
-	if ( zm_get_option( 'img_way' ) == 'upyun' ) {
-		$img_a = $strResult[1][0] . '!/both/' . zm_get_option( 'img_w' ) . 'x' . zm_get_option( 'img_h' ) . '/format/webp/lossless/true';
-		$img_b = $strResult[1][1] . '!/both/' . zm_get_option( 'img_w' ) . 'x' . zm_get_option( 'img_h' ) . '/format/webp/lossless/true';
-		$img_c = $strResult[1][2] . '!/both/' . zm_get_option( 'img_w' ) . 'x' . zm_get_option( 'img_h' ) . '/format/webp/lossless/true';
-		$img_d = $strResult[1][3] . '!/both/' . zm_get_option( 'img_w' ) . 'x' . zm_get_option( 'img_h' ) . '/format/webp/lossless/true';
-	}
-
-	if ( zm_get_option( 'img_way' ) == 'cos_img' ) {
-		$img_a = $strResult[1][0] . '?imageView2/1/w/' . zm_get_option( 'img_w' ) . '/h/' . zm_get_option( 'img_h' ) . '/q/85';
-		$img_b = $strResult[1][1] . '?imageView2/1/w/' . zm_get_option( 'img_w' ) . '/h/' . zm_get_option( 'img_h' ) . '/q/85';
-		$img_c = $strResult[1][2] . '?imageView2/1/w/' . zm_get_option( 'img_w' ) . '/h/' . zm_get_option( 'img_h' ) . '/q/85';
-		$img_d = $strResult[1][3] . '?imageView2/1/w/' . zm_get_option( 'img_w' ) . '/h/' . zm_get_option( 'img_h' ) . '/q/85';
-	}
-
-	if ($n > 3 ) {
-		if (zm_get_option('lazy_s')) {
-			echo '<div class="f4"><div class="format-img"><div class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_w').'&h='.zm_get_option('img_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="' . $img_a . '" alt="'.$post->post_title .'" width="'.zm_get_option('img_w').'" height="'.zm_get_option('img_h').'" /></a></div></div></div>';
-			echo '<div class="f4"><div class="format-img"><div class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_w').'&h='.zm_get_option('img_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="' . $img_b . '" alt="'.$post->post_title .'" width="'.zm_get_option('img_w').'" height="'.zm_get_option('img_h').'" /></a></div></div></div>';
-			echo '<div class="f4"><div class="format-img"><div class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_w').'&h='.zm_get_option('img_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="' . $img_c . '" alt="'.$post->post_title .'" width="'.zm_get_option('img_w').'" height="'.zm_get_option('img_h').'" /></a></div></div></div>';
-			echo '<div class="f4"><div class="format-img"><div class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_w').'&h='.zm_get_option('img_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="' . $img_d . '" alt="'.$post->post_title .'" width="'.zm_get_option('img_w').'" height="'.zm_get_option('img_h').'" /></a></div></div></div>';
+				$html .= '<div class="f4"><div class="format-img"><div class="thumbs-b lazy"><a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img_a . '></a></div></div></div>';
+				$html .= '<div class="f4"><div class="format-img"><div class="thumbs-b lazy"><a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img_b . '></a></div></div></div>';
+				$html .= '<div class="f4"><div class="format-img"><div class="thumbs-b lazy"><a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img_c . '></a></div></div></div>';
+				$html .= '<div class="f4"><div class="format-img"><div class="thumbs-b lazy"><a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img_d . '></a></div></div></div>';
+			}
 		} else {
-			echo '<div class="f4"><div class="format-img"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="' . $img_a . '" alt="'.$post->post_title .'" width="'.zm_get_option('img_w').'" height="'.zm_get_option('img_h').'" /></a></div></div>';
-			echo '<div class="f4"><div class="format-img"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="' . $img_b . '" alt="'.$post->post_title .'" width="'.zm_get_option('img_w').'" height="'.zm_get_option('img_h').'" /></a></div></div>';
-			echo '<div class="f4"><div class="format-img"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="' . $img_c . '" alt="'.$post->post_title .'" width="'.zm_get_option('img_w').'" height="'.zm_get_option('img_h').'" /></a></div></div>';
-			echo '<div class="f4"><div class="format-img"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="' . $img_d . '" alt="'.$post->post_title .'" width="'.zm_get_option('img_w').'" height="'.zm_get_option('img_h').'" /></a></div></div>';
+			if ( zm_get_option( 'img_way') == 's_img' ) {
+				$img_a = be_get_image_url( attachment_url_to_postid( $strResult[1][0] ), array( $width, $height ), true );
+				$img_b = be_get_image_url( attachment_url_to_postid( $strResult[1][1] ), array( $width, $height ), true );
+				$img_c = be_get_image_url( attachment_url_to_postid( $strResult[1][2] ), array( $width, $height ), true );
+				$img_d = be_get_image_url( attachment_url_to_postid( $strResult[1][3] ), array( $width, $height ), true );
+			}
+
+
+			if ( zm_get_option( 'img_way' ) == 'o_img' ) {
+				$img_a = $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0';
+				$img_b = $strResult[1][1] . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0';
+				$img_c = $strResult[1][2] . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0';
+				$img_d = $strResult[1][3] . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0';
+			}
+
+			if ( zm_get_option( 'img_way' ) == 'q_img' ) {
+				$img_a = $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height;
+				$img_b = $strResult[1][1] . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height;
+				$img_c = $strResult[1][2] . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height;
+				$img_d = $strResult[1][3] . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height;
+			}
+
+			if ( zm_get_option( 'img_way' ) == 'upyun' ) {
+				$img_a = $strResult[1][0] . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true';
+				$img_b = $strResult[1][1] . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true';
+				$img_c = $strResult[1][2] . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true';
+				$img_d = $strResult[1][3] . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true';
+			}
+
+			if ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+				$img_a = $strResult[1][0] . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85';
+				$img_b = $strResult[1][1] . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85';
+				$img_c = $strResult[1][2] . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85';
+				$img_d = $strResult[1][3] . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85';
+			}
+
+			if ( zm_get_option( 'lazy_s' ) ) {
+				$html .= '<div class="f4"><div class="format-img"><a class="sc load" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $loadimg . '" data-original="' . $img_a . '" alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a></div></div>';
+				$html .= '<div class="f4"><div class="format-img"><a class="sc load" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $loadimg . '" data-original="' . $img_b . '" alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a></div></div>';
+				$html .= '<div class="f4"><div class="format-img"><a class="sc load" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $loadimg . '" data-original="' . $img_c . '" alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a></div></div>';
+				$html .= '<div class="f4"><div class="format-img"><a class="sc load" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $loadimg . '" data-original="' . $img_d . '" alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a></div></div>';
+			} else {
+				$html .= '<div class="f4"><div class="format-img"><a class="sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $img_a . '" alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a></div></div>';
+				$html .= '<div class="f4"><div class="format-img"><a class="sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $img_b . '" alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a></div></div>';
+				$html .= '<div class="f4"><div class="format-img"><a class="sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $img_c . '" alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a></div></div>';
+				$html .= '<div class="f4"><div class="format-img"><a class="sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $img_d . '" alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a></div></div>';
+			}
 		}
 	} else {
-		echo '<div class="f4-tip">文章中至少添加4张图片才能显示</div>';
+		$html .= '<div class="f4-tip">文章中至少添加4张图片才能显示</div>';
 	}
+	return $html;
 }
 
 // 图片布局缩略图
 function zm_grid_thumbnail() {
 	global $post;
-	$random_img = explode(',' , zm_get_option('random_image_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
-
-	$fancy_box = get_post_meta( get_the_ID(), 'fancy_box', true );
+	$html = '';
+	$domains = explode( ',', zm_get_option( 'allowed_domains' ) );
+	$beimg   = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_image_url' ) ) );
+	$src     = $beimg[array_rand( $beimg )];
+	$width   = zm_get_option( 'grid_w' );
+	$height  = zm_get_option( 'grid_h' );
+	$loadimg = be_lazy_thumb( $width, $height );
+	$fancy   = get_post_meta( get_the_ID(), 'fancy_box', true );
+	$rel     = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
 	if ( get_post_meta( get_the_ID(), 'fancy_box', true ) ) {
-		echo '<a class="fancy-box" rel="external nofollow" href="'. $fancy_box . '"></a>';
+		$html .= '<a class="fancy-box" rel="' . $rel . '" href="'. $fancy . '"></a>';
 	}
 
 	if ( get_post_meta(get_the_ID(), 'thumbnail', true) ) {
 		$image = get_post_meta(get_the_ID(), 'thumbnail', true);
 		if (zm_get_option('lazy_s')) {
-			echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('grid_w').'&h='.zm_get_option('grid_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
+			$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $loadimg . '" data-original="';
 		} else {
-			echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="';
+			$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="';
 		}
-		if (zm_get_option('manual_thumbnail')) {
-			echo get_template_directory_uri().'/prune.php?src='.$image.'&w='.zm_get_option('grid_w').'&h='.zm_get_option('grid_h').'&a='.zm_get_option('crop_top').'&zc=1"';
+
+		if ( ! zm_get_option( 'thumbnail_crop' ) ) {
+			$html .= $image . '"';
 		} else {
-			echo $image . '"';
+			if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+				$html .= get_template_directory_uri() . '/prune.php?src=' . $image . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+				$html .= be_get_image_url( attachment_url_to_postid( $image ), array( $width, $height ), true ) . '"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+				$html .= $image . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+				$html .= $image . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+				$html .= $image . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+				$html .= $image . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
+			}
 		}
-		echo ' alt="'.$post->post_title .'" width="'.zm_get_option('grid_w').'" height="'.zm_get_option('grid_h').'" /></a>';
-		if (zm_get_option('lazy_s')) {
-			echo '</span>';
-		}
+
+		$html .= ' alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a>';
 	} else {
 		if ( has_post_thumbnail() ) {
 			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'content');
-			if (zm_get_option('lazy_s')) {
-				echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'">';
+
+			if ( zm_get_option( 'lazy_s' ) ) {
+				$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
 			} else {
-				echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'">';
+				$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
 			}
-			if (zm_get_option('clipping_thumbnails')) {
-				if (zm_get_option('lazy_s')) {
-					echo '<img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('grid_w').'&h='.zm_get_option('grid_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
-				} else {
-					echo '<img src="';
-				}
-				echo get_template_directory_uri().'/prune.php?src='.$full_image_url[0].'&w='.zm_get_option('grid_w').'&h='.zm_get_option('grid_h').'&a='.zm_get_option('crop_top').'&zc=1" alt="'.get_the_title().'" width="'.zm_get_option('grid_w').'" height="'.zm_get_option('grid_h').'" >';
-			} else {
-				if (zm_get_option('lazy_s')) {
-					echo '<img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('grid_w').'&h='.zm_get_option('grid_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="'.$full_image_url[0].'" alt="'.get_the_title().'" width="'.zm_get_option('grid_w').'" height="'.zm_get_option('grid_h').'" >';
-				} else {
-					the_post_thumbnail('content', array('alt' => get_the_title()));
-				}
-			}
-			if (zm_get_option('lazy_s')) {
-				echo '</a></span>';
-			} else {
-				echo '</a>';
-			}
+
+			$html .= be_get_image_url( attachment_url_to_postid( $full_image_url[0] ), array( $width, $height ), true ) . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '">';
+			$html .= '</a>';
 		} else {
 			$content = $post->post_content;
 			preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 			$n = count($strResult[1]);
 			if ($n > 0 && !get_post_meta( get_the_ID(), 'rand_img', true )) {
-				if (zm_get_option('lazy_s')) {
-					echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('grid_w').'&h='.zm_get_option('grid_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
+				if ( zm_get_option( 'lazy_s' ) ) {
+					$be_get_img = 'data-src="' . $strResult[1][0] . '"';
 				} else {
-					echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="';
+					$be_get_img = 'style="background-image: url(' . $strResult[1][0] . ');"';
 				}
 
-				if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( "img_way") == 'd_img' ) ) {
-					echo get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . zm_get_option( 'grid_w' ) . '&h=' . zm_get_option( 'grid_h' ) . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . zm_get_option( 'grid_w' ) . '" height="' . zm_get_option( 'grid_h' ) . '" /></a>';
+				$parseResult = wp_parse_url( $strResult[1][0] );
+				if ( is_ext_img( $strResult, $parseResult, $domains ) ) {
+					if (zm_get_option('lazy_s')) {
+						$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $loadimg . '" data-original="';
+					} else {
+						$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="';
+					}
+
+
+					if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+						$html .= get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+					}
+
+					if ( zm_get_option( 'img_way' ) == 's_img' ) {
+						$html .= be_get_image_url( attachment_url_to_postid( $strResult[1][0]  ), array( $width, $height ), true ) . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+					}
+
+				} else {
+					$html .= '<div class="thumbs-h lazy"><a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img . '></a></div>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'o_img' ) {
-					echo $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . zm_get_option( 'grid_w' ) . ' ,h_' . zm_get_option( 'grid_h' ) . ', limit_0" alt="' . $post->post_title . '" width="' . zm_get_option( 'grid_w' ) . '" height="' . zm_get_option( 'grid_h' ) . '" /></a>';
+					$html .= $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'q_img' ) {
-					echo $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . zm_get_option( 'grid_w' ) . 'x' . zm_get_option( 'grid_h' ) . '" alt="' . $post->post_title . '" width="' . zm_get_option( 'grid_w' ) . '" height="' . zm_get_option( 'grid_h' ) . '" /></a>';
+					$html .= $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'upyun' ) {
-					echo $strResult[1][0] . '!/both/' . zm_get_option( 'grid_w' ) . 'x' . zm_get_option( 'grid_h' ) . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . zm_get_option( 'grid_w' ) . '" height="' . zm_get_option( 'grid_h' ) . '" /></a>';
+					$html .= $strResult[1][0] . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'cos_img' ) {
-					echo $strResult[1][0] . '?imageView2/1/w/' . zm_get_option( 'grid_w' ) . '/h/' . zm_get_option( 'grid_h' ) . '/q/85" alt="' . $post->post_title . '" width="' . zm_get_option( 'grid_w' ) . '" height="' . zm_get_option( 'grid_h' ) . '" /></a>';
-				}
-
-				if (zm_get_option('lazy_s')) {
-					echo '</span>';
+					$html .= $strResult[1][0] . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 			} else { 
-				if ( zm_get_option('rand_img_n') ) {
-					$random = mt_rand(1, zm_get_option('rand_img_n'));
-				} else { 
-					$random = mt_rand(1, 5);
+				if ( zm_get_option( 'lazy_s' ) ) {
+					$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
+				} else {
+					$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
 				}
-				if (zm_get_option('clipping_rand_img')) {
-					if (zm_get_option('lazy_s')) {
-						echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('grid_w').'&h='.zm_get_option('grid_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
-					} else {
-						echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="';
+
+				if ( ! zm_get_option( 'randimg_crop' ) ) {
+					$html .= $src . '"';
+				} else {
+					if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+						$html .= get_template_directory_uri() . '/prune.php?src=' . $src . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
 					}
-					echo get_template_directory_uri().'/prune.php?src='.$src.'&w='.zm_get_option('grid_w').'&h='.zm_get_option('grid_h').'&a='.zm_get_option('crop_top').'&zc=1" alt="'.$post->post_title .'" width="'.zm_get_option('grid_w').'" height="'.zm_get_option('grid_h').'" /></a>';
-					if (zm_get_option('lazy_s')) {
-						echo '</span>';
+
+					elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+						$html .= be_get_image_url( attachment_url_to_postid( $src ), array( $width, $height ), true ) . '"';
 					}
-				} else { 
-					if (zm_get_option('lazy_s')) {
-						echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('grid_w').'&h='.zm_get_option('grid_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="'. $src .'" alt="'.$post->post_title .'" width="'.zm_get_option('grid_w').'" height="'.zm_get_option('grid_h').'" /></a></span>';
-					} else {
-						echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. $src .'" alt="'.$post->post_title .'" width="'.zm_get_option('grid_w').'" height="'.zm_get_option('grid_h').'" /></a>';
+
+					elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+						$html .= $src . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+						$html .= $src . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+						$html .= $src . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+						$html .= $src . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
 					}
 				}
+	
+				$html .= ' alt="' . $post->post_title .'" width="' . $width . '" height="' . $height . '"></a>';
 			}
 		}
 	}
+	return $html;
 }
 
 // 宽缩略图分类
 function zm_full_thumbnail() {
-	$random_img = explode(',' , zm_get_option('random_long_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
 	global $post;
+	$html = '';
+	$domains = explode( ',', zm_get_option( 'allowed_domains' ) );
+	$beimg   = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_long_url' ) ) );
+	$src     = $beimg[array_rand( $beimg )];
+	$width   = zm_get_option( 'img_full_w' );
+	$height  = zm_get_option( 'img_full_h' );
+	$loadimg = be_lazy_thumb( $width, $height );
+	$rel     = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
 	if ( get_post_meta(get_the_ID(), 'full_thumbnail', true) ) {
 		$image = get_post_meta(get_the_ID(), 'full_thumbnail', true);
 		if (zm_get_option('lazy_s')) {
-			echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_full_w').'&h='.zm_get_option('img_full_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
+			$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $loadimg . '" data-original="';
 		} else {
-			echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="';
+			$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="';
 		}
-		if (zm_get_option('manual_thumbnail')) {
-			echo get_template_directory_uri().'/prune.php?src='.$image.'&w='.zm_get_option('img_full_w').'&h='.zm_get_option('img_full_h').'&a='.zm_get_option('crop_top').'&zc=1"';
+
+		if ( ! zm_get_option( 'thumbnail_crop' ) ) {
+			$html .= $image . '"';
 		} else {
-			echo $image . '"';
+			if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+				$html .= get_template_directory_uri() . '/prune.php?src=' . $image . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+				$html .= be_get_image_url( attachment_url_to_postid( $image ), array( $width, $height ), true ) . '"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+				$html .= $image . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+				$html .= $image . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+				$html .= $image . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+				$html .= $image . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
+			}
 		}
-		echo ' alt="'.$post->post_title .'" width="'.zm_get_option('img_full_w').'" height="'.zm_get_option('img_full_h').'" /></a>';
-		if (zm_get_option('lazy_s')) {
-			echo '</span>';
-		}
+
+		$html .= ' alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a>';
 	} else {
 		if ( has_post_thumbnail() ) {
 			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'content');
 			if (zm_get_option('lazy_s')) {
-				echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'">';
+				$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'">';
 			} else {
-				echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'">';
+				$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'">';
 			}
-			if (zm_get_option('clipping_thumbnails')) {
-				if (zm_get_option('lazy_s')) {
-					echo '<img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_full_w').'&h='.zm_get_option('img_full_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
-				} else {
-					echo '<img src="';
-				}
-				echo get_template_directory_uri().'/prune.php?src='.$full_image_url[0].'&w='.zm_get_option('img_full_w').'&h='.zm_get_option('img_full_h').'&a='.zm_get_option('crop_top').'&zc=1" alt="'.get_the_title().'" width="'.zm_get_option('img_full_w').'" height="'.zm_get_option('img_full_h').'" >';
+
+			if ( zm_get_option( 'lazy_s' ) ) {
+				$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
 			} else {
-				if (zm_get_option('lazy_s')) {
-					echo '<img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_full_w').'&h='.zm_get_option('img_full_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="'.$full_image_url[0].'" alt="'.get_the_title().'" width="'.zm_get_option('img_full_w').'" height="'.zm_get_option('img_full_h').'">';
-				} else {
-					the_post_thumbnail('content', array('alt' => get_the_title()));
-				}
+				$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
 			}
-			if (zm_get_option('lazy_s')) {
-				echo '</a></span>';
-			} else {
-				echo '</a>';
-			}
+
+			$html .= be_get_image_url( attachment_url_to_postid( $full_image_url[0] ), array( $width, $height ), true ) . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '">';
+			$html .= '</a>';
 		} else {
 			$content = $post->post_content;
 			preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 			$n = count($strResult[1]);
 			if ($n > 0 && !get_post_meta( get_the_ID(), 'rand_img', true )) {
-				if (zm_get_option('lazy_s')) {
-					echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_full_w').'&h='.zm_get_option('img_full_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
+				if ( zm_get_option( 'lazy_s' ) ) {
+					$be_get_img = 'data-src="' . $strResult[1][0] . '"';
 				} else {
-					echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="';
+					$be_get_img = 'style="background-image: url(' . $strResult[1][0] . ');"';
 				}
 
-				if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( "img_way") == 'd_img' ) ) {
-					echo get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . zm_get_option( 'img_full_w' ) . '&h=' . zm_get_option( 'img_full_h' ) . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_full_w' ) . '" height="' . zm_get_option( 'img_full_h' ) . '" /></a>';
+				$parseResult = wp_parse_url( $strResult[1][0] );
+				if ( is_ext_img( $strResult, $parseResult, $domains ) ) {
+					if (zm_get_option('lazy_s')) {
+						$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $loadimg . '" data-original="';
+					} else {
+						$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="';
+					}
+
+					if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+						$html .= get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+					}
+
+					if ( zm_get_option( 'img_way' ) == 's_img' ) {
+						$html .= be_get_image_url( attachment_url_to_postid( $strResult[1][0]  ), array( $width, $height ), true ) . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+					}
+
+				} else {
+					$html .= '<div class="thumbs-w lazy"><a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img . '></a></div>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'o_img' ) {
-					echo $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . zm_get_option( 'img_full_w' ) . ' ,h_' . zm_get_option( 'img_full_h' ) . ', limit_0" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_full_w' ) . '" height="' . zm_get_option( 'img_full_h' ) . '" /></a>';
+					$html .= $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'q_img' ) {
-					echo $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . zm_get_option( 'img_full_w' ) . 'x' . zm_get_option( 'img_full_h' ) . '" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_full_w' ) . '" height="' . zm_get_option( 'img_full_h' ) . '" /></a>';
+					$html .= $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'upyun' ) {
-					echo $strResult[1][0] . '!/both/' . zm_get_option( 'img_full_w' ) . 'x' . zm_get_option( 'img_full_h' ) . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_full_w' ) . '" height="' . zm_get_option( 'img_full_h' ) . '" /></a>';
+					$html .= $strResult[1][0] . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'cos_img' ) {
-					echo $strResult[1][0] . '?imageView2/1/w/' . zm_get_option( 'img_full_w' ) . '/h/' . zm_get_option( 'img_full_h' ) . '/q/85" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_full_w' ) . '" height="' . zm_get_option( 'img_full_h' ) . '" /></a>';
-				}
-
-				if (zm_get_option('lazy_s')) {
-					echo '</span>';
+					$html .= $strResult[1][0] . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 			} else { 
-				if ( zm_get_option('rand_img_n') ) {
-					$random = mt_rand(1, zm_get_option('rand_img_n'));
-				} else { 
-					$random = mt_rand(1, 5);
+				if ( zm_get_option( 'lazy_s' ) ) {
+					$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
+				} else {
+					$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
 				}
-				if (zm_get_option('clipping_rand_img')) {
-					if (zm_get_option('lazy_s')) {
-						echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_full_w').'&h='.zm_get_option('img_full_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
-					} else {
-						echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="';
-					}
-					echo get_template_directory_uri().'/prune.php?src='.$src.'&w='.zm_get_option('img_full_w').'&h='.zm_get_option('img_full_h').'&a='.zm_get_option('crop_top').'&zc=1" alt="'.$post->post_title .'" width="'.zm_get_option('img_full_w').'" height="'.zm_get_option('img_full_h').'" /></a>';
 
-					if (zm_get_option('lazy_s')) {
-						echo '</span>';
+				if ( ! zm_get_option( 'randimg_crop' ) ) {
+					$html .= $src . '"';
+				} else {
+					if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+						$html .= get_template_directory_uri() . '/prune.php?src=' . $src . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
 					}
-				} else { 
-					if (zm_get_option('lazy_s')) {
-						echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_full_w').'&h='.zm_get_option('img_full_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="'. $src .'" alt="'.$post->post_title .'" width="'.zm_get_option('img_full_w').'" height="'.zm_get_option('img_full_h').'" /></a></span>';
-					} else {
-						echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. $src .'" alt="'.$post->post_title .'" width="'.zm_get_option('img_full_w').'" height="'.zm_get_option('img_full_h').'" /></a>';
+
+					elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+						$html .= be_get_image_url( attachment_url_to_postid( $src ), array( $width, $height ), true ) . '"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+						$html .= $src . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+						$html .= $src . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+						$html .= $src . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+						$html .= $src . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
 					}
 				}
+	
+				$html .= ' alt="' . $post->post_title .'" width="' . $width . '" height="' . $height . '"></a>';
 			}
 		}
 	}
+	return $html;
 }
 
 // 公司左右图
 function gr_wd_thumbnail() {
-	$random_img = explode(',' , zm_get_option('random_image_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
 	global $post;
+	$html = '';
+	$domains = explode( ',', zm_get_option( 'allowed_domains' ) );
+	$beimg   = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_image_url' ) ) );
+	$src     = $beimg[array_rand( $beimg )];
+	$width   = '700';
+	$height  = '380';
+	$loadimg = be_lazy_thumb( $width, $height );
+	$rel     = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
 	if ( get_post_meta(get_the_ID(), 'wd_img', true) ) {
 		$image = get_post_meta(get_the_ID(), 'wd_img', true);
 		if (zm_get_option('lazy_s')) {
-			echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w=700&h=380&a='.zm_get_option('crop_top').'&zc=1" data-original="';
+			$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $loadimg . '" data-original="';
 		} else {
-			echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="';
+			$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="';
 		}
-		if (zm_get_option('manual_thumbnail')) {
-			echo get_template_directory_uri().'/prune.php?src='.$image.'&w=700&h=380&a='.zm_get_option('crop_top').'&zc=1"';
+
+		if ( ! zm_get_option( 'thumbnail_crop' ) ) {
+			$html .= $image . '"';
 		} else {
-			echo $image . '"';
+			if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+				$html .= get_template_directory_uri() . '/prune.php?src=' . $image . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+				$html .= be_get_image_url( attachment_url_to_postid( $image ), array( $width, $height ), true ) . '"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+				$html .= $image . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+				$html .= $image . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+				$html .= $image . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+				$html .= $image . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
+			}
 		}
-		echo ' alt="'.$post->post_title .'" width="700" height="380" /></a>';
-		if (zm_get_option('lazy_s')) {
-			echo '</span>';
-		}
+
+		$html .= ' alt="'.$post->post_title .'" width="700" height="380"></a>';
 	} else {
 		$content = $post->post_content;
 		preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 		$n = count($strResult[1]);
 		if ($n > 0) {
-			if (zm_get_option('lazy_s')) {
-				echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w=700&h=380&a='.zm_get_option('crop_top').'&zc=1" data-original="';
+			if ( zm_get_option( 'lazy_s' ) ) {
+				$be_get_img = 'data-src="' . $strResult[1][0] . '"';
 			} else {
-				echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="';
+				$be_get_img = 'style="background-image: url(' . $strResult[1][0] . ');"';
 			}
 
-			if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( "img_way") == 'd_img' ) ) {
-				echo get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=700&h=380&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="700" height="380" /></a>';
+			$parseResult = wp_parse_url( $strResult[1][0] );
+			if ( is_ext_img( $strResult, $parseResult, $domains ) ) {
+				if (zm_get_option('lazy_s')) {
+					$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $loadimg . '" data-original="';
+				} else {
+					$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="';
+				}
+
+				if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+					$html .= get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+				}
+
+				if ( zm_get_option( 'img_way' ) == 's_img' ) {
+					$html .= be_get_image_url( attachment_url_to_postid( $strResult[1][0]  ), array( $width, $height ), true ) . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+				}
+
+			} else {
+				$html .= '<div class="thumbs-lr lazy"><a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img . '></a></div>';
 			}
 
 			if ( zm_get_option( 'img_way' ) == 'o_img' ) {
-				echo $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_700,h_380, limit_0" alt="' . $post->post_title . '" width="700" height="380" /></a>';
+				$html .= $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_700,h_380, limit_0" alt="' . $post->post_title . '" width=' . $width . ' height=' . $height . '></a>';
 			}
 
 			if ( zm_get_option( 'img_way' ) == 'q_img' ) {
-				echo $strResult[1][0] . '?imageMogr2/gravity/Center/crop/700x380" alt="' . $post->post_title . '" width="700" height="380" /></a>';
+				$html .= $strResult[1][0] . '?imageMogr2/gravity/Center/crop/700x380" alt="' . $post->post_title . '" width=' . $width . ' height=' . $height . '></a>';
 			}
 
 			if ( zm_get_option( 'img_way' ) == 'upyun' ) {
-				echo $strResult[1][0] . '!/both/700x380/format/webp/lossless/true" alt="' . $post->post_title . '" width="700" height="380" /></a>';
+				$html .= $strResult[1][0] . '!/both/700x380/format/webp/lossless/true" alt="' . $post->post_title . '" width=' . $width . ' height=' . $height . '></a>';
 			}
 
 			if ( zm_get_option( 'img_way' ) == 'cos_img' ) {
-				echo $strResult[1][0] . '?imageView2/1/w/700/h/380/q/85" alt="' . $post->post_title . '" width="700" height="380" /></a>';
-			}
-
-			if (zm_get_option('lazy_s')) {
-				echo '</span>';
+				$html .= $strResult[1][0] . '?imageView2/1/w/700/h/380/q/85" alt="' . $post->post_title . '" width=' . $width . ' height=' . $height . '></a>';
 			}
 		} else { 
-			if ( zm_get_option('rand_img_n') ) {
-				$random = mt_rand(1, zm_get_option('rand_img_n'));
-			} else { 
-				$random = mt_rand(1, 5);
+			if ( zm_get_option( 'lazy_s' ) ) {
+				$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
+			} else {
+				$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
 			}
-			if (zm_get_option('clipping_rand_img')) {
-				if (zm_get_option('lazy_s')) {
-					echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w=700&h=380&a='.zm_get_option('crop_top').'&zc=1" data-original="';
-				} else {
-					echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="';
+
+			if ( ! zm_get_option( 'randimg_crop' ) ) {
+				$html .= $src . '"';
+			} else {
+				if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+					$html .= get_template_directory_uri() . '/prune.php?src=' . $src . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
 				}
-				echo get_template_directory_uri().'/prune.php?src='.$src.'&w=700&h=380&a='.zm_get_option('crop_top').'&zc=1" alt="'.$post->post_title .'" width="700" height="380" /></a>';
-				if (zm_get_option('lazy_s')) {
-					echo '</span>';
+
+				elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+					$html .= be_get_image_url( attachment_url_to_postid( $src ), array( $width, $height ), true ) . '"';
 				}
-			} else { 
-				if (zm_get_option('lazy_s')) {
-					echo '<span class="load"><a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w=700&h=380&a='.zm_get_option('crop_top').'&zc=1" data-original="'. $src .'" alt="'.$post->post_title .'" width="700" height="380" /></a></span>';
-				} else {
-					echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src="'. $src .'" alt="'.$post->post_title .'" width="700" height="380" /></a>';
+
+				elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+					$html .= $src . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+				}
+
+				elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+					$html .= $src . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+				}
+
+				elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+					$html .= $src . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+				}
+
+				elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+					$html .= $src . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
 				}
 			}
+	
+			$html .= ' alt="' . $post->post_title .'" width="' . $width . '" height="' . $height . '"></a>';
 		}
 	}
+	return $html;
 }
 
 // 链接形式
 function zm_thumbnail_link() {
 	global $post;
-	$random_img = explode(',' , zm_get_option('random_image_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
-
-	$fancy_box = get_post_meta( get_the_ID(), 'fancy_box', true );
+	$html = '';
+	$html .= textimg();
+	$domains = explode( ',', zm_get_option( 'allowed_domains' ) );
+	$beimg   = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_image_url' ) ) );
+	$src     = $beimg[array_rand( $beimg )];
+	$width   = zm_get_option( 'img_w' );
+	$height  = zm_get_option( 'img_h' );
+	$loadimg = be_lazy_thumb( $width, $height );
+	$fancy   = get_post_meta( get_the_ID(), 'fancy_box', true );
+	$rel     = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
 	if ( get_post_meta( get_the_ID(), 'fancy_box', true ) ) {
-		echo '<a class="fancy-box" rel="external nofollow" href="'. $fancy_box . '"></a>';
+		$html .= '<a class="fancy-box" rel="' . $rel . '" href="'. $fancy . '"></a>';
 	}
 	$direct = get_post_meta(get_the_ID(), 'direct', true);
 
 	if ( get_post_meta(get_the_ID(), 'thumbnail', true) ) {
 		$image = get_post_meta(get_the_ID(), 'thumbnail', true);
 		if (zm_get_option('lazy_s')) {
-			echo '<span class="load"><a class="sc" rel="external nofollow" href="'.$direct.'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_w').'&h='.zm_get_option('img_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
+			$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="'.$direct.'"><img src="' . $loadimg . '" data-original="';
 		} else {
-			echo '<a class="sc" rel="external nofollow" href="'.$direct.'"><img src="';
+			$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="'.$direct.'"><img src="';
 		}
-		if (zm_get_option('manual_thumbnail')) {
-			echo get_template_directory_uri().'/prune.php?src='.$image.'&w='.zm_get_option('img_w').'&h='.zm_get_option('img_h').'&a='.zm_get_option('crop_top').'&zc=1"';
+
+		if ( ! zm_get_option( 'thumbnail_crop' ) ) {
+			$html .= $image . '"';
 		} else {
-			echo $image . '"';
+			if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+				$html .= get_template_directory_uri() . '/prune.php?src=' . $image . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+				$html .= be_get_image_url( attachment_url_to_postid( $image ), array( $width, $height ), true ) . '"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+				$html .= $image . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+				$html .= $image . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+				$html .= $image . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+				$html .= $image . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
+			}
 		}
-		echo ' alt="'.$post->post_title .'" width="'.zm_get_option('img_w').'" height="'.zm_get_option('img_h').'" /></a>';
-		if (zm_get_option('lazy_s')) {
-			echo '</span>';
-		}
+
+		$html .= ' alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a>';
 	} else {
 		if ( has_post_thumbnail() ) {
 			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'content');
 			if (zm_get_option('lazy_s')) {
-				echo '<span class="load"><a class="sc" rel="external nofollow" href="'.$direct.'">';
+				$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . $direct . '">';
 			} else {
-				echo '<a class="sc" rel="external nofollow" href="'.$direct.'">';
+				$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . $direct . '">';
 			}
-			if (zm_get_option('clipping_thumbnails')) {
-				if (zm_get_option('lazy_s')) {
-					echo '<img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_w').'&h='.zm_get_option('img_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
-				} else {
-					echo '<img src="';
-				}
-				echo get_template_directory_uri().'/prune.php?src='.$full_image_url[0].'&w='.zm_get_option('img_w').'&h='.zm_get_option('img_h').'&a='.zm_get_option('crop_top').'&zc=1" alt="'.get_the_title().'" width="'.zm_get_option('img_w').'" height="'.zm_get_option('img_h').'" >';
+
+			if ( zm_get_option( 'lazy_s' ) ) {
+				$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
 			} else {
-				if (zm_get_option('lazy_s')) {
-					echo '<img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_w').'&h='.zm_get_option('img_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="'.$full_image_url[0].'" alt="'.get_the_title().'" width="'.zm_get_option('img_w').'" height="'.zm_get_option('img_h').'" >';
-				} else {
-					the_post_thumbnail('content', array('alt' => get_the_title()));
-				}
+				$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
 			}
-			if (zm_get_option('lazy_s')) {
-				echo '</a></span>';
-			} else {
-				echo '</a>';
-			}
+
+			$html .= be_get_image_url( attachment_url_to_postid( $full_image_url[0] ), array( $width, $height ), true ) . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '">';
+			$html .= '</a>';
 		} else {
 			$content = $post->post_content;
 			preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 			$n = count($strResult[1]);
 			if ($n > 0 && !get_post_meta( get_the_ID(), 'rand_img', true )) {
-				if (zm_get_option('lazy_s')) {
-					echo '<span class="load"><a class="sc" rel="external nofollow" href="'.$direct.'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_w').'&h='.zm_get_option('img_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
+				if ( zm_get_option( 'lazy_s' ) ) {
+					$be_get_img = 'data-src="' . $strResult[1][0] . '"';
 				} else {
-					echo '<a class="sc" rel="external nofollow" href="'.$direct.'"><img src="';
+					$be_get_img = 'style="background-image: url(' . $strResult[1][0] . ');"';
 				}
 
-				if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( "img_way") == 'd_img' ) ) {
-					echo get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . zm_get_option( 'img_w' ) . '&h=' . zm_get_option( 'img_h' ) . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" /></a>';
+				$parseResult = wp_parse_url( $strResult[1][0] );
+				if ( is_ext_img( $strResult, $parseResult, $domains ) ) {
+
+					if (zm_get_option('lazy_s')) {
+						$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="'.$direct.'"><img src="' . $loadimg . '" data-original="';
+					} else {
+						$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . $direct . '"><img src="';
+					}
+
+					if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+						$html .= get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+					}
+
+					if ( zm_get_option( 'img_way' ) == 's_img' ) {
+						$html .= be_get_image_url( attachment_url_to_postid( $strResult[1][0]  ), array( $width, $height ), true ) . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+					}
+
+				} else {
+					$html .= '<div class="thumbs-l lazy"><a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img . '></a></div>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'o_img' ) {
-					echo $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . zm_get_option( 'img_w' ) . ' ,h_' . zm_get_option( 'img_h' ) . ', limit_0" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" /></a>';
+					$html .= $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'q_img' ) {
-					echo $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . zm_get_option( 'img_w' ) . 'x' . zm_get_option( 'img_h' ) . '" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" /></a>';
+					$html .= $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'upyun' ) {
-					echo $strResult[1][0] . '!/both/' . zm_get_option( 'img_w' ) . 'x' . zm_get_option( 'img_h' ) . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" /></a>';
+					$html .= $strResult[1][0] . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 
 				if ( zm_get_option( 'img_way' ) == 'cos_img' ) {
-					echo $strResult[1][0] . '?imageView2/1/w/' . zm_get_option( 'img_w' ) . '/h/' . zm_get_option( 'img_h' ) . '/q/85" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" /></a>';
-				}
-
-				if (zm_get_option('lazy_s')) {
-					echo '</span>';
+					$html .= $strResult[1][0] . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
 			} else { 
-				if ( zm_get_option('rand_img_n') ) {
-					$random = mt_rand(1, zm_get_option('rand_img_n'));
-				} else { 
-					$random = mt_rand(1, 5);
+				if ( zm_get_option( 'lazy_s' ) ) {
+					$html .= '<a class="sc load" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $loadimg . '" data-original="';
+				} else {
+					$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
 				}
-				if (zm_get_option('clipping_rand_img')) {
-					if (zm_get_option('lazy_s')) {
-						echo '<span class="load"><a class="sc" rel="external nofollow" href="'.$direct.'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_w').'&h='.zm_get_option('img_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="';
-					} else {
-						echo '<a class="sc" rel="external nofollow" href="'.$direct.'"><img src="';
+
+				if ( ! zm_get_option( 'randimg_crop' ) ) {
+					$html .= $src . '"';
+				} else {
+					if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+						$html .= get_template_directory_uri() . '/prune.php?src=' . $src . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
 					}
-					echo get_template_directory_uri().'/prune.php?src='.$src.'&w='.zm_get_option('img_w').'&h='.zm_get_option('img_h').'&a='.zm_get_option('crop_top').'&zc=1" alt="'.$post->post_title .'" width="'.zm_get_option('img_w').'" height="'.zm_get_option('img_h').'" /></a>';
-					if (zm_get_option('lazy_s')) {
-						echo '</span>';
+
+					elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+						$html .= be_get_image_url( attachment_url_to_postid( $src ), array( $width, $height ), true ) . '"';
 					}
-				} else { 
-					if (zm_get_option('lazy_s')) {
-						echo '<span class="load"><a class="sc" rel="external nofollow" href="'.$direct.'"><img src="'. get_template_directory_uri().'/prune.php?src=' . get_template_directory_uri() . '/img/loading.png&w='.zm_get_option('img_w').'&h='.zm_get_option('img_h').'&a='.zm_get_option('crop_top').'&zc=1" data-original="'. $src .'" alt="'.$post->post_title .'" width="'.zm_get_option('img_w').'" height="'.zm_get_option('img_h').'" /></a></span>';
-					} else {
-						echo '<a class="sc" rel="external nofollow" href="'.$direct.'"><img src="'. $src .'" alt="'.$post->post_title .'" width="'.zm_get_option('img_w').'" height="'.zm_get_option('img_h').'" /></a>';
+
+					elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+						$html .= $src . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+						$html .= $src . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+						$html .= $src . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+						$html .= $src . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
 					}
 				}
+	
+				$html .= ' alt="' . $post->post_title .'" width="' . $width . '" height="' . $height . '"></a>';
 			}
 		}
 	}
+	return $html;
 }
 
 // 幻灯小工具
 function zm_widge_thumbnail() {
 	global $post;
+	$html = '';
+	$domains = explode( ',', zm_get_option( 'allowed_domains' ) );
+	$width   = zm_get_option( 'img_s_w' );
+	$height  = zm_get_option( 'img_s_h' );
+	$rel     = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
 	if ( get_post_meta(get_the_ID(), 'widge_img', true) ) {
 		$image = get_post_meta(get_the_ID(), 'widge_img', true);
-		echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img src=';
-		echo get_template_directory_uri().'/prune.php?src='.$image.'&w='.zm_get_option('img_s_w').'&h='.zm_get_option('img_s_h').'&a='.zm_get_option('crop_top').'&zc=1';
-		echo ' alt="'.$post->post_title .'" width="'.zm_get_option('img_s_w').'" height="'.zm_get_option('img_s_h').'" /></a>';
+		$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src=';
+		$html .= be_get_image_url( attachment_url_to_postid( $image ), array( $width, $height ), true );
+		$html .= ' alt="'.$post->post_title .'" width="'.zm_get_option('img_s_w').'" height="'.$height.'"></a>';
 	} else {
 		$content = $post->post_content;
 		preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 		$n = count($strResult[1]);
 		if ($n > 0) {
+			$parseResult = wp_parse_url( $strResult[1][0] );
+			if ( is_ext_img( $strResult, $parseResult, $domains ) ) {
+				if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+					$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . zm_get_option( 'img_s_w' ) . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_s_w' ) . '" height="' . $height . '"></a>';
+				}
 
-			if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( "img_way") == 'd_img' ) ) {
-				echo '<a class="sc" rel="external nofollow" href="' . get_permalink() . '"><img class="owl-lazy" data-src="' . get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . zm_get_option( 'img_s_w' ) . '&h=' . zm_get_option( 'img_s_h' ) . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_s_w' ) . '" height="' . zm_get_option( 'img_s_h' ) . '" /></a>';
+				if ( zm_get_option( 'img_way' ) == 's_img' ) {
+					$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . be_get_image_url( attachment_url_to_postid( $strResult[1][0]  ), array( $width, $height ), true ) . '" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_s_w' ) . '" height="' . $height . '"></a>';
+				}
+
+			} else {
+				$html .= '<div class="thumbs-sw lazy"><a class="thumbs-back sc" rel="' . $rel . '" href="'.get_permalink().'" style="background-image: url('.$strResult[1][0].');"></a></div>';
 			}
 
 			if ( zm_get_option( 'img_way' ) == 'o_img' ) {
-				echo '<a class="sc" rel="external nofollow" href="' . get_permalink() . '"><img class="owl-lazy" data-src="' . $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . zm_get_option( 'img_s_w' ) . ' ,h_' . zm_get_option( 'img_s_h' ) . ', limit_0" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_s_w' ) . '" height="' . zm_get_option( 'img_s_h' ) . '" /></a>';
+				$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . zm_get_option( 'img_s_w' ) . ' ,h_' . $height . ', limit_0" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_s_w' ) . '" height="' . $height . '"></a>';
 			}
 
 			if ( zm_get_option( 'img_way' ) == 'q_img' ) {
-				echo '<a class="sc" rel="external nofollow" href="' . get_permalink() . '"><img class="owl-lazy" data-src="' . $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . zm_get_option( 'img_s_w' ) . 'x' . zm_get_option( 'img_s_h' ) . '" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_s_w' ) . '" height="' . zm_get_option( 'img_s_h' ) . '" /></a>';
+				$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . zm_get_option( 'img_s_w' ) . 'x' . $height . '" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_s_w' ) . '" height="' . $height . '"></a>';
 			}
 
 			if ( zm_get_option( 'img_way' ) == 'upyun' ) {
-				echo '<a class="sc" rel="external nofollow" href="' . get_permalink() . '"><img class="owl-lazy" data-src="' . $strResult[1][0] . '!/both/' . zm_get_option( 'img_s_w' ) . 'x' . zm_get_option( 'img_s_h' ) . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_s_w' ) . '" height="' . zm_get_option( 'img_s_h' ) . '" /></a>';
+				$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $strResult[1][0] . '!/both/' . zm_get_option( 'img_s_w' ) . 'x' . $height . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_s_w' ) . '" height="' . $height . '"></a>';
 			}
 
 			if ( zm_get_option( 'img_way' ) == 'cos_img' ) {
-				echo '<a class="sc" rel="external nofollow" href="' . get_permalink() . '"><img class="owl-lazy" data-src="' . $strResult[1][0] . '?imageView2/1/w/' . zm_get_option( 'img_s_w' ) . '/h/' . zm_get_option( 'img_s_h' ) . '/q/85" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_s_w' ) . '" height="' . zm_get_option( 'img_s_h' ) . '" /></a>';
+				$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $strResult[1][0] . '?imageView2/1/w/' . zm_get_option( 'img_s_w' ) . '/h/' . $height . '/q/85" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_s_w' ) . '" height="' . $height . '"></a>';
 			}
 		}
 	}
+	return $html;
 }
 
 // 图片滚动
 function zm_thumbnail_scrolling() {
 	global $post;
-	$random_img = explode(',' , zm_get_option('random_image_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
-
-	$fancy_box = get_post_meta( get_the_ID(), 'fancy_box', true );
+	$html = '';
+	$domains = explode( ',', zm_get_option( 'allowed_domains' ) );
+	$beimg   = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_image_url' ) ) );
+	$src     = $beimg[array_rand( $beimg )];
+	$width   = zm_get_option( 'img_w' );
+	$height  = zm_get_option( 'img_h' );
+	$fancy   = get_post_meta( get_the_ID(), 'fancy_box', true );
+	$rel     = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
 	if ( get_post_meta( get_the_ID(), 'fancy_box', true ) ) {
-		echo '<a class="fancy-box" rel="external nofollow" href="'. $fancy_box . '"></a>';
+		$html .= '<a class="fancy-box" rel="' . $rel . '" href="'. $fancy . '"></a>';
 	}
 
 	if ( get_post_meta(get_the_ID(), 'thumbnail', true) ) {
 		$image = get_post_meta(get_the_ID(), 'thumbnail', true);
-		echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img class="owl-lazy" data-src="';
-		if (zm_get_option('manual_thumbnail')) {
-			echo get_template_directory_uri().'/prune.php?src='.$image.'&w='.zm_get_option('img_w').'&h='.zm_get_option('img_h').'&a='.zm_get_option('crop_top').'&zc=1"';
+		$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="';
+
+		if ( ! zm_get_option( 'thumbnail_crop' ) ) {
+			$html .= $image . '"';
 		} else {
-			echo $image . '"';
+			if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+				$html .= get_template_directory_uri() . '/prune.php?src=' . $image . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+				$html .= be_get_image_url( attachment_url_to_postid( $image ), array( $width, $height ), true ) . '"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+				$html .= $image . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+				$html .= $image . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+				$html .= $image . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+			}
+
+			elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+				$html .= $image . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
+			}
 		}
-		echo ' alt="'.$post->post_title .'" width="'.zm_get_option('img_w').'" height="'.zm_get_option('img_h').'" /></a>';
+
+		$html .= ' alt="'.$post->post_title .'" width="'.$width.'" height="'.$height.'"></a>';
 	} else {
 		if ( has_post_thumbnail() ) {
-			echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'">';
-			if (zm_get_option('clipping_thumbnails')) {
-				$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'content');
-				echo '<img src="'.get_template_directory_uri().'/prune.php?src='.$full_image_url[0].'&w='.zm_get_option('img_w').'&h='.zm_get_option('img_h').'&a='.zm_get_option('crop_top').'&zc=1" alt="'.get_the_title().'" width="'.zm_get_option('img_w').'" height="'.zm_get_option('img_h').'" >';
-			} else {
-				the_post_thumbnail('content', array('alt' => get_the_title()));
-			}
-			echo '</a>';
+			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'content');
+			$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'">';
+
+			$html .= '<img src="' . be_get_image_url( attachment_url_to_postid( $full_image_url[0] ), array( $width, $height ), true ) . '" alt="' . get_the_title() . '" width="' . $width . '" height="' . $height . '" >';
+
+			$html .= '</a>';
 		} else {
 			$content = $post->post_content;
 			preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 			$n = count($strResult[1]);
 			if ($n > 0) {
+				$parseResult = wp_parse_url( $strResult[1][0] );
+				if ( is_ext_img( $strResult, $parseResult, $domains ) ) {
 
-			if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( "img_way") == 'd_img' ) ) {
-				echo '<a class="sc" rel="external nofollow" href="' . get_permalink() . '"><img class="owl-lazy" data-src="' . get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . zm_get_option( 'img_w' ) . '&h=' . zm_get_option( 'img_h' ) . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" /></a>';
-			}
+					if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way') == 'd_img' ) ) {
+						$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+					}
 
-			if ( zm_get_option( 'img_way' ) == 'o_img' ) {
-				echo '<a class="sc" rel="external nofollow" href="' . get_permalink() . '"><img class="owl-lazy" data-src="' . get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . zm_get_option( 'img_w' ) . ' ,h_' . zm_get_option( 'img_h' ) . ', limit_0" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" /></a>';
-			}
+					if ( zm_get_option( 'img_way' ) == 's_img' ) {
+						$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . be_get_image_url( attachment_url_to_postid( $strResult[1][0]  ), array( $width, $height ), true ) . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+					}
 
-			if ( zm_get_option( 'img_way' ) == 'q_img' ) {
-				echo '<a class="sc" rel="external nofollow" href="' . get_permalink() . '"><img class="owl-lazy" data-src="' . get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . zm_get_option( 'img_w' ) . 'x' . zm_get_option( 'img_h' ) . '" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" /></a>';
-			}
-
-			if ( zm_get_option( 'img_way' ) == 'upyun' ) {
-				echo '<a class="sc" rel="external nofollow" href="' . get_permalink() . '"><img class="owl-lazy" data-src="' . get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '!/both/' . zm_get_option( 'img_w' ) . 'x' . zm_get_option( 'img_h' ) . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" /></a>';
-			}
-
-			if ( zm_get_option( 'img_way' ) == 'cos_img' ) {
-				echo '<a class="sc" rel="external nofollow" href="' . get_permalink() . '"><img class="owl-lazy" data-src="' . get_template_directory_uri() . '/prune.php?src=' . $strResult[1][0] . '?imageView2/1/w/' . zm_get_option( 'img_w' ) . '/h/' . zm_get_option( 'img_h' ) . '/q/85" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" /></a>';
-			}
-
-			} else { 
-				if ( zm_get_option('rand_img_n') ) {
-					$random = mt_rand(1, zm_get_option('rand_img_n'));
 				} else {
-					$random = mt_rand(1, 5);
+					$html .= '<div class="thumbs-sg lazy"><a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" style="background-image: url('.$strResult[1][0].');"></a></div>';
 				}
-				if (zm_get_option('clipping_rand_img')) {
-					echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img class="owl-lazy" data-src="'.get_template_directory_uri().'/prune.php?src='.$src.'&w='.zm_get_option('img_w').'&h='.zm_get_option('img_h').'&a='.zm_get_option('crop_top').'&zc=1" alt="'.$post->post_title .'" width="'.zm_get_option('img_w').'" height="'.zm_get_option('img_h').'" /></a>';
-				} else { 
-					echo '<a class="sc" rel="external nofollow" href="'.get_permalink().'"><img class="owl-lazy" data-src="'. $src .'" alt="'.$post->post_title .'" width="'.zm_get_option('img_w').'" height="'.zm_get_option('img_h').'" /></a>';
+
+				if ( zm_get_option( 'img_way' ) == 'o_img' ) {
+					$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $strResult[1][0] . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 				}
+
+				if ( zm_get_option( 'img_way' ) == 'q_img' ) {
+					$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $strResult[1][0] . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+				}
+
+				if ( zm_get_option( 'img_way' ) == 'upyun' ) {
+					$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $strResult[1][0] . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+				}
+
+				if ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+					$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $strResult[1][0] . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
+				}
+
+			} else {
+				$html .= '<a class="sc" rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="';
+				if ( ! zm_get_option( 'randimg_crop' ) ) {
+					$html .= $src . '"';
+				} else {
+					if ( ! zm_get_option( 'img_way' ) || ( zm_get_option( 'img_way' ) == 'd_img' ) ) {
+						$html .= get_template_directory_uri() . '/prune.php?src=' . $src . '&w=' . $width . '&h=' . $height . '&a=' . zm_get_option( 'crop_top' ) . '&zc=1"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 's_img' ) {
+						$html .= be_get_image_url( attachment_url_to_postid( $src ), array( $width, $height ), true ) . '"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'o_img' ) {
+						$html .= $src . '?x-oss-process=image/resize,m_fill,w_' . $width . ' ,h_' . $height . ', limit_0"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'q_img' ) {
+						$html .= $src . '?imageMogr2/gravity/Center/crop/' . $width . 'x' . $height . '"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'upyun' ) {
+						$html .= $src . '!/both/' . $width . 'x' . $height . '/format/webp/lossless/true"';
+					}
+
+					elseif ( zm_get_option( 'img_way' ) == 'cos_img' ) {
+						$html .= $src . '?imageView2/1/w/' . $width . '/h/' . $height . '/q/85"';
+					}
+				}
+				$html .= ' alt="' . $post->post_title . '" width="' . $width.'" height="' . $height . '"></a>';
 			}
 		}
 	}
+	return $html;
 }
 
 } else {
@@ -1186,6 +1738,8 @@ function zm_thumbnail_scrolling() {
 // 不裁剪
 function zm_thumbnail() {
 	global $post;
+	$html = '';
+	$html .= textimg();
 	$content = $post->post_content;
 	preg_match_all( '/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER );
 	$n = count( $strResult[1] );
@@ -1196,46 +1750,49 @@ function zm_thumbnail() {
 			$be_get_img = 'style="background-image: url(' . $strResult[1][0] . ');"';
 		}
 	}
-	$random_img = explode(',' , zm_get_option('random_image_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
+	$beimg = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_image_url' ) ) );
+	$src   = $beimg[array_rand( $beimg )];
 
-	$fancy_box = get_post_meta( get_the_ID(), 'fancy_box', true );
+	$fancy = get_post_meta( get_the_ID(), 'fancy_box', true );
+	$rel   = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
 	if ( get_post_meta( get_the_ID(), 'fancy_box', true ) ) {
-		echo '<a class="fancy-box" rel="external nofollow" href="'. $fancy_box . '"></a>';
+		$html .= '<a class="fancy-box" rel="' . $rel . '" href="'. $fancy . '"></a>';
 	}
 
-	echo '<div class="thumbs-b lazy">';
-	// 手动
-	if ( get_post_meta( get_the_ID(), 'thumbnail', true ) ) {
-		$image = get_post_meta(get_the_ID(), 'thumbnail', true );
-		echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$image.'"></a>';
-	} else {
-		// 特色
-		if ( has_post_thumbnail() ) {
-			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'content');
-			echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$full_image_url[0].'"></a>';
+	$html .= '<div class="thumbs-b lazy">';
+	if ( ! zm_get_option( 'rand_only' ) ) {
+		// 手动
+		if ( get_post_meta( get_the_ID(), 'thumbnail', true ) ) {
+			$image = get_post_meta(get_the_ID(), 'thumbnail', true );
+			$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="' . $image .'"></a>';
 		} else {
-			// 自动
-			if ( $n > 0 && !get_post_meta( get_the_ID(), 'rand_img', true ) ) {
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" ' . $be_get_img . '></a>';
-			} else { 
-				// 随机
-				if ( zm_get_option('rand_img_n') ) {
-					$random = mt_rand(1, zm_get_option('rand_img_n'));
+			// 特色
+			if ( has_post_thumbnail() ) {
+				$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'content');
+				$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="' . $full_image_url[0] . '"></a>';
+			} else {
+				// 自动
+				if ( $n > 0 && !get_post_meta( get_the_ID(), 'rand_img', true ) ) {
+					$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img . '></a>';
 				} else { 
-					$random = mt_rand(1, 5);
+					// 随机
+					$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="'.$src.'"></a>';
 				}
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$src.'"></a>';
 			}
 		}
+	} else {
+		// 随机
+		$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="'.$src.'"></a>';
 	}
-	echo '</div>';
+	$html .= '</div>';
+	return $html;
 }
 
 // 分类模块宽缩略图
 function zm_long_thumbnail() {
 	global $post;
+	$html = '';
+	$rel  = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
 	$content = $post->post_content;
 	preg_match_all( '/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER );
 	$n = count( $strResult[1] );
@@ -1246,36 +1803,33 @@ function zm_long_thumbnail() {
 			$be_get_img = 'style="background-image: url(' . $strResult[1][0] . ');"';
 		}
 	}
-	$random_img = explode(',' , zm_get_option('random_long_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
-	echo '<div class="thumbs-f lazy">';
+	$beimg = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_long_url' ) ) );
+	$src   = $beimg[array_rand( $beimg )];
+	$html .= '<div class="thumbs-f lazy">';
 	if ( get_post_meta(get_the_ID(), 'long_thumbnail', true) ) {
 		$image = get_post_meta(get_the_ID(), 'long_thumbnail', true);
-		echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$image.'"></a>';
+		$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="' . $image . '"></a>';
 	} else {
 		if ( has_post_thumbnail() ) {
 			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'long');
-			echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$full_image_url[0].'"></a>';
+			$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="' . $full_image_url[0] . '"></a>';
 		} else {
 			if ( $n > 0 && !get_post_meta( get_the_ID(), 'rand_img', true  ) ) {
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" ' . $be_get_img . '></a>';
+				$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img . '></a>';
 			} else { 
-				if ( zm_get_option('rand_img_n') ) {
-					$random = mt_rand(1, zm_get_option('rand_img_n'));
-				} else { 
-					$random = mt_rand(1, 5);
-				}
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$src.'"></a>';
+				$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="'.$src.'"></a>';
 			}
 		}
 	}
-	echo '</div>';
+	$html .= '</div>';
+	return $html;
 }
 
 // 图片缩略图
 function img_thumbnail() {
 	global $post;
+	$html = '';
+	$rel  = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
 	$content = $post->post_content;
 	preg_match_all( '/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER );
 	$n = count( $strResult[1] );
@@ -1286,42 +1840,39 @@ function img_thumbnail() {
 			$be_get_img = 'style="background-image: url(' . $strResult[1][0] . ');"';
 		}
 	}
-	$random_img = explode(',' , zm_get_option('random_image_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
+	$beimg = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_image_url' ) ) );
+	$src   = $beimg[array_rand( $beimg )];
 
-	$fancy_box = get_post_meta( get_the_ID(), 'fancy_box', true );
+	$fancy = get_post_meta( get_the_ID(), 'fancy_box', true );
 	if ( get_post_meta( get_the_ID(), 'fancy_box', true ) ) {
-		echo '<a class="fancy-box" rel="external nofollow" href="'. $fancy_box . '"></a>';
+		$html .= '<a class="fancy-box" rel="' . $rel . '" ' . goal() . ' href="'. $fancy . '"></a>';
 	}
 
-	echo '<div class="thumbs-i lazy">';
+	$html .= '<div class="thumbs-i lazy">';
 	if ( get_post_meta(get_the_ID(), 'thumbnail', true) ) {
 		$image = get_post_meta(get_the_ID(), 'thumbnail', true);
-		echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$image.'"></a>';
+		$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="' . $image . '"></a>';
 	} else {
 		if ( has_post_thumbnail() ) {
 			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'content');
-			echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$full_image_url[0].'"></a>';
+			$html .= '<a class="thumbs-back sc" rel="' . $rel . '" href="'.get_permalink().'" data-src="' . $full_image_url[0] . '"></a>';
 		} else {
 			if ( $n > 0 ) {
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" ' . $be_get_img . '></a>';
+				$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img . '></a>';
 			} else { 
-				if ( zm_get_option('rand_img_n') ) {
-					$random = mt_rand(1, zm_get_option('rand_img_n'));
-				} else { 
-					$random = mt_rand(1, 5);
-				}
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$src.'"></a>';
+				$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="'.$src.'"></a>';
 			}
 		}
 	}
-	echo '</div>';
+	$html .= '</div>';
+	return $html;
 }
 
 // 视频缩略图
 function videos_thumbnail() {
 	global $post;
+	$html = '';
+	$rel  = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
 	$content = $post->post_content;
 	preg_match_all( '/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER );
 	$n = count( $strResult[1] );
@@ -1332,36 +1883,33 @@ function videos_thumbnail() {
 			$be_get_img = 'style="background-image: url(' . $strResult[1][0] . ');"';
 		}
 	}
-	$random_img = explode(',' , zm_get_option('random_image_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
-	echo '<div class="thumbs-v lazy">';
+	$beimg = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_image_url' ) ) );
+	$src   = $beimg[array_rand( $beimg )];
+	$html .= '<div class="thumbs-v lazy">';
 	if ( get_post_meta(get_the_ID(), 'small', true) ) {
 		$image = get_post_meta(get_the_ID(), 'small', true);
-		echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$image.'"></a>';
+		$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="' . $image . '"></a>';
 	} else {
 		if ( has_post_thumbnail() ) {
 			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'content');
-			echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$full_image_url[0].'"></a>';
+			$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="' . $full_image_url[0] . '"></a>';
 		} else {
 			if ( $n > 0 ) {
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" ' . $be_get_img . '></a>';
+				$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img . '></a>';
 			} else { 
-				if ( zm_get_option('rand_img_n') ) {
-					$random = mt_rand(1, zm_get_option('rand_img_n'));
-				} else { 
-					$random = mt_rand(1, 5);
-				}
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$src.'"></a>';
+				$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="'.$src.'"></a>';
 			}
 		}
 	}
-	echo '</div>';
+	$html .= '</div>';
+	return $html;
 }
 
 // 商品缩略图
 function tao_thumbnail() {
 	global $post;
+	$html = '';
+	$rel  = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
 	$content = $post->post_content;
 	preg_match_all( '/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER );
 	$n = count( $strResult[1] );
@@ -1372,74 +1920,75 @@ function tao_thumbnail() {
 			$be_get_img = 'style="background-image: url(' . $strResult[1][0] . ');"';
 		}
 	}
-	$random_img = explode(',' , zm_get_option('random_image_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
+	$beimg = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_image_url' ) ) );
+	$src   = $beimg[array_rand( $beimg )];
 
-	$fancy_box = get_post_meta( get_the_ID(), 'fancy_box', true );
+	$fancy = get_post_meta( get_the_ID(), 'fancy_box', true );
 	if ( get_post_meta( get_the_ID(), 'fancy_box', true ) ) {
-		echo '<a class="fancy-box" rel="external nofollow" href="'. $fancy_box . '"></a>';
+		$html .= '<a class="fancy-box" rel="' . $rel . '" ' . goal() . ' href="'. $fancy . '"></a>';
 	}
 
-	echo '<div class="thumbs-t lazy">';
+	$html .= '<div class="thumbs-t lazy">';
 	$url = get_post_meta(get_the_ID(), 'taourl', true);
 	if ( get_post_meta(get_the_ID(), 'thumbnail', true) ) {
 		$image = get_post_meta(get_the_ID(), 'thumbnail', true);
-		echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$image.'"></a>';
+		$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="' . $image . '"></a>';
 	} else {
 		if ( has_post_thumbnail() ) {
 			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'tao');
-			echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$full_image_url[0].'"></a>';
+			$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="' . $full_image_url[0] . '"></a>';
 		} else {
 			$content = $post->post_content;
 			preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 			if ( $n > 0 ) {
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" ' . $be_get_img . '></a>';
+				$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img . '></a>';
 			} else { 
-				if ( zm_get_option('rand_img_n') ) {
-					$random = mt_rand(1, zm_get_option('rand_img_n'));
-				} else { 
-					$random = mt_rand(1, 5);
-				}
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$src.'"></a>';
+				$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="'.$src.'"></a>';
 			}
 		}
 	}
-	echo '</div>';
+	$html .= '</div>';
+	return $html;
 }
 
 // 图像日志缩略图
 function format_image_thumbnail() {
 	global $post;
+	$html = '';
+	$rel  = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
 	$content = $post->post_content;
 	preg_match_all( '/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER );
-	if ( zm_get_option( 'lazy_s' ) ) {
-		$be_get_img_a = 'data-src="' . $strResult[1][0] . '"';
-		$be_get_img_b = 'data-src="' . $strResult[1][1] . '"';
-		$be_get_img_c = 'data-src="' . $strResult[1][2] . '"';
-		$be_get_img_d = 'data-src="' . $strResult[1][3] . '"';
-	} else {
-		$be_get_img_a = 'style="background-image: url(' . $strResult[1][0] . ');"';
-		$be_get_img_b = 'style="background-image: url(' . $strResult[1][1] . ');"';
-		$be_get_img_c = 'style="background-image: url(' . $strResult[1][2] . ');"';
-		$be_get_img_d = 'style="background-image: url(' . $strResult[1][3] . ');"';
-	}
-	echo '<div class="thumbs-four">';
+	$html .= '<div class="thumbs-four">';
 	$n = count($strResult[1]);
 	if ( $n > 3 ) {
-		echo '<div class="f4"><div class="format-img"><div class="thumbs-b lazy"><a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" ' . $be_get_img_a . '></a></div></div></div>';
-		echo '<div class="f4"><div class="format-img"><div class="thumbs-b lazy"><a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" ' . $be_get_img_b . '></a></div></div></div>';
-		echo '<div class="f4"><div class="format-img"><div class="thumbs-b lazy"><a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" ' . $be_get_img_c . '></a></div></div></div>';
-		echo '<div class="f4"><div class="format-img"><div class="thumbs-b lazy"><a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" ' . $be_get_img_d . '></a></div></div></div>';
+		if ( zm_get_option( 'lazy_s' ) ) {
+			$be_get_img_a = 'data-src="' . $strResult[1][0] . '"';
+			$be_get_img_b = 'data-src="' . $strResult[1][1] . '"';
+			$be_get_img_c = 'data-src="' . $strResult[1][2] . '"';
+			$be_get_img_d = 'data-src="' . $strResult[1][3] . '"';
+		} else {
+			$be_get_img_a = 'style="background-image: url(' . $strResult[1][0] . ');"';
+			$be_get_img_b = 'style="background-image: url(' . $strResult[1][1] . ');"';
+			$be_get_img_c = 'style="background-image: url(' . $strResult[1][2] . ');"';
+			$be_get_img_d = 'style="background-image: url(' . $strResult[1][3] . ');"';
+		}
+
+		$html .= '<div class="f4"><div class="format-img"><div class="thumbs-b lazy"><a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img_a . '></a></div></div></div>';
+		$html .= '<div class="f4"><div class="format-img"><div class="thumbs-b lazy"><a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img_b . '></a></div></div></div>';
+		$html .= '<div class="f4"><div class="format-img"><div class="thumbs-b lazy"><a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img_c . '></a></div></div></div>';
+		$html .= '<div class="f4"><div class="format-img"><div class="thumbs-b lazy"><a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img_d . '></a></div></div></div>';
 	} else {
-		echo '<div class="f4-tip">文章中至少添加4张图片才能显示</div>';
+		$html .= '<div class="f4-tip">文章中至少添加4张图片才能显示</div>';
 	}
-	echo '</div>';
+	$html .= '</div>';
+	return $html;
 }
 
 // 图片布局缩略图
 function zm_grid_thumbnail() {
 	global $post;
+	$html = '';
+	$rel  = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
 	$content = $post->post_content;
 	preg_match_all( '/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER );
 	$n = count( $strResult[1] );
@@ -1450,42 +1999,39 @@ function zm_grid_thumbnail() {
 			$be_get_img = 'style="background-image: url(' . $strResult[1][0] . ');"';
 		}
 	}
-	$random_img = explode(',' , zm_get_option('random_image_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
+	$beimg = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_image_url' ) ) );
+	$src   = $beimg[array_rand( $beimg )];
 
-	$fancy_box = get_post_meta( get_the_ID(), 'fancy_box', true );
+	$fancy = get_post_meta( get_the_ID(), 'fancy_box', true );
 	if ( get_post_meta( get_the_ID(), 'fancy_box', true ) ) {
-		echo '<a class="fancy-box" rel="external nofollow" href="'. $fancy_box . '"></a>';
+		$html .= '<a class="fancy-box" rel="' . $rel . '" href="'. $fancy . '"></a>';
 	}
 
-	echo '<div class="thumbs-h lazy">';
+	$html .= '<div class="thumbs-h lazy">';
 	if ( get_post_meta(get_the_ID(), 'thumbnail', true) ) {
 		$image = get_post_meta(get_the_ID(), 'thumbnail', true);
-		echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$image.'"></a>';
+		$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="' . $image . '"></a>';
 	} else {
 		if ( has_post_thumbnail() ) {
 			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'content');
-			echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$full_image_url[0].'"></a>';
+			$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="' . $full_image_url[0] . '"></a>';
 		} else {
 			if ( $n > 0 && !get_post_meta( get_the_ID(), 'rand_img', true ) ) {
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" ' . $be_get_img . '></a>';
+				$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img . '></a>';
 			} else { 
-				if ( zm_get_option('rand_img_n') ) {
-					$random = mt_rand(1, zm_get_option('rand_img_n'));
-				} else { 
-					$random = mt_rand(1, 5);
-				}
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$src.'"></a>';
+				$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="'.$src.'"></a>';
 			}
 		}
 	}
-	echo '</div>';
+	$html .= '</div>';
+	return $html;
 }
 
 // 宽缩略图分类
 function zm_full_thumbnail() {
 	global $post;
+	$html = '';
+	$rel  = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
 	$content = $post->post_content;
 	preg_match_all( '/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER );
 	$n = count( $strResult[1] );
@@ -1496,36 +2042,33 @@ function zm_full_thumbnail() {
 			$be_get_img = 'style="background-image: url(' . $strResult[1][0] . ');"';
 		}
 	}
-	$random_img = explode(',' , zm_get_option('random_long_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
-	echo '<div class="thumbs-w lazy">';
+	$beimg = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_long_url' ) ) );
+	$src   = $beimg[array_rand( $beimg )];
+	$html .= '<div class="thumbs-w lazy">';
 	if ( get_post_meta(get_the_ID(), 'full_thumbnail', true) ) {
 		$image = get_post_meta(get_the_ID(), 'full_thumbnail', true);
-		echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$image.'"></a>';
+		$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="' . $image . '"></a>';
 	} else {
 		if ( has_post_thumbnail() ) {
 			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'content');
-			echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$full_image_url[0].'"></a>';
+			$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="' . $full_image_url[0] . '"></a>';
 		} else {
 			if ( $n > 0 && !get_post_meta( get_the_ID(), 'rand_img', true ) ) {
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" ' . $be_get_img . '></a>';
+				$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img . '></a>';
 			} else { 
-				if ( zm_get_option('rand_img_n') ) {
-					$random = mt_rand(1, zm_get_option('rand_img_n'));
-				} else { 
-					$random = mt_rand(1, 5);
-				}
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$src.'"></a>';
+				$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="'.$src.'"></a>';
 			}
 		}
 	}
-	echo '</div>';
+	$html .= '</div>';
+	return $html;
 }
 
 // 公司左右图
 function gr_wd_thumbnail() {
 	global $post;
+	$html = '';
+	$rel  = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
 	$content = $post->post_content;
 	preg_match_all( '/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER );
 	$n = count( $strResult[1] );
@@ -1536,31 +2079,29 @@ function gr_wd_thumbnail() {
 			$be_get_img = 'style="background-image: url(' . $strResult[1][0] . ');"';
 		}
 	}
-	$random_img = explode(',' , zm_get_option('random_image_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
-	echo '<div class="thumbs-lr lazy">';
+	$beimg = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_image_url' ) ) );
+	$src   = $beimg[array_rand( $beimg )];
+
+	$html .= '<div class="thumbs-lr lazy">';
 	if ( get_post_meta(get_the_ID(), 'wd_img', true) ) {
 		$image = get_post_meta(get_the_ID(), 'wd_img', true);
-		echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$image.'"></a>';
+		$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="' . $image . '"></a>';
 	} else {
 		if ( $n > 0 ) {
-			echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" ' . $be_get_img . '></a>';
+			$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" ' . $be_get_img . '></a>';
 		} else { 
-			if ( zm_get_option('rand_img_n') ) {
-				$random = mt_rand(1, zm_get_option('rand_img_n'));
-			} else { 
-				$random = mt_rand(1, 5);
-			}
-			echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$src.'"></a>';
+			$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="'.$src.'"></a>';
 		}
 	}
-	echo '</div>';
+	$html .= '</div>';
+	return $html;
 }
 
 // 链接形式
 function zm_thumbnail_link() {
 	global $post;
+	$html = '';
+	$rel  = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
 	$content = $post->post_content;
 	preg_match_all( '/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER );
 	$n = count( $strResult[1] );
@@ -1571,188 +2112,174 @@ function zm_thumbnail_link() {
 			$be_get_img = 'style="background-image: url(' . $strResult[1][0] . ');"';
 		}
 	}
-	$random_img = explode(',' , zm_get_option('random_image_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
+	$beimg = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_image_url' ) ) );
+	$src   = $beimg[array_rand( $beimg )];
 
-	$fancy_box = get_post_meta( get_the_ID(), 'fancy_box', true );
+	$fancy = get_post_meta( get_the_ID(), 'fancy_box', true );
 	if ( get_post_meta( get_the_ID(), 'fancy_box', true ) ) {
-		echo '<a class="fancy-box" rel="external nofollow" href="'. $fancy_box . '"></a>';
+		$html .= '<a class="fancy-box" rel="' . $rel . '" href="'. $fancy . '"></a>';
 	}
-	echo '<div class="thumbs-l lazy">';
+	$html .= '<div class="thumbs-l lazy">';
 	$direct = get_post_meta(get_the_ID(), 'direct', true);
 	if ( get_post_meta(get_the_ID(), 'thumbnail', true) ) {
 		$image = get_post_meta(get_the_ID(), 'thumbnail', true);
-		echo '<a class="thumbs-back sc" href="'.$direct.'" data-src="'.$image.'"></a>';
+		$html .= '<a class="thumbs-back sc" href="'.$direct.'" data-src="'.$image.'"></a>';
 	} else {
 		if ( has_post_thumbnail() ) {
 			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'content');
-			echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" data-src="'.$full_image_url[0].'"></a>';
+			$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" data-src="' . $full_image_url[0] . '"></a>';
 		} else {
 			if ( $n > 0 && !get_post_meta( get_the_ID(), 'rand_img', true ) ) {
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.$direct.'" ' . $be_get_img . '></a>';
+				$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.$direct.'" ' . $be_get_img . '></a>';
 			} else { 
-				if ( zm_get_option('rand_img_n') ) {
-					$random = mt_rand(1, zm_get_option('rand_img_n'));
-				} else { 
-					$random = mt_rand(1, 5);
-				}
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.$direct.'" data-src="'.$src.'"></a>';
+				$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.$direct.'" data-src="'.$src.'"></a>';
 			}
 		}
 	}
-	echo '</div>';
+	$html .= '</div>';
+	return $html;
 }
 
 // 幻灯小工具
 function zm_widge_thumbnail() {
 	global $post;
-	echo '<div class="thumbs-sw lazy">';
+	$html = '';
+	$rel  = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
+	$html .= '<div class="thumbs-sw lazy">';
 	if ( get_post_meta(get_the_ID(), 'widge_img', true) ) {
 		$image = get_post_meta(get_the_ID(), 'widge_img', true);
-		echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" style="background-image: url('.$image.');"></a>';
+		$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" style="background-image: url('.$image.');"></a>';
 	} else {
 		$content = $post->post_content;
 		preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 		$n = count($strResult[1]);
 		if ($n > 0) {
-			echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" style="background-image: url('.$strResult[1][0].');"></a>';
+			$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" style="background-image: url('.$strResult[1][0].');"></a>';
 		}
 	}
-	echo '</div>';
+	$html .= '</div>';
+	return $html;
 }
 
 // 图片滚动
 function zm_thumbnail_scrolling() {
 	global $post;
-	$random_img = explode(',' , zm_get_option('random_image_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
+	$html = '';
+	$rel  = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
+	$beimg = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_image_url' ) ) );
+	$src   = $beimg[array_rand( $beimg )];
 
-	$fancy_box = get_post_meta( get_the_ID(), 'fancy_box', true );
+	$fancy = get_post_meta( get_the_ID(), 'fancy_box', true );
 	if ( get_post_meta( get_the_ID(), 'fancy_box', true ) ) {
-		echo '<a class="fancy-box" rel="external nofollow" href="'. $fancy_box . '"></a>';
+		$html .= '<a class="fancy-box" rel="' . $rel . '" href="'. $fancy . '"></a>';
 	}
 
-	echo '<div class="thumbs-sg">';
+	$html .= '<div class="thumbs-sg">';
 	if ( get_post_meta(get_the_ID(), 'thumbnail', true) ) {
 		$image = get_post_meta(get_the_ID(), 'thumbnail', true);
-		echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" style="background-image: url('.$image.');"></a>';
+		$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" style="background-image: url(' . $image . ');"></a>';
 	} else {
 		if ( has_post_thumbnail() ) {
 			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'content');
-			echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" style="background-image: url('.$full_image_url[0].');"></a>';
+			$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" style="background-image: url(' . $full_image_url[0] . ');"></a>';
 		} else {
 			$content = $post->post_content;
 			preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 			$n = count($strResult[1]);
 			if ( $n > 0 ) {
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" style="background-image: url('.$strResult[1][0].');"></a>';
+				$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" style="background-image: url('.$strResult[1][0].');"></a>';
 			} else { 
-				if ( zm_get_option('rand_img_n') ) {
-					$random = mt_rand(1, zm_get_option('rand_img_n'));
-				} else { 
-					$random = mt_rand(1, 5);
-				}
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" style="background-image: url('.$src.');"></a>';
+				$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" style="background-image: url('.$src.');"></a>';
 			}
 		}
 	}
-	echo '</div>';
+	$html .= '</div>';
+	return $html;
 }
 }
 
 // 瀑布流
 function zm_waterfall_img() {
 	global $post;
-	$random_img = explode( ',' , zm_get_option( 'random_image_url' ) );
-	$random_img_array = array_rand( $random_img );
-	$src = $random_img[$random_img_array];
-
-	$fancy_box = get_post_meta( get_the_ID(), 'fancy_box', true );
+	$html = '';
+	$rel  = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
+	$beimg = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_image_url' ) ) );
+	$src   = $beimg[array_rand( $beimg )];
+	$width  = zm_get_option( 'img_w' );
+	$height = zm_get_option( 'img_h' );
+	$fancy = get_post_meta( get_the_ID(), 'fancy_box', true );
 	if ( get_post_meta( get_the_ID(), 'fancy_box', true ) ) {
-		echo '<a class="fancy-box" rel="external nofollow" href="'. $fancy_box . '"></a>';
+		$html .= '<a class="fancy-box" rel="' . $rel . '" href="'. $fancy . '"></a>';
 	}
 
 	if ( get_post_meta( get_the_ID(), 'fall_img', true ) ) {
 		$image = get_post_meta(get_the_ID(), 'fall_img', true);
-		echo '<a rel="external nofollow" href="' . get_permalink() . '"><img src=';
-		echo $image;
-		echo ' alt="' . $post->post_title . '" width="' . zm_get_option('img_w') . '" height="' . zm_get_option( 'img_h' ) . '" /></a>';
+		$html .= '<a rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src=';
+		$html .= $image;
+		$html .= ' alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 	} else {
 		$content = $post->post_content;
 		preg_match_all( '/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER );
 		$n = count( $strResult[1] );
 		if ( $n > 0 ) {
-			echo '<a rel="external nofollow" href="' . get_permalink() . '"><img src="' . $strResult[1][0] . '" alt="' . $post->post_title . '" width="' . zm_get_option( 'img_w' ) . '" height="' . zm_get_option( 'img_h' ) . '" /></a>';
+			$html .= '<a rel="' . $rel . '" ' . goal() . ' href="' . get_permalink() . '"><img src="' . $strResult[1][0] . '" alt="' . $post->post_title . '" width="' . $width . '" height="' . $height . '"></a>';
 		} else { 
-			if ( zm_get_option('rand_img_n') ) {
-				$random = mt_rand( 1, zm_get_option( 'rand_img_n' ) );
-			} else { 
-					$random = mt_rand( 1, 5 );
-			}
-			echo '<a rel="external nofollow" href="'.get_permalink().'"><img src="' . $src . '" alt="' . $post->post_title . '" width="' . zm_get_option('img_w').'" height="' . zm_get_option('img_h') . '" /></a>';
+			$html .= '<a rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'"><img src="' . $src . '" alt="' . $post->post_title . '" width="' . $width.'" height="' . $height . '"></a>';
 		}
 	}
 	be_vip_meta();
+	return $html;
 }
 
 // 菜单
 function zm_menu_img() {
-	$random_img = explode(',' , zm_get_option('random_image_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
 	global $post;
-	echo '<div class="thumbs-t">';
+	$html = '';
+	$rel  = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
+	$beimg = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_image_url' ) ) );
+	$src   = $beimg[array_rand( $beimg )];
+
+	$html .= '<div class="thumbs-t">';
 	if ( get_post_meta(get_the_ID(), 'thumbnail', true) ) {
 		$image = get_post_meta(get_the_ID(), 'thumbnail', true);
-		echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" style="background-image: url('.$image.') !important;"></a>';
+		$html .= '<a class="thumbs-back" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" style="background-image: url(' . $image . ') !important;"></a>';
 	} else {
 		if ( has_post_thumbnail() ) {
 			$full_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'content');
-			echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" style="background-image: url('.$full_image_url[0].') !important;"></a>';
+			$html .= '<a class="thumbs-back" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" style="background-image: url(' . $full_image_url[0] . ') !important;"></a>';
 		} else {
 			$content = $post->post_content;
 			preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 			$n = count($strResult[1]);
 			if ( $n > 0 && !get_post_meta( get_the_ID(), 'rand_img', true ) ) {
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" style="background-image: url('.$strResult[1][0].') !important;"></a>';
+				$html .= '<a class="thumbs-back " rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" style="background-image: url('.$strResult[1][0].') !important;"></a>';
 			} else { 
-				if ( zm_get_option('rand_img_n') ) {
-					$random = mt_rand(1, zm_get_option('rand_img_n'));
-					$random = mt_rand(1, 5);
-				}
-				echo '<a class="thumbs-back sc" rel="external nofollow" href="'.get_permalink().'" style="background-image: url('.$src.') !important;"></a>';
+				$html .= '<a class="thumbs-back" rel="' . $rel . '" ' . goal() . ' href="'.get_permalink().'" style="background-image: url('.$src.') !important;"></a>';
 			}
 		}
 	}
-	echo '</div>';
+	$html .= '</div>';
+	return $html;
 }
 
 // menu thumbnail
 function be_menu_thumbnail() {
 	global $post, $html;
-	$random_img = explode(',' , zm_get_option('random_long_url'));
-	$random_img_array = array_rand($random_img);
-	$src = $random_img[$random_img_array];
+	$beimg = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_long_url' ) ) );
+	$src   = $beimg[array_rand( $beimg )];
 	// 手动
 	if ( get_post_meta( get_the_ID(), 'thumbnail', true ) ) {
 		$post_img = get_post_meta( get_the_ID(), 'thumbnail', true );
-		$html = '<span class="thumbs-m lazy menu-mix-post-img sc"><img src="' . $post_img . '" alt="' . get_the_title() . '" /></span>';
+		$html = '<span class="thumbs-m lazy menu-mix-post-img sc"><img src="' . $post_img . '" alt="' . get_the_title() . '"></span>';
 	} else {
 		$content = $post->post_content;
 		preg_match_all( '/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER );
 		$n = count( $strResult[1] );
 		if ( $n > 0 ) {
-			$html = '<span class="menu-mix-post-img sc"><img src="' . $strResult[1][0] . '" alt="' . get_the_title() . '" /></span>';
+			$html = '<span class="menu-mix-post-img"><img src="' . $strResult[1][0] . '" alt="' . get_the_title() . '"></span>';
 		} else { 
-			$html = '<span class="menu-mix-post-img sc">';
-			if ( zm_get_option('rand_img_n') ) {
-				$random = mt_rand(1, zm_get_option('rand_img_n'));
-			} else { 
-				$random = mt_rand(1, 5);
-			}
-			$html = '<span class="menu-mix-post-img sc"><img src="'. $src .'" alt="' . get_the_title() . '" /></span>';
+			$html = '<span class="menu-mix-post-img">';
+			$html = '<span class="menu-mix-post-img"><img src="'. $src .'" alt="' . get_the_title() . '"></span>';
 			$html .= '</span>';
 		}
 	}
@@ -1765,4 +2292,74 @@ if ( zm_get_option( 'wp_thumbnails' ) ) {
 	add_image_size( 'content', zm_get_option('img_w'), zm_get_option('img_h'), true );
 	add_image_size( 'long', zm_get_option('img_k_w'), zm_get_option('img_k_h'), true );
 	add_image_size( 'tao', zm_get_option('img_t_w'), zm_get_option('img_t_h'), true );
+}
+
+// 图片背景
+function be_img_fill() {
+	global $post;
+	$content = $post->post_content;
+	preg_match_all( '/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER );
+
+	if ( ! get_post_meta( get_the_ID(), 'be_img_fill', true ) ) {
+		$html = '';
+	} else {
+		if ( ! get_post_meta( get_the_ID(), 'be_bg_img', true ) ) {
+			$html = ' style="background-image: url( ' . $strResult[1][0] . ' );background-repeat: no-repeat;background-position: center;background-size: cover;"';
+		} else {
+			$html = ' style="background-image: url( ' . get_post_meta( get_the_ID(), 'be_bg_img', true ) . ' );background-repeat: no-repeat;background-position: center;background-size: cover;"';
+		}
+	}
+	return $html;
+}
+
+function fill_class() {
+	if ( ! get_post_meta( get_the_ID(), 'be_img_fill', true ) ) {
+		$html = '';
+	} else {
+		$html = ' be-img-fill';
+	}
+	return $html;
+}
+
+// RSS图片
+function rss_thumbnail( $content, $url ) {
+	$html = '';
+	$rel  = zm_get_option( 'img_rel_nofollow' ) ? 'external nofollow' : 'bookmark';
+	preg_match( '/<img.+src=[\'"](?P<src>.+?)[\'"].*>/i', $content, $image );
+
+	$beimg = str_replace( array( "\n", "\r", " " ), '', explode( ',', zm_get_option( 'random_image_url' ) ) );
+	$src   = $beimg[array_rand( $beimg )];
+
+	$html .= '<div class="thumbs-b lazy">';
+	if ( zm_get_option( 'lazy_s' ) ) {
+		if ( ! empty( $image['src'] ) ) {
+			$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="' . $url . '" data-src="' . $image['src'] . '"></a>';
+		} else {
+			$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="' . $url . '" data-src="' . $src . '"></a>';
+		}
+	} else {
+		if ( ! empty( $image['src'] ) ) {
+			$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="' . $url . '"  style="background-image: url(' . $image['src'] . ');"></a>';
+		} else {
+			$html .= '<a class="thumbs-back sc" rel="' . $rel . '" ' . goal() . ' href="' . $url . '" style="background-image: url(' . $src . ');"></a>';
+		}
+	}
+	$html .= '</div>';
+	return $html;
+}
+
+// 图文卡片
+function each_img() {
+	global $post;
+	$content = $post->post_content;
+	preg_match_all( '/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER );
+	return $strResult[1][0];
+}
+
+function has_images() {
+	global $post;
+	$content = $post->post_content;
+	preg_match_all( '/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER );
+	$n = count( $strResult[1] );
+	return $n > 0;
 }

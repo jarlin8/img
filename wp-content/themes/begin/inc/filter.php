@@ -1,32 +1,39 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-<div class="filter-box bk da ms" <?php aos_a(); ?>>
-	<div class="filter-t"><i class="dashicons dashicons-image-filter"></i><span><?php echo zm_get_option('filter_t'); ?></span></div>
-		<?php if (zm_get_option('filters_hidden')) { ?><div class="filter-box-main filter-box-main-h"><?php } else { ?><div class="filter-box-main"><?php } ?>
-		<?php if (zm_get_option('filters_cat')) { ?>
-		<div class="filter-main">
-			<span class="filter-name"><?php _e( '分类', 'begin' ); ?></span>
-			<span class="filtertag" id="filtercat"<?php global $cat; if ($cat!=''){echo ' data="'.strtolower(urlencode(urldecode(urldecode($cat)))).'"';}?>>
-				<?php if (!$cat!='') { ?>
-					<a class="filter-tag filter-all filter-on" data=""><?php _e( '全部', 'begin' ); ?></a>
-				<?php } else { ?>
-					<a class="filter-tag filter-all" data=""><?php _e( '全部', 'begin' ); ?></a>
-				<?php } ?>
-
-				<?php $display_categories = explode(',',zm_get_option('filters_cat_id') ); foreach ($display_categories as $category) { ?>
-					<?php query_posts( array( 'cat' => $category) ); ?>
-					<?php if ($cat==$category) { ?>
-						<a class="filter-tag filter-on" data="<?php echo $category; ?>"><?php single_cat_title(); ?></a>
+<div class="filter-box ms" <?php aos_a(); ?>>
+	<div class="filter-t"><i class="dashicons dashicons-image-filter"></i><span><?php echo zm_get_option( 'filter_t' ); ?></span></div>
+		<?php if ( zm_get_option( 'filters_hidden' ) ) { ?><div class="filter-box-main filter-box-main-h"><?php } else { ?><div class="filter-box-main"><?php } ?>
+		<?php if ( is_array( zm_get_option( 'filters_item' ) ) && in_array( 'filters_cat', zm_get_option( 'filters_item' ) ) ) { ?>
+			<div class="filter-main">
+				<span class="filter-name"><?php _e( '分类', 'begin' ); ?></span>
+				<span class="filtertag" id="filtercat"<?php global $cat; if ( $cat!='' ){echo ' data="'.strtolower(urlencode(urldecode(urldecode($cat)))).'"';}?>>
+					<?php if ( ! $cat != '' ) { ?>
+						<a class="filter-tag filter-all filter-on" data=""><?php _e( '全部', 'begin' ); ?></a>
 					<?php } else { ?>
-						<a class="filter-tag" data="<?php echo $category; ?>"><?php single_cat_title(); ?></a>
+						<a class="filter-tag filter-all" data=""><?php _e( '全部', 'begin' ); ?></a>
 					<?php } ?>
-					<?php wp_reset_query(); ?>
-				<?php } ?>
-			</span>
-		</div>
-		<div class="clear"></div>
+
+					<?php $display_categories = explode( ',', zm_get_option( 'filters_cat_id' ) ); foreach ( $display_categories as $category ) { ?>
+						<?php
+							$terms = get_terms( array(
+								'taxonomy'   => array( 'category' ),
+								'include'    => $category,
+							) );
+
+							foreach ( $terms as $term ) {
+						?>
+							<?php if ( $cat == $category ) { ?>
+								<a class="filter-tag filter-on" data="<?php echo $category; ?>"><?php echo $term->name; ?></a>
+							<?php } else { ?>
+								<a class="filter-tag" data="<?php echo $category; ?>"><?php echo $term->name; ?></a>
+							<?php } ?>
+						<?php } ?>
+					<?php } ?>
+				</span>
+			</div>
+			<div class="clear"></div>
 		<?php } ?>
 
-		<?php if (zm_get_option('filters_a')) { ?>
+		<?php if ( is_array( zm_get_option( 'filters_item' ) ) && in_array( 'filters_a', zm_get_option( 'filters_item' ) ) ) { ?>
 			<div class="filter-main">
 				<span class="filter-name"><?php echo zm_get_option('filters_a_t'); ?></span>
 				<span class="filtertag" id="filtersa"<?php global $filtersa; if ($filtersa!=''){echo ' data="'.strtolower(urlencode(urldecode(urldecode($filtersa)))).'"';}?>>
@@ -52,7 +59,7 @@
 			</div>
 		<?php } ?>
 
-		<?php if (zm_get_option('filters_b')) { ?>
+		<?php if ( is_array( zm_get_option( 'filters_item' ) ) && in_array( 'filters_b', zm_get_option( 'filters_item' ) ) ) { ?>
 			<div class="clear"></div>
 			<div class="filter-main">
 				<span class="filter-name"><?php echo zm_get_option('filters_b_t'); ?></span>
@@ -79,7 +86,7 @@
 			</div>
 		<?php } ?>
 
-		<?php if (zm_get_option('filters_c')) { ?>
+		<?php if ( is_array( zm_get_option( 'filters_item' ) ) && in_array( 'filters_c', zm_get_option( 'filters_item' ) ) ) { ?>
 			<div class="clear"></div>
 			<div class="filter-main">
 				<span class="filter-name"><?php echo zm_get_option('filters_c_t'); ?></span>
@@ -106,7 +113,7 @@
 			</div>
 		<?php } ?>
 
-		<?php if (zm_get_option('filters_d')) { ?>
+		<?php if ( is_array( zm_get_option( 'filters_item' ) ) && in_array( 'filters_d', zm_get_option( 'filters_item' ) ) ) { ?>
 			<div class="clear"></div>
 			<div class="filter-main">
 				<span class="filter-name"><?php echo zm_get_option('filters_d_t'); ?></span>
@@ -133,7 +140,7 @@
 			</div>
 		<?php } ?>
 
-		<?php if (zm_get_option('filters_e')) { ?>
+		<?php if ( is_array( zm_get_option( 'filters_item' ) ) && in_array( 'filters_e', zm_get_option( 'filters_item' ) ) ) { ?>
 			<div class="clear"></div>
 			<div class="filter-main">
 				<span class="filter-name"><?php echo zm_get_option('filters_e_t'); ?></span>
@@ -160,7 +167,7 @@
 			</div>
 		<?php } ?>
 
-		<?php if (zm_get_option('filters_f')) { ?>
+		<?php if ( is_array( zm_get_option( 'filters_item' ) ) && in_array( 'filters_f', zm_get_option( 'filters_item' ) ) ) { ?>
 			<div class="clear"></div>
 			<div class="filter-main">
 				<span class="filter-name"><?php echo zm_get_option('filters_f_t'); ?></span>
@@ -187,7 +194,7 @@
 			</div>
 		<?php } ?>
 
-		<?php if (zm_get_option('filters_g')) { ?>
+		<?php if ( is_array( zm_get_option( 'filters_item' ) ) && in_array( 'filters_g', zm_get_option( 'filters_item' ) ) ) { ?>
 			<div class="clear"></div>
 			<div class="filter-main">
 				<span class="filter-name"><?php echo zm_get_option('filters_g_t'); ?></span>
@@ -214,7 +221,7 @@
 			</div>
 		<?php } ?>
 
-		<?php if (zm_get_option('filters_h')) { ?>
+		<?php if ( is_array( zm_get_option( 'filters_item' ) ) && in_array( 'filters_h', zm_get_option( 'filters_item' ) ) ) { ?>
 			<div class="clear"></div>
 			<div class="filter-main">
 				<span class="filter-name"><?php echo zm_get_option('filters_h_t'); ?></span>
@@ -241,7 +248,7 @@
 			</div>
 		<?php } ?>
 
-		<?php if (zm_get_option('filters_i')) { ?>
+		<?php if ( is_array( zm_get_option( 'filters_item' ) ) && in_array( 'filters_i', zm_get_option( 'filters_item' ) ) ) { ?>
 			<div class="clear"></div>
 			<div class="filter-main">
 				<span class="filter-name"><?php echo zm_get_option('filters_i_t'); ?></span>
@@ -268,7 +275,7 @@
 			</div>
 		<?php } ?>
 
-		<?php if (zm_get_option('filters_j')) { ?>
+		<?php if ( is_array( zm_get_option( 'filters_item' ) ) && in_array( 'filters_j', zm_get_option( 'filters_item' ) ) ) { ?>
 			<div class="clear"></div>
 			<div class="filter-main">
 				<span class="filter-name"><?php echo zm_get_option('filters_j_t'); ?></span>
@@ -294,8 +301,6 @@
 				</span>
 			</div>
 		<?php } ?>
-
-
 		<div class="clear"></div>
 	</div>
 </div>

@@ -6,7 +6,7 @@ jQuery(".qrurl").mouseover(function() {
 	if (!qrurl == "") {
 		var qr = new QRious({
 			element: document.getElementById('qrious'),
-			size: 162,
+			size: 140,
 			level: 'H',
 			value: window.location.href
 		});

@@ -3,22 +3,18 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 get_header(); ?>
 
 <?php begin_primary_class(); ?>
-	<main id="main" class="be-main site-main<?php if ( zm_get_option('p_first' ) ) { ?> p-em<?php } ?>" role="main">
+	<main id="main" class="be-main site-main<?php if ( zm_get_option( 'p_first' ) ) { ?> p-em<?php } ?><?php if ( zm_get_option( 'code_css' ) ) { ?> code-css<?php } ?>" role="main">
 
 		<?php while ( have_posts() ) : the_post(); ?>
-			<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class( 'ms bk' ); ?>>
-
+			<article id="post-<?php the_ID(); ?>" class="post-item post ms" <?php aos_a(); ?>>
 				<?php header_title(); ?>
 					<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
 				</header>
-
-				<!-- <?php begin_single_meta(); ?> -->
-
 				<div class="entry-content">
 					<div class="single-content">
 						<div class="tao-goods">
 							<figure class="tao-img">
-								<?php tao_thumbnail(); ?>
+								<?php echo tao_thumbnail(); ?>
 							</figure>
 
 							<div class="brief">
@@ -27,18 +23,39 @@ get_header(); ?>
 									<?php edit_post_link( '<i class="be be-editor"></i>' ); ?>
 								</span>
 
-								<?php echo be_vip_meta(); ?>
+								<?php be_vip_meta(); ?>
 
-								<span class="pricex"><strong>￥<?php $price = get_post_meta( get_the_ID(), 'pricex', true );{ echo $price; }?>元</strong></span>
-								<?php if ( get_post_meta( get_the_ID(), 'pricey', true ) ) : ?>
-									<span class="pricey"><del>市场价:<?php $price = get_post_meta( get_the_ID(), 'pricey', true );{ echo $price; }?>元</del></span>
-								<?php endif; ?>
+								<div class="clear"></div>
+
+								<?php 
+									$pricex = get_post_meta( get_the_ID(), 'pricex', true );
+									if ( $pricex ) {
+										echo '<span class="pricex">';
+										echo '<strong>';
+										echo '￥' . $pricex . ' 元';
+										echo '</strong>';
+										echo '</span>';
+									}
+								?>
+
+								<?php 
+									$pricey = get_post_meta( get_the_ID(), 'pricey', true );
+									if ( $pricey ) {
+										echo '<span class="pricey">';
+										echo '<del>';
+										echo $pricey . ' 元';
+										echo '</del>';
+										echo '</span>';
+									}
+								?>
+
+								<div class="clear"></div>
 
 								<?php if ( get_post_meta( get_the_ID(), 'discount', true ) ) : ?>
 									<?php
 										$discount = get_post_meta( get_the_ID(), 'discount', true );
 										$url = get_post_meta( get_the_ID(), 'discounturl', true );
-										echo '<span class="discount"><a href=' . $url . ' rel="external nofollow" target="_blank" class="url dah bk">' . $discount . '</a></span>';
+										echo '<span class="discount"><a href=' . $url . ' rel="external nofollow" target="_blank" class="url">' . $discount . '</a></span>';
 									 ?>
 								<?php endif; ?>
 
@@ -59,6 +76,29 @@ get_header(); ?>
 									?>
 								<?php endif; ?>
 
+								<!-- VIP下载 -->
+								<?php if ( get_post_meta( get_the_ID(), 'vip_url', true ) ) { ?>
+									<?php
+										$url = get_post_meta( get_the_ID(), 'vip_url', true );
+										$vip_text = get_post_meta( get_the_ID(), 'vip_text', true );
+										$login_text = get_post_meta( get_the_ID(), 'vip_login_text', true );
+										if ( ! is_user_logged_in() ) {
+											if ( ! $login_text ) {
+												echo '<span class="tao-vip-login show-layer">会员免费下载</span>';
+											} else {
+												echo '<span class="tao-vip-login show-layer">' . $login_text . '</span>';
+											}
+										} else {
+											if ( ! $vip_text ) {
+												echo '<span class="taourl"><a href=' . $url . ' rel="external nofollow" target="_blank" class="url">立即升级会员</a></span>';
+											} else {
+												echo '<span class="taourl"><a href=' . $url . ' rel="external nofollow" target="_blank" class="url">' . $vip_text . '</a></span>';
+											}
+										}
+									?>
+									<span class="taourl"><span class="tao-down-btn">立即下载</span></span>
+								<?php } ?>
+
 							</div>
 							<div class="clear"></div>
 						</div>
@@ -70,6 +110,8 @@ get_header(); ?>
 						<?php begin_link_pages(); ?>
 						<?php echo bedown_show(); ?>
 					</div>
+
+						<?php logic_notice(); ?>
 
 						<?php if ( ! zm_get_option( 'be_like_content' ) || ( wp_is_mobile() ) ) { ?>
 							<?php be_like(); ?>
@@ -90,33 +132,13 @@ get_header(); ?>
 
 			</article>
 
+			<div class="single-tag"><?php echo get_the_term_list( $post->ID, 'taotag', '<ul class="wow fadeInUp" data-wow-delay="0.3s"><li>', '</li><li>', '</li></ul>' ); ?></div>
+
 			<?php if ( zm_get_option('copyright' ) ) { ?>
 				<?php get_template_part( 'template/copyright' ); ?>
 			<?php } ?>
 
-			<?php if ( zm_get_option( 'related_img' ) ) { ?>
-				<div class="single-goods" <?php aos_a(); ?>>
-					<?php 
-						$loop = new WP_Query( array( 'post_type' => 'tao', 'orderby' => 'rand', 'posts_per_page' => zm_get_option('single_tao_n') ) );
-						while ( $loop->have_posts() ) : $loop->the_post();
-					?>
-
-					<div class="tl4 tm4">
-						<div class="single-goods-main fd bk">
-							<figure class="single-goods-img ms bk">
-								<?php tao_thumbnail(); ?>
-							</figure>
-							<div class="single-goods-pricex">￥ <?php $price = get_post_meta(get_the_ID(), 'pricex', true);{ echo $price; }?>元</div>
-							<?php the_title( sprintf( '<h2 class="single-goods-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
-							<div class="clear"></div>
-						</div>
-					</div>
-
-					<?php endwhile; ?>
-					<?php wp_reset_query(); ?>
-					<div class="clear"></div>
-				</div>
-			<?php } ?>
+			<?php get_template_part( 'template/related-tao' ); ?>
 
 			<?php get_template_part( 'ad/ads', 'comments' ); ?>
 

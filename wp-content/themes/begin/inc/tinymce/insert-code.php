@@ -84,7 +84,7 @@ textarea {
 		var modename_ddb = document.getElementById('becode_mode');
 		var modename = modename_ddb.value;
 		var html = escapeHtml(document.getElementById('becode_code').value);
-		tagtext = '<pre class="code-' + modename + '" >' + html + '</pre>';
+		tagtext = '<pre class="code-' + modename + '" >' + html + '</pre>&nbsp;';
 		window.parent.tinyMCE.activeEditor.execCommand('mceInsertContent', 0, tagtext);
 		window.parent.tinyMCE.activeEditor.windowManager.close();
 		return;

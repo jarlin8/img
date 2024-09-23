@@ -1,16 +1,24 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-<?php query_posts( array ( 'meta_key' => 'post_img', 'showposts' => zm_get_option( 'post_img_n' ), 'ignore_sticky_posts' => 1, 'post__not_in' => $do_not_duplicate ) ); if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
+<?php
+	$args = get_posts( array(
+		'post__in'            => explode( ',', be_get_option( 'cms_new_post_img_id' ) ),
+		'orderby'             => 'post__in', 
+		'ignore_sticky_posts' => true,
+		'post__not_in'        => $do_not_duplicate,
+	) );
+?>
+<?php if ( $args ) : foreach ( $args as $post ) : setup_postdata( $post ); ?>
 <div class="xl4 xm4">
-	<div class="picture-cms picture-cms-img-item ms bk<?php if ( zm_get_option('post_no_margin' ) && zm_get_option( 'news_model' ) == 'news_normal' ) { ?> addclose<?php } ?>" <?php aos_a(); ?>>
+	<div class="picture-cms picture-cms-img-item ms<?php if ( be_get_option( 'post_no_margin' ) && be_get_option( 'news_model' ) == 'news_normal' ) { ?> addclose<?php } ?>" <?php aos_a(); ?>>
 		<figure class="picture-cms-img">
-			<?php zm_thumbnail(); ?>
-			<div class="posting-title over"><a  class="bgt" href="<?php the_permalink() ?>" rel="bookmark"><?php the_title(); ?></a></div>
+			<?php echo zm_thumbnail(); ?>
+			<div class="posting-title over"><a href="<?php the_permalink() ?>" rel="bookmark" <?php echo goal(); ?>><?php the_title(); ?></a></div>
 		</figure>
 	</div>
 </div>
-<?php endwhile; ?>
+<?php endforeach; wp_reset_postdata(); ?>
 <?php else : ?>
-<div class="be-none-img da bk ms">编辑文章，勾选“杂志布局图文模块”</div>
+	<div class="be-none-img ms">首页设置 → 杂志布局 → 最新文章 → 图文模块，输入文章ID</div>
 <?php endif; ?>
-<?php wp_reset_query(); ?>
+<?php be_help( $text = '首页设置 → 杂志布局 → 最新文章 → 图文模块' ); ?>
 <div class="clear"></div>

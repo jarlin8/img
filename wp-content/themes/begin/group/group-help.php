@@ -1,64 +1,61 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-<?php if ( zm_get_option( 'group_help' ) ) { ?>
-<div class="g-row g-line group-help-line sort" name="<?php echo zm_get_option( 'group_help_s' ); ?>" <?php aos(); ?>>
+<?php if ( co_get_option( 'group_help' ) ) {
+	if ( ! co_get_option( 'help_bg' ) || ( co_get_option( 'help_bg' ) == 'auto' ) ) {
+		$bg = '';
+	}
+	if ( co_get_option( 'help_bg' ) == 'white' ) {
+		$bg = ' group-white';
+	}
+	if ( co_get_option( 'help_bg' ) == 'gray' ) {
+		$bg = ' group-gray';
+	}
+?>
+<div class="g-row g-line group-help-line<?php echo $bg; ?>" <?php aos(); ?>>
 	<div class="g-col">
 		<div class="group-help-box">
 			<div class="group-title" <?php aos_b(); ?>>
-				<?php if ( ! zm_get_option( 'group_help_t') == '' ) { ?>
-					<h3><?php echo zm_get_option( 'group_help_t' ); ?></h3>
+				<?php if ( ! co_get_option( 'group_help_t') == '' ) { ?>
+					<h3><?php echo co_get_option( 'group_help_t' ); ?></h3>
 				<?php } ?>
-				<?php if ( ! zm_get_option('group_new_des') == '' ) { ?>
-					<div class="group-des"><?php echo zm_get_option( 'group_help_des' ); ?></div>
+				<?php if ( ! co_get_option('group_new_des') == '' ) { ?>
+					<div class="group-des"><?php echo co_get_option( 'group_help_des' ); ?></div>
 				<?php } ?>
 				<div class="clear"></div>
 			</div>
 			<div class="group-help-wrap">
-				<div class="group-help-img" <?php aos_g(); ?>>
-					<div class="group-help-bg">
-						<img alt="<?php echo zm_get_option( 'group_help_t' ); ?>" src="<?php echo zm_get_option( 'group_help_img' ); ?>">
-						<div class="group-help-txt fd"><?php echo zm_get_option( 'group_help_t' ); ?></div>
+				<div class="group-help-img tup" <?php aos_g(); ?>>
+					<div class="group-help-bg" style="background-image: url(<?php echo co_get_option( 'group_help_img' ); ?>);">
+						<div class="group-help-txt fd"><?php echo co_get_option( 'group_help_t' ); ?></div>
 					</div>
 				</div>
 				<div class="group-help-main">
 					<?php 
 						$i = 0;
-						$posts = get_posts(
-							array(
-								'post_type' => 'any',
-								'orderby' => 'menu_order',
-								'orderby' => 'date',
-								'order' => 'ASC',
-								'meta_key' => 'group_help_post',
-								'numberposts' => '60'
-							)
-						);
-
-						if ( $posts ) : foreach( $posts as $post ) : setup_postdata( $post );
+						$help = ( array ) co_get_option( 'group_help_item' );
+						foreach ( $help as $items ) {
 						$i++;
 					?>
-					
-					<div class="group-help-area <?php if ( $i < 2 ) { ?> active<?php } ?>" <?php aos_b(); ?>>
-						<div class="group-help-title group-help-title-<?php echo $i; ?>">
-							<span class="help-ico"></span>
-							<?php if ( zm_get_option( 'group_help_num') ) { ?>
-								<span class="group-help-num"><?php echo $i; ?></span>
-							<?php } ?>
-							<?php the_title(); ?>
+						<div class="group-help-area <?php if ( $i < 2 ) { ?> active<?php } ?>" <?php aos_b(); ?>>
+							<div class="group-help-title group-help-title-<?php echo $i; ?>">
+								<span class="help-ico"></span>
+								<?php if ( co_get_option( 'group_help_num') ) { ?>
+									<span class="group-help-num"><?php echo $i; ?></span>
+								<?php } ?>
+								<?php if ( ! empty( $items['group_help_title'] ) ) { ?>
+									<?php echo $items['group_help_title']; ?>
+								<?php } ?>
+							</div>
+							<div class="group-help-content group-help-content-<?php echo $i; ?>">
+								<?php if ( ! empty( $items['group_help_text'] ) ) { ?>
+									<?php echo wpautop( $items['group_help_text'] ); ?>
+								<?php } ?>
+							</div>
 						</div>
-						<div class="group-help-content group-help-content-<?php echo $i; ?>">
-							<?php
-								$content = get_the_content();
-								$content = strip_shortcodes( $content );
-								echo wp_trim_words( $content, '500', '' );
-							?>
-						</div>
-						<?php edit_post_link('<i class="be be-editor"></i>', '<span class="edit-help-but group-edit bgt">', '</span>' ); ?>
-					</div>
-					<?php endforeach; endif; ?>
-					<?php wp_reset_query(); ?>
+					<?php } ?>
 				</div>
 			</div>
 		</div>
+		<?php co_help( $text = '公司主页 → 帮助', $number = 'group_help_s' ); ?>
 	</div>
 </div>
 <?php } ?>

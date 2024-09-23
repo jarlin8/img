@@ -28,11 +28,15 @@ jQuery(document).ready(function($) {
 	// Mobile Menu
 	$('#navigation-toggle').sidr({
 		name: 'sidr-main',
-		source: '#sidr-close, #site-nav',
+		source: '#sidr-close, #site-nav, .sidr-login',
 		side: 'left',
 		displace: false,
 		onOpen: function onOpen() {
 			$('.menu-but').toggleClass("menu-open");
+			$(".usericon img").lazyload({
+				effect: "fadeIn",
+				threshold: 500,
+			});
 		},
 
 		onClose: function onClose() {
@@ -40,9 +44,11 @@ jQuery(document).ready(function($) {
 		}
 	});
 
-	$("#sidr-id-overlay, .toggle-sidr-close").click(function() {
-		$.sidr('close', 'sidr-main');
-		return false;
+	$("body").click(function(e) {
+		var target = $(e.target);
+		if (!target.closest("#sidr-main").length) {
+			$.sidr('close', 'sidr-main');
+		}
 	});
 
 	$(window).resize(function() {
@@ -123,4 +129,351 @@ jQuery(document).ready(function($){
 	$(".toc-widget").mouseover(function(){
 		$(".toc-prompt").fadeOut();
 	});
-})
+});
+
+// 数字动画
+jQuery(document).ready(function($) {
+	let visibilityIds = ['.be_count_1', '.be_count_2', '.be_count_3', '.be_count_4', '.be_count_5', '.be_count_6', '.be_count_7', '#be_counter-1', '#be_counter-2', '#be_counter-3', '#be_counter-4', '#be_counter-5', '#be_counter-6', '#be_counter-7', '#be_counter-8', '#be_counter-9', '#be_counter-10', '#be_counter-11', '#be_counter-12', '#be_counter-13', '#be_counter-14', '#be_counter-15', '#be_counter-16', '#be_counter-17', '#be_counter-18', '#be_counter-19', '#be_counter-20', '.group_count_1'];
+	let counterClass = '.counter';
+	let defaultSpeed = 10000;
+
+	$(window).on('scroll',
+	function() {
+		getVisibilityStatus();
+	});
+
+	getVisibilityStatus();
+
+	function getVisibilityStatus() {
+		elValFromTop = [];
+		var windowHeight = $(window).height(),
+		windowScrollValFromTop = $(this).scrollTop();
+
+		visibilityIds.forEach(function(item, index) {
+			try {
+				elValFromTop[index] = Math.ceil($(item).offset().top);
+			} catch(err) {
+				return;
+			}
+			if ((windowHeight + windowScrollValFromTop) > elValFromTop[index]) {
+				counter_init(item);
+			}
+		});
+	}
+
+	function counter_init(groupId) {
+		let num,
+		speed,
+		direction,
+		index = 0;
+		$(counterClass).each(function() {
+			num = $(this).attr('data-TargetNum');
+			speed = $(this).attr('data-Speed');
+			direction = $(this).attr('data-Direction');
+			easing = $(this).attr('data-Easing');
+			if (speed == undefined) speed = defaultSpeed;
+			$(this).addClass('c_' + index);
+			doCount(num, index, speed, groupId, direction, easing);
+			index++;
+		});
+	}
+
+	function doCount(num, index, speed, groupClass, direction, easing) {
+		let className = groupClass + ' ' + counterClass + '.' + 'c_' + index;
+		if (easing == undefined) easing = "swing";
+		$(className).animate({
+			num
+		},
+		{
+			duration: +speed,
+			easing: easing,
+			step: function(now) {
+				if (direction == 'reverse') {
+					$(this).text(num - Math.floor(now));
+				} else {
+					$(this).text(Math.floor(now));
+				}
+			},
+			complete: doCount
+		});
+	}
+});
+
+// 复制文本
+jQuery(document).ready(function($){
+	$('.textbox').prepend('<span class="btn-copy be-btn-copy"></span>').children('.btn-copy');
+	var copyText = new ClipboardJS('.btn-copy', {
+		target: function(trigger) {
+			return trigger.nextElementSibling;
+		}
+	});
+
+	copyText.on('success',
+	function(event) {
+		event.clearSelection();
+		event.trigger.innerHTML = '<span class="fd">复制成功</span><div class="copy-success fd"><div class="copy-success-text">复制成功，联系我们</div></div>';
+		$('.copy-success').closest('.textbox').addClass('copy-show');
+		window.setTimeout(function() {
+			event.trigger.innerHTML = '<span class="fd">点击复制</span>';
+			$('.textbox').removeClass('copy-show');
+		},
+		3000);
+	});
+
+	// 复制微信
+	$('.btn-weixin-copy').each(function() {
+		var copyText = new ClipboardJS(this, {
+			target: function(trigger) {
+				return trigger.nextElementSibling;
+			}
+		});
+
+		copyText.on('success',
+		function(event) {
+			event.clearSelection();
+			$(event.trigger).siblings('.copy-success-weixin').addClass('copy-show');
+			$(event.trigger).closest('.weixinbox').addClass('weixincopy');
+			window.setTimeout(function() {
+				$(event.trigger).siblings('.copy-success-weixin').removeClass('copy-show');
+			},
+			3000);
+			window.setTimeout(function() {
+				$(event.trigger).closest('.weixinbox').removeClass('weixincopy');
+			},
+			500);
+		});
+	});
+
+	// 复制邀请码
+	var copyText = new ClipboardJS('.invite-copy', {
+		target: function(trigger) {
+			return trigger.nextElementSibling;
+		}
+	});
+
+	copyText.on('success',
+	function(event) {
+		event.clearSelection();
+		event.trigger.innerHTML = '<span class="copy-invite-success fd"><span class="dashicons dashicons-saved"></span></span>';
+		window.setTimeout(function() {
+			event.trigger.innerHTML = '<span class="copy-invite-success fd"><i class="be be-clipboard"></i></span>';
+		},
+		3000);
+	});
+
+	// 复制正文
+	$('.copy-content').click(function() {
+		var titleContent = $('.entry-title').text().trim();
+		var singleContent = $('.single-content').text().trim();
+		//var textContent = $('.single-content').html().replace(/<\/?p>/g, '\n').trim();
+		var textContent = titleContent + '\n' + singleContent;
+		copyToClipboard(textContent);
+
+		$('.copy-content-tip').addClass('success');
+		$('.be-main').addClass('success');
+
+		setTimeout(function() {
+			$('.copy-content-tip').removeClass('success');
+			$('.be-main').removeClass('success');
+		}, 1000);
+	});
+
+	// 正文到剪贴板
+	function copyToClipboard(content) {
+		var tempInput = document.createElement('textarea');
+
+		tempInput.style.opacity = 0;
+		tempInput.value = content;
+		document.body.appendChild(tempInput);
+		tempInput.select();
+		document.execCommand('copy');
+		document.body.removeChild(tempInput);
+	}
+
+	// 下载TAB
+	$(".tab-down-nav .tab-down-item").click(function() {
+		var tab_index = $(this).index();
+		lazy();
+		$(this).addClass("active").siblings().removeClass("active");
+		$(".tab-down-content .tab-content-item").eq(tab_index).addClass("show").siblings().removeClass("show");
+	});
+
+	$('.tab-down-item-url').click(function() {
+		$('html,body').animate({
+			scrollTop: $('.down-area').offset().top - 80
+		},
+		800);
+	});
+
+	// 直达下载模块
+	$('.tao-down-btn').click(function() {
+		$('html,body').animate({
+			scrollTop: $('.erphpdown').offset().top - 80
+		},
+		800);
+	});
+
+	// 文档模板
+	$('.note-nav-btn > a').on('click', function() {
+		$(this).parent('li').toggleClass('note-nav-hide');
+		if ($('.note-nav-btn').hasClass('note-current-show')) {
+			$(this).parent('li').removeClass('note-current-show');
+		}
+	});
+
+	// 文档小工具目录
+	$('.be-note-nav-widget .menu-item-has-children > a').on('click', function() {
+		$(this).next('.sub-menu').toggleClass('note-widget-show');
+		$('.be-note-nav').removeClass('note-nav-widget-show');
+	});
+
+	$('.be-note-nav-widget .menu-item .sub-menu .current-menu-item').parents('.sub-menu').addClass('note-widget-show');
+	$('.be-note-nav-widget.note-nav-widget-show .sub-menu').addClass('note-widget-show');
+
+	$(".be-note-nav-widget .menu-item-has-children > a").on("click", function(event) {
+		event.preventDefault();
+	});
+
+	$('.note-show-all').on('click', function() {
+		if ($('.note-nav-btn').hasClass('note-current-show')) {
+			$('.note-nav-btn').removeClass('note-current-show');
+		}
+
+		if ($('.note-nav-btn').hasClass('note-nav-hide')) {
+			$('.note-nav-btn').removeClass('note-nav-hide');
+		} else {
+			$('.note-nav-btn').addClass('note-nav-hide');
+		}
+
+		if ($('.be-note-nav-widget .sub-menu').hasClass('note-widget-show')) {
+			$('.be-note-nav-widget .sub-menu').removeClass('note-widget-show');
+		} else {
+			$('.be-note-nav-widget .sub-menu').addClass('note-widget-show');
+		}
+
+		$('.be-note-nav').removeClass('note-nav-widget-show');
+	});
+
+	$('.note-nav-switch').on('click', function() {
+		if ($('.be-note-nav-box').hasClass('note-nav-mini')) {
+			$('.be-note-nav-box').removeClass('note-nav-mini').removeClass('note-nav-max');
+		} else {
+			$('.be-note-nav-box').addClass('note-nav-mini').addClass('note-nav-max');
+		}
+	});
+	
+	// 清除浏览记录
+	$(".clear-cookie").click(function() {
+		document.cookie = "astx_recent_posts=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/";
+		alert("浏览记录已清除！");
+		location.reload();
+	});
+
+	// 加大字号
+	var initialFontSize = parseInt($(".single-content, .question-content, .ap-answer-content").css("font-size"));
+	var maxFontSize = 26;
+	$(".fontadd").click(function() {
+		var fontSize = parseInt($(".single-content, .question-content, .ap-answer-content").css("font-size"));
+
+		if (fontSize < maxFontSize) {
+			fontSize += 2;
+
+			if (fontSize >= maxFontSize) {
+				$(".fontadd").html('<i class="dashicons dashicons-editor-textcolor"></i><i class="xico dashicons dashicons-minus"></i>');
+			}
+		} else {
+			fontSize = initialFontSize;
+			$(".fontadd").html('<i class="dashicons dashicons-editor-textcolor"></i><i class="xico dashicons dashicons-plus-alt2"></i>');
+		}
+
+		$(".single-content, .question-content, .ap-answer-content").css("font-size", fontSize + "px");
+	});
+
+	// 推荐动画
+	$(".foldimg-main:first").addClass("active");
+
+	$(".foldimg-main").hover(function() {
+		$(".foldimg-main").removeClass("active");
+		$(this).addClass("active");
+	},
+
+	function() {
+		if (!$(".foldimg-main").hasClass("active")) {
+			$(".foldimg-main:first").addClass("active");
+		}
+	});
+
+	// 网址锚点
+	$('a.turn').click(function(event) {
+		event.preventDefault();
+
+		var target = $(this).attr('href');
+		var offset = $(target).offset().top - 90;
+		$('html, body').animate({
+			scrollTop: offset
+		},
+		500);
+	});
+
+});
+
+// 加载历史版本
+var assetsid = assetsData.postID;
+var homeurl = homeData.homeurl;
+var isLoaded = false; // 是否已加载
+function fetchContent() {
+	if (isLoaded) {
+		return; // 如果已加载不执行请求
+	}
+
+	// 显示加载中动画
+	var loadingElement = document.querySelector('.ajax-loading');
+	loadingElement.style.display = 'block';
+
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState === XMLHttpRequest.DONE) {
+			// 隐藏加载中动画
+			loadingElement.style.display = 'none';
+
+			if (xhr.status === 200) {
+				var responseElement = document.createElement('div');
+				responseElement.innerHTML = xhr.responseText;
+				var contentToFetch = responseElement.querySelector('#erphpdown-download');
+				if (contentToFetch) {
+					document.getElementById('down-version').appendChild(contentToFetch);
+				}
+			} else {
+			// 显示错误提示信息
+				var errorElement = document.querySelector('.down-version-error');
+				errorElement.style.display = 'block';
+			}
+
+			isLoaded = true; //已加载
+		}
+	};
+	xhr.open('GET', '' + homeurl + '/wp-content/plugins/erphpdown/download.php?postid=' + assetsid, true);
+
+	xhr.send();
+}
+
+// 复制qq
+function copyToClipboard(element) {
+	const hrefValue = element.getAttribute('href');
+	const regex = /&uin=(\d+)&/;
+	const match = hrefValue.match(regex);
+	if (match && match[1]) {
+		const uinValue = match[1];
+
+		const tempTextArea = document.createElement('textarea');
+		tempTextArea.value = uinValue;
+		document.body.appendChild(tempTextArea);
+		tempTextArea.select();
+		document.execCommand('copy');
+		document.body.removeChild(tempTextArea);
+
+		alert('QQ号 ' + uinValue + ' 已复制，可粘贴到QQ中添加我为好友！');
+	} else {
+		alert('出问题了，请重新复制！');
+	}
+}

@@ -30,6 +30,6 @@ o.className&&e.test(o.className)){m=!0;break}if(!m){d.className+=" prettyprinted
 h={};g()}};typeof define==="function"&&define.amd&&define("google-code-prettify",[],function(){return Y})})();}()
 
 jQuery(document).ready(function($) {
-	$("pre").addClass("prettyprint linenums");
+	$(".single-content pre,.comment-list pre").addClass("prettyprint linenums");
 	 prettyPrint();
 })

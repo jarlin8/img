@@ -8,9 +8,9 @@ get_header(); ?>
 
 	<?php begin_primary_class(); ?>
 
-		<main id="main" class="be-main qa-main site-main<?php if (zm_get_option('p_first') ) { ?> p-em<?php } ?>" role="main">
+		<main id="main" class="be-main qa-main site-main<?php if ( zm_get_option( 'p_first' ) ) { ?> p-em<?php } ?><?php if ( zm_get_option( 'code_css' ) ) { ?> code-css<?php } ?>" role="main">
 			<?php while ( have_posts() ) : the_post(); ?>
-				<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class('ms bk'); ?>>
+				<article id="post-<?php the_ID(); ?>" class="post-item post ms" <?php aos_a(); ?>>
 					<?php header_title(); ?>
 						<?php if ( get_post_meta(get_the_ID(), 'header_img', true) || get_post_meta(get_the_ID(), 'header_bg', true) ) { ?>
 						<?php } else { ?>
@@ -64,7 +64,7 @@ get_header(); ?>
 									<?php the_title( sprintf( '<a href="%s" rel="bookmark"><i class="be be-arrowright"></i>', esc_url( get_permalink() ) ), '</a>' ); ?>
 									</li>
 								<?php endwhile; ?>
-								<?php wp_reset_query(); ?>
+								<?php wp_reset_postdata(); ?>
 							</ul>
 							<div class="clear"></div>
 						</div>

@@ -6,7 +6,7 @@ get_header(); ?>
 		<main id="main" class="be-main site-main<?php if (zm_get_option('p_first') ) { ?> p-em<?php } ?>" role="main">
 
 			<?php while ( have_posts() ) : the_post(); ?>
-				<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class('ms bk'); ?>>
+				<article id="post-<?php the_ID(); ?>" class="post-item post ms" <?php aos_a(); ?>>
 
 					<?php header_title(); ?>
 						<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>

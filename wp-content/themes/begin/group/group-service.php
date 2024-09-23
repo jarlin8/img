@@ -1,99 +1,118 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-<?php if (zm_get_option('service')) { ?>
-<div id="service-bg" class="g-row sort" name="<?php echo zm_get_option('service_s'); ?>" style="background: url('<?php echo zm_get_option('service_bg_img'); ?>') no-repeat fixed center / cover;" <?php aos(); ?>>
+<?php if ( co_get_option( 'service' ) ) { ?>
+<div id="service-bg" class="g-row" style="background: url('<?php echo co_get_option( 'service_bg_img' ); ?>') no-repeat fixed center / cover;" <?php aos(); ?>>
 	<div class="service-rgb">
-		<div class="g-col bgt">
-			<div class="group-service-box bgt">
-				<div class="group-title group-service-title bgt" <?php aos_b(); ?>>
-						<?php if ( ! zm_get_option('service_t') == '' ) { ?>
-							<h3 class="bgt"><?php echo zm_get_option('service_t'); ?></h3>
+		<div class="g-col">
+			<div class="group-service-box">
+				<div class="group-title group-service-title" <?php aos_b(); ?>>
+						<?php if ( ! co_get_option( 'service_t' ) == '' ) { ?>
+							<h3><?php echo co_get_option( 'service_t' ); ?></h3>
 						<?php } ?>
-						<?php if ( zm_get_option('service_des') ) { ?>
-							<div class="group-des bgt"><?php echo zm_get_option('service_des'); ?></div>
+						<?php if ( co_get_option( 'service_des' ) ) { ?>
+							<div class="group-des"><?php echo co_get_option( 'service_des' ); ?></div>
 						<?php } ?>
 					<div class="clear"></div>
 				</div>
-				<div class="group-service group-service-c bgt">
-					<div class="group-service-des bgt">
-						<?php if ( !zm_get_option('service_c_img') == '' ) { ?>
-							<img class="be-aos" <?php aos_c(); ?> src="<?php echo zm_get_option('service_c_img'); ?>" alt="service" />
-						<?php } ?>
-						<?php $posts = get_posts( array( 'post_type' => 'any', 'include' =>zm_get_option('service_c_id')) ); if ($posts) : foreach( $posts as $post ) : setup_postdata( $post ); ?>
-						<div class="clear"></div>
-						<?php if ( zm_get_option('service_c_id') == '' ) { ?>
+
+					<?php if ( co_get_option( 'group_service_l' ) ) { ?>
+						<div class="group-service group-service-c">
 						<?php } else { ?>
-							<div class="group-service-content bgt" <?php aos_b(); ?>>
-								<?php 
-									$content = get_the_content();
-									$content = wp_strip_all_tags(str_replace(array('[',']'),array('<','>'),$content));
-									echo wp_trim_words( $content, 200, '' );
-								?>
+						<div class="group-service-centre">
+					<?php } ?>
+	
+
+					<div class="group-service-des tup">
+						<?php if ( ! co_get_option( 'service_c_img' ) == '' ) { ?>
+							<img class="be-aos" <?php aos_c(); ?> src="<?php echo co_get_option( 'service_c_img' ); ?>" alt="<?php echo co_get_option( 'service_t' ); ?>">
+						<?php } ?>
+
+						<div class="clear"></div>
+						<?php if ( co_get_option( 'service_c_txt' ) ) { ?>
+							<div class="group-service-content" <?php aos_b(); ?>>
+								<?php echo co_get_option( 'service_c_txt' ); ?>
 							</div>
 						<?php } ?>
-						<?php endforeach; endif; ?>
-						<?php wp_reset_query(); ?>
+
 						<div class="clear"></div>
 					</div>
 				</div>
 
-				<div class="group-service group-service-l bgt">
-					<div class="service-box bgt">
-						<?php $posts = get_posts( array( 'post_type' => 'any', 'include' =>zm_get_option('service_l_id')) ); if ($posts) : foreach( $posts as $post ) : setup_postdata( $post ); ?>
-						<div class="p4 bgt">
-							<div class="p-4 sup bgt" <?php aos_b(); ?>>
-								<figure class="service-thumbnail bk bgt<?php if ( zm_get_option( 'service_img_edit' ) ) { ?> service-img<?php } ?>">
-									<?php tao_thumbnail(); ?>
-								</figure>
-								<div class="p4-title-box bgt">
-									<h3 class="p4-title bgt"><?php echo wp_trim_words( get_the_title(), 120 ); ?></h3>
-									<div class="p4-content bgt">
-										<?php 
-											$content = get_the_content();
-											$content = wp_strip_all_tags(str_replace(array('[',']'),array('<','>'),$content));
-											echo wp_trim_words( $content, 50, '' );
-										?>
+				<div class="group-service group-service-l">
+					<div class="service-box">
+						<?php 
+							$service = ( array ) co_get_option( 'group_service_l' );
+							foreach ( $service as $items ) {
+						?>
+							<?php if ( ! empty( $items['group_service_title_l'] ) ) { ?>
+								<div class="p4 tup">
+									<div class="p-4" <?php aos_b(); ?>>
+											<div class="service-ico">
+												<?php if ( ! empty( $items['group_service_ico_l'] ) ) { ?>
+													<i class="<?php echo $items['group_service_ico_l']; ?>"></i>
+												<?php } ?>
+												<?php if ( ! empty( $items['group_service_img_l'] ) ) { ?>
+													<figure class="foldimg-bg" style="background-image: url(<?php echo $items['group_service_img_l']; ?>) !important;"></figure>
+												<?php } ?>
+											</div>
+
+										<div class="p4-title-box">
+											<?php if ( ! empty( $items['group_service_title_l'] ) ) { ?>
+												<h3 class="p4-title"><?php echo $items['group_service_title_l']; ?></h3>
+											<?php } ?>
+											<?php if ( ! empty( $items['group_service_txt_l'] ) ) { ?>
+												<div class="p4-content">
+													<?php echo $items['group_service_txt_l']; ?>
+												</div>
+											<?php } ?>
+										</div>
 									</div>
-									<?php edit_post_link('<i class="be be-editor"></i>', '<span class="edit-service-but bgt">', '</span>' ); ?>
 								</div>
-							</div>
-						</div>
-						<?php endforeach; endif; ?>
-						<?php wp_reset_query(); ?>
+							<?php } ?>
+						<?php } ?>
 						<div class="clear"></div>
 					</div>
 				</div>
 
-				<div class="group-service group-service-r bgt">
-					<div class="service-box bgt">
-						<?php $posts = get_posts( array( 'post_type' => 'any', 'include' =>zm_get_option('service_r_id')) ); if ($posts) : foreach( $posts as $post ) : setup_postdata( $post ); ?>
-						<div class="p4 bgt">
-							<div class="p-4 sup bgt" <?php aos_b(); ?>>
-								<figure class="service-thumbnail bk bgt<?php if ( zm_get_option( 'service_img_edit' ) ) { ?> service-img<?php } ?>">
-									<?php tao_thumbnail(); ?>
-								</figure>
-								<div class="p4-title-box bgt">
-									<h3 class="p4-title bgt"><?php echo wp_trim_words( get_the_title(), 120 ); ?></h3>
-									<div class="p4-content bgt">
-										<?php 
-											$content = get_the_content();
-											$content = wp_strip_all_tags(str_replace(array('[',']'),array('<','>'),$content));
-											echo wp_trim_words( $content, 50, '' );
-										?>
+				<div class="group-service group-service-r">
+					<div class="service-box">
+						<?php 
+							$service = ( array ) co_get_option( 'group_service_r' );
+							foreach ( $service as $items ) {
+						?>
+							<?php if ( ! empty( $items['group_service_title_r'] ) ) { ?>
+								<div class="p4 tup">
+									<div class="p-4" <?php aos_b(); ?>>
+
+											<div class="service-ico">
+												<?php if ( ! empty( $items['group_service_ico_r'] ) ) { ?>
+													<i class="<?php echo $items['group_service_ico_r']; ?>"></i>
+												<?php } ?>
+												<?php if ( ! empty( $items['group_service_img_r'] ) ) { ?>
+													<figure class="foldimg-bg" style="background-image: url(<?php echo $items['group_service_img_r']; ?>) !important;"></figure>
+												<?php } ?>
+											</div>
+
+										<div class="p4-title-box">
+											<?php if ( ! empty( $items['group_service_title_r'] ) ) { ?>
+												<h3 class="p4-title"><?php echo $items['group_service_title_r']; ?></h3>
+											<?php } ?>
+											<?php if ( ! empty( $items['group_service_txt_r'] ) ) { ?>
+												<div class="p4-content">
+													<?php echo $items['group_service_txt_r']; ?>
+												</div>
+											<?php } ?>
+										</div>
 									</div>
-									<?php edit_post_link('<i class="be be-editor bgt"></i>', '<span class="edit-service-but bgt">', '</span>' ); ?>
 								</div>
-							</div>
-						</div>
-						<?php endforeach; endif; ?>
-						<?php wp_reset_query(); ?>
+							<?php } ?>
+						<?php } ?>
 						<div class="clear"></div>
 					</div>
 				</div>
-
-				<div class="clear"></div>
 			</div>
-			<div class="clear"></div>
+			<?php co_help( $text = '公司主页 → 服务宗旨', $number = 'service_s' ); ?>
 		</div>
+		<div class="clear"></div>
 	</div>
 </div>
 <?php } ?>

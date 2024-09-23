@@ -8,7 +8,7 @@ get_header(); ?>
 <div id="<?php if ( get_post_meta(get_the_ID(), 'sidebar_l', true) ) { ?>primary-l<?php } else { ?>primary<?php } ?>" class="paper-sidebar<?php if ( get_post_meta( get_the_ID(), 'no_sidebar', true ) ) { ?> paper-area no-sidebar<?php } else { ?> content-area<?php } ?>">
 	<main id="main" class="be-main site-main" role="main">
 		<?php while ( have_posts() ) : the_post(); ?>
-			<article id="post-<?php the_ID(); ?>"  class="page type-page status-publish">
+			<article id="post-<?php the_ID(); ?>"  class="page-item type-page status-publish">
 				<div class="paper-content">
 					<?php the_content(); ?>
 				<div class="clear"></div>

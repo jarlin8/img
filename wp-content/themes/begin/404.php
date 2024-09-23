@@ -10,11 +10,11 @@ exit();
 <?php } ?>
 <div id="primary" class="content-area">
 	<main id="main" class="be-main site-main" role="main">
-		<section class="error-404 not-found page bk da">
+		<section class="error-404 not-found page post">
 			<header class="entry-header">
 				<h1 class="page-title"><?php echo stripslashes( zm_get_option('404_t') ); ?></h1>
 			</header><!-- .page-header -->
-			<div class="single-content" style="text-align: center;height: 100vh;">
+			<div class="single-content" style="min-height: 100vh;">
 				<div style="text-align: center;"><?php echo stripslashes( zm_get_option('404_c') ); ?></div>
 				<?php if (!zm_get_option('404_go') || (zm_get_option('404_go') == '404_s')) { ?>
 					<div style="text-align: center;margin: 30px 0;">
@@ -35,8 +35,14 @@ exit();
 						countDown();
 					</script>
 				<?php } ?>
-				<!-- <?php get_search_form(); ?> -->
-				<br /><br /><br /><br /><br /><br /><br /><br /><br />
+				<div class="item-404">
+					<!-- <?php get_search_form(); ?> -->
+				</div>
+				<div class="item-404">
+					<?php echo do_shortcode( '[random_post]' ); ?>
+					<div class="clear"></div>
+				</div>
+				<div class="clear"></div>
 			</div>
 		</section>
 	</main>

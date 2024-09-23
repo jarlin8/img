@@ -7,7 +7,7 @@ get_header(); ?>
 
 <main id="main" class="be-main author-content" role="main">
 	<?php while ( have_posts() ) : the_post(); ?>
-		<article id="post-<?php the_ID(); ?>" <?php post_class( 'bk da' ); ?> <?php aos_a(); ?>>
+		<article id="post-<?php the_ID(); ?>" class="post-item post ms" <?php aos_a(); ?>>
 			<?php if ( get_post_meta( get_the_ID(), 'header_img', true ) || get_post_meta( get_the_ID(), 'header_bg', true ) ) { ?>
 			<?php } else { ?>
 				<header class="entry-header">
@@ -24,7 +24,7 @@ get_header(); ?>
 		</article>
 	<?php endwhile; ?>
 
-	<article id="picture" class="author-page da">
+	<article id="picture" class="author-page">
 		<?php 
 			$authors = get_users(
 				array(
@@ -38,8 +38,9 @@ get_header(); ?>
 					echo '<div class="cx5" ';
 					echo aos_a();
 					echo '>';
-					echo '<div class="author-all bk da sup">';
-					echo '<div class="author-bgs da">';
+					echo '<div class="boxs1">';
+					echo '<div class="author-all">';
+					echo '<div class="author-bgs">';
 					if ( get_the_author_meta( 'userimg', $author->ID) ) {
 						echo '<img src="';
 						echo the_author_meta( "userimg", $author->ID );
@@ -58,17 +59,22 @@ get_header(); ?>
 					echo the_author_meta( 'description', $author->ID );
 					echo '</div>';
 					echo '<div class="author-user-role">';
-					if (be_check_user_role( array( 'administrator'), $author->ID ) ) {
-						echo '<div class="role1">'. __( '管理员', 'begin' ) .'</div>';
+					if ( be_check_user_role( array( 'administrator' ), $author->ID ) ) {
+						echo '<div class="role1">' . __( '管理员', 'begin' ) . '</div>';
 					}
-					if (be_check_user_role( array( 'editor'), $author->ID ) ) {
-						echo '<div class="role2">'. __( '本站编辑', 'begin' ) .'</div>';
+					elseif( be_check_user_role( array( 'editor'), $author->ID ) ) {
+						echo '<div class="role2">' . __( '本站编辑', 'begin' ) .'</div>';
 					}
-					if (be_check_user_role( array( 'author'), $author->ID ) ) {
-						echo '<div class="role3">'. __( '专栏作者', 'begin' ) .'</div>';
+					elseif( be_check_user_role( array( 'author'), $author->ID ) ) {
+						echo '<div class="role3">' . __( '专栏作者', 'begin' ) . '</div>';
 					}
-					if (be_check_user_role( array( 'contributor'), $author->ID ) ) {
-						echo '<div class="role4">'. __( '自由撰稿人', 'begin' ) .'</div>';
+					elseif( be_check_user_role( array( 'contributor'), $author->ID ) ) {
+						echo '<div class="role4">' . __( '自由撰稿人', 'begin' ) . '</div>';
+					}
+					elseif( be_check_user_role( array( 'vip_roles'), $author->ID ) ) {
+						echo '<div class="role-vip">' . zm_get_option( 'roles_name' ) . '</div>';
+					} else {
+						echo '<div class="role-none">' . __( '天外来客', 'begin' ) . '</div>';
 					}
 					echo '</div>';
 					echo '<div class="author-info-box">';
@@ -76,6 +82,7 @@ get_header(); ?>
 					echo '<div class="author-post-count"><span>'. sprintf(__( '文章', 'begin' )) .'</span>'. count_user_posts( $author->ID ) .'</div>';
 					echo '<div class="author-comments-count"><span>'. sprintf(__( '评论', 'begin' )) .'</span>'. $comments = get_comments( array( 'user_id' => $author->ID, 'count' => true ) ) .'</div>';
 					echo '</a>';
+					echo '</div>';
 					echo '</div>';
 					echo '</div>';
 					echo '</div>';

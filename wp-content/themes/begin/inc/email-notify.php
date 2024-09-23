@@ -21,7 +21,7 @@ function comment_mail_notify($comment_id) {
 					</div>
 				</div>
 				<a style="text-decoration: none;" href="' . home_url() . '" title="欢迎您再度访问' . get_option('blogname') . '">
-					<p align="center" style="margin-top:50px;"><img src="' . zm_get_option('logo_small_b') . '" width="50" height="50" /></p>
+					<p align="center" style="margin-top:50px;"><img src="' . zm_get_option('logo_small_b') . '" width="50" height="50"></p>
 					<p style="text-align: center;">' . get_option('blogname') . '</p>
 				</a>
 				<p style="text-align: center;">' . get_bloginfo( 'description', 'display' ) . '</p>

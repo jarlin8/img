@@ -4,7 +4,7 @@ get_header(); ?>
 
 	<?php begin_primary_class(); ?>
 
-		<main id="main" class="be-main site-main<?php if (zm_get_option('p_first') ) { ?> p-em<?php } ?><?php if (get_post_meta(get_the_ID(), 'sub_section', true) ) { ?> sub-h<?php } ?>" role="main">
+		<main id="main" class="be-main site-main<?php if ( zm_get_option( 'p_first' ) ) { ?> p-em<?php } ?><?php if ( zm_get_option( 'code_css' ) ) { ?> code-css<?php } ?><?php if (get_post_meta(get_the_ID(), 'sub_section', true) ) { ?> sub-h<?php } ?>" role="main">
 
 			<?php while ( have_posts() ) : the_post(); ?>
 
@@ -16,6 +16,10 @@ get_header(); ?>
 
 				<?php if ( zm_get_option( 'single_tab_tags' ) ) { ?>
 					<?php get_template_part( '/template/single-code-tag' ); ?>
+				<?php } ?>
+
+				<?php if ( zm_get_option( 'related_tao' ) ) { ?>
+					<?php get_template_part( 'template/related-tao' ); ?>
 				<?php } ?>
 
 				<?php get_template_part( 'template/single-widget' ); ?>

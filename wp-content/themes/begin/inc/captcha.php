@@ -1,70 +1,63 @@
 <?php
-if (zm_get_option('register_captcha')) {
-add_action('register_form', 'captcha_form');
-}
-if (zm_get_option('login_captcha')) {
-add_action('login_form', 'captcha_form');
-}
-if (zm_get_option('lost_captcha')) {
-add_action('lostpassword_form', 'captcha_form');
+if ( ! defined( 'ABSPATH' ) ) exit;
+if ( zm_get_option( 'slider_captcha' ) || zm_get_option( 'verify_comment' ) ) {
+	add_action( 'wp_enqueue_scripts', 'be_captcha_scripts' );
 }
 
-add_action('contact_form', 'captcha_form');
+if ( zm_get_option( 'slider_captcha' ) ) {
+	add_action( 'be_login_form', 'add_slidercaptcha_form');
+	add_action( 'be_lostpassword_form', 'add_slidercaptcha_form');
+	add_action( 'be_register_form', 'add_slidercaptcha_form' );
+}
 
-function label_captcha() { ?>
-<?php 
-	$url = get_template_directory_uri() . '/inc/captcha/';
-	$be_captcha = new BECaptchaCode();
-	$be_code = be_str_encrypt($be_captcha->generateCode(6));
+if ( zm_get_option( 'verify_comment' ) ) {
+	add_filter( "be_comment_form", 'add_slidercaptcha_form', 10, 1 );
+}
+
+function be_captcha_scripts() {
+	wp_enqueue_script( 'captcha', get_template_directory_uri() . '/js/captcha.js', array( 'jquery' ), version, true );
+	$captcha_img_urls  = zm_get_option( 'captcha_img_url' );
+	$captcha_img_array = $captcha_img_urls ? explode( ',', $captcha_img_urls ) : array();
+	$default_image_url = get_template_directory_uri() . '/img/default/captcha/y1.jpg';
+	$captcha_img_array = $captcha_img_array ?: array( $default_image_url );
+	$captcha_img       = 'var captcha_images = ' . wp_json_encode( $captcha_img_array ) . ';';
+	$captcha_ajax_data = array( 'ajax_url' => admin_url( 'admin-ajax.php' ) );
+	wp_localize_script( 'captcha', 'verify_ajax', $captcha_ajax_data );
+	wp_add_inline_script( 'captcha', $captcha_img, 'after' );
+}
+
+function add_slidercaptcha_form() {
+	if ( ! session_id() ) {
+		session_start();
+	}
+
+	$header_text    = __( '拖动滑块以完成验证', 'begin' );
+	$slider_text    = __( '向右滑动完成拼图', 'begin' );
+	$try_again_text = __( '请再试一次', 'begin' );
+
 ?>
-
-<div class="clear"></div>
-<p class="label-captcha zml-ico captcha-ico">
-	<img class="bk" src="<?php echo $url; ?>captcha_images.php?width=120&height=35&code=<?php echo $be_code; ?>" />
-	<input type="text" name="be_security_code" class="input captcha-input dah bk" autocomplete="off" value="" placeholder="<?php _e( '验证码', 'begin' ); ?>" onfocus="this.placeholder=''" onblur="this.placeholder='<?php _e( '验证码', 'begin' ); ?>'"><br/>
-	<input type="hidden" name="be_security_check" value="<?php echo $be_code; ?>">
-	<label id="be_hp_label" style="display: none;">HP<br/>
-		<input type="text" name="be_hp" value="" class="input" size="20" tabindex="23" />
-	</label>
-</p>
-<div class="clear"></div>
-<?php }
-
-function captcha_form() {
-	include_once("captcha/shared.php");
-	include_once("captcha/captcha_code.php");
-	echo label_captcha();
+	<div class="slidercaptcha-box">
+		<div class="bec-slidercaptcha bec-card">
+			<div class="becclose"></div>
+			<div class="refreshimg"></div>
+			<div class="bec-card-header">
+				<span><?php echo $header_text; ?></span>
+			</div>
+			<div class="bec-card-body"><div data-heading="<?php echo $header_text; ?>" data-slider="<?php echo $slider_text; ?>" data-tryagain="<?php echo $try_again_text; ?>" data-form="login" class="bec-captcha"></div></div>
+		</div>
+	</div>
+	<?php
 }
 
-if (zm_get_option('register_captcha')) {
-add_action('register_post', 'register_check_code', 10, 3);
-}
-function register_check_code($login, $email, $errors) {
-	include_once("captcha/shared.php");
-	$be_code = isset( $_POST['be_security_check'] ) ? be_str_decrypt( $_POST['be_security_check'] ) : '';
-	if (($be_code != $_POST['be_security_code']) && (!empty($be_code)))
-		$errors->add('crror', sprintf(__( '请输入正确的验证码', 'begin' )) );
-
-	if (!isset($_POST['be_hp']) || !empty($_POST['be_hp']))
-		$errors->add('be_error2', __('出错了，请重试'));
+function be_ajax_verify_callback() {
+	if ( ! session_id() ) {
+		session_start();
+	}
+	$form = $_POST["form"];
+	unset( $_SESSION["bec_".$form."_form"] );
+	echo 'verified';
+	die;
 }
 
-if (zm_get_option('login_captcha')) {
-add_action('authenticate', 'login_check_code', 21, 1);
-}
-function login_check_code($errors) {
-	include_once("captcha/shared.php");
-	$be_code = isset( $_POST['be_security_check'] ) ? be_str_decrypt( $_POST['be_security_check'] ) : '';
-	if (isset($_POST['be_security_code']) && $_POST['be_security_code'] != $be_code && (!empty($be_code)))
-		$errors = new WP_Error( 'crror', sprintf(__( '请输入正确的验证码', 'begin' )) );
-		return $errors;
-}
-
-add_action('lostpassword_post', 'lost_check_code', 10, 2);
-function lost_check_code($errors, $user_data) {
-	include_once("captcha/shared.php");
-	$be_code = isset( $_POST['be_security_check'] ) ? be_str_decrypt( $_POST['be_security_check'] ) : '';
-	if (($be_code != $_POST['be_security_code']) && (!empty($be_code)))
-		$errors->add('crror', sprintf(__( '请输入正确的验证码', 'begin' )) );
-		return $errors;
-}
+add_action( 'wp_ajax_be_ajax_verify', 'be_ajax_verify_callback' );
+add_action( 'wp_ajax_nopriv_be_ajax_verify', 'be_ajax_verify_callback' );

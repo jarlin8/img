@@ -45,9 +45,9 @@ class Begin_Menu_Items_Visibility_Control {
 	function template_edit() {
 		?>
 		<script type="text/html" id="tmpl-menu-items-visivility-control">
-			<p class="field-visibility be-ico-admin be-ico-admin-judge description description-wide" style="margin: 10px 0 0;">
-				<label for="edit-menu-item-visibility-{{data.id}}">条件判断</label>
-				<input type="text" class="widefat code" id="edit-menu-item-visibility-{{data.id}}" name="menu-item-visibility[{{data.id}}]" value="{{data.value}}" />
+			<p class="field-visibility be-ico-admin-judge description description-wide">
+				<label for="edit-menu-item-visibility-{{data.id}}"><span class="menu-label-name">条件判断</span></label>
+				<input type="text" class="widefat code"  style="margin: 5px 0 0 0;" id="edit-menu-item-visibility-{{data.id}}" name="menu-item-visibility[{{data.id}}]" value="{{data.value}}" />
 			</p>
 		</script>
 		<?php

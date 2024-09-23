@@ -7,8 +7,8 @@
  * @version 1.0.0
  *
  */
-if ( ! class_exists( 'CSF_Options' ) ) {
-  class CSF_Options extends CSF_Abstract {
+if ( ! class_exists( 'ZMOP_Options' ) ) {
+  class ZMOP_Options extends ZMOP_Abstract {
 
     // constans
     public $unique       = '';
@@ -92,8 +92,8 @@ if ( ! class_exists( 'CSF_Options' ) ) {
     public function __construct( $key, $params = array() ) {
 
       $this->unique   = $key;
-      $this->args     = apply_filters( "csf_{$this->unique}_args", wp_parse_args( $params['args'], $this->args ), $this );
-      $this->sections = apply_filters( "csf_{$this->unique}_sections", $params['sections'], $this );
+      $this->args     = apply_filters( "zmop_{$this->unique}_args", wp_parse_args( $params['args'], $this->args ), $this );
+      $this->sections = apply_filters( "zmop_{$this->unique}_sections", $params['sections'], $this );
 
       // run only is admin panel options, avoid performance loss
       $this->pre_tabs     = $this->pre_tabs( $this->sections );
@@ -106,7 +106,7 @@ if ( ! class_exists( 'CSF_Options' ) ) {
 
       add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
       add_action( 'admin_bar_menu', array( $this, 'add_admin_bar_menu' ), $this->args['admin_bar_menu_priority'] );
-      add_action( 'wp_ajax_csf_'. $this->unique .'_ajax_save', array( $this, 'ajax_save' ) );
+      add_action( 'wp_ajax_zmop_'. $this->unique .'_ajax_save', array( $this, 'ajax_save' ) );
 
       if ( $this->args['database'] === 'network' && ! empty( $this->args['show_in_network'] ) ) {
         add_action( 'network_admin_menu', array( $this, 'add_admin_menu' ) );
@@ -199,7 +199,7 @@ if ( ! class_exists( 'CSF_Options' ) ) {
         global $submenu;
 
         $menu_slug = $this->args['menu_slug'];
-        $menu_icon = ( ! empty( $this->args['admin_bar_menu_icon'] ) ) ? '<span class="csf-ab-icon ab-icon '. esc_attr( $this->args['admin_bar_menu_icon'] ) .'"></span>' : '';
+        $menu_icon = ( ! empty( $this->args['admin_bar_menu_icon'] ) ) ? '<span class="zmop-ab-icon ab-icon '. esc_attr( $this->args['admin_bar_menu_icon'] ) .'"></span>' : '';
 
         $wp_admin_bar->add_node( array(
           'id'    => $menu_slug,
@@ -270,21 +270,21 @@ if ( ! class_exists( 'CSF_Options' ) ) {
 
       // Set variables.
       $data      = array();
-      $noncekey  = 'csf_options_nonce'. $this->unique;
+      $noncekey  = 'zmop_options_nonce'. $this->unique;
       $nonce     = ( ! empty( $response[$noncekey] ) ) ? $response[$noncekey] : '';
       $options   = ( ! empty( $response[$this->unique] ) ) ? $response[$this->unique] : array();
-      $transient = ( ! empty( $response['csf_transient'] ) ) ? $response['csf_transient'] : array();
+      $transient = ( ! empty( $response['zmop_transient'] ) ) ? $response['zmop_transient'] : array();
 
-      if ( wp_verify_nonce( $nonce, 'csf_options_nonce' ) ) {
+      if ( wp_verify_nonce( $nonce, 'zmop_options_nonce' ) ) {
 
         $importing  = false;
         $section_id = ( ! empty( $transient['section'] ) ) ? $transient['section'] : '';
 
-        if ( ! $ajax && ! empty( $response[ 'csf_import_data' ] ) ) {
+        if ( ! $ajax && ! empty( $response[ 'zmop_import_data' ] ) ) {
 
           // XSS ok.
           // No worries, This "POST" requests is sanitizing in the below foreach. see #L337 - #L341
-          $import_data  = json_decode( wp_unslash( trim( $response[ 'csf_import_data' ] ) ), true );
+          $import_data  = json_decode( wp_unslash( trim( $response[ 'zmop_import_data' ] ) ), true );
           $options      = ( is_array( $import_data ) && ! empty( $import_data ) ) ? $import_data : array();
           $importing    = true;
           $this->notice = '导入成功';
@@ -375,18 +375,18 @@ if ( ! class_exists( 'CSF_Options' ) ) {
 
         }
 
-        $data = apply_filters( "csf_{$this->unique}_save", $data, $this );
+        $data = apply_filters( "zmop_{$this->unique}_save", $data, $this );
 
-        do_action( "csf_{$this->unique}_save_before", $data, $this );
+        do_action( "zmop_{$this->unique}_save_before", $data, $this );
 
         $this->options = $data;
 
         $this->save_options( $data );
 
-        do_action( "csf_{$this->unique}_save_after", $data, $this );
+        do_action( "zmop_{$this->unique}_save_after", $data, $this );
 
         if ( empty( $this->notice ) ) {
-          $this->notice = '保存成功';
+          $this->notice = '设置已保存！';
         }
 
         return true;
@@ -410,7 +410,7 @@ if ( ! class_exists( 'CSF_Options' ) ) {
         update_option( $this->unique, $data );
       }
 
-      do_action( "csf_{$this->unique}_saved", $data, $this );
+      do_action( "zmop_{$this->unique}_saved", $data, $this );
 
     }
 
@@ -507,7 +507,7 @@ if ( ! class_exists( 'CSF_Options' ) ) {
           foreach ( $sections['fields'] as $field ) {
             if ( ! empty( $field['id'] ) ) {
               if ( array_key_exists( $field['id'], $this->errors ) ) {
-                $err = '<span class="csf-label-error">!</span>';
+                $err = '<span class="zmop-label-error">!</span>';
               }
             }
           }
@@ -532,45 +532,45 @@ if ( ! class_exists( 'CSF_Options' ) ) {
     public function add_options_html() {
 
       $has_nav       = ( count( $this->pre_tabs ) > 1 ) ? true : false;
-      $show_all      = ( ! $has_nav ) ? ' csf-show-all' : '';
-      $ajax_class    = ( $this->args['ajax_save'] ) ? ' csf-save-ajax' : '';
-      $sticky_class  = ( $this->args['sticky_header'] ) ? ' csf-sticky-header' : '';
+      $show_all      = ( ! $has_nav ) ? ' zmop-show-all' : '';
+      $ajax_class    = ( $this->args['ajax_save'] ) ? ' zmop-save-ajax' : '';
+      $sticky_class  = ( $this->args['sticky_header'] ) ? ' zmop-sticky-header' : '';
       $wrapper_class = ( $this->args['framework_class'] ) ? ' '. $this->args['framework_class'] : '';
-      $theme         = ( $this->args['theme'] ) ? ' csf-theme-'. $this->args['theme'] : '';
+      $theme         = ( $this->args['theme'] ) ? ' zmop-theme-'. $this->args['theme'] : '';
       $class         = ( $this->args['class'] ) ? ' '. $this->args['class'] : '';
       $nav_type      = ( $this->args['nav'] === 'inline' ) ? 'inline' : 'normal';
       $form_action   = ( $this->args['form_action'] ) ? $this->args['form_action'] : '';
 
-      do_action( 'csf_options_before' );
+      do_action( 'zmop_options_before' );
 
-      echo '<div class="csf csf-options'. esc_attr( $theme . $class . $wrapper_class ) .'" data-slug="'. esc_attr( $this->args['menu_slug'] ) .'" data-unique="'. esc_attr( $this->unique ) .'">';
+      echo '<div class="zmop zmop-options'. esc_attr( $theme . $class . $wrapper_class ) .'" data-slug="'. esc_attr( $this->args['menu_slug'] ) .'" data-unique="'. esc_attr( $this->unique ) .'">';
 
-        echo '<div class="csf-container">';
+        echo '<div class="zmop-container">';
 
-        echo '<form method="post" action="'. esc_attr( $form_action ) .'" enctype="multipart/form-data" id="csf-form" autocomplete="off" novalidate="novalidate">';
+        echo '<form method="post" action="'. esc_attr( $form_action ) .'" enctype="multipart/form-data" id="zmop-form" autocomplete="off" novalidate="novalidate">';
 
-        echo '<input type="hidden" class="csf-section-id" name="csf_transient[section]" value="1">';
+        echo '<input type="hidden" class="zmop-section-id" name="zmop_transient[section]" value="1">';
 
-        wp_nonce_field( 'csf_options_nonce', 'csf_options_nonce'. $this->unique );
+        wp_nonce_field( 'zmop_options_nonce', 'zmop_options_nonce'. $this->unique );
 
-        echo '<div class="csf-header'. esc_attr( $sticky_class ) .'">';
-        echo '<div class="csf-header-inner">';
+        echo '<div class="zmop-header'. esc_attr( $sticky_class ) .'">';
+        echo '<div class="zmop-header-inner">';
 
-          echo '<div class="csf-header-left">';
+          echo '<div class="zmop-header-left">';
           echo '<h1>'. $this->args['framework_title'] .'</h1>';
           echo '</div>';
 
-          echo '<div class="csf-header-right">';
-            $notice_class = ( ! empty( $this->notice ) ) ? 'csf-form-show' : '';
+          echo '<div class="zmop-header-right">';
+            $notice_class = ( ! empty( $this->notice ) ) ? 'zmop-form-show' : '';
             $notice_text  = ( ! empty( $this->notice ) ) ? $this->notice : '';
 
-            echo '<div class="csf-form-result csf-form-success '. esc_attr( $notice_class ) .'">'. $notice_text .'</div>';
-            echo '<div class="csf-expand-shut"><span class="dashicons dashicons-plus-alt2"></span></div>';
-            echo ( $this->args['show_form_warning'] ) ? '<div class="csf-form-result csf-form-warning">配置发生改变，请勿忘记保存！</div>' : '';
-            echo ( $this->args['show_search'] ) ? '<div class="csf-search"><input type="text" name="csf-search" placeholder="搜索" autocomplete="off" /></div>' : '';
-            echo ( $has_nav && $this->args['show_all_options'] ) ? '<div class="csf-expand-all"><i class="dashicons dashicons-ellipsis"></i></div>' : '';
-            echo '<div class="csf-buttons"><div class="csf-buttons-ico"><span class="dashicons dashicons-update-alt"></span></div>';
-            echo '<input type="submit" name="'. esc_attr( $this->unique ) .'[_nonce][save]" class="button button-primary csf-top-save csf-save'. esc_attr( $ajax_class ) .'" value="保存设置" data-save="正在保存">';
+            echo '<div class="zmop-form-result zmop-form-success '. esc_attr( $notice_class ) .'">'. $notice_text .'</div>';
+            echo '<div class="zmop-expand-shut"><span class="dashicons dashicons-plus-alt2"></span></div>';
+            echo ( $this->args['show_form_warning'] ) ? '<div class="zmop-form-result zmop-form-warning">设置已更改，请记得保存！</div>' : '';
+            echo ( $this->args['show_search'] ) ? '<div class="zmop-search"><input type="text" name="zmop-search" placeholder="搜索" autocomplete="off" /></div>' : '';
+            echo ( $has_nav && $this->args['show_all_options'] ) ? '<div class="zmop-expand-all" title="展开所有设置"><i class="dashicons dashicons-ellipsis"></i></div>' : '';
+            echo '<div class="zmop-buttons"><div class="zmop-buttons-ico"><span class="dashicons dashicons-update-alt"></span></div>';
+            echo '<input type="submit" name="'. esc_attr( $this->unique ) .'[_nonce][save]" class="button-primary zmop-top-save zmop-save'. esc_attr( $ajax_class ) .'" value="保存设置" data-save="正在保存">';
             echo '</div>';
 
           echo '</div>';
@@ -579,11 +579,11 @@ if ( ! class_exists( 'CSF_Options' ) ) {
           echo '</div>';
         echo '</div>';
 
-        echo '<div class="csf-wrapper'. esc_attr( $show_all ) .'">';
+        echo '<div class="zmop-wrapper'. esc_attr( $show_all ) .'">';
 
           if ( $has_nav ) {
 
-            echo '<div class="csf-nav csf-nav-'. esc_attr( $nav_type ) .' csf-nav-options">';
+            echo '<div class="zmop-nav zmop-nav-'. esc_attr( $nav_type ) .' zmop-nav-options">';
 
               echo '<ul>';
 
@@ -591,13 +591,13 @@ if ( ! class_exists( 'CSF_Options' ) ) {
 
                 $tab_id    = sanitize_title( $tab['title'] );
                 $tab_error = $this->error_check( $tab );
-                $tab_icon  = ( ! empty( $tab['icon'] ) ) ? '<i class="csf-tab-icon '. esc_attr( $tab['icon'] ) .'"></i>' : '';
+                $tab_icon  = ( ! empty( $tab['icon'] ) ) ? '<i class="zmop-tab-icon '. esc_attr( $tab['icon'] ) .'"></i>' : '';
 
                 if ( ! empty( $tab['subs'] ) ) {
 
-                  echo '<li class="csf-tab-item">';
+                  echo '<li class="zmop-tab-item">';
 
-                    echo '<a href="#tab='. esc_attr( $tab_id ) .'" data-tab-id="'. esc_attr( $tab_id ) .'" class="csf-arrow">'. $tab_icon . $tab['title'] . $tab_error .'</a>';
+                    echo '<a href="#tab='. esc_attr( $tab_id ) .'" data-tab-id="'. esc_attr( $tab_id ) .'" class="zmop-arrow">'. $tab_icon . $tab['title'] . $tab_error .'</a>';
 
                     echo '<ul>';
 
@@ -605,7 +605,7 @@ if ( ! class_exists( 'CSF_Options' ) ) {
 
                       $sub_id    = $tab_id .'/'. sanitize_title( $sub['title'] );
                       $sub_error = $this->error_check( $sub );
-                      $sub_icon  = ( ! empty( $sub['icon'] ) ) ? '<i class="csf-tab-icon '. esc_attr( $sub['icon'] ) .'"></i>' : '';
+                      $sub_icon  = ( ! empty( $sub['icon'] ) ) ? '<i class="zmop-tab-icon '. esc_attr( $sub['icon'] ) .'"></i>' : '';
 
                       echo '<li><a href="#tab='. esc_attr( $sub_id ) .'" data-tab-id="'. esc_attr( $sub_id ) .'">'. $sub_icon . $sub['title'] . $sub_error .'</a></li>';
 
@@ -617,7 +617,7 @@ if ( ! class_exists( 'CSF_Options' ) ) {
 
                 } else {
 
-                  echo '<li class="csf-tab-item"><a href="#tab='. esc_attr( $tab_id ) .'" data-tab-id="'. esc_attr( $tab_id ) .'">'. $tab_icon . $tab['title'] . $tab_error .'</a></li>';
+                  echo '<li class="zmop-tab-item"><a href="#tab='. esc_attr( $tab_id ) .'" data-tab-id="'. esc_attr( $tab_id ) .'">'. $tab_icon . $tab['title'] . $tab_error .'</a></li>';
 
                 }
 
@@ -629,22 +629,22 @@ if ( ! class_exists( 'CSF_Options' ) ) {
 
           }
 
-          echo '<div class="csf-content">';
+          echo '<div class="zmop-content">';
             get_all_cat_id();
-            echo '<div class="csf-sections">';
+            echo '<div class="zmop-sections">';
 
             foreach ( $this->pre_sections as $section ) {
 
-              $section_onload = ( ! $has_nav ) ? ' csf-onload' : '';
+              $section_onload = ( ! $has_nav ) ? ' zmop-onload' : '';
               $section_class  = ( ! empty( $section['class'] ) ) ? ' '. $section['class'] : '';
-              $section_icon   = ( ! empty( $section['icon'] ) ) ? '<i class="csf-section-icon '. esc_attr( $section['icon'] ) .'"></i>' : '';
+              $section_icon   = ( ! empty( $section['icon'] ) ) ? '<i class="zmop-section-icon '. esc_attr( $section['icon'] ) .'"></i>' : '';
               $section_title  = ( ! empty( $section['title'] ) ) ? $section['title'] : '';
               $section_parent = ( ! empty( $section['ptitle'] ) ) ? sanitize_title( $section['ptitle'] ) .'/' : '';
               $section_slug   = ( ! empty( $section['title'] ) ) ? sanitize_title( $section_title ) : '';
 
-              echo '<div class="csf-section hidden'. esc_attr( $section_onload . $section_class ) .'" data-section-id="'. esc_attr( $section_parent . $section_slug ) .'">';
-              echo ( $has_nav ) ? '<div class="csf-section-title"><h3>'. $section_icon . $section_title .'</h3></div>' : '';
-              echo ( ! empty( $section['description'] ) ) ? '<div class="csf-field csf-section-description">'. $section['description'] .'</div>' : '';
+              echo '<div class="zmop-section hidden'. esc_attr( $section_onload . $section_class ) .'" data-section-id="'. esc_attr( $section_parent . $section_slug ) .'">';
+              echo ( $has_nav ) ? '<div class="zmop-section-title"><h3>'. $section_icon . $section_title .'</h3></div>' : '';
+              echo ( ! empty( $section['description'] ) ) ? '<div class="zmop-field zmop-section-description">'. $section['description'] .'</div>' : '';
 
               if ( ! empty( $section['fields'] ) ) {
 
@@ -662,13 +662,13 @@ if ( ! class_exists( 'CSF_Options' ) ) {
 
                   $value = ( ! empty( $field['id'] ) && isset( $this->options[$field['id']] ) ) ? $this->options[$field['id']] : '';
 
-                  CSF::field( $field, $value, $this->unique, 'options' );
+                  ZMOP::field( $field, $value, $this->unique, 'options' );
 
                 }
 
               } else {
 
-                echo '<div class="csf-no-option">没有可用数据</div>';
+                echo '<div class="zmop-no-option">没有可用数据</div>';
 
               }
 
@@ -682,21 +682,21 @@ if ( ! class_exists( 'CSF_Options' ) ) {
 
           echo '</div>';
 
-          echo ( $has_nav && $nav_type === 'normal' ) ? '<div class="csf-nav-background"></div>' : '';
+          echo ( $has_nav && $nav_type === 'normal' ) ? '<div class="zmop-nav-background"></div>' : '';
 
         echo '</div>';
 
         if ( ! empty( $this->args['show_footer'] ) ) {
 
-          echo '<div class="csf-footer">';
+          echo '<div class="zmop-footer">';
 
-          echo '<div class="csf-buttons">';
-          echo '<input type="submit" name="csf_transient[save]" class="button button-primary csf-save'. esc_attr( $ajax_class ) .'" value="保存设置" data-save="正在保存">';
-          echo ( $this->args['show_reset_all'] ) ? '<input type="submit" name="csf_transient[reset]" class="button csf-warning-primary csf-reset-all csf-confirm" value="'. ( ( $this->args['show_reset_section'] ) ? '恢复全部' : '恢复默认' ) .'" data-confirm="单击「确定」，所有页面的设置都将恢复默认！">' : '';
-          echo ( $this->args['show_reset_section'] ) ? '<input type="submit" name="csf_transient[reset_section]" class="button button-secondary csf-reset-section csf-confirm" value="恢复此页" data-confirm="单击「确定」，当前页面的设置将恢复默认！">' : '';
+          echo '<div class="zmop-buttons">';
+          echo '<input type="submit" name="zmop_transient[save]" class="button button-primary zmop-save'. esc_attr( $ajax_class ) .'" value="保存设置" data-save="正在保存">';
+          echo ( $this->args['show_reset_all'] ) ? '<input type="submit" name="zmop_transient[reset]" class="button zmop-warning-primary zmop-reset-all zmop-confirm" value="'. ( ( $this->args['show_reset_section'] ) ? '重置全部' : '重置默认' ) .'" data-confirm="所有设置页面都将恢复默认设置！">' : '';
+          echo ( $this->args['show_reset_section'] ) ? '<input type="submit" name="zmop_transient[reset_section]" class="button button-secondary zmop-reset-section zmop-confirm" value="重置此页" data-confirm="当前设置页面将恢复默认设置！">' : '';
           echo '</div>';
 
-          echo ( ! empty( $this->args['footer_text'] ) ) ? '<div class="csf-copyright">'. $this->args['footer_text'] .'</div>' : '';
+          echo ( ! empty( $this->args['footer_text'] ) ) ? '<div class="zmop-copyright">'. $this->args['footer_text'] .'</div>' : '';
 
           echo '<div class="clear"></div>';
           echo '</div>';
@@ -713,7 +713,7 @@ if ( ! class_exists( 'CSF_Options' ) ) {
 
       echo '</div>';
 
-      do_action( 'csf_options_after' );
+      do_action( 'zmop_options_after' );
 
     }
   }
