@@ -1,0 +1,86 @@
+{
+  "id": "3482467",
+  "name": "epd",
+  "font_family": "ep",
+  "css_prefix_text": "ep-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "765570",
+      "name": "优惠卡",
+      "font_class": "shouye",
+      "unicode": "e62c",
+      "unicode_decimal": 58924
+    },
+    {
+      "icon_id": "19818675",
+      "name": "广告管理",
+      "font_class": "guanggaoguanli",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
+      "icon_id": "716115",
+      "name": "积分",
+      "font_class": "jifen",
+      "unicode": "e6a4",
+      "unicode_decimal": 59044
+    },
+    {
+      "icon_id": "1323275",
+      "name": "推广套利",
+      "font_class": "tongzhituiguang",
+      "unicode": "e611",
+      "unicode_decimal": 58897
+    },
+    {
+      "icon_id": "5793838",
+      "name": "查看",
+      "font_class": "chakan-copy",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
+      "icon_id": "367828",
+      "name": "blogs",
+      "font_class": "blogs",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "2593669",
+      "name": "提现",
+      "font_class": "tixian",
+      "unicode": "e61f",
+      "unicode_decimal": 58911
+    },
+    {
+      "icon_id": "2739238",
+      "name": "余额",
+      "font_class": "yue",
+      "unicode": "e632",
+      "unicode_decimal": 58930
+    },
+    {
+      "icon_id": "581986",
+      "name": "账户充值",
+      "font_class": "zhanghuchongzhi-copy",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    },
+    {
+      "icon_id": "402136",
+      "name": "拼团-选择心仪商品",
+      "font_class": "pintuanxuanzexinyishangpin",
+      "unicode": "e64a",
+      "unicode_decimal": 58954
+    },
+    {
+      "icon_id": "3590954",
+      "name": "提现处理",
+      "font_class": "tixianchuli",
+      "unicode": "e631",
+      "unicode_decimal": 58929
+    }
+  ]
+}

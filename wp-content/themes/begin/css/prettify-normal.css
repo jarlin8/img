@@ -1,0 +1,417 @@
+/** 外观 **/
+.codebox {
+	position: relative;
+	overflow: hidden;
+	margin: 10px 0;
+	border-radius: 5px;
+}
+
+.single-content pre {
+	background: linear-gradient(to bottom, #fff 0%, #343d46 5%, #343d46 95%);
+	position: relative;
+	max-height: 420px;
+	font-size: 1.3rem;
+	color: #343d46;
+	line-height: 202%;
+	opacity: 1;
+	overflow: hidden;
+	margin: 3px 0 16px 0;
+	padding: 36px 0 5px 0;
+	border-radius: 5px;
+}
+
+.prettyprint, 
+pre.prettyprint {
+	background: #343d46;
+	white-space: pre;
+	overflow: hidden;
+	margin: 4px 0 0 0;
+	border-radius: 5px 5px 0 0;
+	box-shadow: none;
+}
+
+.single-content pre ol li {
+	margin: 0;
+}
+
+.codebox pre {
+	line-height: 190%;
+	opacity: 1;
+}
+
+.prettyprint.linenums, 
+pre.prettyprint.linenums {
+	position: static;
+	max-height: 420px;
+	overflow-x: auto;
+	overflow-y: auto;
+	padding: 26px 0 0 0;
+}
+
+@media screen and (max-width: 768px) {
+	pre.code-normal, 
+	.prettyprint.linenums,pre.prettyprint.linenums {
+		max-height: 260px;
+	}
+}
+
+/** 简化 **/
+pre.code-prune:after, 
+pre.code-prune:before {
+	display: none;
+}
+
+pre.code-prune {
+	padding: 9px;
+}
+
+.code-prune.prettyprint.linenums, 
+pr.code-pruneprettyprint.linenums {
+	padding: 0;
+}
+
+.code-prune.prettyprint, 
+pre.code-prune.prettyprint {
+	margin: 0;
+}
+
+/** 装饰 **/
+pre:after {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 30px;
+	content: "";
+	background: #eff0f2;
+	border-radius: 5px 5px 0 0;
+}
+
+pre:before {
+	position: absolute;
+	top: 10px;
+	left: 12px;
+	display: block;
+	height: 8px;
+	width: 8px;
+	content: "";
+	border-radius: 50%;
+	background: #f44;
+	box-shadow: 0 0 0 1px #f44,16px 0 0 1px #fb5,32px 0 0 1px #9b3;
+	z-index: 1;
+	opacity: .5;
+	transition: all .3s ease;
+}
+
+.codebox:hover pre:before {
+	opacity: 1
+}
+
+/** 复制动画 **/
+.pre-loading ol {
+	opacity: 0.3;
+}
+
+.pre-loading:after {
+	content: "";
+	margin: -1em auto 0 -1em;
+	font-size: 10px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 2em;
+	height: 2em;
+	border-top: 0.2em solid var(--be-border-grey);
+	border-right: 0.2em solid var(--be-border-grey);
+	border-bottom: 0.2em solid var(--be-border-grey);
+	border-left: 0.2em solid #444;
+	-webkit-animation: load8 0.5s infinite linear;
+	animation: load8 0.5s infinite linear;
+	border-radius: 50%;
+}
+
+/** 按钮 **/
+.btn-clipboard {
+	position: absolute;
+	top: 1px;
+	right: 0;
+	padding: 2px 10px;
+	text-align: center;
+	font-size: 12px;
+	cursor: pointer;
+	color: #bbb;
+	z-index: 1;
+	display: inline-block;
+	animation: fade-in;
+	animation-duration: 0.5s;
+}
+
+.btn-clipboard:hover {
+	color: var(--be-bg-btn);
+}
+
+.codebox .dashicons-yes {
+	color: #666;
+}
+
+/** 滚动条 **/
+pre.prettyprint.linenums::-webkit-scrollbar {
+	width: 15px;
+	height: 15px;
+}
+
+pre.prettyprint.linenums::-webkit-scrollbar-thumb {
+	background: var(--be-bg-pre);
+}
+
+pre.prettyprint.linenums::-webkit-scrollbar-thumb:hover {
+	background: #6a6e73;
+}
+
+pre.prettyprint.linenums::-webkit-scrollbar-button {
+	background: var(--be-bg-pre);
+}
+
+pre.prettyprint.linenums::-webkit-scrollbar-track {
+	background: var(--be-bg-pre);
+}
+
+pre.prettyprint.linenums::-webkit-scrollbar-corner {
+	background: var(--be-bg-pre);
+}
+
+pre.prettyprint.linenums::-webkit-scrollbar {
+	width: 15px;
+}
+
+pre.prettyprint.linenums::-webkit-scrollbar-track {
+	background: var(--be-bg-pre);
+}
+
+pre.prettyprint.linenums::-webkit-scrollbar-thumb {
+	background: #7d8186;
+}
+
+.prettyprint.linenums:::-webkit-scrollbar-thumb:hover,
+pre.prettyprint.linenums::-webkit-scrollbar-thumb:hover {
+	background: #ff0000; 
+}
+
+/** 评论 **/
+.comment-list .prettyprint li {
+	background: transparent;
+	position: relative;
+	margin: 0;
+	padding: 0;
+	box-shadow: none;
+}
+
+.comment-list pre {
+	background: #343d46;
+	color: #343d46;
+}
+
+.comment-list .codebox pre {
+	padding: 0;
+}
+
+.comment-list .codebox pre:after, 
+.comment-list .codebox pre:before {
+	display: none;
+}
+
+/** 夜间 **/
+.night pre ol {
+	opacity: 0.6
+}
+
+.night pre:after {
+	background: #262626;
+}
+
+.night .btn-clipboard {
+	color: #808080;
+}
+
+.night pre {
+	background: #2f2f2f;
+}
+
+.night .prettyprint.linenums ol, 
+.night pre.prettyprint.linenums ol {
+	border-left: 42px solid #262626;
+}
+
+.night .codebox .linenums ol li:hover {
+	background: #262626;
+	color: #eee;
+}
+
+/** 高亮 **/
+.prettyprint ol {
+	font-size: 13px;
+	font-size: 1.3rem;
+}
+
+ol.linenums {
+	margin-top: 0;
+	margin-bottom: 0
+}
+
+li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8 {
+	list-style-type: none
+}
+
+.prettyprint.linenums ol, 
+pre.prettyprint.linenums ol {
+	padding: 10px 0;
+	border-left: 42px solid #2d343c;
+}
+
+.prettyprint.linenums ol li, 
+pre.prettyprint.linenums ol li {
+	padding-left: 8px;
+	color: #999;
+	line-height: 190%;
+	margin-left: 0;
+	list-style: decimal;
+}
+
+.codebox .linenums ol li:hover {
+	background: #2d343c;
+	color: #eee;
+}
+
+/** 高亮样式1 **/
+.prettyprint .com {
+	color: #ddd;
+}
+
+.prettyprint .lit {
+	color: #22c3a8;
+}
+
+.prettyprint .pun, 
+.prettyprint .opn, 
+.prettyprint .clo {
+	color: #5fb4b4;
+}
+
+.prettyprint .fun {
+	color: #dc322f;
+}
+
+.prettyprint .str, 
+.prettyprint .atv {
+	color: #8fc794;
+}
+
+.prettyprint .kwd {
+	color: #22c3a8;
+}
+
+.prettyprint .tag {
+	color: #228ec3;
+}
+
+.prettyprint .typ,
+.prettyprint .atn,
+.prettyprint .dec,.prettyprint .var {
+	color: #ddd;
+}
+
+.prettyprint .pln {
+	color: #ddd;
+}
+
+.pln {
+	color: #000
+}
+
+@media screen {
+	.str {
+		color: #080
+	}
+
+	.kwd {
+		color: #008
+	}
+
+	.com {
+		color: #800
+	}
+
+	.typ {
+		color: #606
+	}
+
+	.lit {
+		color: #066
+	}
+
+	.pun,.opn,.clo {
+		color: #660
+	}
+
+	.tag {
+		color: #008
+	}
+
+	.atn {
+		color: #606
+	}
+
+	.atv {
+		color: #080
+	}
+
+	.dec,.var {
+		color: #606
+	}
+
+	.fun {
+		color: red
+	}
+}
+
+@media print,projection {
+	.str {
+		color: #060
+	}
+
+	.kwd {
+		color: #006;
+		font-weight: bold
+	}
+
+	.com {
+		color: #600;
+		font-style: italic
+	}
+
+	.typ {
+		color: #404;
+		font-weight: bold
+	}
+
+	.lit {
+		color: #044
+	}
+
+	.pun,.opn,.clo {
+		color: #440
+	}
+
+	.tag {
+		color: #006;
+		font-weight: bold
+	}
+
+	.atn {
+		color: #404
+	}
+
+	.atv {
+		color: #060
+	}
+}
