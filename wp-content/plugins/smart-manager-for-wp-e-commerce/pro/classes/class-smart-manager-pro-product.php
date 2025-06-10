@@ -60,23 +60,47 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 			add_filter('sm_post_batch_update_db_updates', __CLASS__. '::products_post_batch_update_db_updates', 10, 2);
 			add_filter( 'sm_beta_batch_update_prev_value',__CLASS__. '::products_batch_update_prev_value', 12, 2 );
 			add_filter( 'sm_task_details_update_by_prev_val',__CLASS__. '::task_details_update_by_prev_val', 12, 1 );
-			add_filter( 'sm_disable_task_details_update',__CLASS__. '::disable_task_details_update', 12, 2 );
+			add_filter( 'sm_disable_task_details_update',__CLASS__. '::disable_task_details_update', 12, 1 );
 			add_filter( 'sm_get_value_for_copy_from_operator',__CLASS__. '::get_value_for_copy_from_operator', 12, 2 );
 			add_filter( 'sm_update_value_for_copy_from_operator',__CLASS__. '::update_value_for_copy_from_operator', 12, 1 );
 			add_filter( 'sm_process_undo_args_before_update',__CLASS__. '::process_undo_args_before_update', 12, 1 );
 			add_filter( 'sm_task_update_action',__CLASS__. '::task_update_action', 12, 2 );
 			add_filter( 'sm_delete_attachment_get_matching_gallery_images_post_ids',__CLASS__. '::get_matching_gallery_images_post_ids', 12, 2 );
-			add_action( 'woocommerce_product_duplicate_before_save', __CLASS__. '::product_duplicate_before_save', 10, 2 );
 			add_action( 'sm_beta_pre_process_batch', __CLASS__. '::products_pre_batch_update' );
+			add_action( 'sm_pro_pre_process_delete_records', __CLASS__. '::products_pre_process_delete_records' );
+			add_action( 'sm_pro_pre_process_move_to_trash_records', __CLASS__. '::products_pre_process_move_to_trash_records' );
+			add_filter( 'sm_special_batch_update_operators', __CLASS__. '::special_batch_update_operators', 10, 2 );
+			// compat for 'Germanized for WooCommerce Pro' plugin.
+			add_filter( 'sm_pro_update_meta_args', __CLASS__. '::update_meta_args', 10, 2 );
+			add_filter( 'sm_pro_get_taxonomy_terms', __CLASS__. '::get_product_manufacturer_terms', 10, 1 );
+			add_filter( 'sm_process_inline_terms_update', __CLASS__. '::update_germanized_meta', 10, 1 );
+			add_action( 'sm_pro_before_run_after_update_hooks', __CLASS__. '::products_before_run_after_update_hooks' );
+			add_action( 'sm_pro_post_process_terms_update', __CLASS__. '::post_process_terms_update' );
+			// Disable term recount for WooCommerce products.
+			add_filter('woocommerce_product_recount_terms', '__return_false');
 		}
-		
+
 		public static function products_post_batch_process_args( $args ) {
-
-			if( !empty( $args['operator'] ) && ( $args['operator'] == 'set_to_regular_price' || $args['operator'] == 'set_to_sale_price' ) ) {
-				$col = ( $args['operator'] == 'set_to_regular_price' ) ? '_regular_price' : '_sale_price';
-				$args['value'] = get_post_meta( $args['id'], $col, true );
+			if ( ! empty( $args['operator'] ) && ( in_array( $args['operator'], array( 'set_to_regular_price', 'set_to_sale_price', 'set_to_regular_price_and_decrease_by_per', 'set_to_regular_price_and_decrease_by_num' ) ) ) ) {
+				$price_operators = array(
+					'set_to_regular_price',
+					'set_to_sale_price',
+					'set_to_regular_price_and_decrease_by_per',
+					'set_to_regular_price_and_decrease_by_num'
+				);
+				if ( in_array( $args['operator'], $price_operators ) ) {
+					// Determine the selected field for fetching previous value.
+					$col_nm = ( 'set_to_sale_price' === $args['operator'] ) ? '_sale_price' : '_regular_price';
+					// Fetch the previous value.
+					$prev_val = get_post_meta( $args['id'], $col_nm, true );
+					if ( in_array( $args['operator'], array( 'set_to_regular_price',
+					'set_to_sale_price' ) ) ) {
+						$args['value'] = $prev_val;
+					}
+					// Modify value only for decrease operations.
+					$args['value'] = ( 'set_to_regular_price_and_decrease_by_per' === $args['operator'] ) ? self::decrease_value_by_per( $prev_val, $args['value'] ) : ( ( 'set_to_regular_price_and_decrease_by_num' === $args['operator'] ) ? self::decrease_value_by_num( $prev_val, $args['value'] ) : $args['value'] );
+				}
 			}
-
 			return $args;
 		}
 
@@ -84,8 +108,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 			global $wpdb;
 
 			$numeric_columns = array(
-				'_wc_booking_duration'               => __( 'Booking duration', 'smart-manager-for-wp-e-commerce' ), 
-				'_wc_booking_min_duration'           => __( 'Minimum duration', 'smart-manager-for-wp-e-commerce' ), 
+				'_wc_booking_duration'               => __( 'Booking duration', 'smart-manager-for-wp-e-commerce' ),
+				'_wc_booking_min_duration'           => __( 'Minimum duration', 'smart-manager-for-wp-e-commerce' ),
 				'_wc_booking_max_duration'           => __( 'Maximum duration', 'smart-manager-for-wp-e-commerce' ),
 				'_wc_booking_cancel_limit'           => __( 'Booking can be cancelled until', 'smart-manager-for-wp-e-commerce' ),
 				'_wc_booking_min_persons_group'      => __( 'Min persons', 'smart-manager-for-wp-e-commerce' ),
@@ -122,7 +146,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 				'_unit_price_sale'					 => __( 'Sale Unit Price', 'smart-manager-for-wp-e-commerce' ),
 			);
 
-			$numeric_text_editor_columns = array( '_wc_booking_duration', '_wc_booking_min_duration', '_wc_booking_max_duration', '_wc_booking_cancel_limit', 
+			$numeric_text_editor_columns = array( '_wc_booking_duration', '_wc_booking_min_duration', '_wc_booking_max_duration', '_wc_booking_cancel_limit',
 												'_wc_booking_min_date', '_wc_booking_max_date' );
 
 			$checkbox_empty_one_columns = array(
@@ -154,7 +178,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 				'variation_minmax_cart_exclude'              => __( 'Variation Order rules: Exclude', 'smart-manager-for-wp-e-commerce' ),
 				'variation_minmax_category_group_of_exclude' => __( 'Variation Category group-of rules: Exclude', 'smart-manager-for-wp-e-commerce' ),
 				// [Germanized for WooCommerce](https://wordpress.org/plugins/woocommerce-germanized/)
-				'_unit_price_auto' 							 => __( 'Calculate unit prices automatically', 'smart-manager-for-wp-e-commerce' ),	
+				'_unit_price_auto' 							 => __( 'Calculate unit prices automatically', 'smart-manager-for-wp-e-commerce' ),
 			);
 
 			$booking_duration_unit = array(
@@ -202,7 +226,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 						break;
 					case '_wc_booking_duration_unit':
 						$column['key'] = __( 'Booking Duration (Unit)', 'smart-manager-for-wp-e-commerce' );
-						$column['name'] = $column['key']; 
+						$column['name'] = $column['key'];
 						$column = $this->generate_dropdown_col_model( $column, $booking_duration_unit );
 						break;
 					case '_wc_booking_cancel_limit_unit':
@@ -276,7 +300,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 								if( $key > 0 ) {
 									$subscription_ranges[ $key ] = $key .' Renewals';
 								}
-							}	
+							}
 						}
 						$column = $this->generate_dropdown_col_model( $column, $subscription_ranges );
 						break;
@@ -329,7 +353,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 						$column ['editable']= false;
 						$column ['editor']= 'select';
 						$column ['strict'] = true;
-						$column ['allowInvalid'] = false;	
+						$column ['allowInvalid'] = false;
 						$column ['selectOptions'] = $column['values'];
 						break;
 					case '_unit':
@@ -338,8 +362,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 						$column ['editable']= false;
 						$column ['editor']= 'select';
 						$column ['strict'] = true;
-						$column ['allowInvalid'] = false;	
-						
+						$column ['allowInvalid'] = false;
+
 						$column ['values'] = $column ['selectOptions'] = array();
 						$column ['search_values'] = array();
 						if( function_exists( 'WC_Germanized' ) ){
@@ -349,7 +373,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 								if( ! empty( $column ['values'] ) ){
 									foreach( $column ['values'] as $key => $value ) {
 										$column['search_values'][] = array( 'key' => $key, 'value' => $value );
-									}			
+									}
 								}
 							}
 						}
@@ -358,12 +382,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 			}
 
 			if (!empty($dashboard_model_saved)) {
-				$col_model_diff = sm_array_recursive_diff($dashboard_model_saved,$dashboard_model);	
+				$col_model_diff = sm_array_recursive_diff($dashboard_model_saved,$dashboard_model);
 			}
 
 			//clearing the transients before return
 			if (!empty($col_model_diff)) {
-				delete_transient( 'sa_sm_'.$this->dashboard_key );	
+				delete_transient( 'sa_sm_'.$this->dashboard_key );
 			}
 
 			return $dashboard_model;
@@ -405,10 +429,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 					// Code to handle setting of 'regular_price' & 'sale_price' in proper way
 					case ( empty( $args['operator'] ) || ( ! empty( $args['operator'] ) && ! in_array( $args['operator'], array( 'set_to_regular_price', 'set_to_sale_price', 'copy_from_field' ) ) ) ):
 						$regular_price = ( '_regular_price' === $args['col_nm'] ) ? $args['value'] : get_post_meta( $args['id'], '_regular_price', true );
-						$sale_price = ( '_sale_price' === $args['col_nm'] ) ? $args['value'] : get_post_meta( $args['id'], '_sale_price', true );	
-						if ( $sale_price >= $regular_price ) {
-							update_post_meta( $args['id'], '_sale_price', '' );
-						}
+						$sale_price = ( '_sale_price' === $args['col_nm'] ) ? $args['value'] : get_post_meta( $args['id'], '_sale_price', true );
+						$sale_price = ( $sale_price >= $regular_price ) ? '' : $sale_price;
+						update_post_meta( $args['id'], '_sale_price', $sale_price );
 						break;
 				}
 				sm_update_price_meta(array($args['id']));
@@ -503,9 +526,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 						}
 
 					} else if( !empty($action) && $action == 'custom' ) {
-
-						$value = ( (!empty($args['value2'])) ? $args['value2'] : '' );
-
+						$value = ( ! empty( $args['meta']['attribute_values'] ) ) ? $args['meta']['attribute_values'] : '';
 						if( !empty($product_attributes[$args['value']]) ) {
 							$product_attributes[$args['value']]['value'] = $value;
 						} else {
@@ -575,14 +596,14 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 					$current_term_ids = wp_get_object_terms( $args['id'], $taxonomy_nm, 'orderby=none&fields=ids' );
 
 					if( $action == 'add_to' ) {
-						$current_term_ids[] = $value;						
+						$current_term_ids[] = $value;
 					} else if( $action == 'remove_from' ) {
 						$key = array_search($value, $current_term_ids);
 						if( $key !== false ) {
 							unset($current_term_ids[$key]);
 						}
 					}
-					
+
 				} else if( !empty($action) && $action == 'set_to' ) {
 					$current_term_ids = array( $value );
 				}
@@ -614,7 +635,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 			if( empty( $original_id ) ) {
 				return false;
 			}
-			
+
 			$identifier = '';
 
 			if ( is_callable( array( 'Smart_Manager_Pro_Background_Updater', 'get_identifier' ) ) ) {
@@ -626,7 +647,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 			}
 
 			$background_process_params = get_option( $identifier.'_params', false );
-			
+
 			if( empty( $background_process_params ) ) {
 				return;
 			}
@@ -638,7 +659,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
             $parent_id = 0;
             $woo_dup_obj = '';
             $dup_prod_id = '';
-            
+
             if( !empty( $background_process_params ) && (!empty( $background_process_params['SM_IS_WOO30'] ) || !empty( $background_process_params['SM_IS_WOO22'] ) || !empty( $background_process_params['SM_IS_WOO21'] ) ) ) {
                 $parent_id = wp_get_post_parent_id($original_id);
 
@@ -650,7 +671,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
                 if ( class_exists( 'WC_Admin_Duplicate_Product' ) ) {
                 	$woo_dup_obj = new WC_Admin_Duplicate_Product();
                 }
-                
+
             } else {
 
             	$file = WP_PLUGIN_DIR . '/woocommerce/admin/includes/duplicate_product.php';
@@ -659,11 +680,11 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
                 }
 
                 $post = get_post( $original_id );
-                $parent_id = $post->post_parent;    
+                $parent_id = $post->post_parent;
             }
 
             if ($parent_id == 0) {
-                
+
                 if ($woo_dup_obj instanceof WC_Admin_Duplicate_Product) {
                     if( !empty( $background_process_params ) && !empty( $background_process_params['SM_IS_WOO30'] ) ) {
 
@@ -674,7 +695,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
                         if( !is_wp_error($dup_prod) ) {
                         	$dup_prod_id = $dup_prod->get_id();
                         }
-                        
+
 
                     } else {
                         $dup_prod_id = $woo_dup_obj -> duplicate_product($post,0,$post->post_status);
@@ -705,10 +726,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 		/**
 		* Get previous values for the taxonomy
 		*
-		* @param string $prev_val previous value for current taxonomy 
-		* @param array $args args has id, column name and table name 
+		* @param string $prev_val previous value for current taxonomy
+		* @param array $args args has id, column name and table name
 		* @return result of function call or empty value
-		*/ 
+		*/
 		public static function products_batch_update_prev_value( $prev_val = '', $args = array() ) {
 			if ( 'custom' === $args['table_nm'] && 'product_attributes' === $args['col_nm'] && !empty( $args['meta']['attributeName'] ) ) {
 				$result = wp_get_object_terms( $args['id'], $args['meta']['attributeName'], 'orderby=none&fields=ids' );
@@ -723,7 +744,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 		*
 		* @param array $args args has array of task details update values
 		* @return void
-		*/ 
+		*/
 		public static function task_details_update_by_prev_val( $args = array() ) {
 			if (  empty( $args ) ) {
 				return $args;
@@ -752,10 +773,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 								'action' => $arg['action'],
 								'status' => $arg['status'],
 								'record_id' => $arg['record_id'],
-								'field' => $field_name,   
+								'field' => $field_name,
 								'prev_val' => $prev_val,
 								'updated_val' => $arg['updated_val'],
-							); 
+							);
 						}
 					}
 				} else if ( empty( $arg['prev_val'] ) && ! is_array( $arg['prev_val'] ) ) {
@@ -766,10 +787,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 							'action' => $arg['action'],
 							'status' => $arg['status'],
 							'record_id' => $arg['record_id'],
-							'field' => $field_name,   
+							'field' => $field_name,
 							'prev_val' => $arg['updated_val'],
 							'updated_val' => $arg['updated_val'],
-						); 
+						);
 					}
 				}
 			}
@@ -778,12 +799,32 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 		/**
 		* Disable task details update
 		*
-		* @param array $prev_val prev_val has previous value
-		* @param string $field_nm field name 
-		* @return boolean 
-		*/ 
-		public static function disable_task_details_update( $prev_val = array(), $field_nm = '' ) {
-			return ( ( ! empty( $prev_val ) ) && ( 'postmeta/meta_key=_product_attributes/meta_value=_product_attributes' === $field_nm ) ) ? true : false;
+		* @param array $args
+		* @return boolean
+		*/
+		public static function disable_task_details_update( $args = array() ) {
+			if ( ( empty( $args ) ) || ( ! is_array( $args ) ) || ( empty( $args['prev_vals'] ) ) || ( empty( $args['record_id'] ) ) || ( empty( $args['field_name'] ) ) ) {
+				return false;
+			}
+			switch ( $args['field_name'] ) {
+				case 'postmeta/meta_key=_product_attributes/meta_value=_product_attributes':
+					return true;
+				case 'postmeta/meta_key=_stock/meta_value=_stock':
+					if ( ( empty( Smart_Manager_Base::$update_task_details_params ) ) || ( empty( $args['data'] ) ) || ( ! is_array( $args['data'] ) ) || ( empty( $args['data']['task_id'] ) ) ) {
+						return false;
+					}
+					foreach ( Smart_Manager_Base::$update_task_details_params as $task_data ) {
+						if ( ( empty( $task_data ) ) || ( ! is_array( $task_data ) ) || ( empty( $task_data['record_id'] ) ) || ( empty( $task_data['task_id'] ) ) || ( empty( $task_data['field'] ) ) ) {
+							continue;
+						}
+						if ( ( intval( $args['data']['task_id'] ) === intval( $task_data['task_id'] ) ) && ( intval( $task_data['record_id'] ) === intval( $args['record_id'] ) ) && ( $task_data['field'] === $args['field_name'] ) ) {
+							return true;
+						}
+					}
+				default:
+					return false;
+			}
+			return false;
 		}
 
 		/**
@@ -791,21 +832,21 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 		*
 		* @param string $new_val new value
 		* @param array $args array of selected field, operator and value
-		* @return array value of selected column 
-		*/ 
+		* @return array value of selected column
+		*/
 		public static function get_value_for_copy_from_operator( $new_val = '', $args = array() ) {
 			if ( empty( $args['selected_column_name'] ) || ( 'product_attributes' !== $args['selected_column_name'] ) || empty( intval( $args['selected_value'] ) ) ) {
 				return $new_val;
 			}
 			return get_post_meta( $args['selected_value'], '_product_attributes', true );
 		}
-		
+
 		/**
 		* Update value for copy from operator
 		*
 		* @param array $args array of selected field, operator and value
-		* @return boolean 
-		*/ 
+		* @return boolean
+		*/
 		public static function update_value_for_copy_from_operator( $args = array() ) {
 			if ( empty( $args['id'] ) || ( 'product_attributes' !== $args['col_nm'] ) || ( ! isset( $args['value'] ) ) ) {
 				return false;
@@ -817,8 +858,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 		* Update task args before processing undo
 		*
 		* @param array $args array of selected field, operator and value
-		* @return array $args array of updated args 
-		*/ 
+		* @return array $args array of updated args
+		*/
 		public static function process_undo_args_before_update( $args = array() ) {
 			if ( empty( $args['type'] ) || empty( $args['operator'] ) || ( ! in_array( $args['type'], array( 'custom/product_attributes_add', 'custom/product_attributes_remove' ) ) ) ) {
 				return $args;
@@ -843,8 +884,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 		*
 		* @param string $operator operator name
 		* @param array $args array of field, operator and value
-		* @return string action name 
-		*/ 
+		* @return string action name
+		*/
 		public static function task_update_action( $operator = '', $args = array() ) {
 			if ( empty( $args['type'] ) || ( 'custom/product_attributes' !== $args['type'] ) || empty( $operator ) || empty( $args['meta']['attributeName'] ) ) {
 				return $operator;
@@ -858,7 +899,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 		* @param array $attached_media_post_ids attached media post ids
 		* @param array $args array of post id and attachment id
 		* @return array $attached_media_post_ids Updated value of attached media post ids
-		*/ 
+		*/
 		public static function get_matching_gallery_images_post_ids( $attached_media_post_ids = array(), $args = array() ) {
 			if ( ! is_array( $attached_media_post_ids ) || empty( $args ) || ! is_array( $args ) || empty( $args['post_id'] ) || empty( $args['attachment_id'] ) ) {
 				return $attached_media_post_ids;
@@ -875,29 +916,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 		}
 
 		/**
-		* Function for updating value before saving duplicate product
-		*
-		* @param WC_Product $duplicate product object for duplicate
-		* @param WC_Product $product product object
-		* @return void
-		*/ 
-		public static function product_duplicate_before_save( $duplicate = null, $product = null ) {
-			if ( ( is_admin() && ! empty( $_GET['page'] ) && ( 'smart-manager' !== $_GET['page'] ) ) || empty( $duplicate ) || empty( $product ) ) {
-				return;
-			}
-			$status = ( is_callable( array( $product, 'get_status' ) ) ) ? $product->get_status() : '';
-			if ( ! empty( $status ) && is_callable( array( $duplicate, 'set_status' ) ) ) {
-				$duplicate->set_status( $status );
-			}
-		}
-
-		/**
 		* Adding new custom column in data model for stock column color code based on each product level low stock threshold
 		*
 		* @param array $data_model data model array.
 		* @param array $data_col_params data columns params array.
 		* @return array $data_model Updated data model array
-		*/ 
+		*/
 		public function products_data_model( $data_model = array(), $data_col_params = array() ) {
 			if ( empty( $data_model ) || ! is_array( $data_model ) || empty( $data_model['items'] ) || ! is_array( $data_model['items'] ) ) {
 				return $data_model;
@@ -930,7 +954,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 		*
 		* @param array $args array of update related data.
 		* @return void
-		*/ 
+		*/
 		public static function products_pre_batch_update( $args = array() ) {
 			if ( empty( $args['type'] ) || ( ! empty( $args['type'] ) && ( 'postmeta/meta_key=_sale_price/meta_value=_sale_price' !== $args['type'] ) ) || ( ! in_array( $args['operator'], array( 'increase_by_per', 'decrease_by_per', 'increase_by_num', 'decrease_by_num' ) ) ) || empty( $args['id'] ) ) {
 				return;
@@ -941,5 +965,440 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 			}
 		}
 
+		/**
+		 * Pre-processes deletion of product records in the database.
+		 *
+		 *
+		 * @param array $args Required args array.
+		 *
+		 * @return void
+		 */
+		public static function products_pre_process_delete_records( $args = array() ) {
+			if ( empty( $args ) || ( ! is_array( $args ) ) || empty( $args['selected_post_ids'] ) || empty( $args['post_id_placeholders'] ) ) {
+				return;
+			}
+			$selected_post_ids = $args['selected_post_ids'];
+			$post_id_placeholders = $args['post_id_placeholders'];
+			global $wpdb;
+			$variations_ids = self::get_variations_for_selected_ids( $args );
+			if ( ! empty( $variations_ids ) && ( is_array( $variations_ids ) && ( ! is_wp_error( $variations_ids ) ) ) ) {
+				foreach ( $variations_ids as $variation_id ) {
+					do_action( 'woocommerce_before_delete_product_variation', $variation_id );
+					do_action( 'woocommerce_delete_product_variation', $variation_id );
+				}
+			}
+			$wpdb->query(
+				$wpdb->prepare(
+					"DELETE FROM {$wpdb->prefix}posts WHERE post_parent IN ( $post_id_placeholders ) AND post_type = %s",
+					array_merge( $selected_post_ids, array('product_variation') )
+				)
+			);
+			$transient_names = array();
+			$transients_timeout = array();
+			// Delete from wc_product_meta_lookup
+			$wpdb->query(
+				$wpdb->prepare(
+					"DELETE FROM {$wpdb->prefix}wc_product_meta_lookup WHERE product_id IN ( " . $post_id_placeholders . " )",
+					$selected_post_ids
+				)
+			);
+			// Transients to clear
+			$transients_to_clear = array(
+				'wc_products_onsale',
+				'wc_featured_products',
+				'wc_outofstock_count',
+				'wc_low_stock_count',
+			);
+			$transient_types = array(
+				'product_children', 'var_prices', 'related', 'child_has_weight', 'child_has_dimensions', 'blocks_has_downloadable_product', 'product_children'
+			);
+			// Add base transients.
+			foreach ( $transients_to_clear as $transient ) {
+				$transient_names[] = "'_transient_{$transient}'";
+				$transients_timeout[] = "'_transient_timeout_{$transient}'";
+			}
+			// Add ID-specific transients.
+			foreach ( $selected_post_ids as $id ) {
+				wp_cache_delete( 'lookup_table', 'object_' . $id );
+				foreach ( $transient_types as $type ) {
+					$transient_names[] = "'_transient_wc_{$type}_{$id}'";
+					$transients_timeout[] = "'_transient_timeout_wc_{$type}_{$id}'";
+				}
+			}
+			if ( empty( $transient_names ) || ( ! is_array( $transient_names ) ) ) {
+				return;
+			}
+			// Clear the transients from the cache.
+			foreach ( $transient_names as $transient_name ) {
+				do_action( "delete_transient_{$transient_name}", $transient_name );
+			}
+			if ( wp_using_ext_object_cache() ) {
+				wp_cache_delete_multiple( $transient_names );
+			} else { // If not using external object cache, remove transients from options table.
+				self::sm_delete_transients( array(
+					'transient_names' => $transient_names,
+					'transients_timeout' => $transients_timeout
+				));
+			}
+			// Trigger deleted transient actions.
+			foreach ( $transient_names as $transient_name ) {
+				do_action( 'deleted_transient', $transient_name );
+			}
+			// Post action after clearing transients.
+			foreach ( $selected_post_ids as $id ) {
+				do_action( 'woocommerce_delete_product_transients', $id );
+			}
+		}
+
+		/**
+		 * Pre-processes trash of product records in the database.
+		 *
+		 *
+		 * @param array $args Required args array.
+		 *
+		 * @return void
+		 */
+		public static function products_pre_process_move_to_trash_records( $args = array() ) {
+			if ( empty( $args ) || ( ! is_array( $args ) ) || empty( $args['selected_post_ids'] ) || empty( $args['post_id_placeholders'] ) ) {
+				return;
+			}
+			global $wpdb;
+			$selected_post_ids = $args['selected_post_ids'];
+			$post_id_placeholders = $args['post_id_placeholders'];
+			$variations_ids = self::get_variations_for_selected_ids( $args );
+			$args['selected_ids'] = $variations_ids;
+			$result = self::sm_process_move_to_trash_records( array_merge( $args, array('move_to_trash_pre_action' => true ) ) );
+			if ( ! empty( $variations_ids ) && ( is_array( $variations_ids ) && ( ! is_wp_error( $variations_ids ) ) ) ) {
+				foreach ( $variations_ids as $variation_id ) {
+					do_action( 'woocommerce_trash_product_variation', $variation_id );
+				}
+			}
+			$transient_names = array();
+			$transients_timeout = array();
+			foreach ( $selected_post_ids as $post_id ) {
+				$transient_names[] = "'_transient_wc_product_children_{$post_id}'";
+				$transients_timeout[] = "'_transient_timeout_wc_product_children_{$post_id}'";
+			}
+			self::sm_delete_transients( array(
+				'transient_names' => $transient_names,
+				'transients_timeout' => $transients_timeout
+			));
+		}
+
+		/**
+		 * Get variation ids for selected product ids.
+		 *
+		 *
+		 * @param array $args Required args array.
+		 *
+		 * @return result of the query
+		 */
+		public static function get_variations_for_selected_ids( $args = array() ) {
+			if ( empty( $args ) || ( ! is_array( $args ) ) || empty( $args['selected_post_ids'] ) || empty( $args['post_id_placeholders'] ) ) {
+				return;
+			}
+			global $wpdb;
+			return $wpdb->get_col(
+				$wpdb->prepare(
+					"SELECT ID 
+					FROM {$wpdb->prefix}posts
+					WHERE post_parent IN ( " . $args['post_id_placeholders'] . " ) 
+					AND post_type = %s", array_merge( $args['selected_post_ids'], array('product_variation')
+				) )
+			);
+		}
+
+		/**
+		 * Delete product related transients usign SQL query.
+		 *
+		 * @param array $args Required args array.
+		 */
+		public static function sm_delete_transients( $args = array() ) {
+			global $wpdb;
+			if ( empty( $args ) || ( ! is_array( $args ) ) || empty( $args['transient_names'] ) || empty( $args['transients_timeout'] ) ) {
+				return;
+			}
+			$transient_names = array_map( 'esc_sql', $args['transient_names'] );
+			$transients_timeout = array_map( 'esc_sql', $args['transients_timeout'] );
+			// Create placeholders for the IN clause.
+			$transient_placeholders = implode( ', ', array_fill( 0, count( $transient_names ), '%s' ) );
+			$timeout_placeholders = implode( ', ', array_fill( 0, count( $transients_timeout ), '%s' ) );
+			// Delete transients
+			$result = $wpdb->query(
+				$wpdb->prepare(
+					"DELETE FROM {$wpdb->prefix}options WHERE option_name IN ( $transient_placeholders )",
+					$transient_names
+				)
+			);
+			// Delete transient timeouts.
+			if ( $result ) {
+				$wpdb->query(
+					$wpdb->prepare(
+						"DELETE FROM {$wpdb->prefix}options WHERE option_name IN ( $timeout_placeholders )",
+						$transients_timeout
+					)
+				);
+			}
+
+		}
+
+		/**
+		 * Get special handling operators
+		 *
+		 * @param array $special_batch_update_operators Array of special handling operators.
+		 *
+		 * @param array $args Array of args.
+		 *
+		 * @return array Array of special handling operators.
+		 */
+		public static function special_batch_update_operators( $special_batch_update_operators = array(), $args = array() ) {
+			if ( empty( $args ) || ( ! is_array( $args ) ) || ( ! is_array( $special_batch_update_operators ) ) ) {
+				return $special_batch_update_operators;
+			}
+			return array_merge( array( '_regular_price' => 'set_to_regular_price', '_sale_price' => 'set_to_sale_price' ), $special_batch_update_operators );
+		}
+
+		/**
+		 * Update meta args
+		 *
+		 * @param array $postarr Array of post data.
+		 *
+		 * @param array $args Array of args.
+		 *
+		 * @return array $postarr Updated meta data args.
+		 */
+		public static function update_meta_args( $postarr = array(), $args = array() ) {
+			if ( ( ! is_array( $postarr ) ) || ( ! is_array( $args ) ) || empty( $args['taxonomy'] ) || empty( $args['taxonomy_terms'] ) || ( 'product_manufacturer' !== $args['taxonomy'] ) || ( empty( $args['term_ids'] ) ) || ( ! is_array( $args['term_ids'] ) ) ) {
+				return $postarr;
+			}
+			foreach ( $args['term_ids'] as $term_id ) {
+				$term = Smart_Manager_Pro_Base::get_term_by_id( $args['taxonomy_terms'], $term_id );
+				$term_slug = ( ( ! empty( $term ) ) && ( ! empty( $term->slug ) ) ) ? $term->slug : '';
+				$postarr['meta_input']['_manufacturer_slug'] = $term_slug;
+			}
+			return $postarr;
+		}
+
+		/**
+ 		 * Deletes metadata for the given taxonomy terms, replication of wc_clear_term_product_ids.
+		 *
+		 * @param array $taxonomy_term_ids Array of taxonomy term IDs to process.
+		*/
+		public static function post_process_terms_update( $taxonomy_term_ids = array() ) {
+			if ( ( empty( $taxonomy_term_ids ) ) || ( ! is_array( $taxonomy_term_ids ) ) || ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) || ( ! is_callable( array( 'Smart_Manager_Pro_Base', 'delete_metadata' ) ) ) ) {
+				return;
+			}
+			$terms_meta_data = array_map(function($tt_id) {
+				return array(
+					'object_id'  => $tt_id,
+					'meta_key'   => 'product_ids',
+				);
+			}, $taxonomy_term_ids);
+			if ( ( empty( $terms_meta_data ) ) || ( ! is_array( $terms_meta_data ) ) ) {
+				return;
+			}
+			Smart_Manager_Pro_Base::delete_metadata( array( 'meta_type' => 'term', 'meta_data' => $terms_meta_data ) );
+		}
+
+		/**
+		 * Function for recounting product terms, ignoring hidden products.
+		 * replication of _wc_term_recount
+		 *
+		 * @param array  $terms                       List of terms.
+		 * @param object $taxonomy                    Taxonomy.
+		 * @param bool   $callback                    Callback.
+		 * @param bool   $terms_are_term_taxonomy_ids If terms are from term_taxonomy_id column.
+		 *
+		 * @return void
+		*/
+		public static function products_taxonomy_term_recount( $terms, $taxonomy, $callback = true, $terms_are_term_taxonomy_ids = true ) {
+			if ( ( empty( $terms ) ) || ( ! is_array( $terms ) ) || empty( $taxonomy ) || ( empty( $taxonomy->name ) ) ) {
+				return;
+			}
+			global $wpdb;
+			// Standard callback.
+			if ( $callback ) {
+				if ( ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) || ( ! is_callable( array( 'Smart_Manager_Pro_Base', 'update_post_term_count' ) ) ) ) {
+					return;
+				}
+				Smart_Manager_Pro_Base::update_post_term_count( $terms, $taxonomy );
+			}
+
+			$exclude_term_ids            = array();
+			$product_visibility_term_ids = wc_get_product_visibility_term_ids();
+
+			if ( $product_visibility_term_ids['exclude-from-catalog'] ) {
+				$exclude_term_ids[] = $product_visibility_term_ids['exclude-from-catalog'];
+			}
+
+			if ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) && $product_visibility_term_ids['outofstock'] ) {
+				$exclude_term_ids[] = $product_visibility_term_ids['outofstock'];
+			}
+
+			$query = array(
+				'fields' => "
+					SELECT COUNT( DISTINCT ID ) FROM {$wpdb->posts} p
+				",
+				'join'   => '',
+				'where'  => "
+					WHERE 1=1
+					AND p.post_status = 'publish'
+					AND p.post_type = 'product'
+
+				",
+			);
+
+			if ( count( $exclude_term_ids ) ) {
+				$query['join']  .= " LEFT JOIN ( SELECT object_id FROM {$wpdb->term_relationships} WHERE term_taxonomy_id IN ( " . implode( ',', array_map( 'absint', $exclude_term_ids ) ) . ' ) ) AS exclude_join ON exclude_join.object_id = p.ID';
+				$query['where'] .= ' AND exclude_join.object_id IS NULL';
+			}
+
+			// Pre-process term taxonomy ids.
+			if ( ! $terms_are_term_taxonomy_ids ) {
+				// We passed in an array of TERMS in format id=>parent.
+				$terms = array_filter( (array) array_keys( $terms ) );
+			} else {
+				// If we have term taxonomy IDs we need to get the term ID.
+				$term_taxonomy_ids = $terms;
+				$terms             = array();
+				foreach ( $term_taxonomy_ids as $term_taxonomy_id ) {
+					$term    = get_term_by( 'term_taxonomy_id', $term_taxonomy_id, $taxonomy->name );
+					$terms[] = $term->term_id;
+				}
+			}
+
+			// Exit if we have no terms to count.
+			if ( empty( $terms ) ) {
+				return;
+			}
+
+			// Ancestors need counting.
+			if ( is_taxonomy_hierarchical( $taxonomy->name ) ) {
+				foreach ( $terms as $term_id ) {
+					$terms = array_merge( $terms, get_ancestors( $term_id, $taxonomy->name ) );
+				}
+			}
+
+			// Unique terms only.
+			$terms = array_unique( $terms );
+
+			// Count the terms.
+			foreach ( $terms as $term_id ) {
+				$terms_to_count = array( absint( $term_id ) );
+
+				if ( is_taxonomy_hierarchical( $taxonomy->name ) ) {
+					// We need to get the $term's hierarchy so we can count its children too.
+					$children = get_term_children( $term_id, $taxonomy->name );
+
+					if ( $children && ! is_wp_error( $children ) ) {
+						$terms_to_count = array_unique( array_map( 'absint', array_merge( $terms_to_count, $children ) ) );
+					}
+				}
+
+				// Generate term query.
+				$term_query          = $query;
+				$term_query['join'] .= " INNER JOIN ( SELECT object_id FROM {$wpdb->term_relationships} INNER JOIN {$wpdb->term_taxonomy} using( term_taxonomy_id ) WHERE term_id IN ( " . implode( ',', array_map( 'absint', $terms_to_count ) ) . ' ) ) AS include_join ON include_join.object_id = p.ID';
+
+				// Get the count.
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+				$count = $wpdb->get_var( implode( ' ', $term_query ) );
+
+				// Update the count.
+				update_term_meta( $term_id, 'product_count_' . $taxonomy->name, absint( $count ) );
+			}
+
+			delete_transient( 'wc_term_counts' );
+		}
+
+		/**
+		 * Function to get product manufacturer terms.
+		 * compat for 'Germanized for WooCommerce Pro' plugin.
+		 *
+		 * @param array  $taxonomies Array of taxonomies to be updated.
+		 *
+		 * @return array Array of product_manufacturer taxonomy terms.
+		 */
+		public static function get_product_manufacturer_terms ( $taxonomies = array() ) {
+			$product_manufacturer_terms = array();
+			if ( ( empty( $taxonomies ) ) || ( ! in_array( 'product_manufacturer', $taxonomies ) ) ) {
+				return $product_manufacturer_terms;
+			}
+			$product_manufacturer_terms = get_terms(
+				array(
+					'taxonomy'   => 'product_manufacturer', // Pass an array of taxonomies.
+					'hide_empty' => false,
+				)
+			);
+			return ( ( ! empty( $product_manufacturer_terms ) ) && ( ! is_wp_error( $product_manufacturer_terms ) ) ) ? $product_manufacturer_terms : array();
+		}
+
+		/**
+		 * Function to get product manufacturer terms.
+		 * compat for 'Germanized for WooCommerce Pro' plugin.
+		 *
+		 * @param object  $post updated post object.
+		 * @param object  $post_before post object before update.
+		 *
+		 * @return void
+		 */
+		public static function products_before_run_after_update_hooks( $post = null, $post_before = null ) {
+			if ( ( empty( $post ) ) || ( empty( $post_before ) ) ) {
+				return;
+			}
+			if ( class_exists( 'WC_GZDP_Unit_Price_Helper' ) ) {
+				remove_action( 'wp_insert_post', array( WC_GZDP_Unit_Price_Helper::instance(), 'maybe_save_unit_price' ), 10 );
+			}
+		}
+
+		/**
+	     * Function to update meta values of Germanized for WooCommerce Pro plugin when updating terms by inline edit.
+		 * compat for 'Germanized for WooCommerce Pro' plugin.
+		 *
+		 * @param  array $args array data.
+		 *
+		 * @return array $args array data.
+		 */
+		public static function update_germanized_meta( $args = array() ) {
+			if ( ( empty( $args ) ) || ( ! is_array( $args ) ) || ( empty( $args['id'] ) ) || ( empty( $args['taxonomies'] ) ) || ( ! is_array( $args['taxonomies'] ) ) || ( ! in_array( 'product_manufacturer', $args['taxonomies'] ) ) || ( "product_manufacturer" !== $args['update_column'] ) ) {
+				return $args;
+			}
+			$id = $args['id'];
+			$args['prev_postmeta_values'][$id]['_manufacturer_slug'] = "";
+			$args['meta_keys_edited']['_manufacturer_slug'] = "";
+			//If all terms are removed then empty meta field.
+			if ( ( is_array( $args['term_ids'] ) ) && ( 1 === count( $args['term_ids'] ) ) && ( ( empty( $args['term_ids'][0] ) ) || ( '0' === $args['term_ids'][0] ) ) ) {
+				$args['meta_data_edited']['postmeta'][$id]['_manufacturer_slug'] = "";
+				return $args;
+			}
+
+			$product_manufacturer_terms = get_terms(
+				array(
+					'taxonomy'   => 'product_manufacturer',
+					'hide_empty' => false,
+				)
+			);
+
+			$meta_data = apply_filters(
+				'sm_pro_update_meta_args',
+				array(),
+				array(
+					'taxonomy'       => $args['update_column'],
+					'term_ids'       => $args['term_ids'],
+					'taxonomy_terms' => $product_manufacturer_terms
+				)
+			);
+
+			if ( empty( $meta_data ) || ! is_array( $meta_data ) || empty( $meta_data['meta_input']['_manufacturer_slug'] ) ) {
+				return $args;
+			}
+
+			$args['meta_data_edited']['postmeta'][$id]['_manufacturer_slug'] = $meta_data['meta_input']['_manufacturer_slug'];
+
+			$term_obj = Smart_Manager_Pro_Base::get_term_by_id( $product_manufacturer_terms, $args['prev_val'] );
+
+			$args['prev_postmeta_values'][$id]['_manufacturer_slug'] = ( ! empty( $term_obj ) && ! empty( $term_obj->slug ) ) ? $term_obj->slug : '';
+
+			return $args;
+		}
 	} //End of Class
 }

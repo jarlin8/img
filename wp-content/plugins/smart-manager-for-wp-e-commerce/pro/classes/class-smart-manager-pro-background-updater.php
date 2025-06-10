@@ -60,6 +60,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 			add_action( 'wp_ajax_sa_sm_stop_background_process', array( $this, 'stop_background_process' ) );
 			add_action( 'sm_schedule_tasks_cleanup', array( &$this, 'schedule_tasks_cleanup_cron' ) ); // For handling deletion of tasks those are more than x number of days.
 			add_action( 'storeapps_smart_manager_scheduled_actions', array( &$this, 'schedule_bulk_edit_actions' ) );
+			add_action( 'storeapps_smart_manager_scheduled_export_actions', array( &$this, 'scheduled_export_actions' ) );
+			add_action( 'storeapps_smart_manager_scheduled_export_cleanup', array( &$this, 'scheduled_exports_cleanup_cron' ) ); // For handling deletion of scheduled export files those are more than x number of days.
 		}
 
 		/**
@@ -111,6 +113,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 		}
 
 		public function background_heartbeat() {
+			if ( ( ! is_admin() ) || empty( $_GET['page'] ) || ( ( ! empty( $_GET['page'] ) ) && ( 'smart-manager' !== $_GET['page'] ) ) ) {
+                return;
+            }
 
 			?>
 			<script type="text/javascript">
@@ -199,7 +204,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 															return match.toUpperCase();
 														}), 'capitalized process name', 'smart-manager-for-wp-e-commerce');
 													}
-													let noOfRecords = ('undefined' !== typeof( window.smart_manager.selectedRows ) && window.smart_manager.selectedRows && window.smart_manager.selectedRows.length > 0) ? window.smart_manager.selectedRows.length : (window.smart_manager.selectAll ? _x('All', 'all records', 'smart-manager-for-wp-e-commerce') : 0);
+													let noOfRecords = ('undefined' !== typeof( window.smart_manager.selectedRows ) && window.smart_manager.selectedRows && window.smart_manager.selectedRows.length > 0 && window.smart_manager.selectAll === false) ? window.smart_manager.selectedRows.length : (window.smart_manager.selectAll ? _x('All', 'all records', 'smart-manager-for-wp-e-commerce') : 0);
 													setTimeout( function() {
 														jQuery('#sa_sm_background_process_complete').fadeOut();
 														window.smart_manager.notification = {status:'success', message: _x(`${processName} ${_x('for', 'success message', 'smart-manager-for-wp-e-commerce')} ${noOfRecords} ${_x(`${noOfRecords == 1 ? 'record' : 'records'}`, 'success notification', 'smart-manager-for-wp-e-commerce')} ${_x(' completed successfully!', 'success message', 'smart-manager-for-wp-e-commerce')}`, 'success notification', 'smart-manager-for-wp-e-commerce')}
@@ -301,7 +306,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 
 			if( ! empty( $abort ) ) {
 				delete_option( $this->identifier.'_ids' );
-				delete_option( $this->identifier.'_current_id_batch' );
 				delete_option( $this->identifier.'_params' );
 				delete_option( $this->identifier.'_is_background' );
 			}
@@ -516,139 +520,55 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 		 * within server memory and time limit constraints.
 		 */
 		public function storeapps_smart_manager_batch_handler() {
-
 			$batch_params = get_option( $this->identifier.'_params', array() );
 			$update_ids = get_option( $this->identifier.'_ids', array() );
 			if ( is_callable( array( 'Smart_Manager', 'log' ) ) ) {
 				Smart_Manager::log( 'info', _x( 'Batch handler params ', 'batch handler params', 'smart-manager-for-wp-e-commerce' ) . print_r( $batch_params, true ) );
 				Smart_Manager::log( 'info', _x( 'Batch handler update ids ', 'batch handler update ids', 'smart-manager-for-wp-e-commerce' ) . print_r( $update_ids, true ) );
 			}
-			if( empty( $batch_params ) || empty( $update_ids ) ) {
+			if ( empty( $batch_params ) || empty( $update_ids ) || ( ! is_array( $batch_params ) ) || ( ! is_array( $update_ids ) ) || empty( $batch_params['process_name'] ) || empty( $batch_params['process_key'] ) ) {
 				return;
 			}
-
 			$start_time = get_option( $this->identifier.'_start_time', false );
-			if( empty( $start_time ) ) {
+			if ( empty( $start_time ) ) {
 				update_option( $this->identifier.'_start_time', time(), 'no' );
 			}
-
 			$this->batch_start_time = time();
 			$batch_complete = false;
-
-			// update_option( $this->identifier.'_batch_start_time', time() );
-
 			$update_remaining_count = get_option( $this->identifier.'_remaining', false );
 			$update_tot_count = get_option( $this->identifier.'_tot', false );
-
-			$current_batch_update_id = $current_batch_action_id = '';
-
-			$current_id_batch_action = get_option( $this->identifier.'_current_id_batch', false );
-			
-			if( !empty( $current_id_batch_action ) ) {
-				$current_params = explode( '__', $current_id_batch_action );
-				$current_batch_update_id = ( !empty( $current_params[0] ) ) ? $current_params[0] : '';
-				$current_batch_action_id = ( !empty( $current_params[1] ) ) ? $current_params[1] : '';
+			if ( ! in_array( $batch_params['process_key'], array( 'duplicate_records', 'delete_non_post_type_records' ) ) ) {
+				$this->batch_process(
+					array(
+						'update_ids' => $update_ids,
+						'update_remaining_count' => ( ! empty( $update_remaining_count ) ) ? $update_remaining_count : 0,
+						'batch_params' => $batch_params
+					)
+				);
+				return;
 			}
-
-			foreach( $update_ids as $key => $update_id ) {
-
-				$current_batch_action_id = 0;
-
-				if( !empty( $current_batch_update_id ) && $current_batch_update_id == $update_id && !empty( $current_batch_action_id ) ) {
-					$start_index = $current_batch_action_id;
-				}
-
-				if( !empty( $batch_params['actions'] ) ) { //For Batch Update
-					for( $index = $current_batch_action_id; $index < sizeof( $batch_params['actions'] ); $index++ ) {
-						update_option( $this->identifier.'_current_id_batch', $update_id.'__'.$index, 'no' );
-
-						$batch_params['actions'][$index]['id'] = $update_id;
-						$this->task( array( 'callback' => $batch_params['callback'], 'args' => $batch_params['actions'][$index] ) );
-
-						update_option( $this->identifier.'_current_time', time(), 'no' );
-
-						if( $this->time_exceeded() || $this->memory_exceeded() ) { //Code for continuing the batch
-							$initial_process = get_option( $this->identifier.'_initial_process', false );
-
-							if( !empty( $initial_process ) ) {
-								delete_option( $this->identifier.'_initial_process' );
-							}
-
-							$batch_complete = true;
-							if ( is_callable( array( 'Smart_Manager', 'log' ) ) ) {
-								if ( $this->time_exceeded() ) {
-									Smart_Manager::log( 'notice', _x( 'Time is exceeded for Bulk Edit', 'bulk edit batch handler time exceed status', 'smart-manager-for-wp-e-commerce' ) );
-								}
-								if ( $this->memory_exceeded() ) {
-									Smart_Manager::log( 'notice', _x( 'Memory is exceeded for Bulk Edit', 'bulk edit batch handler memory exceed status', 'smart-manager-for-wp-e-commerce' ) );
-								}
-							}
-							break;
-						}
-					}	
-				} else {
-
-					$args = array( 'dashboard_key' => $batch_params['dashboard_key'], 'id' => $update_id );
-					$args = ( !empty( $batch_params['callback_params'] ) && is_array( $batch_params['callback_params'] ) ) ? array_merge( $args, $batch_params['callback_params'] ) : $args;
-
-					$this->task( array( 'callback' => $batch_params['callback'], 'args' => $args ) );
-
-					update_option( $this->identifier.'_current_time', time(), 'no' );
-
-					if( $this->time_exceeded() || $this->memory_exceeded() ) { //Code for continuing the batch
-						if ( is_callable( array( 'Smart_Manager', 'log' ) ) && ! empty( $batch_params['process_name'] ) ) {
-							if ( $this->time_exceeded() ) {
-								/* translators: %s: process name */
-								Smart_Manager::log( 'notice', sprintf( _x( 'Time is exceeded for %s', 'batch handler time exceed status', 'smart-manager-for-wp-e-commerce' ), $batch_params['process_name'] ) );
-							}
-							if ( $this->memory_exceeded() ) {
-								/* translators: %s: process name */
-								Smart_Manager::log( 'notice', sprintf( _x( 'Memory is exceeded for %s', 'batch handler memory exceed status', 'smart-manager-for-wp-e-commerce' ), $batch_params['process_name'] ) );
-							}
-						}
-						$initial_process = get_option( $this->identifier.'_initial_process', false );
-
-						if( !empty( $initial_process ) ) {
-							delete_option( $this->identifier.'_initial_process' );
-						}
-
-						$batch_complete = true;
-					}
-				}
+			// Code for duplicate functionality
+			foreach ( $update_ids as $key => $update_id ) {
+ 				$args = array( 'dashboard_key' => $batch_params['dashboard_key'], 'id' => $update_id );
+				$args = ( ! empty( $batch_params['callback_params'] ) && is_array( $batch_params['callback_params'] ) ) ? array_merge( $args, $batch_params['callback_params'] ) : $args;
+				$this->task( array( 'callback' => $batch_params['callback'], 'args' => $args ) );
+				update_option( $this->identifier.'_current_time', time(), 'no' );
+				$batch_complete = $this->sm_batch_process_log( $batch_params );
 				//Code for post update
 				$update_remaining_count = $update_remaining_count - 1;
-				if ( is_callable( array( 'Smart_Manager', 'log' ) ) ) {
-					if ( empty( $batch_complete ) ) {
-						Smart_Manager::log( 'error', _x( 'Batch process not yet completed', 'batch process status', 'smart-manager-for-wp-e-commerce' ) );
-					}
-					Smart_Manager::log( 'info', _x( 'Remaining count for update in batch handler ', 'remaining count for update in batch handler', 'smart-manager-for-wp-e-commerce' ) . print_r( $update_remaining_count, true ) );
-				}
 				update_option( $this->identifier.'_remaining', $update_remaining_count, 'no' );
-
-				if( 0 === $update_remaining_count ) { // Code for handling when the batch has completed.
+				if ( 0 === $update_remaining_count ) { // Code for handling when the batch has completed.
 					do_action( 'sm_background_process_complete', $this->identifier ); // For triggering task deletion after successfully completing undo task/deleting task.
 					delete_option( $this->identifier.'_ids' );
-					delete_option( $this->identifier.'_current_id_batch' );
-					
-					$is_background = get_option( $this->identifier.'_is_background', false );
-
-					if( !empty( $is_background ) ) {
-						$this->complete();
-					} else {
-						delete_option( $this->identifier.'_params' );
-					}
-
+					( ! empty( get_option( $this->identifier.'_is_background', false ) ) ) ? $this->complete() : delete_option( $this->identifier.'_params' );
 					delete_option( $this->identifier.'_is_background' );
-				} else if( !empty( $batch_complete ) ) { //Code for continuing the batch
+				} elseif ( ! empty( $batch_complete ) ) { //Code for continuing the batch
 					$update_ids = array_slice( $update_ids, $key+1 );
-
 					update_option( $this->identifier.'_remaining', $update_remaining_count, 'no' );
 					update_option( $this->identifier.'_ids', $update_ids, 'no' );
-
 					if ( function_exists( 'as_schedule_single_action' ) ) {
 						as_schedule_single_action( time(), self::$batch_handler_hook );
 					}
-
 					break;
 				}
 			}
@@ -825,6 +745,190 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 			} else {
 				$rescheduled_interval = apply_filters( 'sa_sm_bulk_edit_action_rescheduled_interval', intval( get_option( 'sa_sm_bulk_edit_action_rescheduled_interval', 30 ) ) );
 				as_schedule_single_action( strtotime( date( 'Y-m-d H:i:s', strtotime( "+" . $rescheduled_interval . " minutes" ) ) ), 'storeapps_smart_manager_scheduled_actions' );
+			}
+		}
+
+		/**
+		 * Process the deletion/bulk edit/undo of records.
+		 *
+		 * @param array $params Required params array
+		*/
+		public function batch_process( $params = array() ) {
+			if ( empty( $params )|| ( ! is_array( $params ) ) || empty( $params['update_ids'] ) || empty( $params['update_remaining_count'] ) || empty( $params['batch_params'] ) ) {
+				return;
+			}
+			$remaining_ids = $params['update_ids']; // Initially remaining ids are equal to total ids.
+			$update_remaining_count = $params['update_remaining_count'];
+			$batch_params = $params['batch_params'];
+			$batch_complete = false;
+			// Get a slice of 100 records from $remaining_ids
+			$batch_size = get_option( 'sa_sm_batch_size', 100 );
+			// Process the current batch of IDs.				
+			while ( ( is_array( $remaining_ids ) ) && ( 0 !== $update_remaining_count ) ) {
+				$batch_ids_to_process =  ( ! empty( $remaining_ids ) ) ? array_slice( $remaining_ids, 0, $batch_size ) : array();
+				if ( empty( $batch_ids_to_process ) || ( ! is_array( $batch_ids_to_process ) ) ) {
+					break;
+				}
+				// Call your task with the current batch
+				$this->task(
+					array(
+						'callback' => $batch_params['callback'],
+						'args' => array(
+							'batch_params' => $batch_params,
+							'selected_ids' => $batch_ids_to_process,
+							'dashboard_key' => $batch_params['dashboard_key']
+						)
+					)
+				);
+				update_option( $this->identifier . '_current_time', time(), 'no' );
+				$batch_complete = $this->sm_batch_process_log( $batch_params );
+				// Check if we've processed all records.
+				$remaining_ids = array_slice( $remaining_ids, $batch_size );
+				$update_remaining_count = count( $remaining_ids );
+				if ( 0 === $update_remaining_count ) {
+					// All records processed.
+					do_action( 'sm_background_process_complete', $this->identifier );
+					delete_option($this->identifier . '_ids');
+					( ! empty( get_option( $this->identifier . '_is_background', false ) ) ) ? $this->complete() : delete_option( $this->identifier . '_params' );
+					delete_option($this->identifier . '_is_background');
+					delete_option( $this->identifier.'_start_time' );
+					delete_option( $this->identifier.'_current_time' );
+					delete_option( $this->identifier.'_tot' );
+					delete_option( $this->identifier.'_remaining' );
+					break;
+				} elseif ( ! empty( $batch_complete ) ) { // Code for continuing the batch.
+					update_option( $this->identifier . '_remaining', $update_remaining_count, 'no' );
+					update_option( $this->identifier . '_ids', $remaining_ids, 'no' ); //remaining ids to update.
+					// Schedule the next batch.
+					if ( function_exists( 'as_schedule_single_action' ) ) {
+						as_schedule_single_action( time(), self::$batch_handler_hook );
+					}
+					break;
+				}
+			}
+		}
+
+		/**
+		 * Logs the batch process status and checks for time or memory exceedance and set the $batch_complete to true.
+		 *
+		 *
+		 * @param array $batch_params The parameters for the batch process, including 'process_name'.
+		 * 
+		 * @return boolean true if time or memory exceeds else false
+		 */
+		public function sm_batch_process_log( $batch_params = array() ) {
+			if ( empty( $batch_params ) || ( ! is_array( $batch_params ) ) ) {
+				return;
+			}
+			if ( $this->time_exceeded() || $this->memory_exceeded() ) { // Code for continuing the batch
+				if ( is_callable( array( 'Smart_Manager', 'log' ) ) && ( ! empty( $batch_params['process_name'] ) ) ) {
+					if ( $this->time_exceeded() ) {
+						/* translators: %s: process name */
+						Smart_Manager::log( 'notice', sprintf( _x('Time is exceeded for %s', 'batch handler time exceed status', 'smart-manager-for-wp-e-commerce' ), $batch_params['process_name'] ) );
+					}
+					if ( $this->memory_exceeded() ) {
+						/* translators: %s: process name */
+						Smart_Manager::log( 'notice', sprintf( _x( 'Memory is exceeded for %s', 'batch handler memory exceed status', 'smart-manager-for-wp-e-commerce' ), $batch_params['process_name'] ) );
+					}
+				}
+				$initial_process = get_option( $this->identifier . '_initial_process', false );
+				if ( ! empty( $initial_process ) ) {
+					delete_option( $this->identifier . '_initial_process' );
+				}
+				return true;
+			}
+			return false;
+		}
+
+		/**
+		 * Schedule export actions
+		 * 
+		 * @param array $args arguments for schedule export action.
+		 * @return void
+		 */
+		public function scheduled_export_actions( $args = array() ) {
+			if ( empty( $args ) || ! is_array( $args ) || empty( $args['class_path'] ) || empty( $args['dashboard_key'] ) || empty( $args['scheduled_export_params'] ) || empty( $args['scheduled_export_params']['schedule_export_interval'] ) ) {
+				return;
+			}
+			$file_paths = array( 
+				SM_PLUGIN_DIR_PATH . '/classes/class-smart-manager-base.php',
+				dirname( __FILE__ ) . '/class-smart-manager-pro-base.php',
+				dirname( __FILE__ ) .'/'. $args['class_path']
+			);
+			foreach ( $file_paths as $file_path ) {
+				if ( file_exists( $file_path ) ) {
+					include_once $file_path;
+				}
+			}
+			// Validate if the class exists and method is callable before proceeding.
+			if ( ! class_exists( $args['class_nm'] ) || ! is_callable( array( $args['class_nm'], 'instance' ) ) || ! is_callable( array( 'Smart_Manager_Pro_Base', 'get_scheduled_exports_advanced_search_query' ) ) ) {
+				return;
+			}
+			$table_data = ( empty( Smart_Manager::$sm_is_wc_hpos_tables_exists ) ) ? array( 'table_nm' => 'posts', 'status_col' => 'post_status', 'date_col' => 'post_date' ) : ( ! empty( $args['table_model']['wc_orders'] ) ? array( 'table_nm' => 'wc_orders', 'status_col' => 'status', 'date_col' => 'date_created_gmt' ) : array() );
+			if ( empty( $table_data ) ) {
+				return;
+			}
+			// Get the advanced search query.
+			$args['advanced_search_query'] = Smart_Manager_Pro_Base::get_scheduled_exports_advanced_search_query(
+				array(
+					'interval_days'  => absint( $args['scheduled_export_params']['schedule_export_interval'] ),
+					'order_statuses' => ( ! empty( $args['scheduled_export_params']['schedule_export_order_statuses'] ) ) ? $args['scheduled_export_params']['schedule_export_order_statuses'] : array(),
+					'table_nm' => ( ! empty( $table_data['table_nm'] ) ) ? sanitize_key( $table_data['table_nm'] ) : '',
+					'status_col' => ( ! empty( $table_data['status_col'] ) ) ? sanitize_key( $table_data['status_col'] ) : '',
+					'date_col' => ( ! empty( $table_data['date_col'] ) ) ? sanitize_key( $table_data['date_col'] ) : ''
+				)
+			);
+			// Get class instance safely.
+			$class_instance = call_user_func( array( $args['class_nm'], 'instance' ), $args['dashboard_key'] );
+			if ( ( ! is_object( $class_instance ) ) || ( ! is_callable( array( $class_instance, 'get_export_csv' ) ) ) ) {
+				return;
+			}
+			$class_instance->get_export_csv( $args ); //convert to static function.
+		}
+
+		/**
+		 * Deletes scheduled export attachments older than a specified number of days.
+		 *
+		 * The default expiration is 30 days, but this can be overridden using the
+		 * 'sm_scheduled_export_file_expiration_days' filter.
+		 * @return void
+		*/
+		public function scheduled_exports_cleanup_cron() {
+			$expiration_days = absint( get_option( 'sa_sm_scheduled_export_file_expiration_days' ) );
+			if ( empty( $expiration_days ) ) {
+				return;
+			}
+			global $wpdb;
+			// Calculate expiration date.
+			$expiration_date = gmdate( 'Y-m-d', time() - ( $expiration_days * DAY_IN_SECONDS ) ) . ' 00:00:00';
+			// Prepare query to get expired attachment IDs with meta key.
+			$attachment_ids = $wpdb->get_col(
+				$wpdb->prepare(
+					"SELECT p.ID 
+					FROM {$wpdb->postmeta} pm 
+					JOIN {$wpdb->posts} p ON p.ID = pm.post_id 
+					WHERE pm.meta_key = %s 
+					  AND pm.meta_value = %s 
+					  AND p.post_type = %s 
+					  AND p.post_status = %s 
+					  AND p.post_date < %s
+					",
+					'sa_sm_is_scheduled_export_file',
+					'1',
+					'attachment',
+					'inherit',
+					$expiration_date
+				)
+			);
+			if ( ( is_wp_error( $attachment_ids ) ) || ( empty( $attachment_ids ) ) || ( ! is_array( $attachment_ids ) ) ) {
+				return;
+			}
+			// Loop and delete each attachment permanently.
+			foreach ( $attachment_ids as $attachment_id ) {
+				if ( empty( $attachment_id ) ) {
+					continue;
+				}
+				wp_delete_attachment( (int) $attachment_id, true );
 			}
 		}
 	}

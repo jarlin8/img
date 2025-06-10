@@ -397,48 +397,60 @@ if ( ! class_exists( 'Smart_Manager_Pro_Access_Privilege' ) ) {
 		* return array $final_dashboards final dashboards array
 		*/
 		public static function get_current_user_access_privilege_settings() {
-			global $current_user;
-			$accessible_dashboards = array();
 			$final_dashboards = array();
 			$final_result = array();
 			$current_user_role = ( is_callable( array( 'Smart_Manager', 'get_current_user_role' ) ) ) ? Smart_Manager::get_current_user_role() : '';
 			$current_user_id = get_current_user_id();	
-			if ( ! ( ( ! empty( $current_user_role ) && 'administrator' === $current_user_role ) ) ) {
-	        	// query for get current user role's accessible dashboards.
-				$get_user_role_accessible_dashboards =  maybe_unserialize( get_option( self::get_db_key( $current_user_role ), '' ) );
-	            $user_role_accessible_dashboards = ( ! empty( $get_user_role_accessible_dashboards ) ) ? $get_user_role_accessible_dashboards : array();
-	            // query for get current user's accessible dashboards.
-	        	$get_user_accessible_dashboards = maybe_unserialize( get_user_meta( $current_user_id, self::get_db_key(), true ) );
-	        	$user_accessible_dashboards = ( ! empty( $get_user_accessible_dashboards ) ) ? $get_user_accessible_dashboards : array();
-				if ( ! empty( $user_role_accessible_dashboards ) && ( ! empty( $user_accessible_dashboards ) ) ) {
-					$final_result['valid'] = array_merge_recursive( $user_role_accessible_dashboards['valid'], $user_accessible_dashboards['valid'] );
-		        	if ( ! empty ( $user_accessible_dashboards['not_valid'] ) ) {
-		        		foreach ( $user_accessible_dashboards['not_valid'] as $key => $values ) {
-							$result = false;
-							foreach ( $values as $value ) {
-								if ( empty( $value ) || empty( $user_role_accessible_dashboards['valid'][ $key ] ) || ! is_array( $user_role_accessible_dashboards['valid'][ $key ] ) ) {
-									continue;
-								}
-								$result = array_search( $value, $user_role_accessible_dashboards['valid'][ $key ] );
-								if ( isset( $result ) ) {
-									unset( $final_result['valid'][$key][$result] );
-								}
-							}
-			        	}
-		        	}
-		        } else {
-		        	$final_result['valid'] = ( ! empty( $user_role_accessible_dashboards['valid'] ) ) ? $user_role_accessible_dashboards['valid'] : array();
-		        }
-		        foreach ( $final_result['valid'] as $value ) {			
-			        foreach( $value as $result ) {
-			        	$final_dashboards['valid'][] = $result;
-			        }				        	
-			    }
-		        if ( empty( $final_dashboards )) {
-		        	$final_dashboards['valid'][] = "";
-		        }	
+			if ( ( 'administrator' === $current_user_role ) ) return $final_dashboards;
+			// query for get current user role's accessible dashboards.
+			$get_user_role_accessible_dashboards =  maybe_unserialize( get_option( self::get_db_key( $current_user_role ), '' ) );
+			$user_role_accessible_dashboards = ( ! empty( $get_user_role_accessible_dashboards ) ) ? $get_user_role_accessible_dashboards : array();
+			// query for get current user's accessible dashboards.
+			$get_user_accessible_dashboards = maybe_unserialize( get_user_meta( $current_user_id, self::get_db_key(), true ) );
+			$user_accessible_dashboards = ( ! empty( $get_user_accessible_dashboards ) ) ? $get_user_accessible_dashboards : array();
+
+			$valid_user_role_accessible_dashboards = ( ! empty( $user_role_accessible_dashboards['valid'] ) ) ? $user_role_accessible_dashboards['valid'] : array();
+			$valid_user_accessible_dashboards = ( ! empty( $user_accessible_dashboards['valid'] ) ) ? $user_accessible_dashboards['valid'] : array();
+			$final_result['valid'] = array_merge_recursive( $valid_user_role_accessible_dashboards, $valid_user_accessible_dashboards );
+
+			$not_valid_user_role_accessible_dashboards = ( ! empty( $user_role_accessible_dashboards['not_valid'] ) ) ? $user_role_accessible_dashboards['not_valid'] : array();
+			$not_valid_user_accessible_dashboards = ( ! empty( $user_accessible_dashboards['not_valid'] ) ) ? $user_accessible_dashboards['not_valid'] : array();
+			$final_result['not_valid'] = array_merge_recursive( $not_valid_user_role_accessible_dashboards, $not_valid_user_accessible_dashboards );
+			if ( ! empty ( $user_accessible_dashboards['not_valid'] ) ) {
+				foreach ( $user_accessible_dashboards['not_valid'] as $key => $values ) {
+					if ( ( empty( $values ) ) || ( empty( $key ) ) || ( ! is_array( $values ) ) ) continue;
+					$result = false;
+					foreach ( $values as $value ) {
+						if ( empty( $value ) || empty( $user_role_accessible_dashboards['valid'][ $key ] ) || ! is_array( $user_role_accessible_dashboards['valid'][ $key ] ) ) continue;
+						$result = array_search( $value, $final_result['valid'][ $key ] );
+						if ( empty( $result ) ) continue;
+						unset( $final_result['valid'][$key][$result] );
+					}
+				}
 			}
-           return $final_dashboards;	
+			foreach ( $final_result['valid'] as $value ) {	
+				if( ( empty( $value ) ) || ( ! is_array( $value ) ) ){
+					continue;
+				}			
+				foreach( $value as $result ) {
+					if( empty( $result ) ){
+						continue;
+					}
+					$final_dashboards['valid'][] = $result;
+				}				        	
+			}
+			foreach ( $final_result['not_valid'] as $value ) {		
+				if( ( empty( $value ) ) || ( ! is_array( $value ) ) ){
+					continue;
+				}	
+				foreach( $value as $result ) {
+					if( empty( $result ) ){
+						continue;
+					}
+					$final_dashboards['not_valid'][] = $result;
+				}				        	
+			}
+           	return $final_dashboards;	
 		}
 
 		/**
@@ -458,12 +470,14 @@ if ( ! class_exists( 'Smart_Manager_Pro_Access_Privilege' ) ) {
 			}
 			foreach ( $accessible_dashboards as $accessible_dashboard ) {
 	        	foreach ( $dashboards as $key => $dashboard ) {	 
-					if ( empty( $key ) || ! isset( $accessible_dashboards['valid'] ) || empty( $accessible_dashboards['valid'] ) || ! is_array( $accessible_dashboards['valid'] ) ) {
+					if (
+						empty( $key ) ||
+						( ! empty( $accessible_dashboards['valid'] ) && is_array( $accessible_dashboards['valid'] ) && in_array( $key, $accessible_dashboards['valid'], true ) ) ||
+						( empty( $accessible_dashboards['valid'] ) && ! empty( $accessible_dashboards['not_valid'] ) && is_array( $accessible_dashboards['not_valid'] ) && ! in_array( $key, $accessible_dashboards['not_valid'], true ) )
+					) {
 						continue;
-					}       	
-	        		if ( ! in_array( $key, $accessible_dashboards['valid'] ) ) {
-	        			unset( $dashboards[ $key ] );
-	        		}        	
+					}
+					unset( $dashboards[ $key ] );
 	        	}
 			}
 	        if ( empty( $dashboards ) && ! defined( 'SM_BETA_ACCESS' ) ) {

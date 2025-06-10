@@ -8,14 +8,15 @@ namespace Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders;
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Caches\OrderCache;
 use Automattic\WooCommerce\Caches\OrderCacheController;
-use Automattic\WooCommerce\Caching\TransientsEngine;
-use Automattic\WooCommerce\DataBase\Migrations\CustomOrderTable\CLIRunner;
+use Automattic\WooCommerce\Caches\OrderCountCacheService;
+use Automattic\WooCommerce\Database\Migrations\CustomOrderTable\CLIRunner;
 use Automattic\WooCommerce\Database\Migrations\CustomOrderTable\PostsToOrdersMigrationController;
 use Automattic\WooCommerce\Internal\BatchProcessing\BatchProcessingController;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableRefundDataStore;
 use Automattic\WooCommerce\Internal\DependencyManagement\AbstractServiceProvider;
 use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
+use Automattic\WooCommerce\Internal\DataStores\Orders\LegacyDataCleanup;
 use Automattic\WooCommerce\Internal\DataStores\Orders\LegacyDataHandler;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStoreMeta;
@@ -43,7 +44,9 @@ class OrdersDataStoreServiceProvider extends AbstractServiceProvider {
 		OrdersTableRefundDataStore::class,
 		OrderCache::class,
 		OrderCacheController::class,
+		OrderCountCacheService::class,
 		LegacyDataHandler::class,
+		LegacyDataCleanup::class,
 	);
 
 	/**
@@ -61,6 +64,7 @@ class OrdersDataStoreServiceProvider extends AbstractServiceProvider {
 				LegacyProxy::class,
 				OrderCacheController::class,
 				BatchProcessingController::class,
+				OrderCountCacheService::class,
 			)
 		);
 		$this->share( OrdersTableRefundDataStore::class )->addArguments( array( OrdersTableDataStoreMeta::class, DatabaseUtil::class, LegacyProxy::class ) );
@@ -68,20 +72,36 @@ class OrdersDataStoreServiceProvider extends AbstractServiceProvider {
 			array(
 				OrdersTableDataStore::class,
 				DataSynchronizer::class,
+				LegacyDataCleanup::class,
 				OrdersTableRefundDataStore::class,
 				BatchProcessingController::class,
 				FeaturesController::class,
 				OrderCache::class,
 				OrderCacheController::class,
 				PluginUtil::class,
+				DatabaseUtil::class,
 			)
 		);
 		$this->share( OrderCache::class );
 		$this->share( OrderCacheController::class )->addArgument( OrderCache::class );
+		$this->share( OrderCountCacheService::class )->addArgument();
 		if ( Constants::is_defined( 'WP_CLI' ) && WP_CLI ) {
 			$this->share( CLIRunner::class )->addArguments( array( CustomOrdersTableController::class, DataSynchronizer::class, PostsToOrdersMigrationController::class ) );
 		}
 
-		$this->share( LegacyDataHandler::class )->addArguments( array( OrdersTableDataStore::class, DataSynchronizer::class ) );
+		$this->share( LegacyDataCleanup::class )->addArguments(
+			array(
+				BatchProcessingController::class,
+				LegacyDataHandler::class,
+				DataSynchronizer::class,
+			)
+		);
+		$this->share( LegacyDataHandler::class )->addArguments(
+			array(
+				OrdersTableDataStore::class,
+				DataSynchronizer::class,
+				PostsToOrdersMigrationController::class,
+			)
+		);
 	}
 }

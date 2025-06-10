@@ -344,7 +344,7 @@ Smart_Manager.prototype.prodAttributeInlineEdit = function(params){
 	window.smart_manager.editedAttribueSlugs = '';
 	jQuery('#edit_product_attributes input[name^="attribute_names"]').each( function(){
 		let index = jQuery(this).attr('index'),
-			attrNm = jQuery(this).val(),
+			attrExactNm = attrNm = jQuery(this).val(),
 			isTaxonomy = parseInt(jQuery("input[name='attribute_taxonomy["+index+"]']" ).val()),
 			editedValue = '',
 			editedText = '',
@@ -401,7 +401,7 @@ Smart_Manager.prototype.prodAttributeInlineEdit = function(params){
 			attributesEditedText += ( ( window.smart_manager.prodAttributeActualValues.hasOwnProperty(attrNm) && window.smart_manager.prodAttributeActualValues[attrNm].hasOwnProperty('lbl') ) ? window.smart_manager.prodAttributeActualValues[attrNm].lbl : '' ) + ': [' + selectedText + ']';
 		}
 		productAttributesPostmeta [attrNm] = {};
-		productAttributesPostmeta [attrNm]['name'] = attrNm;
+		productAttributesPostmeta [attrNm]['name'] = attrExactNm;
 		productAttributesPostmeta [attrNm]['value'] = editedValue;
 		productAttributesPostmeta [attrNm]['position'] = jQuery( "input[name='attribute_position["+index+"]']" ).val();
 
@@ -504,7 +504,20 @@ Smart_Manager.prototype.handleShowVariations = function(){
 }
 //Function for redirecting to WC product import
 Smart_Manager.prototype.handleProductImportCSV = function(){
-	if(window.smart_manager.WCProductImportURL){
-		window.open(window.smart_manager.WCProductImportURL, '_blank');
+	if(!window.smart_manager.WCProductImportURL || "undefined" === typeof(window.smart_manager.WCProductImportURL)){
+		return;
 	}
+	if((window.smart_manager?.allSettings?.general?.toggle?.generate_sku === 'yes') && ("undefined" !== typeof(window.smart_manager.showConfirmDialog) && "function" === typeof(window.smart_manager.showConfirmDialog))){
+		window.smart_manager.showConfirmDialog({
+			content:_x("<strong>Note:</strong> Auto-generation of SKUs is enabled. Products with blank SKUs in your CSV will have SKUs automatically assigned during import.<br><br> To disable this, uncheck the <strong>“Automatically generate SKUs for WooCommerce products with blank values during CSV import”</strong>, setting under <strong>Settings > General Settings</strong>, then re-try the import.",'product import csv modal content','smart-manager-for-wp-e-commerce'),
+			btnParams:{
+				yesCallback: function(){
+					window.open(window.smart_manager.WCProductImportURL, '_blank');
+				}
+			},
+			title:'<span class="sm-error-icon"><span class="dashicons dashicons-warning" style="vertical-align: text-bottom;"></span>&nbsp;'+_x('Attention!', 'modal title', 'smart-manager-for-wp-e-commerce')+'</span>'
+		});
+		return;
+	}
+	window.open(window.smart_manager.WCProductImportURL, '_blank');
 }

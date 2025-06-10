@@ -406,16 +406,13 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 			$order_items = array();
             $order_shipping_method = array();
 			$order_shipping_method_title = array();
+			$processed_results = array();
             $results = $wpdb->get_results( $wpdb->prepare( "SELECT order_items.order_item_id,
 				                            order_items.order_id    ,
 				                            order_items.order_item_name AS order_prod,
 				                            order_items.order_item_type,
-				                            GROUP_CONCAT(order_itemmeta.meta_key
-				                                                ORDER BY order_itemmeta.meta_id 
-				                                                SEPARATOR '###' ) AS meta_key,
-				                            GROUP_CONCAT(order_itemmeta.meta_value
-				                                                ORDER BY order_itemmeta.meta_id 
-				                                                SEPARATOR '###' ) AS meta_value
+				                            order_itemmeta.meta_key,
+				                           	order_itemmeta.meta_value
 				                        FROM {$wpdb->prefix}woocommerce_order_items AS order_items 
 				                            LEFT JOIN {$wpdb->prefix}woocommerce_order_itemmeta AS order_itemmeta 
 				                                ON (order_items.order_item_id = order_itemmeta.order_item_id
@@ -424,16 +421,38 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 				                        WHERE 1 = %d
 				                        	AND order_items.order_item_type IN ('line_item', 'shipping')
 				                            ". $order_id_cond ."
-				                        GROUP BY order_items.order_item_id", 1 ), 'ARRAY_A' );
+				                        GROUP BY order_items.order_item_id, order_itemmeta.meta_key", 1 ), 'ARRAY_A' );
+			if ( ! empty( $results ) && is_array( $results ) ) {
+				foreach( $results as $result ) {
+					$item_id = $result['order_item_id'];
+					if ( empty( $item_id ) ) {
+						continue;
+					}
+					if ( ! isset( $processed_results[ $item_id ] ) ) {
+						$processed_results[ $item_id ] = array( 
+							'order_id' => $result['order_id'],
+							'order_prod' => $result['order_prod'],
+							'order_item_type' => $result['order_item_type'],
+							'meta_key' => array(),
+							'meta_value' => array()
+						);
+					}
+					$processed_results[ $item_id ]['meta_key'][] = $result['meta_key'];
+					$processed_results[ $item_id ]['meta_value'][] = $result['meta_value'];
+				}
+			}
 
-            if ( !empty( $results ) ) {
-
-                foreach ( $results as $result ) {
-
-                    if ( !isset($order_items [$result['order_id']]) ) {
-                        $order_items [$result['order_id']] = array();
+			// Convert $processed_results array to concatenated strings.
+			if ( ( ! empty( $processed_results ) ) && is_array( $processed_results ) ) {
+				foreach ( $processed_results as &$item ) {
+					$item['meta_key'] = implode( '###', $item['meta_key'] );
+					$item['meta_value'] = implode( '###', $item['meta_value'] );
+				}
+				foreach ( $processed_results as $result ) {
+                    if ( ! isset( $order_items[ $result['order_id'] ] ) ) {
+                        $order_items[ $result['order_id'] ] = array();
                     }
-                    if ($result['order_item_type'] == 'shipping') {
+                    if ( 'shipping' === $result['order_item_type'] ) {
 						$order_meta_key = explode( '###', $result['meta_key'] );
 						$order_meta_values = explode( '###', $result['meta_value'] );
 						if ( ! empty( $order_meta_key ) && is_array( $order_meta_key ) && 'method_id' === $order_meta_key[0] && ! empty( $order_meta_values ) && is_array( $order_meta_values ) ) {
@@ -443,9 +462,8 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
                     } else {
                         $order_items [$result['order_id']] [] = $result;
                     }
-                }    
-            }
-
+                }
+			}
 
             if( !empty( $data_model['items'] ) ) {
             	foreach( $data_model['items'] as $key => $order_data ) {
@@ -632,6 +650,14 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 			if( empty( $data_col_params ) || ! is_array( $data_col_params ) || empty( $curr_obj ) || ( ! empty( $curr_obj ) && empty( $curr_obj->dashboard_key ) ) ){
 				return $data_model;
 			}
+			
+			//if scheduled export then set the scheduled export params to req_params.
+			if( ( ! empty ( $data_col_params['is_scheduled_export'] ) && ( 'true' === $data_col_params['is_scheduled_export'] ) ) && ( ! empty( $data_col_params['advanced_search_query'] ) ) ) {
+				$curr_obj->req_params['advanced_search_query'] = $data_col_params['advanced_search_query'];
+			}
+			if( ( ! empty ( $data_col_params['is_scheduled_export'] ) && ( 'true' === $data_col_params['is_scheduled_export'] ) ) && ( ! empty( $data_col_params['sort_params'] ) ) ) {
+				$curr_obj->req_params['sort_params'] = $data_col_params['sort_params'];
+			}
 
 			global $wpdb;
 			if ( ! empty( Smart_Manager::$sm_is_woo79 ) ) {
@@ -650,7 +676,7 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 
 				$query_args = array(
 					'type' => $curr_obj->dashboard_key,
-					'orderby' => 'id',
+					'orderby' => ( ! empty ( $data_col_params['is_scheduled_export'] ) && ( 'true' === $data_col_params['is_scheduled_export'] ) ) ? 'date' : 'id',
 					'order' => 'DESC',
 					'offset' => ( ! empty( $data_col_params['offset'] ) ) ? intval( $data_col_params['offset'] ) : 0,
 					'paginate' => true,
@@ -1514,7 +1540,7 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 				unset($col_name[0]);
 				$search_params['search_col'] = implode( '_', $col_name );
 					if( ( $wpdb->prefix . 'wc_order_addresses' ) === $search_params['search_string']['table_name'] ) {
-						$advanced_search_query['cond_wc_order_addresses'] = $search_params['search_string']['table_name'] . '.' . $search_params['search_col'] . " LIKE '" . $search_params['search_string']['value'] . "' AND address_type LIKE '" . $adress_type . "'";
+						$advanced_search_query['cond_wc_order_addresses'] = $search_params['search_string']['table_name'] . '.' . $search_params['search_col'] . $advanced_search_query['cond_wc_order_addresses_formatted_search_operator'] . " AND address_type LIKE '" . $adress_type . "'";
 					}
 			}
 			return $advanced_search_query;

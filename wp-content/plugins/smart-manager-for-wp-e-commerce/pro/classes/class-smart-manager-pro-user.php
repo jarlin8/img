@@ -57,6 +57,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 			add_filter( 'sm_beta_batch_update_prev_value', __CLASS__. '::users_batch_update_prev_value', 10, 2 );
 			add_filter( 'sm_default_batch_update_db_updates',  __CLASS__. '::users_default_batch_update_db_updates', 10, 2 );
 			add_filter( 'sm_post_batch_update_db_updates', __CLASS__. '::users_post_batch_update_db_updates', 10, 2 );
+			add_filter( 'sm_pro_default_process_delete_records', function() { return false; } );
 		}
 
 		public function get_batch_update_copy_from_record_ids( $args = array() ) {
@@ -217,6 +218,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 					}
 
 					if( !empty( $default_non_editable_cols ) && in_array( $field_nm, $default_non_editable_cols ) ) {
+						$temp ['editor'] = false;
 						$temp ['editable'] = false;
 						$temp ['batch_editable'] = false;
 					}
@@ -569,8 +571,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 							}
 
                             $search_col = (!empty($rule['col_name'])) ? $rule['col_name'] : '';
-							$search_operator = (!empty($rule['operator'])) ? $rule['operator'] : '';
-							$search_operator = ( ! empty( $this->advance_search_operators[$search_operator] ) ) ? $this->advance_search_operators[$search_operator] : $search_operator;
+							$selected_search_operator = (!empty($rule['operator'])) ? $rule['operator'] : '';
+							$search_operator = ( ! empty( $this->advanced_search_operators[$selected_search_operator] ) ) ? $this->advanced_search_operators[$selected_search_operator] : $selected_search_operator;
                             $search_data_type = ( ! empty( $search_cols_type[$rule['type']] ) ) ? $search_cols_type[$rule['type']] : 'text';
                             $search_value = (!empty($rule['value']) && $rule['value'] != "''") ? $rule['value'] : ( ( in_array( $search_data_type, array( "number", "numeric" ) ) ) ? '0' : '' );
                             if ( 'terms' === $rule['table_name'] && "''" === $search_value ){ // For handling taxonomy empty strings
@@ -589,7 +591,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 													'search_operator' => $search_operator, 
 													'search_data_type' => $search_data_type, 
 													'search_value' => $search_value,
-													'SM_IS_WOO30' => (!empty($params['SM_IS_WOO30'])) ? $params['SM_IS_WOO30'] : '');
+													'selected_search_operator' => $selected_search_operator,
+													'SM_IS_WOO30' => (!empty($params['SM_IS_WOO30'])) ? $params['SM_IS_WOO30'] : '',
+													'table_nm' => $rule['table_name'] );
 
                            	if( !empty( $params['data_col_params'] ) ) {
                             	$search_value = ( in_array($search_col, $params['data_col_params']['data_cols_timestamp']) ) ? strtotime($search_value) : $search_value;
@@ -599,38 +603,47 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 
                             	$search_col = apply_filters('sm_search_format_query_users_col_name', $search_col, $search_params);
                                 $search_value = apply_filters('sm_search_format_query_users_col_value', $search_value, $search_params);
-
+								if ( empty( $advanced_search_query[$i]['cond_users_col_values'] ) ) {
+									$advanced_search_query[$i]['cond_users_col_values'] = array();
+								}
+								if ( empty( $advanced_search_query[$i]['cond_users_selected_search_operators'] ) ) {
+									$advanced_search_query[$i]['cond_users_selected_search_operators'] = array();
+								}
                                 if ( in_array( $search_data_type, array( "number", "numeric" ) ) ) {
-                                    $users_cond = $rule['table_name'].".".$search_col . " ". $search_operator ." " . $search_value;
+                                    $users_cond = $rule['table_name'].".".$search_col . " ". $search_operator ." %f";
                                 } else if ( $search_data_type == "date" || $search_data_type == "sm.datetime" ) {
-                                	$users_cond = $rule['table_name'].".".$search_col . " ". $search_operator ." '" . $search_value ."' ";
+                                	$users_cond = $rule['table_name'].".".$search_col . " ". $search_operator ." %s ";
                                 } else {
                                     if ($search_operator == 'is') {
-                                        $users_cond = $rule['table_name'].".".$search_col . " LIKE '" . $search_value . "'";
+                                        $users_cond = $rule['table_name'].".".$search_col . " LIKE %s";
                                     } else if ($search_operator == 'is not') {
-                                        $users_cond = $rule['table_name'].".".$search_col . " NOT LIKE '" . $search_value . "'";
+                                        $users_cond = $rule['table_name'].".".$search_col . " NOT LIKE %s";
                                     } else {
-                                        $users_cond = $rule['table_name'].".".$search_col . " ". $search_operator ."'%" . $search_value . "%'";
+                                        $users_cond = $rule['table_name'].".".$search_col . " ". $search_operator ." %s";
                                     }
                                 }
 
                                 $users_cond = apply_filters('sm_search_users_cond', $users_cond, $search_params);
 
                                 $advanced_search_query[$i]['cond_users'] .= $users_cond ." && ";
-
+								$advanced_search_query[$i]['cond_users_col_values'][] = $search_value;
+								$advanced_search_query[$i]['cond_users_selected_search_operators'][] = $search_params['selected_search_operator'];
                             } else if (!empty($rule['table_name']) && $rule['table_name'] == $wpdb->prefix.'usermeta') {
 
                                 $advanced_search_query[$i]['cond_usermeta_col_name'] .= $search_col;
-                                $advanced_search_query[$i]['cond_usermeta_col_value'] .= $search_value;
-
                                 $search_col = apply_filters('sm_search_format_query_usermeta_col_name', $search_col, $search_params);
                                 $search_value = apply_filters('sm_search_format_query_usermeta_col_value', $search_value, $search_params);
-
+								if ( empty(  $advanced_search_query[$i]['cond_usermeta_col_values'] ) ) {
+									$advanced_search_query[$i]['cond_usermeta_col_values'] = array();
+								}
+								if ( empty(  $advanced_search_query[$i]['cond_usermeta_selected_search_operators'] ) ) {
+									$advanced_search_query[$i]['cond_usermeta_selected_search_operators'] = array();
+								}
                                 if ( in_array( $search_data_type, array( "number", "numeric" ) ) ) {
-                                    $postmeta_cond = " ( ". $rule['table_name'].".meta_key LIKE '". $search_col . "' AND ". $rule['table_name'] .".meta_value ". $search_operator ." " . $search_value . " )";
+                                    $postmeta_cond = " ( ". $rule['table_name'].".meta_key LIKE '". $search_col . "' AND ". $rule['table_name'] .".meta_value ". $search_operator ." %f )";
                                     $advanced_search_query[$i]['cond_usermeta_operator'] .= $search_operator;
                                 } else if ( $search_data_type == "date" || $search_data_type == "sm.datetime" ) {
-                                	$postmeta_cond = " ( ". $rule['table_name'].".meta_key LIKE '". $search_col . "' AND ". $rule['table_name'] .".meta_value ". $search_operator ." '" . $search_value . "' )";
+                                	$postmeta_cond = " ( ". $rule['table_name'].".meta_key LIKE '". $search_col . "' AND ". $rule['table_name'] .".meta_value ". $search_operator ." %s )";
                                     $advanced_search_query[$i]['cond_usermeta_operator'] .= $search_operator;
                                 } else {
                                     if( $search_operator == 'is' ) {
@@ -640,7 +653,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
                                     	}
 
                                         $advanced_search_query[$i]['cond_usermeta_operator'] .= 'LIKE';
-                                        $postmeta_cond = " ( ". $rule['table_name'].".meta_key LIKE '". $search_col . "' AND ". $rule['table_name'] .".meta_value LIKE '" . $search_value . "'" . " )";
+                                        $postmeta_cond = " ( ". $rule['table_name'].".meta_key LIKE '". $search_col . "' AND ". $rule['table_name'] .".meta_value LIKE %s" . " )";
 
                                         
                                     } else if( $search_operator == 'is not' ) {
@@ -650,12 +663,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
                                     	}
 
                                         $advanced_search_query[$i]['cond_usermeta_operator'] .= 'NOT LIKE';
-                                        $postmeta_cond = " ( ". $rule['table_name'].".meta_key LIKE '". $search_col . "' AND ". $rule['table_name'] .".meta_value NOT LIKE '" . $search_value . "'" . " )";
+                                        $postmeta_cond = " ( ". $rule['table_name'].".meta_key LIKE '". $search_col . "' AND ". $rule['table_name'] .".meta_value NOT LIKE %s" . " )";
 
                                     } else {
 
                                         $advanced_search_query[$i]['cond_usermeta_operator'] .= $search_operator;
-                                        $postmeta_cond = " ( ". $rule['table_name'].".meta_key LIKE '". $search_col . "' AND ". $rule['table_name'] .".meta_value ". $search_operator ." '%" . $search_value . "%'" . " )";
+                                        $postmeta_cond = " ( ". $rule['table_name'].".meta_key LIKE '". $search_col . "' AND ". $rule['table_name'] .".meta_value ". $search_operator ." %s" . " )";
                                     }
                                     
                                 }
@@ -664,9 +677,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 
                                 $advanced_search_query[$i]['cond_usermeta'] .= $postmeta_cond ." && ";
                                 $advanced_search_query[$i]['cond_usermeta_col_name'] .= " && ";
-                                $advanced_search_query[$i]['cond_usermeta_col_value'] .= " && ";
+                                $advanced_search_query[$i]['cond_usermeta_col_values'][] = $search_value;
                                 $advanced_search_query[$i]['cond_usermeta_operator'] .= " && ";
-
+								$advanced_search_query[$i]['cond_usermeta_selected_search_operators'][] = $search_params['selected_search_operator'];
                             } elseif ( ( ! empty( $rule['table_name'] ) ) && $wpdb->prefix.'terms' === $rule['table_name'] ) {
                                 $advanced_search_query[$i] = $this->create_terms_table_search_query( array(
 									'search_query' => $advanced_search_query[$i],
@@ -679,7 +692,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
                         }
                         if ( ! empty( $advanced_search_query[$i] ) ) {
 							foreach( $advanced_search_query[$i] as $key => $value ){
-								if( " && " !== substr( $value, -4 ) ){
+								if ( is_array( $value ) || ( " && " !== substr( $value, -4 ) ) ) {
 									continue;
 								}
 								$advanced_search_query[$i][ $key ] = ( ! empty( $value ) ) ? substr( $value, 0, -4 ) : '';
@@ -704,7 +717,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 		                    $cond_usermeta_array = explode(" &&  ",$advanced_search_query_string['cond_usermeta']);
 
 		                    $cond_usermeta_col_name = (!empty($advanced_search_query_string['cond_usermeta_col_name'])) ? explode(" && ",$advanced_search_query_string['cond_usermeta_col_name']) : '';
-		                    $cond_usermeta_col_value = (!empty($advanced_search_query_string['cond_usermeta_col_value'])) ? explode(" && ",$advanced_search_query_string['cond_usermeta_col_value']) : '';
+		                    $cond_usermeta_col_values = $advanced_search_query_string['cond_usermeta_col_values'];
 		                    $cond_usermeta_operator = (!empty($advanced_search_query_string['cond_usermeta_operator'])) ? explode(" && ",$advanced_search_query_string['cond_usermeta_operator']) : '';
 
 		                    $index = 0;
@@ -712,11 +725,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 		                    $result_usermeta_search = '';
 
 		                    foreach ($cond_usermeta_array as $cond_usermeta) {
-
 		                        $usermeta_search_result_flag = ( $index == (sizeof($cond_usermeta_array) - 1) ) ? ', '.$index_search_string : ', 0';
 
 		                        $cond_usermeta_col_name1 = (!empty($cond_usermeta_col_name[$index])) ? trim($cond_usermeta_col_name[$index]) : '';
-		                        $cond_usermeta_col_value1 = (!empty($cond_usermeta_col_value[$index])) ? trim($cond_usermeta_col_value[$index]) : '';
+		                        $cond_usermeta_col_value1 = (!empty($cond_usermeta_col_values[$index])) ? trim($cond_usermeta_col_values[$index]) : '';
 		                        $cond_usermeta_operator1 = (!empty($cond_usermeta_operator[$index])) ? trim($cond_usermeta_operator[$index]) : '';
 
 		                        $search_params = array('cond_usermeta_col_name' => $cond_usermeta_col_name1,
@@ -752,10 +764,17 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 		                        $result_usermeta_search = array();
 
 		                        if (!empty($usermeta_advanced_search_select ) && !empty($usermeta_advanced_search_from ) && !empty($usermeta_advanced_search_where )) {
-			                        $query_usermeta_search = "REPLACE INTO {$wpdb->base_prefix}sm_advanced_search_temp
+									$usermeta_advanced_search_select = esc_sql( $usermeta_advanced_search_select );
+									$exp_search_val = ( is_array( $cond_usermeta_col_values ) && ( ! empty( $cond_usermeta_col_values[ $index ] ) ) ) ? $cond_usermeta_col_values[ $index ] : $cond_usermeta_col_values;
+									$exp_search_val = $this->format_advanced_search_value( array(
+										'search_val' => $exp_search_val,
+										'selected_search_operator' => $advanced_search_query_string['cond_usermeta_selected_search_operators'][ $index ],
+									) );
+									
+			                        $query_usermeta_search = $wpdb->prepare( "REPLACE INTO {$wpdb->base_prefix}sm_advanced_search_temp
 			                                                        (". $usermeta_advanced_search_select ."
 			                                                        ". $usermeta_advanced_search_from ."
-			                                                        ".$usermeta_advanced_search_where.")";
+			                                                        ".$usermeta_advanced_search_where.")", $exp_search_val );
 			                        $result_usermeta_search = $wpdb->query ( $query_usermeta_search );
 			                    }
 
@@ -780,7 +799,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 		                    $result_users_search = '';
 
 		                    foreach ( $cond_users_array as $cond_users ) {
-
 		                        $users_search_result_flag = ( $index == (sizeof($cond_users_array) - 1) ) ? ', '.$index_search_string : ', 0';
 
 		                        $cond_users = apply_filters('sm_search_users_condition_start', $cond_users);
@@ -804,8 +822,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 
 		                        //Code to handle condition if the ids of previous cond are present in temp table
 		                        if ( ($index == 0 && $count_temp_previous_cond > 0) || (!empty($result_users_search)) ) {
-		                            $users_advanced_search_from .= " JOIN ".$wpdb->base_prefix."sm_advanced_search_temp
-		                                                                ON (".$wpdb->base_prefix."sm_advanced_search_temp.product_id = {$wpdb->users}.id) ";
+		                            $users_advanced_search_from .= " JOIN ".$wpdb->base_prefix."sm_advanced_search_temp ON (".$wpdb->base_prefix."sm_advanced_search_temp.product_id = {$wpdb->users}.id) ";
 
 		                            $users_advanced_search_where .= " AND ".$wpdb->base_prefix."sm_advanced_search_temp.flag = 0 ";
 		                        }
@@ -813,10 +830,17 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 		                        $result_users_search = array();
 
 		                        if (!empty($users_advanced_search_select ) && !empty($users_advanced_search_from ) && !empty($users_advanced_search_where )) {
-			                        $query_users_search = "REPLACE INTO {$wpdb->base_prefix}sm_advanced_search_temp
+									$users_advanced_search_select = esc_sql( $users_advanced_search_select );
+									$users_advanced_search_from = esc_sql( $users_advanced_search_from );
+									$exp_search_val = ( is_array( $advanced_search_query_string['cond_users_col_values'] ) && ( ! empty( $advanced_search_query_string['cond_users_col_values'][ $index ] ) ) ) ? $advanced_search_query_string['cond_users_col_values'][ $index ] : '';
+									$exp_search_val = $this->format_advanced_search_value( array(
+										'search_val' => $exp_search_val,
+										'selected_search_operator' => $advanced_search_query_string['cond_users_selected_search_operators'][ $index ],
+									) );
+			                        $query_users_search = $wpdb->prepare( "REPLACE INTO {$wpdb->base_prefix}sm_advanced_search_temp
 			                                                        ( ". $users_advanced_search_select ."
 			                                                        ". $users_advanced_search_from ."
-			                                                        ". $users_advanced_search_where .")";
+			                                                        ". $users_advanced_search_where .")", $exp_search_val );
 			                        $result_users_search = $wpdb->query ( $query_users_search );
 			                    }
 		                        
@@ -1650,10 +1674,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 		/**
 		 * Function to handle delete of a single record
 		 *
-		 * @param  integer $deleting_id The ID of the record to be deleted.
+		 * @param  array $params Required params
 		 * @return boolean
 		 */
-		public static function process_delete_record( $params ) {
+		public static function sm_process_delete_non_posts_records( $params = array() ) {
 
 			$deleting_id = ( !empty( $params['id'] ) ) ? $params['id'] : '';
 

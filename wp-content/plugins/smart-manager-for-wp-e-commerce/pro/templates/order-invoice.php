@@ -103,14 +103,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 <?php 
 $counter = 0;
 foreach ($purchase_id_arr as $purchase_id_value){
+    if ( empty( $purchase_id_value ) ) {
+        continue;
+    }
     $order = new WC_Order($purchase_id_value);
 
-    if ( ! $order instanceof WC_Order ){
+    if ( ! $order instanceof WC_Order || empty( $order ) ) {
         continue;
     }
 
     $order_data = ( $sm_is_woo30 && is_callable( array( $order, 'get_data' ) ) ) ? $order->get_data() : $order;
-    $order_date = ( $sm_is_woo30 && is_callable( array( $order, 'get_date_created' ) ) ) ? $order->get_date_created()->date('Y-m-d H:i:s') : $order->order_date;
+    $date_created = ( is_callable( array( $order, 'get_date_created' ) ) ) ? $order->get_date_created() : null;
+    $order_date = ( ( ! empty( $date_created ) ) && $sm_is_woo30 && is_callable( array( $date_created, 'date' ) ) ) ? $date_created->date('Y-m-d H:i:s') : ( ( ! empty( $order->order_date ) ) ? $order->order_date : '' );
     $billing_email = ( $sm_is_woo30 ) ? $order_data['billing']['email'] : $order->billing_email;
     $billing_phone = ( $sm_is_woo30 ) ? $order_data['billing']['phone'] : $order->billing_phone;
     $customer_note = ( $sm_is_woo30 ) ? $order_data['customer_note'] : $order->customer_note;

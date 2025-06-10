@@ -19,7 +19,7 @@ jQuery(document).on('smart_manager_post_load_grid','#sm_editor_grid', function()
 				if(key != ''){
 					let valObj = attr.hasOwnProperty('value') ? attr.value : {}
 					attributesActions[key] = (valObj.hasOwnProperty('lbl')) ? valObj.lbl : ''
-				
+
 					let values = valObj.hasOwnProperty('val') ? valObj.val : {}
 
 					if(Object.keys(values).length > 0){
@@ -61,7 +61,7 @@ jQuery(document).on('smart_manager_post_load_grid','#sm_editor_grid', function()
 		// 			if(categories[i].key == parent){
 		// 				parentExists = true;
 		// 				break;
-		// 			} 
+		// 			}
 		// 		}
 
 		// 		if( parent > 0 && parentExists ) {
@@ -71,7 +71,7 @@ jQuery(document).on('smart_manager_post_load_grid','#sm_editor_grid', function()
 		// 			childCategories[parent].push({'key': cat.key, 'value': title});
 		// 		}
 		// 	});
-			
+
 		// 	//Code for parent categories
 		// 	if( Object.keys(parentCategories).length > 0 ) {
 		// 		window.smart_manager.column_names_batch_update['custom/product_cat_parent'] = JSON.parse( JSON.stringify( attrObj ) );
@@ -80,8 +80,8 @@ jQuery(document).on('smart_manager_post_load_grid','#sm_editor_grid', function()
 		// 		window.smart_manager.column_names_batch_update['custom/product_cat_parent']['type'] = 'multilist';
 		// 		window.smart_manager.column_names_batch_update['custom/product_cat_parent']['values'] = parentCategories;
 		// 	}
-			
-		// 	//Code for child categories 
+
+		// 	//Code for child categories
 		// 	if( Object.keys(childCategories).length > 0 ) {
 
 		// 		Object.entries(childCategories).forEach(([key, obj]) => {
@@ -99,19 +99,26 @@ jQuery(document).on('smart_manager_post_load_grid','#sm_editor_grid', function()
 		// 	}
 		// 	delete window.smart_manager.column_names_batch_update['terms/product_cat'];
 
-		// }	
+		// }
 	}
 })
 
 //Code to handle after change of batch update field
 .on('smart_manager_post_format_columns','#sm_editor_grid', function() {
-	
+
 	if(window.smart_manager.column_names_batch_update['postmeta/meta_key=_regular_price/meta_value=_regular_price']){
-		window.smart_manager.column_names_batch_update['postmeta/meta_key=_regular_price/meta_value=_regular_price']['custom_actions'] = {set_to_sale_price: _x('set to sale price', 'bulk edit option for WooCommerce product price', 'smart-manager-for-wp-e-commerce')}
+		window.smart_manager.column_names_batch_update['postmeta/meta_key=_regular_price/meta_value=_regular_price']['custom_actions'] = {set_to_sale_price: _x('set to sale price', 'bulk edit option for WooCommerce product regular price', 'smart-manager-for-wp-e-commerce')}
 	}
 
 	if(window.smart_manager.column_names_batch_update['postmeta/meta_key=_sale_price/meta_value=_sale_price']){
-		window.smart_manager.column_names_batch_update['postmeta/meta_key=_sale_price/meta_value=_sale_price']['custom_actions'] = {set_to_regular_price: _x('set to regular price', 'bulk edit option for WooCommerce product price', 'smart-manager-for-wp-e-commerce')}
+		window.smart_manager.column_names_batch_update['postmeta/meta_key=_sale_price/meta_value=_sale_price']['custom_actions'] = {set_to_regular_price: _x('set to regular price', 'bulk edit option for WooCommerce product sale price', 'smart-manager-for-wp-e-commerce'), set_to_regular_price_and_decrease_by_per: {
+			label: _x('set to regular price and decrease by %', 'bulk edit option for WooCommerce product sale price', 'smart-manager-for-wp-e-commerce'),
+			hide_value: false
+		},
+		set_to_regular_price_and_decrease_by_num: {
+			label: _x('set to regular price and decrease by number', 'bulk edit option for WooCommerce product sale price', 'smart-manager-for-wp-e-commerce'),
+			hide_value: false
+		}}
 	}
 })
 
@@ -213,23 +220,7 @@ jQuery(document).on('smart_manager_post_load_grid','#sm_editor_grid', function()
     		jQuery("<td id='batch_update_value_td_2' style='white-space: pre;'><input type='text' class='batch_update_value_2' placeholder='"+_x('Enter values...', 'placeholder', 'smart-manager-for-wp-e-commerce')+"' title='"+_x('For more than one values, use pipe (|) as delimiter', 'tooltip', 'smart-manager-for-wp-e-commerce')+"' class='FormElement ui-widget-content'></td>").insertAfter("#"+rowId+" #batch_update_value_td");
     		jQuery("#batchmod_sm_editor_grid").css('width','760px');
     	}
-    	
+
     }
 
 })
-
-//Code to make changes to batch_update_actons on batch update form submit for custom attribute handling
-.off('sm_batch_update_on_submit').on('sm_batch_update_on_submit',function(){
-
-	let index = 0;
-
-	jQuery('tr[id^=batch_update_action_row_]').each(function() {
-		let value2 = jQuery(this).find('.batch_update_value_2').val();
-
-		if( typeof (value2) != 'undefined' ) {
-			window.smart_manager.batch_update_actions[index].value2 = value2; 
-		}
-
-		index++;
-	});
-});

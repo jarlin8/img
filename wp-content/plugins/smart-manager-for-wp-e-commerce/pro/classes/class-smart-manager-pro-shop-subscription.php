@@ -81,7 +81,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 			add_filter( 'sm_default_process_delete_records', function() { return false; } );
 			add_filter( 'sm_default_process_delete_records_result', array( 'Smart_Manager_Shop_Order', 'order_trash' ), 12, 2 );
 			add_action( 'sm_inline_update_post', array( &$this, 'subscriptions_inline_update' ), 10, 2 );
-
 		}
 
 		public static function actions() {
@@ -99,6 +98,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 			add_filter( 'sm_post_batch_update_db_updates', __CLASS__ . '::post_batch_update_db_updates', 10, 2 );
 			add_filter( 'sm_pro_default_process_delete_records', function() { return false; } );
 			add_filter( 'sm_pro_default_process_delete_records_result', 'Smart_Manager_Shop_Order::process_delete', 12, 3 );
+			// Hoooks for updating line items.
+			add_filter( 'sm_beta_post_batch_process_args', array( 'Smart_Manager_Pro_Shop_Order', 'set_line_items_batch_update_args' ), 10, 1 );
+			add_action( 'sm_pro_pre_process_batch_db_updates', array( 'Smart_Manager_Pro_Shop_Order', 'process_line_items_batch_update' ) );
+			add_action( 'sm_pro_pre_process_batch_update_args', array( 'Smart_Manager_Pro_Shop_Order', 'pre_process_batch_update_args' ) );
 		}
 
 		public function __call( $function_name, $arguments = array() ) {

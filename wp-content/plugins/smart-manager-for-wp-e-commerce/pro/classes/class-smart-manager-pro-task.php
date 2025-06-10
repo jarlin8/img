@@ -105,7 +105,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Task' ) ) {
 			$is_entire_store = ( ! empty( $get_selected_ids_and_entire_store_flag['entire_store'] ) ) ? $get_selected_ids_and_entire_store_flag['entire_store'] : false;
 			Smart_Manager_Pro_Base::send_to_background_process(
 				array(
-					'process_name' => 'Undo Tasks',
+					'process_name' => _x( 'Undo Tasks', 'process name', 'smart-manager-for-wp-e-commerce' ),
+					'process_key' => 'undo_tasks',
 					'callback'     => array(
 						'class_path' => $this->req_params['class_path'],
 						'func'       => array(
@@ -134,43 +135,79 @@ if ( ! class_exists( 'Smart_Manager_Pro_Task' ) ) {
 		 * @return void
 		 */
 		public static function process_undo( $args = array() ) {
-			if ( empty( $args )|| empty( $args['id'] ) ) {
+			if ( empty( $args )|| empty( $args['selected_ids'] ) ) {
 				return;
 			}
 			$col_data_type = parent::get_column_data_type( $args['dashboard_key'] );
 			$dashboard_key = $args['dashboard_key'];
-			$args = self::get_task_details(
+			$task_details = self::get_task_details(
 				array(
-					'task_details_ids' => ( ! is_array( $args['id'] ) ) ? array( $args['id'] ) : $args['id'],
+					'task_details_ids' => ( ! is_array( $args['selected_ids'] ) ) ? array( $args['selected_ids'] ) : $args['selected_ids'],
 					'fetch'            => 'all',
 				)
 			);
-			$args['date_type'] = ( ! empty( $col_data_type[ $args['type'] ] ) ) ? $col_data_type[ $args['type'] ] : 'text';
-			$args['dashboard_key'] = $dashboard_key;
-			$arg_values = ( ! empty( $args['value'] ) ) ? explode( ',', $args['value'] ) : '';
-			$args = apply_filters( 'sm_process_undo_args_before_update', $args );
-			if ( is_callable( array( 'Smart_Manager', 'log' ) ) ) {
-				Smart_Manager::log( 'info', _x( 'Undo process args ', 'undo process args', 'smart-manager-for-wp-e-commerce' ) . print_r( $args, true ) );
+			$task_details_data = self::prepare_task_details_data( 
+				array( 
+					'col_data_type' => $col_data_type,
+					'dashboard_key' => $dashboard_key,
+					'task_details'  => $task_details
+				)
+			);
+			if( empty( $task_details_data ) ) return;
+			$args['task_details_data'] = $task_details_data;
+			parent::process_batch_update( $args );
+		}
+
+		/**
+		 * Prepares task details data for batch updates based on column data type and dashboard key.
+		 *
+		 * @param array $params Parameters for processing task details, including:
+		 *
+		 * @return array Processed task details data for batch updating.
+		*/
+		public static function prepare_task_details_data( $params = array() ) {
+			if ( empty( $params['dashboard_key'] ) || empty( $params['task_details'] ) ) {
+				return array();
 			}
-			if ( 'set_to' === $args['operator'] && 'sm.multilist' === $args['date_type'] && ( ! empty( $arg_values ) && ( count( $arg_values ) > 0 ) ) && ( ! empty( $args['updated_value'] ) ) ) {
-				$arg_updated_values = explode( ',', $args['updated_value'] );
-				foreach ( $arg_updated_values as $arg_updated_value ) {
-					$args['value'] = $arg_updated_value;
-					$args['operator'] = 'remove_from';
-					if ( ! empty( $args ) ) {
-						parent::process_batch_update( $args );
-					}
+			$col_data_type   = $params['col_data_type'];
+			$task_details_data = array();
+			foreach ($params['task_details'] as $task_detail ) {
+				$task_detail['date_type'] = ( ! empty( $col_data_type[ $task_detail['type'] ] ) ) ? $col_data_type[ $task_detail['type'] ] : 'text';
+				$task_detail['dashboard_key'] = $params['dashboard_key'];
+				$prev_values = ( ! empty( $task_detail['value'] ) ) ? explode( ',', $task_detail['value'] ) : '';
+				$task_detail = apply_filters( 'sm_process_undo_args_before_update', $task_detail );
+				if ( is_callable( array( 'Smart_Manager', 'log' ) ) ) {
+					Smart_Manager::log( 'info', _x( 'Undo process args ', 'undo process args', 'smart-manager-for-wp-e-commerce' ) . print_r( $task_detail, true ) );
 				}
-				foreach ( $arg_values as $value ) {
-					$args['value'] = $value;
-					$args['operator'] = 'add_to';
-					if ( ! empty( $args ) ) {
-						parent::process_batch_update( $args );
+				if ( 'set_to' === $task_detail['operator'] && 'sm.multilist' === $task_detail['date_type'] && ( ! empty( $prev_values ) && ( count( $prev_values ) > 0 ) ) && ( ! empty( $task_detail['updated_value'] ) ) ) {
+					$updated_values = explode( ',', $task_detail['updated_value'] );
+					// Set 'remove_from' operator for updated values.
+					foreach ( $updated_values as $updated_value ) {
+						if ( ( false !== strpos( $task_detail['type'], 'terms' ) ) && ( in_array( $updated_value, $prev_values ) ) ) {
+							continue;
+						}
+						$task_detail['value'] = $updated_value;
+						$task_detail['operator'] = 'remove_from';
+						if ( ! empty( $task_detail ) ) {
+							$task_details_data[] = $task_detail;
+						}
 					}
+					// Set 'add_to' operator for original values.
+					foreach ( $prev_values as $value ) {
+						if ( ( false !== strpos( $task_detail['type'], 'terms' ) ) && ( ! in_array( $value, $prev_values ) ) ) {
+							continue;
+						}
+						$task_detail['value'] = $value;
+						$task_detail['operator'] = 'add_to';
+						if ( ! empty( $task_detail ) ) {
+							$task_details_data[] = $task_detail;
+						}
+					}
+				} elseif ( ! empty( $task_detail ) ) {
+					$task_details_data[] = $task_detail;
 				}
-			} elseif ( ! empty( $args ) ) {
-				$args = parent::process_batch_update( $args );
 			}
+			return $task_details_data;
 		}
 
 		/**
@@ -224,7 +261,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Task' ) ) {
 			$is_entire_store = ( ! empty( $get_selected_ids_and_entire_store_flag['entire_store'] ) ) ? $get_selected_ids_and_entire_store_flag['entire_store'] : false;
 			Smart_Manager_Pro_Base::send_to_background_process(
 				array(
-					'process_name' => 'Delete Tasks',
+					'process_name' => _x( 'Delete Tasks', 'process name', 'smart-manager-for-wp-e-commerce' ),
+					'process_key' => 'delete_tasks',
 					'callback' => array(
 						'class_path' => $this->req_params['class_path'],
 						'func' => array(
@@ -252,10 +290,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_Task' ) ) {
 		 * @return boolean
 		 */
 		public static function process_delete( $args = array() ) {
-			if ( empty( $args ) && empty( $args['id'] ) ) {
+			if ( empty( $args ) && empty( $args['selected_ids'] ) ) {
 				return false;
 			}
-			return ( self::delete_task_details( ( ! is_array( $args['id'] ) ? array( $args['id'] ) : $args['id'] ) ) ) ? true : false;
+			return ( self::delete_task_details( ( ! is_array( $args['selected_ids'] ) ? array( $args['selected_ids'] ) : $args['selected_ids'] ) ) ) ? true : false;
 		}
 
 		/**
@@ -457,14 +495,17 @@ if ( ! class_exists( 'Smart_Manager_Pro_Task' ) ) {
 					return $wpdb->get_results(
 						"SELECT task_id AS task_id, id AS task_details_id
 						FROM {$wpdb->prefix}sm_task_details
-						WHERE task_id IN (" . implode( ',', $task_ids ) . ')',
+						WHERE task_id IN (" . implode( ',', $task_ids ) . ")
+						ORDER BY task_details_id DESC",
 						'ARRAY_A'
 					);
 				case ( ( ! empty( $task_details_ids ) ) && ( ! empty( $fetch ) ) && ( 'all' === $fetch ) ):
-					return $wpdb->get_row(
+					//fetch task details data.
+					return $wpdb->get_results(
 						"SELECT id AS task_details_id, record_id AS id, field AS type, prev_val AS value, action AS operator, updated_val AS updated_value
 						FROM {$wpdb->prefix}sm_task_details
-						WHERE id IN (" . implode( ',', $task_details_ids ) . ')',
+						WHERE id IN (" . implode( ',', $task_details_ids ) . ")
+						ORDER BY task_details_id DESC",
 						'ARRAY_A'
 					);
 				case ( ( ! empty( $task_ids ) ) && ( ! empty( $fetch ) ) && ( 'count' === $fetch ) ):

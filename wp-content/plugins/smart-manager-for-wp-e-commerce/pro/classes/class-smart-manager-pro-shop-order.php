@@ -10,10 +10,32 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 				$custom_product_search_key_prefix = 'sm_custom_product_',
 				$custom_product_search_cols = array();
 		public static $custom_search_cols = array();
-		public static $advanced_search_option_name = 'sa_sm_search_order_product_ids';
+		public static $advanced_search_option_name = 'sa_sm_search_order_product_ids',
+			$hpos_tables_default_visible_cols = array( 
+				'wc_orders_id', 'wc_orders_date_created_gmt', 'wc_order_addresses_billing_first_name', 'wc_order_addresses_billing_last_name', 'wc_orders_billing_email', 'wc_orders_status', 'wc_orders_total_amount', 'custom_details', 'wc_orders_payment_method_title', 'shipping_method', 'coupons_used', 'custom_line_items' 
+			),
+			$non_hpos_tables_default_visible_cols = array(
+				'ID', 'post_date', '_billing_first_name', '_billing_last_name', '_billing_email', 'post_status', '_order_total', 'custom_details', '_payment_method_title', 'shipping_method', 'coupons_used', 'custom_line_items'
+			);
 		public $shop_order = '';
 
 		protected static $_instance = null;
+
+		/**
+		 * Stores batch update actions for line items grouped by order ID.
+		 * Format:
+		 * [
+		 *   order_id => [
+		 *     'add_product'    => [ product_ids... ],
+		 *     'remove_product' => [ product_ids... ],
+		 *     'copy_product_from' => [ from_order_id ],
+		 *     ...
+		 *   ]
+		 * ]
+		 *
+		 * @var array
+		 */
+		public static $line_items_update_data = array();
 
 		public static function instance($dashboard_key) {
 			if ( is_null( self::$_instance ) ) {
@@ -58,6 +80,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 			if ( ! empty( Smart_Manager::$sm_is_woo79 ) ) {
 				add_filter( 'sm_beta_background_entire_store_ids_query', array( $this,'get_entire_store_ids_query' ), 12, 1 );
 			}
+			add_filter( 'sm_modified_advanced_search_operators', array( &$this, 'modified_advanced_search_operators' ), 12, 1 );
+			add_filter( 'sm_col_model_for_export', __CLASS__. '::orders_col_model_for_export', 12, 2 );
 		}
 
 		public static function actions() {
@@ -67,6 +91,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 			add_filter( 'sm_post_batch_update_db_updates', __CLASS__. '::post_batch_update_db_updates', 10, 2 );
 			add_filter( 'sm_pro_default_process_delete_records', function() { return false; } );
 			add_filter( 'sm_pro_default_process_delete_records_result', 'Smart_Manager_Shop_Order::process_delete', 12, 3 );
+			// Hoooks for updating line items.
+			add_filter( 'sm_beta_post_batch_process_args', array( __CLASS__, 'set_line_items_batch_update_args' ), 10, 1 );
+			add_action( 'sm_pro_pre_process_batch_db_updates', array( __CLASS__, 'process_line_items_batch_update' ) );
+			add_action( 'sm_pro_pre_process_batch_update_args', array( __CLASS__, 'pre_process_batch_update_args' ) );
 		}
 
 		public function __call( $function_name, $arguments = array() ) {
@@ -221,7 +249,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 		 */
 		public function order_itemmeta_search_query( $query = array(), $params = array() ){
 			$search_string = ( ! empty( $params['search_string'] ) ) ? $params['search_string'] : array();
-
+			$actual_selected_operator = $params['selected_search_operator'];
+			$actual_search_value = $params['search_value'];
 			if( empty( $search_string ) || ( ! empty( $search_string ) && empty( $search_string['table_name'] ) ) ){
 				return $query;
 			}
@@ -235,7 +264,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 
 			global $wpdb;
 
-			$search_meta = explode( "/", $this->custom_product_search_cols[substr( $col, strlen( $this->custom_product_search_key_prefix ) )] );
+			$search_meta = ( ! empty( $this->custom_product_search_cols[ substr( $col, strlen( $this->custom_product_search_key_prefix ) ) ] ) ) ? explode( "/", $this->custom_product_search_cols[ substr( $col, strlen( $this->custom_product_search_key_prefix ) ) ] ) : array();
+			if( empty( $search_meta ) ){
+				return $query;
+			}
 			$search_table = ( ! empty( $search_meta[0] ) ) ? $search_meta[0] : '';
 			$search_col = ( ! empty( $search_meta[1] ) ) ? $search_meta[1] : '';
 
@@ -256,7 +288,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 				'table_name' => $wpdb->prefix. '' .$search_table,
 				'col_name' => $search_col
 			);
-
+			$selected_search_operator = ( ! empty( $rule['operator'] ) ) ? $rule['operator'] : '';
+			$search_operator = ( ! empty( $this->advanced_search_operators[$selected_search_operator] ) ) ? $this->advanced_search_operators[$selected_search_operator] : $selected_search_operator;
 			$params = array(
 				'table_nm'	=> $search_table,
 				'search_query' => array(
@@ -268,16 +301,24 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 				'search_params' => array(
 					'search_string' => $rule,
 					'search_col' => $search_col,
-					'search_operator' => $search_op,
+					'search_operator' => $search_operator,
 					'search_data_type' => 'text',
-					'search_value' => $search_val,
-					'selected_search_operator' => ( ! empty( $params['selected_search_operator'] ) ) ? $params['selected_search_operator'] : '',
-					'SM_IS_WOO30' => ( !empty( $params['SM_IS_WOO30'] ) ) ? $params['SM_IS_WOO30'] : '',
+					'search_value' => ( ( ( 'not like' === $search_operator ) || ( 'like' === $search_operator ) ) ? "%".$search_val."%" : $search_val ),
+					'selected_search_operator' => $selected_search_operator,
+					'SM_IS_WOO30' => ( ! empty( $params['SM_IS_WOO30'] ) ) ? $params['SM_IS_WOO30'] : '',
 					'post_type' => array( 'product', 'product_variation')
 				),
-				'rule'			=> $rule
+				'rule'			=> $rule,
+				'skip_placeholders' =>true
 			);
-
+			if ( in_array( $actual_selected_operator, array( 'anyOf', 'notAnyOf' ) ) ) {
+				$params['search_params']['selected_search_operator'] = $actual_selected_operator;
+				$params['search_params']['search_value'] = $actual_search_value;
+				$params['search_params']['table_nm'] = $search_table;
+				$params['search_params']['is_meta_table'] = ( 'postmeta' === $search_table ) ? true : false;
+				$params['search_params']['skip_placeholders'] = true;
+				$meta_query = $this->modify_search_cond( $query['cond_woocommerce_order_itemmeta'], $params['search_params'] );
+			}
 			// code for postmeta cols
 			if( 'postmeta' === $search_table ){
 				$meta_query = $this->create_meta_table_search_query( $params );
@@ -289,8 +330,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 					return $query;
 				}
 				//Query to get the post_id of the products whose meta value matches with the one type in the search text box of the Orders Module
-				$p_ids  = $wpdb->get_col( "SELECT DISTINCT(post_id) FROM {$wpdb->prefix}postmeta
-														WHERE 1=1 AND ". $cond ); //not using wpdb->prepare as its failing if the `cond` is having `%s`
+				$p_ids  = $wpdb->get_col( "SELECT DISTINCT(post_id) FROM {$wpdb->prefix}postmeta WHERE 1=1 AND ". $cond ); //not using wpdb->prepare as its failing if the `cond` is having `%s`
 			} else if( 'posts' === $search_table ){
 				$meta_query = $this->create_flat_table_search_query( $params );
 				if( empty( $meta_query ) || ( ! empty( $meta_query ) && empty( $meta_query['cond_posts'] ) ) ){
@@ -301,18 +341,16 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 					return $query;
 				}
 				//Query to get the post_id of the products whose meta value matches with the one type in the search text box of the Orders Module
-				$p_ids  = $wpdb->get_col( "SELECT DISTINCT(ID) FROM {$wpdb->prefix}posts
-														WHERE 1=1 AND ". $cond ); //not using wpdb->prepare as its failing if the `cond` is having `%s`
+				$p_ids  = $wpdb->get_col( "SELECT DISTINCT(ID) FROM {$wpdb->prefix}posts WHERE 1=1 AND ". $cond ); //not using wpdb->prepare as its failing if the `cond` is having `%s`, passing value in palce of the placeholders(%s).
 			}
-
 
 			if( is_wp_error( $p_ids ) || empty( $p_ids ) ) {
 				return $query;
 			}
-			$ometa_cond = $searched_col_table_nm .".meta_value ". $searched_col_op ." in (". implode( ",", $p_ids ) .")";
+			$ometa_cond = $searched_col_table_nm .".meta_value in (". implode( ",", $p_ids ) .")";
 			if( count( $p_ids ) > 100 && !empty( self::$advanced_search_option_name ) ){
 				update_option( self::$advanced_search_option_name, implode( ",", $p_ids ), 'no' );
-				$ometa_cond = $searched_col_op ." FIND_IN_SET( ". $searched_col_table_nm .".meta_value, (SELECT option_value FROM ". $wpdb->prefix ."options WHERE option_name = '". self::$advanced_search_option_name ."') )";
+				$ometa_cond = " FIND_IN_SET( ". $searched_col_table_nm .".meta_value, (SELECT option_value FROM ". $wpdb->prefix ."options WHERE option_name = '". self::$advanced_search_option_name ."') )";
 			}
 
 			$query['cond_woocommerce_order_itemmeta'] = "( ( ". $searched_col_table_nm .".meta_key = '_product_id' AND ". $ometa_cond ." )
@@ -649,6 +687,478 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 			} else {
 				return $data;
 			}
+		}
+
+		/**
+		 * Modifies the advanced search operators.
+		 *
+		 * @param array $advanced_search_operators An array of existing advanced search operators.
+		 * @return array Modified array of advanced search operators.
+		 */
+		public function modified_advanced_search_operators( $advanced_search_operators = array() ) {
+			return ( defined('SMPRO') && ! empty( SMPRO ) ) ? array_merge( $this->advanced_search_operators, $advanced_search_operators ) : $advanced_search_operators;
+		}
+
+		/**
+		 * Filters the column model for scheduled order exports.
+		 *
+		 * This function ensures that only the default visible columns (based on HPOS or non-HPOS tables)
+		 * are included in the export when it is a scheduled export. It hides any columns not part of the
+		 * default visible set by removing them from the model.
+		 *
+		 * @param array $col_model Array of column model data to be filtered.
+		 * @param array $params Parameters related to export.
+		 *
+		 * @return array Filtered column model with only default visible columns for export.
+		 */
+		public static function orders_col_model_for_export( $col_model = array(), $params = array() ) {
+			if ( ( empty( $params ) ) || ( ! is_array( $params ) ) || ( empty( $params['is_scheduled_export'] ) ) || ( 'true' !== $params['is_scheduled_export'] ) || ( empty( $col_model ) ) || ( ! is_array( $col_model ) ) || ! class_exists( 'Smart_Manager' ) ) {
+				return $col_model;
+			}
+			$cols = ( ( ! empty( Smart_Manager::$sm_is_wc_hpos_tables_exists ) ) && ( ! empty( self::$hpos_tables_default_visible_cols ) ) ) ? self::$hpos_tables_default_visible_cols : ( ( empty( Smart_Manager::$sm_is_wc_hpos_tables_exists ) ) && ( ! empty( self::$non_hpos_tables_default_visible_cols ) ) ? self::$non_hpos_tables_default_visible_cols : array() );
+			if ( empty( $cols ) || ! is_array( $cols ) ) {
+				return $col_model;
+			}
+			foreach ( $col_model as $key => &$column ) {
+				if ( ( empty( $column ) ) || ( ! is_array( $column ) ) || ( empty( $column['data'] ) ) ) {
+					continue;
+				}
+				if ( ( true === in_array( $column['data'], $cols, true ) ) || ( ! empty( $column['col_name'] ) && true === in_array( $column['col_name'], $cols, true ) ) ) {
+					$column['hidden'] = false;
+					continue;
+				}
+				unset( $col_model[ $key ] );
+			}
+			return $col_model;
+		}
+
+		/**
+		 * Set batch update data for line items by order ID and operation.
+		 * Handles actions like add/remove/copy product or coupon.
+		 *
+		 * @param array $args array of data to be updated. 
+		 * @return array
+		 */
+		public static function set_line_items_batch_update_args( $args = array() ) {
+			if ( ( empty( $args ) ) || ( ! is_array( $args ) ) ) {
+				return array();
+			}
+			if ( ( empty( $args['col_nm'] ) ) || ( 'line_items' !== $args['col_nm'] ) || ( empty( $args['value'] ) ) || ( empty( $args['table_nm'] ) ) || ( 'custom' !== $args['table_nm'] ) || ( ! in_array( $args['operator'], array( 'add_product', 'remove_product', 'copy_product_from', 'add_coupon', 'remove_coupon', 'copy_coupon_from', 'copy_from' ), true ) ) ) {
+				return $args;
+			}
+			if ( empty( self::$line_items_update_data[ $args['id'] ] ) ) {
+				self::$line_items_update_data[ $args['id'] ] = array();
+			}
+			if ( empty( self::$line_items_update_data[ $args['id'] ][ $args['operator'] ] ) ) {
+				self::$line_items_update_data[ $args['id'] ][ $args['operator'] ] = array();
+			}
+			self::$line_items_update_data[ $args['id'] ][ $args['operator'] ][] = absint( $args['value'] );
+			return array();
+		}
+
+		/**
+		 * Processes batch updates on order line items.
+		 * 
+		 * @return void
+		 */
+		public static function process_line_items_batch_update() {
+			if ( ( empty( self::$line_items_update_data ) ) || ( ! is_array( self::$line_items_update_data ) ) ) {
+				return;
+			}
+			$product_objs = array();
+			$cached_coupon_codes = array();
+			$order_line_items_to_remove = self::get_line_item_ids_by_order_ids( array_keys(
+				array_filter(
+					self::$line_items_update_data,
+					function ( $actions ) {
+						return ( ( ! empty( $actions ) ) && is_array( $actions ) && array_key_exists( 'remove_product', $actions ) && ! empty( $actions['remove_product'] ) ); //get order ids for all the orders that have remove_product action, in case of bulk edit it all ids in array will have remove_product action.
+					}
+				)
+			));
+			$copy_products_source_order = null;
+			$copy_all_line_items_source_order = null;
+			$copy_coupons_source_order = null;
+			$source_order_coupons = array();
+			foreach ( self::$line_items_update_data as $order_id => $args ) {
+				$order_id = absint( $order_id );
+				if ( ( empty( $args ) ) || ( ! is_array( $args ) ) || ( empty( $order_id ) ) ) {
+					continue;
+				}
+				//Add/Remove line items.
+				foreach ( array( 'add_product', 'remove_product' ) as $key ) {
+					if ( ( empty( $args[ $key ] ) ) || ( ! is_array( $args[ $key ] ) ) ) {
+						continue;
+					}
+					$order = wc_get_order( $order_id );
+					if ( empty( $order ) || ( ! is_callable( array( $order, 'is_editable' ) ) ) || ( empty( $order->is_editable() ) ) ) {
+						continue;
+					}
+					switch ($key) {
+						//Add line items.
+						case 'add_product':
+							$order_note = array();
+							foreach ( $args['add_product'] as $product_id ) {
+								$product_id = absint( $product_id );
+								if ( ( empty( $product_id ) ) || ( ! is_array( $product_objs ) ) ) {
+									continue;
+								}
+								//store product object for future referance.
+								if ( ( empty( $product_objs[ $product_id ] ) ) ) {
+									$product_objs[ $product_id ] = wc_get_product( absint( $product_id ) );
+								}
+								if( ( empty( $product_objs ) ) || ( ! is_array( $product_objs ) ) || empty( $product_objs[ $product_id ] ) ){
+									continue;
+								}
+								// Add product to the new order.
+								$new_item_data = self::add_product_line_item_to_order( $product_objs[ $product_id ], 1, $order );
+								if ( ( empty( $new_item_data ) ) || ( empty( $new_item_data['item_id'] ) ) ) {
+									continue;
+								}
+								if ( ! empty( $new_item_data['order_note'] ) ) {
+									$order_note[] = $new_item_data['order_note'];
+								}
+							}
+							if ( ! empty( $order_note ) ) { 
+								self::save_order( $order, sprintf(
+									/* translators: %s: list of item names */
+									_x( 'Added line items: %s by Smart Manager', 'order note', 'smart-manager-for-wp-e-commerce' ),
+									implode( ', ', $order_note )
+									)
+								);
+							}
+							break;
+						//Remove line items.
+						case 'remove_product':
+							if ( ( ! empty( $order_line_items_to_remove ) ) && ( is_array( $order_line_items_to_remove ) ) && ( ! empty( $order_line_items_to_remove[ $order_id ] ) ) && ( is_array( $order_line_items_to_remove[ $order_id ] ) ) ) {
+								foreach ( $order_line_items_to_remove[ $order_id ] as $item_id ) {
+									$item_id = absint( $item_id );
+									if ( empty( $item_id ) || ! is_callable( array( $order, 'get_item' ) ) ) {
+										continue;
+									}
+									$item = $order->get_item( $item_id );
+									//Check if items exists before removing.
+									if ( empty( $item ) || ! is_object( $item ) || ! is_callable( array( $item, 'get_product_id' ) ) || ! is_callable( array( $item, 'get_variation_id' ) ) )  {
+										continue;
+									}
+									if ( ( ! in_array( $item->get_product_id(), $args['remove_product'], true ) ) && ( ! in_array( $item->get_variation_id(), $args['remove_product'], true ) ) ) {
+										continue;
+									}
+									// Before deleting the item, adjust any stock values already reduced.
+									$stock_note = wc_maybe_adjust_line_item_product_stock( $item, 0 );
+									$order->add_order_note( ( ! empty( $stock_note ) && ! is_wp_error( $stock_note ) ) ? sprintf( /* translators: 1: item name, 2: stock adjustment from -> to */ _x( 'Deleted "%1$s" and adjusted stock (%2$s) by Smart Manager', 'order note', 'smart-manager-for-wp-e-commerce' ), $item->get_name(), $stock_note['from'] . '&rarr;' . $stock_note['to'] ) : sprintf( /* translators: %s: item name */ _x( 'Deleted "%s" by Smart Manager', 'order note', 'smart-manager-for-wp-e-commerce' ), $item->get_name() ), false, true );
+
+									wc_delete_order_item( $item_id );
+								}
+								self::save_order( $order );
+							}
+							break;
+						default:
+							break;
+					}
+				}
+				//Copy product line items.
+				if ( ( ! empty( $args['copy_product_from'] ) ) && ( is_array( $args['copy_product_from'] ) ) ) {
+					$copy_products_source_order = ( empty( $copy_products_source_order ) || ! is_object( $copy_products_source_order ) ) ? wc_get_order( absint( $args['copy_product_from'][0] ) ) : $copy_products_source_order;
+					if ( ( ! empty( $copy_products_source_order ) ) && ( is_a( $copy_products_source_order, 'WC_Order' ) ) ) {
+						self::copy_order_line_items( $copy_products_source_order, wc_get_order( $order_id ), array( 'line_item' ) );
+					}
+				}
+				//Copy all line items.
+				if ( ( ! empty( $args['copy_from'] ) ) && ( is_array( $args['copy_from'] ) ) ) {
+					$copy_all_line_items_source_order = ( empty( $copy_all_line_items_source_order ) || ! is_object( $copy_all_line_items_source_order ) ) ? wc_get_order( absint( $args['copy_from'][0] ) ) : $copy_all_line_items_source_order;
+					if ( ( ! empty( $copy_all_line_items_source_order ) ) && ( is_a( $copy_all_line_items_source_order, 'WC_Order' ) ) ) {
+						self::copy_order_line_items( $copy_all_line_items_source_order, wc_get_order( $order_id ), array( 'line_item', 'shipping', 'fee' ) );
+					}
+				}
+				//Copy coupons.
+				if ( ( ! empty( $args['copy_coupon_from'] ) ) && ( is_array( $args['copy_coupon_from'] ) ) ) {
+					$copy_coupons_source_order = ( empty( $copy_coupons_source_order ) || ! is_object( $copy_coupons_source_order ) ) ? wc_get_order( absint( $args['copy_coupon_from'][0] ) ) : $copy_coupons_source_order;
+					if ( ( ! empty( $copy_coupons_source_order ) ) && ( is_a( $copy_coupons_source_order, 'WC_Order' ) ) ) {
+						//Get coupons form source order.
+						if ( ( empty( $source_order_coupons ) ) && ( is_callable( array( $copy_coupons_source_order, 'get_items' ) ) ) ) {
+							foreach ( $copy_coupons_source_order->get_items( 'coupon' ) as $item_id => $coupon_item ) {
+								$coupon_code = ( is_callable( array( $coupon_item, 'get_code' ) ) ) ? $coupon_item->get_code() : '';
+								if ( empty( $coupon_code ) ) {
+									continue;
+								}
+								$source_order_coupons[] = $coupon_code;
+							}
+						}
+						//Add coupons.
+						if ( ( ! empty( $source_order_coupons ) ) && ( is_array( $source_order_coupons ) ) ) {
+							self::handle_order_coupons( 
+								array(
+									'order'        => wc_get_order( $order_id ),
+									'coupon_codes' => $source_order_coupons,
+									'action'       => 'add',
+								)
+							);
+						}
+					}
+				}
+				// Add or remove coupon.
+				foreach ( array( 'add' => 'add_coupon', 'remove' => 'remove_coupon' ) as $action => $key ) {
+					if ( ( empty( $args[ $key ] ) ) || ( ! is_array( $args[ $key ] ) ) ) {
+						continue;
+					}
+					$coupons_fetched = self::get_coupon_codes_by_ids( array_diff( $args[ $key ], array_keys( $cached_coupon_codes ) ) );
+					$cached_coupon_codes += ( ( ! empty( $coupons_fetched ) ) && ( is_array( $coupons_fetched ) ) ) ? $coupons_fetched : array();
+					self::handle_order_coupons( 
+						array(
+							'order'        => wc_get_order( $order_id ),
+							'coupon_codes' => array_values( array_intersect_key( $cached_coupon_codes, array_flip( $args[ $key ] ) ) ),
+							'action'       => $action,
+						)
+					);
+				}
+			}
+			self::$line_items_update_data = array(); //Reset variable when updates are done.
+		}
+
+		/**
+		 * Applies or removes coupons from an order using coupon IDs or codes.
+		 *
+		 * @param array $args {
+		 *     @type WC_Order order        Required. Order object.
+		 *     @type array    coupon_ids   Optional. Array of coupon post IDs.
+		 *     @type array    coupon_codes Optional. Array of coupon code strings.
+		 *     @type string   action       Required. 'add' or 'remove'.
+		 * }
+		 * 
+		 * @return void
+		 */
+		public static function handle_order_coupons( $args = array() ) {
+			if ( ( empty( $args ) ) || ( ! is_array( $args ) ) || ( empty( $args['order'] ) ) || ( ! is_a( $args['order'], 'WC_Order' ) ) || ( empty( $args['action'] ) ) || ( ! in_array( $args['action'], array( 'add', 'remove' ), true ) ) || ( empty( $args['coupon_codes'] ) ) || ( ! is_array( $args['coupon_codes'] ) ) || ( ! is_callable( array( $args['order'], 'is_editable' ) ) ) || ( empty( $args['order']->is_editable() ) )) {
+				return;
+			}
+			
+			//Add/Remove coupons.
+			foreach ( $args['coupon_codes'] as $code ) {
+				$code = wc_format_coupon_code( wp_unslash( $code ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+				if ( empty( $code ) ) {
+					continue;
+				}
+				$result = ( 'add' === $args['action'] && is_callable( array( $args['order'], 'apply_coupon' ) ) ) ? $args['order']->apply_coupon( $code ) : ( is_callable( array( $args['order'], 'remove_coupon' ) ) ? $args['order']->remove_coupon( $code ) : false );
+				if ( empty( $result ) ) {
+					continue;
+				}
+				$args['order']->add_order_note(
+					esc_html( sprintf( /* translators: %s: Coupon name */
+						( 'add' === $args['action'] ) ? _x( 'Coupon applied: "%s", by Smart Manager', 'order note', 'smart-manager-for-wp-e-commerce' ) : _x( 'Coupon removed: "%s", by Smart Manager', 'order note', 'smart-manager-for-wp-e-commerce' ),
+						$code
+					) ),
+					false,
+					true
+				);
+			}
+			self::save_order( $args['order'] );
+		}
+
+		/**
+		 * Get line item IDs for specific WC orders using raw query.
+		 *
+		 * @param array $order_ids Array of WC order IDs.
+		 * @return array Array of line item IDs.
+		 */
+		public static function get_line_item_ids_by_order_ids( $order_ids = array() ) {
+			if ( ( empty( $order_ids ) ) || ( ! is_array( $order_ids ) ) ) {
+				return;
+			}
+			$order_ids = array_map( 'absint', $order_ids );
+			global $wpdb;
+			$placeholders = implode( ',', array_fill( 0, count( $order_ids ), '%d' ) );
+
+			$results = $wpdb->get_results( $wpdb->prepare( "SELECT order_id, order_item_id FROM {$wpdb->prefix}woocommerce_order_items WHERE order_id IN ($placeholders) AND order_item_type = %s", ...array_merge( $order_ids, array( 'line_item' ) ) ), ARRAY_A );
+			if( ( empty( $results ) ) || ( is_wp_error( $results ) ) ) {
+				return;
+			}
+			$line_items = array();
+			foreach ( $results as $row ) {
+				if ( ( empty( $row['order_id'] ) ) || ( empty( $row['order_item_id'] ) ) ) {
+					continue;
+				}
+				$line_items[ $row['order_id'] ][] = absint( $row['order_item_id'] );
+			}
+			return $line_items;
+		}
+		
+		/**
+		 * Copy line items from one WooCommerce order to another.
+		 *
+		 * @param WC_Order|null $from_order      Source order object.
+		 * @param WC_Order|null $to_order        Target order object.
+		 * @param array         $line_item_types Line item types to copy (default: line_item).
+		 */
+		public static function copy_order_line_items( $from_order = null, $to_order = null, $line_item_types = array( 'line_item' ) ) {
+			// Validate input orders.
+			if ( ( empty( $from_order ) ) || ( empty( $to_order ) ) || ( ! is_object( $from_order ) ) || ( ! is_object( $to_order ) ) || ( ! is_callable( array( $from_order, 'get_items' ) ) ) || ( ! is_callable( array( $to_order, 'is_editable' ) ) ) || ( empty( $to_order->is_editable() ) ) || ( empty( $line_item_types ) ) || ( ! is_array( $line_item_types ) ) ) {
+				return;
+			}
+
+			$order_note = array();
+
+			foreach ( $line_item_types as $item_type ) {
+				if ( empty( $item_type ) ) {
+					continue;
+				}
+				foreach ( $from_order->get_items( $item_type ) as $item ) {
+					if ( ( empty( $item ) ) || ( ! is_object( $item ) ) ) {
+						continue;
+					}
+					$new_item_data = array();
+					switch ( $item_type ) {
+						//copy products.
+						case 'line_item':
+							if ( ( is_callable( array( $item, 'get_product' ) ) ) && ( is_callable( array( $item, 'get_quantity' ) ) ) ) {
+								$new_item_data = self::add_product_line_item_to_order( $item->get_product(), absint( $item->get_quantity() ), $to_order );
+								if ( ( is_array( $new_item_data ) ) && ! empty( $new_item_data['order_note'] ) ) {
+									$order_note[] = $new_item_data['order_note'];
+								}
+							}
+						break;
+						//Copy shipping.
+						case 'shipping':
+							$shipping = new WC_Order_Item_Shipping();
+							// Set values with ternary + is_callable check
+							( is_callable( array( $item, 'get_method_title' ) ) && is_callable( array( $shipping, 'set_method_title' ) ) ) ? $shipping->set_method_title( $item->get_method_title() ) : '';
+							( is_callable( array( $item, 'get_method_id' ) ) && is_callable( array( $shipping, 'set_method_id' ) ) )       ? $shipping->set_method_id( $item->get_method_id() )       : 0;
+							( is_callable( array( $item, 'get_total' ) ) && is_callable( array( $shipping, 'set_total' ) ) )               ? $shipping->set_total( $item->get_total() )               : 0;
+							( is_callable( array( $item, 'get_taxes' ) ) && is_callable( array( $shipping, 'set_taxes' ) ) )               ? $shipping->set_taxes( $item->get_taxes() )               : 0;
+							$to_order->add_item( $shipping );
+							// Add order note if item_id is valid and method title is available
+							if ( ( is_callable( array( $shipping, 'get_method_title' ) ) ) && ( ! empty( $shipping->get_method_title() ) ) ) {
+								$order_note[] = sprintf(
+									/* translators: %s: shipping method */
+									_x( 'Shipping method: %s', 'order note', 'smart-manager-for-wp-e-commerce' ),
+									$item->get_method_title()
+								);
+							}
+						break;
+						//Copy fee.
+						case 'fee':
+							$fee = new WC_Order_Item_Fee();
+							// Set fee properties using ternary and is_callable checks
+							( is_callable( array( $item, 'get_name' ) ) && is_callable( array( $fee, 'set_name' ) ) )             ? $fee->set_name( $item->get_name() )             : '';
+							( is_callable( array( $item, 'get_total' ) ) && is_callable( array( $fee, 'set_total' ) ) )           ? $fee->set_total( $item->get_total() )           : 0;
+							( is_callable( array( $item, 'get_tax_class' ) ) && is_callable( array( $fee, 'set_tax_class' ) ) )   ? $fee->set_tax_class( $item->get_tax_class() )   : '';
+							( is_callable( array( $item, 'get_tax_status' ) ) && is_callable( array( $fee, 'set_tax_status' ) ) ) ? $fee->set_tax_status( $item->get_tax_status() ) : '';
+							( is_callable( array( $item, 'get_taxes' ) ) && is_callable( array( $fee, 'set_taxes' ) ) )           ? $fee->set_taxes( $item->get_taxes() )           : 0;
+							$to_order->add_item( $fee );
+							if ( ( is_callable( array( $fee, 'get_name' ) ) ) && ( ! empty( $fee->get_name() ) ) ) {
+								$order_note[] = sprintf(
+									/* translators: %s: fee name */
+									_x( 'Fee: %s', 'order note', 'smart-manager-for-wp-e-commerce' ),
+									$item->get_name()
+								);
+							}
+						break;
+						default:
+							break;
+					}
+					// Copy metadata if applicable.
+					if ( ! empty( $new_item_data['item_id'] ) && is_callable( array( $item, 'get_meta_data' ) ) ) {
+						foreach ( $item->get_meta_data() as $meta ) {
+							if ( empty( $meta ) || ! is_object( $meta ) || empty( $meta->key ) || ! isset( $meta->value ) ) {
+								continue;
+							}
+							wc_add_order_item_meta( absint( $new_item_data['item_id'] ), $meta->key, $meta->value );
+						}
+					}
+				}
+			}
+			//Save the order.
+			if ( ! empty( $order_note ) ) {
+				self::save_order(
+					$to_order,
+					sprintf(
+						/* translators: %1$s: list of item names %2$d: from order id */
+						_x( 'Copied items: %s from order #%d, by Smart Manager', 'order note', 'smart-manager-for-wp-e-commerce' ),
+						implode( ', ', $order_note ), absint( $from_order->get_id() )
+					)
+				);
+			}
+		}
+
+		/**
+		 * Add a product line item to the given WooCommerce order.
+		 *
+		 * @param WC_Product|null $product  The WooCommerce product object to add.
+		 * @param int             $quantity The quantity of the product to add.
+		 * @param WC_Order|null   $order    The WooCommerce order object to which the product will be added.
+		 *
+		 * @return array {
+		 *     Associative array of new item data.
+		 *
+		 *     @type int    $item_id    The new order item ID.
+		 *     @type string $order_note A formatted note describing the added item.
+		 * }
+		 */
+		public static function add_product_line_item_to_order( $product = null, $quantity = 0, $order = null ) {
+			$quantity = absint( $quantity );
+			if ( ( empty( $product ) ) || ( empty( $quantity ) ) || ( ! is_object( $product ) ) || ( empty( $order ) ) || ( ! is_object( $order ) ) || ( ! is_callable( array( $order, 'add_product' ) ) ) ) {
+				return;
+			}
+			// Add product to the new order.
+			$new_item_id = absint( $order->add_product( $product, $quantity, array( 'order' => $order ) ) );
+			return ( empty( $new_item_id ) ? false : array(
+				'item_id'    => $new_item_id,
+				'order_note' => sprintf(
+					/* translators: 1: product name, 2: quantity */
+					_x( '%1$s (×%2$d)', 'order note', 'smart-manager-for-wp-e-commerce' ),
+					is_callable( array( $product, 'get_formatted_name' ) ) ? $product->get_formatted_name() : '',
+					$quantity
+				)
+			) );
+		}
+
+		/**
+		 * Save order with order note and recalculate totals.
+		 *
+		 * @param WC_Order|null $order WooCommerce order object.
+		 * @param string $order_note Order note.
+		 *
+		 * @return void
+		 */
+		public static function save_order( $order = null, $order_note = '' ) {
+			if ( ( empty( $order ) ) || ( ! is_object( $order ) ) || ( ! is_callable( array( $order, 'add_order_note' ) ) ) || ( ! is_callable( array( $order, 'calculate_totals' ) ) ) || ( ! is_callable( array( $order, 'save' ) ) ) ) {
+				return;
+			}
+			if ( ! empty( $order_note ) ) {
+				$order->add_order_note( $order_note, false, true );
+			}
+			$order->calculate_totals( true );
+			$order->save();
+		}
+
+		/**
+		 * Get coupon codes by post IDs using raw SQL.
+		 *
+		 * @param array $coupon_ids Array of coupon post IDs.
+		 * @return array|void Array in format [ 'id' => 'code' ], void if validation fails or no results.
+		 */
+		public static function get_coupon_codes_by_ids( $coupon_ids = array() ) {
+			global $wpdb;
+			if ( empty( $coupon_ids ) || ! is_array( $coupon_ids ) ) { 
+				return;
+			}
+			$placeholders = implode( ',', array_fill( 0, count( $coupon_ids ), '%d' ) );
+			$results = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT ID, post_title FROM {$wpdb->posts} WHERE ID IN ($placeholders) AND post_type = %s",
+					...array_merge( array_map( 'absint', $coupon_ids ), array( 'shop_coupon' ) )
+				),
+				OBJECT_K
+			);
+			return ( ( empty( $results ) ) || ( is_wp_error( $results ) ) ) ? false : wp_list_pluck( $results, 'post_title', 'ID' );
+		}
+
+		/**
+		 * Initializes or resets the line items update data before preparing batch update args.
+		 *
+		 * @return void
+		 */
+		public static function pre_process_batch_update_args() {
+			self::$line_items_update_data = array();
 		}
 	}
 }

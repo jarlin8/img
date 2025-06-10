@@ -298,7 +298,7 @@ function sm_update_product_lookup_table( $product_ids ) {
 	$query = "SELECT post_id, meta_key, meta_value
 				FROM {$wpdb->prefix}postmeta 
 				WHERE meta_key IN ( '_sku', '_virtual', '_downloadable', '_regular_price', '_sale_price', '_price', '_manage_stock', '_stock', '_stock_status', '_wc_rating_count', '_wc_average_rating', 'total_sales'
-				". ( ( !empty( Smart_Manager::$sm_is_woo40 ) ) ? ", '_tax_status', '_tax_class'" : '' ) ." ) 
+				". ( ( !empty( Smart_Manager::$sm_is_woo40 ) ) ? ", '_tax_status', '_tax_class'" : '' ) . ( ( !empty( Smart_Manager::$sm_is_woo92 ) ) ? ", '_global_unique_id'" : '' ) ." ) 
 				AND post_id IN (".implode(",", $product_ids).")
 					GROUP BY post_id, meta_key";
 
@@ -339,6 +339,9 @@ function sm_update_product_lookup_table( $product_ids ) {
 		$sm_cache_update[$product_id]['total_sales'] 	= ( empty( $sm_cache_update[$product_id]['total_sales'] ) ) ? ( ( $meta_key == 'total_sales' ) ? $meta_value : 0 ) : $sm_cache_update[$product_id]['total_sales'];
 		$sm_cache_update[$product_id]['tax_status'] 	= ( empty( $sm_cache_update[$product_id]['tax_status'] ) ) ? ( ( $meta_key == '_tax_status' ) ? $meta_value : '' ) : $sm_cache_update[$product_id]['tax_status'];
 		$sm_cache_update[$product_id]['tax_class'] 	= ( empty( $sm_cache_update[$product_id]['tax_class'] ) ) ? ( ( $meta_key == '_tax_class' ) ? $meta_value : '' ) : $sm_cache_update[$product_id]['tax_class'];
+		if ( ! empty( Smart_Manager::$sm_is_woo92 ) ) {
+			$sm_cache_update[ $product_id ][ 'global_unique_id' ] 	= ( empty( $sm_cache_update[ $product_id ][ 'global_unique_id' ] ) ) ? ( ( '_global_unique_id' === $meta_key ) ? $meta_value : '' ) : $sm_cache_update[ $product_id ][ 'global_unique_id' ];
+		}
 		$temp = $sm_cache_update;
 		$temp[$product_id]['sku'] = (string) $temp[$product_id]['sku'];
 		$temp[$product_id]['stock_status'] = (string) $temp[$product_id]['stock_status'];
