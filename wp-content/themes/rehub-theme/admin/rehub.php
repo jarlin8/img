@@ -504,6 +504,24 @@ if ( ! class_exists( 'Rehub_Admin' ) ) {
             .ocdi{max-width: 1050px !important} /*fix for demo import */
 			.ocdi-install-plugins-content-content{display:none !important}
 
+			<?php if(rehub_option('width_layout') =='compact') : ?>
+
+				@media screen and (min-width: 1140px) {
+					body{--wp--style--global--wide-size: 1080px}
+				}
+			<?php elseif(rehub_option('width_layout') =='mini') : ?>
+				@media screen and (min-width: 1140px) {
+					body{--wp--style--global--wide-size: 1000px}
+				}
+			<?php elseif(rehub_option('width_layout') =='extended') : ?>
+				@media (min-width:1400px){ 
+					body{--wp--style--global--wide-size: 1330px}
+				}
+				@media (min-width:1600px){
+					body{--wp--style--global--wide-size: 1530px}
+				}
+			<?php endif;?>
+
 			:root {
 				--rehub-main-color: <?php echo ''.$maincolor; ?>;
 				--rehub-sec-color: <?php echo ''.$secondarycolor; ?>;
@@ -720,5 +738,41 @@ function rh_standard_wp_pages_logo_url() {
     return home_url();
 }
 add_filter( 'login_headerurl', 'rh_standard_wp_pages_logo_url' );
+
+
+// Adding Custom field in 6.7
+add_action('init', 'rh_register_block_meta');
+function rh_register_block_meta() {
+    register_post_meta('wp_block', '_rh_section_type', array(
+        'show_in_rest' => true,
+        'single' => true,
+        'type' => 'string',
+        'default' => '',
+        'auth_callback' => function() {
+            return current_user_can('edit_posts');
+        }
+    ));
+}
+
+add_action('enqueue_block_editor_assets', 'rh_block_sidebar_script');
+function rh_block_sidebar_script() {
+    // Only load on wp_block post type
+    $screen = get_current_screen();
+    if ($screen->post_type !== 'wp_block') {
+        return;
+    }
+
+	wp_enqueue_script(
+	    'rh-block-sidebar',
+	    get_template_directory_uri() . '/admin/screens/js/block-sidebar.js',
+	    array('wp-element', 'wp-components', 'wp-data', 'wp-edit-post', 'wp-plugins', 'wp-i18n'),
+	    '1.0.0',
+	    true
+	);
+
+	wp_set_script_translations('rh-block-sidebar', 'rehub-framework');
+}
+
+
 
 // Omit closing PHP tag to avoid "Headers already sent" issues.

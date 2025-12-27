@@ -104,7 +104,7 @@ if (rehub_option('enable_brand_taxonomy') == 1) {
             }
 
             ?>
-            <a class="img-centered-flex rh-flex-center-align rh-flex-justify-center re_track_btn<?php echo ($outsidelinkpart) ? ' masked_coupon' : '';?>" href="<?php echo '' . $link; ?>" <?php echo '' . $target; ?> <?php echo ''.$outsidelinkpart; ?>>
+            <a class="img-centered-flex rh-flex-center-align rh-flex-justify-center re_track_btn<?php echo ($outsidelinkpart) ? ' masked_coupon' : '';?>" href="<?php echo '' . $link; ?>" title="<?php the_title(); ?>" <?php echo '' . $target; ?> <?php echo ''.$outsidelinkpart; ?>>
                 <?php $discountpercentage = get_post_meta($post->ID, 'rehub_offer_discount', true); ?>
                 <?php if ($discountpercentage) : ?>
                     <span class="height-80 rh-flex-center-align rh-flex-justify-center sale_tag_inwoolist text-center">

@@ -19,7 +19,7 @@
         $maincolor = REHUB_MAIN_COLOR;
     }
 ?>
-<style scoped>
+<style>
     #rh_woo_layout_inimage{background: <?php echo hex2rgba($maincolor, 0.05);?>}
 </style>
 <div class="rh-container alignfulloutside">

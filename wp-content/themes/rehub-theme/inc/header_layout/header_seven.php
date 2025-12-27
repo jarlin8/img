@@ -36,6 +36,9 @@
                                 <?php echo do_shortcode($custom_element);?>
                             </div>
                         <?php endif; ?> 
+                        <div class="celldisplay link-add-cell">
+                            <?php rh_post_code_loop('header-element');?>
+                        </div>
                         <?php if(rehub_option('header_seven_login') == true):?>
                             <?php $icons ++;?>
                             <div class="celldisplay login-btn-cell text-center">

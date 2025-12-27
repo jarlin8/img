@@ -39,7 +39,7 @@ use ContentEgg\application\helpers\CurrencyHelper;
             if (!$currency_rate) $currency_rate = 1;            
         }?>         
         <table class="border-lightgrey clearbox flowhidden mb25 rh-shadow1 rh-tabletext-block whitebg width-100p ce-price-hist">
-            <style scoped>
+            <style>
                 body .ce-price-hist ul li{padding: 0 0 5px 0; margin: 0; list-style: none !important;}
                 body .ce-price-hist ul{margin: 0 0 10px 0}
                 body .ce-price-hist ul.rh-lowest-highest {margin: 20px 0 0 10px}

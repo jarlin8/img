@@ -13,7 +13,7 @@ use Keywordrush\AffiliateEgg\TemplateHelper;
 //$best_price_value = $items[0]['price'];
 //$best_price_currency = $items[0]['currency'];
 ?>
-<?php  wp_enqueue_script('flexslider'); wp_enqueue_script('flexinit');wp_enqueue_style('flexslider'); ?>
+<?php  wp_enqueue_script('rhflexslider'); wp_enqueue_script('flexinit');wp_enqueue_style('flexslider'); ?>
 
 <div class="post_slider media_slider blog_slider egg_cart_slider loading">
     <ul class="slides">        

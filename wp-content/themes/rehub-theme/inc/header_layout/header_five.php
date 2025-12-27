@@ -59,6 +59,9 @@
                             <?php echo do_shortcode($custom_element);?>
                         </div>
                     <?php endif; ?>
+                    <div class="celldisplay link-add-cell">
+                        <?php rh_post_code_loop('header-element');?>
+                    </div>
                     <?php if(rehub_option('header_six_login')) : ?>
                         <?php $icons ++;?>
                         <?php $rtlclass = (is_rtl()) ? 'mr10 ml5' : 'ml10 mr5'; ?>

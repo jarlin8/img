@@ -29,10 +29,10 @@
                         <div class="position-relative mt10" id="rh_woo_layout_inimage">
                             <?php $image_url = get_post_meta($post->ID, '_woo_review_image_bg', true);?>
                             <?php if($image_url):?>
-                                <style scoped>#rh_woo_layout_inimage{background-image: url(<?php echo ''.$image_url;?>);}#rh-model-td-trigger .bluecolor{display:none}#rh-model-td-trigger{margin-top:15px}</style>
+                                <style>#rh_woo_layout_inimage{background-image: url(<?php echo ''.$image_url;?>);}#rh-model-td-trigger .bluecolor{display:none}#rh-model-td-trigger{margin-top:15px}</style>
                                 <span class="rh-post-layout-image-mask"></span>
                             <?php else:?>
-                                <style scoped>#rh_woo_layout_inimage{background: linear-gradient(120deg, rgb(39, 43, 47) 15%, rgb(5, 123, 91) 55%, rgb(5, 123, 91) 100%);}#rh-model-td-trigger{margin-top:15px}#rh-model-td-trigger .bluecolor{display:none}</style>
+                                <style>#rh_woo_layout_inimage{background: linear-gradient(120deg, rgb(39, 43, 47) 15%, rgb(5, 123, 91) 55%, rgb(5, 123, 91) 100%);}#rh-model-td-trigger{margin-top:15px}#rh-model-td-trigger .bluecolor{display:none}</style>
                             <?php endif;?> 
                             <div class="rh-flex-eq-height rh-flex-nowrap mobileblockdisplay pt25 pr25 pl25 pb5 whitecolor position-relative zind2">                             
                                 <div class="woo-image-part position-relative mr15 mb15 rtlml15">

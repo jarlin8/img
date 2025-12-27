@@ -567,14 +567,12 @@ function ajax_action_re_getfullcontent() {
     check_ajax_referer( 'ajaxed-nonce', 'security' );
     $postid = intval($_POST['postid']);
     if ($postid) {
-        $wp_query = new WP_Query(array('p'=>$postid, 'no_found_rows'=>1, 'ignore_sticky_posts'=>1));
+        $wp_query = new WP_Query(array('p'=>$postid, 'no_found_rows'=>1, 'ignore_sticky_posts'=>1, 'post_status'=>'publish'));
         if ( $wp_query->have_posts() ) {
             while ($wp_query->have_posts() ) {
                 $wp_query->the_post();
-                global $post;
-                
                 ?>
-                <article class="post"><?php echo apply_filters('the_content', $post->post_content); ?></article>;
+                <article class="post"><?php the_content(); ?></article>
                 <?php 
                 
             }

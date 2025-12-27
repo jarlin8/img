@@ -5,7 +5,7 @@
 	Description: A Hybrid magazine/shop/review/news Wordpress Theme
 	Author: Sizam
 	Author URI: https://wpsoul.com/
-	Version: 15.1	
+	Version: 15.2
 	Tags: two-columns, fluid-layout, custom-background, threaded-comments, translation-ready, custom-menu
 	License: 
 	License URI:
@@ -103,7 +103,6 @@ nav.top_menu>ul>li.vertical-menu>ul>li>.sub-menu{border-right: none; border-left
 .offsetnav-overlay{right: 270px; left:0;}
 #slide-menu-mobile ul.off-canvas, #slide-menu-mobile ul ul.sub-menu{right: 0; left:auto;transform: translateX(100%);}
 #slide-menu-mobile ul.off-canvas-active, #slide-menu-mobile ul ul.sub-menu.sub-menu-active{transform: translateX(0);}
-.woocommerce-product-gallery figure{float: left;}
 .post-meta-big span.postview_meta {float: right;}
 ul.page-numbers li{float:right;}
 .rtl.woocommerce .rh_woo_star .halfactive{background:linear-gradient(to left, #ff8a00 0%, #ff8a00 50%,  #e0dadf 51%, #e0dadf 100%);background-clip: text;-webkit-background-clip: text;-webkit-text-fill-color: transparent;}

@@ -1,6 +1,6 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly ?>
 <?php get_header(); ?>
-<style scoped>
+<style>
 #cegg-full-header-image{min-height: 260px; position:relative;width:100%;z-index:1; }
 #cegg-full-header {padding: 50px 20px 30px 20px;position: relative;z-index: 2; border-bottom: 1px solid #eee; box-shadow: 0 0 70px #f3f3f3;
 background-color: #ffffff;

@@ -499,7 +499,7 @@ wp_add_inline_script('rehub', $script);
                                     <div class="border-lightgrey clearbox flowhidden mb25 rh-shadow1 rh-tabletext-block rh-tabletext-wooblock whitebg width-100p" id="section-<?php echo esc_attr($key); ?>">
                                         <div class="rh-tabletext-block-heading fontbold border-grey-bottom">
                                             <span class="cursorpointer floatright lineheight15 ml10 toggle-this-table rtlmr10"></span>
-                                            <h4 class="rh-heading-icon"><?php echo esc_attr($tab['title']); ?></h4>
+                                            <h2 class="rh-heading-icon"><?php echo esc_attr($tab['title']); ?></h2>
                                         </div>
                                         <div class="rh-tabletext-block-wrapper padd20">
                                             <?php call_user_func($tab['callback'], $key, $tab); ?>

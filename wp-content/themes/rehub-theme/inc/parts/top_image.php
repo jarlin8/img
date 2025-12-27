@@ -75,7 +75,7 @@
 		<?php endif ?>									  
 	<?php elseif($postformat == 'gallery') : ?>
 		<?php $galleryarray = get_post_meta($post->ID, 'gallery_post', true);?>
-		<?php  wp_enqueue_script('flexslider'); wp_enqueue_script('flexinit');wp_enqueue_style('flexslider'); ?>
+		<?php  wp_enqueue_script('rhflexslider'); wp_enqueue_script('flexinit');wp_enqueue_style('flexslider'); ?>
 		<?php 
 			$gallery_images = ( !empty($galleryarray[0]['gallery_post_images']) ) ? $galleryarray[0]['gallery_post_images'] : ''; 
 			$resizer = ( !empty($galleryarray[0]['gallery_post_images_resize']) ) ? $galleryarray[0]['gallery_post_images_resize'] : ''; 

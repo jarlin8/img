@@ -27,7 +27,7 @@ if ( class_exists( 'WCVendors_Pro' ) ) {
 get_header(); ?>
 
 <div class="wcvendor_store_wrap_bg">
-	<style scoped>#wcvendor_image_bg{<?php echo rh_show_vendor_bg($vendor_id);?>}</style>
+	<style>#wcvendor_image_bg{<?php echo rh_show_vendor_bg($vendor_id);?>}</style>
 	<div id="wcvendor_image_bg">	
 		<div id="wcvendor_profile_wrap">
 			<div class="rh-container">

@@ -44,7 +44,7 @@
         $header_menuline_style = ' dark_style';
     }
     else {
-        $header_menuline_style = ' dark_style';
+        $header_menuline_style = ' white_style';
     }    
 ?>
 <?php $branded_bg_url = rehub_option('rehub_branded_bg_url');?>
@@ -57,7 +57,8 @@
 			<?php echo do_shortcode(rehub_option('rehub_ads_megatop')); ?>
 		</div>
 	</div>
-<?php endif ;?>	               
+<?php endif ;?>	
+<?php rh_post_code_loop('top-area');?>
 <!-- Outer Start -->
 <div class="rh-outer-wrap">
     <div id="top_ankor"></div>
@@ -87,7 +88,11 @@
                 <?php if(is_numeric($header_template) && function_exists('rh_wp_reusable_render')):?>
                 
                     <div class="header_clean_style clearfix pt0 pb0 <?php if (rehub_option('rehub_sticky_nav') ==true){echo 'rh-stickme ';}?>">                      
-                        <?php echo rh_wp_reusable_render(array('id' => $header_template));?>                  
+                        <?php if (function_exists('gspb_template_shortcode_function')): ?>
+                            <?php echo gspb_template_shortcode_function(array('id' => $header_template)); ?>
+                        <?php else: ?>
+                            <?php echo rh_wp_reusable_render(array('id' => $header_template)); ?>
+                        <?php endif; ?>                  
                     </div>
                     
                 <?php else:?>

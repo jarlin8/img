@@ -25,7 +25,7 @@
                             else {
                                 $maincolor = REHUB_MAIN_COLOR;
                             }?>
-                        <style scoped>
+                        <style>
                             #rh_woo_layout_inimage{background: <?php echo hex2rgba($maincolor, 0.05);?>}
                             .woocommerce-breadcrumb span.delimiter+a{background:transparent;}
                             .woocommerce .summary table.shop_attributes{margin: 10px 0; font-size:90%; border:none; display: block; max-height:430px; overflow-y:auto;}

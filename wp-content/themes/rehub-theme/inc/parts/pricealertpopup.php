@@ -28,9 +28,9 @@
                             <input value="<?php esc_html_e('Start tracking', 'rehub-theme'); ?>" type="submit" class="wpsm-button rehub_main_btn" /> 
                             <?php $privacy_url = ContentEgg\application\helpers\TemplateHelper::getPrivacyUrl(); ?>
                             <?php if ($privacy_url): ?>
-                                <div style="display: none;" class="price-alert-agree-wrap mt10 font80">
+                                <div class="price-alert-agree-wrap mt10 font80">
                                     <label class="price-alert-agree-label">
-                                        <input type="checkbox" name="accepted" value="1" id="cegg_alert_accepted" required />
+                                        <input type="checkbox" name="accepted" value="1" id="cegg_alert_accepted" />
                                         <?php esc_html_e( 'I agree to the', 'rehub-theme' ); ?> <a href="<?php echo esc_url($privacy_url);?>" target="_blank"><?php esc_html_e( 'Privacy Policy', 'rehub-theme' ); ?></a>
                                     </label>
                                 </div>

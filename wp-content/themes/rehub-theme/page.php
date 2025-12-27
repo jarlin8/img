@@ -83,7 +83,7 @@
     wp_add_inline_script('rehub', $script);
     ?>
     <div id="rhLoader">
-        <style scoped>
+        <style>
             #loading-spinner {
               animation: loading-spinner 1s linear infinite;
             }

@@ -287,7 +287,7 @@ if( !function_exists('rehub_simple_star') ) {
 				'customid' => '',
 			), $atts);
     	extract($atts);
-    	return '<div class="rehub_simple_star"><style scoped>.rehub_simple_star .rh-star-ajax{display:flex; align-items:center;gap: 10px;}.rehub_simple_star .title_star_ajax{order:2; margin-bottom:0 !important}.rehub_simple_star .user-rate{order:1}.rehub_simple_star .userrating-clear{display:none}</style>'.rehub_get_user_rate($schema, $type, $customid).'</div>';
+    	return '<div class="rehub_simple_star"><style>.rehub_simple_star .rh-star-ajax{display:flex; align-items:center;gap: 10px;}.rehub_simple_star .title_star_ajax{order:2; margin-bottom:0 !important}.rehub_simple_star .user-rate{order:1}.rehub_simple_star .userrating-clear{display:none}</style>'.rehub_get_user_rate($schema, $type, $customid).'</div>';
 	}
 }
 
@@ -651,6 +651,11 @@ function show_tab_ajax() {
     	wp_die(sha1(microtime())); // return some random trash :)
 
   	$post_id = (int)$_POST['post_id'];
+  	$post = get_post($post_id);
+  	if (!$post || $post->post_status !== 'publish' || $post->post_status === 'private') {
+    	wp_die(esc_html__('This post is not available.', 'rehub-theme'));
+  	}
+	
   	$tab_number = (int)$_POST['tab_number'];
   	$posttype = (isset($_POST['posttype']) && $_POST['posttype'] == 'product') ? 'product' : 'post';
   	if (empty($post_id) || empty($tab_number) || $post_id<1 || $tab_number<1 || $tab_number>4)

@@ -43,7 +43,7 @@
         <?php endif;?>
         <div class="wpsm_spec_meta_value">
         <?php if ($meta_line_customize) :?>
-        <style scoped>
+        <style>
             .wpsm_spec_row_<?php echo ''.$id;?>_<?php echo ''.$pbid;?> .wpsm_spec_meta_value{font-size: <?php echo ''.$meta_line_size;?>px; color: <?php echo ''.$meta_line_color;?>; line-height: <?php echo ''.$meta_line_size;?>px;}
         </style>
         <?php endif;?>

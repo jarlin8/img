@@ -81,7 +81,7 @@ else {
     $deal_type_string = esc_html__('Deal', 'rehub-theme');
 }
 ?>
-<div class="rh_offer_list <?php echo ''.$coupon_style.$deal_type; ?><?php echo rh_expired_or_not($postid, 'class');?><?php echo ''.($disclaimer) ? ' pt0 pb0 pl0 pr0 w_disclaimer' : '';?>"> 
+<div class="rh_offer_list <?php echo ''.$coupon_style.$deal_type; ?><?php echo rh_expired_or_not($postid, 'class');?><?php echo ''.do_shortcode($disclaimer) ? ' pt0 pb0 pl0 pr0 w_disclaimer' : '';?>"> 
     <?php echo re_badge_create('ribbonleft'); ?>         
     <div class="rh_grid_image_3_col">
         <div class="rh_gr_img_first offer_thumb"> 

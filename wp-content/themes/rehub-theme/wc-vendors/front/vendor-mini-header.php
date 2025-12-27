@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 ?>
 
 <div id="wcv_mini_header">
-	<style scoped>#wcvendor_image_bg{<?php echo rh_show_vendor_bg($vendor_id);?>}</style>
+	<style>#wcvendor_image_bg{<?php echo rh_show_vendor_bg($vendor_id);?>}</style>
 	<div id="wcvendor_image_bg">
 		<div class="wcv_mini_header_content" >
 			<div class="wcv_mini_header_store floatleft">

@@ -40,7 +40,7 @@ wp_add_inline_script('rehub', $script);
     <div class="rh-content-wrap clearfix">
         <div id="contents-section-woo-area" class="rh-stickysidebar-wrapper">                      
             <div class="ce_woo_auto_sections ce_woo_blocks ce_woo_list main-side rh-sticky-container clearfix <?php echo (is_active_sidebar( 'sidebarwooinner' )) ? 'woo_default_w_sidebar' : 'full_width woo_default_no_sidebar'; ?>" id="content">
-                <style scoped>
+                <style>
                     .ce_woo_blocks nav.woocommerce-breadcrumb{font-size: 13px; margin-bottom: 18px}
                     .ce_woo_blocks .woo_bl_title h1{font-size: 22px; line-height: 26px; margin: 0 0 15px 0; font-weight: normal;}
                 </style>
@@ -385,7 +385,7 @@ wp_add_inline_script('rehub', $script);
                                         <div class="border-lightgrey clearbox flowhidden mb25 rh-shadow1 rh-tabletext-block rh-tabletext-wooblock whitebg width-100p" id="section-<?php echo esc_attr( $key ); ?>">
                                             <div class="rh-tabletext-block-heading fontbold border-grey-bottom">
                                                 <span class="cursorpointer floatright lineheight15 ml10 toggle-this-table rtlmr10"></span>
-                                                <h4 class="rh-heading-icon"><?php echo ''.$tab['title'];?></h4>
+                                                <h2 class="rh-heading-icon"><?php echo ''.$tab['title'];?></h2>
                                             </div>
                                             <div class="rh-tabletext-block-wrapper padd20">
                                                 <?php call_user_func( $tab['callback'], $key, $tab ); ?>

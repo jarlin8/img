@@ -52,7 +52,7 @@
 			<div class="rh-container clearfix">
 				<div class="footer_most_bottom mobilecenterdisplay mobilepadding">
 					<div class="f_text font80">
-						<span class="f_text_span"><?php echo do_shortcode(rehub_option('rehub_footer_text')); ?></span>
+						<span class="f_text_span mobmb10"><?php echo do_shortcode(rehub_option('rehub_footer_text')); ?></span>
 						<?php if(rehub_option('rehub_footer_logo')) : ?><div class="floatright ml15 mr15 mobilecenterdisplay disablefloatmobile"><img src="<?php echo esc_url(rehub_option('rehub_footer_logo')); ?>" alt="<?php bloginfo( 'name' ); ?>" /></div><?php endif; ?>	
 					</div>		
 				</div>
@@ -61,8 +61,12 @@
 		<?php endif; ?>
 	<?php endif; ?>
 	<?php if(is_numeric($footer_template)):?>
-		<div class="footer_clean_style post clearfix mb0">                      
-			<?php echo rh_wp_reusable_render(array('id' => $footer_template));?>                  
+		<div class="footer_clean_style post clearfix mb0"> 
+			<?php if(function_exists('gspb_template_shortcode_function')):?>
+				<?php echo gspb_template_shortcode_function(array('id' => $footer_template));?>
+			<?php else:?>
+				<?php echo rh_wp_reusable_render(array('id' => $footer_template));?>                  
+			<?php endif;?>
 		</div>
 	<?php endif;?>
 	<!-- FOOTER -->

@@ -24,7 +24,7 @@
                 ?>  
 
                 <div id="rh_post_layout_inimage">
-                    <style scoped>
+                    <style>
                         #rh_post_layout_inimage{background-image: url(<?php echo ''.$image_url;?>);}
                     </style>
                     <?php echo rh_generate_incss('fullwidthphotowoo');?>

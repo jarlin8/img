@@ -154,7 +154,7 @@ class Widget_Woo_EL_dealday extends WPSM_Widget_Base {
         $autodata = ($autorotate) ? 'data-auto="1"' : 'data-auto="0"' ;
         $loop = new \WP_Query( $query );
         echo '<div class="deal_daywoo woocommerce position-relative custom-nav-car flowhidden">';
-            echo '<style scoped>
+            echo '<style>
                 @media (min-width: 600px){
                     .elementor-widget:not(.elementor-widget-sidebar) .deal_daywoo figure, .elementor-widget:not(.elementor-widget-sidebar) .deal_daywoo .dealdaycont{width: 50%; float: left;}
                     .elementor-widget:not(.elementor-widget-sidebar) .deal_daywoo .dealdaycont{padding: 0 16px}

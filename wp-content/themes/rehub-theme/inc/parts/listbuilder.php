@@ -58,7 +58,7 @@ else {
                     <?php endif;?>                                                            
                 </div>
             <?php endif;?>                        
-            <<?php echo esc_attr($headingtag);?> class="font80 mt0 mb0 top_rating_title fontbold blackcolor"><a href="<?php echo ''.$link;?>"<?php echo ''.$target;?>><?php the_title();?></a></<?php echo esc_attr($headingtag);?>>
+            <<?php echo esc_attr($headingtag);?> class="font80 mt0 mb0 top_rating_title fontbold blackcolor"><a href="<?php echo ''.$link;?>"<?php echo ''.$target;?> title="<?php the_title(); ?>"><?php the_title();?></a></<?php echo esc_attr($headingtag);?>>
         </div>
     <?php endif;?>
     <div class="rh-flex-center-align rh-flex-justify-center pt15 pb15 <?php if(isset($stacktablet) && $stacktablet):?> tabletblockdisplay<?php else:?>mobileblockdisplay<?php endif;?>">
@@ -104,8 +104,10 @@ else {
                     <div class="list_shortcode_area mb10">     
                         <?php 
                         $contshortcode = urldecode($contshortcode); 
-                        $contshortcode = wp_kses_post($contshortcode);?>
-                        <?php echo do_shortcode($contshortcode);?>                    
+                        $contshortcode = sanitize_text_field($contshortcode);
+                        //$contshortcode = wp_kses_post($contshortcode);
+                        ?>
+                        <?php echo apply_filters('listbuilder_rehub_shortcode', $contshortcode);?>                    
                     </div>
                 <?php endif;?>                 
                 <?php if($isproduct):?>

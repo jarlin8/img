@@ -140,7 +140,7 @@
                 <?php wp_enqueue_script('tablesorter');?><?php wp_enqueue_style('tabletoggle'); ?>
                 <div class="rh-top-table">
                     <?php if ($image_width || $image_height):?>
-                        <style scoped>.rh-top-table .top_rating_item figure > a img{max-height: <?php echo esc_attr($image_height);?>px; max-width: <?php echo esc_attr($image_width);?>px;}.rh-top-table .top_rating_item figure > a, .rh-top-table .top_rating_item figure{height: auto;width: auto; border:none;}</style>
+                        <style>.rh-top-table .top_rating_item figure > a img{max-height: <?php echo esc_attr($image_height);?>px; max-width: <?php echo esc_attr($image_width);?>px;}.rh-top-table .top_rating_item figure > a, .rh-top-table .top_rating_item figure{height: auto;width: auto; border:none;}</style>
                     <?php endif;?>
                     <table  data-tablesaw-sortable<?php echo ''.$sortable_switch; ?> class="tablesaw top_table_block<?php if ($module_width =='1') : ?> full_width_rating<?php else :?> with_sidebar_rating<?php endif;?> tablesorter" cellspacing="0">
                         <thead> 

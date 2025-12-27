@@ -10,7 +10,7 @@
         else {
             $maincolor = REHUB_MAIN_COLOR;
         }?>
-    <style scoped>
+    <style>
         #rh_woo_layout_inimage{background: <?php echo hex2rgba($maincolor, 0.05);?>}
     </style>
     <div class="rh-container position-static flowhidden pt15 pb30">                                   
@@ -44,7 +44,10 @@
                     <?php if ($discountpercentage) :?>
                         <span class="height-80 rh-flex-center-align rh-flex-justify-center sale_tag_inwoolist text-center"><div class="font150 fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0"><?php echo esc_html($discountpercentage);?></div></span>
                     <?php else :?> 
-                        <?php wpsm_thumb('smallgrid'); ?>                              
+                        <?php $disableimage = get_post_meta($post->ID, 'show_featured_image', true);?>
+                        <?php if ( (has_post_thumbnail()) && rehub_option('rehub_disable_feature_thumb') !='1' && !$disableimage ) { ?>
+                            <?php wpsm_thumb('smallgrid'); ?>  
+                        <?php } ?>                            
                     <?php endif ;?>  
                 </figure> 
             </div>
@@ -52,7 +55,7 @@
                 <?php block_template_part( 'post-single-button' ); rehub_generate_offerbtn('wrapperclass=text-center');?>
                 <?php $disclaimer = get_post_meta($post->ID, 'rehub_offer_disclaimer', true);?>
                 <?php if($disclaimer):?>
-                    <div class="font80 guten-disclaimer text-center greycolor lineheight15 pb15"><?php echo wp_kses($disclaimer, 'post');?></div>
+                    <div class="font80 guten-disclaimer text-center greycolor lineheight15 pb15"><?php echo do_shortcode($disclaimer);?></div>
                 <?php endif;?> 
             </div>
             <div class="guten-contents">

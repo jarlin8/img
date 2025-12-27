@@ -59,7 +59,7 @@ if(!function_exists('rh_author_detail_box')){
             }           
         ?>
             <div class="author_detail_box clearfix"><?php echo get_avatar( $author_ID, '69', '', $name ); ?>
-                <style scoped>
+                <style>
                     .author_detail_box { background-color: #fff; border: 1px solid #ededed; padding: 20px 0px; margin: 5px auto 40px auto; position: relative; min-height: 90px;width: 100%}
                     .author_detail_box a{text-decoration: none;}
                     .archive .author_detail_box { margin: 0 0 10px 0 }
@@ -100,7 +100,6 @@ if(!function_exists('rh_author_detail_box')){
                         <?php if(get_the_author_meta('facebook')) : ?><a href="<?php the_author_meta('facebook'); ?>" class="author-social fb" rel="nofollow"><i class="rhicon rhi-facebook"></i></a><?php endif; ?>
                         <?php if(get_the_author_meta('twitter')) : ?><a href="<?php the_author_meta('twitter'); ?>" class="author-social tw" rel="nofollow"><i class="rhicon rhi-twitter"></i></a><?php endif; ?>
                         <?php if(get_the_author_meta('linkedin')) : ?><a href="<?php the_author_meta('linkedin'); ?>" class="author-social in" rel="nofollow"><i class="rhicon rhi-linkedin"></i></a><?php endif; ?>
-                        <?php if(get_the_author_meta('google')) : ?><a href="<?php the_author_meta('google'); ?>?rel=author" class="author-social gp" rel="nofollow"><i class="rhicon rhi-google-plus"></i></a><?php endif; ?>
                         <?php if(get_the_author_meta('tumblr')) : ?><a href="<?php the_author_meta('tumblr'); ?>" class="author-social tm" rel="nofollow"><i class="rhicon rhi-tumblr"></i></a><?php endif; ?>
                         <?php if(get_the_author_meta('instagram')) : ?><a href="<?php the_author_meta('instagram'); ?>" class="author-social ins" rel="nofollow"><i class="rhicon rhi-instagram"></i></a><?php endif; ?>
                         <?php if(get_the_author_meta('vkontakte')) : ?><a href="<?php the_author_meta('vkontakte'); ?>" class="author-social vk" rel="nofollow"><i class="rhicon rhi-vk"></i></a><?php endif; ?>

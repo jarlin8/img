@@ -67,7 +67,7 @@ $type = (isset($type)) ? $type : '';
 					<?php if (function_exists('RHF_get_wishlist')) : ?>
 						<div class="favorrightside wishonimage"><?php echo RHF_get_wishlist($post->ID); ?></div>
 					<?php endif; ?>
-					<a href="<?php the_permalink(); ?>">
+					<a href="<?php the_permalink(); ?>" title="<?php the_title(); ?>">
 						<?php
 						$showimg = new WPSM_image_resizer();
 						$showimg->use_thumb = true;

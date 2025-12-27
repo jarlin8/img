@@ -1,6 +1,6 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly ?>
 <div class="guten-auto-layout position-relative darkbgl">
-    <style scoped>
+    <style>
         .post-meta span a, .post-meta a.admin, .post-meta a.cat, .post-meta-big a{color:#bbb;}
         .breadcrumb a{color:#eee;}
         .row_social_inpost span.share-link-image{box-shadow:none;}
@@ -76,7 +76,7 @@
                 </div>
                 <?php $disclaimer = get_post_meta($post->ID, 'rehub_offer_disclaimer', true);?>
                 <?php if($disclaimer):?>
-                    <div class="font80 guten-disclaimer text-center greycolor lineheight15 pb15"><?php echo wp_kses($disclaimer, 'post');?></div>
+                    <div class="font80 guten-disclaimer text-center greycolor lineheight15 pb15"><?php echo do_shortcode($disclaimer);?></div>
                 <?php endif;?> 
             </div>
             <div class="rhhidden showonfloat">

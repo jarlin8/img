@@ -12,7 +12,9 @@
             $brandurlurl = get_term_meta( $tagid, 'brand_url', true ); 
             $brandurl = apply_filters('rh_post_offer_url_filter', $brandurlurl);
             $brandurl = apply_filters('rehub_create_btn_url', $brandurl, $tagslug);
-            $brandurl = str_replace( '#038;', '&', $brandurl);
+            if($brandurl){
+                $brandurl = str_replace( '#038;', '&', $brandurl);
+            }
             $brand_heading = get_term_meta( $tagid, 'brand_heading', true ); 
             $taglink = get_term_link( $tagid );
             $tagcat = (!empty($_GET["dealcategory"])) ? esc_attr($_GET["dealcategory"]) : '';

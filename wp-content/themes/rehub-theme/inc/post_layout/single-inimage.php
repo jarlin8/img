@@ -16,7 +16,7 @@
                 } 
             ?>  
             <div id="rh_post_layout_inimage">
-                <style scoped>
+                <style>
                     #rh_post_layout_inimage{background-image: url(<?php echo ''.$image_url;?>);}
                     #rh_post_layout_inimage{color:#fff; background-position: center center; background-repeat: no-repeat; background-size: cover; background-color: #333;position: relative;width: 100%;z-index: 1;}
                     .rh_post_layout_inner_image #rh_post_layout_inimage{min-height: 500px;}

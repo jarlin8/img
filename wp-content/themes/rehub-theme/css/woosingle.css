@@ -19,7 +19,7 @@
 .re_wooinner_info .dealScore .label, .woo_default_w_sidebar .save_proc_woo{display: none;}
 .re_wooinner_info .dealScore .thumbscount{border-radius: 4px}
 .woocommerce div.product .summary div[itemprop="description"]{font-size: 15px; line-height: 20px; clear: both;}
-.rh-tabletext-wooblock.rh-tabletext-block-heading h4{font-size: 20px;}
+.rh-tabletext-wooblock.rh-tabletext-block-heading h4, .rh-tabletext-wooblock.rh-tabletext-block-heading h2{font-size: 20px;}
 .rh-tabletext-wooblock h2:first-child{margin-top: 0; font-size: 20px}
 #section-additional_information .rh-heading-icon:before, #section-additional_information .rh-woo-section-title h2:before{content: "\f1de"; margin-right: 15px; font-weight:300;}
 .rh-woo-section-title h2{font-size: 20px; margin-bottom: 30px;border-bottom: 1px solid rgba(206,206,206,0.3);padding-bottom: 20px;}

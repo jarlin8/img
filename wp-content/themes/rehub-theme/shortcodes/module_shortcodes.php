@@ -1167,7 +1167,7 @@ $rand_id = 'woo_feat'.mt_rand();
 ob_start(); 
 ?>
 <?php if( !is_paged()) : ?>
-<?php if ($feat_type=='1') {wp_enqueue_script('flexslider');wp_enqueue_script('flexinit');wp_enqueue_style('flexslider');} ;?>
+<?php if ($feat_type=='1') {wp_enqueue_script('rhflexslider');wp_enqueue_script('flexinit');wp_enqueue_style('flexslider');} ;?>
 <?php if(!$show) $build_args['show'] = 5;
 	$argsfilter = new WPSM_Woohelper($build_args);
 	$args = $argsfilter->extract_filters();
@@ -1177,7 +1177,7 @@ ob_start();
 <div class="wpsm_featured_wrap flowhidden mb35 wpsm_featured_<?php echo esc_attr($feat_type)?>" id="<?php echo ''.$rand_id;?>">
 <?php if($feat_type =='1') : //First type - featured full width slider?>
 	<?php if($custom_height) :?>
-    	<style scoped>
+    	<style>
     		@media (min-width: 768px){
     			#<?php echo ''.$rand_id;?> .main_slider.full_width_slider.flexslider .slides .slide{height: <?php echo (int)$custom_height;?>px; line-height: <?php echo (int)$custom_height;?>px;} 
     			#<?php echo ''.$rand_id;?> .main_slider.full_width_slider.flexslider{height:<?php echo (int)$custom_height;?>px}
@@ -1246,7 +1246,7 @@ ob_start();
 				$image_url = (!empty($image_url[0])) ? $image_url[0] : get_template_directory_uri() . '/images/default/noimage_800_520.png';			
 			?>
 			<div class="col-feat-grid col_item rh-hovered-wrap flowhidden item-<?php echo ''.$col_number;?>">
-				<style scoped>
+				<style>
 					#<?php echo ''.$rand_id;?> .item-<?php echo ''.$col_number;?>{
 						background-image: url('<?php echo esc_url($image_url) ;?>');
 					}
@@ -2839,7 +2839,7 @@ ob_start();
 
 	<div id="wpsm-title<?php echo ''.$rand_id;?>" class="wpsm-title position-relative flowhidden mb25 <?php echo esc_attr($title_size);?>-size-title <?php echo esc_attr($upper_echo);?> <?php echo esc_attr($title_pos);?>-align-title <?php echo esc_attr($title_line);?>-line <?php echo esc_attr($back_echo);?> <?php echo esc_html($title_class_add);?>">
 		<?php if ($title_color !='' || $title_background_color !='' || $title_line_color !='') :?>
-			<style scoped>
+			<style>
 				<?php if ($title_color !='') :?>
 					#wpsm-title<?php echo ''.$rand_id;?> h5{color:<?php echo esc_attr($title_color);?>;}
 				<?php endif;?>
@@ -3525,7 +3525,7 @@ ob_start();
 	<?php if ($playlist_type == 'slider') :?>
 		<?php $idshosts = WPSM_video_class::parse_videoid_from_urls($videolinks, 'arrayhost') ;?>	
 
-		<?php  wp_enqueue_script('flexslider');wp_enqueue_script('flexinit');wp_enqueue_style('flexslider'); ?>
+		<?php  wp_enqueue_script('rhflexslider');wp_enqueue_script('flexinit');wp_enqueue_style('flexslider'); ?>
 		<div class="gallery_video_wrap">
 			<div class="flexslider post_slider media_slider gallery_top_slider loading"> 
 			<ul class="slides">     <script src="//a.vimeocdn.com/js/froogaloop2.min.js"></script>
@@ -3608,7 +3608,7 @@ $rand_id = 'feat_area'.mt_rand();
 ob_start(); 
 ?>
 <?php if( !is_paged()) : ?>
-<?php if ($feat_type=='1' || $feat_type == '2') {wp_enqueue_style('flexslider'); wp_enqueue_script('flexslider');wp_enqueue_script('flexinit');} ;?>
+<?php if ($feat_type=='1' || $feat_type == '2') {wp_enqueue_style('flexslider'); wp_enqueue_script('rhflexslider');wp_enqueue_script('flexinit');} ;?>
 <?php
 	global $wp_query; 
 	$argsfilter = new WPSM_Postfilters($build_args);
@@ -3629,7 +3629,7 @@ ob_start();
 <div class="wpsm_featured_wrap flowhidden mb35 wpsm_featured_<?php echo esc_attr($feat_type);?>" id="<?php echo ''.$rand_id;?>">
 <?php if($feat_type =='2') : //Second type - featured full width slider?>
 	<?php if($custom_height) :?>
-    	<style scoped>
+    	<style>
     		@media (min-width: 768px){
     			#<?php echo ''.$rand_id;?> .main_slider.full_width_slider.flexslider .slides .slide{height: <?php echo (int)$custom_height;?>px; line-height: <?php echo (int)$custom_height;?>px;} 
     			#<?php echo ''.$rand_id;?> .main_slider.full_width_slider.flexslider{height:<?php echo (int)$custom_height;?>px}
@@ -3695,7 +3695,7 @@ ob_start();
 				$image_url = (!empty($image_url[0])) ? $image_url[0] : '';			
 			?>
 			<div class="col-feat-grid col_item flowhidden rh-hovered-wrap item-<?php echo ''.$col_number;?>">
-				<style scoped>
+				<style>
 					#<?php echo ''.$rand_id;?> .item-<?php echo ''.$col_number;?>{
 						background-image: url('<?php echo esc_url($image_url) ;?>');
 					}
@@ -3757,7 +3757,7 @@ if( !function_exists('wpsm_searchbox_function') ) {
 	<div class="width-100p position-relative custom_search_box<?php if ($label):?> flat_style_form<?php endif;?>">
 		<?php if ( $tax && $tax !='' ) { ?>
 		<form role="search" id="rh-category-search">
-			<style scoped>
+			<style>
 				/* typehead */
 				#rh-category-search .hide{display:none !important}
 				#rh-category-search .show{display:inherit}
@@ -3773,7 +3773,7 @@ if( !function_exists('wpsm_searchbox_function') ) {
 				#rh-category-search .empty-message{padding:4px}				
 			</style>
 			<span class="tt-clear-search hide js-clear-search"><i class="rhicon rhi-times"></i></span>
-			<input class="typeahead search-text-input" type="text" placeholder="<?php echo ''.$placeholder?>" autocomplete="off">
+			<input class="typeahead search-text-input" type="text" placeholder="<?php echo esc_attr($placeholder);?>" autocomplete="off">
 			 <i class="rhicon rhi-arrow-right inside-search"></i>
 		</form> 
 		<?php
@@ -3807,7 +3807,7 @@ if( !function_exists('wpsm_searchbox_function') ) {
 
 		<?php } else { ?>
 			<form  role="search" class="flowhidden" method="get" id="rh-custom-search-<?php echo mt_rand();?>" action="<?php echo home_url( '/' ); ?>">
-			  <input type="text" name="s" placeholder="<?php echo ''.$placeholder?>" <?php if ($enable_ajax == '1') {echo 'class="re-ajax-search" autocomplete="off"';} ?> data-posttype="<?php echo ''.$by;?>" data-enable_compare="<?php echo ''.$enable_compare;?>" data-catid="<?php echo ''.$catid;?>" data-aff="<?php echo ''.$aff_link;?>">
+			  <input type="text" name="s" placeholder="<?php echo esc_attr($placeholder);?>" <?php if ($enable_ajax == '1') {echo 'class="re-ajax-search" autocomplete="off"';} ?> data-posttype="<?php echo ''.$by;?>" data-enable_compare="<?php echo ''.$enable_compare;?>" data-catid="<?php echo ''.$catid;?>" data-aff="<?php echo ''.$aff_link;?>">
 			  <input type="hidden" name="post_type" value="<?php echo ''.$by?>" />
 			  <?php if($by == 'product'):?>
 			  	<input type="hidden" name="product_cat" value="<?php echo ''.$catid?>" />

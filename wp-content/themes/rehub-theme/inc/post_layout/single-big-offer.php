@@ -137,7 +137,7 @@
                                                 </div>
                                                 <?php $disclaimer = get_post_meta($post->ID, 'rehub_offer_disclaimer', true); ?>
                                                 <?php if ($disclaimer) : ?>
-                                                    <div class="font80 guten-disclaimer greycolor lineheight15 pb15"><?php echo wp_kses($disclaimer, 'post'); ?></div>
+                                                    <div class="font80 guten-disclaimer greycolor lineheight15 pb15"><?php echo do_shortcode($disclaimer); ?></div>
                                                 <?php endif; ?>
                                             </div>
                                             <?php wp_enqueue_script('customfloatpanel'); ?>

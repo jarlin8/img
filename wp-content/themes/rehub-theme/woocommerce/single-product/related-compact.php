@@ -12,7 +12,7 @@ global $product, $post;
     <div class="border-lightgrey clearbox flowhidden mb25 rh-shadow1 rh-tabletext-block rh-tabletext-wooblock whitebg width-100p related-woo-area" id="section-woo-related">
         <div class="rh-tabletext-block-heading fontbold border-grey-bottom">
             <span class="cursorpointer floatright lineheight15 ml10 toggle-this-table rtlmr10"></span>
-            <h4 class="rh-heading-icon"><?php esc_html_e( 'Related Products', 'rehub-theme' );?></h4>
+            <h2 class="rh-heading-icon"><?php esc_html_e( 'Related Products', 'rehub-theme' );?></h2>
         </div>
         <div class="rh-tabletext-block-wrapper padd20"> 
             <?php $classcol = ($sidebar) ? 'col_wrap_two' : 'col_wrap_three';?>        

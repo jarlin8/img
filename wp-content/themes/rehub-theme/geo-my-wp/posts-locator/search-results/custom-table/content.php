@@ -58,7 +58,7 @@ $rows = get_post_meta($post->ID, 'columncontents',true);  //Get the rows
 		<div class="gmw-posts-wrapper">
 			<div class="rh-top-table">
 	            <?php if ($image_width || $image_height):?>
-	                <style scoped>.rh-top-table .top_rating_item figure > a img{max-height: <?php echo ''.$image_height;?>px; max-width: <?php echo ''.$image_width;?>px;}.rh-top-table .top_rating_item figure > a, .rh-top-table .top_rating_item figure{height: auto;width: auto; border:none;}</style>
+	                <style>.rh-top-table .top_rating_item figure > a img{max-height: <?php echo ''.$image_height;?>px; max-width: <?php echo ''.$image_width;?>px;}.rh-top-table .top_rating_item figure > a, .rh-top-table .top_rating_item figure{height: auto;width: auto; border:none;}</style>
 	            <?php endif;?>
 	            <?php $sortable_col = ($disable_filters !=1) ? ' data-tablesaw-sortable-col' : '';?>
 	            <?php $sortable_switch = ($disable_filters !=1) ? ' data-tablesaw-sortable-switch' : '';?>

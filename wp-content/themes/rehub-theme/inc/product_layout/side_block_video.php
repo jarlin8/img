@@ -8,7 +8,7 @@
         return;
     }
 ?>
-<style scoped>
+<style>
     .main-nav.white_style{border-bottom:none;}
     .woocommerce .summary table.shop_attributes{margin: 10px 0; font-size:90%; border:none; display: block; max-height:430px; overflow-y:auto;}
     .woocommerce .summary table.shop_attributes th, .woocommerce .summary table.shop_attributes td{border:none;padding: 5px 10px; text-align:inherit}

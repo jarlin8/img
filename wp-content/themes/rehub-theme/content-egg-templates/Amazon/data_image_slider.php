@@ -4,7 +4,7 @@
  * 
  */
 ?>
-<?php  wp_enqueue_script('flexslider'); wp_enqueue_script('flexinit');wp_enqueue_style('flexslider');?>
+<?php  wp_enqueue_script('rhflexslider'); wp_enqueue_script('flexinit');wp_enqueue_style('flexslider');?>
 <div class="flexslider post_slider media_slider blog_slider loading"> 
     <ul class="slides">
         <?php foreach ($items as $item):?>

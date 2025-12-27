@@ -83,14 +83,8 @@
                 $args = apply_filters('rh_module_args_query', $args);
                 $wp_query = new WP_Query($args);
                 do_action('rh_after_module_args_query', $wp_query);  
-                $i=0; if ($wp_query->have_posts()) :?>
-                <?php wp_enqueue_script('carouFredSel'); wp_enqueue_script('touchswipe'); ?>                                       
+                $i=0; if ($wp_query->have_posts()) :?>                                     
                 <div class="top_chart table_view_charts loading">
-                    <div class="top_chart_controls">
-                        <a href="/" class="controls prev"></a>
-                        <div class="top_chart_pagination"></div>
-                        <a href="/" class="controls next"></a>
-                    </div>
                     <div class="top_chart_first">
                         <ul>
                         <?php if (!empty ($rows)) {

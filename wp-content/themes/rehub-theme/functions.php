@@ -12,7 +12,7 @@ update_option( 'Rehub_Key', [
 ] );
 
 if ( !defined( 'RH_MAIN_THEME_VERSION' ) ) {
-	define('RH_MAIN_THEME_VERSION', '19.7.2');
+	define('RH_MAIN_THEME_VERSION', '19.9.9.2');
 }
 if(!defined('REHUB_NAME_ACTIVE_THEME')){
 	define('REHUB_NAME_ACTIVE_THEME', 'REHUB');
@@ -90,10 +90,10 @@ function rehub_framework_register_scripts() {
 	wp_register_script( 'rhajaxvariation', get_template_directory_uri() . '/js/add-to-cart-variation.js', array( 'jquery', 'rehub' ), RH_MAIN_THEME_VERSION, true );
 	wp_register_script( 'rhquickview', get_template_directory_uri() . '/js/quickview.js', array( 'jquery', 'rehub' ), RH_MAIN_THEME_VERSION, true);
 	wp_register_script('rhwoodropcat', get_template_directory_uri() . '/js/woodropcat.js', array('jquery', 'rehub'), '1.0', true);
-	wp_register_script('rhswatches', get_template_directory_uri() . '/js/wooswatch.js', array('jquery', 'rehub'), '1.4', true);
+	wp_register_script('rhswatches', get_template_directory_uri() . '/js/wooswatch.js', array('jquery', 'rehub'), '1.5', true);
 	wp_register_script('rhcommentsort', get_template_directory_uri() . '/js/commentsort.js', array('jquery', 'rehub'), '1.1', true);
-	wp_register_script('flexslider', get_template_directory_uri() . '/js/jquery.flexslider-min.js', array('jquery'), '2.7.4', true);
-	wp_register_script('flexinit', get_template_directory_uri() . '/js/flexinit.js', array('jquery', 'flexslider'), '2.2.2', true);
+	wp_register_script('rhflexslider', get_template_directory_uri() . '/js/jquery.flexslider-min.js', array('jquery'), '2.7.4', true);
+	wp_register_script('flexinit', get_template_directory_uri() . '/js/flexinit.js', array('jquery', 'rhflexslider'), '2.2.2', true);
 	wp_register_script('totemticker', get_template_directory_uri() . '/js/jquery.totemticker.js', array('jquery'), '', true);
 	wp_register_script('carouFredSel', get_template_directory_uri() . '/js/jquery.carouFredSel-6.2.1-packed.js', array('jquery'), '6.2.2', true);
 	wp_register_script('rhsticky', get_template_directory_uri() . '/js/jquery.sticky.js', array('jquery'), '1.0.6', true);
@@ -111,8 +111,8 @@ function rehub_framework_register_scripts() {
 	wp_register_script('stickysidebar', get_template_directory_uri() . '/js/stickysidebar.js', array('jquery'), '1.3.3', true);
 	wp_register_script('rhprintcoupon', get_template_directory_uri() . '/js/printcoupon.js', array('jquery'), '1.1', true);
 	wp_register_script('typehead', get_template_directory_uri() . '/js/typehead.js', array('jquery'), '0.10.7', true);
-	wp_register_script( 'rehubtablechart', get_template_directory_uri() . '/js/tablechart.js', array('jquery'), '1.7', true );
-	wp_register_script( 'rehubcompare', get_template_directory_uri() . '/js/comparechart.js', array('jquery', 'rehubtablechart'), '1.8', true );
+	wp_register_script( 'rehubtablechart', get_template_directory_uri() . '/js/tablechart.js', array('jquery'), '1.9', true );
+	wp_register_script( 'rehubcompare', get_template_directory_uri() . '/js/comparechart.js', array('jquery', 'rehubtablechart'), '1.9', true );
 	wp_register_script( 'rehubwaypoints', get_template_directory_uri() . '/js/jquery.waypoints.min.js', array('jquery'), '4.0.2', true );	
 	wp_register_script( 'justifygallery', get_template_directory_uri() . '/js/jquery.justifiedGallery.min.js', array('jquery'), '3.8.2', true );
 	wp_register_script( 'customfloatpanel', get_template_directory_uri() . '/js/custom_floatpanel.js', array('jquery', 'rehub'), '1.5', true );
@@ -143,7 +143,7 @@ function rehub_framework_register_scripts() {
 	wp_register_script('rhelreusableloader', get_template_directory_uri() . '/js/rhelreusableloader.js', array(), '1.0', true);
 	wp_register_script('rhalignfull', get_template_directory_uri() . '/js/alignfull.js', array('jquery', 'rehub'), '1.1', true);
 	wp_register_script('rhvmenu', get_template_directory_uri() . '/js/vertmenu.js', array('jquery'), '1.0');
-	wp_register_script('rh-modelviewer-init', get_template_directory_uri() . '/js/modelviewer-init.js', array(), '1.0');
+	wp_register_script('rh-modelviewer-init', get_template_directory_uri() . '/js/modelviewer-init.js', array(), '1.1');
 	wp_register_script( 'rh-threesixty', get_template_directory_uri() . '/js/threesixty.js', array( 'jquery', 'rehub' ), RH_MAIN_THEME_VERSION, true );
 	wp_register_script( 'rh-product-360-view', get_template_directory_uri() . '/js/product-360-view.js', array( 'jquery', 'rehub' ), RH_MAIN_THEME_VERSION, true );
 }
@@ -1584,7 +1584,7 @@ function my_theme_register_required_plugins() {
 			'slug'     				=> 'greenshiftgsap', // The plugin slug (typically the folder name)
 			'source'   				=> get_template_directory() . '/plugins/greenshiftgsap.zip', 
 			'required' 				=> false,
-			'version' 				=> '3.7',
+			'version' 				=> '3.7.4',
 			'force_activation' 		=> false, 
 			'force_deactivation' 	=> false, 
 			'external_url' 			=> '',
@@ -1622,7 +1622,7 @@ function my_theme_register_required_plugins() {
 			'slug'     				=> 'rehub-framework', // The plugin slug (typically the folder name)
 			'source'   				=> get_template_directory() . '/plugins/rehub-framework.zip', 
 			'required' 				=> true,
-			'version' 				=> '19.7.2',
+			'version' 				=> '19.9.9',
 			'force_activation' 		=> false, 
 			'force_deactivation' 	=> false, 
 			'external_url' 			=> '',
@@ -1843,6 +1843,7 @@ if (class_exists('WPBakeryVisualComposerAbstract')) {
 	add_action('init','add_rehub_to_vc', 5);
 	add_action('admin_enqueue_scripts', 'rehub_vc_styles'); 
 }
+
 
 //Elementor Init
 

@@ -896,7 +896,7 @@ if(!function_exists('wpsm_stickypanel_shortcode')) {
         $content = do_shortcode($content); 
         wp_enqueue_script( 'contentstickypanel', get_template_directory_uri() . '/js/contentstickypanel.js', array( 'jquery', 'rehubwaypoints' ), 1.2, true ); 
         return '<div id="content-sticky-panel">
-            <style scoped>
+            <style>
                 #content-sticky-panel{transition: all 0.5s ease; position:sticky; top:100px; background: #fff; border-bottom: none; margin: 0 0 0 -125px;width: 100px;font-size: 10px;line-height: 12px; z-index: 9989; height:0}
                 #content-sticky-panel ul, #content-sticky-panel ul li{margin: 0; padding: 0}
                 #content-sticky-panel ul{border: 1px solid #ddd; border-bottom: none;background:white}
@@ -1669,7 +1669,7 @@ if(!function_exists('rehub_amp_add_custom_before_content')){
 
 if(!function_exists('rh_generate_incss')) {
     function rh_generate_incss($type='', $random = '', $atts=array()) {  
-        $output = '<style scoped>';
+        $output = '<style>';
         if($type === 'masonry'){
             $output .= '
                 .masonry_grid_fullwidth { margin-bottom: 20px; display: flex;flex-wrap: wrap;flex-direction: row; }
@@ -2429,7 +2429,7 @@ if(!function_exists('rh_generate_incss')) {
             $output .= '
               .woo_directory_layout p.price{margin-top: 0; margin-bottom: 0}
               .woo_directory_layout nav.woocommerce-breadcrumb{margin: 0px 0px 20px 0; font-size: 13px; line-height: 14px}
-              .woo_directory_layout .woo-image-part{width: 150px;max-width: 150px}
+              .woo_directory_layout .woo-image-part{width: 150px;max-width: 100%}
               .woo_directory_layout h1{font-size: 24px;line-height: 28px;margin-bottom: 15px;}
               #rh-model-td-trigger .bluecolor{display:none}
               @media screen and (max-width: 767px){ .woo_directory_layout .score_text_r{margin-bottom: 5px}}
@@ -2805,7 +2805,7 @@ function rh_safelist_css_wprocket($safelist) {
 add_filter( 'rocket_rucss_safelist', 'rh_safelist_css_wprocket');
 
 if(!function_exists('rh_post_code_loop')){
-	function rh_post_code_loop($template=''){
-		block_template_part( 'post-loop' );
+	function rh_post_code_loop($template='post-loop'){
+		block_template_part( $template );
 	}
 }

@@ -115,7 +115,7 @@ function rehub_before_import_setup( $current_import ){
 		exit();		
 	}	
 	$curimp = $current_import['import_file_name'];
-	if( 'RePick' === $curimp || 'ReMag' === $curimp || 'ReCash' === $curimp || 'ReDeal' === $curimp || 'ReViewit' === $curimp || 'ReCart' === $curimp || 'ReCompare' === $curimp || 'ReMart' === $curimp || 'ReWise' === $curimp || 'ReGame' === $curimp || 'ReLearn' === $curimp || 'ReMarket' === $curimp) {
+	if( 'RePick' === $curimp || 'ReMag' === $curimp || 'ReCash' === $curimp || 'ReDeal' === $curimp || 'ReViewit' === $curimp || 'ReCart' === $curimp || 'ReCompare' === $curimp || 'ReMart' === $curimp || 'ReWise' === $curimp || 'ReGame' === $curimp || 'ReLearn' === $curimp || 'ReMarket' === $curimp || 'ReFashion' === $curimp || 'ReVendor' === $curimp) {
 		if($registeredlicense && empty($lb_verify_res['data']['themes'])){
 			echo '<p style="color:red;font-size:180%" class="notofficialtheme">You have no access to demo import, because you are using nulled or not official theme version. Please, purchase theme on <a href="https://themeforest.net/item/rehub-directory-multi-vendor-shop-coupon-affiliate-theme/7646339">Themeforest</a>, otherwise, your site can be blocked.</p>';		
 			exit();			
@@ -397,7 +397,7 @@ function rehub_import_files() {
 		$redokannewnotice .= $tutorialnotice;	
 
 		$revendornotice = $requirednotice.'<ol>';
-		$revendornotice .= $rhelnotice;
+		$revendornotice .= $rhgsnotice;
 		$revendornotice .= $rhwoonotice;	
 		$revendornotice .='</ol>';
 		$revendornotice .= $optionalnotice.' <a href="'.$wpplugins.'" target="_blank">'.$installpnotice.'</a><ol>';
@@ -685,7 +685,7 @@ function rehub_after_import_setup( $current_import ) {
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );
 			break; 	
 		case 'ReFashion' :
-			$front_page = rh_get_page_by_title( 'Homepage Refashion' );
+			$front_page = rh_get_page_by_title( 'Homepage Refashion Greenshift' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );			
 			break;
 		case 'ReDigit' :
@@ -715,7 +715,7 @@ function rehub_after_import_setup( $current_import ) {
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );		
 			break;
 		case 'ReVendor':
-			$front_page = rh_get_page_by_title( 'Revendor Home' );
+			$front_page = rh_get_page_by_title( 'Homepage Revendor Greenshift' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );			
 			break;
 		case 'ReLearn':

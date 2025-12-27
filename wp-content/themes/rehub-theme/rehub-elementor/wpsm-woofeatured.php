@@ -149,7 +149,7 @@ class Widget_Wpsm_Woo_Products_Featured extends WPSM_Widget_Base {
         $settings = $this->get_settings_for_display();
         // Convert arrays to strings
         $this->normalize_arrays( $settings );
-        // wp_enqueue_script('flexslider');
+        // wp_enqueue_script('rhflexslider');
         $this->render_custom_js();
         echo wpsm_woofeatured_function( $settings );
     }

@@ -51,7 +51,11 @@ if ($custombg) {
 ?>
 <?php if (is_numeric($rh_product_layout_style) && function_exists('rh_wp_reusable_render')) : ?>
     <div class="post woocommerce product">
-        <?php echo rh_wp_reusable_render(array('id' => $rh_product_layout_style));?> 
+        <?php if (function_exists('gspb_template_shortcode_function')): ?>
+            <?php echo gspb_template_shortcode_function(array('id' => $rh_product_layout_style)); ?>
+        <?php else: ?>
+            <?php echo rh_wp_reusable_render(array('id' => $rh_product_layout_style)); ?>
+        <?php endif; ?>
     </div>
 <?php else : ?>
     <?php if ($rh_product_layout_style == 'default_with_sidebar') : ?>

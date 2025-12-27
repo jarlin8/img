@@ -872,7 +872,7 @@ abstract class WPSM_Widget_Base extends Widget_Base {
 
         $query = [
             "select" => "SELECT SQL_CALC_FOUND_ROWS ID, post_title FROM {$wpdb->posts}",
-            "where"  => "WHERE post_type = 'product'",
+            "where"  => "WHERE post_type = 'product' AND post_status = 'publish'",
             "like"   => "AND post_title NOT LIKE %s",
             "offset" => "LIMIT %d, %d"
         ];

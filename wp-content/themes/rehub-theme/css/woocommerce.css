@@ -113,7 +113,7 @@ p.demo_store { position: fixed; top: 0; left: 0; right: 0; margin: 0; width: 100
 .woocommerce .products.grid_woo .product{padding: 12px 12px 80px 12px; border:1px solid #e2e2e2; background-color: #fff}
 .woocommerce .products.grid_woo .product .woo_loop_btn_actions{text-align: center;margin-bottom: 10px;}
 .woo_loop_btn{display: inline-block;}.woo_gridloop_btn .woo_loop_btn{display: block;}
-.woocommerce .products .woo_grid_compact h2{font-size: 18px; font-weight: normal; line-height: 22px; height: 44px; margin-bottom: 15px}
+.woocommerce .products .woo_grid_compact h2{font-size: 18px; font-weight: normal; line-height: 22px; height: 44px; margin-bottom: 15px; overflow:hidden}
 .woocommerce .products .woo_grid_compact .woo_loop_btn{padding: 0; border-radius: 100px !important;font-size: 0;width: 38px;height: 38px;line-height: 38px;text-align: center; display: flex;}
 .woocommerce .products .woo_grid_compact .woo_loop_btn.loading:before{border-radius: 100px}
 .woo_grid_compact figure:not(.notresized) img{ height: 180px; }
@@ -162,7 +162,7 @@ p.demo_store { position: fixed; top: 0; left: 0; right: 0; margin: 0; width: 100
 .woocommerce table.shop_table td.download-remaining{text-align:center}
 .woocommerce table.shop_table #coupon_code{ padding: 6px;}
 .woocommerce table.shop_table thead th {  font-weight: bold; line-height: 18px; padding: 1em; border-right: 1px solid #DBDBDB;border-bottom: 1px solid #DBDBDB;}
-.woocommerce table tr th:last-child, .woocommerce table tr td:last-child{ border-right: none;}
+.woocommerce table.shop_table tr th:last-child, .woocommerce table.shop_table table tr td:last-child{ border-right: none;}
 .woocommerce table thead th, .woocommerce table tbody th {background: rgba(0, 0, 0, 0.04);}
 .woocommerce table.shop_table td, .woocommerce table.shop_table th { vertical-align: middle; border-right: 1px solid #eee; padding: .857em 1.387em}
 .woocommerce table.shop_table td{border-bottom: 1px solid #eee;}

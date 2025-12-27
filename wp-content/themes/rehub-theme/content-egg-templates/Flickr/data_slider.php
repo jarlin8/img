@@ -5,7 +5,7 @@
  */
 ?>
 
-<?php  wp_enqueue_script('flexslider'); wp_enqueue_script('flexinit');wp_enqueue_style('flexslider');?>
+<?php  wp_enqueue_script('rhflexslider'); wp_enqueue_script('flexinit');wp_enqueue_style('flexslider');?>
 <?php if (isset($title) && $title): ?>
     <h3 class="cegg-shortcode-title"><?php echo esc_html($title); ?></h3>
 <?php endif; ?>

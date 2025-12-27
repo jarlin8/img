@@ -37,7 +37,11 @@ wp_enqueue_script('rhniceselect');
 <?php $custom_shop_layout = rehub_option('woo_columns'); ?>
 <?php if (is_numeric($custom_shop_layout) && function_exists('rh_wp_reusable_render')) : ?>
     <div class="rh-container rh_woo_main_archive">
-        <?php echo rh_wp_reusable_render(array('id' => $custom_shop_layout));?> 
+        <?php if (function_exists('gspb_template_shortcode_function')): ?>
+            <?php echo gspb_template_shortcode_function(array('id' => $custom_shop_layout)); ?>
+        <?php else: ?>
+            <?php echo rh_wp_reusable_render(array('id' => $custom_shop_layout)); ?>
+        <?php endif; ?>
     </div>
 <?php else : ?>
 <!-- CONTENT -->
@@ -50,7 +54,7 @@ wp_enqueue_script('rhniceselect');
     $catimage = get_term_meta( $termid, 'brandimage', true );
     if($catimage){
         echo '<div class="position-relative text-center woo_cat_head" id="woo_cat_head">';
-        echo '<style scoped>#woo_cat_head{background-image: url('.$catimage.');background-size:cover; background-position:center center}</style>
+        echo '<style>#woo_cat_head{background-image: url('.$catimage.');background-size:cover; background-position:center center}</style>
                 <span class="rh-post-layout-image-mask"></span>';
             echo '<div class="pr25 pl25 position-relative zind2"><div class="pt30 pb30"></div><h1 class="mt0 whitecolor font250">'.$page_title.'</h1>';
                 echo '<div class="mt20 rehub-main-font hideonmobile">'.wpsm_tax_archive_shortcode(array('taxonomy'=>'product_cat', 'limit'=>5, 'child_of'=>$termid, 'type'=>'inlinelinks', 'classitem'=> 'whitecolor rh-hov-bor-line below-border mr10')).'</div>';

@@ -139,6 +139,7 @@ function hot_count() {
             }
         }
         do_action('rh_overall_post_likes_add');
+        do_action('rh_overall_post_likes_add_by_id', $post_id);
     }
     exit;
 }
@@ -757,7 +758,7 @@ function RhGetUserFavorites($atts, $content = null ) {
             $wp_query = new WP_Query($args);  
             if ($wp_query->have_posts()){
                 echo '<div class="tabledisplay re-favorites-posts mb20">';
-                echo '<style scoped>.re-favorites-posts .heartplus.alreadywish:before, .re-favorites-posts .heart_thumb_wrap:hover .heartplus.alreadywish:before{content: "\f00d";}
+                echo '<style>.re-favorites-posts .heartplus.alreadywish:before, .re-favorites-posts .heart_thumb_wrap:hover .heartplus.alreadywish:before{content: "\f00d";}
                     .re-favorites-posts{border-collapse: collapse;}
                     .re-favorites-posts .yith_woo_chart{display: none;}
                     .re-favorites-posts .price-woo-compare-chart{font-size: 15px; margin: 0}

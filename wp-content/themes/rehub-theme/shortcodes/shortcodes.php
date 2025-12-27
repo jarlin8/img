@@ -119,22 +119,22 @@ if ( !function_exists( 'wpsm_colortable_shortcode' ) ) {
 		  	$content = preg_replace( '%<p>&nbsp;\s*</p>%', '', $content ); 
 			$content = preg_replace('/^(?:<br\s*\/?>\s*)+/', '', $content);	  
 			if($color == 'orange'){
-				$colorstyle = '<style scoped>body .wpsm-table.wpsm-table-orange table tr th { background: none repeat scroll 0 0 #fb7203; }</style>';
+				$colorstyle = '<style>body .wpsm-table.wpsm-table-orange table tr th { background: none repeat scroll 0 0 #fb7203; }</style>';
 			}
 			else if($color == 'blue'){
-				$colorstyle = '<style scoped>body .wpsm-table.wpsm-table-blue table tr th { background: none repeat scroll 0 0 #00AAE9; }</style>';
+				$colorstyle = '<style>body .wpsm-table.wpsm-table-blue table tr th { background: none repeat scroll 0 0 #00AAE9; }</style>';
 			}
 			else if($color == 'yellow'){
-				$colorstyle = '<style scoped>body .wpsm-table.wpsm-table-yellow table tr th { background: none repeat scroll 0 0 #FFDD00; color: #222222; }</style>';
+				$colorstyle = '<style>body .wpsm-table.wpsm-table-yellow table tr th { background: none repeat scroll 0 0 #FFDD00; color: #222222; }</style>';
 			}
 			else if($color == 'red'){
-				$colorstyle = '<style scoped>body .wpsm-table.wpsm-table-red table tr th { background: none repeat scroll 0 0 #DD0007; }</style>';
+				$colorstyle = '<style>body .wpsm-table.wpsm-table-red table tr th { background: none repeat scroll 0 0 #DD0007; }</style>';
 			}
 			else if($color == 'green'){
-				$colorstyle = '<style scoped>body .wpsm-table.wpsm-table-green table tr th { background: none repeat scroll 0 0 #77bb0f; }</style>';
+				$colorstyle = '<style>body .wpsm-table.wpsm-table-green table tr th { background: none repeat scroll 0 0 #77bb0f; }</style>';
 			}
 			else if($color == 'purple'){
-				$colorstyle = '<style scoped>body .wpsm-table.wpsm-table-purple table tr th { background: none repeat scroll 0 0 #662D91; }</style>';
+				$colorstyle = '<style>body .wpsm-table.wpsm-table-purple table tr th { background: none repeat scroll 0 0 #662D91; }</style>';
 			}else{
 				$colorstyle = '';
 			}
@@ -495,7 +495,7 @@ if( !function_exists('wpsm_shortcode_quick_slider') ) {
 		extract(shortcode_atts(array(
 				"ids" => '',
 		), $atts));
-		wp_enqueue_script('flexslider');wp_enqueue_script('flexinit');wp_enqueue_style('flexslider');
+		wp_enqueue_script('rhflexslider');wp_enqueue_script('flexinit');wp_enqueue_style('flexslider');
 		return wpsm_get_post_slide($ids);
 	}
 }
@@ -505,7 +505,7 @@ if( !function_exists('wpsm_shortcode_quick_slider') ) {
 //////////////////////////////////////////////////////////////////
 if( !function_exists('wpsm_post_slide') ) {
 function wpsm_post_slide( $atts, $content = null ) {
-		wp_enqueue_script('flexslider');
+		wp_enqueue_script('rhflexslider');
 	return wpsm_get_post_slide();
 }
 function wpsm_get_post_slide($ids='') {
@@ -823,7 +823,7 @@ function wpsm_pros_shortcode( $atts, $content = null ) {
 	$Old     = array( '<br />', '<br>' );
 	$New     = array( '','' );
 	$content = str_replace( $Old, $New, $content );		 	
-    return '<div class="wpsm_pros"><div class="title_pros">'.$title.'</div>'.$content.'</div>';  
+    return '<div class="wpsm_pros"><div class="title_pros">'.esc_html($title).'</div>'.$content.'</div>';  
 }  
 }
 
@@ -835,7 +835,12 @@ function wpsm_cons_shortcode( $atts, $content = null ) {
 	extract(shortcode_atts(array(
 		'title' => 'Negatives',
 	), $atts));	
-    return '<div class="wpsm_cons"><div class="title_cons">'.$title.'</div>'.$content.'</div>';  
+	$content = do_shortcode($content);
+    $content = preg_replace( '%<p>&nbsp;\s*</p>%', '', $content ); 
+	$Old     = array( '<br />', '<br>' );
+	$New     = array( '','' );
+	$content = str_replace( $Old, $New, $content );	
+    return '<div class="wpsm_cons"><div class="title_cons">'.esc_html($title).'</div>'.$content.'</div>';  
 }  
 }
 
@@ -2022,7 +2027,7 @@ function wpsm_toptable_shortcode( $atts, $content = null ) {
         <?php $sortable_switch = ($disable_filters !=1) ? ' data-tablesaw-sortable-switch' : '';?>
         <div class="rh-top-table">
             <?php if ($image_width || $image_height):?>
-                <style scoped>.rh-top-table .top_rating_item figure > a img{max-height: <?php echo (int)$image_height;?>px; max-width: <?php echo (int)$image_width;?>px;}.rh-top-table .top_rating_item figure > a, .rh-top-table .top_rating_item figure{height: auto;width: auto; border:none;}</style>
+                <style>.rh-top-table .top_rating_item figure > a img{max-height: <?php echo (int)$image_height;?>px; max-width: <?php echo (int)$image_width;?>px;}.rh-top-table .top_rating_item figure > a, .rh-top-table .top_rating_item figure{height: auto;width: auto; border:none;}</style>
             <?php endif;?>        
 	        <table data-tablesaw-sortable<?php echo ''.$sortable_switch; ?> class="tablesaw top_table_block<?php if ($full_width =='1') : ?> full_width_rating<?php else :?> with_sidebar_rating<?php endif;?> tablesorter" cellspacing="0">
 	            <thead> 
@@ -2194,13 +2199,8 @@ function wpsm_topcharts_shortcode( $atts, $content = null ) {
 	    $wp_query = new WP_Query($args);
 	    do_action('rh_after_module_args_query', $wp_query);   
         $i=0; if ($wp_query->have_posts()) :?>
-        <?php wp_enqueue_script('carouFredSel'); wp_enqueue_script('touchswipe'); wp_enqueue_script('rehubtablechart'); wp_enqueue_style('rhchartbuilder'); ?>                                       
+        <?php  wp_enqueue_script('rehubtablechart'); wp_enqueue_style('rhchartbuilder'); ?>                                       
         <div class="top_chart table_view_charts loading">
-            <div class="top_chart_controls">
-                <a href="/" class="controls prev"></a>
-                <div class="top_chart_pagination"></div>
-                <a href="/" class="controls next"></a>
-            </div>
             <div class="top_chart_first">
                 <ul>
                     <?php if (!empty ($rows)) {
@@ -2441,14 +2441,9 @@ function wpsm_woocharts_shortcode( $atts, $content = null ) {
 
 	    	<?php $wp_query = new WP_Query($args); $ci=0; if ($wp_query->have_posts()) : ?>
 
-	    	<?php wp_enqueue_script('carouFredSel'); wp_enqueue_script('touchswipe'); wp_enqueue_script('rehubtablechart');wp_enqueue_style('rhchartbuilder'); ?>
+	    	<?php wp_enqueue_script('rehubtablechart');wp_enqueue_style('rhchartbuilder'); ?>
 		    <div class="top_chart table_view_charts loading">		        	
 		    	<div class="chart_helper floatleft mr10 ml10 rhhidden"><i class="rhicon rhi-arrows-h font150"></i></div>
-		        <div class="top_chart_controls">
-		            <a href="/" class="controls prev"></a>
-		            <div class="top_chart_pagination"></div>
-		            <a href="/" class="controls next"></a>
-		        </div>
                 <div class="top_chart_first">
                     <ul>
                         <li class="row_chart_0 image_row_chart">
@@ -3043,7 +3038,7 @@ function wpsm_scorebox_shortcode( $atts, $content = null ) {
     <?php if ($query->have_posts()) : ?>
     <?php while ($query->have_posts()) : $query->the_post(); global $post; ?>
     	<div class="wpsm_score_box whitebg wpsm_score_box blackcolor rh-shadow3 border-lightgrey"> 
-    		<style scoped>
+    		<style>
     			.wpsm_score_box .rate_bar_wrap{ background-color: transparent; padding: 0; border: none; box-shadow: none; margin: 0}
 				.wpsm_inside_scorebox .rate_bar_wrap .review-criteria{ border: none}
 				.wpsm_score_box .rate-bar, .wpsm_score_box .rate-bar-bar, .cmp_crt_block .rate-bar, .cmp_crt_block .rate-bar-bar{ height: 9px}
@@ -3995,6 +3990,7 @@ function wpsm_tax_archive_shortcode( $atts, $content = null ) {
 		unset($args['include']);
 		$args['exclude'] = array_map( 'trim', explode( ",", $include ) );
 	}
+
 	 
 	$terms = get_terms($args );
 
@@ -4103,7 +4099,7 @@ function wpsm_tax_archive_shortcode( $atts, $content = null ) {
 		}
 		
 		return	'<div class="alphabet-filter">
-					<style scoped>
+					<style>
 						.alphabet-filter .list-inline{margin:0;list-style:none}
 						.alphabet-filter .list-inline>li{display:inline-block;padding-right:5px;padding-left:5px;margin:0}
 						.alphabet-filter .list-inline>li:first-child{margin-left: 0;padding-left:0}
@@ -5676,8 +5672,8 @@ function wpsm_reviewbox( $atts, $content = null ) {
         $cols = (empty($pros) && empty($cons)) ? 'rate_col_2' : 'rate_col_3';	
 
 		$out = '<div class="rate_wide_block mobileblockdisplay rh-flex-center-align '.$cols.'" id="rate_wide_block_'.$rand_id.'">';
-			$out .='<style scoped>#rate_wide_block_'.$rand_id.'{background-image: url('.esc_url($image_url).');     background-size: cover;}</style>';
-			$out .= '<style scoped>
+			$out .='<style>#rate_wide_block_'.$rand_id.'{background-image: url('.esc_url($image_url).');     background-size: cover;}</style>';
+			$out .= '<style>
 				.rate_wide_block{color: #fff; font-size: 14px; position: relative;}
 				.rate_wide_block .rh-post-layout-image-mask{background: rgba(0,0,0,0.7);}
 				.rate_wide_block .rh_col{z-index: 2; position: relative;}
@@ -5738,7 +5734,7 @@ function wpsm_reviewbox( $atts, $content = null ) {
 						$prosvalues = explode(PHP_EOL, $pros);
 						foreach ($prosvalues as $prosvalue) {
 							if(!empty($prosvalue)){
-								$out .='<li>'.esc_html($prosvalue).'</li>';						
+								$out .='<li>'.wp_kses_post($prosvalue).'</li>';						
 							}
 						}
 						$out .='</ul></div>';
@@ -5748,7 +5744,7 @@ function wpsm_reviewbox( $atts, $content = null ) {
 						$consvalues = explode(PHP_EOL, $cons);
 						foreach ($consvalues as $consvalue) {
 							if(!empty($consvalue)){
-								$out .='<li>'.esc_html($consvalue).'</li>';						
+								$out .='<li>'.wp_kses_post($consvalue).'</li>';						
 							}
 						}
 						$out .='</ul></div>';
@@ -5762,7 +5758,7 @@ function wpsm_reviewbox( $atts, $content = null ) {
 					$consvalues = explode(PHP_EOL, $cons);
 					foreach ($consvalues as $consvalue) {
 						if(!empty($consvalue)){
-							$out .='<li>'.esc_html($consvalue).'</li>';						
+							$out .='<li>'.wp_kses_post($consvalue).'</li>';						
 						}
 					}
 					$out .='</ul></div>';					

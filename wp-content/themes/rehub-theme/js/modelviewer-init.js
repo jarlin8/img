@@ -27,10 +27,14 @@ const onRHProgress = (event) => {
     }
 };
 
-document.body.addEventListener("mouseover", onRHInteraction, {once:true});
-document.body.addEventListener("touchmove", onRHInteraction, {once:true});
-document.body.addEventListener("scroll", onRHInteraction, {once:true});
-document.body.addEventListener("keydown", onRHInteraction, {once:true});
+// Wrap the event listeners in DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    document.body.addEventListener("mouseover", onRHInteraction, {once:true});
+    document.body.addEventListener("touchmove", onRHInteraction, {once:true});
+    document.body.addEventListener("scroll", onRHInteraction, {once:true});
+    document.body.addEventListener("keydown", onRHInteraction, {once:true});
+});
+
 var requestIdleCallback = window.requestIdleCallback || function(cb) {
     const start = Date.now();
     return setTimeout(function() {

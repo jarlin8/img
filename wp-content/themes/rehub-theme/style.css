@@ -4,7 +4,7 @@
 	Description: A Hybrid magazine/shop/review/news Wordpress Theme
 	Author: Wpsoul
 	Author URI: https://wpsoul.com/
-	Version: 19.7.2
+	Version: 19.9.9.2
 	Tags: two-columns, fluid-layout, custom-background, threaded-comments, translation-ready, custom-menu
 	License: 
 	License URI:
@@ -59,7 +59,7 @@ img {max-width: 100%;height: auto;vertical-align: top; border: 0;}
 .clearbox{ clear: both;}.clearboxleft{ clear: left;}.clearboxright{ clear: right;}
 
 /* ICONS */
-a.ajax_add_to_cart.loading:after, .wpsm_pretty_list ul li:before, .loading .re-icon-compare:before, .loading.table_view_charts:before, .post_carousel_block.loading:before, .woo_carousel_block.loading:before, .cons_comment_item:before, .pros_comment_item:before, span.date_meta:before, span.cat_link_meta:before, span.comm_count_meta:before, span.postview_meta:before, span.admin_meta:before, .wpsm_cons ul li:before, .wpsm_pros ul li:before, #buddypress .standard-form div.radio ul li:before, .re_carousel .controls:after, .media_owl_carousel .gp-overlay a:before, .rh_category_tab ul.cat_widget_custom li a:before, .widget.top_offers .title:before, .widget.cegg_widget_products .title:before, .rehub_chimp:before, .def_btn.active_ajax_pagination:before, .top_chart_controls .controls.next:after, .top_chart_controls .controls.prev:after, .postNavigation .postnavprev:before, .commentlist ul.children .commbox:before, .comment-reply-link:before, .comment-reply-login:before, .comment-respond .usr_re:after, .comment-respond .email_re:after, .comment-respond .site_re:after, .re_loadingafter:after, .re_loadingbefore:before, .togglegreedybtn:before, .rh-heading-icon:before, .thumbminus:before, .thumbplus:before, .heartplus:before, .post_thumbs_comm span:before, .thumbminus.loading:before, .thumbplus.loading:before, .heartplus.loading:before, .hotminus:before, .hotplus:before, .hoticonfireclass:before, .cold_temp .gradus_icon:before, .categorytable li a:before, .categorytable p a:before, span.stars-rate, .rh-star-ajax .stars-rate-ajax-type, .btn_act_for_grid .thumbscount:before, .comm_number_for_grid:before, .more-from-store-a a:before, div.sortingloading:after, .re_filter_instore ul.re_filter_ul li span:before, .re_filter_panel .re_tax_dropdown.activeul li.label:after, .userstar-rating, .re-user-popup-wrap .wpsm-button.loading:after, .user-ava-intop:after, .printthecoupon:before, #rh-category-search .tt-suggestion:before, .rh_videothumb_link:before, .re-compare-icon-toggle:before, .wpsm_box.standart_type i, .wpsm_box.info_type i, .wpsm_box.warning_type i, .wpsm_box.error_type i, .wpsm_box.download_type i, .wpsm_box.note_type i, .icon-search-onclick:before, nav.top_menu ul li.menu-item-has-children ul li.menu-item-has-children > a:before, .rh-menu-label:after, .wpsm_score_box .priced_block .btn_offer_block:not(.rehub_offer_coupon):before, .rh_post_layout_compare_autocontent .pros-list li:before, .re-user-popup-wrap .wpsm-button.loading:after, nav.top_menu ul.menu:not(.off-canvas) > li.menu-item-has-children > a:before, .header-top .top-nav > ul > li.menu-item-has-children > a:before, .toggle-this-table:after{font-family: rhicons;}
+a.ajax_add_to_cart.loading:after, .wpsm_pretty_list ul li:before, .loading .re-icon-compare:before, .loading.table_view_charts:before, .post_carousel_block.loading:before, .woo_carousel_block.loading:before, .cons_comment_item:before, .pros_comment_item:before, span.date_meta:before, span.cat_link_meta:before, span.comm_count_meta:before, span.postview_meta:before, span.admin_meta:before, .wpsm_cons ul li:before, .wpsm_pros ul li:before, #buddypress .standard-form div.radio ul li:before, .re_carousel .controls:after, .media_owl_carousel .gp-overlay a:before, .rh_category_tab ul.cat_widget_custom li a:before, .widget.top_offers .title:before, .widget.cegg_widget_products .title:before, .rehub_chimp:before, .def_btn.active_ajax_pagination:before, .postNavigation .postnavprev:before, .commentlist ul.children .commbox:before, .comment-reply-link:before, .comment-reply-login:before, .comment-respond .usr_re:after, .comment-respond .email_re:after, .comment-respond .site_re:after, .re_loadingafter:after, .re_loadingbefore:before, .togglegreedybtn:before, .rh-heading-icon:before, .thumbminus:before, .thumbplus:before, .heartplus:before, .post_thumbs_comm span:before, .thumbminus.loading:before, .thumbplus.loading:before, .heartplus.loading:before, .hotminus:before, .hotplus:before, .hoticonfireclass:before, .cold_temp .gradus_icon:before, .categorytable li a:before, .categorytable p a:before, span.stars-rate, .rh-star-ajax .stars-rate-ajax-type, .btn_act_for_grid .thumbscount:before, .comm_number_for_grid:before, .more-from-store-a a:before, div.sortingloading:after, .re_filter_instore ul.re_filter_ul li span:before, .re_filter_panel .re_tax_dropdown.activeul li.label:after, .userstar-rating, .re-user-popup-wrap .wpsm-button.loading:after, .user-ava-intop:after, .printthecoupon:before, #rh-category-search .tt-suggestion:before, .rh_videothumb_link:before, .re-compare-icon-toggle:before, .wpsm_box.standart_type i, .wpsm_box.info_type i, .wpsm_box.warning_type i, .wpsm_box.error_type i, .wpsm_box.download_type i, .wpsm_box.note_type i, .icon-search-onclick:before, nav.top_menu ul li.menu-item-has-children ul li.menu-item-has-children > a:before, .rh-menu-label:after, .wpsm_score_box .priced_block .btn_offer_block:not(.rehub_offer_coupon):before, .rh_post_layout_compare_autocontent .pros-list li:before, .re-user-popup-wrap .wpsm-button.loading:after, nav.top_menu ul.menu:not(.off-canvas) > li.menu-item-has-children > a:before, .header-top .top-nav > ul > li.menu-item-has-children > a:before, .toggle-this-table:after{font-family: rhicons;}
 @media(max-width: 767px){
 	.re_filter_panel ul.re_filter_ul li span.active:after{font-family: rhicons;}
 }
@@ -415,7 +415,7 @@ body:not(.noinnerpadding) .rh-post-wrapper {background:#fff; border: 1px solid #
 .compare-domain-text::first-letter{text-transform: uppercase;}
 .compare-domain-icon img{vertical-align: middle; max-width: 80px; margin: 0 3px }
 .rh-tabletext-block-heading{padding: 12px 15px; background: #fafafa;}
-.rh-tabletext-block-heading h4{font-size: 17px; line-height: 18px; margin: 0}
+.rh-tabletext-block-heading h4, .rh-tabletext-block-heading h2{font-size: 17px; line-height: 18px; margin: 0}
 .rh-tabletext-block-left{background: #f4f4f4; width: 200px; font-size: 11px;box-shadow: inset -50px 0 50px #eee;}
 .rh-tabletext-block-wrapper .wpsm-table table{margin: 0}
 .rh-tabletext-block-wrapper .wpsm-table table tr th{text-transform: none;}
@@ -480,6 +480,7 @@ ul.wp-block-list{margin-left:20px; list-style-type: disc;}
 .post ul.list-unstyled li{list-style: none; margin: 0 0 5px 0}
 ul.list-unstyled.list-line-style li{display: inline-block; margin: 0 10px 5px 0;}
 .post ol, .post ul { margin-bottom: 25px }
+.post ol{margin-left:15px}
 .title h1 span { font-weight: normal; }
 a.rh-cat-label-title, .rh-cat-label-title a, .rh-label-string{font-style: normal !important;background-color: #111;padding: 3px 6px !important;color: #fff;font-size: 11px !important; white-space: nowrap;text-decoration: none;display: inline-block;margin: 0 5px 5px 0;line-height: 12px !important;}
 a.rh-cat-label-title.rh-dealstore-cat{background-color: green}
@@ -1473,6 +1474,7 @@ div.gmw-directions-form-wrapper ul.travel-mode-options li{margin:0; list-style: 
 .wp-block-table.is-style-regular{border: 1px solid #e8e8e8; border-bottom: none; border-right: none}
 .wpsm-table table, .wp-block-table, .table-condensed { border-collapse: separate; padding-bottom: 1px; width: 100%; margin: 10px 0 20px !important; border-spacing: 0; font-size: 15px; }
 .wpsm-table table tr:first-child th { border-top: 0 none; }
+.wp-block-table td, .wp-block-table th{border-color: #e8e8e8}	
 .wpsm-table table tr th, .wpsm-table table tr td, .wp-block-table tr td, .table-condensed tr td, .table-condensed tr th, .wp-block-table tr th { padding: 7px 14px; border-bottom: 1px solid #e8e8e8; vertical-align: middle; }
 .wp-block-table tr th{font-weight:bold;}
 .wp-block-table.is-style-regular tr td, .wp-block-table.is-style-regular tr th:last-child{ border-right: 1px solid #e8e8e8;}

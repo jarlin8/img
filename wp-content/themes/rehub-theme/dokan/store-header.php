@@ -32,7 +32,7 @@ if ( !empty( $store_address['state'] ) && !empty( $store_address['country'] ) ) 
 $store_address = apply_filters( 'dokan_store_header_adress', $short_address, $store_address );
 ?>
 <div class="wcvendor_store_wrap_bg">
-	<style scoped>#wcvendor_image_bg{<?php echo rh_show_vendor_bg($store_id); ?>}</style>
+	<style>#wcvendor_image_bg{<?php echo rh_show_vendor_bg($store_id); ?>}</style>
 	<div id="wcvendor_image_bg">	
 		<div id="wcvendor_profile_wrap">
 			<div class="rh-container">

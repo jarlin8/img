@@ -41,7 +41,7 @@ if(rehub_option('enable_brand_taxonomy') == 1){
     </div> 
     <?php $discountpercentage = get_post_meta($post->ID, 'rehub_offer_discount', true);?>    
     <figure class="<?php if ($discountpercentage) :?> border-lightgrey <?php endif;?>mb20 position-relative text-center<?php echo esc_attr($image_padding);?>"><?php echo re_badge_create('tablelabel'); ?>             
-        <a href="<?php echo ''.$link;?>"<?php echo ''.$target;?> class="<?php echo esc_attr($image_class);?>">
+        <a href="<?php echo ''.$link;?>"<?php echo ''.$target;?> class="<?php echo esc_attr($image_class);?>" title="<?php the_title(); ?>">
             <?php if ($discountpercentage) :?>
                 <span class="height-80 rh-flex-center-align rh-flex-justify-center sale_tag_inwoolist text-center"><div class="font150 fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0"><?php echo esc_html($discountpercentage);?></div></span>
             <?php else :?>

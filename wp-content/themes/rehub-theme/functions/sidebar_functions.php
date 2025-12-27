@@ -64,26 +64,23 @@ function rehub_register_sidebars() {
 		'before_title' => '<div class="title">',
 		'after_title' => '</div>',
 	));
-	if(rehub_option('enable_brand_taxonomy') == 1){
-		register_sidebar(array(
-			'id' => 'dealstore-sidebar',
-			'name' => esc_html__('Affiliate store archive sidebar', 'rehub-theme'),
-			'before_widget' => '<div id="%1$s" class="widget %2$s">',
-			'after_widget' => '</div>',
-			'before_title' => '<div class="title">',
-			'after_title' => '</div>',
-		));	
-	}
-	if(rehub_option('enable_blog_posttype') == 1){
-		register_sidebar(array(
-			'id' => 'blog-sidebar',
-			'name' => esc_html__('Blog sidebar Area', 'rehub-theme'),
-			'before_widget' => '<div id="%1$s" class="widget %2$s">',
-			'after_widget' => '</div>',
-			'before_title' => '<div class="title">',
-			'after_title' => '</div>',
-		));	
-	}
+	register_sidebar(array(
+		'id' => 'dealstore-sidebar',
+		'name' => esc_html__('Affiliate store archive sidebar', 'rehub-theme'),
+		'before_widget' => '<div id="%1$s" class="widget %2$s">',
+		'after_widget' => '</div>',
+		'before_title' => '<div class="title">',
+		'after_title' => '</div>',
+	));	
+
+	register_sidebar(array(
+		'id' => 'blog-sidebar',
+		'name' => esc_html__('Blog sidebar Area', 'rehub-theme'),
+		'before_widget' => '<div id="%1$s" class="widget %2$s">',
+		'after_widget' => '</div>',
+		'before_title' => '<div class="title">',
+		'after_title' => '</div>',
+	));	
 	if(function_exists('bp_is_active') ){
 		register_sidebar(array(
 			'id' => 'bprh-profile-sidebar',
@@ -220,7 +217,7 @@ if( !function_exists('rehub_category_widget_block') ) {
 function rehub_category_widget_block() { ?>
 
 <div class="rh_category_tab">
-	<style scoped>
+	<style>
         .rh_category_tab ul.cat_widget_custom {margin: 0;padding: 0;border: 0;list-style: none outside;overflow-y: auto;max-height: 166px;}
         .rh_category_tab ul.cat_widget_custom li {padding: 0 0 4px;list-style: none;font-size: 14px;line-height: 22px;}
         .rh_category_tab ul.cat_widget_custom li a, .category_tab ul.cat_widget_custom li span {padding: 1px 0;color: #111;}

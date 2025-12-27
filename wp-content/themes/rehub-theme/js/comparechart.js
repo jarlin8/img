@@ -217,7 +217,7 @@ jQuery(document).ready(function($) {
          security: comparechart.comparenonce    
       }, function (response) {           
          block.remove();
-         table_charts();
+         table_charts_rehub();
 	     alltoggles.addClass('not-incompare');
 	     alltoggles.removeClass('comparing').removeClass('loading');  
 		$('.compare-item-' + compareID).remove(); 

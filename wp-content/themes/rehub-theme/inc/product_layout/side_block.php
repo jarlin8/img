@@ -17,7 +17,7 @@
                 <div class="top-woo-area position-relative" id="rh_woo_layout_inimage">
                     <?php $image_url = get_post_meta($post->ID, '_woo_review_image_bg', true);?>
                     <?php if($image_url):?>
-                        <style scoped>#rh_woo_layout_inimage{background-image: url(<?php echo ''.$image_url;?>);}</style>
+                        <style>#rh_woo_layout_inimage{background-image: url(<?php echo ''.$image_url;?>);}</style>
                         <span class="rh-post-layout-image-mask"></span>
                         <?php else:?>
                             <?php 
@@ -30,7 +30,7 @@
                                 else {
                                     $maincolor = REHUB_MAIN_COLOR;
                                 }?>
-                        <style scoped>
+                        <style>
                             .main-nav.white_style{border-bottom:none;}
                             #rh_woo_layout_inimage{background: linear-gradient(135deg,<?php echo ''.$maincolor;?>,<?php echo hex2rgba($maincolor, 0.9);?>)}
                             #rh_woo_layout_inimage:before{content: " "; background: url(<?php echo get_template_directory_uri() .'/images/subbg.webp';?>) no-repeat right bottom;position: absolute;bottom: 0;right: 0;left:0;top:0;pointer-events:none;}

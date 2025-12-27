@@ -99,15 +99,6 @@
 			                <div><?php esc_html_e( 'Comments', 'rehub-theme' ); ?>: <span><?php echo (int)$count_comments;?></span></div>
 			                <div><?php esc_html_e( 'Likes', 'rehub-theme' ); ?>: <span><?php echo (int)$count_p_votes;?></span></div>
 			                <div><?php esc_html_e( 'Submitted', 'rehub-theme' ); ?>: <span><?php echo (int)$totalsubmitted;?></span></div>
-							<?php
-							if ( function_exists( 'bp_follow_total_follow_counts' ) ) :?>
-							    <?php $count = bp_follow_total_follow_counts( array(
-							        // change 5 to whatever user ID you need to fetch
-							        'user_id' => $author_ID
-							    ) );?>
-							    <div><?php esc_html_e( 'Followers', 'rehub-theme' ); ?>: <span><?php echo (int)$count['followers']; ?></span></div>
-							    <div><?php esc_html_e( 'Following', 'rehub-theme' ); ?>: <span><?php echo (int)$count['following']; ?></span></div>
-							<?php endif;?>
 
 			                <?php if(bp_is_active( 'friends' )) :?>
 				                <div><?php esc_html_e( 'Friends', 'rehub-theme' ); ?>: <span><?php echo friends_get_total_friend_count();?></span></div>				 				

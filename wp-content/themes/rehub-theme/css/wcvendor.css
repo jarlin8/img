@@ -221,6 +221,7 @@ table.wcv-table tr td, table.wcv-table tr th{border-bottom: 1px solid #E1E1E1;}
     background: -ms-radial-gradient(.6em .6em, circle, white .55em, rgba(255,255,255,0) .6em) -.6em -.6em, -ms-radial-gradient(1em 50%, circle, white .35em, rgba(255,255,255,0) .4em), -ms-radial-gradient(1em 47%, circle, rgba(0,0,0,.4) .4em, transparent .43em);
     background: -webkit-radial-gradient(.6em .6em, circle, white .55em, rgba(255,255,255,0) .6em) -.6em -.6em, -webkit-radial-gradient(1em 50%, circle, white .35em, rgba(255,255,255,0) .4em), -webkit-radial-gradient(1em 47%, circle, rgba(0,0,0,.4) .4em, transparent .43em);
 }
+.dokan-izimodal-wraper .dokan-izimodal-close-btn button{border:none}
 .store-coupon-wrap .code:after {
     content: '';
     position: absolute;
