@@ -33,9 +33,9 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 		 * @return array
 		 */
 		public function localize( $data ) {
-			$data['ajax'] = array(
+			$data['ajax'] = [
 				'action' => self::ACTION,
-			);
+			];
 
 			return $data;
 		}
@@ -44,14 +44,19 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 		 * Init the object, during the AJAX request. Adds ajax handlers and verifies nonces
 		 */
 		public function init() {
-			add_action( 'wp_ajax_' . self::ACTION, array( $this, 'handle' ) );
+			add_action( 'wp_ajax_' . self::ACTION, [ $this, 'handle' ] );
 		}
 
 		/**
 		 * Handles the ajax call
 		 */
 		public function handle() {
-			if ( wp_verify_nonce( $this->param( 'nonce' ), self::NONCE_KEY ) === false ) {
+			$post_id = $this->param('post_id');
+			if(empty($post_id)) {
+				$post_id = $this->param('page_id');
+			}
+
+			if ( wp_verify_nonce( $this->param( 'nonce' ), self::NONCE_KEY ) === false || ! TCB_Product::has_external_access( $post_id ) ) {
 				$this->error( __( 'This page has expired. Please reload and try again', 'thrive-cb' ), 403, 'nonce_expired' );
 			}
 
@@ -78,7 +83,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			 */
 			do_action( 'tcb_ajax_before_' . $custom, $this );
 
-			$response = call_user_func( array( $this, $action ) );
+			$response = call_user_func( [ $this, $action ] );
 
 			$response = apply_filters( 'tcb_ajax_response_' . $custom, $response, $this );
 
@@ -123,11 +128,11 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				wp_die( esc_html( $message ), $code );
 			}
 
-			$json = array(
+			$json = [
 				'error'             => true,
 				'message'           => $message,
 				'tcb_default_error' => $code === 422,
-			);
+			];
 			if ( $str_code ) {
 				$json['code'] = $str_code;
 			}
@@ -143,9 +148,9 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 		 */
 		protected function json( $data ) {
 			if ( is_scalar( $data ) ) {
-				$data = array(
+				$data = [
 					'message' => $data,
-				);
+				];
 			}
 			if ( ! isset( $data['success'] ) ) {
 				$data['success'] = true;
@@ -180,7 +185,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			$s = trim( wp_unslash( $this->param( 'q' ) ) );
 			$s = trim( $s );
 
-			$selected_post_types = array( 'post', 'page', 'product' );
+			$selected_post_types = [ 'post', 'page', 'product' ];
 
 			/**
 			 * Add filter to allow hooking into the selected post types
@@ -216,13 +221,13 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				}
 			}
 
-			$args = array(
+			$args = [
 				'post_type'   => $selected_post_types,
-				'post_status' => array( 'publish', 'inherit' ), //Inherit for the attachment post type
+				'post_status' => [ 'publish', 'inherit' ], //Inherit for the attachment post type
 				's'           => $s,
 				'numberposts' => 20,
 				'fields'      => 'ids', //we are taking ids because it resembles more with the results returned from wp search
-			);
+			];
 
 			$query     = new WP_Query();
 			$found_ids = $query->query( $args );
@@ -334,8 +339,10 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				require_once( ABSPATH . 'wp-admin/includes/file.php' );
 			}
 
-			/* Filter to change the default location of the uploaded file */
-			add_filter( 'upload_dir', "tve_filter_{$content_type}_preview_location" );
+			if ( function_exists( "tve_filter_{$content_type}_preview_location" ) ) {
+				/* Filter to change the default location of the uploaded file */
+				add_filter( 'upload_dir', "tve_filter_{$content_type}_preview_location" );
+			}
 
 			/* Callback for the file name(it's used for replacing the image instead of creating a new one) */
 			$unique_filename_callback = static function () use ( $image_name ) {
@@ -559,38 +566,77 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 					'message' => __( 'You do not have the required permission for this action', 'thrive-cb' ),
 				);
 			}
+
+			/* Pre-refactor `param()` read `$_POST[$key] ?? $_REQUEST[$key]`. `$_POST + $_REQUEST` reproduces that precedence (left operand wins on duplicate keys) so the wrapper stays byte-equivalent to the original body even when an editor caller puts a save field in the URL query string. */
+			return self::save_post_content( (int) $post_id, $_POST + $_REQUEST ); //phpcs:ignore -- shape preserved verbatim for parity; sanitization happens inside save_post_content().
+		}
+
+		/**
+		 * Read a single field from a save-post payload, mirroring the sanitization behaviour of {@see param()}.
+		 *
+		 * @param array  $payload
+		 * @param string $key
+		 * @param mixed  $default
+		 * @param bool   $sanitize
+		 *
+		 * @return mixed
+		 */
+		protected static function pluck( $payload, $key, $default = null, $sanitize = true ) {
+			$value = isset( $payload[ $key ] ) ? $payload[ $key ] : $default;
+
+			return $sanitize ? map_deep( $value, 'sanitize_text_field' ) : $value;
+		}
+
+		/**
+		 * Persist Thrive Architect content for a post. Canonical save pipeline shared by the
+		 * editor's admin-ajax entry ({@see action_save_post()}) and the REST controller
+		 * ({@see TCB_Content_REST}, namespace tcb/v1).
+		 *
+		 * Caller is responsible for verifying current_user_can( 'edit_post', $post_id ) and
+		 * tcb_has_external_cap() before invoking this method.
+		 *
+		 * The $payload array shape mirrors $_POST (slashed strings) — REST callers must
+		 * wp_slash() their JSON-decoded body before calling this method to keep parity with
+		 * the AJAX entry point.
+		 *
+		 * @param int   $post_id
+		 * @param array $payload
+		 *
+		 * @return array
+		 */
+		public static function save_post_content( $post_id, $payload ) {
 			$post_id  = (int) $post_id;
 			$tcb_post = tcb_post( $post_id );
 
-			do_action( 'tcb_ajax_save_post', $post_id, $_POST );
+			do_action( 'tcb_ajax_save_post', $post_id, $payload );
 
-			$landing_page_template = $this->param( 'tve_landing_page', 0 );
+			$landing_page_template = self::pluck( $payload, 'tve_landing_page', 0 );
 
-			$inline_rules     = $this->param( 'inline_rules', null, false );
+			$inline_rules     = self::pluck( $payload, 'inline_rules', null, false );
 			$clippath_pattern = '/clip-path:(.+?);/';
 
-			$inline_rules = preg_replace_callback( $clippath_pattern, array(
-				$this,
+			$inline_rules = preg_replace_callback( $clippath_pattern, [
+				self::class,
 				'replace_clip_path',
-			), $inline_rules );
+			], $inline_rules );
 
-			$response = array(
+			$response = [
 				'success' => true,
-			);
+			];
 
 			/**
 			 * Post Constants - similar with tve_globals but do not depend on the Landing Page Key
 			 *
 			 * Usually stores flags for a particular post
 			 */
-			if ( ! empty( $_POST['tve_post_constants'] ) && is_array( $_POST['tve_post_constants'] ) ) {
-				update_post_meta( $post_id, '_tve_post_constants', map_deep( $_POST['tve_post_constants'], 'sanitize_text_field' ) );
+			if ( ! empty( $payload['tve_post_constants'] ) && is_array( $payload['tve_post_constants'] ) ) {
+				update_post_meta( $post_id, '_tve_post_constants', map_deep( $payload['tve_post_constants'], 'sanitize_text_field' ) );
 			}
 
-			if ( ( $custom_action = $this->param( 'custom_action' ) ) ) {
+			if ( ( $custom_action = self::pluck( $payload, 'custom_action' ) ) ) {
 				switch ( $custom_action ) {
 					case 'landing_page': //change or remove the landing page template for this post
-						$lp_id = $this->param( 'id' );
+						$lp_id = self::pluck( $payload, 'id' );
 
 						tcb_landing_page( $post_id )->change_template( $landing_page_template, $lp_id );
 						break;
@@ -635,7 +681,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 						break;
 					case 'landing_page_delete':
 						/* @var \TCB\SavedLandingPages\Saved_Lp $saved_lp_instance */
-						$saved_lp_instance = TCB\SavedLandingPages\Saved_Lp::get_instance_with_id( $this->param( 'id' ) );
+						$saved_lp_instance = TCB\SavedLandingPages\Saved_Lp::get_instance_with_id( self::pluck( $payload, 'id' ) );
 						$saved_lp_instance->delete();
 						$response['saved_lp_templates'] = TCB\SavedLandingPages\Saved_Lp::localize();
 
@@ -644,18 +690,18 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 
 				$response['revisions'] = tve_get_post_revisions( $post_id );
 
-				if ( isset( $_POST['header'] ) ) {
-					update_post_meta( $post_id, '_tve_header', (int) $_POST['header'] );
+				if ( isset( $payload['header'] ) ) {
+					update_post_meta( $post_id, '_tve_header', (int) $payload['header'] );
 				}
-				if ( isset( $_POST['footer'] ) ) {
-					update_post_meta( $post_id, '_tve_footer', (int) $_POST['footer'] );
+				if ( isset( $payload['footer'] ) ) {
+					update_post_meta( $post_id, '_tve_footer', (int) $payload['footer'] );
 				}
 
 				return $response;
 			}
 
 			$key     = $landing_page_template ? ( '_' . $landing_page_template ) : '';
-			$content = $this->param( 'tve_content', null, false );
+			$content = self::pluck( $payload, 'tve_content', null, false );
 
 			/**
 			 * Just in case someone whats to do stuff on content before we save it into db
@@ -663,16 +709,33 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			$content = apply_filters( 'tcb_save_post_content', $content, $post_id );
 
 			$content_split = tve_get_extended( $content );
-			$content       = str_replace( array( '<!--tvemorestart-->', '<!--tvemoreend-->' ), '', $content );
+			$content       = str_replace( [ '<!--tvemorestart-->', '<!--tvemoreend-->' ], '', $content );
 			update_post_meta( $post_id, "tve_content_before_more{$key}", $content_split['main'] );
 			update_post_meta( $post_id, "tve_content_more_found{$key}", $content_split['more_found'] );
 			update_post_meta( $post_id, "tve_custom_css{$key}", $inline_rules );
 
-			/* user defined Custom CSS rules here, had to use different key because tve_custom_css was already used */
-			update_post_meta( $post_id, "tve_user_custom_css{$key}", $this->param( 'tve_custom_css', null, false ) );
-			tve_update_post_meta( $post_id, 'tve_page_events', $this->param( 'page_events', [], false ) );
+			/**
+			 * Store Lead generation forms data
+			 */
 
-			if ( $this->param( 'update' ) === 'true' ) {
+			// add lead gen forms data
+			if ( ! empty( $payload['lead_gen_forms'] ) && is_array( $payload['lead_gen_forms'] ) ) {
+				foreach ( $payload['lead_gen_forms'] as $lead_gen_form ) {
+					$form_identifier = isset( $lead_gen_form['form_identifier'] ) ? $lead_gen_form['form_identifier'] : '';
+					$inputs          = isset( $lead_gen_form['inputs'] ) ? $lead_gen_form['inputs'] : array();
+					$apis            = isset( $lead_gen_form['apis'] ) ? $lead_gen_form['apis'] : array();
+
+					if ( ! empty( $form_identifier ) ) {
+						add_post_meta( $post_id, "_tve_lead_gen_form_{$form_identifier}", array( 'inputs' => $inputs, 'apis' => $apis ) );
+					}
+				}
+			}
+
+			/* user defined Custom CSS rules here, had to use different key because tve_custom_css was already used */
+			update_post_meta( $post_id, "tve_user_custom_css{$key}", self::pluck( $payload, 'tve_custom_css', null, false ) );
+			tve_update_post_meta( $post_id, 'tve_page_events', self::pluck( $payload, 'page_events', [], false ) );
+
+			if ( self::pluck( $payload, 'update' ) === 'true' ) {
 				update_post_meta( $post_id, "tve_updated_post{$key}", $content );
 				/**
 				 * If there is not WP content in the post, migrate it to TCB2-editor only mode
@@ -680,47 +743,49 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				$tcb_post->maybe_auto_migrate( false );
 				$tcb_post->enable_editor();
 
-				$tve_stripped_content = $this->param( 'tve_stripped_content', null, false );
-				$tve_stripped_content = str_replace( array(
+				$tve_stripped_content = self::pluck( $payload, 'tve_stripped_content', null, false );
+				$tve_stripped_content = str_replace( [
 					'<!--tvemorestart-->',
 					'<!--tvemoreend-->',
-				), '', $tve_stripped_content );
+				], '', $tve_stripped_content );
 				$tcb_post->update_plain_text_content( $tve_stripped_content );
 			}
 
 			/* global options for a post that are not included in the editor */
-			$tve_globals             = empty( $_POST['tve_globals'] ) ? [] : map_deep( array_filter( $_POST['tve_globals'] ), 'sanitize_text_field' ); // phpcs:ignore
-			$tve_globals['font_cls'] = $this->param( 'custom_font_classes', [] );
+			$tve_globals             = ( empty( $payload['tve_globals'] ) || ! is_array( $payload['tve_globals'] ) ) ? [] : map_deep( array_filter( $payload['tve_globals'] ), 'sanitize_text_field' );
+			$tve_globals['font_cls'] = self::pluck( $payload, 'custom_font_classes', [] );
 			update_post_meta( $post_id, "tve_globals{$key}", $tve_globals );
 			/* custom fonts used for this post */
 			tve_update_post_custom_fonts( $post_id, $tve_globals['font_cls'] );
 
 			if ( $landing_page_template ) {
-				update_post_meta( $post_id, 'tve_landing_page', $this->param( 'tve_landing_page' ) );
+				update_post_meta( $post_id, 'tve_landing_page', self::pluck( $payload, 'tve_landing_page' ) );
 				/* global Scripts for landing pages */
-				update_post_meta( $post_id, 'tve_global_scripts', $this->param( 'tve_global_scripts', [], false ) );
-				if ( ! empty( $_POST['tve_landing_page_save'] ) ) {
+				update_post_meta( $post_id, 'tve_global_scripts', self::pluck( $payload, 'tve_global_scripts', [], false ) );
+				if ( ! empty( $payload['tve_landing_page_save'] ) ) {
 					/* In the new version we add all data in post meta */
 					$template_data = [
-						'before_more'        => $content_split['main'],
-						'more_found'         => $content_split['more_found'],
-						'content'            => $content,
-						'inline_css'         => $this->param( 'inline_rules', null, false ),
-						'custom_css'         => $this->param( 'tve_custom_css', null, false ),
-						'tve_globals'        => $this->param( 'tve_globals', [], false ),
-						'tve_global_scripts' => $this->param( 'tve_global_scripts', [], false ),
-						'name'               => $this->param( 'tve_landing_page_save' ),
-						'tags'               => $this->param( 'template_tags' ),
-						'template'           => $landing_page_template,
-						'theme_dependency'   => get_post_meta( $post_id, 'tve_disable_theme_dependency', true ),
-						'tpl_colours'        => get_post_meta( $post_id, 'thrv_lp_template_colours', true ),
-						'tpl_gradients'      => get_post_meta( $post_id, 'thrv_lp_template_gradients', true ),
-						'tpl_button'         => get_post_meta( $post_id, 'thrv_lp_template_button', true ),
-						'tpl_section'        => get_post_meta( $post_id, 'thrv_lp_template_section', true ),
-						'tpl_contentbox'     => get_post_meta( $post_id, 'thrv_lp_template_contentbox', true ),
-						'tpl_palettes'       => get_post_meta( $post_id, 'thrv_lp_template_palettes', true ),
-						'tpl_skin_tag'       => get_post_meta( $post_id, 'theme_skin_tag', true ),
-						'date'               => date( 'Y-m-d' ),
+						'before_more'            => $content_split['main'],
+						'more_found'             => $content_split['more_found'],
+						'content'                => $content,
+						'inline_css'             => self::pluck( $payload, 'inline_rules', null, false ),
+						'custom_css'             => self::pluck( $payload, 'tve_custom_css', null, false ),
+						'tve_globals'            => self::pluck( $payload, 'tve_globals', [], false ),
+						'tve_global_scripts'     => self::pluck( $payload, 'tve_global_scripts', [], false ),
+						'name'                   => self::pluck( $payload, 'tve_landing_page_save' ),
+						'tags'                   => self::pluck( $payload, 'template_tags' ),
+						'template'               => $landing_page_template,
+						'theme_dependency'       => get_post_meta( $post_id, 'tve_disable_theme_dependency', true ),
+						'tpl_colours'            => get_post_meta( $post_id, 'thrv_lp_template_colours', true ),
+						'tpl_gradients'          => get_post_meta( $post_id, 'thrv_lp_template_gradients', true ),
+						'tpl_button'             => get_post_meta( $post_id, 'thrv_lp_template_button', true ),
+						'tpl_section'            => get_post_meta( $post_id, 'thrv_lp_template_section', true ),
+						'tpl_contentbox'         => get_post_meta( $post_id, 'thrv_lp_template_contentbox', true ),
+						'tpl_palettes'           => get_post_meta( $post_id, 'thrv_lp_template_palettes', true ),
+						'tpl_palettes_v2'        => get_post_meta( $post_id, TCB_LP_Palettes::LP_PALETTES, true ),
+						'tpl_palettes_config_v2' => get_post_meta( $post_id, TCB_LP_Palettes::LP_PALETTES_CONFIG, true ),
+						'tpl_skin_tag'           => get_post_meta( $post_id, 'theme_skin_tag', true ),
+						'date'                   => date( 'Y-m-d' ),
 					];
 					/**
 					 * if this is a cloud template, we need to store the thumbnail separately, as it has a different location
@@ -751,20 +816,20 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			} else {
 				delete_post_meta( $post_id, 'tve_landing_page' );
 			}
-			tve_update_post_meta( $post_id, 'thrive_icon_pack', empty( $_POST['has_icons'] ) ? 0 : $_POST['has_icons'] );
-			tve_update_post_meta( $post_id, 'tve_has_masonry', empty( $_POST['tve_has_masonry'] ) ? 0 : 1 );
-			tve_update_post_meta( $post_id, 'tve_has_typefocus', empty( $_POST['tve_has_typefocus'] ) ? 0 : 1 );
-			tve_update_post_meta( $post_id, 'tve_has_wistia_popover', empty( $_POST['tve_has_wistia_popover'] ) ? 0 : 1 );
+			tve_update_post_meta( $post_id, 'thrive_icon_pack', empty( $payload['has_icons'] ) ? 0 : $payload['has_icons'] );
+			tve_update_post_meta( $post_id, 'tve_has_masonry', empty( $payload['tve_has_masonry'] ) ? 0 : 1 );
+			tve_update_post_meta( $post_id, 'tve_has_typefocus', empty( $payload['tve_has_typefocus'] ) ? 0 : 1 );
+			tve_update_post_meta( $post_id, 'tve_has_wistia_popover', empty( $payload['tve_has_wistia_popover'] ) ? 0 : 1 );
 
-			if ( isset( $_POST['header'] ) ) {
-				update_post_meta( $post_id, '_tve_header', (int) $_POST['header'] );
+			if ( isset( $payload['header'] ) ) {
+				update_post_meta( $post_id, '_tve_header', (int) $payload['header'] );
 			}
-			if ( isset( $_POST['footer'] ) ) {
-				update_post_meta( $post_id, '_tve_footer', (int) $_POST['footer'] );
+			if ( isset( $payload['footer'] ) ) {
+				update_post_meta( $post_id, '_tve_footer', (int) $payload['footer'] );
 			}
 
 			/* Handle the css, js and additional saves */
-			\TCB\Lightspeed\Main::handle_optimize_saves( $post_id, $_POST );
+			\TCB\Lightspeed\Main::handle_optimize_saves( $post_id, $payload );
 			/**
 			 * Remove old unused meta
 			 */
@@ -785,14 +850,12 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 					'ID'                => $post_id,
 					'post_modified'     => current_time( 'mysql' ),
 					'post_modified_gmt' => current_time( 'mysql' ),
-					'post_title'        => get_the_title( $post_id ),
 				) );
 			}
 
 			$response['revisions'] = tve_get_post_revisions( $post_id );
 
 			return $response;
-
 		}
 
 		/**
@@ -816,14 +879,14 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			$option_name  = $this->param( 'option_name' );
 			$option_value = $this->param( 'option_value' );
 
-			$allowed = apply_filters( 'tcb_allowed_ajax_options', array(
+			$allowed = apply_filters( 'tcb_allowed_ajax_options', [
 				'tve_display_save_notification',
 				'tve_social_fb_app_id',
 				'tve_comments_disqus_shortname',
 				'tve_comments_facebook_admins',
 				'tcb_pinned_elements',
 				'tve_fa_kit',
-			) );
+			] );
 
 			if ( ! in_array( $option_name, $allowed ) ) {
 				$this->error( 'Invalid', 403 );
@@ -876,10 +939,85 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				$api_extra_data = Thrive_Dash_List_Manager::connection_instance( $api )->get_api_extra( $extra, $params );
 			}
 
-			return $api_extra_data;
+		return $api_extra_data;
+	}
+
+	/**
+	 * Create a custom field in HubSpot (Thrive Tags approach)
+	 *
+	 * @return array
+	 */
+	public function action_create_hubspot_custom_field() {
+		// Validate input parameters to prevent fatal errors.
+		$field_key = $this->param( 'field_key' );
+		$field_label = $this->param( 'field_label' );
+
+		if ( empty( $field_key ) ) {
+			return array(
+				'success' => false,
+				'message' => 'Field key is required.',
+			);
 		}
 
-		public function action_custom_menu() {
+		if ( empty( $field_label ) ) {
+			return array(
+				'success' => false,
+				'message' => 'Field label is required.',
+			);
+		}
+
+		// Sanitize inputs.
+		$field_key = sanitize_key( $field_key );
+		$field_label = sanitize_text_field( $field_label );
+
+		if ( empty( $field_key ) ) {
+			return array(
+				'success' => false,
+				'message' => 'Field key contains invalid characters.',
+			);
+		}
+
+		try {
+			// Get HubSpot connection.
+			$hubspot_connection = Thrive_Dash_List_Manager::connection_instance( 'hubspot' );
+
+			if ( ! $hubspot_connection || ! $hubspot_connection->is_connected() ) {
+				return array(
+					'success' => false,
+					'message' => 'HubSpot is not connected.',
+				);
+			}
+
+			// Create the field in HubSpot (like Thrive Tags).
+			$success = $hubspot_connection->ensure_custom_field_exists( $field_key, $field_label, 'text' );
+
+			if ( $success ) {
+				return array(
+					'success' => true,
+					'field'   => array(
+						'id'    => $field_key,
+						'name'  => $field_label,
+						'label' => $field_label,
+						'type'  => 'text',
+					),
+					'message' => sprintf( 'Field "%s" created successfully in HubSpot.', $field_label ),
+				);
+			}
+
+			return array(
+				'success' => false,
+				'message' => 'Failed to create field in HubSpot.',
+			);
+
+		} catch ( Exception $e ) {
+			return array(
+				'success' => false,
+				'message' => 'Error: ' . $e->getMessage(),
+			);
+		}
+	}
+
+	public function action_custom_menu() {
 			ob_start();
 			include plugin_dir_path( __DIR__ ) . 'views/elements/menu-generated.php';
 			$content = ob_get_clean();
@@ -899,7 +1037,8 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			$template_instance = \TCB\UserTemplates\Template::get_instance_with_id( $this->param( 'template_key' ) );
 			$template_data     = $template_instance->load();
 
-			$template_data['html_code'] = tve_do_wp_shortcodes( tve_thrive_shortcodes( stripslashes( $template_data['html_code'] ), true ), true );
+		$template_data['html_code'] = tve_do_wp_shortcodes( tve_thrive_shortcodes( stripslashes( $template_data['html_code'] ), true ), true );
+		$template_data['html_code'] = tve_add_custom_html_overlay( $template_data['html_code'] );
 
 			if ( ! empty( $template_data['media_css'] ) && is_array( $template_data['media_css'] ) ) {
 				if ( ! empty( $template_data['media_css'][0] ) ) {
@@ -918,7 +1057,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				}
 			}
 
-			return $template_data;
+            return $template_data;
 		}
 
 		public function action_delete_content_template() {
@@ -1015,13 +1154,13 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				 */
 				$gradient_id = count( $global_gradients );
 
-				$global_gradients[] = array(
+				$global_gradients[] = [
 					'id'          => $gradient_id,
 					'gradient'    => $gradient,
 					'name'        => $name,
 					'active'      => $active,
 					'custom_name' => $custom_name,
-				);
+				];
 
 			} else {
 				/**
@@ -1112,13 +1251,13 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				 */
 				$color_id = count( $global_colors );
 
-				$global_colors[] = array(
+				$global_colors[] = [
 					'id'          => $color_id,
 					'color'       => $color,
 					'name'        => $name,
 					'active'      => $active,
 					'custom_name' => $custom_name,
-				);
+				];
 
 			} else {
 				/**
@@ -1192,7 +1331,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				$custom_name = 0;
 			}
 
-			if ( ! in_array( $type, array( 'color', 'gradient' ) ) ) {
+			if ( ! in_array( $type, [ 'color', 'gradient' ] ) ) {
 				$this->error( 'Invalid type' );
 			}
 
@@ -1233,7 +1372,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			$type   = $this->param( 'type', '' );
 			$values = $this->param( 'values', [], false );
 
-			if ( ! in_array( $type, array( 'colours', 'gradients' ) ) ) {
+			if ( ! in_array( $type, [ 'colours', 'gradients' ] ) ) {
 				$this->error( 'Invalid type' );
 			}
 
@@ -1258,12 +1397,12 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			$data['blocks'] = tcb_elements()->element_factory( 'contentblock' )->get_blocks();
 
 			$data['btn_default_templates'] = tcb_elements()->element_factory( 'button' )->get_default_templates();
-			$terms                         = get_terms( array( 'slug' => array( 'headers', 'footers' ) ) );
+			$terms                         = get_terms( [ 'slug' => [ 'headers', 'footers' ] ] );
 			$terms                         = array_map( function ( $term ) {
 				return $term->term_id;
 			}, $terms );
 
-			$data['symbols']           = tcb_elements()->element_factory( 'symbol' )->get_all( array( 'category__not_in' => $terms ), true );
+			$data['symbols']           = tcb_elements()->element_factory( 'symbol' )->get_all( [ 'category__not_in' => $terms ], true );
 			$data['content_templates'] = TCB\UserTemplates\Template::localize( true );
 
 			$data['custom_icons'] = TCB_Icon_Manager::get_custom_icons( $post_id );
@@ -1350,12 +1489,12 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				/**
 				 * Add New Global Style
 				 */
-				$global_styles[ $identifier ] = array(
+				$global_styles[ $identifier ] = [
 					'name'  => $name,
 					'css'   => $css,
 					'dom'   => $dom,
 					'fonts' => $fonts,
-				);
+				];
 
 				$default_props = array(
 					'default_css'  => $this->param( 'default_css', '', false ),
@@ -1405,7 +1544,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			$post_grid = new TCB_Post_Grid( $_POST );
 			$html      = $post_grid->render();
 
-			$this->json( array( 'html' => $html ) );
+			$this->json( [ 'html' => $html ] );
 		}
 
 		/**
@@ -1532,17 +1671,17 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				$this->error( __( 'Invalid element type', 'thrive-cb' ) . " ({$type})", 500 );
 			}
 
-			$templates = $element->get_cloud_templates( array( 'nocache' => $no_cache ) );
+			$templates = $element->get_cloud_templates( [ 'nocache' => $no_cache ] );
 
 			if ( is_wp_error( $templates ) ) {
 				$code = $templates->get_error_data( 'tcb_error' );
-				$this->error( $templates, $code ?: 500 );
+				$this->error( $templates, $code ?: 422 );
 			}
 
-			return array(
+			return [
 				'success'   => true,
 				'templates' => $templates,
-			);
+			];
 		}
 
 		/**
@@ -1557,16 +1696,16 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 
 			$no_cache = (bool) $this->param( 'nocache', false );
 
-			$templates = tve_get_cloud_content_templates( $type, array( 'nocache' => $no_cache ) );
+			$templates = tve_get_cloud_content_templates( $type, [ 'nocache' => $no_cache ] );
 
 			if ( is_wp_error( $templates ) ) {
 				$this->error( $templates );
 			}
 
-			return array(
+			return [
 				'success'   => true,
 				'templates' => $templates,
-			);
+			];
 		}
 
 		/**
@@ -1590,17 +1729,17 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			if ( ! ( $element = tcb_elements()->element_factory( $type ) ) || ! is_a( $element, 'TCB_Cloud_Template_Element_Abstract' ) ) {
 				$this->error( __( 'Invalid element type', 'thrive-cb' ) . " ({$type})", 500 );
 			}
-
-			$data = $element->get_cloud_template_data( $id, array( 'type' => $type ) );
+			$post_id = $this->param( 'post_id' );
+			$data    = $element->get_cloud_template_data( $id, [ 'type' => $type, 'post_id' => $post_id ] );
 
 			if ( is_wp_error( $data ) ) {
 				$this->error( $data );
 			}
 
-			return array(
+			return [
 				'success' => true,
 				'data'    => $data,
-			);
+			];
 		}
 
 		/**
@@ -1617,24 +1756,25 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			if ( ! ( $id = $this->param( 'id' ) ) ) {
 				$this->error( __( 'Missing template id', 'thrive-cb' ) . " ({$type})", 500 );
 			}
+			$post_id = $this->param( 'post_id' );
 
-			$data = tve_get_cloud_template_data( $type, array( 'id' => $id, 'type' => $type, ) );
+			$data = tve_get_cloud_template_data( $type, [ 'id' => $id, 'type' => $type, 'post_id' => $post_id ] );
 
 			if ( is_wp_error( $data ) ) {
 				$this->error( $data );
 			}
 
-			return array(
+			return [
 				'success' => true,
 				'data'    => $data,
-			);
+			];
 		}
 
 		/**
 		 * Callback for preg_replace
 		 * Adds vendor prefix for clip-path for safari
 		 */
-		public function replace_clip_path( $matches ) {
+		public static function replace_clip_path( $matches ) {
 			return $matches[0] . ' -webkit-clip-path:' . $matches[1] . '; ';
 		}
 
@@ -1655,13 +1795,13 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			$symbols = $element->get_all( $args );
 
 			if ( is_wp_error( $symbols ) ) {
-				$this->error( __( 'Error when retrieving symbols', 'thrive-cb' ), 500 );
+				$this->error( $symbols->get_error_message( 'tcb_api_error' ), 401 );
 			}
 
-			return array(
+			return [
 				'success' => true,
 				'symbols' => $symbols,
-			);
+			];
 		}
 
 		/**
@@ -1671,12 +1811,12 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			$type = $this->param( 'type', 'symbol' );
 			$id   = $this->param( 'id' );
 			if ( ! $id ) {
-				return new WP_Error( 'missing_id', __( 'Missing ID', 'thrive-cb' ), array( 'status' => 500 ) );
+				return new WP_Error( 'missing_id', __( 'Missing ID', 'thrive-cb' ), [ 'status' => 500 ] );
 			}
 
 			/** @var TCB_Symbol_Element_Abstract $element */
 			if ( ! ( $element = tcb_elements()->element_factory( $type ) ) || ! is_a( $element, 'TCB_Symbol_Element_Abstract' ) ) {
-				return new WP_Error( 'rest_invalid_element_type', __( 'Invalid element type', 'thrive-cb' ) . " ({$type})", array( 'status' => 500 ) );
+				return new WP_Error( 'rest_invalid_element_type', __( 'Invalid element type', 'thrive-cb' ) . " ({$type})", [ 'status' => 500 ] );
 			}
 
 			return array(
@@ -1734,10 +1874,10 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 
 			do_action( 'tcb_after_symbol_save', array_merge( $_POST, $data ) );
 
-			return array(
+			return [
 				'success' => true,
 				'data'    => $data,
-			);
+			];
 		}
 
 		/**
@@ -1771,10 +1911,10 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				$this->error( $response );
 			}
 
-			return array(
+			return [
 				'success' => true,
 				'data'    => $response,
-			);
+			];
 
 		}
 
@@ -1800,10 +1940,10 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				$this->error( $data );
 			}
 
-			return array(
+			return [
 				'success' => true,
 				'data'    => $data,
-			);
+			];
 
 		}
 
@@ -1835,7 +1975,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			}
 
 			$content .= sprintf( '<div class="widget-config" style="display: none;">__CONFIG_thrive_widget__%s__CONFIG_thrive_widget__</div>',
-				json_encode( array_merge( $widget_data, array( 'type' => $widget_type ) ) )
+				json_encode( array_merge( $widget_data, [ 'type' => $widget_type ] ) )
 			);
 
 			return apply_filters( 'tcb_widget_data_' . $widget_type,
@@ -1890,10 +2030,10 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 
 			update_option( 'thrv_fav_content_blocks', $favorites );
 
-			return array(
+			return [
 				'success' => true,
 				'status'  => $status,
-			);
+			];
 		}
 
 		/**
@@ -1910,13 +2050,13 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			$previous_template_data = json_decode( stripslashes( $this->param( 'previous_template_data', [], false ) ), true );
 			$active_template_data   = json_decode( stripslashes( $this->param( 'active_template_data', [], false ) ), true );
 
-			$whitelist = array(
+			$whitelist = [
 				'id',
 				'color',
 				'gradient',
 				'hsl',
 				'hsl_parent_dependency',
-			);
+			];
 
 			foreach ( $previous_template_data as $type => $values ) {
 				foreach ( $values as $key => $value ) {
@@ -1931,7 +2071,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			$landing_page->update_template_palette( $active_id, $previous_id, $previous_template_data );
 
 
-			$whitelistTemplateMeta = array(
+			$whitelistTemplateMeta = [
 				'id',
 				'color',
 				'gradient',
@@ -1940,7 +2080,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				'parent',
 				'hsl',
 				'hsl_parent_dependency',
-			);
+			];
 
 			foreach ( $active_template_data as $type => $values ) {
 				foreach ( $values as $key => $value ) {
@@ -1952,7 +2092,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 
 			$landing_page->update_template_css_variables( $active_template_data );
 
-			return array( 'success' => true );
+			return [ 'success' => true ];
 		}
 
 		/**
@@ -1993,14 +2133,14 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				}
 			}
 
-			$landing_page->update_template_css_variables( array(
+			$landing_page->update_template_css_variables( [
 				'colors'    => $landing_page->template_vars['colours'],
 				'gradients' => $landing_page->template_vars['gradients'],
-			) );
+			] );
 
-			return array(
+			return [
 				'success' => true,
-			);
+			];
 		}
 
 		/**
@@ -2021,11 +2161,11 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			}
 
 			if ( $template_id && $styles ) {
-				$data = array(
+				$data = [
 					'id'     => $template_id,
 					'name'   => $template_name,
 					'styles' => $styles,
-				);
+				];
 				if ( $found !== false ) {
 					$templates[ $found ] = $data;
 				} else {
@@ -2034,10 +2174,10 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				update_option( 'tve_menu_item_templates', $templates, 'no' );
 			}
 
-			return array(
+			return [
 				'success'   => true,
 				'templates' => $templates,
-			);
+			];
 		}
 
 		/**
@@ -2135,10 +2275,10 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 
 			$result = wp_trash_post( $id );
 
-			return array(
+			return [
 				'success' => $success,
 				'data'    => $result,
-			);
+			];
 		}
 
 		/**
@@ -2156,10 +2296,10 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				$success = false;
 			}
 
-			wp_update_post( array(
+			wp_update_post( [
 				'ID'         => $id,
 				'post_title' => $new_name,
-			) );
+			] );
 
 			$symbol->post_title = $new_name;
 
@@ -2201,16 +2341,16 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			                            ->save( $post_title );
 
 			if ( is_wp_error( $instance ) ) {
-				return array(
+				return [
 					'success' => false,
 					'message' => 'Something went wrong while saving the file upload configuration',
-				);
+				];
 			}
 
-			return array(
+			return [
 				'success' => true,
 				'file_id' => $instance->ID,
-			);
+			];
 		}
 
 		/**
@@ -2221,7 +2361,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 		public function action_file_upload_config_delete() {
 			FileUploadConfig::get_one( $this->param( 'file_id', 0 ) )->delete();
 
-			return array( 'success' => true );
+			return [ 'success' => true ];
 		}
 
 		/**
@@ -2237,7 +2377,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			 *
 			 * @param array $response
 			 */
-			return apply_filters( 'tcb.content_pre_save', array( 'success' => true ), $_POST );
+			return apply_filters( 'tcb.content_pre_save', [ 'success' => true ], $_POST );
 		}
 
 		/**
@@ -2248,7 +2388,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 		public function action_form_settings_delete() {
 			FormSettings::get_one( $this->param( 'settings_id', 0 ) )->delete();
 
-			return array( 'success' => true );
+			return [ 'success' => true ];
 		}
 
 		/**
@@ -2264,7 +2404,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			tve_delete_cloud_saved_data();
 
 			if ( $type === 'lps' ) {
-				$tpls = function_exists( 'tve_get_cloud_templates' ) ? tve_get_cloud_templates( [], array( 'nocache' => true ) ) : [];
+				$tpls = function_exists( 'tve_get_cloud_templates' ) ? tve_get_cloud_templates( [], [ 'nocache' => true ] ) : [];
 			} elseif ( $type === 'blocks' ) {
 				$tpls = tcb_elements()->element_factory( 'contentblock' )->get_blocks();
 			}
@@ -2274,10 +2414,10 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				$this->error( $wpdb->last_error );
 			}
 
-			return array(
+			return [
 				'success' => true,
 				'tpls'    => $tpls,
-			);
+			];
 		}
 
 		/**
@@ -2291,10 +2431,9 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			$user = wp_get_current_user();
 			/* double check, just to be sure */
 			if ( $user ) {
-				$key   = $this->param( 'meta_key' );
 				$value = $this->param( 'meta_value' );
-				update_user_meta( $user->ID, $key, $value );
-				$response[ $key ] = $value;
+				update_user_meta( $user->ID, 'tcb_dismissed_tooltips', $value );
+				$response['tcb_dismissed_tooltips'] = $value;
 			}
 
 			return $response;
@@ -2304,19 +2443,21 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 		 * Get the intercom article from a specific url
 		 *
 		 * @return mixed
+		 *
+		 * #TODO: This will be not in use anymore after 01 July 2024
 		 */
 		public function action_get_intercom_article() {
 			$key = $this->param( 'url_key' );
 
 			$article_url = tve_get_intercom_article_url( $key );
 
-			return empty( $article_url ) ? '' : tve_dash_api_remote_get( $article_url, array(
-				'headers' => array(
+			return empty( $article_url ) ? '' : tve_dash_api_remote_get( $article_url, [
+				'headers' => [
 					'Authorization' => 'Bearer dG9rOjcyYjBkZGU5X2FiZTJfNGJiM19iNTY4X2Q2NzVmNDNiOGZjMToxOjA=',
 					'Accept'        => 'application/json',
 					'Content-Type'  => 'application/json',
-				),
-			) );
+				],
+			] );
 		}
 
 		/**
@@ -2350,14 +2491,16 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 					case 'download':
 						$template = isset( $_POST['template'] ) ? $_POST['template'] : '';
 						$post_id  = isset( $_POST['post_id'] ) ? $_POST['post_id'] : '';
+						$uid      = isset( $_POST['uid'] ) ? $_POST['uid'] : '';
+
 						if ( empty( $template ) ) {
 							throw new Exception( __( 'Invalid template', 'thrive-cb' ) );
 						}
-						TCB_Landing_Page::apply_cloud_template( $post_id, $template );
+						TCB_Landing_Page::apply_cloud_template( $post_id, $template, $uid );
 
-						$response = array(
+						$response = [
 							'success' => true,
-						);
+						];
 						break;
 					default:
 						$response = array(
@@ -2377,9 +2520,9 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 		}
 
 		public function action_content_export() {
-			$response = array(
+			$response = [
 				'success' => true,
-			);
+			];
 
 			$template_name = sanitize_file_name( $this->param( 'template_name' ) );
 			$post_id       = (int) $this->param( 'post_id' );
@@ -2405,10 +2548,10 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 		}
 
 		public function action_content_import() {
-			$response = array(
+			$response = [
 				'success' => true,
 				'message' => '',
-			);
+			];
 
 			$page_id       = (int) $this->param( 'page_id' );
 			$attachment_id = (int) $this->param( 'attachment_id' );
@@ -2442,9 +2585,9 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 		 * export a Landing Page as a Zip file
 		 */
 		public function action_landing_page_export() {
-			$response = array(
+			$response = [
 				'success' => true,
-			);
+			];
 
 			$template_name = sanitize_file_name( $this->param( 'template_name' ) );
 			$post_id       = (int) $this->param( 'post_id' );
@@ -2475,10 +2618,10 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 		 * the attachment should be a .zip file created with the "Export Landing Page" functionality
 		 */
 		public function action_landing_page_import() {
-			$response = array(
+			$response = [
 				'success' => true,
 				'message' => '',
-			);
+			];
 
 			$page_id       = (int) $this->param( 'page_id' );
 			$attachment_id = (int) $this->param( 'attachment_id' );
@@ -2507,9 +2650,9 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 		}
 
 		public function action_update_advanced_optimization() {
-			$response = array(
+			$response = [
 				'success' => true,
-			);
+			];
 
 			$post_id = (int) $this->param( 'post_id' );
 			$name    = $this->param( 'option_name' );
@@ -2534,9 +2677,9 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 		 * @return bool[]
 		 */
 		public function action_change_palette() {
-			$response = array(
+			$response = [
 				'success' => true,
-			);
+			];
 
 			$previous_id = (int) $this->param( 'previous_id' );
 			$active_id   = (int) $this->param( 'active_id' );
@@ -2572,9 +2715,9 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 		 * @return bool[] $response
 		 */
 		public function action_update_palette() {
-			$response = array(
+			$response = [
 				'success' => true,
-			);
+			];
 
 			$hsl                 = $this->param( 'hsl' );
 			$post_id             = $this->param( 'post_id' );
@@ -2590,15 +2733,54 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 		}
 
 		public function action_update_auxiliary_variable() {
-			$response = array(
+			$response = [
 				'success' => true,
-			);
+			];
 
 			$post_id  = (int) $this->param( 'post_id' );
 			$color_id = (int) $this->param( 'id' );
 			$color    = (string) $this->param( 'color' );
 
 			tcb_landing_page( $post_id )->update_auxiliary_variable( $color_id, $color );
+
+			return $response;
+		}
+
+		public function action_inherit_ttb_typography() {
+			$response = [
+				'success' => true,
+			];
+			$lp_id    = (int) $this->param( 'post_id' );
+			$inherit  = (int) $this->param( 'inherit' );
+
+			/* update post meta with the inherit value for this specific LP */
+
+			tve_update_post_meta( $lp_id, 'ttb_inherit_typography', $inherit );
+
+			global $post;
+			$post = get_post( $lp_id );
+
+			/* get the active skin typography and append it to the page, see print_skin_typography from LP class */
+			if ( tve_dash_is_ttb_active() ) {
+				$response['is_ttb_lp'] = tve_get_post_meta( $lp_id, 'theme_skin_tag' );
+
+				if ( $inherit ) {
+					$lp_typography = tcb_default_style_provider()->get_processed_styles( thrive_typography()->style(), 'string' );
+				} else {
+					$lp_typography = tcb_landing_page( $lp_id )->skin_typography;
+				}
+
+				if ( ! empty( $lp_typography ) ) {
+					/* Replace the variable to match the colors from config */
+					$lp_typography = str_replace( '--tcb-color-', TCB_LP_Palettes::SKIN_COLOR_VARIABLE_PREFIX, $lp_typography );
+
+					$lp_typography = tcb_custom_css( $lp_typography );
+
+					$response['style'] = '<style type="text/css" class="tcb_skin_lp_typography">' . $lp_typography . '</style>';
+				}
+
+				$response['thrive_default_styles'] = tcb_default_style_provider()->get_processed_styles( null, 'string', false );
+			}
 
 			return $response;
 		}
@@ -2614,6 +2796,6 @@ if ( wp_doing_ajax() ) {
 	$tcb_ajax_handler->init();
 } else {
 	/* in other cases, generate nonce and assign it */
-	add_filter( 'tcb_main_frame_localize', array( $tcb_ajax_handler, 'localize' ) );
+	add_filter( 'tcb_main_frame_localize', [ $tcb_ajax_handler, 'localize' ] );
 }
 

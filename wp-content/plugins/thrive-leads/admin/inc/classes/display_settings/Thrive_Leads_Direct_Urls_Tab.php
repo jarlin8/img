@@ -31,7 +31,7 @@ class Thrive_Leads_Direct_Urls_Tab extends Thrive_Leads_Tab implements Thrive_Le
 	}
 
 	/**
-	 * Wordpress doesnt have a list of direct URLs
+	 * WordPress doesnt have a list of direct URLs
 	 * and we dont have to match any item with any saved option
 	 *
 	 * @param $item

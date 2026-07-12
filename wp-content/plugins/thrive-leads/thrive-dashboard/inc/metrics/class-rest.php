@@ -27,6 +27,7 @@ class Rest_Controller extends WP_REST_Controller {
 				'permission_callback' => array( __CLASS__, 'admin_permissions_check' ),
 				'args'                => array(
 					'reason'         => Utils::get_rest_string_arg_data(),
+					'reason_id'      => Utils::get_rest_string_arg_data(),
 					'plugin_name'    => Utils::get_rest_string_arg_data(),
 					'plugin_version' => [
 						'type' => 'string',
@@ -68,6 +69,7 @@ class Rest_Controller extends WP_REST_Controller {
 		}
 		Deactivate::log_data( [
 			'reason'         => $request->get_param( 'reason' ),
+			'reason_id'      => $request->get_param( 'reason_id' ),
 			'extra_message'  => $request->get_param( 'extra_message' ),
 			'plugin_name'    => $request->get_param( 'plugin_name' ),
 			'plugin_version' => $request->get_param( 'plugin_version' ),

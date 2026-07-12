@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden
 }
 ?>
-
+<div class="error-container"></div>
 <div class="modal-sidebar">
 	<div class="lp-search">
 		<?php tcb_icon( 'search-regular' ); ?>
@@ -50,7 +50,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 </div>
 <div class="modal-content">
-	<span class="tcb-modal-title ml-30"><?php echo __( 'Thrive Leads Library', 'thrive-leads' ) ?></span>
+	<div class="flex-center space-between">
+		<span class="tcb-modal-title ml-30"><?php echo __( 'Thrive Leads Library', 'thrive-leads' ) ?></span>
+		<span data-fn="clearCache" class="tcb-refresh mr-30 click flex-center">
+			<span class="mr-10"><?php tcb_icon( 'sync-regular' ); ?></span>
+			<span class="mr-10"><?php echo esc_html__( 'Refresh from cloud', 'thrive-leads' ); ?></span>
+		</span>
+	</div>
 	<div class="warning-ct-change mr-30">
 		<div class="tcb-notification info-text">
 			<div class="tcb-notification-content">

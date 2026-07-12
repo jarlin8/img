@@ -480,6 +480,8 @@ final class TD_Inbox {
 	 */
 	public function notification_button( $return = false ) {
 
+		return false;
+
 		$template = dirname( __FILE__ ) . '/views/templates/notification-inbox-button.php';
 
 		ob_start();

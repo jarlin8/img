@@ -26,7 +26,7 @@ class TD_TTW_Messages_Manager {
 		$licenses = TD_TTW_User_Licenses::get_instance();
 
 		if ( $licenses->get_membership() && ! $licenses->get_membership()->can_update() ) {
-			add_action( 'admin_notices', array( __CLASS__, 'inactive_membership' ) );
+			//add_action( 'admin_notices', array( __CLASS__, 'inactive_membership' ) );
 		}
 	}
 

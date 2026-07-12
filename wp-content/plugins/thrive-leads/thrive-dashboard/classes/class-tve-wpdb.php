@@ -20,9 +20,6 @@ class Tve_Wpdb extends wpdb {
 			$dbhost     = defined( 'DB_HOST' ) ? DB_HOST : '';
 
 			static::$instance = new static( $dbuser, $dbpassword, $dbname, $dbhost );
-
-			global $table_prefix;
-			static::$instance->set_prefix( $table_prefix );
 		}
 
 		return static::$instance;

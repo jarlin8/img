@@ -27,6 +27,8 @@
 				<input type="text" class="change input tve-lg-field-placeholder" data-fn="changePlaceholder"/>
 			</div>
 		</div>
+		<div class="number-toggle control-number"></div>
+		<div class="date-toggle control-date"></div>
 		<div class="control-grid switch">
 			<div class="fill">
 				<span class="switch-label"><?php echo __( 'Required', 'thrive-cb' ) ?></span>
@@ -59,6 +61,30 @@
 		</div>
 		<div class="control-toggle control-consent"></div>
 	</div>
+	<div class="country-toggle control-country hr-top pt-10"></div>
+	<div class="tcb-edit-country" style="display: none;">
+		<div class="control-grid switch tve-lg-country--state">
+			<div class="fill">
+				<span><?php echo __( 'Country state', 'thrive-cb' ) ?></span>
+			</div>
+			<div class="tcb-switch tcb-text-right">
+				<label>
+					<input type="checkbox" class="change" data-fn="addStateField" />
+					<span class="tcb-lever"></span>
+				</label>
+			</div>
+		</div>
+		<div class="control-grid tve-lg-country--id" style="display: none;">
+			<div class="label">
+				<?php echo __( 'Country ID', 'thrive-cb' ); ?>
+			</div>
+
+			<div class="input">
+				<input type="text" class="change input" data-fn="" />
+			</div>
+		</div>
+	</div>
+	<div class="state-toggle control-state"></div>
 	<div class="custom-field-settings"></div>
 	<div class="tcb-field-mapping wrap">
 		<div class="tcb-field-mapping-controls control-grid hr-top pt-10">
@@ -74,7 +100,7 @@
 			</span>
 			</a>
 		</div>
-		<div id="tcb-apis-fields-mapping"></div>
+		<div id="tcb-apis-fields-mapping" class="mt-0 pt-10"></div>
 	</div>
 	<p id="tcb-field-mapping-unsupported" class="mt-0 hr-top pt-10">
 		<?php echo __( 'Custom fields (unavailable)', 'thrive-cb' ); ?>

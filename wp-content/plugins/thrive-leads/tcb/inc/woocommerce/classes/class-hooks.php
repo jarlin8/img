@@ -25,29 +25,32 @@ class Hooks {
 	}
 
 	public static function add_actions() {
-		add_action( 'tcb_editor_iframe_after', array( __CLASS__, 'tcb_editor_iframe_after' ) );
+		add_action( 'tcb_editor_iframe_after', [ __CLASS__, 'tcb_editor_iframe_after' ] );
 
-		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ), PHP_INT_MAX );
+		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'enqueue_scripts' ], PHP_INT_MAX );
 
-		add_action( 'wp_print_footer_scripts', array( __CLASS__, 'wp_print_footer_scripts' ), 9 );
+		add_action( 'wp_print_footer_scripts', [ __CLASS__, 'wp_print_footer_scripts' ], 9 );
 
-		add_action( 'tcb_output_components', array( __CLASS__, 'tcb_output_components' ) );
+		add_action( 'tcb_output_components', [ __CLASS__, 'tcb_output_components' ] );
 
-		add_action( 'rest_api_init', array( __CLASS__, 'rest_api_init' ) );
+		add_action( 'rest_api_init', [ __CLASS__, 'rest_api_init' ] );
 
-		add_action( 'tcb_editor_enqueue_scripts', array( 'TCB\Integrations\WooCommerce\Main', 'enqueue_scripts' ) );
+		add_action( 'tcb_editor_enqueue_scripts', [ 'TCB\Integrations\WooCommerce\Main', 'enqueue_scripts' ] );
 
-		add_action( 'tve_frontend_extra_scripts', array( 'TCB\Integrations\WooCommerce\Main', 'enqueue_scripts' ) );
+		add_action( 'tve_frontend_extra_scripts', [ 'TCB\Integrations\WooCommerce\Main', 'enqueue_scripts' ] );
 
 		add_action( 'tve_lightspeed_enqueue_module_scripts', [ __CLASS__, 'check_woo_modules_to_enqueue' ], 10, 2 );
+
+		/* Ensure Woo cart is initialized on frontend pages where TCB Shop is present or add-to-cart is used */
+		add_action( 'wp_loaded', [ __CLASS__, 'ensure_cart_initialized' ] );
 	}
 
 	public static function add_filters() {
-		add_filter( 'wp_list_categories', array( __CLASS__, 'wp_list_categories' ), 10, 2 );
+		add_filter( 'wp_list_categories', [ __CLASS__, 'wp_list_categories' ], 10, 2 );
 
-		add_filter( 'tve_frontend_options_data', array( __CLASS__, 'tve_frontend_data' ) );
+		add_filter( 'tve_frontend_options_data', [ __CLASS__, 'tve_frontend_data' ] );
 
-		add_filter( 'tcb_alter_cloud_template_meta', array( __CLASS__, 'tcb_alter_cloud_template_meta' ), 10, 3 );
+		add_filter( 'tcb_alter_cloud_template_meta', [ __CLASS__, 'tcb_alter_cloud_template_meta' ], 10, 3 );
 
 		add_filter( 'woocommerce_enqueue_styles', [ __CLASS__, 'woocommerce_enqueue_styles' ] );
 
@@ -56,6 +59,9 @@ class Hooks {
 		add_filter( 'tcb_main_frame_localize', [ __CLASS__, 'localize_woo_modules' ], 10, 1 );
 
 		add_filter( 'pre_get_posts', [ __CLASS__, 'pre_get_posts' ] );
+
+		/* When a TCB Shop is used, force enqueue of WC add-to-cart scripts */
+		add_filter( 'tcb_lightspeed_optimize_woo', '__return_true' );
 	}
 
 	/**
@@ -115,7 +121,7 @@ class Hooks {
 	 */
 	public static function tcb_output_components() {
 		$path  = TVE_TCB_ROOT_PATH . 'inc/woocommerce/views/components/';
-		$files = array_diff( scandir( $path ), array( '.', '..' ) );
+		$files = array_diff( scandir( $path ), [ '.', '..' ] );
 
 		foreach ( $files as $file ) {
 			include $path . $file;
@@ -176,10 +182,10 @@ class Hooks {
 	 */
 	public static function tcb_alter_cloud_template_meta( $template_data, $meta, $do_shortcode ) {
 		if ( ! is_array( $template_data ) ) {
-			$template_data = array();
+			$template_data = [];
 		}
 
-		if ( $do_shortcode && in_array( $template_data['type'], array( 'header', 'footer' ) ) && ! empty( $template_data['content'] ) ) {
+		if ( $do_shortcode && in_array( $template_data['type'], [ 'header', 'footer' ] ) && ! empty( $template_data['content'] ) ) {
 			/* the main reason for calling this is to render woo widgets such as Product Search which rely on __CONFIG__s */
 			$template_data['content'] = tve_thrive_shortcodes( $template_data['content'], is_editor_page_raw( true ) || \TCB_Utils::is_rest() );
 		}
@@ -275,6 +281,27 @@ class Hooks {
 				wp_enqueue_style( $handle, $src, [], false, $media );
 			}
 		}
+	}
+
+	/**
+	 * Initialize Woo cart early on frontend so add_to_cart has a valid cart instance
+	 */
+	public static function ensure_cart_initialized() {
+		if ( is_admin() || ! function_exists( 'wc_load_cart' ) ) {
+			return;
+		}
+
+		/* Only load when we detect a TCB Shop in content or an add-to-cart intent */
+		global $post;
+
+		$has_shop       = $post && isset( $post->post_content ) && strpos( $post->post_content, '[tcb_woo_shop' ) !== false;
+		$adding_to_cart = isset( $_REQUEST['add-to-cart'] );
+
+		if ( ! $has_shop && ! $adding_to_cart ) {
+			return;
+		}
+
+		\TCB\Integrations\WooCommerce\Main::init_frontend_woo_functionality();
 	}
 
 	/**

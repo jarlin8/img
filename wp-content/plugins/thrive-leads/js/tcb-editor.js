@@ -1,22 +1,21 @@
 /**
  * This file is included each time the TCB editor is opened for a piece of content - Loaded in the main frame
  */
-var TL_Editor = TL_Editor || {},
-	TCB_AnimViews = TVE.Views.Components.AnimationViews;
-
-TL_Editor.views = TL_Editor.views || {};
+window.TL_Editor = window.TL_Editor || {}
+window.TCB_AnimViews = TVE.Views.Components.AnimationViews;
+window.TL_Editor.views = window.TL_Editor.views || {};
 
 /**
  * TL Components Views
  * @type {{}}
  */
-TL_Editor.views.components = TL_Editor.views.components || {};
+window.TL_Editor.views.components = window.TL_Editor.views.components || {};
 
 /**
  * Backbone Panel View used to display all TL Shortcodes list when
  * user adds TL Shortcode Element in content
  */
-TL_Editor.views.ShortcodesPanel = TVE.Views.InlinePanel.extend( {
+window.TL_Editor.views.ShortcodesPanel = TVE.Views.InlinePanel.extend( {
 
 	template: TVE.tpl( 'inline/content-templates' ),
 
@@ -116,7 +115,7 @@ TVE.Views.Components.tl_shortcode = TVE.Views.Base.component.extend( {
 
 		var self = this;
 
-		this.placeholder_panel = new TL_Editor.views.ShortcodesPanel( {
+		this.placeholder_panel = new window.TL_Editor.views.ShortcodesPanel( {
 			component: this,
 			minWidth: 300,
 			no_buttons: true
@@ -138,7 +137,7 @@ TVE.Views.Components.tl_shortcode = TVE.Views.Base.component.extend( {
 	}
 } );
 
-TL_Editor.views.ThriveBoxAction = TCB_AnimViews.ThriveLightbox.extend( {
+window.TL_Editor.views.ThriveBoxAction = TCB_AnimViews.ThriveLightbox.extend( {
 	controls_init: function () {
 		this.list = new TVE.Views.Controls.List( {
 			el: this.$( '.state-list' )[ 0 ],
@@ -251,6 +250,12 @@ TL_Editor.views.ThriveBoxAction = TCB_AnimViews.ThriveLightbox.extend( {
 			 */
 			lgComponent.leadGenerationView.read( 'asset_delivery' );
 
+			if ( ! lgComponent.leadGenerationModel.get( 'form_fields' ).hasOwnProperty( 'email' ) ) {
+				this.input( TVE.ActiveElement, {checked: 0} )
+				this.disable();
+			} else {
+				this.enable();
+			}
 			var is_checked = lgComponent.leadGenerationModel.get( 'asset_delivery' )._asset_option;
 			this.setChecked( is_checked );
 			this.$el.parent().find( '#tve-leads-asset-controls' ).toggleClass( 'tcb-hidden', ! is_checked );
@@ -348,6 +353,95 @@ TL_Editor.views.ThriveBoxAction = TCB_AnimViews.ThriveLightbox.extend( {
 				asset_delivery: _asset_delivery,
 				write: 'asset_delivery'
 			} );
+		}
+	} );
+
+	/**
+	 * Reusable "Track as Conversion Event" control.
+	 * Single template, single class - used identically on any element.
+	 */
+	TVE.Views.Controls.ConversionTracking = TVE.Views.Controls.Switch.extend( {
+
+		template: TVE.tpl( 'conversion-tracking' ),
+
+		afterRender: function () {
+			this.$wrapper = this.$( '.tl-conversion-tracking' );
+		},
+
+		update: function () {
+			/* Only show when the element is inside a TL opt-in form */
+			var isInsideTL = TVE.ActiveElement.closest( '.tve-leads-conversion-object' ).length > 0;
+			this.$el.toggle( isInsideTL );
+			if ( ! isInsideTL ) {
+				return;
+			}
+
+			var value = TVE.ActiveElement.attr( 'data-tl-track-conversion' );
+
+			if ( typeof value === 'undefined' ) {
+				value = this.model.config.default ? '1' : '0';
+			}
+
+			var isChecked = value === '1';
+
+			this.setChecked( isChecked );
+			this.$wrapper.toggleClass( 'tl-ct-disabled', ! isChecked );
+		},
+
+		input: function ( $element, dom ) {
+			$element.attr( 'data-tl-track-conversion', dom.checked ? '1' : '0' );
+			this.$wrapper.toggleClass( 'tl-ct-disabled', ! dom.checked );
+		}
+	} );
+
+	/**
+	 * Mount the ConversionTracking control on a component by injecting a mount point
+	 * after a given selector inside the component, then instantiating the control.
+	 */
+	function mountConversionTracking( component, $after, defaultValue, description ) {
+		if ( ! component || ! $after.length ) {
+			return;
+		}
+
+		var $mount = $( '<div class="tl-conversion-tracking-wrap tve-control no-api"></div>' );
+
+		$after.after( $mount );
+
+		component.controls.ConversionTracking = new TVE.Views.Controls.ConversionTracking( {
+			el: $mount[ 0 ],
+			model: {
+				config: {
+					label: TVE.t.conversion_tracking_label || 'Track as Conversion Event',
+					description: description,
+					'default': defaultValue
+				}
+			},
+			component: component
+		} );
+	}
+
+	TVE.add_action( 'tcb.after_menu_init', function () {
+		var lgComponent = TVE.Components.lead_generation,
+			btnComponent = TVE.Components.button;
+
+		/* Lead Generation: mount after spam prevention section */
+		if ( lgComponent ) {
+			mountConversionTracking(
+				lgComponent,
+				lgComponent.$el.find( '.tve-lg-sp-content' ),
+				true,
+				TVE.t.conversion_tracking_lg_desc || 'This setting determines whether this element counts as a conversion for the Lead Group. If multiple conversion events exist, only the first one per visitor session is counted.'
+			);
+		}
+
+		/* Button: mount after .tve-link-boxes (client-side rendered link options) */
+		if ( btnComponent ) {
+			mountConversionTracking(
+				btnComponent,
+				btnComponent.$el.find( '.tve-link-boxes' ),
+				false,
+				TVE.t.conversion_tracking_btn_desc || 'Tracks button clicks as campaign conversions. Only the first event per visitor session counts.'
+			);
 		}
 	} );
 

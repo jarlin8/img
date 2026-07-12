@@ -9,6 +9,8 @@
 			#>
 			<#= TVE.tpl( 'util/option', {value:'automation', selected: (type && type == 'automation'), text:
 			'<?php echo __( 'Record Custom Event', 'thrive-cb' ) ?>'}) #>
+      <#= TVE.tpl( 'util/option', {value:'tag', selected: (type && type == 'tag'), text:
+      '<?php echo __( 'Add to Tags', 'thrive-cb' ) ?>'}) #>
 		</select>
 	</div>
 </div>
@@ -32,7 +34,7 @@
 </div>
 </div>
 <div class="api-field">
-	<div class="field-description mb-40">
+	<div class="field-description">
 		<?php echo __( 'Tags', 'thrive-cb' ); ?>
 	</div>
 	<div class="tvd-input-field">

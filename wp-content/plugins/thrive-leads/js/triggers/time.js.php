@@ -5,12 +5,23 @@
 			_ms = parseInt(<?php echo intval( 1000 * $this->config['s'] ) ?>),
 			event_triggered = false;
 		event_data.source = 'time';
-		setTimeout(function () {
-			if (!event_triggered) {
+
+		var showForm = function() {
+			var triggerShow = false;
+
+			if ( ThriveGlobal.$j( '.tve_lb_open' ).length > 0 ) {
+				setTimeout( showForm, 1000 );
+			} else {
+				triggerShow = true;
+			}
+
+			if ( triggerShow && ! event_triggered ) {
 				ThriveGlobal.$j(TL_Front).trigger('showform.thriveleads', event_data);
 				event_triggered = true;
-				}
-			}, _ms);
+			}
+		};
+		
+		setTimeout( showForm, _ms);
 		<?php if (! empty( $this->config['exi'] )) : /** if the "Display on exit intent if the set amount of time did not pass" option is set, then output the trigger for exit intent */ ?>
 		/* Chrome has a stupid bug in which it triggers almost simultaneously "mouseenter" "mouseleave" "mouseenter" if the following applies:
 		 - at page load, the cursor is outside the html element

@@ -93,11 +93,16 @@ $current_screen = get_current_screen();
 			</a>
 		</div>
 	</li>
-	<li>
-		<a id="tvd-share-modal" class="tvd-modal-trigger" href="#tvd-modal1"
-		   data-overlay_class="tvd-white-bg" data-opacity=".95">
-			<span class="tvd-icon-heart"></span>
-		</a>
-	</li>
+
+	<?php do_action( 'tvd_notification_inbox' ); ?>
 </ul>
+
+<div class="td-app-notification-overlay overlay close"></div>
+<div class="td-app-notification-drawer">
+    <div class="td-app-notification-holder">
+        <div class="td-app-notification-header notification-header-notify-thrive-leads"></div>
+        <div class="td-app-notification-wrapper notification-wrapper-notify-thrive-leads"></div>
+        <div class="notification-footer notification-footer-notify-thrive-leads"></div>
+    </div>
+</div>
 <?php require_once( TVE_DASH_PATH . '/templates/share.phtml' ); ?>

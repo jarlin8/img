@@ -1,13 +1,15 @@
 <?php
-
-/*
-Plugin Name: Thrive Leads
-Plugin URI: https://thrivethemes.com
-Version: 3.14.2
-Author: <a href="https://thrivethemes.com">Thrive Themes</a>
-Description: The ultimate lead capture solution for Wordpress
-Text Domain: thrive-leads
-*/
+/**
+ * Plugin Name: Thrive Leads
+ * Plugin URI: https://thrivethemes.com
+ * Description: The ultimate lead capture solution for WordPress
+ * Version: 10.9.3
+ * Author: Thrive Themes
+ * Author URI: https://thrivethemes.com
+ * Text Domain: thrive-leads
+ * Domain Path: /languages
+ * Requires PHP: 8.1
+ */
 
 /* the base URL for the plugin */
 define( 'TVE_LEADS_URL', str_replace( array(

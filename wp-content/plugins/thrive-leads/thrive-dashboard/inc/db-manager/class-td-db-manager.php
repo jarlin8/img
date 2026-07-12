@@ -91,8 +91,14 @@ class TD_DB_Manager {
 		if ( is_dir( $path ) === false ) {
 			throw new Exception( 'Path to migrations is invalid' );
 		}
-		$this->_migrations_path    = trailingslashit( $path );
-		$this->_option_name        = $option_name;
+
+		if ( strpos( $option_name, '_db' ) !== false ) {
+			$this->_option_name = $option_name;
+		} else {
+			throw new Exception( 'Unknown option name' );
+		}
+
+		$this->_migrations_path = trailingslashit( $path );
 		$this->_required_version   = $required_version;
 		$this->_current_version    = $this->_get_current_version();
 		$this->_product_name       = $product_name;
@@ -200,8 +206,10 @@ class TD_DB_Manager {
 			if ( empty( $script_version ) ) {
 				continue;
 			}
-			if ( version_compare( $script_version, $from_version, '>' ) && version_compare( $script_version, $to_version, '<=' ) ) {
-				$scripts[ $script_version ] = $file->getPathname();
+			if ( version_compare( $script_version, $from_version, '>' ) && version_compare(
+				$script_version, $to_version, '<=' ) ) {
+                $script_key = $this->_generate_script_key( $script_version, $scripts );
+				$scripts[ $script_key ] = $file->getPathname();
 			}
 		}
 
@@ -212,6 +220,22 @@ class TD_DB_Manager {
 
 		return $scripts;
 	}
+
+    /**
+     * Generate a key for script if there is multiple migration file name with same version.
+     *
+     * @param string $script_version migration file name's version.
+     * @param array $scripts  list of scripts.
+     *
+     * @return string
+     */
+    protected function _generate_script_key( $script_version, $scripts ) {
+        if ( ! isset( $scripts[ $script_version ] ) ) {
+            return $script_version;
+        }
+
+        return $script_version . '.0';
+    }
 
 	/**
 	 * Parse the script_ame and returns its version

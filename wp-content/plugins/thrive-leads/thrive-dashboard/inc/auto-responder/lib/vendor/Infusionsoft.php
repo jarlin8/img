@@ -42,7 +42,16 @@ class Thrive_Dash_Api_Infusionsoft {
 		$arguments = array_merge( array( $method, $this->api_key ), $arguments );
 
 		// Initialize the client
-		$client = new WP_HTTP_IXR_Client( 'https://' . $this->subdomain . '.infusionsoft.com/api/xmlrpc' );
+		$client = new WP_HTTP_IXR_Client( 'https://api.infusionsoft.com/crm/xmlrpc' );
+
+		// Set the headers to support Legacy XML-RPC keys
+		$args = array(
+			'headers' => array(
+				'X-Keap-API-Key' => $this->api_key,
+				'Content-Type' => 'application/xml',
+			),
+		);
+		$client->headers = $args['headers'];
 
 		// Call the function and return any error that happens
 		if ( ! call_user_func_array( array( $client, 'query' ), $arguments ) ) {

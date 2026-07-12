@@ -47,10 +47,15 @@ class Logs {
 	 */
 	private $args = [];
 
+	/**
+	 * @var string
+	 */
+	private $table;
+
 	public function __construct() {
 		$this->db = \Tve_Wpdb::instance();
 
-		$this->table = $this->db->prefix . static::TABLE_NAME;
+		$this->table = $GLOBALS['wpdb']->prefix . static::TABLE_NAME;
 	}
 
 	/**
@@ -59,16 +64,19 @@ class Logs {
 	 * @return bool|int|\mysqli_result|resource|null
 	 */
 	public function insert( $event ) {
-		$log_data = [];
-
-		foreach ( array_keys( $event::get_registered_fields() ) as $field_key ) {
-			$log_data[ $field_key ] = $event->get_field_value( $field_key );
-		}
-
-		$log_data['event_type'] = $event::key();
-		$log_data['created']    = gmdate( 'Y-m-d H:i:s' );
+		$log_data = $event->get_log_data();
 
 		return $this->db->insert( $this->table, $log_data );
+	}
+
+	public function update( $event, $id, $fields_to_update ) {
+		$log_data = $event->get_log_data( $fields_to_update );
+
+		return $this->db->update( $this->table, $log_data, [ 'id' => $id ] );
+	}
+
+	public function get_row() {
+		return $this->db->get_row( $this->prepare_query() );
 	}
 
 	/**
@@ -266,14 +274,37 @@ class Logs {
 	}
 
 	/**
-	 * Get a min/max date range from the reporting table
+	 * Get date format depending on the range we use
+	 *
+	 * @return string
 	 */
-	public function get_min_max_date() {
-		if ( empty( $this->min_max_date ) ) {
-			$this->min_max_date = $this->db->do_query( "SELECT MAX(created) AS max_date, MIN(created) AS min_date FROM $this->table" )->get_one_row();
+	public function get_date_format( $min_date = 0, $max_date = 0 ) {
+		if ( empty( $this->min_date ) || empty( $this->max_date ) ) {
+			$min_max_date = $this->db->do_query( "SELECT MAX(created) AS max_date, MIN(created) AS min_date FROM $this->table" )->get_one_row();
+
+			$this->min_date = empty( $min_max_date->min_date ) ? time() : strtotime( $min_max_date->min_date );
+			$this->max_date = empty( $min_max_date->max_date ) ? time() : strtotime( $min_max_date->max_date );
 		}
 
-		return $this->min_max_date;
+		$from = empty( $min_date ) ? $this->min_date : max( $this->min_date, strtotime( $min_date ) );
+		$to   = empty( $max_date ) ? $this->max_date : min( $this->max_date, strtotime( $max_date ) );
+
+		$days = ( $to - $from ) / DAY_IN_SECONDS;
+
+		if ( $days > 30 * 12 * 10 ) {
+			/* display years if we have at least 10 */
+			$format = 'year';
+		} elseif ( $days > 30 * 10 ) {
+			/* display months if we have at least 10 */
+			$format = 'month';
+		} elseif ( $days > 7 * 10 ) {
+			/* display weeks if we have at least 10 */
+			$format = 'week';
+		} else {
+			$format = 'day';
+		}
+
+		return $format;
 	}
 
 	/**

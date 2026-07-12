@@ -312,6 +312,38 @@ class Set implements \JsonSerializable {
 	 *
 	 * @return $this
 	 */
+	public function add_static_rule( $rule ) {
+		if ( ! $rule->is_valid() ) {
+			return $this;
+		}
+
+		$child_added = false;
+
+		/**
+		 * @var Rule $r
+		 */
+		foreach ( $this->rules as $r ) {
+			if ( $rule->get_content() === $r->get_content() && $rule->field === Rule::FIELD_TITLE && $r->field === Rule::FIELD_TITLE ) {
+				if ( is_array( $rule->value ) && is_array( $r->value ) ) {
+					$r->value    = array_merge( $rule->value, $r->value );
+					$child_added = true;
+					break;
+				}
+			}
+		}
+
+		if ( ! $child_added ) {
+			$this->rules[] = $rule;
+		}
+
+		return $this;
+	}
+
+	/**
+	 * @param Rule $rule
+	 *
+	 * @return $this
+	 */
 	public function add_rule( $rule ) {
 
 		if ( ! $rule->is_valid() ) {

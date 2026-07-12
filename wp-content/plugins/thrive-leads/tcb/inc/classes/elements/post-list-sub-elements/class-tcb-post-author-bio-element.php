@@ -35,7 +35,7 @@ class TCB_Post_Author_Bio_Element extends TCB_Post_List_Sub_Element_Abstract {
 	}
 
 	/**
-	 * Wordpress element identifier
+	 * WordPress element identifier
 	 *
 	 * @return string
 	 */
@@ -60,7 +60,7 @@ class TCB_Post_Author_Bio_Element extends TCB_Post_List_Sub_Element_Abstract {
 	public function own_components() {
 		$components = parent::own_components();
 
-		$components['shadow'] = array( 'hidden' => true );
+		$components['shadow'] = [ 'hidden' => true ];
 
 		return $components;
 	}

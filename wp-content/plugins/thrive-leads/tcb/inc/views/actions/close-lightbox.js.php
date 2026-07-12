@@ -1,3 +1,7 @@
 <?php echo 'function(trigger,action,config){' ?>
-ThriveGlobal.$j( '.tve_p_lb_close' ).trigger( 'click' );
+const closeButtons = ThriveGlobal.$j( '.tve_p_lb_close' );
+
+closeButtons.each( ( index, button ) => {
+    button.click();
+} );
 <?php echo 'return false;}';

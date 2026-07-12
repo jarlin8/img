@@ -38,7 +38,7 @@ class Dashboard {
 
 	public static function admin_menu() {
 		add_submenu_page(
-			null,
+			'',
 			static::TITLE,
 			static::TITLE,
 			'manage_options',
@@ -85,15 +85,16 @@ class Dashboard {
 		if ( ! empty( $screen ) && $screen === 'admin_page_tve_lightspeed' ) {
 			tve_dash_enqueue();
 
-			tve_dash_enqueue_script( 'tcb-admin-lightspeed', tve_editor_url( 'admin/assets/js/lightspeed.min.js' ), array(
+			tve_dash_enqueue_script( 'tcb-admin-lightspeed', tve_editor_url( 'admin/assets/js/lightspeed.min.js' ), [
 				'jquery',
 				'backbone',
-			), TVE_VERSION, true );
+			], TVE_VERSION, true );
 
 			tve_dash_enqueue_style( 'tcb-admin-lightspeed', tve_editor_url( 'admin/assets/css/admin-lightspeed.css' ) );
 
 			$data = [
-				'options' => [
+				'home_url' => home_url( '/' ),
+				'options'  => [
 					'is_enabled'                     => Main::is_enabled(),
 					Fonts::ENABLE_ASYNC_FONTS_LOAD   => Fonts::is_loading_fonts_async(),
 					Fonts::ENABLE_FONTS_OPTIMIZATION => Fonts::is_enabled(),

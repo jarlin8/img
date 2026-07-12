@@ -34,12 +34,11 @@ class Thrive_Dash_Api_Zapier {
 	 */
 	public function __construct( $_api_key, $_blog_url ) {
 
-		$this->_api_key     = $_api_key;
-		$this->_blog_url    = $_blog_url;
-		$this->_rest_prefix = rest_get_url_prefix();
+		$this->_api_key  = $_api_key;
+		$this->_blog_url = $_blog_url;
 
 		$rest_controller    = new TD_REST_Controller();
-		$this->_rest_prefix = trailingslashit( $this->_rest_prefix ) . trailingslashit( $rest_controller->get_namespace() );
+		$this->_rest_prefix = trailingslashit( $rest_controller->get_namespace() );
 	}
 
 	/**
@@ -63,16 +62,16 @@ class Thrive_Dash_Api_Zapier {
 	/**
 	 * Does a wp_remote_post()
 	 *
-	 * @see tve_dash_api_remote_post()
-	 *
 	 * @param string $route
 	 * @param array  $args
 	 *
 	 * @return array|WP_Error
+	 * @see tve_dash_api_remote_post()
+	 *
 	 */
 	protected function _request( $route, $args = array() ) {
 
-		$url = trailingslashit( $this->_blog_url ) . trailingslashit( $this->_rest_prefix ) . $route;
+		$url = rest_url() . $this->_rest_prefix . $route;
 
 		$args = array_merge(
 			array(
@@ -83,9 +82,7 @@ class Thrive_Dash_Api_Zapier {
 			$args
 		);
 
-		$response = tve_dash_api_remote_post( $url, $args );
-
-		return $response;
+		return tve_dash_api_remote_post( $url, $args );
 	}
 
 	/**
@@ -111,6 +108,7 @@ class Thrive_Dash_Api_Zapier {
 
 	/**
 	 * Call to the zapier request method with error handling
+	 *
 	 * @param $url
 	 * @param $params
 	 *

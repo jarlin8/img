@@ -1,3 +1,13 @@
+<?php
+/**
+ * Font Manager TAr Control
+ *
+ * @package     Thrive Content Builder
+ * @subpackage  Backbone Controls
+ */
+
+$font_library_link = \Thrive_Dashboard\Font_Library\Admin::get_url();
+?>
 <label class="block full-width">
 	<?php echo __( 'Source', 'thrive-cb' ); ?>
 	<select class="tve-font-select change" data-fn="sourceChange">
@@ -61,6 +71,41 @@
 		</label>
 		<select class="tve-google-subsets-select change" data-fn="change" data-font="google"></select>
 	</div>
+</div>
+	<# } else if ( section === 'library' ) { #>
+<div class="font-section" data-section="<#= section #>">
+	<label class="block control-grid full-width pt-5">
+		<?php echo __( 'Font Library', 'thrive-cb' ); ?>
+		<select class="font-select change" data-fn="fontChange" data-font="<#= section #>">
+			<option value="" disabled selected><?php echo __( 'Select Font', 'thrive-cb' ); ?></option>
+			<# _.each( this.fonts[ section ].fonts, function( font, index ) { #>
+			<option value="<#= index #>">
+				<#= font.name #>
+			</option>
+			<# } ) #>
+		</select>
+	</label>
+	<div class="control-grid">
+		<label><?php echo __( 'Regular', 'thrive-cb' ); ?></label>
+		<select class="tve-library-weigh-select change" data-fn="change" data-font="library"></select>
+	</div>
+	<div class="control-grid has-bold">
+		<label>
+			<?php echo __( 'Bold', 'thrive-cb' ); ?>
+		</label>
+		<select class="tve-library-bold-select change" data-fn="change" data-font="library"></select>
+	</div>
+	<hr>
+	<a 
+		href="<?php echo esc_url( $font_library_link ); ?>" 
+		class="tcb-button-link tve-button btn-cancel full-width tcb-text-uppercase font-library-trigger"
+		target="_blank"
+		>
+		<?php echo __( 'Manage Font Library', 'thrive-cb' ); ?>
+	</a>
+	<p class="info-text grey-text mt-10 tcb-hidden">
+		<?php echo __( 'Please reload this page to update the fonts in the editor.', 'thrive-cb' ); ?>
+	</p>
 </div>
 	<# } else { #>
 <div class="font-section" data-section="<#= section #>">

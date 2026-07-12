@@ -85,12 +85,17 @@ class Thrive_Dash_Api_Sendy {
 			throw new Thrive_Dash_Api_Sendy_Exception( 'Error occurred' );
 		}
 
-		if ( $response['body'] == 1 ) {
-			return true;
-		} else {
-			throw new Thrive_Dash_Api_Sendy_Exception( $response['body'] );
+		if ( ! isset( $response['body'] ) ) {
+			throw new Thrive_Dash_Api_Sendy_Exception( 'Invalid API response' );
 		}
 
-		return false;
+		$body = is_string( $response['body'] ) ? trim( $response['body'] ) : '';
+
+		// Treat "Already subscribed" as success - Sendy updates subscriber data even for existing subscribers
+		if ( $body === '1' || stripos( $body, 'Already subscribed' ) !== false ) {
+			return true;
+		}
+
+		throw new Thrive_Dash_Api_Sendy_Exception( $body );
 	}
 }

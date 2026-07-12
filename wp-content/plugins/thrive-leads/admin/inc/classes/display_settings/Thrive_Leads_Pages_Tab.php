@@ -26,14 +26,33 @@ class Thrive_Leads_Pages_Tab extends Thrive_Leads_Tab implements Thrive_Leads_Ta
 	}
 
 	/**
+	 * Overwrite this method to set a specific list of actions
+	 * @return array of Action
+	 */
+	public function getActions() {
+		return array();
+	}
+
+	/**
 	 * @return $this
 	 */
 	protected function initItems() {
-		$this->setItems( get_pages( array(
-			'sort_column'  => 'post_title',
-			'sort_order'   => 'ASC',
-			'hierarchical' => 0
-		) ) );
+		$front_page_id = get_option( 'page_on_front' );
+		$items = array();
+
+		$options = $this->getSavedOptions()->getTabSavedOptions( 3, $this->hanger );
+		if ( ! empty( $options ) ) {
+			$items = get_pages( array(
+				'posts_per_page' => - 1,
+				'sort_column'    => 'post_title',
+				'sort_order'     => 'ASC',
+				'include'        => $options,
+				'exclude'        => array( $front_page_id ),
+				'hierarchical'   => 0,
+			) );
+		}
+
+		$this->setItems( $items );
 
 		return $this;
 	}

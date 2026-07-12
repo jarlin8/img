@@ -94,6 +94,11 @@
 		                   href="#shortcode/<#= shortcode.get('ID')#>"
 		                   title="<?php echo __( 'Edit', 'thrive-leads' ) ?>">
 			                <span class="tvd-icon-edit7"></span> <span class="tvd-on-large-and-down"><?php echo __( 'Edit', 'thrive-leads' ) ?></span></a>
+                        <a class="tve-shortcode-duplicate tvd-btn-icon tvd-btn-icon-gray"
+                           href="javascript:void(0)"
+                           title="<?php echo __( 'Duplicate Shortcode', 'thrive-leads' ) ?>"
+                           data-id="<#= shortcode.get('ID') #>">
+                            <span class="tvd-icon-clone2"></span> <span class="tvd-on-large-and-down"><?php echo __( 'Duplicate', 'thrive-leads' ) ?></span></a>
 		                <a class="tve-shortcode-delete tvd-btn-icon tvd-btn-icon-red"
 		                   href="javascript:void(0)"
 		                   title="<?php echo __( 'Delete Shortcode', 'thrive-leads' ) ?>"

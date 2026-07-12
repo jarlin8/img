@@ -400,12 +400,14 @@ class Thrive_Dash_Api_Awsses {
 
 		$rest = $rest->getResponse();
 
-		$response = json_decode( wp_remote_retrieve_body( $rest ) );
+		$response_body = wp_remote_retrieve_body( $rest );
+		$response     = json_decode( $response_body );
 
 		if ( is_wp_error( $rest ) ) {
 			throw new Thrive_Dash_Api_Awsses_Exception( $rest->get_error_message() );
 		} elseif ( $rest['response']['code'] !== 200 ) {
-			throw new Thrive_Dash_Api_Awsses_Exception( $response );
+			$error_message = $this->extract_aws_ses_error_message( $response_body, $response, $rest );
+			throw new Thrive_Dash_Api_Awsses_Exception( $error_message );
 		}
 
 		return true;
@@ -420,6 +422,32 @@ class Thrive_Dash_Api_Awsses {
 	 *
 	 * @return  void
 	 */
+
+	/**
+	 * Extract error message from AWS SES API response.
+	 * AWS SES returns XML for errors; json_decode returns null for XML.
+	 *
+	 * @param string $response_body Raw response body
+	 * @param mixed  $response      JSON-decoded response (null for XML)
+	 * @param array $rest          WordPress HTTP response array
+	 *
+	 * @return string Human-readable error message
+	 */
+	private function extract_aws_ses_error_message( $response_body, $response, $rest ) {
+		// Try JSON structure first (unlikely for SES)
+		if ( is_object( $response ) && isset( $response->Error->Message ) ) {
+			return (string) $response->Error->Message;
+		}
+		// Parse AWS SES XML error response (regex fallback for namespaced XML)
+		$xml = @simplexml_load_string( $response_body );
+		if ( $xml !== false && isset( $xml->Error->Message ) ) {
+			return (string) $xml->Error->Message;
+		}
+		// Fallback to HTTP status
+		$code    = isset( $rest['response']['code'] ) ? $rest['response']['code'] : 0;
+		$message = isset( $rest['response']['message'] ) ? $rest['response']['message'] : '';
+		return trim( "HTTP $code: $message" ) ?: "Unknown error occurred while connecting to AWS SES";
+	}
 	public function triggerError( $functionname, $error ) {
 		if ( $error == false ) {
 			trigger_error( sprintf( "Thrive_List_Connection_Awsses::%s(): Encountered an error, but no description given", $functionname ), E_USER_WARNING );

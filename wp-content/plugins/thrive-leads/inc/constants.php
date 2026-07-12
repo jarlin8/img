@@ -11,9 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 define( 'TVE_LEADS_TEST_DATA', false );
 
-define( 'TVE_LEADS_VERSION', '3.14.2' );
+define( 'TVE_LEADS_VERSION', '10.9.3' );
 
-define( 'TVE_LEADS_DB_VERSION', '1.23' );
+define( 'TVE_LEADS_DB_VERSION', '1.25' );
 
 define( 'TVE_LEADS_DB_PREFIX', 'tve_leads_' );
 
@@ -22,6 +22,7 @@ define( 'TVE_LEADS_UNIQUE_IMPRESSION', 1 ); // not used anymore. kept only for b
 define( 'TVE_LEADS_CONVERSION', 2 );
 define( 'TVE_LEADS_IMPRESSION', 3 ); // not used anymore. kept only for backwards compatibility
 define( 'TVE_LEADS_ONE_CLICK_CONVERSION', 4 );
+define( 'TVE_LEADS_BUTTON_CLICK_CONVERSION', 5 );
 
 /* POST statuses */
 define( 'TVE_LEADS_STATUS_PUBLISH', 'publish' );
@@ -81,6 +82,12 @@ define( 'TVE_LEADS_TEST_STATUS_ARCHIVED', 'archived' );
 define( 'TVE_ALREADY_SUBSCRIBED_HIDDEN', 'already_subscribed_hidden' );
 
 /**
+ * Error types for shortcode rendering
+ */
+define( 'TVE_LEADS_ERROR_NO_FORMS', 'no_forms' );
+define( 'TVE_LEADS_ERROR_NO_CONTENT', 'no_content' );
+
+/**
  * Actions
  */
 define( 'TVE_LEADS_ACTION_FORM_IMPRESSION', 'tve_leads_form_impression' ); //hook to apply some logic for the form that is displayed
@@ -93,3 +100,22 @@ define( 'TVE_LEADS_ACTION_SET_TEST_ITEM_WINNER', 'tve_leads_action_set_test_item
  * Filters
  */
 define( 'TVE_LEADS_FILTER_DISPLAY_GROUP_FORM', 'tve_leads_filter_display_group_form' ); //filter for displaying form
+
+/**
+ * Get trigger-based form types that defer impression tracking.
+ *
+ * Form types that are trigger-based and should have their impressions tracked
+ * only when the form becomes visible, not on page load.
+ *
+ * This is the single source of truth for trigger-based form types.
+ * It's localized to JavaScript via `tve_leads_prepare_script_config()`.
+ *
+ * @see https://github.com/awesomemotive/thrive-themes/issues/2956
+ * @see tve_leads_prepare_script_config() Where this is localized to JavaScript
+ * @see frontend.js Where this is used in JavaScript as TL_Const.trigger_based_form_types
+ *
+ * @return array List of form type identifiers
+ */
+function tve_leads_get_trigger_based_form_types() {
+	return array( 'lightbox', 'screen_filler', 'slide_in', 'ribbon' );
+}

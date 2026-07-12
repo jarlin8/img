@@ -37,10 +37,9 @@ class Thrive_Dash_List_Manager {
 	public static $AVAILABLE = [
 		'email'                => 'Thrive_Dash_List_Connection_Email',
 		'activecampaign'       => 'Thrive_Dash_List_Connection_ActiveCampaign',
-		'arpreach'             => 'Thrive_Dash_List_Connection_ArpReach',
 		'aweber'               => 'Thrive_Dash_List_Connection_AWeber',
 		'campaignmonitor'      => 'Thrive_Dash_List_Connection_CampaignMonitor',
-		'constantcontact'      => 'Thrive_Dash_List_Connection_ConstantContact',
+		'constantcontact_v3'   => 'Thrive_Dash_List_Connection_ConstantContactV3',
 		'convertkit'           => 'Thrive_Dash_List_Connection_ConvertKit',
 		'drip'                 => 'Thrive_Dash_List_Connection_Drip',
 		'facebook'             => 'Thrive_Dash_List_Connection_Facebook',
@@ -57,10 +56,9 @@ class Thrive_Dash_List_Manager {
 		'mailerlite'           => 'Thrive_Dash_List_Connection_MailerLite',
 		'mailpoet'             => 'Thrive_Dash_List_Connection_MailPoet',
 		'mailrelay'            => 'Thrive_Dash_List_Connection_MailRelay',
-		'mautic'               => 'Thrive_Dash_List_Connection_Mautic',
 		'ontraport'            => 'Thrive_Dash_List_Connection_Ontraport',
 		'recaptcha'            => 'Thrive_Dash_List_Connection_ReCaptcha',
-		'sendreach'            => 'Thrive_Dash_List_Connection_Sendreach',
+		'turnstile'            => 'Thrive_Dash_List_Connection_Turnstile',
 		'sendgrid'             => 'Thrive_Dash_List_Connection_SendGrid',
 		'sendinblue'           => 'Thrive_Dash_List_Connection_SendinblueV3',
 		'sendy'                => 'Thrive_Dash_List_Connection_Sendy',
@@ -76,6 +74,7 @@ class Thrive_Dash_List_Manager {
 		'awsses'               => 'Thrive_Dash_List_Connection_Awsses',
 		'campaignmonitoremail' => 'Thrive_Dash_List_Connection_CampaignMonitorEmail',
 		'mailgun'              => 'Thrive_Dash_List_Connection_Mailgun',
+		'sendlayer'            => 'Thrive_Dash_List_Connection_SendLayer',
 		'mandrill'             => 'Thrive_Dash_List_Connection_Mandrill',
 		'mailrelayemail'       => 'Thrive_Dash_List_Connection_MailRelayEmail',
 		'postmark'             => 'Thrive_Dash_List_Connection_Postmark',
@@ -84,7 +83,6 @@ class Thrive_Dash_List_Manager {
 		'sparkpost'            => 'Thrive_Dash_List_Connection_SparkPost',
 		'sendowl'              => 'Thrive_Dash_List_Connection_SendOwl',
 		'sendlane'             => 'Thrive_Dash_List_Connection_Sendlane',
-		'zoom'                 => 'Thrive_Dash_List_Connection_Zoom',
 		'everwebinar'          => 'Thrive_Dash_List_Connection_EverWebinar',
 
 		/* integrations services */
@@ -96,7 +94,7 @@ class Thrive_Dash_List_Manager {
 
 		/* Collaboration */
 		'slack'                => 'Thrive_Dash_List_Connection_Slack',
-//		'facebookpixel'        => 'Thrive_Dash_List_Connection_FacebookPixel',
+		'facebookpixel'        => 'Thrive_Dash_List_Connection_FacebookPixel',
 	];
 
 	private static $_available      = [];
@@ -253,26 +251,35 @@ class Thrive_Dash_List_Manager {
 	}
 
 	/**
+	 * Snake_case alias for getAvailableCustomFields() for TAR compatibility
+	 *
+	 * @return array
+	 */
+	public static function get_available_custom_fields() {
+		return static::getAvailableCustomFields();
+	}
+
+	/**
 	 * Get the hardcoded mapper from the first connected API
 	 * Can be renamed to get_custom_fields_mapper in 2-3 releases
 	 *
 	 * @return array
 	 */
-	public static function getCustomFieldsMapper() {
-
+	public static function getCustomFieldsMapper( $default = false ) {
 		$mapper = [];
-		$apis   = static::get_available_apis( true, [ 'exclude_types' => [ 'email', 'social' ] ] );
+		$apis   = static::get_available_apis( true, [ 'exclude_types' => [ 'email', 'social', 'collaboration' ] ] );
 
 		/**
 		 * @var Thrive_Dash_List_Connection_Abstract $api
 		 */
 		foreach ( $apis as $api ) {
-
-			if ( ! empty( $mapper ) ) {
-				break;
+			if ( $default ) {
+				if ( method_exists( $api, 'get_default_fields_mapper' ) ) {
+					$mapper[ $api->get_key() ] = $api->get_default_fields_mapper();
+				}
+			} else if ( method_exists( $api, 'get_custom_fields_mapping' ) ) {
+				$mapper[ $api->get_key() ] = $api->get_custom_fields_mapping();
 			}
-
-			$mapper = $api->get_custom_fields_mapping();
 		}
 
 		return $mapper;
@@ -334,7 +341,7 @@ class Thrive_Dash_List_Manager {
 				$all_credentials['wordpress'] = [ 'connected' => true ];
 			}
 
-			static::$all_credentials = $all_credentials;
+			static::$all_credentials = apply_filters( 'tve_filter_all_api_credentials', $all_credentials );
 		}
 
 		if ( empty( $key ) ) {

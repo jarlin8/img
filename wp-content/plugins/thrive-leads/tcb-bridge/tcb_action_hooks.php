@@ -219,11 +219,22 @@ add_filter( 'tcb_main_frame_localize', 'tve_leads_localize_shortcodes' );
 add_filter( 'tcb_main_frame_localize', 'tve_leads_localize_templates' );
 add_filter( 'tcb_ajax_render_tl_shortcode', 'tve_leads_render_tl_shortcode', 10, 2 );
 add_filter( 'tcb_has_templates_tab', 'tve_leads_has_templates_tab' );
-add_action( 'tcb_settings_links', 'tve_leads_templates_menu' );
 add_action( 'tcb_modal_templates', 'tve_leads_modal_templates' );
 add_action( 'tcb_can_use_page_events', 'tve_leads_can_use_page_events' );
 add_action( 'tcb_lead_generation_menu', 'tve_leads_insert_asset_delivery_control' );
 add_action( 'tcb_elements_localize', 'tve_leads_forms_config' );
+
+add_action( 'tcb_right_sidebar_content_settings', static function () {
+	if ( tve_leads_post_type_editable( get_post_type() ) ) {
+		echo tve_leads_template( 'template-settings', null, true );
+	}
+} );
+
+add_action( 'tcb_right_sidebar_top_settings', static function () {
+	if ( tve_leads_post_type_editable( get_post_type() ) ) {
+		echo tve_leads_template( 'reset-settings', null, true );
+	}
+} );
 
 /**
  *  Modify TCB Close Url For Leads Editor
@@ -240,7 +251,7 @@ add_filter( 'tcb_has_revision_manager', 'tve_leads_disable_revision_manager', 10
  */
 add_filter( 'tcb_can_use_page_events', 'tve_leads_disable_page_events', 10, 1 );
 
-add_filter( 'architect.branding', 'tve_leads_architect_branding' );
+add_filter( 'architect.branding', 'tve_leads_architect_branding', 10, 2 );
 
 /**
  * Adds TL query string variation to preview link
@@ -251,12 +262,38 @@ add_filter( 'preview_post_link', 'tve_leads_preview_post_link', 10, 2 );
 /**
  * called when trying to edit a post to check TL capability with TA deactivated
  */
-add_filter( 'tcb_user_has_plugin_edit_cap', 'tve_leads_user_can_use_plugin' );
+add_filter( 'tcb_user_has_plugin_edit_cap', 'tve_leads_user_can_use_plugin', 20 );
 
 /**
  * Adds Thrive Leads data to the hook that fetched data for the 3rd party developers
  */
 add_filter( 'tcb_parse_lead_gen_form_data', 'tve_leads_parse_lead_gen_form_data', 10, 1 );
+
+/**
+ * Overwrite tcb attributes on leads post types
+ */
+add_filter( 'tve_lcns_attributes', static function ( $attributes, $post_type ) {
+	$tag = 'tl';
+	if ( in_array( $post_type, [
+		TVE_LEADS_POST_FORM_TYPE,
+		TVE_LEADS_POST_GROUP_TYPE,
+		TVE_LEADS_POST_SHORTCODE_TYPE,
+		TVE_LEADS_POST_TWO_STEP_LIGHTBOX,
+		TVE_LEADS_POST_ASSET_GROUP,
+		TVE_LEADS_POST_ONE_CLICK_SIGNUP,
+	], true ) ) {
+		return [
+			'source'        => $tag,
+			'exp'           => ! TD_TTW_User_Licenses::get_instance()->has_active_license( $tag ),
+			'gp'            => TD_TTW_User_Licenses::get_instance()->is_in_grace_period( $tag ),
+			'show_lightbox' => TD_TTW_User_Licenses::get_instance()->show_gp_lightbox( $tag ),
+			'product'       => 'Thrive Leads',
+			'link'          => tvd_get_individual_plugin_license_link( $tag ),
+		];
+	}
+
+	return $attributes;
+}, 10, 2 );
 
 /**
  * Check if the post can be edited by checking access and post type
@@ -266,7 +303,9 @@ add_filter( 'tcb_parse_lead_gen_form_data', 'tve_leads_parse_lead_gen_form_data'
  * @return bool
  */
 function tve_leads_user_can_use_plugin( $has_access ) {
-	if ( tve_leads_post_type_editable( get_post_type() ) ) {
+	$post_id = isset( $_REQUEST['post_id'] ) ? (int) $_REQUEST['post_id'] : get_the_ID();
+
+	if ( tve_leads_post_type_editable( get_post_type( $post_id ) ) ) {
 		$has_access = TL_Product::has_access();
 	}
 
@@ -316,8 +355,12 @@ function tve_leads_render_tl_shortcode( $data_to_filter, $params ) {
 		) );
 	}
 
-	if ( empty( $data ) || ! is_array( $data ) || empty( $data['html'] ) ) {
-		$data['html'] = '<p>' . __( 'Shortcode could not be rendered!', 'thrive-leads' ) . '</p>';
+	if ( empty( $data ) || ! is_array( $data ) ) {
+		$data = array();
+	}
+
+	if ( empty( $data['html'] ) && ! empty( $data['error_type'] ) ) {
+		$data['html'] = tve_leads_get_shortcode_error_html( $data['error_type'] );
 	}
 
 	//build config html
@@ -325,14 +368,16 @@ function tve_leads_render_tl_shortcode( $data_to_filter, $params ) {
 
 	//build font links html
 	$font_links = '';
-	foreach ( $data['fonts'] as $font_url ) {
-		$font_links .= '<link href="' . $font_url . '" />';
+	$fonts = $data['fonts'] ?? [];
+	foreach ( $fonts as $font_url ) {
+		$font_links .= '<link href="' . esc_url( $font_url ) . '" />';
 	}
 
 	//build css links html
 	$css_links = '';
-	foreach ( $data['css'] as $css_url ) {
-		$css_links .= '<link href="' . $css_url . '" type="text/css" rel="stylesheet"/>';
+	$css = $data['css'] ?? [];
+	foreach ( $css as $css_url ) {
+		$css_links .= '<link href="' . esc_url( $css_url ) . '" type="text/css" rel="stylesheet"/>';
 	}
 
 	//replace css class
@@ -424,13 +469,6 @@ function tve_leads_remove_element_instances( $elements = array() ) {
 	}
 
 	return $elements;
-}
-
-function tve_leads_render_shortcode( $data ) {
-
-	$html = '<p>' . __( 'Shortcode could not be rendered!', 'thrive-leads' ) . '</p>';
-
-	return '<div class="thrv_wrapper thrive_leads_shortcode">' . $html . '</div>';
 }
 
 /**
@@ -1780,7 +1818,7 @@ function tve_leads_search_thrivebox( $post_types ) {
  *
  */
 function tve_leads_enqueue_editor_extension() {
-	$js_suffix = defined( 'TVE_DEBUG' ) && TVE_DEBUG ? '.min.js' : '.js';
+	$js_suffix = defined( 'TVE_DEBUG' ) && TVE_DEBUG ? '.js' : '.min.js';
 
 	tve_leads_enqueue_script( 'tve-leads-editor-extension', TVE_LEADS_URL . 'js/tcb-editor' . $js_suffix, array( 'tve-main' ), false, true );
 
@@ -1881,7 +1919,8 @@ function tve_leads_localize_templates( $data ) {
 	$templates = Thrive_Leads_Template_Manager::get_templates( $form_type, $get_multi_step );
 
 	if ( ! empty( $templates ) ) {
-		$data['tl_templates'] = $templates;
+		$data['tl_templates']       = $templates['templates'];
+		$data['tl_templates_error'] = $templates['error'];
 	}
 
 	return $data;
@@ -1901,18 +1940,6 @@ function tve_leads_has_templates_tab( $has_template ) {
 	}
 
 	return $has_template;
-}
-
-/**
- * In Templates Tab from Sidebar
- * set the available settings menu items for current template
- */
-function tve_leads_templates_menu() {
-
-	if ( ! tve_leads_post_type_editable( get_post_type() ) ) {
-		return;
-	}
-	echo tve_leads_template( 'template-settings', null, true );
 }
 
 /**
@@ -1985,7 +2012,9 @@ function tve_leads_forms_config( $config ) {
 		if ( isset( $config[ $key ] ) ) {
 			$config[ $key ]['components'][ $key ]['config']['AssetDelivery'] = array(
 				'config' => array(
-					'label' => __( 'Enable asset delivery', 'thrive-leads' ),
+					'label'        => __( 'Enable asset delivery', 'thrive-leads' ),
+					'tooltip'      => __( 'Asset delivery requires an email address to be submitted in your form.', 'thrive-leads' ),
+					'tooltip_side' => 'top',
 				),
 			);
 			$config[ $key ]['components'][ $key ]['config']['AssetGroup']    = array(
@@ -2002,17 +2031,27 @@ function tve_leads_forms_config( $config ) {
 	return $config;
 }
 
+
+
 /**
- * @param string $logo_url
+ * @param string $string
+ * @param string $type
  *
  * @return string
  */
-function tve_leads_architect_branding( $logo_url ) {
+function tve_leads_architect_branding( $string, $type = 'logo_src' ) {
 	if ( tve_leads_post_type_editable( get_post_type() ) ) {
-		$logo_url = TVE_LEADS_URL . 'admin/img/thrive-leads-logo.png';
+		switch ( $type ) {
+			case 'name':
+				$string = 'Thrive Leads';
+				break;
+			default:
+				$string = TVE_LEADS_URL . 'admin/img/thrive-leads-logo.png';
+				break;
+		}
 	}
 
-	return $logo_url;
+	return $string;
 }
 
 function tve_leads_output_froala_container() {

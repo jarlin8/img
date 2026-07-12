@@ -604,7 +604,17 @@
 					hostname = hostname.substring( 4 );
 				}
 
-				if ( ! url.includes( hostname ) && ! url.includes( 'gravatar' ) && ! url.includes( 'fonts.gstatic' ) ) {
+				// These are the patterns that we don't need to proxy the request for.
+				const whitelistedPatterns = [
+					hostname,
+					'fonts.gstatic.com',
+					'fonts.googleapis.com',
+					'fonts.bunny.net',
+					'gravatar'
+				];
+
+				// If the URL contains any of the whitelistedPatterns items, we don't need to proxy the request.
+				if ( ! whitelistedPatterns.some( item => url.includes( item ) ) ) {
 					url = '//cors-anywhere.herokuapp.com/' + url;
 				}
 

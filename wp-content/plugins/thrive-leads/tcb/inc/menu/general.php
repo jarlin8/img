@@ -55,6 +55,32 @@
 	</div>
 </div>
 
+<div id="tve-carousel-component" class="tve-component" data-view="Carousel">
+	<div class="dropdown-header" data-prop="docked">
+		<div class="group-description">
+			<?php echo esc_html__( 'Carousel Options', 'thrive-cb' ) ?>
+		</div>
+		<i></i>
+	</div>
+	<div class="dropdown-content">
+		<div class="tve-control sep-bottom mb-10 pb-0" data-view="MovementSettings"></div>
+		<div class="tve-control" data-view="SlidesToScroll"></div>
+		<div class="tve-control" data-view="SlidesToShow"></div>
+		<div class="tve-control" data-view="Autoplay"></div>
+		<div class="tve-autoplay-controls sep-bottom">
+			<div class="tve-control" data-view="AutoplaySpeed"></div>
+			<div class="tve-control" data-view="PauseOn"></div>
+		</div>
+		<div class="tve-control" data-view="CenterMode"></div>
+		<div class="tve-control" data-view="CenterPadding"></div>
+		<div class="tve-control" data-view="AdaptiveHeight"></div>
+		<div class="tve-control" data-view="UniformSlidesHeight"></div>
+		<div class="tve-control" data-view="VerticalPosition"></div>
+		<div class="tve-control" data-view="Fade"></div>
+		<div class="tve-control" data-view="FadeImageWidth"></div>
+	</div>
+</div>
+
 <div id="tve-styles-templates-component" class="tve-component" data-view="StylesTemplates">
 	<div class="dropdown-header" data-prop="docked">
 		<?php echo esc_html__( 'HTML Attributes', 'thrive-cb' ); ?>
@@ -108,7 +134,7 @@
 			</span>
 		</div>
 
-		<div class="tve-advanced-controls extend-grey hide-states">
+		<div class="tve-advanced-controls hide-states">
 			<div class="dropdown-header" data-prop="advanced">
 				<span>
 					<?php echo esc_html__( 'Advanced', 'thrive-cb' ); ?>
@@ -255,6 +281,37 @@
 	</div>
 </div>
 
+<div id="tve-multiple-select-mode-component" class="tve-component" data-view="MultipleSelectMode">
+	<div class="dropdown-header open" data-prop="docked">
+		<div class="group-description"><?php echo esc_html__( 'Currently selected', 'thrive-cb' ); ?></div>
+		<i></i>
+	</div>
+	<div class="dropdown-content">
+		<div class="tve-multiple-select">
+			<div class="tve-control fill no-space" data-view="selectedElementsType"></div>
+
+			<div class="tve-multi-select-notice tve-same-type info-text dark-orange mt-5" data-type="all" style="display: none">
+				<?php echo esc_html__( 'Your selection is a combination of item types. Only elements of the same type can be styled together. Please choose the items type', 'thrive-cb' ); ?>
+			</div>
+
+			<div class="tve-multi-select-notice tve-different-type info-text yellow mt-5" data-type="element" data-type="all" style="display:none">
+				<strong>
+					<?php echo esc_html__( 'Selected type is ', 'thrive-cb' ); ?>
+					<span class="tve-multiple-select-element-type-notice">
+						<?php echo esc_html__( 'Text', 'thrive-cb' ); ?>
+					</span>
+				</strong>
+				<br>
+				<?php echo esc_html__( 'Please select items of this type only', 'thrive-cb' ); ?>
+			</div>
+		</div>
+		<div class="tcb-text-center sep-top exit-group-styling">
+			<a href="javascript:void(0);" class="click clear-format"
+			   data-fn="exit_multiple_selected_mode"><?php echo esc_html__( 'Exit Group Styling', 'thrive-cb' ); ?></a>
+		</div>
+	</div>
+</div>
+
 <div id="tve-group-component" class="tve-component" data-view="Group">
 	<div class="dropdown-header" data-prop="docked">
 		<div class="group-description"><?php echo esc_html__( 'Currently styling', 'thrive-cb' ); ?></div>
@@ -265,8 +322,7 @@
 			<div class="tve-control fill no-space" data-view="preview"></div>
 			<div class="tve-control pl-10" data-view="ButtonToggle"></div>
 		</div>
-		<hr>
-		<div class="tcb-text-center">
+		<div class="tcb-text-center sep-top exit-group-styling">
 			<a href="javascript:void(0);" class="click clear-format"
 			   data-fn="close_group_options"><?php tcb_icon( 'exit-to-app' ); ?><?php echo esc_html__( 'Exit Group Styling', 'thrive-cb' ); ?></a>
 		</div>

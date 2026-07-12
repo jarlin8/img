@@ -54,8 +54,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<hr>
 
+		<div class="tve-lg-sp-content" data-view="SPContainer">
+			<div class="tve-lg-prevention">
+				<div class="tcb-label"><?php echo esc_html__( 'Spam Prevention', 'thrive-cb' ); ?>
+					<span class="click tve-cb-img-info" data-fn="openTooltip"><?php tcb_icon( 'info-circle-solid' ); ?></span>
+				</div>
+				<div class="control-grid ">
+					<div class="tve-control control-grid full-width" data-view="SPTools"></div>
+					<span class="lg-api-select-arrow lg-sp-tools-select-arrow select2-arrow"><?php tcb_icon('a_down'); ?></span>
+				</div>
+			</div>
+
+			<div class="tve-api-dashboard">
+				<div></div>
+				<a class="tve-sp-redirect toggle-control mb-5" target="_blank" href="<?php echo esc_url( admin_url( 'admin.php?page=tve_dash_api_connect' ) ); ?>">
+					<span class="tve-sp-info-text"><?php echo esc_html__( 'Go to the API Dashboard', 'thrive-cb' ); ?></span>
+				</a>
+			</div>
+		</div>
+
 		<div id="api-controls" class="mt-10">
-			<div class="no-api tve-advanced-controls extend-grey">
+			<div class="no-api tve-advanced-controls">
 				<div class="dropdown-header" data-prop="advanced">
 					<span>
 						<?php echo esc_html__( 'Advanced', 'thrive-cb' ); ?>
@@ -64,13 +83,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="dropdown-content pt-0">
 					<?php do_action( 'tcb_lead_generation_menu' ); ?>
 					<div class="tve-control" data-view="FormIdentifier"></div>
-					<div class="tve-lg-prevention">
-						<p class="strong"><?php echo esc_html__( 'Spam prevention', 'thrive-cb' ); ?></p>
-						<div class="tve-control" data-view="Captcha"></div>
-						<a class="tcb-hidden info-link toggle-control mb-5" target="_blank" href="<?php echo esc_url( admin_url( 'admin.php?page=tve_dash_api_connect' ) ); ?>">
-							<span class="info-text"><?php echo esc_html__( 'Requires integration with Google ReCaptcha', 'thrive-cb' ); ?></span>
-						</a>
-					</div>
+
 					<div class="no-api tcb-text-center mt-5">
 						<button class="tve-button blue long click" data-fn="manage_error_messages">
 							<?php echo esc_html__( 'Edit error messages', 'thrive-cb' ); ?>

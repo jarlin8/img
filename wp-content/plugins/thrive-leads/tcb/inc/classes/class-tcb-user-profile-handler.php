@@ -2,7 +2,7 @@
 
 class TCB_User_Profile_Handler {
 
-	const DEFAULT_FIELDS = array(
+	const DEFAULT_FIELDS = [
 		'user_email',
 		'username',
 		'nickname',
@@ -13,7 +13,7 @@ class TCB_User_Profile_Handler {
 		'user_bio',
 		'pass1',
 		'pass2',
-	);
+	];
 	/**
 	 * Config attribute separator
 	 */
@@ -21,17 +21,21 @@ class TCB_User_Profile_Handler {
 
 	const SHORTCODE = 'tve_user_profile';
 
+	const NONCE = 'tve-user-profile-nonce';
+
 	public static function init() {
 		static::hooks();
 	}
 
 	public static function hooks() {
-		add_shortcode( static::SHORTCODE, array( __CLASS__, 'render_shortcode' ) );
+		add_shortcode( static::SHORTCODE, [ __CLASS__, 'render_shortcode' ] );
 
-		add_action( 'wp_ajax_tve_user_profile_update', array( __CLASS__, 'handle_update_data' ) );
-		add_filter( 'tve_thrive_shortcodes', array( __CLASS__, 'thrive_shortcodes' ), 10, 2 );
-		add_filter( 'tcb.content_pre_save', array( __CLASS__, 'handle_content_pre_save' ), 10, 2 );
-		add_filter( 'tcb_content_allowed_shortcodes', array( __CLASS__, 'content_allowed_shortcodes_filter' ) );
+		add_action( 'wp_ajax_tve_user_profile_update', [ __CLASS__, 'handle_update_data' ] );
+		add_filter( 'tve_thrive_shortcodes', [ __CLASS__, 'thrive_shortcodes' ], 10, 2 );
+		add_filter( 'tcb.content_pre_save', [ __CLASS__, 'handle_content_pre_save' ], 10, 2 );
+		add_filter( 'tcb_content_allowed_shortcodes', [ __CLASS__, 'content_allowed_shortcodes_filter' ] );
+
+		add_filter( 'tve_frontend_options_data', [ __CLASS__, 'frontend_options_data' ], 10, 2 );
 	}
 
 	/**
@@ -46,11 +50,42 @@ class TCB_User_Profile_Handler {
 	}
 
 	/**
+	 * Add nonce to frontend options
+	 *
+	 * @param array $data The frontend options data
+	 *
+	 * @return array The updated frontend options data with nonce added
+	 */
+	public static function frontend_options_data( $data ) {
+		$data['user_profile_nonce'] = wp_create_nonce( static::NONCE );
+
+		return $data;
+	}
+
+	/**
 	 * Handle the ajax request and validate fields
 	 */
 	public static function handle_update_data() {
-		$data     = array();
-		$response = array( 'success' => true );
+		if ( ! wp_verify_nonce( $_REQUEST['form-nonce'], static::NONCE ) ) {
+			wp_send_json(
+				[
+					'errors'  => __( 'Unauthorized access.', 'thrive-cb' ),
+					'success' => false,
+				]
+			);
+		}
+
+		if ( current_user_can( 'manage_options' ) ) {
+			wp_send_json(
+				[
+					'errors'  => __( "Admins can't update profile data using the profile element.", 'thrive-cb' ),
+					'success' => false,
+				]
+			);
+		}
+
+		$data     = [];
+		$response = [ 'success' => true ];
 
 		/**
 		 * Check whether or not the form settings exist
@@ -121,7 +156,7 @@ class TCB_User_Profile_Handler {
 
 		$user_id = (int) $current_user->data->ID;
 
-		$user = new stdClass;
+		$user = new stdClass();
 
 		$user->ID         = $user_id;
 		$userdata         = get_userdata( $user_id );
@@ -174,12 +209,11 @@ class TCB_User_Profile_Handler {
 		 * @param string $pass2      The confirmed password (passed by reference).
 		 *
 		 * @since 1.5.1
-		 *
 		 */
-		do_action_ref_array( 'check_passwords', array( $user->user_login, &$pass1, &$pass2 ) );
+		do_action_ref_array( 'check_passwords', [ $user->user_login, &$pass1, &$pass2 ] );
 		// Check for "\" in password.
 		if ( false !== strpos( wp_unslash( $pass1 ), '\\' ) ) {
-			$errors->add( 'pass_slash', __( '<strong>Error</strong>: Passwords may not contain the character "\\".', 'thrive-cb' ), array( 'form-field' => 'pass1' ) );
+			$errors->add( 'pass_slash', __( '<strong>Error</strong>: Passwords may not contain the character "\\".', 'thrive-cb' ), [ 'form-field' => 'pass1' ] );
 		}
 
 		if ( ! empty( $pass1 ) ) {
@@ -187,23 +221,23 @@ class TCB_User_Profile_Handler {
 			$score           = tve_score_password( $pass1 );
 
 			if ( $score <= 30 ) {
-				$errors->add( 'password_score', __( 'Please choose a stronger password. Try including numbers, symbols, and a mix of upper and lowercase letters and remove common words.', 'thrive-cb' ), array( 'form-field' => 'pass1' ) );
+				$errors->add( 'password_score', __( 'Please choose a stronger password. Try including numbers, symbols, and a mix of upper and lowercase letters and remove common words.', 'thrive-cb' ), [ 'form-field' => 'pass1' ] );
 			}
 
 			// Checking the password has been typed twice the same.
 			if ( ! empty( $pass2 ) && $pass1 != $pass2 ) {
-				$errors->add( 'passwordmismatch', __( "Passwords don't match. Please enter the same password in both password fields." ), array( 'form-field' => 'pass1' ) );
+				$errors->add( 'passwordmismatch', __( "Passwords don't match. Please enter the same password in both password fields." ), [ 'form-field' => 'pass1' ] );
 			}
 		}
 
 		/* checking email address */
 		if ( ! empty( $user->user_email ) ) {
 			if ( ! is_email( $user->user_email ) ) {
-				$errors->add( 'invalid_email', __( "The email address isn't correct.", 'thrive-cb' ), array( 'form-field' => 'email' ) );
+				$errors->add( 'invalid_email', __( "The email address isn't correct.", 'thrive-cb' ), [ 'form-field' => 'email' ] );
 			} else {
 				$owner_id = email_exists( $user->user_email );
 				if ( $owner_id && ( $owner_id != $user->ID ) ) {
-					$errors->add( 'email_exists', __( 'This email is already registered. Please choose another one.', 'thrive-cb' ), array( 'form-field' => 'email' ) );
+					$errors->add( 'email_exists', __( 'This email is already registered. Please choose another one.', 'thrive-cb' ), [ 'form-field' => 'email' ] );
 				}
 			}
 		}
@@ -216,9 +250,8 @@ class TCB_User_Profile_Handler {
 		 * @param stdClass $user   User object (passed by reference).
 		 *
 		 * @since 2.8.0
-		 *
 		 */
-		do_action_ref_array( 'user_profile_update_errors', array( &$errors, true, &$user ) );
+		do_action_ref_array( 'user_profile_update_errors', [ &$errors, true, &$user ] );
 
 		if ( $errors->has_errors() ) {
 			return $errors;
@@ -290,14 +323,30 @@ class TCB_User_Profile_Handler {
 
 		if ( ! empty( $post_data['user_profile_forms'] ) ) {
 			foreach ( $post_data['user_profile_forms'] as $form_id => $settings ) {
-				update_option( $form_id, $settings );
+				if ( strncmp( $form_id, 'tve-up-', 7 ) === 0 ) {
+					update_option( $form_id, $settings );
+				}
 			}
 		}
 
 		if ( ! empty( $post_data['user_profile_deleted_forms'] ) ) {
 			foreach ( $post_data['user_profile_deleted_forms'] as $form_id ) {
-				delete_option( $form_id );
+				if ( strncmp( $form_id, 'tve-up-', 7 ) === 0 ) {
+					delete_option( $form_id );
+				}
 			}
+		}
+
+		// delete existing lead gen forms data.
+		if ( ! empty( $post_data['post_id'] ) ) {
+			global $wpdb;
+			$wpdb->query(
+				$wpdb->prepare(
+					"DELETE FROM {$wpdb->prefix}postmeta
+					WHERE meta_key LIKE '_tve_lead_gen_form\_%' AND post_id = %d",
+					$post_data['post_id']
+				)
+			);
 		}
 
 		return $response;

@@ -8,6 +8,9 @@
             <?php echo __('from a total of', 'thrive-leads') ?>
             <strong><#= total_items #></strong>
             <?php echo __('records', 'thrive-leads') ?>
+            <# if ( typeof show_tooltip !== 'undefined' && show_tooltip ) { #>
+                <span class="tvd-icon-question-circle tvd-tooltipped" data-position="top" data-tooltip="<?php echo esc_attr__( 'This report lists individual contacts captured via form submissions. Button click conversions are tracked as anonymous engagement events and contribute to your overall Conversion Rate, see the Conversion Rate Report for the full picture.', 'thrive-leads' ); ?>"></span>
+            <# } #>
         </div>
     </div>
     <div class="tvd-col tvd-s6">

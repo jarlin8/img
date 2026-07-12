@@ -30,18 +30,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php tcb_template( 'loading-spinner.php' ); ?>
 	</div>
 	<div id="sidebar-top">
-		<?php do_action( 'tve_top_buttons' ); ?>
+		<div id="tcb-sidebar-top-left">
+            <?php do_action( 'tve_top_buttons' ); ?>
 
-		<?php if ( tcb_editor()->has_post_breadcrumb_option() ) : ?>
-			<?php $post_breadcrumb_data = tcb_editor()->post_breadcrumb_data(); ?>
-			<span id="tcb-post-option-breadcrumb" class="tcb-left pr-5 click tcb-active-element-breadcrumbs-item" data-index="" data-selector="<?php echo esc_attr( $post_breadcrumb_data['selector'] ); ?>" data-fn="postOptionsClicked">
+            <?php if ( tcb_editor()->has_post_breadcrumb_option() ) : ?>
+                <?php $post_breadcrumb_data = tcb_editor()->post_breadcrumb_data(); ?>
+                <span id="tcb-post-option-breadcrumb" class="tcb-left pr-5 click tcb-active-element-breadcrumbs-item" data-index="" data-selector="<?php echo esc_attr( $post_breadcrumb_data['selector'] ); ?>" data-fn="postOptionsClicked">
 				<span class="tcb-breadcrumb-name"><?php echo esc_html( $post_breadcrumb_data['label'] ); ?></span>
 				<span class="tcb-icon"><?php tcb_icon( 'cog-regular' ); ?><?php tcb_icon( 'cog-solid' ); ?></span>
 				<span class="cont"><i></i></span>
 			</span>
-		<?php endif; ?>
+            <?php endif; ?>
 
-		<div id="tcb-top-nav-list" class="<?php echo in_array( get_post_type(), array( 'post', 'page' ) ) ? 'tve-has-post-options' : '' ?>"></div>
+            <div id="tcb-top-nav-list" class="<?php echo in_array( get_post_type(), [ 'post', 'page' ] ) ? 'tve-has-post-options' : '' ?>"></div>
+        </div>
+		<!-- Here buttons/images/text will be added dynamically -->
+        <div id="tcb-sidebar-top-right">
+            <div class="button-group">
+
+			</div>
+        </div>
 	</div>
 
 	<div class="tcb-relative">

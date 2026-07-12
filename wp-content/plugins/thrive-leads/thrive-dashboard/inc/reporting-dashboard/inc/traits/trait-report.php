@@ -21,7 +21,7 @@ trait Report {
 	 * @return bool
 	 */
 	public static function permission_callback(): bool {
-		return current_user_can( 'manage_options' );
+		return current_user_can( TVE_DASH_CAPABILITY );
 	}
 
 	/**
@@ -113,6 +113,10 @@ trait Report {
 			'items_per_page' => 0,
 			'group_by'       => [],
 		], $query );
+
+		if ( empty( $reports_query['date_format'] ) ) {
+			$reports_query['date_format'] = Logs::get_instance()->get_date_format( $query['filters']['date']['from'] ?? 0, $query['filters']['date']['to'] ?? 0 );
+		}
 
 		if ( is_string( $reports_query['group_by'] ) ) {
 			$reports_query['group_by'] = empty( $reports_query['group_by'] ) ? [] : explode( ',', $reports_query['group_by'] );
@@ -274,6 +278,9 @@ trait Report {
 	 * @return array
 	 */
 	public static function get_table_data( $query ): array {
+		/* for table display, we want data sorted by day because we retrieve all entries */
+		$query['date_format'] = 'day';
+
 		$data = static::get_data( $query );
 
 		if ( ! empty( $query['has_pagination'] ) ) {

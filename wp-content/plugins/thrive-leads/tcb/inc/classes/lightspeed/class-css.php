@@ -22,6 +22,10 @@ class Css {
 
 	private $styles_loaded = [];
 
+	private $ID;
+
+	private $post;
+
 	public static function get_instance( $post_id = 0 ) {
 		if ( empty( self::$instances[ $post_id ] ) ) {
 			self::$instances[ $post_id ] = new self( $post_id );
@@ -79,7 +83,11 @@ class Css {
 			$css = '';
 		}
 
+		/* we want to keep the encoded open/close tag characters (they might be part of background SVGs) */
+		$css = str_replace( [ '%3C', '%3E' ], [ '[tcb-encoded-open-tag]', '[tcb-encoded-close-tag]' ], $css );
 		$css = sanitize_text_field( $css );
+		/* restore the encoded tag characters */
+		$css = str_replace( [ '[tcb-encoded-open-tag]', '[tcb-encoded-close-tag]' ], [ '%3C', '%3E' ], $css );
 
 		$css = tve_minify_css( $css );
 
@@ -202,7 +210,7 @@ class Css {
 			$inline_css = '';
 		}
 
-		static::get_compat_css( $inline_css, $this->ID );
+		$inline_css = static::get_compat_css( $inline_css, $this->ID );
 
 		/**
 		 * Filters the inline css for the current post.
@@ -388,7 +396,8 @@ class Css {
 		}, $css );
 
 		$css = preg_replace_callback( '/inset:([^;]*);/m', static function ( $matches ) {
-			$matched_values = explode( ' ', $matches[1] );
+			/* there are cases where 'inset:' comes with a space after ':' */
+			$matched_values = explode( ' ', ltrim( $matches[1] ) );
 
 			switch ( count( $matched_values ) ) {
 				case 4:
@@ -420,6 +429,11 @@ class Css {
 				'bottom:' . $bottom . ';' .
 				'left:' . $left . ';';
 		}, $css );
+
+		$css = preg_replace_callback( '/mask-\w*:[^;]*;/m', static function ( $matches ) {
+			return $matches[0] . '-webkit-' . $matches[0];
+		}, $css );
+
 
 		/**
 		 * Filters the inline css for the current post.

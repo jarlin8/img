@@ -9,5 +9,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
 
-class Thrive_Dash_Api_ConvertKit_Exception extends Exception {
+/**
+ * ConvertKit Exception Class
+ * Used for API error handling
+ */
+if ( ! class_exists( 'Thrive_Dash_Api_ConvertKit_Exception' ) ) {
+	class Thrive_Dash_Api_ConvertKit_Exception extends Exception {
+	}
 }

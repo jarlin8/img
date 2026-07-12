@@ -112,11 +112,13 @@ class TVD_PDF_From_URL {
 		] );
 
 		$header = wp_remote_retrieve_header( $response, 'X-Thrive-File-Ok' );
+		$code = wp_remote_retrieve_response_code( $response );
+		$message = wp_remote_retrieve_body( $response );
 
 		if ( $header !== 'ok' ) {
 			return [
-				'error'    => 'PDF-API: There was a problem creating the certificate',
-				'response' => wp_remote_retrieve_body( $response ),
+				'error'    => 'PDF-API: There was a problem creating the certificate. Status code:' . $code . '. Error message:' . $message,
+				'response' => $message,
 			];
 		}
 

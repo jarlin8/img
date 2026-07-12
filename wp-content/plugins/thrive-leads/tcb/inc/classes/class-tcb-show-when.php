@@ -11,17 +11,17 @@ class TCB_Show_When_Menu_Option {
 	 */
 	protected static $instance;
 
-	public $settings = array();
+	public $settings = [];
 
 	private function __construct() {
-		add_action( 'wp_nav_menu_item_custom_fields', array( $this, 'add_show_when_dropdown_to_menu_item' ), 10, 4 );
-		add_filter( 'wp_setup_nav_menu_item', array( $this, 'add_show_when_to_menu_item' ) );
-		add_action( 'wp_update_nav_menu_item', array( $this, 'wp_update_nav_menu_item' ), 10, 2 );
-		add_filter( 'wp_nav_menu_objects', array( $this, 'remove_specific_menu_items' ), 9 ); //before TA and TL
+		add_action( 'wp_nav_menu_item_custom_fields', [ $this, 'add_show_when_dropdown_to_menu_item' ], 10, 4 );
+		add_filter( 'wp_setup_nav_menu_item', [ $this, 'add_show_when_to_menu_item' ] );
+		add_action( 'wp_update_nav_menu_item', [ $this, 'wp_update_nav_menu_item' ], 10, 2 );
+		add_filter( 'wp_nav_menu_objects', [ $this, 'remove_specific_menu_items' ], 9 ); //before TA and TL
 	}
 
-	function add_show_when_dropdown_to_menu_item( $item_id, $item ) {
-		echo tcb_template( 'show-when-dropdown.phtml', array( 'item' => $item, 'item_id' => $item_id ), true ); //phpcs:ignore
+	public function add_show_when_dropdown_to_menu_item( $item_id, $item ) {
+		echo tcb_template( 'show-when-dropdown.phtml', [ 'item' => $item, 'item_id' => $item_id ], true ); //phpcs:ignore
 	}
 
 	/**
@@ -50,11 +50,11 @@ class TCB_Show_When_Menu_Option {
 	 */
 	public static function get_instance() {
 
-		if ( ! self::$instance ) {
-			self::$instance = new self();
+		if ( ! static::$instance ) {
+			static::$instance = new static();
 		}
 
-		return self::$instance;
+		return static::$instance;
 	}
 
 	/**

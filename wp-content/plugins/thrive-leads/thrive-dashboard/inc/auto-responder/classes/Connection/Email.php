@@ -120,11 +120,16 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 	 * @return array
 	 */
 	public function get_connected_email_providers() {
+		if ( function_exists( 'wp_mail_smtp' ) ) {
+			$own_site_name = 'WP Mail SMTP';
+		} else {
+			$own_site_name = 'Send emails from this site';
+		}
 
 		$providers = array(
 			array(
-				'id'   => 'own_site',
-				'name' => 'Send emails from this site',
+				'id'         => 'own_site',
+				'name'       => $own_site_name,
 			),
 		);
 
@@ -182,10 +187,11 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 	 * Get any extra settings needed by the api
 	 *
 	 * @param array $arguments
+	 * @param bool  $force     force refresh from API
 	 *
 	 * @return array
 	 */
-	public function get_extra_settings( $arguments = array() ) {
+	public function get_extra_settings( $arguments = array(), $force = false ) {
 
 		$response = array();
 
@@ -248,7 +254,7 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 
 		$data = array(
 			'emails'               => $emails,
-			'subject'              => sanitize_text_field( $arguments['email_subject'] ),
+			'subject'              => html_entity_decode( sanitize_text_field( $this->replace_shortcodes( $arguments['email_subject'], $arguments, true ) ) ),
 			'from_name'            => sanitize_text_field( $arguments['from_name'] ),
 			'from_email'           => sanitize_email( $arguments['from_email'] ),
 			'html_content'         => $this->replace_shortcodes( $arguments['email_message'], $arguments ),
@@ -257,7 +263,7 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 			'cc'                   => $cc,
 			'send_confirmation'    => $send_confirmation,
 			'confirmation_html'    => $confirmation_html,
-			'confirmation_subject' => sanitize_text_field( $arguments['email_confirmation_subject'] ),
+			'confirmation_subject' => html_entity_decode( sanitize_text_field( $this->replace_shortcodes( $arguments['email_confirmation_subject'], $arguments, true ) ) ),
 			'sender_email'         => sanitize_email( trim( $arguments['email'] ) ),
 		);
 
@@ -353,6 +359,7 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 
 		foreach ( $this->_get_custom_fields( $args ) as $field ) {
 			$label = ! empty( $labels[ $field ] ) ? sanitize_text_field( $labels[ $field ] ) : __( 'Extra Data', 'thrive-dash' );
+			$is_extra_data = ! empty( $labels[ $field ] ) ? false : true;
 
 			if ( strpos( $field, 'textarea' ) !== false ) { /* preserve textarea formatting */
 				$value = ! empty( $args[ $field ] ) ? sanitize_textarea_field( $args[ $field ] ) : '';
@@ -380,7 +387,7 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 				$value = '******';
 			}
 
-			$_html = '<b>' . $label . ':</b> <span>' . $value . '</span><br>';
+			$_html = $is_extra_data && empty( $value ) ? '' : '<b>' . $label . ':</b> <span>' . $value . '</span><br>';
 
 			$html .= $_html;
 		}
@@ -388,15 +395,13 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 		return $html;
 	}
 
-	public function replace_shortcodes( $message, $args ) {
+	public function replace_shortcodes( $message, $args, $is_inline_field = false ) {
 		$timezone    = get_option( 'gmt_offset' );
 		$time        = date( 'H:i', time() + 3600 * ( $timezone + date( 'I' ) ) );
 		$first_name  = empty( $args['name'] ) ? '' : $this->get_name_parts( $args['name'] )[0];
 		$fields_html = $this->get_email_fields( $message, $args, $time );
 
 		$to_replace = array(
-			'[all_form_fields]',
-			'[ form_fields ]',
 			'[wp_site_title]',
 			'[form_url_slug]',
 			'[first_name]',
@@ -408,9 +413,8 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 			'[ip_address]',
 			'[device_settings]',
 		);
+
 		$values     = array(
-			$fields_html,
-			$fields_html,
 			wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES ),
 			trim( parse_url( $args['url'], PHP_URL_PATH ), '/' ),
 			$first_name,
@@ -422,6 +426,14 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 			tve_dash_get_ip(),
 			htmlspecialchars( isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ) : '' ),
 		);
+
+		if ( ! $is_inline_field ) {
+			$to_replace[] = '[all_form_fields]';
+			$to_replace[] = '[ form_fields ]';
+
+			$values[] = $fields_html;
+			$values[] = $fields_html;
+		}
 
 		/**
 		 * Add custom fields to the shortcodes to be replaced in messages
@@ -462,4 +474,31 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 	public static function get_email_merge_tag() {
 		return '[user_email]';
 	}
+
+	protected function set_custom_default_fields_mapping() {
+		$this->_default_form_fields = apply_filters(
+			'tve_dash_mapped_default_fields',
+			array(
+				array(
+					'id'          => 'email',
+					'placeholder' => __( 'Email', 'thrive-dash' ),
+					'unique'      => true,
+					'mandatory'   => false,
+				),
+				array(
+
+					'id'          => 'name',
+					'placeholder' => __( 'Name', 'thrive-dash' ),
+					'unique'      => true,
+					'mandatory'   => false,
+				),
+				array(
+					'id'          => 'phone',
+					'placeholder' => __( 'Phone', 'thrive-dash' ),
+					'unique'      => true,
+					'mandatory'   => false,
+				),
+			) );
+	}
+
 }

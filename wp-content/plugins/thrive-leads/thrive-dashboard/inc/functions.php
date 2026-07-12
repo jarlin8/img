@@ -106,6 +106,16 @@ function tve_dash_get_general_settings() {
 			'multiple'    => false,
 		),
 		array(
+			'name'        => 'tve_stock_images_disable_service',
+			'id'          => 'tve_stock_images_disable_service',
+			'value'       => get_option( 'tve_stock_images_disable_service', '' ),
+			'type'        => 'checkbox',
+			'description' => __( 'Disable stock images integration.', 'thrive-dash' ),
+			'multiple'    => false,
+			'link'        => '//thrivethemes.com/docs/how-to-load-images-from-third-party-services/#loading-images-from-unsplash',
+
+		),
+		array(
 			'name'        => 'tve_allow_video_src',
 			'id'          => 'tve_allow_video_src',
 			'value'       => tve_dash_allow_video_src(),
@@ -131,15 +141,6 @@ function tve_dash_general_settings_section() {
 	/* text, radio, checkbox, password */
 	$accepted_settings = array( 'text', 'checkbox' );
 	require_once TVE_DASH_PATH . '/templates/settings/general_settings.phtml';
-}
-
-/**
- * Thrive UI toolkit - should contain a list of all UI components used in Thrive admin UI
- *
- * @see templates/ui.phtml
- */
-function tve_dash_ui_toolkit() {
-	require TVE_DASH_PATH . '/templates/ui.phtml';
 }
 
 /**
@@ -232,10 +233,17 @@ function tve_dash_get_features() {
 		'api_connections'  => array(
 			'icon'        => 'tvd-icon-exchange',
 			'title'       => __( "API Connections", 'thrive-dash' ),
-			'description' => __( "Connect to your email marketing system, reCaptcha, email delivery services & more.", 'thrive-dash' ),
+			'description' => __( "Manage connections to your email marketing, reCaptcha, delivery services & API keys that let external tools talk to your Thrive products.", 'thrive-dash' ),
 			'btn_link'    => add_query_arg( 'page', 'tve_dash_api_connect', admin_url( 'admin.php' ) ),
 			'btn_text'    => __( "Manage Connections", 'thrive-dash' ),
 		),
+        'about_us'  => array(
+            'icon'        => 'tvd-growth-tools',
+            'title'       => __( "About Us", 'thrive-dash' ),
+            'description' => __( "Meet the Thrive Team and browse recommended products that help you grow your business further.", 'thrive-dash' ),
+            'btn_link'    => add_query_arg( 'page', 'about_tve_theme_team', admin_url( 'admin.php' ) ),
+            'btn_text'    => __( "Manage Tools", 'thrive-dash' ),
+        ),
 		'font_manager'     => array(
 			'icon'        => 'tvd-icon-font',
 			'title'       => __( "Custom Fonts", 'thrive-dash' ),
@@ -266,6 +274,16 @@ function tve_dash_get_features() {
 		),
 	);
 
+	if ( current_user_can( 'manage_options' ) ) {
+		$thrive_features['font_library'] = array(
+			'icon'        => 'tvd-icon-font',
+			'title'       => __( 'Font library', 'thrive-dash' ),
+			'description' => __( 'Manage and Upload fonts', 'thrive-dash' ),
+			'btn_link'    => add_query_arg( 'page', 'tve_dash_font_library', admin_url( 'admin.php' ) ),
+			'btn_text'    => __( "Manage fonts", 'thrive-dash' ),
+		);
+	}
+
 	/**
 	 * For now, the font manager is available only for the users who have a custom font loaded.
 	 */
@@ -281,6 +299,9 @@ function tve_dash_get_features() {
 	 * always available
 	 */
 	$enabled['general_settings'] = true;
+    $enabled['about_us'] = true;
+    $enabled['font_library'] = true;
+
 	/**
 	 * Thrive dashboard admin feature is only enabled for super admins
 	 */
@@ -949,6 +970,20 @@ function tve_dash_is_debug_on() {
 }
 
 /**
+ * Log a message when TVE_DEBUG is enabled.
+ *
+ * All Thrive plugins use this single entry point for debug logging.
+ * Messages are prefixed with [Thrive Debug] for easy grep filtering.
+ *
+ * @param string $message The debug message to log.
+ */
+function tve_debug_log( $message ) {
+	if ( tve_dash_is_debug_on() ) {
+		error_log( '[Thrive Debug] ' . $message );
+	}
+}
+
+/**
  * Global recursive function for sanitizing data,
  * by using custom class methods or wp standard sanitize functions,
  * sent in $callback param
@@ -1117,6 +1152,24 @@ function tvd_get_webhook_route_url( $endpoint ) {
 	$rest_controller = new TD_REST_Controller();
 
 	return get_rest_url() . $rest_controller->get_namespace() . $rest_controller->get_webhook_base() . '/' . $endpoint;
+}
+
+function tvd_get_google_api_client_id() {
+	$connection = Thrive_Dash_List_Manager::connection_instance( 'google' );
+
+	return $connection ? $connection->param( 'client_id' ) : '';
+}
+
+function tvd_get_google_api_key() {
+	$connection = Thrive_Dash_List_Manager::connection_instance( 'google' );
+
+	return $connection ? $connection->param( 'api_key' ) : '';
+}
+
+function tvd_get_facebook_app_id() {
+	$connection = Thrive_Dash_List_Manager::connection_instance( 'facebook' );
+
+	return $connection ? $connection->param( 'app_id' ) : '';
 }
 
 /**
@@ -1310,19 +1363,35 @@ function thrive_get_transient( $transient ) {
 }
 
 /**
- * Delete any possible support user
+ * Get the max upload size in MB
  *
- * @return void
+ * @param $with_suffix
+ *
+ * @return string
  */
-function tve_dash_delete_support_user() {
-	foreach ( get_users( [ 'meta_key' => '_thrive_support_user', 'meta_value' => 1 ] ) as $user ) {
-		wp_delete_user( $user->ID );
+function tve_get_max_upload_size( $with_suffix = false ) {
+	return number_format_i18n( wp_max_upload_size() / MB_IN_BYTES ) . ( $with_suffix ? 'MB' : '' );
+}
+
+/**
+ * Get the URL for a REST API route.
+ *
+ * @param string $namespace The namespace of the REST API route.
+ * @param string $endpoint  The REST API endpoint.
+ * @param int    $id        Optional. The ID for the endpoint.
+ * @param array  $args      Optional. Additional arguments to append to the URL as query parameters.
+ * @return string The URL for the REST API route.
+ */
+function tva_get_rest_route_url( $namespace, $endpoint, $id = 0, $args = array() ) {
+	$url = get_rest_url() . $namespace . '/' . $endpoint;
+
+	if ( ! empty( $id ) && is_numeric( $id ) ) {
+		$url .= '/' . $id;
 	}
-	/**
-	 * Make sure the previously saved user is also deleted in case nothing is found by meta query
-	 */
-	$user = get_user_by( 'email', 'support@thrivethemes.com' );
-	if ( isset( $user->ID ) && $user->ID ) {
-		wp_delete_user( $user->ID );
+
+	if ( ! empty( $args ) ) {
+		$url = add_query_arg( $args, $url );
 	}
+
+	return $url;
 }

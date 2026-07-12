@@ -143,35 +143,40 @@ class Thrive_Dash_Api_Mailchimp {
 
 		$options      = $this->getOptions( $method, $arguments );
 		$query_string = '';
-		$body         = array();
+
+		$args = array(
+			'timeout'   => 15,
+			'headers'   => $options['headers'],
+			'sslverify' => false,
+		);
 		switch ( $method ) {
 			case 'get':
 				$fn           = 'tve_dash_api_remote_get';
 				$body         = isset( $options['query'] ) ? $options['query'] : '';
+				$args['body'] = $body;
 				$query_string = isset( $options['query'] ) ? '?' . http_build_query( $options['query'] ) : '';
 				break;
 			case 'delete':
-				$method  = 'DELETE';
+				$args['method']                     = 'DELETE';
 				$fn      = 'tve_dash_api_remote_request';
 				$no_body = true;
+				break;
+
+			case 'put':
+				$args['method']                     = 'PUT';
+				$fn                                 = 'tve_dash_api_remote_request';
+				$body                               = json_encode( $options['json'] );
+				$options['headers']['Content-type'] = 'application/json';
+				$args['body']                       = $body;
 				break;
 			default:
 				$fn                                 = 'tve_dash_api_remote_post';
 				$body                               = json_encode( $options['json'] );
 				$options['headers']['Content-type'] = 'application/json';
+				$args['body']                       = $body;
 				break;
 		}
-
-		$args = array(
-			'body'      => $body,
-			'timeout'   => 15,
-			'headers'   => $options['headers'],
-			'sslverify' => false,
-			'method'    => $method,
-		);
-
-		// Mailchimp returns 404 sometimes on GET requests with body params
-		if ( in_array( strtolower( $method ), array( 'get', 'delete' ) ) && $no_body ) {
+		if ( $no_body ) {
 			unset( $args['body'] );
 		}
 

@@ -53,6 +53,12 @@
 				   data-tooltip="<# if( has_display_settings != 1 ){ #>Set your targeting options here<# } else { #>Display Settings<# } #>">
 					<span class="tvd-icon-cog <# if( has_display_settings != 1 ){ #>tvd-icon-setting-alert<# } #>"></span>
 				</a>
+				<a href="javascript:void(0)" title="<?php echo __( 'Duplicate Group', 'thrive-leads' ) ?>"
+				   data-title="<?php echo __( 'Duplicate Group', 'thrive-leads' ) ?>"
+				   class="tvd-tooltipped tve-prevent-click tve-group-duplicate tvd-text-gray" data-position="top" data-tooltip="Duplicate group"
+				   data-id="<#= ID #>">
+					<span class="tvd-icon-clone2"></span>
+				</a>
 				<a href="javascript:void(0)" title="<?php echo __( 'Delete Group', 'thrive-leads' ) ?>"
 				   data-title="<?php echo __( 'Delete Group', 'thrive-leads' ) ?>"
 				   class="tvd-tooltipped tve-prevent-click tve-group-delete tvd-text-gray" data-position="top" data-tooltip="Delete group"

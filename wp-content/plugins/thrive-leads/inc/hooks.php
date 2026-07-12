@@ -244,6 +244,40 @@ function tve_leads_register_group() {
 }
 
 /**
+ * Check if a lead group has at least one globally visible form
+ * A form is globally visible if it has either Mobile OR Desktop visibility enabled
+ *
+ * @param array $form_types Array of form type objects
+ *
+ * @return bool True if at least one form is globally visible, false otherwise
+ */
+function tve_leads_group_has_visible_forms( $form_types ) {
+	if ( empty( $form_types ) ) {
+		return false;
+	}
+
+	foreach ( $form_types as $form_type ) {
+		if ( is_array( $form_type ) || ! $form_type->ID ) {
+			continue;
+		}
+
+		// By default, when an option is not set, a form type is displayed.
+		$display_on_mobile = get_post_meta( $form_type->ID, 'display_on_mobile', true );
+		$display_on_mobile = (string) $display_on_mobile === '' ? 1 : (int) $display_on_mobile;
+
+		$display_status = get_post_meta( $form_type->ID, 'display_status', true );
+		$display_status = (string) $display_status === '' ? 1 : (int) $display_status;
+
+		// If at least one device visibility is enabled, the form is globally visible
+		if ( $display_on_mobile === 1 || $display_status === 1 ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
  * Query all lead groups order by priority desc (highest to lowest)
  * Run through the display settings of each group until you find one that returns true for display
  * Exit algorithm because you know that the highest priority lead group will be found first.
@@ -320,18 +354,26 @@ function tve_leads_query_group() {
 					continue;
 				}
 			}
-			$tve_lead_group                        = $group;
-			$tve_lead_group->saved_display_options = array(
-				'allowed_post_types' => $saved_options->getTabSavedOptions( 5, 'show_group_options' ),
-				'flag_url_match'     => $saved_options->flag( 'direct_url_match' ),
-			);
-			/* only get form types for a single group - the one that is matched by the current request */
-			$tve_lead_group->form_types = tve_leads_get_form_types( array(
+
+			/* Get form types for this group to check if any are globally visible */
+			$form_types = tve_leads_get_form_types( array(
 				'lead_group_id'  => $group->ID,
 				'tracking_data'  => false,
 				'get_variations' => true,
 				'no_content'     => false,
 			) );
+
+			/* Check if this group has at least one globally visible form */
+			if ( ! tve_leads_group_has_visible_forms( $form_types ) ) {
+				continue;
+			}
+
+			$tve_lead_group                        = $group;
+			$tve_lead_group->form_types            = $form_types;
+			$tve_lead_group->saved_display_options = array(
+				'allowed_post_types' => $saved_options->getTabSavedOptions( 5, 'show_group_options' ),
+				'flag_url_match'     => $saved_options->flag( 'direct_url_match' ),
+			);
 			break;
 		}
 	}
@@ -507,11 +549,13 @@ function tve_leads_prepare_script_config() {
 	}
 
 	return array(
-		'security'          => wp_create_nonce( 'tve-leads-front-js-track-123333' ),
-		'ajax_url'          => $admin_url,
-		'forms'             => array(),
-		'action_conversion' => 'tve_leads_ajax_conversion',
-		'action_impression' => 'tve_leads_ajax_impression',
+		'security'                   => wp_create_nonce( 'tve-leads-front-js-track-123333' ),
+		'ajax_url'                   => $admin_url,
+		'forms'                      => array(),
+		'action_conversion'          => 'tve_leads_ajax_conversion',
+		'action_button_conversion'   => 'tve_leads_ajax_button_conversion',
+		'action_impression'          => 'tve_leads_ajax_impression',
+		'trigger_based_form_types'   => tve_leads_get_trigger_based_form_types(),
 	);
 }
 
@@ -677,15 +721,20 @@ function tve_leads_register_conversion( $group, $form_type, $variation, $test_mo
 	global $tvedb;
 
 	$event_log = array(
-		'event_type'    => TVE_LEADS_CONVERSION,
+		'event_type'    => ! empty( $post_data['event_type'] ) && in_array( (int) $post_data['event_type'], array( TVE_LEADS_CONVERSION, TVE_LEADS_BUTTON_CLICK_CONVERSION ), true ) ? (int) $post_data['event_type'] : TVE_LEADS_CONVERSION,
 		'main_group_id' => ! empty( $group ) ? $group->ID : $form_type->ID,
 		'form_type_id'  => $form_type->ID,
 		'variation_key' => $variation['key'],
-		'user'          => $post_data['email'],
+		'user'          => ! empty( $post_data['email'] ) ? $post_data['email'] : '',
 	);
+
+	if ( isset( $post_data['is_first_session_conversion'] ) ) {
+		$event_log['is_first_session_conversion'] = $post_data['is_first_session_conversion'];
+	}
+
 	$event_log = array_merge( $event_log, $current_screen );
 
-	$referrer = isset( $post_data['http_referrer'] ) ? $post_data['http_referrer'] : '';
+	$referrer = isset( $post_data['http_referrer'] ) ? filter_var( $post_data['http_referrer'], FILTER_SANITIZE_URL ) : '';
 
 	if ( $referrer ) {
 		$trimmed = preg_replace( '#http(s)?://#', '', trim( $referrer, '/' ) );
@@ -709,13 +758,20 @@ function tve_leads_register_conversion( $group, $form_type, $variation, $test_mo
 	$cache_variation_data = $variation['cache_conversions'] !== null;
 	$log_id               = $tvedb->insert_event( $event_log, $test_model_id, $cache_variation_data );
 
-	$name = empty( $post_data['custom_fields']['name'] ) ? '' : $post_data['custom_fields']['name'];
-	unset(
-		$post_data['custom_fields']['name'],
-		$post_data['custom_fields']['password'],
-		$post_data['custom_fields']['confirm_password']
-	);
-	$tvedb->tve_leads_register_contact( $log_id, $name, $post_data['email'], $post_data['custom_fields'] );
+	/* Non-first session conversions return null from insert_event -- skip contact/test logic */
+	if ( null === $log_id && isset( $post_data['is_first_session_conversion'] ) && $post_data['is_first_session_conversion'] === '0' ) {
+		return;
+	}
+
+	if ( ! empty( $post_data['email'] ) ) {
+		$name = empty( $post_data['custom_fields']['name'] ) ? '' : $post_data['custom_fields']['name'];
+		unset(
+			$post_data['custom_fields']['name'],
+			$post_data['custom_fields']['password'],
+			$post_data['custom_fields']['confirm_password']
+		);
+		$tvedb->tve_leads_register_contact( $log_id, $name, $post_data['email'], $post_data['custom_fields'] );
+	}
 
 	if ( ! empty( $test_model_id ) ) {
 		tve_leads_test_check_winner( $test_model_id );
@@ -839,6 +895,20 @@ function tve_leads_send_asset( $post_data ) {
 }
 
 /**
+ * Set first-event-per-session attribution flag on conversion data.
+ * Uses a session cookie to determine if this is the first conversion for the given Lead Group.
+ *
+ * @param array $data Conversion data array (modified by reference)
+ */
+function tve_leads_set_session_attribution( &$data ) {
+	$session_cookie = 'tl_first_conv_' . (int) $data['main_group_id'];
+	$data['is_first_session_conversion'] = empty( $_COOKIE[ $session_cookie ] ) ? '1' : '0';
+	if ( ! isset( $_COOKIE[ $session_cookie ] ) ) {
+		setcookie( $session_cookie, '1', 0, '/' );
+	}
+}
+
+/**
  * handles a couple of preliminary (data integrity checks) and record the actual conversion of a form
  *
  * @param array $post_data
@@ -853,6 +923,7 @@ function tve_leads_process_conversion( $post_data ) {
 		'form_type_id'  => ! empty( $post_data['tl_data']['form_type_id'] ) ? $post_data['tl_data']['form_type_id'] : 0,
 		'custom_fields' => ! empty( $post_data['custom_fields'] ) ? $post_data['custom_fields'] : array(),
 		'tve_labels'    => ! empty( $post_data['tve_labels'] ) ? $post_data['tve_labels'] : array(),
+		'http_referrer' => ! empty( $post_data['get_data']['http_referrer'] ) ? $post_data['get_data']['http_referrer'] : array(),
 	);
 
 	//add referrer and utm data from post
@@ -918,7 +989,44 @@ function tve_leads_process_conversion( $post_data ) {
 	 */
 	setcookie( 'tl-conv-' . $variation['key'], 1, time() + 3600 * 24 * 365, '/' ); // 1 year :-)
 
+	/* First-event-per-session attribution (server-side is authoritative) */
+	tve_leads_set_session_attribution( $data );
+
 	do_action( TVE_LEADS_ACTION_FORM_CONVERSION, $main, $form_type, $variation, $data['active_test_id'], $data, empty( $post_data['current_screen'] ) ? array() : $post_data['current_screen'] );
+
+	/**
+	 * Standardized Leads form submission hook — fires for Leads form submissions only.
+	 * Includes all fields from thrivethemes_form_submitted plus Leads-specific context.
+	 *
+	 * @param array $payload {
+	 *     @type int    $user_id      Current user ID (0 for guests).
+	 *     @type int    $form_id      Leads form type post ID.
+	 *     @type string $form_name    Form variation name (falls back to form type title).
+	 *     @type array  $form_data    Processed form data including custom fields.
+	 *     @type string $source       Always 'leads'.
+	 *     @type string $source_url   URL of the page where form was submitted.
+	 *     @type int    $post_id      Post/page ID where form was submitted.
+	 *     @type int    $group_id     Leads group post ID.
+	 *     @type int    $variation_id Variation key.
+	 *     @type string $form_type    Form display type (lightbox, ribbon, etc.).
+	 *     @type string $screen_type  Page type where form was shown (homepage, blog, page, post, custom_post, archive, other).
+	 *     @type int    $timestamp    Unix timestamp.
+	 * }
+	 */
+	do_action( 'thrivethemes_leads_form_submitted', array(
+		'user_id'      => (int) get_current_user_id(),
+		'form_id'      => (int) $data['form_type_id'],
+		'form_name'    => ! empty( $post_data['tl_data']['form_name'] ) ? $post_data['tl_data']['form_name'] : $form_type->post_title,
+		'form_data'    => $data,
+		'source'       => 'leads',
+		'source_url'   => ! empty( $data['http_referrer'] ) ? $data['http_referrer'] : ( isset( $post_data['post_id'] ) ? get_permalink( (int) $post_data['post_id'] ) : '' ),
+		'post_id'      => isset( $post_data['post_id'] ) ? (int) $post_data['post_id'] : 0,
+		'group_id'     => (int) $main->ID,
+		'variation_id' => (int) $variation['key'],
+		'form_type'    => ! empty( $data['type'] ) ? $data['type'] : ( ! empty( $post_data['type'] ) ? $post_data['type'] : '' ),
+		'screen_type'  => ! empty( $post_data['current_screen']['screen_type'] ) ? tve_leads_get_screen_type_label( (int) $post_data['current_screen']['screen_type'] ) : '',
+		'timestamp'    => (int) time(),
+	) );
 }
 
 /**
@@ -929,6 +1037,83 @@ function tve_leads_ajax_conversion() {
 //    check_ajax_referer('tve-leads-front-js-track-123333', 'security');
 
 	tve_leads_process_conversion( $_POST );
+}
+
+/**
+ * AJAX call entry point for button click conversion tracking
+ */
+function tve_leads_ajax_button_conversion() {
+	tve_leads_process_button_conversion( $_POST );
+}
+
+/**
+ * Process a button click conversion event.
+ * Mirrors tve_leads_process_conversion() but without email, custom fields, or captcha checks.
+ *
+ * @param array $post_data
+ */
+function tve_leads_process_button_conversion( $post_data ) {
+	$data = array(
+		'email'         => '',
+		'variation_key' => ! empty( $post_data['tl_data']['_key'] ) ? $post_data['tl_data']['_key'] : 0,
+		'main_group_id' => ! empty( $post_data['tl_data']['main_group_id'] ) ? $post_data['tl_data']['main_group_id'] : 0,
+		'form_type_id'  => ! empty( $post_data['tl_data']['form_type_id'] ) ? $post_data['tl_data']['form_type_id'] : 0,
+		'custom_fields' => array(),
+		'event_type'    => TVE_LEADS_BUTTON_CLICK_CONVERSION,
+	);
+
+	foreach ( array( 'http_referrer', 'utm_source', 'utm_medium', 'utm_campaign' ) as $_field ) {
+		if ( ! empty( $post_data[ $_field ] ) ) {
+			$data[ $_field ] = $post_data[ $_field ];
+		}
+	}
+
+	/* Dedup: prevent duplicate button click conversions within 10 minutes */
+	$conversion_cookie_key = 'tl_btn_conv_' . md5( wp_json_encode( array( $data['main_group_id'], $data['form_type_id'] ) ) );
+	if ( ! defined( 'TVE_LEADS_TEST_DATA' ) || ! TVE_LEADS_TEST_DATA ) {
+		if ( isset( $_COOKIE[ $conversion_cookie_key ] ) ) {
+			return;
+		}
+	}
+
+	$data['active_test_id'] = ! empty( $post_data['tl_data']['active_test_id'] ) ? $post_data['tl_data']['active_test_id'] : 0;
+
+	/* Validate group and form type exist */
+	$main = get_post( $data['main_group_id'] );
+	if ( empty( $main ) ) {
+		return;
+	}
+
+	$type = ! empty( $post_data['type'] ) ? $post_data['type'] : '';
+	if ( $data['main_group_id'] == $data['form_type_id'] && ( strpos( $type, 'two_step_' ) === 0 || strpos( $type, 'shortcode_' ) === 0 ) ) {
+		$form_type = $main;
+	} else {
+		$form_type = tve_leads_get_form_type( $data['form_type_id'], array(
+			'get_variations' => false,
+		) );
+		if ( empty( $form_type ) || $form_type->post_parent != $main->ID ) {
+			return;
+		}
+	}
+
+	$variation = tve_leads_get_form_variation( $data['form_type_id'], $data['variation_key'] );
+	if ( empty( $variation ) || $variation['post_status'] != TVE_LEADS_STATUS_PUBLISH ) {
+		return;
+	}
+
+	/* Set dedup cookie (10 minutes) */
+	setcookie( $conversion_cookie_key, '1', time() + ( 10 * 60 ), '/' );
+
+	/* Remember the conversion so we won't display the form later */
+	tve_leads_set_conversion_cookie( $data['main_group_id'] );
+
+	/* Remember a conversion cookie for the variation state (to show "already_subscribed" state) */
+	setcookie( 'tl-conv-' . $variation['key'], 1, time() + 3600 * 24 * 365, '/' );
+
+	/* First-event-per-session attribution (server-side is authoritative) */
+	tve_leads_set_session_attribution( $data );
+
+	do_action( TVE_LEADS_ACTION_FORM_CONVERSION, $main, $form_type, $variation, $data['active_test_id'], $data, empty( $post_data['current_screen'] ) ? array() : $post_data['current_screen'] );
 }
 
 /**
@@ -2324,8 +2509,31 @@ function tve_leads_ajax_load_forms( $return = false, $post_data = null ) {
 				$variation['form_id']   = $_type . '-' . $variation['key'];
 				$variation['form_type'] = $_type;
 
-				if ( ! tve_dash_is_crawler() ) {
-					do_action( TVE_LEADS_ACTION_FORM_IMPRESSION, $group, $form_type, $variation, empty( $variation['test_model'] ) ? null : $variation['test_model']->id, $current_screen );
+			/**
+			 * For trigger-based forms (lightbox, screen_filler, slide_in, ribbon), we defer impression
+			 * tracking until the form is actually shown to the user. This ensures accurate
+			 * impression counting for forms that are not immediately visible on page load.
+			 *
+			 * @see https://github.com/awesomemotive/thrive-themes/issues/2956
+			 * @see tve_leads_get_trigger_based_form_types() Single source of truth for these form types
+			 *
+			 * @todo Future enhancement: Check the actual trigger type (page_load vs time/scroll/exit/click)
+			 *       and only defer impressions for non-page_load triggers.
+			 */
+			$trigger_based_form_types = tve_leads_get_trigger_based_form_types();
+
+			if ( ! tve_dash_is_crawler() ) {
+				if ( in_array( $_type, $trigger_based_form_types, true ) ) {
+						// Defer impression tracking - pass data to JS for tracking when form is shown
+						$response['deferred_impressions'][ $_type ] = array(
+							'group_id'       => $group->ID,
+							'form_type_id'   => $form_type ? $form_type->ID : '',
+							'variation_key'  => $variation['key'],
+							'active_test_id' => ! empty( $variation['test_model'] ) ? $variation['test_model']->id : null,
+						);
+					} else {
+						do_action( TVE_LEADS_ACTION_FORM_IMPRESSION, $group, $form_type, $variation, empty( $variation['test_model'] ) ? null : $variation['test_model']->id, $current_screen );
+					}
 				}
 
 				$load_forms[ $_type ] = true;
@@ -2389,8 +2597,20 @@ function tve_leads_ajax_load_forms( $return = false, $post_data = null ) {
 
 			$output_variations[ 'shortcode_' . $id ] = $variation;
 
+			/**
+			 * Defer impression tracking for shortcodes - they may be below the fold.
+			 * Impressions will be tracked via Intersection Observer when the shortcode
+			 * becomes visible in the viewport.
+			 *
+			 * @see https://github.com/awesomemotive/thrive-themes/issues/2956
+			 */
 			if ( ! tve_dash_is_crawler() ) {
-				do_action( TVE_LEADS_ACTION_FORM_IMPRESSION, $shortcode, $shortcode, $variation, empty( $variation['test_model'] ) ? null : $variation['test_model']->id, $current_screen );
+				$response['deferred_impressions'][ 'shortcode_' . $id ] = array(
+					'group_id'       => $shortcode->ID,
+					'form_type_id'   => $shortcode->ID,
+					'variation_key'  => $variation['key'],
+					'active_test_id' => ! empty( $variation['test_model'] ) ? $variation['test_model']->id : null,
+				);
 			}
 		}
 	}
@@ -2458,9 +2678,15 @@ function tve_leads_ajax_load_forms( $return = false, $post_data = null ) {
 			);
 
 			$output_variations[ 'two_step_' . $id ] = $variation;
-			if ( ! tve_dash_is_crawler() ) {
-				do_action( TVE_LEADS_ACTION_FORM_IMPRESSION, $two_step, $two_step, $variation, empty( $variation['test_model'] ) ? null : $variation['test_model']->id, $current_screen );
-			}
+
+			/**
+			 * Do NOT track impressions for two-step (ThriveBox) forms on AJAX load.
+			 * Impressions should only be tracked when the ThriveBox is actually opened (triggered by click),
+			 * not when the form is loaded. The impression tracking is handled in frontend.js
+			 * when the user clicks the trigger to open the ThriveBox.
+			 *
+			 * @see https://github.com/awesomemotive/thrive-themes/issues/2504
+			 */
 		}
 	}
 
@@ -2785,7 +3011,7 @@ function tve_leads_wp_nav_menu_objects( $menu_items ) {
 		}
 
 		//continue if not TB menu item
-		if ( $item->object !== TVE_LEADS_POST_TWO_STEP_LIGHTBOX ) {
+		if ( ! property_exists( $item, 'object' ) || $item->object !== TVE_LEADS_POST_TWO_STEP_LIGHTBOX ) {
 			continue;
 		}
 
@@ -3082,7 +3308,7 @@ function tve_leads_add_to_dashboard( $items ) {
  */
 function tve_leads_update_checker() {
 	new TVE_PluginUpdateChecker(
-		'http://service-api.thrivethemes.com/plugin/update',
+		'https://service-api.thrivethemes.com/plugin/update',
 		dirname( dirname( __FILE__ ) ) . '/thrive-leads.php',
 		'thrive-leads',
 		12,

@@ -208,4 +208,80 @@ trait Event {
 	final public function log() {
 		return Logs::get_instance()->insert( $this );
 	}
+
+	/**
+	 * Update event data in the database
+	 *
+	 * @param $id
+	 * @param $fields_to_update
+	 *
+	 * @return bool|int|\mysqli_result|resource|null
+	 */
+	final public function update_log( $id, $fields_to_update ) {
+		return Logs::get_instance()->update( $this, $id, $fields_to_update );
+	}
+
+	/**
+	 * @param $query_fields
+	 * @param $fields_to_update
+	 *
+	 * @return void
+	 */
+	public function upsert( $query_fields, $fields_to_update = [] ) {
+		$id = $this->get_entry_row( $query_fields );
+
+		if ( is_null( $id ) ) {
+			$this->log();
+		} else {
+			if ( empty( $fields_to_update ) ) {
+				$fields_to_update = $query_fields;
+			}
+
+			$this->update_log( $id, $fields_to_update );
+		}
+	}
+
+	/**
+	 * @param $filter_keys
+	 *
+	 * @return string|null
+	 */
+	final public function get_entry_row( $filter_keys ) {
+		$filters = [];
+
+		foreach ( array_keys( $this::get_registered_fields() ) as $field_key ) {
+			if ( in_array( $field_key, $filter_keys, true ) ) {
+				$filters[ $field_key ] = $this->get_field_value( $field_key );
+			}
+		}
+
+		return Logs::get_instance()->set_query( [
+			'event_type' => static::key(),
+			'filters'    => $filters,
+		] )->get_row();
+	}
+
+	/**
+	 * @param $allowed_fields
+	 *
+	 * @return array
+	 */
+	public function get_log_data( $allowed_fields = [] ) {
+		$log_data = [];
+
+		if ( empty( $allowed_fields ) ) {
+			$allowed_fields = array_keys( $this::get_registered_fields() );
+		}
+
+		foreach ( array_keys( $this::get_registered_fields() ) as $field_key ) {
+			if ( in_array( $field_key, $allowed_fields, true ) ) {
+				$log_data[ $field_key ] = $this->get_field_value( $field_key );
+			}
+		}
+
+		$log_data['event_type'] = $this::key();
+		$log_data['created']    = gmdate( 'Y-m-d H:i:s' );
+
+		return $log_data;
+	}
 }

@@ -31,7 +31,7 @@ class TCB_Icon_Manager {
 		 * if the post has in post meta flag set
 		 */
 		if ( is_editor_page() && tve_is_post_type_editable( get_post_type( get_the_ID() ) ) || tve_get_post_meta( get_the_ID(), 'thrive_icon_pack' ) ) {
-			add_action( 'wp_enqueue_scripts', array( 'TCB_Icon_Manager', 'enqueue_icon_pack' ) );
+			add_action( 'wp_enqueue_scripts', [ 'TCB_Icon_Manager', 'enqueue_icon_pack' ] );
 		}
 	}
 
@@ -69,9 +69,12 @@ class TCB_Icon_Manager {
 			$license = 'pro';
 		}
 
-		tve_enqueue_style( 'tve_material', '//fonts.googleapis.com/css?family=Material+Icons+Two+Tone' );
+		if ( ! tve_dash_is_google_fonts_blocked() ) {
+			tve_enqueue_style( 'tve_material', '//fonts.googleapis.com/css?family=Material+Icons+Two+Tone' );
+		}
+
 		tve_enqueue_style( 'tve_material_community', '//cdn.materialdesignicons.com/5.3.45/css/materialdesignicons.min.css' );
-		tve_enqueue_style( 'tve_fa', "//$license.fontawesome.com/releases/v5.13.1/css/all.css" );
+		tve_enqueue_style( 'tve_fa', "//$license.fontawesome.com/releases/v6.7.1/css/all.css" );
 	}
 
 	/**
@@ -96,11 +99,11 @@ class TCB_Icon_Manager {
 		$css_version = isset( $icon_pack['css_version'] ) ? $icon_pack['css_version'] : TVE_VERSION;
 
 		$_url = tve_url_no_protocol( $css_url );
-		wp_enqueue_style( $handle, $_url, array(), $css_version );
+		wp_enqueue_style( $handle, $_url, [], $css_version );
 
 
 		return $_url . '?ver=' . $css_version;
 	}
 }
 
-add_action( 'wp', array( 'TCB_Icon_Manager', 'init' ) );
+add_action( 'wp', [ 'TCB_Icon_Manager', 'init' ] );

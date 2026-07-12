@@ -10,6 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Thrive_Dash_List_Connection_ReCaptcha extends Thrive_Dash_List_Connection_Abstract {
+	public function __construct( $key ) {
+		parent::__construct( $key );
+
+		add_filter( 'tcb_spam_prevention_tools', [$this, 'add_spam_prevention_tool'] );
+	}
+
 	/**
 	 * Return the connection type
 	 *
@@ -100,6 +106,12 @@ class Thrive_Dash_List_Connection_ReCaptcha extends Thrive_Dash_List_Connection_
 		$this->get_credentials();
 
 		return $this->param( 'site_key' );
+	}
+
+	public function add_spam_prevention_tool( $sp_tools ) {
+		array_push($sp_tools, $this->_key);
+
+		return $sp_tools;
 	}
 
 	/**

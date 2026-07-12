@@ -195,6 +195,7 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 				'email'         => $arguments['email'],
 				'ip_address'    => sanitize_text_field( $_SERVER['REMOTE_ADDR'] ), // phpcs:ignore
 				'custom_fields' => $proprieties,
+				'status'        => 'active',
 			);
 
 			if ( isset( $arguments['drip_type'] ) && 'list' === $arguments['drip_type'] ) {
@@ -206,7 +207,7 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 				return __( 'User could not be subscribed', 'thrive-dash' );
 			}
 
-			if ( ! isset( $arguments['drip_field'] ) || 'list' === $arguments['drip_type'] ) {
+			if ( 'tag' !== $arguments['drip_type'] && ( ! isset( $arguments['drip_field'] ) || 'list' === $arguments['drip_type'] ) ) {
 
 				$client = array_shift( $lead['subscribers'] );
 
@@ -255,10 +256,11 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 	 * It will hold the latest selected value in a cookie so that the user is presented by default with the same option selected the next time he edits such a form
 	 *
 	 * @param array $params
+	 * @param bool  $force  force refresh from API
 	 *
 	 * @return mixed
 	 */
-	public function get_extra_settings( $params = array() ) {
+	public function get_extra_settings( $params = array(), $force = false ) {
 		$processed_params = array();
 
 		$params['optin'] = empty( $params['optin'] ) ? ( isset( $_COOKIE['tve_api_drip_optin'] ) ? sanitize_text_field( $_COOKIE['tve_api_drip_optin'] ) : 'd' ) : $params['optin'];

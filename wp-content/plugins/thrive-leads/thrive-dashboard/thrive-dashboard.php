@@ -1,9 +1,11 @@
 <?php
-
 /**
  * Thrive Themes - https://thrivethemes.com
  *
  * @package thrive-dashboard
+ *
+ * Requires PHP: 8.1
+ *
  */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
@@ -26,8 +28,9 @@ defined( 'TVE_SECRET' ) || define( 'TVE_SECRET', 'tve_secret' );
 
 /**
  * Dashboard Database Version
+ * Meanwhile the 1.0.4 migration was deleted, so the next file should be 1.0.5
  */
-defined( 'TVE_DASH_DB_VERSION' ) || define( 'TVE_DASH_DB_VERSION', '1.0.3' );
+defined( 'TVE_DASH_DB_VERSION' ) || define( 'TVE_DASH_DB_VERSION', '1.0.8' );
 
 /**
  * REQUIRED FILES
@@ -35,12 +38,12 @@ defined( 'TVE_DASH_DB_VERSION' ) || define( 'TVE_DASH_DB_VERSION', '1.0.3' );
 require_once TVE_DASH_PATH . '/traits/trait-singleton.php';
 
 require_once TVE_DASH_PATH . '/classes/class-tve-wpdb.php';
+require_once TVE_DASH_PATH . '/classes/class-thrive-user-tags.php';
 
 require_once TVE_DASH_PATH . '/rest-api/init.php';
 require_once TVE_DASH_PATH . '/inc/util.php';
 require_once TVE_DASH_PATH . '/inc/hooks.php';
 require_once TVE_DASH_PATH . '/inc/functions.php';
-require_once TVE_DASH_PATH . '/inc/crons.php';
 require_once TVE_DASH_PATH . '/inc/plugin-updates/plugin-update-checker.php';
 require_once TVE_DASH_PATH . '/inc/notification-manager/class-td-nm.php';
 require_once TVE_DASH_PATH . '/inc/db-manager/class-td-db-migration.php';
@@ -59,6 +62,9 @@ require_once TVE_DASH_PATH . '/inc/smart-site/classes/endpoints/class-tvd-groups
 require_once TVE_DASH_PATH . '/inc/smart-site/classes/endpoints/class-tvd-fields-controller.php';
 require_once TVE_DASH_PATH . '/inc/access-manager/class-tvd-access-manager.php';
 require_once TVE_DASH_PATH . '/inc/marketing/functions.php';
+require_once TVE_DASH_PATH . '/inc/ttw-account/traits/trait-magic-methods.php';
+require_once TVE_DASH_PATH . '/inc/ttw-account/traits/trait-ttw-utils.php';
+require_once TVE_DASH_PATH . '/inc/ttw-account/classes/class-td-ttw-connection.php';
 require_once TVE_DASH_PATH . '/inc/ttw-account/classes/class-td-ttw-update-manager.php';
 require_once TVE_DASH_PATH . '/inc/automator/class-main.php';
 require_once TVE_DASH_PATH . '/inc/design-packs/class-main.php';
@@ -70,13 +76,25 @@ require_once TVE_DASH_PATH . '/inc/access-manager/class-tvd-am-admin-bar-visibil
 require_once TVE_DASH_PATH . '/inc/access-manager/class-tvd-am-login-redirect.php';
 require_once TVE_DASH_PATH . '/inc/pdf/class-pdf-from-url.php';
 require_once TVE_DASH_PATH . '/inc/metrics/class-main.php';
+require_once TVE_DASH_PATH . '/inc/webhooks/class-main.php';
+require_once TVE_DASH_PATH . '/inc/public-api/class-main.php';
+
+// Load shared utilities
+require_once TVE_DASH_PATH . '/inc/utils/class-tt-http-error-map.php';
+require_once TVE_DASH_PATH . '/inc/utils/class-name-parser.php';
 
 require_once TVE_DASH_PATH . '/inc/reporting-dashboard/functions.php';
+
+require_once TVE_DASH_PATH . '/inc/growth-tools/classes/Tve_Dash_Growth_Tools.php';
+require_once TVE_DASH_PATH . '/inc/app-notification/classes/App_Notification.php';
 
 /**
  * AUTO-LOADERS
  */
 spl_autoload_register( 'tve_dash_autoloader' );
+
+// Include composer autoloader.
+include TVE_DASH_PATH . '/vendor/autoload.php';
 
 /**
  * Allow other products to hook in after the main dashboard files have been loaded
@@ -122,6 +140,10 @@ add_action( 'init',
 		TVD\Dashboard\Access_Manager\Login_Redirect::init();
 		TVE\Dashboard\Design_Packs\Main::init();
 		TVE\Dashboard\Metrics\Main::init();
+		TVE\Dashboard\Webhooks\Main::init();
+		TVE\Dashboard\Public_API\Main::init();
+		Tve_Dash_Growth_Tools::init();
+		App_Notification::instance();
 	}, - 1 );
 if ( defined( 'WPSEO_FILE' ) ) {
 	/* Yoast SEO plugin installed -> use a hook provided by the plugin for configuring meta "robots" */
@@ -151,16 +173,17 @@ if ( is_admin() ) {
 	add_action( 'wp_ajax_nopriv_tve_dash_front_ajax', 'tve_dash_frontend_ajax_load' );
 
 	add_action( 'current_screen', 'tve_dash_current_screen' );
+    add_action( 'admin_enqueue_scripts', 'add_generic_admin_css' );
 }
 
 /**
- * Hook when a user submits a wordpress login form & the login has been successful
+ * Hook when a user submits a WordPress login form & the login has been successful
  *
  * Adds a user meta with last login timestamp
  */
 add_action( 'wp_login', 'tve_dash_on_user_login', 10, 2 );
 
 /**
- * Hook when a user submits a wordpress login form & the login has been failed
+ * Hook when a user submits a WordPress login form & the login has been failed
  */
 add_action( 'wp_login_failed', 'tve_dash_on_user_login_failed', 10, 2 );

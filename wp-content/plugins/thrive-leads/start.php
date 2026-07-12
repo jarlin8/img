@@ -28,7 +28,7 @@ require_once plugin_dir_path( __FILE__ ) . 'tcb-bridge/tcb_action_hooks.php';
  */
 
 include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-if ( ! file_exists( dirname( dirname( __FILE__ ) ) . '/thrive-visual-editor/thrive-visual-editor.php' ) || ! is_plugin_active( 'thrive-visual-editor/thrive-visual-editor.php' ) ) {
+if ( ! file_exists( dirname( __FILE__, 2 ) . '/thrive-visual-editor/thrive-visual-editor.php' ) || ! is_plugin_active( 'thrive-visual-editor/thrive-visual-editor.php' ) ) {
 	include_once plugin_dir_path( __FILE__ ) . 'tcb-bridge/init.php';
 }
 
@@ -58,6 +58,12 @@ add_action( 'wp_ajax_tve_leads_ajax_conversion', 'tve_leads_ajax_conversion' );
  * also for non-authenticated users
  */
 add_action( 'wp_ajax_nopriv_tve_leads_ajax_conversion', 'tve_leads_ajax_conversion' );
+
+/**
+ * ajax call that tracks button click conversions
+ */
+add_action( 'wp_ajax_tve_leads_ajax_button_conversion', 'tve_leads_ajax_button_conversion' );
+add_action( 'wp_ajax_nopriv_tve_leads_ajax_button_conversion', 'tve_leads_ajax_button_conversion' );
 
 /**
  * ajax call that tracks the impression for all rendered forms
@@ -143,7 +149,11 @@ if ( ! is_admin() ) {
 	/**
 	 * action for enqueueing scripts and CSS, but only on display pages (on pages where we have forms to be displayed)
 	 */
-	add_action( 'wp_enqueue_scripts', 'tve_leads_enqueue_form_scripts' );
+	if ( function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() ) {
+		add_action( 'template_redirect', 'tve_leads_enqueue_form_scripts' );
+	} else {
+		add_action( 'wp_enqueue_scripts', 'tve_leads_enqueue_form_scripts' );
+	}
 
 	/**
 	 * print the footer JS required for tracking conversions, triggering displays etc

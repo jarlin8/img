@@ -92,7 +92,20 @@ class Thrive_Dash_List_Connection_Awsses extends Thrive_Dash_List_Connection_Abs
 	 * @return bool|string true for success or error message for failure
 	 */
 	public function test_connection() {
-		$awsses = $this->get_api();
+		// Validate credentials before attempting API instantiation
+		$key       = $this->param( 'key' );
+		$secretkey = $this->param( 'secretkey' );
+
+		if ( empty( $key ) || empty( $secretkey ) ) {
+			return __( 'Invalid credentials: Access key and Secret key are required', 'thrive-dash' );
+		}
+
+		try {
+			$awsses = $this->get_api();
+		} catch ( Exception $e ) {
+			$error_message = $e->getMessage();
+			return ! empty( $error_message ) ? $error_message : __( 'Failed to initialize AWS SES API', 'thrive-dash' );
+		}
 
 		if ( isset( $_POST['connection']['email'] ) ) {
 			$from_email = sanitize_email( $_POST['connection']['email'] );
@@ -119,8 +132,22 @@ class Thrive_Dash_List_Connection_Awsses extends Thrive_Dash_List_Connection_Abs
 			$awsses->sendEmail( $messsage );
 
 		} catch ( Exception $e ) {
-			return $e->getMessage();
+			$error_message = $e->getMessage();
+			$error_code    = method_exists( $e, 'getCode' ) ? $e->getCode() : '';
+
+			// Provide meaningful error message
+			if ( empty( $error_message ) ) {
+				$error_message = __( 'Unknown error occurred while connecting to AWS SES', 'thrive-dash' );
+			}
+
+			// Append error code if available
+			if ( ! empty( $error_code ) ) {
+				$error_message .= ' (Code: ' . $error_code . ')';
+			}
+
+			return $error_message;
 		}
+
 		$connection = get_option( 'tve_api_delivery_service', false );
 
 		if ( $connection == false ) {
@@ -128,10 +155,6 @@ class Thrive_Dash_List_Connection_Awsses extends Thrive_Dash_List_Connection_Abs
 		}
 
 		return true;
-
-		/**
-		 * just try getting a list as a connection test
-		 */
 	}
 
 	/**
@@ -161,7 +184,9 @@ class Thrive_Dash_List_Connection_Awsses extends Thrive_Dash_List_Connection_Abs
 			$awsses->sendEmail( $messsage );
 
 		} catch ( Exception $e ) {
-			return $e->getMessage();
+			$error_message = $e->getMessage();
+
+			return ! empty( $error_message ) ? $error_message : __( 'Failed to send email via AWS SES', 'thrive-dash' );
 		}
 
 		return true;
@@ -210,7 +235,9 @@ class Thrive_Dash_List_Connection_Awsses extends Thrive_Dash_List_Connection_Abs
 			$awsses->sendEmail( $message );
 
 		} catch ( Exception $e ) {
-			return $e->getMessage();
+			$error_message = $e->getMessage();
+
+			return ! empty( $error_message ) ? $error_message : __( 'Failed to send email via AWS SES', 'thrive-dash' );
 		}
 		/* Send confirmation email */
 		if ( ! empty( $data['send_confirmation'] ) ) {
@@ -224,7 +251,9 @@ class Thrive_Dash_List_Connection_Awsses extends Thrive_Dash_List_Connection_Abs
 
 				$awsses->sendEmail( $message );
 			} catch ( Exception $e ) {
-				return $e->getMessage();
+				$error_message = $e->getMessage();
+
+				return ! empty( $error_message ) ? $error_message : __( 'Failed to send confirmation email via AWS SES', 'thrive-dash' );
 			}
 		}
 
@@ -299,17 +328,39 @@ class Thrive_Dash_List_Connection_Awsses extends Thrive_Dash_List_Connection_Abs
 	 * @return mixed
 	 */
 	protected function get_api_instance() {
-		switch ( $this->param( 'country' ) ) {
-			case 'ireland':
-				$country = "email.eu-west-1.amazonaws.com";
-				break;
-			case 'useast':
-				$country = "email.us-east-1.amazonaws.com";
-				break;
-			case 'uswest':
-				$country = "email.us-west-2.amazonaws.com";
-				break;
-		}
+		$region = $this->param( 'country' );
+
+		// Map region identifiers to AWS SES endpoints
+		$region_endpoints = array(
+			// US Regions
+			'useast'     => 'email.us-east-1.amazonaws.com',    // US East (N. Virginia)
+			'useast2'    => 'email.us-east-2.amazonaws.com',    // US East (Ohio)
+			'uswest'     => 'email.us-west-2.amazonaws.com',    // US West (Oregon)
+			'uswest1'    => 'email.us-west-1.amazonaws.com',    // US West (N. California)
+			// Europe Regions
+			'ireland'    => 'email.eu-west-1.amazonaws.com',    // Europe (Ireland)
+			'frankfurt'  => 'email.eu-central-1.amazonaws.com', // Europe (Frankfurt)
+			'london'     => 'email.eu-west-2.amazonaws.com',    // Europe (London)
+			'paris'      => 'email.eu-west-3.amazonaws.com',    // Europe (Paris)
+			'stockholm'  => 'email.eu-north-1.amazonaws.com',   // Europe (Stockholm)
+			'milan'      => 'email.eu-south-1.amazonaws.com',   // Europe (Milan)
+			// Asia Pacific Regions
+			'mumbai'     => 'email.ap-south-1.amazonaws.com',   // Asia Pacific (Mumbai)
+			'singapore'  => 'email.ap-southeast-1.amazonaws.com', // Asia Pacific (Singapore)
+			'sydney'     => 'email.ap-southeast-2.amazonaws.com', // Asia Pacific (Sydney)
+			'tokyo'      => 'email.ap-northeast-1.amazonaws.com', // Asia Pacific (Tokyo)
+			'seoul'      => 'email.ap-northeast-2.amazonaws.com', // Asia Pacific (Seoul)
+			'osaka'      => 'email.ap-northeast-3.amazonaws.com', // Asia Pacific (Osaka)
+			'jakarta'    => 'email.ap-southeast-3.amazonaws.com', // Asia Pacific (Jakarta)
+			// Other Regions
+			'canada'     => 'email.ca-central-1.amazonaws.com', // Canada (Central)
+			'saopaulo'   => 'email.sa-east-1.amazonaws.com',    // South America (São Paulo)
+			'capetown'   => 'email.af-south-1.amazonaws.com',   // Africa (Cape Town)
+			'bahrain'    => 'email.me-south-1.amazonaws.com',   // Middle East (Bahrain)
+		);
+
+		// Default to US East (N. Virginia) if region not found
+		$country = isset( $region_endpoints[ $region ] ) ? $region_endpoints[ $region ] : 'email.us-east-1.amazonaws.com';
 
 		return new Thrive_Dash_Api_Awsses( $this->param( 'key' ), $this->param( 'secretkey' ), $country );
 	}

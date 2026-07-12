@@ -1,23 +1,19 @@
 /**
- * this file is loaded pn Inner Frame
+ * this file is loaded on Inner Frame
  */
 
-var TVE_Content_Builder = TVE_Content_Builder || {},
-	TVE = window.parent.TVE || {};
-TVE_Content_Builder.ext = TVE_Content_Builder.ext || {};
+window.TVE_Content_Builder = window.TVE_Content_Builder || {}
+window.TVE = window.parent.TVE || {};
+window.TVE_Content_Builder.ext = window.TVE_Content_Builder.ext || {};
 
-var TL_Editor = window.parent.TL_Editor || {};
-var TL_Editor_Page = {};
+window.TL_Editor = window.parent.TL_Editor || {};
+window.TL_Editor_Page = {};
 
-/** @var tve_leads_page_data Object */
-/**
- * Extensions added to the TCB editor
- */
 ( function ( $ ) {
-	window.parent.TL_Editor_Page = TL_Editor_Page;
+	window.parent.TL_Editor_Page = window.TL_Editor_Page;
 
-	TL_Editor_Page.handle_state_response = function ( response ) {
-		var tve_leads_page_data = window.parent.tve_leads_page_data;
+	window.TL_Editor_Page.handle_state_response = function ( response ) {
+		let tveLeadsPageData = window.parent.tve_leads_page_data;
 
 		/** custom CSS */
 		$( '.tve_custom_style,.tve_user_custom_style,.tve_global_style' ).remove();
@@ -49,22 +45,22 @@ var TL_Editor_Page = {};
 		/**
 		 * if the template has changed, remove the old css (the new one will be added automatically)
 		 */
-		if ( tve_leads_page_data.current_css != response.tve_leads_page_data.current_css ) {
-			$( '#' + tve_leads_page_data.current_css + '-css' ).remove();
+		if ( tveLeadsPageData.current_css !== response.tve_leads_page_data.current_css ) {
+			$( '#' + tveLeadsPageData.current_css + '-css' ).remove();
 		}
 
 		/**
 		 * tve_leads javascript page data
 		 */
-		tve_leads_page_data = jQuery.extend( tve_leads_page_data, response.tve_leads_page_data, true );
+		tveLeadsPageData = jQuery.extend( tveLeadsPageData, response.tve_leads_page_data, true );
 
-		TL_Editor.tcbEditorSetSelector();
+		window.TL_Editor.tcbEditorSetSelector();
 
 		/**
 		 * Check if the current template needs a Thrive Themes wrapper
 		 */
 		/* if the current template has Thrive Themes wrappers */
-		var $replace = $( '#tve-leads-editor-replace' ),
+		const $replace = $( '#tve-leads-editor-replace' ),
 			hasTTWrapper = $replace.closest( '.cnt.bSe' ).length;
 
 		if ( response.needs_tt_wrapper && ! hasTTWrapper ) {
@@ -72,23 +68,23 @@ var TL_Editor_Page = {};
 		} else if ( ! response.needs_tt_wrapper && hasTTWrapper ) {
 			$replace.unwrap().unwrap();
 		}
-		var $new_content = $(response.main_page_content);
+		const $newContent = $( response.main_page_content );
 
-		$replace.empty().unwrap().replaceWith( $new_content );
+		$replace.empty().unwrap().replaceWith( $newContent );
 
 		TVE.Editor_Page.initEditorActions( true ); // make sure old rules are added to the end of the desktop media query
-		$new_content.find( '[data-css]:not(.thrv_symbol  *)' ).each( function () {
-			$(this).head_css_clone();
+		$newContent.find( '[data-css]:not(.thrv_symbol  *)' ).each( function () {
+			$( this ).head_css_clone();
 		} );
 	};
 
 	/**
 	 * pre-process the HTML node to be inserted
 	 *
-	 * @param {object} $html jQuery wrapper over the HTML to be inserted
+	 * @param {Object} $html jQuery wrapper over the HTML to be inserted
 	 */
-	TL_Editor.pre_process_content_template = function ( $html ) {
-		var tl_classes = [
+	window.TL_Editor.pre_process_content_template = function ( $html ) {
+		const tlClasses = [
 			'thrv-leads-slide-in',
 			'thrv-greedy-ribbon',
 			'thrv-leads-form-box',
@@ -97,7 +93,7 @@ var TL_Editor_Page = {};
 			'thrv-leads-widget'
 		];
 
-		$.each( tl_classes, function ( i, cls ) {
+		$.each( tlClasses, function ( i, cls ) {
 			if ( $html.hasClass( cls ) ) {
 				$html = $html.children();
 				$html.find( '.tve-leads-close' ).remove();

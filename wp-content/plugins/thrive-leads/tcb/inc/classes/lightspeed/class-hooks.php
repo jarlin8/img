@@ -21,6 +21,9 @@ class Hooks {
 
 		add_action( 'init', [ Dashboard::class, 'init' ] );
 
+		/* Duplicate post/page slugs map to one canonical URL; keep ?page_id= / ?p= during bulk optimize so the iframe targets the correct post. */
+		add_filter( 'redirect_canonical', [ __CLASS__, 'maybe_disable_redirect_canonical_for_lightspeed_optimize' ], 10, 2 );
+
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'wp_enqueue_scripts' ] );
 
 		add_action( 'rest_api_init', [ Rest_Api::class, 'register_routes' ] );
@@ -164,5 +167,20 @@ class Hooks {
 			}
 		</script>
 		<?php
+	}
+
+	/**
+	 * @param string|false $redirect_url
+	 * @param string       $requested_url
+	 *
+	 * @return string|false
+	 */
+	public static function maybe_disable_redirect_canonical_for_lightspeed_optimize( $redirect_url, $requested_url ) {
+
+		if ( Main::is_optimizing() ) {
+			return false;
+		}
+
+		return $redirect_url;
 	}
 }

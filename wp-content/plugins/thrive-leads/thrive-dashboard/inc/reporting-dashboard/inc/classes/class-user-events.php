@@ -17,7 +17,7 @@ class User_Events {
 					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => [ __CLASS__, 'get_user_events' ],
 					'permission_callback' => static function () {
-						return current_user_can( 'manage_options' );
+						return current_user_can( TVE_DASH_CAPABILITY );
 					},
 					'args'                => [
 						'filters'        => [
@@ -119,6 +119,7 @@ class User_Events {
 				$users[ $user_id ] = [
 					'name'    => $user->get_title(),
 					'picture' => $user->get_image(),
+					'email'   => $user->get_email(),
 				];
 			}
 		}

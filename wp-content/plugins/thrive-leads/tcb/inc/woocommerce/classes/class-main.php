@@ -34,7 +34,7 @@ class Main {
 	public static function __callStatic( $name, $arguments ) {
 
 		if ( method_exists( __CLASS__, $name ) ) {
-			return call_user_func_array( array( __CLASS__, $name ), $arguments );
+			return call_user_func_array( [ __CLASS__, $name ], $arguments );
 		}
 
 		if ( function_exists( $name ) && static::active() ) {
@@ -95,9 +95,9 @@ class Main {
 	public static function get_localized_data() {
 		$is_active = static::active();
 
-		$data = array(
+		$data = [
 			'is_active' => $is_active ? 1 : 0,
-		);
+		];
 
 		/* localize the rest of the data only if woo is active */
 		if ( $is_active ) {
@@ -131,6 +131,14 @@ class Main {
 	public static function enqueue_scripts() {
 		if ( self::needs_woo_enqueued() ) {
 			tve_enqueue_script( 'tve_woo', tve_editor_js( '/woo' . \TCB_Utils::get_js_suffix() ), [ 'jquery', 'tve_frontend' ], false, true );
+
+			/* Ensure core Woo scripts needed for AJAX add to cart are present when a TCB Shop is used */
+			wp_enqueue_script( 'woocommerce' );
+			wp_enqueue_script( 'wc-cart-fragments' );
+
+			if ( 'yes' === get_option( 'woocommerce_enable_ajax_add_to_cart' ) ) {
+				wp_enqueue_script( 'wc-add-to-cart' );
+			}
 		}
 	}
 

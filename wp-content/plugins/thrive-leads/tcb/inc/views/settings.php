@@ -1,138 +1,192 @@
-<?php
-/*
- * settings drawer (right small sidebar)
- */
-$has_zip_archive = class_exists( 'ZipArchive', false );
-?>
-<div id="settings" class="tcb-relative">
-	<div class="state-default state">
-		<span class="label tcb-hide"><?php echo esc_html__( 'Settings', 'thrive-cb' ); ?></span>
-		<div class="list">
-			<?php if ( tcb_editor()->is_landing_page() ) : ?>
-				<a href="#" class="nav s-setting" data-nav="global"><span class="s-name"><?php echo esc_html__( 'Global', 'thrive-cb' ); ?></span><?php tcb_icon( 'long-arrow-right-light' ); ?></a>
-				<a href="#" class="click s-setting" data-fn="lpSettings">
-					<span class="s-name"><?php echo esc_html__( 'Landing Page Settings', 'thrive-cb' ); ?></span>
-					<?php tcb_icon( 'long-arrow-right-light' ); ?>
-				</a>
-			<?php elseif ( tcb_editor()->is_lightbox() ) : ?>
-				<a href="#" class="click s-setting" data-fn="select_element" data-el=".tve_p_lb_content">
-					<span class="s-name"><?php echo esc_html__( 'Thrive Lightbox Settings', 'thrive-cb' ); ?></span>
-					<?php tcb_icon( 'cog-light' ); ?>
-				</a>
-			<?php endif ?>
-			<a href="#" class="nav s-setting" data-nav="advanced"><span class="s-name"><?php echo esc_html__( 'Advanced Settings', 'thrive-cb' ); ?></span><?php tcb_icon( 'long-arrow-right-light' ); ?></a>
-			<span class="sep"></span>
-			<?php if ( tcb_editor()->is_landing_page() ) : ?>
-				<a href="#" class="click s-setting" data-fn="saveTemplateLP"><span class="s-name"><?php echo esc_html__( 'Save Landing Page', 'thrive-cb' ); ?></span></a>
-				<a href="#" class="<?php echo $has_zip_archive ? 'click' : 'disabled-children'; ?> s-setting" data-fn="exportLP" data-position="top" data-tooltip="<?php esc_attr_e( $has_zip_archive ? '' : __( 'The PHP ZipArchive extension must be enabled in order to use this functionality. Please contact your hosting provider.', 'thrive-cb' ) ); ?>"><span class="s-name"><?php echo esc_html__( 'Export Landing Page', 'thrive-cb' ); ?></span></a>
-				<span class="sep"></span>
-			<?php endif; ?>
-			<?php if ( tcb_editor()->can_use_landing_pages() ) : ?>
-				<a href="#" class="<?php echo $has_zip_archive ? 'click' : 'disabled-children'; ?> s-setting" data-fn="importLP" data-position="top" data-tooltip="<?php esc_attr_e( $has_zip_archive ? '' : __( 'The PHP ZipArchive extension must be enabled in order to use this functionality. Please contact your hosting provider.', 'thrive-cb' ) ); ?>"><span class="s-name"><?php echo esc_html__( 'Import Landing Page', 'thrive-cb' ); ?></span></a>
-			<?php endif; ?>
-			<?php if ( tcb_editor()->allow_import_content() ) : ?>
-				<a href="#" class="<?php echo $has_zip_archive ? 'click' : 'disabled-children'; ?> s-setting" data-fn="importContent" data-position="top" data-tooltip="<?php esc_attr_e( $has_zip_archive ? '' : __( 'The PHP ZipArchive extension must be enabled in order to use this functionality. Please contact your hosting provider.', 'thrive-cb' ) ); ?>"><span class="s-name"><?php echo esc_html__( 'Import Content', 'thrive-cb' ); ?></span></a>
-			<?php endif; ?>
-			<?php if ( tcb_editor()->allow_export_content() ) : ?>
-				<a href="#" class="<?php echo $has_zip_archive ? 'click' : 'disabled-children'; ?> s-setting" data-fn="exportContent" data-position="top" data-tooltip="<?php esc_attr_e( $has_zip_archive ? '' : __( 'The PHP ZipArchive extension must be enabled in order to use this functionality. Please contact your hosting provider.', 'thrive-cb' ) ); ?>"><span class="s-name"><?php echo esc_html__( 'Export Content', 'thrive-cb' ); ?></span></a>
-			<?php endif; ?>
-			<?php if ( tcb_editor()->has_save_template_button() ) : ?>
-				<a href="#" class="click s-setting" data-fn="saveTemplate"><span class="s-name"><?php echo esc_html__( 'Save as Template', 'thrive-cb' ); ?></span></a>
-			<?php endif; ?>
-			<?php
-			/**
-			 * Action hook. Allows injecting custom menu options under the "Templates Setup" tab
-			 */
-			do_action( 'tcb_settings_links' );
-			?>
-		</div>
-	</div>
-
-	<div class="state-advanced state">
-		<span class="label tcb-hide"><?php echo esc_html__( 'Advanced Settings', 'thrive-cb' ); ?></span>
-		<div class="list">
-			<a href="#" class="click s-setting" data-fn="html"><span class="s-name"><?php echo esc_html__( 'View Page Source (HTML)', 'thrive-cb' ); ?></span><?php tcb_icon( 'code-regular' ); ?></a>
-			<a href="#" class="click s-setting" data-fn="css"><span class="s-name"><?php echo esc_html__( 'Custom CSS', 'thrive-cb' ); ?></span><?php tcb_icon( 'css3-brands' ); ?></a>
-			<?php if ( tcb_editor()->can_use_page_events() ) : ?>
-				<a href="#" class="click s-setting" data-fn="page_events"><span class="s-name"><?php echo esc_html__( 'Page Events', 'thrive-cb' ); ?></span></a>
-			<?php endif ?>
-			<?php if ( tcb_editor()->is_landing_page() ) : ?>
-				<a href="#" data-nav="custom-scripts" class="s-setting"><span class="s-name"><?php echo esc_html__( 'Custom Scripts', 'thrive-cb' ); ?></span><?php tcb_icon( 'long-arrow-right-light' ); ?></a>
-				<a href="#" data-nav="head-css" class="s-setting"><span class="s-name"><?php echo esc_html__( 'CSS in the <head> section', 'thrive-cb' ); ?></span><?php tcb_icon( 'long-arrow-right-light' ); ?></a>
-			<?php endif ?>
-			<a href="#" class="click s-setting" data-fn="reminders">
-				<?php $label = (int) get_option( 'tve_display_save_notification', 1 ) ? __( 'Turn Off Save Reminders', 'thrive-cb' ) : __( 'Turn On Save Reminders', 'thrive-cb' ); ?>
-				<span class="s-name"><?php echo $label; ?></span><?php tcb_icon( 'bell-slash-light' ); ?>
-			</a>
-			<a href="#" data-nav="asset-optimization" class="s-setting"><span class="s-name"><?php echo esc_html__( 'Asset Optimization', 'thrive-cb' ); ?></span><?php tcb_icon( 'long-arrow-right-light' ); ?></a>
-		</div>
-	</div>
-
+<?php $has_zip_archive = class_exists( 'ZipArchive', false ); ?>
+<?php $post = get_post_type(); ?>
+<div id="tcb-sidebar-settings">
 	<?php if ( tcb_editor()->is_landing_page() ) : ?>
-
-		<?php tcb_template( 'custom-scripts' ); ?>
-
-		<div class="state-lp-settings state">
-			<span class="label tcb-hide"><?php echo esc_html__( 'Landing Page Settings', 'thrive-cb' ); ?></span>
-			<div class="list">
-				<a href="#" class="click s-setting" data-fn="toggleThemeCss" data-do="disable">
-					<span class="s-name"><?php echo esc_html__( 'Disable Theme CSS', 'thrive-cb' ); ?></span>
-					<?php echo tcb_icon( 'toggle-off-regular' ); ?>
-				</a>
-				<a href="#" class="click s-setting" data-fn="toggleThemeCss" data-do="enable">
-					<span class="s-name"><?php echo esc_html__( 'Enable Theme CSS', 'thrive-cb' ); ?></span>
-					<?php echo tcb_icon( 'toggle-on-regular' ); ?>
-				</a>
-				<a href="#" class="click s-setting" data-fn="lpRevert">
-					<span class="s-name"><?php echo esc_html__( 'Revert to Theme', 'thrive-cb' ); ?></span><?php tcb_icon( 'undo-regular' ); ?>
-				</a>
+		<div class="tve-component s-item">
+			<div class="dropdown-header">
+				<div class="group-description s-name">
+					<?php echo __( 'Global settings', 'thrive-cb' ); ?>
+				</div>
 			</div>
-		</div>
-
-		<div class="state-head-css state">
-			<span class="label tcb-hide"><?php echo esc_html__( 'CSS in <head>', 'thrive-cb' ); ?></span>
-			<section>
-				<div class="field-section checkbox"></div>
-				<div class="field-section">
-					Thrive Architect will strip out any Custom CSS from the
-					&lt;head&gt; section from all Landing Pages built with it.
-					Usually, this is extra CSS that is not needed throughout the Landing Page.
-					By ticking the checkbox above, you will disable this functionality, and all Custom CSS will be included.
-					Please keep in mind that including this Custom CSS might prevent some of the Landing Page settings to function
-					properly, such as: background color, background image etc.
-				</div>
-			</section>
-		</div>
-
-		<div class="state-global state">
-			<span class="label tcb-hide"><?php echo esc_html__( 'Global settings', 'thrive-cb' ); ?></span>
-			<section>
-				<div class="field-section s-setting" id="p-texts">
-					<label class="s-name"><?php echo esc_html__( 'Fonts', 'thrive-cb' ); ?></label>
-					<a href="javascript:void(0)" class="style-input dots click" data-fn="landingPageFonts">
-						<span class="value tcb-truncate"
-							  data-default="<?php echo esc_html__( '[inherit]', 'thrive-cb' ); ?>"><?php echo esc_html__( '[inherit]', 'thrive-cb' ); ?></span>
-						<?php tcb_icon( 'pen-regular' ); ?>
-					</a>
-				</div>
+			<div class="dropdown-content pb-0">
 				<div class="field-section s-setting" id="p-header">
-					<label class="s-name"><?php echo esc_html__( 'Header', 'thrive-cb' ); ?></label>
+					<label><?php echo esc_html__( 'Header', 'thrive-cb' ); ?></label>
 					<a href="javascript:void(0)" class="style-input dots click" data-fn="addSection" data-type="header">
-						<span class="value tcb-truncate"
-							  data-default="<?php echo esc_html__( '[no header added]', 'thrive-cb' ); ?>"><?php echo esc_html__( '[no header added]', 'thrive-cb' ); ?></span>
+						<span class="value tcb-truncate" data-default="<?php echo esc_html__( '[no header added]', 'thrive-cb' ); ?>"><?php echo esc_html__( '[no header added]', 'thrive-cb' ); ?></span>
 						<?php tcb_icon( 'pen-regular' ); ?>
 					</a>
 				</div>
 				<div class="field-section s-setting" id="p-footer">
-					<label class="s-name"><?php echo esc_html__( 'Footer', 'thrive-cb' ); ?></label>
+					<label><?php echo esc_html__( 'Footer', 'thrive-cb' ); ?></label>
 					<a href="javascript:void(0)" class="style-input dots click" data-fn="addSection" data-type="footer">
-						<span class="value tcb-truncate"
-							  data-default="<?php echo esc_html__( '[no footer added]', 'thrive-cb' ); ?>"><?php echo esc_html__( '[no footer added]', 'thrive-cb' ); ?></span>
+						<span class="value tcb-truncate" data-default="<?php echo esc_html__( '[no footer added]', 'thrive-cb' ); ?>"><?php echo esc_html__( '[no footer added]', 'thrive-cb' ); ?></span>
 						<?php tcb_icon( 'pen-regular' ); ?>
 					</a>
 				</div>
-			</section>
+			</div>
 		</div>
+
+		<div class="tve-component s-item">
+			<div class="dropdown-header">
+				<div class="group-description s-name">
+					<?php echo __( 'Landing page settings', 'thrive-cb' ); ?>
+				</div>
+			</div>
+			<div class="dropdown-content">
+				<button class="click tcb-settings-modal-open-button s-item inside-button" data-fn="saveTemplateLP">
+					<span class="s-name"><?php echo esc_html__( 'Save Landing Page', 'thrive-cb' ); ?></span>
+					<?php tcb_icon( 'go-to' ); ?>
+				</button>
+
+				<hr class="mt-10 mb-10">
+
+				<button class="click tcb-settings-modal-open-button s-item inside-button" data-fn="exportLP">
+					<span class="s-name"><?php echo esc_html__( 'Export Landing Page', 'thrive-cb' ); ?></span>
+					<?php tcb_icon( 'go-to' ); ?>
+				</button>
+
+				<hr class="mt-10 mb-10">
+
+				<button class="click green-ghost-button p-5 w-100" data-fn="lpRevert">
+					<?php tcb_icon( 'undo-regular' ); ?>
+					<?php echo esc_html__( 'Revert to theme', 'thrive-cb' ); ?>
+				</button>
+			</div>
+		</div>
+
+		<hr class="mt-20" style="background: #dee8e8">
 	<?php endif; ?>
-	<?php tcb_template( 'asset-optimization' ); ?>
+
+	<?php do_action( 'tcb_right_sidebar_top_settings' ); ?>
+
+	<div class="mt-20">
+		<?php if ( tcb_editor()->can_use_landing_pages() ) : ?>
+			<button class="<?php echo $has_zip_archive ? 'click' : 'disabled-children'; ?> tcb-settings-modal-open-button s-item" data-tooltip="<?php esc_attr_e( $has_zip_archive ? '' : __( 'The PHP ZipArchive extension must be enabled in order to use this functionality. Please contact your hosting provider.', 'thrive-cb' ) ); ?>"
+					data-fn="importLP" data-position="top">
+				<span class="s-name"><?php echo esc_html__( 'Import Landing Page', 'thrive-cb' ); ?></span>
+				<?php tcb_icon( 'go-to' ); ?>
+			</button>
+		<?php endif; ?>
+
+		<?php if ( tcb_editor()->allow_import_content() ) : ?>
+			<button class="<?php echo $has_zip_archive ? 'click' : 'disabled-children'; ?> tcb-settings-modal-open-button s-item" data-fn="importContent" data-position="top" data-tooltip="<?php esc_attr_e( $has_zip_archive ? '' : __( 'The PHP ZipArchive extension must be enabled in order to use this functionality. Please contact your hosting provider.', 'thrive-cb' ) ); ?>">
+				<span class="s-name"><?php echo esc_html__( 'Import Content', 'thrive-cb' ); ?></span>
+				<?php tcb_icon( 'go-to' ); ?>
+			</button>
+		<?php endif; ?>
+
+		<?php if ( tcb_editor()->allow_export_content() ) : ?>
+			<button class="<?php echo $has_zip_archive ? 'click' : 'disabled-children'; ?> tcb-settings-modal-open-button s-item" data-fn="exportContent" data-position="top" data-tooltip="<?php esc_attr_e( $has_zip_archive ? '' : __( 'The PHP ZipArchive extension must be enabled in order to use this functionality. Please contact your hosting provider.', 'thrive-cb' ) ); ?>">
+				<span class="s-name"><?php echo esc_html__( 'Export Content', 'thrive-cb' ); ?></span>
+				<?php tcb_icon( 'go-to' ); ?>
+			</button>
+		<?php endif; ?>
+
+		<?php if ( tcb_editor()->has_save_template_button() ) : ?>
+			<button class="click tcb-settings-modal-open-button s-item" data-fn="saveTemplate">
+				<span class="s-name"><?php echo esc_html__( 'Save as Template', 'thrive-cb' ); ?></span>
+				<?php tcb_icon( 'go-to' ); ?>
+			</button>
+		<?php endif; ?>
+
+		<?php do_action( 'tcb_right_sidebar_content_settings' ); ?>
+	</div>
+
+	<hr class="mt-20" style="background: #dee8e8">
+
+	<div class="tve-component gray-component no-hover">
+		<div class="dropdown-header">
+			<div class="group-description">
+				<?php echo __( 'Advanced settings', 'thrive-cb' ); ?>
+			</div>
+		</div>
+		<div class="dropdown-content">
+			<?php if ( tcb_editor()->can_use_page_events() ) : ?>
+				<button class="click tcb-settings-modal-open-button s-item" data-fn="pageEvents">
+					<span class="s-name"><?php echo esc_html__( 'Page Events', 'thrive-cb' ); ?></span>
+					<?php tcb_icon( 'go-to' ); ?>
+				</button>
+			<?php endif ?>
+
+			<div class="tve-component s-item">
+				<div class="dropdown-header">
+					<div class="group-description s-name">
+						<?php echo __( 'Custom CSS & HTML', 'thrive-cb' ); ?>
+					</div>
+				</div>
+				<div class="dropdown-content pb-0">
+
+					<button class="click green-ghost-button p-5 w-100" data-fn="html">
+						<?php echo esc_html__( 'View Page Source (HTML)', 'thrive-cb' ); ?>
+					</button>
+
+					<hr class="mt-10 mb-10">
+
+					<button class="click green-ghost-button p-5 w-100 mb-10" data-fn="css">
+						<?php echo esc_html__( 'Custom CSS', 'thrive-cb' ); ?>
+					</button>
+
+					<?php if ( tcb_editor()->is_landing_page() ) : ?>
+						<hr class="mt-10">
+
+						<button class="click green-ghost-button no-border p-0 w-100 flex-center" data-fn="focusScripts">
+							<?php echo esc_html__( 'Custom Scripts', 'thrive-cb' ); ?>
+							<?php tcb_icon( 'info-circle-solid', false, 'sidebar', 'grey-text ml-5', [
+								'data-tooltip' => __( 'Custom Scripts are now more easily accessible in the left settings sidebar', 'thrive-cb' ),
+								'data-side'    => 'top',
+							] ); ?>
+						</button>
+
+						<hr class="mt-10 mb-10">
+
+						<div class="tcb-strip-head-css-settings"></div>
+					<?php endif ?>
+				</div>
+			</div>
+
+			<div class="tve-component s-item">
+				<div class="dropdown-header">
+					<div class="group-description s-name">
+						<?php echo __( 'Asset Optimization', 'thrive-cb' ); ?>
+					</div>
+				</div>
+				<div class="dropdown-content">
+					<div class="asset-optimization-settings">
+						<?php $is_selected_gutenberg = get_post_meta( get_the_id(), \TCB\Lightspeed\Gutenberg::DISABLE_GUTENBERG, true ); ?>
+						<label class="asset-optimization-label"><?php echo esc_html__( 'Gutenberg assets', 'thrive-cb' ); ?></label>
+						<select name="<?php echo \TCB\Lightspeed\Gutenberg::DISABLE_GUTENBERG; ?>" data-fn="selectAssetOptimization" class="change">
+							<option value="inherit" <?php selected( $is_selected_gutenberg, 'inherit' ); ?>><?php echo esc_html__( 'Inherit', 'thrive-cb' ); ?> </option>
+							<option value="enable" <?php selected( $is_selected_gutenberg, '1' ); ?>><?php echo esc_html__( 'Enable', 'thrive-cb' ); ?> </option>
+							<option value="disable" <?php selected( $is_selected_gutenberg, '0' ); ?>><?php echo esc_html__( 'Disable', 'thrive-cb' ); ?> </option>
+						</select>
+						<?php if ( \TCB\Integrations\WooCommerce\Main::active() ): ?>
+							<?php $is_selected_woocommerce = get_post_meta( get_the_id(), \TCB\Lightspeed\Woocommerce::DISABLE_WOOCOMMERCE, true ); ?>
+							<label class="asset-optimization-label"><?php echo esc_html__( 'WooCommerce assets', 'thrive-cb' ); ?></label>
+							<select name="<?php echo TCB\Lightspeed\Woocommerce::DISABLE_WOOCOMMERCE; ?>" data-fn="selectAssetOptimization" class="change">
+								<option value="inherit" <?php selected( $is_selected_woocommerce, 'inherit' ); ?>><?php echo esc_html__( 'Inherit', 'thrive-cb' ); ?> </option>
+								<option value="enable" <?php selected( $is_selected_woocommerce, '1' ); ?>><?php echo esc_html__( 'Enable', 'thrive-cb' ); ?> </option>
+								<option value="disable" <?php selected( $is_selected_woocommerce, '0' ); ?>><?php echo esc_html__( 'Disable', 'thrive-cb' ); ?> </option>
+							</select>
+						<?php endif; ?>
+					</div>
+					<div class="tve-grey-box p-5" style="font-size: 12px">
+						<?php echo esc_html__( 'These optimization settings apply to WordPress core or 3rd party assets and may affect 3rd party plugin or theme functionality. Please read the documentation for each and thoroughly test your website after making any changes to them.', 'thrive-cb' ); ?>
+					</div>
+				</div>
+			</div>
+
+			<div class="tve-component s-item">
+				<div class="dropdown-header">
+					<div class="group-description s-name">
+						<?php echo __( 'Save Reminders', 'thrive-cb' ); ?>
+					</div>
+				</div>
+				<div class="dropdown-content pb-0">
+					<div class="tcb-reminders-switch"></div>
+				</div>
+			</div>
+
+			<?php do_action( 'tcb_right_sidebar_advanced_settings' ); ?>
+		</div>
+	</div>
 </div>

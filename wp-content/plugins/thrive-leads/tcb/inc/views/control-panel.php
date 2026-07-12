@@ -24,6 +24,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<span class="element-info click"></span>
 		</div>
 		<div class="element-states"></div>
+		<div id="multiple-selection-settings" style="display:none;">
+			<button class="tve-button active click" data-type="move" data-fn="toggleMultipleSelectMode">
+				<?php tcb_icon( 'move' ); ?>
+				<span><?php echo esc_html__( 'Moving', 'thrive-cb' ); ?></span>
+			</button>
+			<button class="tve-button click" data-type="style" data-fn="toggleMultipleSelectMode">
+				<?php tcb_icon( 'brush' ); ?>
+				<span><?php echo esc_html__( 'Styling', 'thrive-cb' ); ?></span>
+			</button>
+		</div>
 	</div>
 
 	<div id="tve-scroll-panel" class="trigger">
@@ -32,6 +42,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div id="component-edit-mode" class="info-text grey-text orange border white-bg bigger m-5 tcb-hide">
 				<?php echo sprintf( esc_html__( 'You are now in Edit Mode. When finished, press "DONE" in the bottom bar', 'thrive-cb' ) ); ?>
 			</div>
+			<div id="multiple-selection-notice" class="tcb-hide multi-select-sidebar-message">
+				<?php echo sprintf( esc_html__( 'Multiple selection mode activated.', 'thrive-cb' ) ); ?>
+				<br>
+				<?php echo sprintf( esc_html__( 'You can now %s the selected elements across the page', 'thrive-cb' ), '<span class="selection-action">move</span>' ); ?>
+			</div>
+
+			<button id="group-moving-exit" data-fn="exit_multiple_selected_mode" class="tcb-hide multi-select-sidebar-message click">
+				<?php echo sprintf( esc_html__( 'Exit group moving', 'thrive-cb' ) ); ?>
+			</button>
+
 			<div id="component-jump-mode" class="tcb-hide tcb-flex">
 				<p class="info-text grey-text orange border white-bg bigger m-5"><?php echo esc_html__( 'Select an element as your target and click "Add jumplink" when you are done.', 'thrive-cb' ); ?></p>
 				<img id="tve-jumplink-helper" src="<?php echo esc_url( tve_editor_css( 'images/jumplink-helper.png' ) ); ?>" width="179" height="135" srcset="<?php echo esc_url( tve_editor_css( 'images/jumplink-helper@2x.png' ) ); ?> 2x">
@@ -45,20 +65,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div id="tve-components" class="tcb-flex sidebar-block" style="display: none">
 				<div id="tcb-drop-panels"></div>
 				<?php $data->elements->output_components(); ?>
-			</div>
-
-			<div id="multiple-select-elements" class="sidebar-block" style="display: none;">
-				<div class="row pt-15">
-					<div class="col-xs-12">
-						<p><?php echo esc_html__( 'Multiple selection mode activated. You can now move the selected elements across the page.', 'thrive-cb' ); ?></p>
-					</div>
-				</div>
-				<div class="row pt-15">
-					<div class="col-xs-12 tcb-text-center">
-						<button class="click tve-btn tve-button grey"
-								data-fn="exit_multiple_selected_mode"><?php echo esc_html__( 'Exit mode', 'thrive-cb' ); ?></button>
-					</div>
-				</div>
 			</div>
 
 			<?php /* custom sidebar states for elements */ ?>

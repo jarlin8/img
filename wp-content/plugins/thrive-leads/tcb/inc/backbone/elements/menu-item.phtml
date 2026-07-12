@@ -13,8 +13,7 @@
 <#if (item.children && item.children.length) { #>
 <# if ( config.type === 'mega' && level === 0 ) { #>
 <div class="tcb-mega-drop">
-	<div class="tcb-mega-drop-inner thrv_wrapper menu-item-<#=item.id#>-drop"><#}#>
-
+	<div class="tcb-mega-drop-inner thrv_wrapper menu-item-<#=item.id#>-drop" <#=(item['data-cols-number'] ? ' data-cols-number="' + item['data-cols-number'] + '"' : '')#>><#}#>
 		<ul class="<#=type === 'regular' ? 'sub-menu ' : '' #>menu-item-<#=item.id#>-ul">
 			<#_.each(item.children, function( item ) {#>
 			<#=item_template( {item:item,config:config,item_template:item_template,dropdown_icon:dropdown_icon,level:level+1,type:type,menuDescriptions:menuDescriptions} )#>

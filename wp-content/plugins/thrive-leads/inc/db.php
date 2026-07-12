@@ -87,6 +87,25 @@ class Thrive_Leads_DB {
 	}
 
 	/**
+	 * Append an event_type filter clause to a SQL query.
+	 * Supports both a single integer and an array of integers.
+	 *
+	 * @param string $sql    SQL string (modified by reference)
+	 * @param array  $params Query params (modified by reference)
+	 * @param mixed  $event_type int or array of ints
+	 */
+	private function append_event_type_filter( &$sql, &$params, $event_type ) {
+		if ( is_array( $event_type ) ) {
+			$placeholders = implode( ', ', array_fill( 0, count( $event_type ), '%d' ) );
+			$sql    .= "AND `event_type` IN ({$placeholders}) ";
+			$params = array_merge( $params, $event_type );
+		} else {
+			$sql       .= "AND `event_type` = %d ";
+			$params [] = $event_type;
+		}
+	}
+
+	/**
 	 * Insert a new event in the log table and automatically update the related cached entries for the related Lead Group, Form Type and form variations
 	 *
 	 * @param array $data
@@ -100,6 +119,10 @@ class Thrive_Leads_DB {
 			$data['date'] = current_time( 'mysql' ); // store event logs using the correct timezone
 		}
 
+		/* Extract session attribution flag before DB insert (not a DB column) */
+		$is_first = ! isset( $data['is_first_session_conversion'] ) || $data['is_first_session_conversion'] !== '0';
+		unset( $data['is_first_session_conversion'] );
+
 		$log_id = null;
 
 		if ( $data['event_type'] === TVE_LEADS_UNIQUE_IMPRESSION ) {
@@ -107,11 +130,15 @@ class Thrive_Leads_DB {
 			 * Update May 2020 - the log table does not store impression data anymore (not even unique impressions).
 			 * Instead, impressions are stored in a separate db table (form_summary) as a total count / day / variation_key
 			 */
-		} else {
+		} elseif ( $is_first ) {
 			$this->wpdb->insert( tve_leads_table_name( 'event_log' ), $data );
 			$log_id = $this->wpdb->insert_id;
+		} else {
+			/* Not the first conversion in this session -- skip event_log and summary updates */
+			return $log_id;
 		}
 
+		/* Both impressions and first-in-session conversions reach here; update summary/cache counters */
 		if ( $active_test ) {
 			$this->update_test_item_data( $data, $active_test, '+' );
 		}
@@ -126,22 +153,24 @@ class Thrive_Leads_DB {
 
 		/**
 		 * increase the impressions / conversions for the Lead Group / Form Type / Shortcode
+		 * Button click conversions use the same cache key as form conversions so dashboard totals are accurate
 		 */
-		$main_group_id = $data['main_group_id'];
-		$form_type_id  = $data['form_type_id'];
+		$main_group_id  = $data['main_group_id'];
+		$form_type_id   = $data['form_type_id'];
+		$cache_event_type = $data['event_type'] === TVE_LEADS_BUTTON_CLICK_CONVERSION ? TVE_LEADS_CONVERSION : $data['event_type'];
 
 		if ( ! empty( $main_group_id ) ) {
-			$count = tve_leads_get_post_tracking_data( $main_group_id, $data['event_type'], false );
+			$count = tve_leads_get_post_tracking_data( $main_group_id, $cache_event_type, false );
 			if ( $count !== '' ) { // this means we have a cached value for the Lead Group, it's ok to increment that
 				$count ++;
-				tve_leads_set_post_tracking_data( $main_group_id, $count, $data['event_type'] );
+				tve_leads_set_post_tracking_data( $main_group_id, $count, $cache_event_type );
 			}
 		}
 		if ( ! empty( $form_type_id ) && $form_type_id != $main_group_id ) {
-			$count = tve_leads_get_post_tracking_data( $form_type_id, $data['event_type'], false );
+			$count = tve_leads_get_post_tracking_data( $form_type_id, $cache_event_type, false );
 			if ( $count !== '' ) { // this means we have a cached value for the form type, it's ok to increment that
 				$count ++;
-				tve_leads_set_post_tracking_data( $form_type_id, $count, $data['event_type'] );
+				tve_leads_set_post_tracking_data( $form_type_id, $count, $cache_event_type );
 			}
 		}
 
@@ -173,6 +202,7 @@ class Thrive_Leads_DB {
 				$field = '`unique_impressions`';
 				break;
 			case TVE_LEADS_CONVERSION:
+			case TVE_LEADS_BUTTON_CLICK_CONVERSION:
 				$field = '`conversions`';
 				break;
 			default:
@@ -288,8 +318,7 @@ class Thrive_Leads_DB {
 		$params = array();
 
 		if ( ! empty( $filter['event_type'] ) ) {
-			$sql       .= "AND `event_type` = %d ";
-			$params [] = $filter['event_type'];
+			$this->append_event_type_filter( $sql, $params, $filter['event_type'] );
 		}
 
 		if ( ! empty( $filter['main_group_id'] ) && $filter['main_group_id'] > 0 ) {
@@ -313,20 +342,22 @@ class Thrive_Leads_DB {
 		}
 
 		if ( ! empty( $filter['start_date'] ) && ! empty( $filter['end_date'] ) ) {
-			$filter['end_date'] .= ' 23:59:59';
+			$timezone_diff = current_time( 'timestamp' ) - time();
 
 			$sql       .= "AND `date` BETWEEN %s AND %s ";
 			$params [] = $filter['start_date'];
-			$params [] = $filter['end_date'];
+			$params [] = date( 'Y-m-d H:i:s', ( strtotime( '+1 day', strtotime( $filter['end_date'] ) ) - 1 + $timezone_diff ) );
 		}
 
 		if ( ! empty( $filter['is_unique'] ) ) {
-			$sql       .= " AND ( is_unique = 1 OR event_type = %d ) ";
+			$sql       .= " AND ( is_unique = 1 OR event_type IN (%d, %d) ) ";
 			$params [] = TVE_LEADS_CONVERSION;
+			$params [] = TVE_LEADS_BUTTON_CLICK_CONVERSION;
 		} else if ( is_array( $filter['group_by'] ) && in_array( 'event_type', $filter['group_by'] ) ) {
-			$sql       .= " AND ( event_type = %d OR event_type = %d ) ";
+			$sql       .= " AND event_type IN (%d, %d, %d) ";
 			$params [] = TVE_LEADS_UNIQUE_IMPRESSION;
 			$params [] = TVE_LEADS_CONVERSION;
+			$params [] = TVE_LEADS_BUTTON_CLICK_CONVERSION;
 		}
 
 		if ( isset( $filter['archived_log'] ) ) {
@@ -359,8 +390,7 @@ class Thrive_Leads_DB {
 		$params = array();
 
 		if ( ! empty( $filter['event_type'] ) ) {
-			$sql       .= "AND `event_type` = %d ";
-			$params [] = $filter['event_type'];
+			$this->append_event_type_filter( $sql, $params, $filter['event_type'] );
 		}
 
 		if ( ! empty( $filter['main_group_id'] ) && $filter['main_group_id'] > 0 ) {
@@ -410,9 +440,10 @@ class Thrive_Leads_DB {
                 FROM " . tve_leads_table_name( 'event_log' ) . "
                 WHERE referrer!='' ";
 
+		$params = array();
+
 		if ( ! empty( $filter['event_type'] ) ) {
-			$sql       .= "AND `event_type` = %d ";
-			$params [] = $filter['event_type'];
+			$this->append_event_type_filter( $sql, $params, $filter['event_type'] );
 		}
 
 		if ( ! empty( $filter['main_group_id'] ) && $filter['main_group_id'] > 0 ) {
@@ -660,9 +691,10 @@ class Thrive_Leads_DB {
 		$sql = "SELECT COUNT(DISTINCT id) AS conversions, " . $select .
 		       "FROM " . tve_leads_table_name( 'event_log' ) . " WHERE (utm_source!='' OR utm_campaign!='' OR utm_medium!='') ";
 
+		$params = array();
+
 		if ( ! empty( $filter['event_type'] ) ) {
-			$sql       .= "AND `event_type` = %d ";
-			$params [] = $filter['event_type'];
+			$this->append_event_type_filter( $sql, $params, $filter['event_type'] );
 		}
 
 		if ( ! empty( $filter['main_group_id'] ) && $filter['main_group_id'] > 0 ) {
@@ -714,7 +746,7 @@ class Thrive_Leads_DB {
 		/* Screen type can be null for the conversions that happened before the release of this feature. We will mark the source as Unknown */
 		$sql
 			= "SELECT IF(screen_type IS NULL, 0, screen_type) AS screen_type, IF(screen_id IS NULL, 0,screen_id ) AS screen_id,
-                    SUM(IF(event_type=" . TVE_LEADS_CONVERSION . ",1,0)) AS conversions,
+                    SUM(IF(event_type IN (" . TVE_LEADS_CONVERSION . "," . TVE_LEADS_BUTTON_CLICK_CONVERSION . "),1,0)) AS conversions,
                     SUM( IF( t_log.id IS NOT NULL , 1, 0) ) AS leads
                 FROM " . tve_leads_table_name( 'event_log' ) . " logs
                 LEFT JOIN (SELECT user, MIN(id) AS id FROM " . tve_leads_table_name( 'event_log' ) . " GROUP BY user) AS t_log ON logs.user=t_log.user AND logs.id=t_log.id
@@ -1172,6 +1204,21 @@ class Thrive_Leads_DB {
 	}
 
 	/**
+	 * check if  already_subscribed state for a form
+	 *
+	 * @param int $parent_id
+	 *
+	 * @return array|null
+	 */
+	public function form_has_already_subscribed_state( $parent_id ) {
+		$sql   = "SELECT * FROM {form_variations} WHERE post_parent = %d AND `form_state` = %s";
+		$state = $this->wpdb->get_row( $this->prepare( $sql, array( $parent_id, 'already_subscribed' ) ), ARRAY_A );
+
+		return ! empty( $state );
+	}
+
+
+	/**
 	 * completely delete all child states for a variation
 	 *
 	 * @param int   $variation_key
@@ -1260,154 +1307,37 @@ class Thrive_Leads_DB {
 	/**
 	 *  Get the contacts for contact storage download manager
 	 *
-	 * @param $source  string
 	 * @param $filters array
 	 *
 	 * @return mixed
 	 */
-	public function tve_leads_get_contacts_stored( $source, $filters = array() ) {
+	public function tve_leads_get_contacts_stored( $filters = array() ) {
 		$table_name = tve_leads_table_name( 'contacts' );
 		$sql        = "SELECT * FROM {$table_name} ";
 		$params     = array();
-		switch ( $source ) {
-			case 'last_download':
-				$latest_download = $this->tve_leads_get_contacts_last_download_date();
-				$sql             .= " WHERE date > %s ORDER BY date";
-				$params[]        = $latest_download->date;
 
-				break;
-			case 'current_report':
-				if ( $filters['source'] > 0 ) {
-					$sql      .= " AS `contacts` JOIN " . tve_leads_table_name( 'event_log' ) . " `logs` ON `logs`.id=`contacts`.`log_id` WHERE `logs`.`main_group_id`=%s ";
-					$params[] = $filters['source'];
-				} else {
-					$sql .= " AS `contacts` WHERE 1";
-				}
+		if ( empty( $filters ) ) {
+			$sql .= " ORDER BY date DESC;";
+		} else {
+			if ( $filters['source'] > 0 ) {
+				$sql      .= " AS `contacts` JOIN " . tve_leads_table_name( 'event_log' ) . " `logs` ON `logs`.id=`contacts`.`log_id` WHERE `logs`.`main_group_id`=%s ";
+				$params[] = $filters['source'];
+			} else {
+				$sql .= " AS `contacts` WHERE 1";
+			}
 
-				if ( ! empty( $filters['start_date'] ) && ! empty( $filters['end_date'] ) ) {
-					$sql       .= " AND `contacts`.`date` BETWEEN %s AND %s ";
-					$params [] = $filters['start_date'];
-					$params [] = $filters['end_date'] . ' 23:59:59';
-				}
+			if ( ! empty( $filters['start_date'] ) && ! empty( $filters['end_date'] ) ) {
+				$sql       .= " AND `contacts`.`date` BETWEEN %s AND %s ";
+				$params [] = $filters['start_date'];
+				$params [] = $filters['end_date'] . ' 23:59:59';
+			}
 
-				$sql .= " ORDER BY `contacts`.date DESC";
-
-				break;
-			case 'all':
-			default:
-				$sql .= " ORDER BY date DESC;";
+			$sql .= " ORDER BY `contacts`.date DESC";
 		}
 
 		ini_set( 'memory_limit', '1024M' );
 
 		return $this->wpdb->get_results( $this->prepare( $sql, $params ) );
-	}
-
-	/**
-	 *  Get the the date of the last download
-	 *
-	 * @return mixed
-	 */
-
-	public function tve_leads_get_contacts_last_download_date() {
-		$table_name = tve_leads_table_name( 'contact_download' );
-		$sql        = "SELECT MAX(date) AS date FROM {$table_name}";
-
-		return $this->wpdb->get_row( $sql );
-	}
-
-	/**
-	 * Insert new download for the contacts
-	 *
-	 * @param $source
-	 * @param $file_url
-	 * @param $params array
-	 *
-	 * @return int
-	 */
-	function tve_leads_write_contact_download( $source, $file_url, $params = array() ) {
-		switch ( $source ) {
-			case 'all':
-				$data['type'] = __( 'All Contacts in Database', 'thrive-leads' );
-				break;
-			case 'last_download':
-				$latest_download = $this->tve_leads_get_contacts_last_download_date();
-				$data['type']    = __( 'All Contacts since ', 'thrive-leads' ) . $latest_download->date;
-				break;
-			case 'current_report':
-				$source_name = $params['source'] > 0 ? __( 'in ', 'thrive-leads' ) . get_the_title( $params['source'] ) : '';
-
-				$data['type'] = __( 'All Contacts ', 'thrive-leads' ) . $source_name . ' ' .
-				                __( 'from', 'thrive-leads' ) . ' ' . date( 'd M, Y', strtotime( $params['start_date'] ) ) . ' ' .
-				                __( 'to', 'thrive-leads' ) . ' ' . date( 'd M, Y', strtotime( $params['end_date'] ) );
-
-				break;
-		}
-
-		$data['status']        = 'pending';
-		$data['date']          = date( 'Y-m-d H:i:s' );
-		$data['download_link'] = $file_url;
-
-		$this->wpdb->insert( tve_leads_table_name( 'contact_download' ), $data );
-
-		return $this->wpdb->insert_id;
-	}
-
-	/**
-	 * Update download status
-	 *
-	 * @param        $id
-	 * @param string $status
-	 *
-	 * @return false|int
-	 */
-	function tve_leads_update_contacts_download_status( $id, $status = 'pending' ) {
-		return $this->wpdb->update( tve_leads_table_name( 'contact_download' ), array( 'status' => $status ), array( 'id' => $id ) );
-	}
-
-	/**
-	 * Gets the list of downloads that have been generated
-	 *
-	 * @return array
-	 */
-	public function tve_leads_get_download_list() {
-		$table_name = tve_leads_table_name( 'contact_download' );
-		$sql        = "SELECT * FROM {$table_name} ORDER BY date DESC";
-
-		$downloads = $this->wpdb->get_results( $sql );
-
-		foreach ( $downloads as $d ) {
-			/* If 10 minutes have passed since the download was started and the download still has status pending, then something wrong happened so we change the status. */
-			if ( time() - strtotime( $d->date ) > 60 * 10 && $d->status == 'pending' ) {
-				$this->tve_leads_update_contacts_download_status( $d->id, 'error' );
-				$d->status = 'error';
-			}
-
-			switch ( $d->status ) {
-				case 'complete':
-					$d->status_title = __( 'Complete', 'thrive-leads' );
-					break;
-				case 'pending':
-					$d->status_title = __( 'Pending', 'thrive-leads' );
-					break;
-				case 'error':
-					$d->status_title = __( 'An error occurred while trying to prepare the download.', 'thrive-leads' );
-					break;
-			}
-		}
-
-		return $downloads;
-	}
-
-	/**
-	 * Delete a download item
-	 *
-	 * @param $id
-	 *
-	 * @return false|int
-	 */
-	public function tve_leads_delete_download_item( $id ) {
-		return $this->wpdb->delete( tve_leads_table_name( 'contact_download' ), array( 'id' => $id ) );
 	}
 
 	/*
@@ -1574,8 +1504,8 @@ class Thrive_Leads_DB {
 	 * @param array $data
 	 */
 	public function register_event_summary( $data ) {
-		$field     = $data['event_type'] === TVE_LEADS_UNIQUE_IMPRESSION ? 'impression_count' : 'conversion_count';
-		$summary   = $this->get_summary( current_time( 'Y-m-d' ), $data['variation_key'] );
+		$field   = $data['event_type'] === TVE_LEADS_UNIQUE_IMPRESSION ? 'impression_count' : 'conversion_count';
+		$summary = $this->get_summary( current_time( 'Y-m-d' ), $data['variation_key'] );
 		$is_unique = isset( $data['is_unique'] ) && $data['is_unique'] ? 1 : 0;
 
 		if ( empty( $summary ) ) {

@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 	<div class="dropdown-content">
 		<div class="tve-control" data-view="CaptchaTheme"></div>
+		<div class="tve-control" data-view="CaptchaLanguage"></div>
+		<div class="tve-control" data-view="CaptchaAppearance"></div>
 		<div class="tve-control" data-view="CaptchaType"></div>
 		<div class="tve-control" data-view="CaptchaSize"></div>
 	</div>

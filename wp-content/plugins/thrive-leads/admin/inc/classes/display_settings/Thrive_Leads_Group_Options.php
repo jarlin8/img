@@ -192,7 +192,7 @@ class Thrive_Leads_Group_Options {
 
 		/**
 		 * if none of the options is not selected keep displaying the group
-		 * and let the Wordpress apply its logic on it
+		 * and let the WordPress apply its logic on it
 		 */
 		if ( ! $this->checkForAnyOptionChecked() ) {
 			return false;
@@ -269,6 +269,13 @@ class Thrive_Leads_Group_Options {
 
 			$post = apply_filters( 'thrive_leads_current_post', $post );
 
+			/**
+			 * Filter current post that is used for the display manager
+			 *
+			 * @param WP_Post $post
+			 */
+			$_post = apply_filters( 'tve_display_manager_current_post', $post );
+
 			/** @var Thrive_Leads_Other_Screens_Tab $otherScreensTab */
 			$otherScreensTab = Thrive_Leads_Tab_Factory::build( 'other_screens' );
 			$otherScreensTab->setSavedOptions( $this );
@@ -298,22 +305,22 @@ class Thrive_Leads_Group_Options {
 			$taxonomyTermsTab = Thrive_Leads_Tab_Factory::build( 'taxonomy_terms' );
 			$taxonomyTermsTab->setSavedOptions( $this );
 
-			$inclusion = $otherScreensTab->allTypesAllowed( get_post_type() ) || $pagesTab->isPageAllowed( $post )
+			$inclusion = $otherScreensTab->allTypesAllowed( get_post_type() ) || $pagesTab->isPageAllowed( $_post )
 			             || $postTypesTab->isTypeAllowed( get_post_type() )
 			             || $directUrlsTab->isUrlAllowed( $this->get_current_URL() )
 			             || $visitorsStatusTab->isStatusAllowed( $visitorsStatus )
-			             || $taxonomyTermsTab->isPostAllowed( $post )
+			             || $taxonomyTermsTab->isPostAllowed( $_post )
 			             || $pageTemplatesTab->isTemplateAllowed( static::get_page_template() );
 
 			if ( $inclusion === false ) {
 				return false;
 			}
 
-			$exclusion = $otherScreensTab->allTypesDenied( get_post_type() ) || $pagesTab->isPageDenied( $post )
+			$exclusion = $otherScreensTab->allTypesDenied( get_post_type() ) || $pagesTab->isPageDenied( $_post )
 			             || $postTypesTab->isDeniedType( get_post_type() )
 			             || $directUrlsTab->isUrlDenied( $this->get_current_URL() )
 			             || $visitorsStatusTab->isStatusDenied( $visitorsStatus )
-			             || $taxonomyTermsTab->isPostDenied( $post )
+			             || $taxonomyTermsTab->isPostDenied( $_post )
 			             || $pageTemplatesTab->isTemplateDenied( static::get_page_template() );
 
 			if ( $exclusion === true ) {

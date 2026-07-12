@@ -29,55 +29,55 @@ function tve_leads_get_default_form_types( $include_extra = false ) {
 			'edit_selector' => '.thrv-leads-in-content', // selector for the element settings in editing mode
 			'wp_hook'       => 'the_content',
 			'priority'      => 20,
-			'video_link'    => '//fast.wistia.net/embed/iframe/vp8pi64ss2?popover=true',
+			'video_link'    => '9YS9EGUel98',
 		),
 		'lightbox'      => array(
 			'post_title'    => __( 'Lightbox', 'thrive-leads' ),
 			'tve_form_type' => 'lightbox',
 			'edit_selector' => '.tve_p_lb_control', // selector for the element settings in editing mode
 			'wp_hook'       => 'wp_footer',
-			'video_link'    => '//fast.wistia.net/embed/iframe/eodv48v1qz?popover=true',
+			'video_link'    => '2SXwMnfIFXc',
 		),
 		'post_footer'   => array(
 			'post_title'    => __( 'Post footer', 'thrive-leads' ),
 			'tve_form_type' => 'post_footer',
 			'edit_selector' => '.thrv-leads-form-box', // selector for the element settings in editing mode
 			'wp_hook'       => 'the_content',
-			'video_link'    => '//fast.wistia.net/embed/iframe/nizwf1uccw?popover=true',
+			'video_link'    => 'J9Tt42ts43s',
 		),
 		'ribbon'        => array(
 			'post_title'    => __( 'Ribbon', 'thrive-leads' ),
 			'tve_form_type' => 'ribbon',
 			'edit_selector' => '.thrv-ribbon', // selector for the element settings in editing mode
 			'wp_hook'       => 'wp_footer',
-			'video_link'    => '//fast.wistia.net/embed/iframe/p8a5uowels?popover=true',
+			'video_link'    => 'x8QGGaqxPDY',
 		),
 		'screen_filler' => array(
 			'post_title'    => __( 'Screen filler lightbox', 'thrive-leads' ),
 			'tve_form_type' => 'screen_filler',
 			'edit_selector' => '.thrv-leads-screen-filler', // selector for the element settings in editing mode
 			'wp_hook'       => 'wp_footer',
-			'video_link'    => '//fast.wistia.net/embed/iframe/abpv5so4uq?popover=true',
+			'video_link'    => 'IdvjD6T4Xa4',
 		),
 		'greedy_ribbon' => array(
 			'post_title'    => __( 'Scroll mat', 'thrive-leads' ),
 			'tve_form_type' => 'greedy_ribbon',
 			'edit_selector' => '.thrv-greedy-ribbon', // selector for the element settings in editing mode
 			'wp_hook'       => 'wp_footer',
-			'video_link'    => '//fast.wistia.net/embed/iframe/2vg13bctud?popover=true',
+			'video_link'    => '4UHtgN8LZzI',
 		),
 		'slide_in'      => array(
 			'post_title'    => __( 'Slide in', 'thrive-leads' ),
 			'tve_form_type' => 'slide_in',
 			'edit_selector' => '.thrv-leads-slide-in', // selector for the element settings in editing mode
 			'wp_hook'       => 'wp_footer',
-			'video_link'    => '//fast.wistia.net/embed/iframe/1p5u2b9rmd?popover=true',
+			'video_link'    => 'dhL4NEt84kk',
 		),
 		'widget'        => array(
 			'post_title'    => __( 'Widget', 'thrive-leads' ),
 			'edit_selector' => '.thrv-leads-widget', // selector for the element settings in editing mode
 			'tve_form_type' => 'widget',
-			'video_link'    => '//fast.wistia.net/embed/iframe/3luamnx1va?popover=true',
+			'video_link'    => 'uSrD8lVbF5Q',
 		),
 		/**
 		 * no wp_hook for php_inserts, these are to be added by the (advanced) user - as pieces of PHP code that can be directly inserted into
@@ -123,8 +123,8 @@ function tve_leads_prepare_default_form_types() {
 /**
  * return a formatted conversion rate based on $impressions and $conversions
  *
- * @param int    $impressions
- * @param int    $conversions
+ * @param int $impressions
+ * @param int $conversions
  * @param string $suffix
  * @param string $decimals
  * @param string $if_zero what to return if either of the values is 0
@@ -134,11 +134,22 @@ function tve_leads_prepare_default_form_types() {
 function tve_leads_conversion_rate( $impressions, $conversions, $suffix = '%', $decimals = '2', $if_zero = 'N/A' ) {
 	$impressions = (int) $impressions;
 	$conversions = (int) $conversions;
-	if ( ! $impressions || ! $conversions ) {
+	if ( $conversions == 0 || $impressions == 0 ) {
+		// For chart data, return 0 instead of 'N/A' when suffix is empty
+		if ( empty( $suffix ) ) {
+			return 0;
+		}
 		return $if_zero;
 	}
 
-	return round( 100 * ( $conversions / $impressions ), $decimals ) . $suffix;
+	$rate = round( 100 * ( $conversions / $impressions ), $decimals );
+	
+	// Return numeric value when no suffix is requested (for charts)
+	if ( empty( $suffix ) ) {
+		return (float) $rate;
+	}
+	
+	return $rate . $suffix;
 }
 
 /**
@@ -169,7 +180,8 @@ function tve_leads_get_editor_template_config( $key ) {
 	}
 
 	if ( isset( $config[ $type ][ $key ] ) && isset( $config[ $type ][ $key ]['fonts'] ) && tve_dash_is_google_fonts_blocked() ) {
-		$config[ $type ][ $key ]['fonts'] = array();
+		// Replace Google Fonts with Bunny Fonts instead of removing them
+		$config[ $type ][ $key ]['fonts'] = array_map( 'tve_replace_google_font_with_bunny', $config[ $type ][ $key ]['fonts'] );
 	}
 
 	return isset( $config[ $type ][ $key ] ) ? $config[ $type ][ $key ] : array();
@@ -246,7 +258,10 @@ function tve_leads_get_preview_url( $post_id, $variation_key, $escape = true ) {
 	 */
 	$post        = get_post( $post_id );
 	$editor_link = $cache[ $post_id ];
-	$editor_link = apply_filters( 'preview_post_link', add_query_arg( array( '_key' => $variation_key, 'r' => uniqid() ), $editor_link ), $post );
+	$editor_link = apply_filters( 'preview_post_link', add_query_arg( array(
+		'_key' => $variation_key,
+		'r'    => uniqid()
+	), $editor_link ), $post );
 
 	if ( $escape ) {
 		$editor_link = esc_url( $editor_link );
@@ -273,9 +288,9 @@ function tve_leads_get_random_index( $total, $multiplier = 1000 ) {
 /**
  * get a list of all available triggers (optional) grouped by a specific form type
  *
- * @param string|null $form_type    , if present, it will only return triggers that apply to that specific form type
+ * @param string|null $form_type , if present, it will only return triggers that apply to that specific form type
  *
- * @param bool        $get_as_array whether or not to get the results as array instead of Trigger objects
+ * @param bool $get_as_array whether or not to get the results as array instead of Trigger objects
  *
  * @return array the list of triggers
  */
@@ -347,7 +362,19 @@ function tve_leads_get_available_positions( $form_type ) {
 		case 'in_content':
 			return array(
 				'label'    => __( 'Show after how many paragraphs?', 'thrive-leads' ),
-				'position' => array( 0 => 0, 1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10 ),
+				'position' => array(
+					0  => 0,
+					1  => 1,
+					2  => 2,
+					3  => 3,
+					4  => 4,
+					5  => 5,
+					6  => 6,
+					7  => 7,
+					8  => 8,
+					9  => 9,
+					10 => 10
+				),
 			);
 		default:
 			return array();
@@ -486,6 +513,34 @@ function tve_leads_norm_dist( $x ) {
 }
 
 /**
+ * Generate error message HTML for shortcode rendering errors.
+ *
+ * @param string $error_type The error type constant (TVE_LEADS_ERROR_NO_CONTENT, TVE_LEADS_ERROR_NO_FORMS, etc.)
+ *
+ * @return string HTML for the error message
+ */
+function tve_leads_get_shortcode_error_html( $error_type ) {
+	$error_message = '';
+
+	switch ( $error_type ) {
+		case TVE_LEADS_ERROR_NO_CONTENT:
+			$error_message = __( 'We couldn\'t load anything for this Lead Shortcode because the form doesn\'t have any form design. Design the form for this shortcode in Thrive Leads, and it will automatically appear here.', 'thrive-leads' );
+			break;
+		case TVE_LEADS_ERROR_NO_FORMS:
+			$error_message = __( 'We couldn\'t load anything for this Lead Shortcode because there are no forms under it. Create a form for this shortcode in Thrive Leads, and it will automatically appear here.', 'thrive-leads' );
+			break;
+		default:
+			$error_message = __( 'Shortcode could not be rendered!', 'thrive-leads' );
+			break;
+	}
+
+	// Note: Using inline SVG because this content is rendered via AJAX/shortcode and the SVG sprite isn't available.
+	$warning_icon = '<svg class="tve-leads-shortcode-error__icon" xmlns="http://www.w3.org/2000/svg" width="23" height="20" viewBox="0 0 23 20" fill="none"><path d="M11.4397 0C12.0647 -5.46392e-08 12.6451 0.357143 12.9576 0.892857L22.6004 17.3214C22.9129 17.9018 22.9129 18.5714 22.6004 19.1071C22.2879 19.6875 21.7076 20 21.0826 20L1.79688 20C1.12723 20 0.546875 19.6875 0.234375 19.1071C-0.078125 18.5714 -0.078125 17.9018 0.234375 17.3214L9.87723 0.892857C10.1897 0.357143 10.7701 5.8542e-08 11.4397 0ZM11.4397 5.71429C10.8147 5.71429 10.3683 6.20536 10.3683 6.78571V11.7857C10.3683 12.4107 10.8147 12.8571 11.4397 12.8571C12.0201 12.8571 12.5112 12.4107 12.5112 11.7857V6.78571C12.5112 6.20536 12.0201 5.71428 11.4397 5.71429ZM12.8683 15.7143C12.8683 14.9554 12.1987 14.2857 11.4397 14.2857C10.6362 14.2857 10.0112 14.9554 10.0112 15.7143C10.0112 16.5179 10.6362 17.1429 11.4397 17.1429C12.1987 17.1429 12.8683 16.5179 12.8683 15.7143Z" fill="#FB5C55"/></svg>';
+
+	return '<div class="tve-leads-shortcode-error">' . $warning_icon . '<p class="tve-leads-shortcode-error__message">' . $error_message . '</p></div>';
+}
+
+/**
  * Render the form included in the shortcode
  * the received parameter should contain one element: the id of the TL shortcode
  *
@@ -552,7 +607,24 @@ function tve_leads_shortcode_render( $attributes = array() ) {
 	if ( ! empty( $attributes['for_editor'] ) || ! $ajax_load_forms ) {
 		$variation = tve_leads_determine_variation( $shortcode, ! empty( $attributes['for_editor'] ) ); // if we render it in the TCB editor => do not use/store cookies
 		if ( empty( $variation ) ) {
-			return '';
+			if ( empty( $attributes['for_editor'] ) ) {
+				return '';
+			}
+
+			$variations_filters = array(
+				'tracking_data' => false, // We don't need tracking data, just the list of form variations.
+			);
+			// Determine the specific error type for the editor
+			$variations = tve_leads_get_form_variations( $attributes['id'], $variations_filters );
+
+			$error_type = empty( $variations ) ? TVE_LEADS_ERROR_NO_FORMS : TVE_LEADS_ERROR_NO_CONTENT;
+
+			return array(
+				'html'       => '',
+				'error_type' => $error_type,
+				'fonts'      => array(),
+				'css'        => array(),
+			);
 		}
 		$GLOBALS['tve_leads_detected_variation'] = $variation;
 		/**
@@ -701,7 +773,7 @@ function tve_leads_shortcode_lock_render( $attributes, $content ) {
  * Render the button / link etc contents that will trigger the opening of the lightbox
  * register the lightbox to be output in the footer (or just a placeholder in case AJAX-loading of forms is enabled)
  *
- * @param array  $attributes
+ * @param array $attributes
  * @param string $content
  *
  * @return string
@@ -826,7 +898,13 @@ function tve_leads_two_step_render( $attributes, $content ) {
 		}
 	}
 
-	tve_leads_display_js_impression_data( $type );
+	/**
+	 * Do NOT call tve_leads_display_js_impression_data() for two-step lightboxes (ThriveBox).
+	 * Impressions should only be tracked when the ThriveBox is actually opened (triggered by click),
+	 * not on page load. The impression tracking is handled in frontend.js when open_two_step_lightbox is called.
+	 *
+	 * @see https://github.com/awesomemotive/thrive-themes/issues/2504
+	 */
 
 	return $content;
 
@@ -1170,9 +1248,9 @@ function tve_leads_get_default_animation( $form_type ) {
  *
  * @param        $handle
  * @param string $src
- * @param array  $deps
- * @param bool   $ver
- * @param bool   $in_footer
+ * @param array $deps
+ * @param bool $ver
+ * @param bool $in_footer
  */
 function tve_leads_enqueue_script( $handle, $src = false, $deps = array(), $ver = false, $in_footer = false ) {
 	if ( $ver === false ) {
@@ -1192,10 +1270,10 @@ function tve_leads_enqueue_script( $handle, $src = false, $deps = array(), $ver 
  * it will add the plugin version to the style link if no version is specified
  *
  * @param             $handle
- * @param string      $src
- * @param array       $deps
+ * @param string $src
+ * @param array $deps
  * @param bool|string $ver
- * @param string      $media
+ * @param string $media
  */
 function tve_leads_enqueue_style( $handle, $src = false, $deps = array(), $ver = false, $media = 'all' ) {
 	if ( $ver === false ) {
@@ -1296,7 +1374,7 @@ function tve_leads_get_screen_data() {
  * it ensures the option is prefixed with "tve_leads_" prefix
  *
  * @param string $name
- * @param mixed  $value
+ * @param mixed $value
  *
  * @return bool
  */
@@ -1310,7 +1388,7 @@ function tve_leads_update_option( $name, $value ) {
  * get all form types that are to be shown on a page based on the $lead_group
  *
  * @param WP_Post $lead_group
- * @param bool    $skip_group_tests whether or not to take into account any tests that are running at group level
+ * @param bool $skip_group_tests whether or not to take into account any tests that are running at group level
  *
  * @return array
  */
@@ -1339,7 +1417,12 @@ function tve_leads_get_targeted_form_types( $lead_group, $skip_group_tests = fal
 		/**
 		 * eliminate screenfillers, lightboxes, ribbons and slideins from the customize preview screens
 		 */
-		if ( tve_leads_is_customize_preview() && in_array( $form_type->tve_form_type, array( 'lightbox', 'screen_filler', 'ribbon', 'slide_in' ) ) ) {
+		if ( tve_leads_is_customize_preview() && in_array( $form_type->tve_form_type, array(
+				'lightbox',
+				'screen_filler',
+				'ribbon',
+				'slide_in'
+			) ) ) {
 			continue;
 		}
 		$form_types_to_be_shown[ $form_type->ID ] = $form_type;
@@ -1436,7 +1519,7 @@ function tve_leads_inline_cookies( $cookies ) {
 /**
  * output the JS code required for a trigger associated with a variation
  *
- * @param array  $variation
+ * @param array $variation
  * @param string $form_id
  * @param string $form_type
  */
@@ -1464,7 +1547,7 @@ function tve_leads_output_trigger_js( $variation, $form_id, $form_type ) {
  * this is also solved with a cookie, and also handled here
  *
  * @param WP_Post $form_type
- * @param bool    $skip_cookie_check whether or not to skip the cookie check in case of an active test running
+ * @param bool $skip_cookie_check whether or not to skip the cookie check in case of an active test running
  *
  * @return array|null the form variation or empty for failure
  */
@@ -1477,7 +1560,10 @@ function tve_leads_determine_variation( $form_type, $skip_cookie_check = false )
 	 * If there is a test running at variation level, only get active test items for that test
 	 */
 	if ( empty( $test_model ) ) {
-		$variation_active_test = tve_leads_get_form_active_test( $form_type->ID, array( 'test_type' => null, 'get_items' => false ) );
+		$variation_active_test = tve_leads_get_form_active_test( $form_type->ID, array(
+			'test_type' => null,
+			'get_items' => false
+		) );
 	}
 
 	$variations = tve_leads_get_form_variations( $form_type->ID, array(
@@ -1591,7 +1677,11 @@ function tve_leads_check_conversion_cookie( $main_group_id ) {
  */
 function tve_leads_is_preview_page() {
 	$post_type = get_post_type( get_the_ID() );
-	if ( ! in_array( $post_type, array( TVE_LEADS_POST_FORM_TYPE, TVE_LEADS_POST_TWO_STEP_LIGHTBOX, TVE_LEADS_POST_SHORTCODE_TYPE ) ) ) {
+	if ( ! in_array( $post_type, array(
+		TVE_LEADS_POST_FORM_TYPE,
+		TVE_LEADS_POST_TWO_STEP_LIGHTBOX,
+		TVE_LEADS_POST_SHORTCODE_TYPE
+	) ) ) {
 		return false;
 	}
 
@@ -1608,7 +1698,11 @@ function tve_leads_is_preview_page() {
  */
 function tve_leads_is_editor_page() {
 	$post_type = get_post_type( get_the_ID() );
-	if ( ! in_array( $post_type, array( TVE_LEADS_POST_FORM_TYPE, TVE_LEADS_POST_TWO_STEP_LIGHTBOX, TVE_LEADS_POST_SHORTCODE_TYPE ) ) ) {
+	if ( ! in_array( $post_type, array(
+		TVE_LEADS_POST_FORM_TYPE,
+		TVE_LEADS_POST_TWO_STEP_LIGHTBOX,
+		TVE_LEADS_POST_SHORTCODE_TYPE
+	) ) ) {
 		return false;
 	}
 
@@ -1623,10 +1717,10 @@ function tve_leads_is_editor_page() {
 /**
  * check if a conversion has been registered for this variation and, if so, we need to check if there is an "Already subscribed" state defined and show that instead
  *
- * @param array  $variation               the main variation where the "Already Subscribed" state should have been setup
- * @param string $type                    type of form
- * @param bool   $skip_inbound_link_check whether or not to skip the check for 'already_subscribed' state from the inbound link params
- * @param bool   $for_shortcode           whether the current call is done for a shortcode. if true and $skip_inbound_link_check is false, it checks that the "subscribed" state is checked for inbound links and all forms are targeted
+ * @param array $variation the main variation where the "Already Subscribed" state should have been setup
+ * @param string $type type of form
+ * @param bool $skip_inbound_link_check whether or not to skip the check for 'already_subscribed' state from the inbound link params
+ * @param bool $for_shortcode whether the current call is done for a shortcode. if true and $skip_inbound_link_check is false, it checks that the "subscribed" state is checked for inbound links and all forms are targeted
  *
  * @return string
  */
@@ -1694,8 +1788,8 @@ function tve_leads_ajax_already_subscribed_state( $output_variations ) {
  * used in all form types except for lightboxes
  *
  * @param string $form_html
- * @param array  $variation
- * @param array  $control used to control pieces of html
+ * @param array $variation
+ * @param array $control used to control pieces of html
  *
  * @return string
  */
@@ -1893,6 +1987,27 @@ function tve_get_current_screen_for_reporting_table( $screen_type, $screen_id ) 
 }
 
 /**
+ * Resolve a TVE_SCREEN_* constant to a human-readable string.
+ *
+ * @param int $screen_type One of the TVE_SCREEN_* constants.
+ *
+ * @return string Lowercase screen type label (e.g. 'page', 'post', 'homepage').
+ */
+function tve_leads_get_screen_type_label( $screen_type ) {
+	$map = array(
+		TVE_SCREEN_HOMEPAGE    => 'homepage',
+		TVE_SCREEN_BLOG        => 'blog',
+		TVE_SCREEN_PAGE        => 'page',
+		TVE_SCREEN_POST        => 'post',
+		TVE_SCREEN_CUSTOM_POST => 'custom_post',
+		TVE_SCREEN_ARCHIVE     => 'archive',
+		TVE_SCREEN_OTHER       => 'other',
+	);
+
+	return isset( $map[ $screen_type ] ) ? $map[ $screen_type ] : 'unknown';
+}
+
+/**
  * Return an array with all the fields that we want to ignore when storing contacts in the database.
  * Email is already stored in another variable so we don't need it again
  *
@@ -2019,7 +2134,7 @@ function tve_leads_get_downloaded_templates( $form_type ) {
  * save the list of downloaded templates into the wp_option used for these
  *
  * @param string $form_type
- * @param array  $templates
+ * @param array $templates
  */
 function tve_leads_save_downloaded_templates( $form_type, $templates ) {
 	update_option( 'tve_leads_' . $form_type . '_downloaded_templates', $templates );
@@ -2054,9 +2169,10 @@ function tve_inconclusive_tests_notice() {
 
 		if ( ! in_array( $id, $inconclusive_tests ) ) {
 			?>
-			<div data-test-id="<?php echo $id; ?>" class="notice-error notice tve_error_inconclusive_test_notice is-dismissible">
-				<p><?php echo __( 'One of your active A/B tests in Thrive Leads appears to be inconclusive. The test has reached double the threshold time and conversion numbers, but no clear winner has been found. <a href="javascript:void(0);" onclick="ThriveLeadsInconclusive.inconclusive_tests.trigger_dismiss_notice(' . $id . ')">Click here to view the test</a>.', 'thrive-leads' ); ?></p>
-			</div>
+            <div data-test-id="<?php echo $id; ?>"
+                 class="notice-error notice tve_error_inconclusive_test_notice is-dismissible">
+                <p><?php echo __( 'One of your active A/B tests in Thrive Leads appears to be inconclusive. The test has reached double the threshold time and conversion numbers, but no clear winner has been found. <a href="javascript:void(0);" onclick="ThriveLeadsInconclusive.inconclusive_tests.trigger_dismiss_notice(' . $id . ')">Click here to view the test</a>.', 'thrive-leads' ); ?></p>
+            </div>
 			<?php
 		}
 	}
@@ -2151,11 +2267,12 @@ function tve_leads_get_cloud_templates( $form_type, $get_multi_step ) {
 		}
 
 	}
-
-	foreach ( $templates as &$tpl ) {
-		$tpl['key']       = ( $tpl['multi_step'] ? 'multi_step|' : '' ) . $form_type . '|' . $tpl['key'];
-		$tpl['form_type'] = $form_type;
-		$tpl['cloud']     = true;
+	if ( empty( $templates['error'] ) ) {
+		foreach ( $templates as &$tpl ) {
+			$tpl['key']       = ( $tpl['multi_step'] ? 'multi_step|' : '' ) . $form_type . '|' . $tpl['key'];
+			$tpl['form_type'] = $form_type;
+			$tpl['cloud']     = true;
+		}
 	}
 
 	return $templates;
@@ -2179,7 +2296,7 @@ function tve_leads_is_v2_template( $template_key ) {
  * The CSS can either be stored locally, for the blank template, or downloaded from the cloud, stored in a file in the wp-uploads folder
  *
  * @param string $template_key
- * @param array  $template_config
+ * @param array $template_config
  *
  * @return string
  */
@@ -2298,8 +2415,8 @@ function tve_leads_process_custom_css( $css ) {
 /**
  * Format a date using a specific format, or the one setup from general settings
  *
- * @param string      $date_string the date
- * @param null|string $format      format. if not passed, it will take the default WordPress settings
+ * @param string $date_string the date
+ * @param null|string $format format. if not passed, it will take the default WordPress settings
  *
  * @return string the formatted date
  */
@@ -2346,7 +2463,10 @@ function tve_leads_get_form_placeholder( $type, $control_variation = null ) {
 
 		if (
 			! empty( $control_variation['tcb_fields'][ TVE_LEADS_FIELD_FORM_HEIGHT ] ) &&
-			( isset( $control_variation['trigger'] ) && in_array( $control_variation['trigger'], array( 'page_load', 'viewport' ) ) ) &&
+			( isset( $control_variation['trigger'] ) && in_array( $control_variation['trigger'], array(
+					'page_load',
+					'viewport'
+				) ) ) &&
 			! is_editor_page_raw() && /* don't show placeholder inside editor */
 			( $type === 'post_footer' || $type === 'widget' || strpos( $type, 'shortcode_' ) === 0 )
 		) {
@@ -2395,3 +2515,99 @@ function tl_get_design_thumbnail( $design_id ) {
 
 	return $url;
 }
+
+/**
+ * Get forms that have active variation tests running
+ * This is used by the sample data generator plugin for creating sample data for testing charts.
+ * 
+ * @return array Array of forms with test information
+ */
+function tve_leads_get_forms_with_active_tests() {
+	global $tvedb;
+	
+	$forms_with_tests = array();
+	
+	// Get all active tests
+	$active_tests = $tvedb->tve_leads_get_tests( array(
+		'status' => 'running'
+	) );
+	
+	if ( empty( $active_tests ) ) {
+		return $forms_with_tests;
+	}
+	
+	foreach ( $active_tests as $test ) {
+		// Get test items for this test
+		$test_id = absint( $test->id );
+		$test_items = $tvedb->get_test_items( array(
+			'test_id' => $test_id
+		) );
+		
+		if ( empty( $test_items ) ) {
+			continue;
+		}
+		
+		// Process based on test type
+		switch ( $test->test_type ) {
+			case TVE_LEADS_VARIATION_TEST_TYPE:
+				// Form variation test - get the form type
+				foreach ( $test_items as $item ) {
+					$form_type_id = absint( $item->form_type_id );
+					if ( ! empty( $form_type_id ) ) {
+						$form = get_post( $form_type_id );
+						if ( $form && $form->post_status === 'publish' ) {
+							$forms_with_tests[ absint( $form->ID ) ] = array(
+								'form' => $form,
+								'test' => $test,
+								'test_type' => esc_html__( 'Variation Test', 'thrive-leads' ),
+								'parent_group' => get_post( absint( $form->post_parent ) )
+							);
+						}
+					}
+				}
+				break;
+				
+			case TVE_LEADS_GROUP_TEST_TYPE:
+				// Group test - get all form types in the test
+				foreach ( $test_items as $item ) {
+					$form_type_id = absint( $item->form_type_id );
+					if ( ! empty( $form_type_id ) ) {
+						$form = get_post( $form_type_id );
+						if ( $form && $form->post_status === 'publish' ) {
+							$forms_with_tests[ absint( $form->ID ) ] = array(
+								'form' => $form,
+								'test' => $test,
+								'test_type' => esc_html__( 'Group Test', 'thrive-leads' ),
+								'parent_group' => get_post( absint( $form->post_parent ) )
+							);
+						}
+					}
+				}
+				break;
+				
+			case TVE_LEADS_SHORTCODE_TEST_TYPE:
+			case TVE_LEADS_TWO_STEP_LIGHTBOX_TEST_TYPE:
+				// Shortcode or 2-step lightbox test
+				foreach ( $test_items as $item ) {
+					$main_group_id = absint( $item->main_group_id );
+					if ( ! empty( $main_group_id ) ) {
+						$form = get_post( $main_group_id );
+						if ( $form && $form->post_status === 'publish' ) {
+													$test_type_name = absint( $test->test_type ) == TVE_LEADS_SHORTCODE_TEST_TYPE ? esc_html__( 'Shortcode Test', 'thrive-leads' ) : esc_html__( '2-Step Lightbox Test', 'thrive-leads' );
+						$forms_with_tests[ absint( $form->ID ) ] = array(
+							'form' => $form,
+							'test' => $test,
+							'test_type' => $test_type_name,
+							'parent_group' => null
+						);
+						}
+					}
+				}
+				break;
+		}
+	}
+	
+	return $forms_with_tests;
+}
+
+

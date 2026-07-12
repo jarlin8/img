@@ -20,8 +20,6 @@ class Main {
 
 	const NONCE = 'td-metrics-nonce';
 
-	const ALLOWED_VIEWS = [ 'admin_page_tve_dash_general_settings_section' ];
-
 	public static function init() {
 		static::includes();
 		static::hooks();
@@ -94,7 +92,7 @@ class Main {
 	 * @return mixed|null
 	 */
 	public static function should_enqueue() {
-		return apply_filters( 'tve_dash_metrics_should_enqueue', true );
+		return apply_filters( 'tve_dash_metrics_should_enqueue', Deactivate::should_enqueue() || Tracking::should_enqueue() );
 	}
 
 	/**

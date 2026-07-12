@@ -23,9 +23,9 @@ class Main {
 	const LINK_SHORTCODE = 'thrive_woo_link_shortcode';
 
 	/* price shortcode attributes */
-	const PRICE_ON_SALE_EFFECT = 'on_sale_effect';
+	const PRICE_ON_SALE_EFFECT          = 'on_sale_effect';
 	const PRICE_INCLUDE_CURRENCY_SYMBOL = 'include_currency_symbol';
-	const PRICE_SHOW_DECIMALS = 'show_decimals';
+	const PRICE_SHOW_DECIMALS           = 'show_decimals';
 
 	const PATH = 'classes/shortcodes/inline/';
 
@@ -40,8 +40,8 @@ class Main {
 
 		Hooks::add();
 
-		add_shortcode( static::META_SHORTCODE, array( __CLASS__, 'render_meta_shortcode' ) );
-		add_shortcode( static::LINK_SHORTCODE, array( __CLASS__, 'render_link_shortcode' ) );
+		add_shortcode( static::META_SHORTCODE, [ __CLASS__, 'render_meta_shortcode' ] );
+		add_shortcode( static::LINK_SHORTCODE, [ __CLASS__, 'render_link_shortcode' ] );
 	}
 
 	/**
@@ -70,13 +70,17 @@ class Main {
 	 *
 	 * @return mixed|string
 	 */
-	public static function do_shortcode( $shortcode_id, $attr = array() ) {
+	public static function do_shortcode( $shortcode_id, $attr = [] ) {
 		$content = '';
 
 		if ( array_key_exists( $shortcode_id, Helpers::available_shortcodes() ) ) {
 			/* always fetch the product based on the ID, otherwise the post list custom loop can mess this up */
 			$product_id = get_the_ID();
 			$product    = wc_get_product( $product_id );
+
+			if ( ! $product ) {
+				return '';
+			}
 
 			switch ( $shortcode_id ) {
 				case '_sale_price':
@@ -114,12 +118,12 @@ class Main {
 	 * @return mixed|string
 	 */
 	public static function render_link_shortcode( $attr ) {
-		$attr = shortcode_atts( array(
+		$attr = shortcode_atts( [
 			'id'                   => '',
 			'product-id'           => '',
 			'product-variation-id' => '',
 			'redirect-destination' => '',
-		), $attr );
+		], $attr );
 
 		switch ( $attr['id'] ) {
 			case 'cart_url':
@@ -144,11 +148,11 @@ class Main {
 				if ( $product_id ) {
 					$variation_id = empty( $attr['product-variation-id'] ) ? 0 : $attr['product-variation-id'];
 					$product      = wc_get_product( $product_id );
-					$link         = add_query_arg( array(
+					$link         = add_query_arg( [
 						'add-to-cart' => $variation_id ? $variation_id : $product_id,
-					), $link );
+					], $link );
 
-					if ( $product->get_type() === 'grouped' ) {
+					if ( $product && $product->get_type() === 'grouped' ) {
 						$children = $product->get_children();
 						foreach ( $children as $child ) {
 							//the default quantity for each part of a grouped product is 1

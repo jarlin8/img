@@ -258,7 +258,7 @@ if ( ! class_exists( 'TVE_PluginUpdateChecker_1_3_2', false ) ) {
 			);
 
 			//Try to parse the response
-			$pluginInfo = null;
+			$pluginInfo = new StdClass();
 			if ( ! is_wp_error( $result ) && isset( $result['response']['code'] ) && ( $result['response']['code'] == 200 ) && ! empty( $result['body'] ) ) {
 				$pluginInfo = TVE_PluginInfo_1_3::fromJson( $result['body'], $this->debugMode );
 			} else if ( $this->debugMode ) {
@@ -565,11 +565,11 @@ if ( ! class_exists( 'TVE_PluginUpdateChecker_1_3_2', false ) ) {
 					if ( ! empty( $update->upgrade_notice ) ) {
 						remove_action( 'in_plugin_update_message-' . $this->pluginFile, array(
 							$this,
-							'upgrade_notice'
+							'upgrade_notice',
 						), 10 );
 						add_action( 'in_plugin_update_message-' . $this->pluginFile, array(
 							$this,
-							'upgrade_notice'
+							'upgrade_notice',
 						), 10, 2 );
 					}
 
@@ -806,6 +806,9 @@ if ( ! class_exists( 'TVE_PluginInfo_1_3', false ) ) {
 
 		public $requires;
 		public $tested;
+
+		public $icons;
+		public $channel;
 		public $upgrade_notice;
 
 		public $rating;
@@ -924,16 +927,18 @@ if ( ! class_exists( 'TVE_PluginUpdate_1_3', false ) ) {
 	 * @access    public
 	 */
 	class TVE_PluginUpdate_1_3 {
-		public         $id = 0;
-		public         $slug;
-		public         $version;
-		public         $homepage;
-		public         $download_url;
-		public         $upgrade_notice;
-		public         $tested;
-		public         $icons;
+		public $id = 0;
+		public $slug;
+		public $version;
+		public $homepage;
+		public $download_url;
+		public $upgrade_notice;
+		public $tested;
+		public $icons;
+		public $requires;
+
 		private static $fields
-		                   = array(
+			= array(
 				'id',
 				'slug',
 				'version',

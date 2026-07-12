@@ -31,9 +31,35 @@ $admin_email = get_option( 'admin_email' );
 		</div>
 		<div class="tvd-input-field">
 			<select id="tvd-aw-api-country" class="tvd-browser-default" type="text" name="connection[country]">
-				<option value="ireland" <?php echo $this->param( 'country' ) == "ireland" ? 'selected="selected"' : '' ?> >Ireland</option>
-				<option value="useast" <?php echo $this->param( 'country' ) == "useast" ? 'selected="selected"' : '' ?> >US East (N. Virginia)</option>
-				<option value="uswest" <?php echo $this->param( 'country' ) == "uswest" ? 'selected="selected"' : '' ?> >US West (N. Oregon)</option>
+				<optgroup label="<?php echo esc_attr__( 'US Regions', 'thrive-dash' ); ?>">
+					<option value="useast" <?php echo $this->param( 'country' ) == "useast" ? 'selected="selected"' : '' ?> >US East (N. Virginia)</option>
+					<option value="useast2" <?php echo $this->param( 'country' ) == "useast2" ? 'selected="selected"' : '' ?> >US East (Ohio)</option>
+					<option value="uswest1" <?php echo $this->param( 'country' ) == "uswest1" ? 'selected="selected"' : '' ?> >US West (N. California)</option>
+					<option value="uswest" <?php echo $this->param( 'country' ) == "uswest" ? 'selected="selected"' : '' ?> >US West (Oregon)</option>
+				</optgroup>
+				<optgroup label="<?php echo esc_attr__( 'Europe Regions', 'thrive-dash' ); ?>">
+					<option value="ireland" <?php echo $this->param( 'country' ) == "ireland" ? 'selected="selected"' : '' ?> >Europe (Ireland)</option>
+					<option value="frankfurt" <?php echo $this->param( 'country' ) == "frankfurt" ? 'selected="selected"' : '' ?> >Europe (Frankfurt)</option>
+					<option value="london" <?php echo $this->param( 'country' ) == "london" ? 'selected="selected"' : '' ?> >Europe (London)</option>
+					<option value="paris" <?php echo $this->param( 'country' ) == "paris" ? 'selected="selected"' : '' ?> >Europe (Paris)</option>
+					<option value="stockholm" <?php echo $this->param( 'country' ) == "stockholm" ? 'selected="selected"' : '' ?> >Europe (Stockholm)</option>
+					<option value="milan" <?php echo $this->param( 'country' ) == "milan" ? 'selected="selected"' : '' ?> >Europe (Milan)</option>
+				</optgroup>
+				<optgroup label="<?php echo esc_attr__( 'Asia Pacific Regions', 'thrive-dash' ); ?>">
+					<option value="mumbai" <?php echo $this->param( 'country' ) == "mumbai" ? 'selected="selected"' : '' ?> >Asia Pacific (Mumbai)</option>
+					<option value="singapore" <?php echo $this->param( 'country' ) == "singapore" ? 'selected="selected"' : '' ?> >Asia Pacific (Singapore)</option>
+					<option value="sydney" <?php echo $this->param( 'country' ) == "sydney" ? 'selected="selected"' : '' ?> >Asia Pacific (Sydney)</option>
+					<option value="tokyo" <?php echo $this->param( 'country' ) == "tokyo" ? 'selected="selected"' : '' ?> >Asia Pacific (Tokyo)</option>
+					<option value="seoul" <?php echo $this->param( 'country' ) == "seoul" ? 'selected="selected"' : '' ?> >Asia Pacific (Seoul)</option>
+					<option value="osaka" <?php echo $this->param( 'country' ) == "osaka" ? 'selected="selected"' : '' ?> >Asia Pacific (Osaka)</option>
+					<option value="jakarta" <?php echo $this->param( 'country' ) == "jakarta" ? 'selected="selected"' : '' ?> >Asia Pacific (Jakarta)</option>
+				</optgroup>
+				<optgroup label="<?php echo esc_attr__( 'Other Regions', 'thrive-dash' ); ?>">
+					<option value="canada" <?php echo $this->param( 'country' ) == "canada" ? 'selected="selected"' : '' ?> >Canada (Central)</option>
+					<option value="saopaulo" <?php echo $this->param( 'country' ) == "saopaulo" ? 'selected="selected"' : '' ?> >South America (São Paulo)</option>
+					<option value="capetown" <?php echo $this->param( 'country' ) == "capetown" ? 'selected="selected"' : '' ?> >Africa (Cape Town)</option>
+					<option value="bahrain" <?php echo $this->param( 'country' ) == "bahrain" ? 'selected="selected"' : '' ?> >Middle East (Bahrain)</option>
+				</optgroup>
 			</select>
 			<label for="tvd-aw-api-country"><?php echo esc_html__( "Email Zone", 'thrive-dash' ) ?></label>
 		</div>

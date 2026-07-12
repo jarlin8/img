@@ -28,6 +28,7 @@ class Table extends Shortcode {
 				'report-table-columns'      => '',
 				'report-order-by'           => '',
 				'report-order-by-direction' => '',
+				'report-restrict-order-by'  => '',
 				'has-pagination'            => 0,
 				'export-title'              => '',
 			]

@@ -55,7 +55,7 @@ global $tve_thrive_shortcodes;
  * list of shortcode identifier => callback function
  * the callback function will be called with an array of attributes and must return a html code to be inserted into the DOM
  */
-$tve_thrive_shortcodes = array(
+$tve_thrive_shortcodes = [
 	'post_symbol'                         => 'tcb_symbol_shortcode',
 	'optin'                               => 'tve_do_optin_shortcode',
 	'posts_list'                          => 'tve_do_posts_list_shortcode',
@@ -70,7 +70,7 @@ $tve_thrive_shortcodes = array(
 	'ultimatum_shortcode'                 => 'tve_ult_render_shortcode',
 	'quiz_shortcode'                      => 'tqb_render_shortcode',
 	'thrive_widget'                       => 'thrive_widget_render',
-);
+];
 
 /**
  * If a file called .flag-staging-templates exists, turn off caching of cloud templates
@@ -90,6 +90,7 @@ if ( file_exists( plugin_dir_path( __FILE__ ) . '.flag-nocache' ) ) {
 }
 
 require_once TVE_TCB_ROOT_PATH . 'inc/traits/trait-is-singleton.php';
+require_once TVE_TCB_ROOT_PATH . 'inc/traits/trait-has-ranges.php';
 
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-custom-fields-shortcode.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/compat.php';
@@ -103,6 +104,7 @@ require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-elements.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-color-manager.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-font-manager.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-icon-manager.php';
+require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-editor-meta-boxes.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/lightspeed/class-main.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-post.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-utils.php';
@@ -124,9 +126,12 @@ require_once TVE_TCB_ROOT_PATH . 'inc/classes/logo/class-tcb-logo.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/post-list-filter/class-tcb-post-list-filter.php';
 
 require_once TVE_TCB_ROOT_PATH . 'inc/woocommerce/classes/class-main.php';
+require_once TVE_TCB_ROOT_PATH . 'inc/smash-balloon/classes/class-main.php';
 
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/notifications/class-main.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/conditional-display/class-main.php';
+
+require_once TVE_TCB_ROOT_PATH . 'inc/classes/video-reporting/class-main.php';
 
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/user-templates/class-main.php';
 /* we must include these before tve_global_options_init() */
@@ -145,6 +150,7 @@ require_once TVE_TCB_ROOT_PATH . 'landing-page/inc/class-tcb-landing-page.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-lightbox.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-login-element-handler.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-user-profile-handler.php';
+require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-menu-settings.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/helpers/form.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/helpers/file-upload.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/helpers/form-hooks.php';
@@ -153,6 +159,18 @@ require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-scripts.php';
 
 /* init the Event Manager */
 require_once TVE_TCB_ROOT_PATH . 'event-manager/init.php';
+
+//Check if the stock images service is disabled. If it is, don't include the class.
+$stock_images_disabled_transient = get_transient( '_thrive_tvd_tve_stock_images_disable_service' );
+//If the transient is not set, we use the option value.
+$stock_images_disabled_check = false === $stock_images_disabled_transient ? get_option( 'tve_stock_images_disable_service' ) : $stock_images_disabled_transient;
+
+//Ensure class is called only under admin, and when it is not disabled.
+if ( '1' !== $stock_images_disabled_check && is_admin() ) {
+	// Require the Stock images class.
+	require_once TVE_TCB_ROOT_PATH . 'admin/includes/class-tcb-stock-images.php';
+	new TCB_Stock_library();
+}
 
 add_action( 'admin_init', 'tve_revert_page_to_theme' );
 
@@ -191,7 +209,7 @@ function tve_get_seo_content() {
 	$post = get_post( $id );
 
 	global $wp_query;
-	$wp_query->query( [ 'p' => $id ] );
+	$wp_query->query( [ 'p' => $id, 'post_type' => $post->post_type ] );
 
 	/* Make sure Architect content is parsed */
 	add_filter( 'the_content', 'tve_clean_wp_editor_content', - 100 );
@@ -206,9 +224,12 @@ function tve_get_seo_content() {
 		$content = ob_get_clean();
 	}
 
+	$content = str_replace( [ 'data-src', 'data-url' ], [ 'src', 'url' ], $content );
+
 	wp_send_json( array(
-		'post_id' => $post->ID,
-		'content' => $content,
+		'post_id'            => $id,
+		'content'            => $content,
+		'is_edited_with_tar' => (int) get_post_meta( $id, 'tcb_editor_enabled', true ),
 	) );
 }
 
@@ -320,6 +341,9 @@ function tcb_rest_api_init() {
 	TCB_Logo::rest_api_init();
 	TCB_Post_List_Filter::rest_api_init();
 
+	require_once TVE_TCB_ROOT_PATH . 'inc/classes/rest/class-tcb-content-rest.php';
+	TCB_Content_REST::rest_api_init();
+
 	if ( ! empty( $_POST['tar_editor_page'] ) && TCB_Product::has_external_access() ) {
 		TCB_Utils::restore_post_waf_content();
 	}
@@ -361,6 +385,14 @@ add_action( 'init', function () {
 	\TCB\ConditionalDisplay\Main::init();
 
 	\TCB\UserTemplates\Main::init();
+
+	\TCB\Integrations\SmashBalloon\Main::init();
+
+	TCB_Menu_Settings::init();
+
+	TCB_Editor_Meta_Boxes::init();
+
+	\TCB\VideoReporting\Main::init();
 } );
 
 \TCB\Lightspeed\Main::init();
@@ -403,12 +435,12 @@ add_filter( 'tcb_custom_css', 'tcb_custom_css' );
 /**
  *Replaces element type with post_list if the type is post_list_featured
  */
-add_filter( 'tcb_cloud_templates_replace_featured_type', array( 'TCB_Post_List', 'featured_type_replace' ) );
+add_filter( 'tcb_cloud_templates_replace_featured_type', [ 'TCB_Post_List', 'featured_type_replace' ] );
 
 /**
  *Replaces element tag with post_list_featured if the type is post_list_featured
  */
-add_filter( 'tcb_cloud_templates_replace_featured_tag', array( 'TCB_Post_List', 'post_list_tag_replace' ), 10, 2 );
+add_filter( 'tcb_cloud_templates_replace_featured_tag', [ 'TCB_Post_List', 'post_list_tag_replace' ], 10, 2 );
 
 /**
  * Checks if the post type is not blacklisted
@@ -438,9 +470,13 @@ add_action( 'wp_head', function () {
  * @return string
  */
 function tcb_custom_css( $css ) {
+	// Remove extra double quotes from the css.
+	$css = str_replace( array( '"\\"', '\\""' ), '"', $css );
 
 	if ( function_exists( 'tve_dash_is_google_fonts_blocked' ) && tve_dash_is_google_fonts_blocked() ) {
-		$css = preg_replace( '/@import url\((\\\)?\"(http:|https:)?\/\/fonts\.(googleapis|gstatic)\.com([^)]*)\);/', '', $css );
+		// Replace Google Fonts with Bunny Fonts instead of removing them
+		$css = preg_replace( '/@import url\((\\\)?\"(http:|https:)?\/\/fonts\.googleapis\.com([^)]*)\);/', '@import url("https://fonts.bunny.net$3);', $css );
+		$css = preg_replace( '/@import url\((\\\)?\"(http:|https:)?\/\/fonts\.gstatic\.com([^)]*)\);/', '@import url("https://fonts.bunny.net$3);', $css );
 	}
 
 	/**
@@ -469,7 +505,7 @@ function tve_minify_css( $css = '' ) {
 	$css = preg_replace( '/\s{2,}/m', '', $css );
 
 	/* remove spaces before and after , : and ; */
-	$css = preg_replace_callback( '/\s*([,;:{}])(?!:)\s*/m', static function ( $match ) {
+	$css = preg_replace_callback( '/\s*([,;{}])(?!:)\s*/m', static function ( $match ) {
 		return $match[1];
 	}, $css );
 
@@ -507,17 +543,17 @@ if ( ! function_exists( 'tve_page_events' ) ) {
 			}
 			/** @var TCB_Event_Action_Abstract $action */
 			$action                = $actions[ $event_config['a'] ];
-			$registered_actions [] = array(
+			$registered_actions [] = [
 				'class'        => $action,
 				'event_config' => $event_config,
-			);
+			];
 
 			/** @var TCB_Event_Trigger_Abstract $trigger */
 			$trigger                = $triggers[ $event_config['t'] ];
-			$registered_triggers [] = array(
+			$registered_triggers [] = [
 				'class'        => $trigger,
 				'event_config' => $event_config,
-			);
+			];
 
 			if ( ! isset( $javascript_callbacks[ $event_config['a'] ] ) ) {
 				$javascript_callbacks[ $event_config['a'] ] = $action->getJsActionCallback();

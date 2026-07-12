@@ -192,7 +192,12 @@ class TVD_Content_Sets {
 							),
 						),
 					),
-					'exceptions' => array(
+					/**
+					 * Allow Protected files to hook here and modify the exceptions list
+					 *
+					 * @param array $exceptions
+					 */
+					'exceptions' => apply_filters( 'tvd_content_sets_get_content_types_exceptions', array(
 						'tva_courses'    => array(
 							array(
 								'value'    => '',
@@ -239,7 +244,7 @@ class TVD_Content_Sets {
 								'label' => __( 'Within the last', 'thrive-dash' ),
 							),
 						),
-					),
+					) ),
 				),
 				'sets'       => \TVD\Content_Sets\Set::get_items(),
 			) );
@@ -394,4 +399,4 @@ function tvd_content_sets() {
 	return TVD_Content_Sets::get_instance();
 }
 
-add_action( 'init', 'tvd_content_sets', 9 );
+add_action( 'init', 'tvd_content_sets', 8 );

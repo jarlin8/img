@@ -12,7 +12,7 @@
 		<select class="tve-select change" data-fn="changed">
 			<# _.each(this.get_options(), function(option) { #>
 			<option class="tve-option <#= option.class #>" value="<#= option.value #>"
-			<#= option.default? ' selected':'' #> <#= option.disabled? ' disabled':'' #>><#= option.name #></option>
+			<#= option.default? ' selected':'' #> <#= option.disabled? ' disabled':'' #> <#= option.logo ? ` data-image="${option.logo}"` : '' #>><#= option.name #></option>
 			<# }); #>
 		</select>
 	</div>

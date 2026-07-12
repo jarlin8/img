@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- *
+ * @property int     id
  * @property int     status
  * @property string  name
  * @property string  state
@@ -19,6 +19,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @property string  refund_date
  * @property array   tags
  * @property boolean can_update
+ * @property int     grace_period_in_days
+ * @property boolean in_grace_period
+ * @property boolean complementary
  *
  * Representation of a single user license
  * Class TD_TTW_License
@@ -27,15 +30,12 @@ class TD_TTW_License {
 
 	use TD_Magic_Methods;
 
-	const EXPIRED_STATUS = 2;
+	const MEMBERSHIP_TAG = 'all';
 
 	const REFUNDED_STATUS = 3;
 
-	const INVALID_STATUS = 0;
-
-	const MEMBERSHIP_TAG = 'all';
-
 	private $_expected_fields = [
+		'id',
 		'status',
 		'name',
 		'state',
@@ -44,6 +44,11 @@ class TD_TTW_License {
 		'refund_date',
 		'can_update',
 		'mm_product_id',
+		'grace_period_in_days',
+		'in_grace_period',
+		'complementary',
+		'lifetime',
+		'deactivated',
 	];
 
 	public function __construct( $data ) {
@@ -62,14 +67,19 @@ class TD_TTW_License {
 	 */
 	public function is_active() {
 
+		// A site the owner deactivated for this license is not active here, regardless of status.
+		if ( $this->is_deactivated() ) {
+			return false;
+		}
+
 		return in_array(
-			(int) $this->status,
-			array(
-				1, // active
-				9, // pending cancellation
-			),
-			true
-		);
+			       (int) $this->status,
+			       array(
+				       1, // active
+				       9, // pending cancellation
+			       ),
+			       true
+		       ) || $this->complementary === true;
 	}
 
 	/**
@@ -78,28 +88,57 @@ class TD_TTW_License {
 	 * @return bool
 	 */
 	public function is_expired() {
-
-		return self::EXPIRED_STATUS === (int) $this->status;
+		try {
+			return new DateTime( 'now' ) > $this->get_expiration_date();
+		} catch ( Exception $e ) {
+			return true;
+		}
 	}
 
 	/**
-	 * Check if the license is invalid
-	 *
-	 * @return bool
+	 * @return DateTime
+	 * @throws Exception
 	 */
-	public function is_invalid() {
-
-		return self::INVALID_STATUS === (int) $this->status;
+	public function get_expiration_date() {
+		return new DateTime( $this->expiration );
 	}
 
 	/**
-	 * Check if the license is refunded
+	 * @return DateTime
+	 * @throws Exception
+	 */
+	public function get_grace_period_date() {
+		return $this->get_expiration_date()->add( new DateInterval( 'P' . (int) $this->grace_period_in_days . 'D' ) );
+	}
+
+	/**
+	 * Checks if a license is expired and expiration date + grace period in days in the future
 	 *
 	 * @return bool
 	 */
-	public function is_refunded() {
+	public function is_in_grace_period() {
 
-		return self::REFUNDED_STATUS === (int) $this->status;
+		// Owner-deactivated for this site: not active and not in grace — no access path.
+		if ( $this->is_deactivated() || $this->is_active() ) {
+			return false;
+		}
+
+		try {
+			$date = $this->get_expiration_date();
+			$date->add( new DateInterval( 'P' . (int) $this->grace_period_in_days . 'D' ) );
+
+			return new DateTime( 'now' ) < $date;
+		} catch ( Exception $e ) {
+			return false;
+		}
+	}
+
+	/**
+	 * @return bool
+	 * @throws Exception
+	 */
+	public function is_out_of_grace_period() {
+		return $this->is_expired() && ! $this->is_in_grace_period();
 	}
 
 	/**
@@ -113,25 +152,37 @@ class TD_TTW_License {
 	/**
 	 * @return string
 	 */
-	public function get_state() {
-
-		return $this->state;
-	}
-
-	/**
-	 * @return string
-	 */
 	public function get_expiration() {
 
 		return $this->expiration;
 	}
 
 	/**
-	 * @return string
+	 * Whether this is a lifetime (never-expiring) license.
+	 *
+	 * Driven by the `lifetime` flag from /get_licenses_details. Lifetime licenses carry a
+	 * far-future expiration date (so they never expire), but the UI should show "Lifetime"
+	 * rather than that date.
+	 *
+	 * @return bool
 	 */
-	public function get_refunded_date() {
+	public function is_lifetime() {
 
-		return $this->refund_date;
+		return ! empty( $this->lifetime );
+	}
+
+	/**
+	 * Whether the account owner has deactivated THIS license on the current site (per-(license, site),
+	 * via the account-area Deactivate button). Driven by the `deactivated` flag from
+	 * /get_licenses_details, which the server computes for the calling site only. A deactivated
+	 * license grants no access here — is_active() and is_in_grace_period() both return false — until
+	 * the owner reactivates it.
+	 *
+	 * @return bool
+	 */
+	public function is_deactivated() {
+
+		return ! empty( $this->deactivated );
 	}
 
 	/**
@@ -142,5 +193,68 @@ class TD_TTW_License {
 	public function can_update() {
 
 		return true === $this->can_update;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function is_membership() {
+		return in_array( self::MEMBERSHIP_TAG, $this->tags, true );
+	}
+
+	/**
+	 * @return DateInterval
+	 * @throws Exception
+	 */
+	public function get_remaining_grace_period() {
+		try {
+			return ( new DateTime( 'now' ) )->diff( $this->get_grace_period_date() );
+		} catch ( Exception $e ) {
+			return new DateInterval( 'P0D' );
+		}
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_product_name() {
+
+		if ( $this->is_membership() ) {
+			return 'membership';
+		}
+
+		return implode( ',', $this->tags );
+	}
+
+	public function get_state() {
+		return $this->state;
+	}
+
+	public function is_refunded() {
+		return self::REFUNDED_STATUS === (int) $this->status;
+	}
+
+	public function get_refunded_date() {
+		return $this->refund_date;
+	}
+
+	/**
+	 * Checks if tags list contains the $tag
+	 *
+	 * @param $tag
+	 *
+	 * @return bool
+	 */
+	public function has_tag( $tag ) {
+		return in_array( $tag, $this->tags, true );
+	}
+
+	/**
+	 * License data
+	 *
+	 * @return array|mixed
+	 */
+	public function get_data() {
+		return $this->_data;
 	}
 }

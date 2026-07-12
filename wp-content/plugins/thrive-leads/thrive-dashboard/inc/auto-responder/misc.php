@@ -243,7 +243,7 @@ function tve_dash_api_classes_loader( $className ) {
 
 spl_autoload_register( 'tve_dash_api_vendor_loader' );
 spl_autoload_register( 'tve_dash_api_classes_loader' );
-
+do_action( 'thrive_dashboard_autoresponders_loaded' );
 /**
  * AJAX call handler for API logs that are being retried
  * If the subscription is made with success the log is deleted from db

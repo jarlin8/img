@@ -1,8 +1,11 @@
 <hr>
-<div class="tve-advanced-controls extend-grey tve-lg-autofill">
+<div class="tve-advanced-controls tve-lg-autofill">
 	<div class="click dropdown-header" data-fn="toggleAutofill">
 		<span>
 			<?php echo esc_html__( 'Autofill settings', 'thrive-cb' ); ?>
+			<span class="click tve-field-number-autofill-info tcb-hidden" data-fn="openFieldNumberAutofillTooltip" data-paneltlt-hover><?php tcb_icon( 'info-circle-solid' ); ?></span>
+			<span class="click tve-field-country-autofill-info tcb-hidden" data-fn="openFieldCountryAutofillTooltip" data-paneltlt-hover><?php tcb_icon( 'info-circle-solid' ); ?></span>
+			<span class="click tve-field-date-autofill-info tcb-hidden" data-fn="openFieldDateAutofillTooltip" data-paneltlt-hover><?php tcb_icon( 'info-circle-solid' ); ?></span>
 		</span>
 	</div>
 	<div class="dropdown-content">
@@ -57,13 +60,13 @@
 					<option value="" disabled selected hidden><?php echo esc_html__( 'Select User Data', 'thrive-cb' ) ?></option>
 					<option value="ip"><?php echo esc_html__( 'IP Address', 'thrive-cb' ) ?></option>
 					<option value="browser"><?php echo esc_html__( 'Browser', 'thrive-cb' ) ?></option>
-					<option value="wp.username"><?php echo esc_html__( 'Wordpress Username', 'thrive-cb' ) ?></option>
-					<option value="wp.user_email"><?php echo esc_html__( 'Wordpress User Email', 'thrive-cb' ) ?></option>
-					<option value="wp.role"><?php echo esc_html__( 'Wordpress User Role', 'thrive-cb' ) ?></option>
-					<option value="wp.first_name"><?php echo esc_html__( 'Wordpress User First Name', 'thrive-cb' ) ?></option>
-					<option value="wp.last_name"><?php echo esc_html__( 'Wordpress User Last Name', 'thrive-cb' ) ?></option>
-					<option value="wp.nickname"><?php echo esc_html__( 'Wordpress User Nickname', 'thrive-cb' ) ?></option>
-					<option value="wp.display_name"><?php echo esc_html__( 'Wordpress User Public Name', 'thrive-cb' ) ?></option>
+					<option value="wp.username"><?php echo esc_html__( 'WordPress Username', 'thrive-cb' ) ?></option>
+					<option value="wp.user_email"><?php echo esc_html__( 'WordPress User Email', 'thrive-cb' ) ?></option>
+					<option value="wp.role"><?php echo esc_html__( 'WordPress User Role', 'thrive-cb' ) ?></option>
+					<option value="wp.first_name"><?php echo esc_html__( 'WordPress User First Name', 'thrive-cb' ) ?></option>
+					<option value="wp.last_name"><?php echo esc_html__( 'WordPress User Last Name', 'thrive-cb' ) ?></option>
+					<option value="wp.nickname"><?php echo esc_html__( 'WordPress User Nickname', 'thrive-cb' ) ?></option>
+					<option value="wp.display_name"><?php echo esc_html__( 'WordPress User Public Name', 'thrive-cb' ) ?></option>
 				</select>
 			</div>
 			<div class="control-grid tve-lg-variable full-width tcb-hidden" data-key="content">

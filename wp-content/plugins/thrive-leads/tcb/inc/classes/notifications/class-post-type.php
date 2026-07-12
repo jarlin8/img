@@ -19,6 +19,14 @@ class Post_Type {
 	 * @var Post_Type
 	 */
 	private static $_instance;
+	/**
+	 * @var \WP_Post
+	 */
+	private $post;
+	/**
+	 * @var \WP_Post
+	 */
+	private $ID;
 
 	/**
 	 * Post_Type constructor.
@@ -45,6 +53,10 @@ class Post_Type {
 	}
 
 	public static function register_post_type() {
+		if ( post_type_exists( static::NAME ) ) {
+			return;
+		}
+
 		register_post_type(
 			static::NAME,
 			[
@@ -149,28 +161,30 @@ class Post_Type {
 	/**
 	 * Return an instance of the post that edits the notifications
 	 *
-	 * @return Post_Type
+	 * @return Post_Type|null
 	 */
 	public static function instance() {
-		if ( static::$_instance === null ) {
-			if ( Main::is_edit_screen() ) {
-				$post = get_post();
-			} else {
-				$posts = get_posts( [
-					'post_type' => static::NAME,
-				] );
-
-				if ( empty( $posts ) ) {
-					$post = static::create_default();
-				} else {
-					$post = $posts[0];
-				}
-			}
-
-			static::$_instance = new self( $post );
+		if ( static::$_instance !== null ) {
+			return static::$_instance;
 		}
 
-		return static::$_instance;
+		if ( Main::is_edit_screen() ) {
+			$post = get_post();
+			return new self( $post );
+		}
+
+		$posts = get_posts( [
+			'post_type' => static::NAME,
+		] );
+
+		// Return null on frontend if no posts exist
+		if ( empty( $posts ) && ! is_admin() ) {
+			return null;
+		}
+
+		$post = empty( $posts ) ? static::create_default() : $posts[0];
+
+		return new self( $post );
 	}
 
 	/**
@@ -210,6 +224,7 @@ class Post_Type {
 
 	/**
 	 * Check if we're on a notification post type
+	 *
 	 * @return bool
 	 */
 	public static function is_notification() {

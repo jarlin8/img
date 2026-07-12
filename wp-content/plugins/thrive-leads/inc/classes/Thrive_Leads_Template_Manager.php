@@ -8,7 +8,7 @@
  */
 class Thrive_Leads_Template_Manager extends Thrive_Leads_Request_Handler {
 
-	const OPTION_TPL_META = 'tve_leads_saved_tpl_meta';
+	const OPTION_TPL_META    = 'tve_leads_saved_tpl_meta';
 	const OPTION_TPL_CONTENT = 'tve_leads_saved_tpl';
 	public static $file_name = null;
 	/**
@@ -105,8 +105,13 @@ class Thrive_Leads_Template_Manager extends Thrive_Leads_Request_Handler {
 		/**
 		 * set all templates in one array
 		 */
-		$assoc_templates = array_merge( $local_templates, $cloud_templates );
-
+		$error_templates = [];
+		if ( empty( $cloud_templates['error'] ) ) {
+			$assoc_templates = array_merge( $local_templates, $cloud_templates );
+		}else {
+			$assoc_templates = $local_templates;
+			$error_templates = $cloud_templates;
+		}
 		$templates = array();
 
 		if ( ! empty( $assoc_templates ) ) {
@@ -116,7 +121,7 @@ class Thrive_Leads_Template_Manager extends Thrive_Leads_Request_Handler {
 			}
 		}
 
-		return $templates;
+		return [ 'templates'=> $templates, 'error'=> $error_templates ];
 	}
 
 	/**
@@ -264,7 +269,7 @@ class Thrive_Leads_Template_Manager extends Thrive_Leads_Request_Handler {
 	protected function config() {
 		$config = include dirname( dirname( dirname( __FILE__ ) ) ) . '/editor-templates/_config.php';
 
-		$cloud = tve_leads_get_downloaded_templates( $this->type() );
+		$cloud = tve_leads_get_downloaded_templates( $this->type() ) ?: array();
 		$type  = isset( $config[ $this->type() ] ) && is_array( $config[ $this->type() ] ) ? $config[ $this->type() ] : array();
 
 		$config[ $this->type() ] = array_merge( $type, $cloud );
@@ -563,6 +568,66 @@ class Thrive_Leads_Template_Manager extends Thrive_Leads_Request_Handler {
 		$stateManager = Thrive_Leads_State_Manager::instance( $variation );
 
 		return $stateManager->state_data( $this->variation );
+	}
+
+	/**
+	 * Invalidate the cloud templates cache for the current form type and re-fetch the template list.
+	 *
+	 * Gives the user a self-service way to refresh the Thrive Leads Library when the cloud templates
+	 * transient is stuck on an empty or outdated response, mirroring the "Refresh from cloud" control
+	 * from the Architect content blocks library.
+	 *
+	 * @return array
+	 */
+	public function api_refresh_cloud() {
+		$form_type = tve_leads_get_form_type_from_variation( $this->variation, true, false );
+
+		if ( empty( $form_type ) ) {
+			return array(
+				'success'   => false,
+				'templates' => array(),
+				'error'     => array( 'error' => __( 'Invalid form type.', 'thrive-leads' ) ),
+			);
+		}
+
+		$get_multi_step = empty( $this->variation['parent_id'] );
+
+		/* delete the same transient(s) that tve_leads_get_cloud_templates() reads for this form type */
+		$cloud_types = $form_type === 'two_step_lightbox' ? array( 'lightbox', 'screen_filler' ) : array( self::tpl_type_map( $form_type ) );
+		foreach ( $cloud_types as $cloud_type ) {
+			delete_transient( 'tve_leads_' . $cloud_type . '_template_cloud' );
+		}
+
+		$templates = self::get_templates( $form_type, $get_multi_step );
+		$error     = $templates['error'];
+
+		/**
+		 * A failed cloud request is caught upstream and returns an empty list with no error payload,
+		 * leaving only the local blank template. Surface a notice so refreshing doesn't silently wipe
+		 * the list with no explanation - which is exactly the scenario this button exists to recover from.
+		 */
+		$has_cloud = false;
+		foreach ( $templates['templates'] as $tpl ) {
+			if ( ! empty( $tpl['cloud'] ) ) {
+				$has_cloud = true;
+				break;
+			}
+		}
+
+		if ( empty( $error ) && ! $has_cloud ) {
+			$error = array( 'error' => __( 'Could not load templates from the cloud. Please check your connection and try again.', 'thrive-leads' ) );
+		}
+
+		/**
+		 * Report failure when the cloud returned nothing usable so the editor keeps the currently
+		 * displayed list and surfaces the error, instead of collapsing it down to the blank template.
+		 * The transients are already cleared, so the next modal open will re-fetch.
+		 */
+		return array(
+			'success'   => $has_cloud,
+			'templates' => $templates['templates'],
+			'error'     => $error,
+		);
 	}
 
 	/**

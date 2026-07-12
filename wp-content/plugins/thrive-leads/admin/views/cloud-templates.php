@@ -20,7 +20,7 @@
 		}
 		$href .= $template;
 		?>
-		<a href="http://landingpages.thrivethemes.com/thrive-leads/?tl_preview=<?php echo $href; ?>&form_type=<?php echo $tpl['form_type']; ?>"
+		<a href="https://landingpages.thrivethemes.com/thrive-leads/?tl_preview=<?php echo $href; ?>&form_type=<?php echo $tpl['form_type']; ?>"
 		   class="tve_editor_button tve_editor_button_default tve_editor_button_small"
 		   target="_blank">
 			<?php echo __( 'Preview', 'thrive-leads' ) ?>

@@ -184,7 +184,8 @@ class Conditional_Display_Group {
 					$display['html'] = str_replace( array_keys( $css_id_map ), array_values( $css_id_map ), $display['html'] );
 
 					/* replace other groups inside the display */
-					$display['html'] = static::clone_conditional_groups_in_content( $display['html'], $css_id_map );
+					$cloned_content = static::clone_conditional_groups_in_content( $display['html'], $css_id_map );
+					$display['html'] = $cloned_content['content'];
 
 					$meta_value[ $index ] = $display;
 				}
@@ -441,9 +442,11 @@ class Conditional_Display_Group {
 	 * @param string $content
 	 * @param array  $css_id_map
 	 *
-	 * @return string
+	 * @return array
 	 */
 	public static function clone_conditional_groups_in_content( $content, $css_id_map = [] ) {
+		$display_group_keys = [];
+		
 		/* match display group key */
 		preg_match_all( '/\[' . Shortcode::NAME . " group='([^']*)'/m", $content, $matches );
 
@@ -455,10 +458,16 @@ class Conditional_Display_Group {
 					$new_display_group = $display_group->clone_group( $css_id_map );
 
 					$content = str_replace( $display_group_key, $new_display_group->get_key(), $content );
+					
+					/* Store the mapping of old key to new key */
+					$display_group_keys[ $display_group_key ] = $new_display_group->get_key();
 				}
 			}
 		}
 
-		return $content;
+		return [
+			'content' => $content,
+			'display_group_keys' => $display_group_keys,
+		];
 	}
 }

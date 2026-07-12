@@ -49,10 +49,31 @@ class TCB_Tab_Item_Element extends TCB_Element_Abstract {
 		return array(
 			'tab_item'   => array(
 				'config' => array(
+					'TabItemType'      => array(
+						'config' => array(
+							'name'       => __( 'Type', 'thrive-cb' ),
+							'full-width' => true,
+							'buttons'    => array(
+								array(
+									'value' => 'icon',
+									'text'  => __( 'Icon Only', 'thrive-cb' ),
+								),
+								array(
+									'value' => 'text_icon',
+									'text'  => __( 'Icon + Text', 'thrive-cb' ),
+								),
+								array(
+									'value'   => 'text',
+									'text'    => __( 'Text Only', 'thrive-cb' ),
+									'default' => true,
+								),
+							),
+						),
+					),
 					'TextTypeDropdown' => array(
 						'config'  => array(
 							'default'     => 'none',
-							'name'        => __( 'Change text type', 'thrive-cb' ),
+							'name'        => __( 'Change Text Type', 'thrive-cb' ),
 							'label_col_x' => 6,
 							'options'     => array(
 								array(
@@ -91,9 +112,9 @@ class TCB_Tab_Item_Element extends TCB_Element_Abstract {
 						),
 						'extends' => 'Select',
 					),
-					'HasIcon'          => array(
+					'SecondaryText'    => array(
 						'config'  => array(
-							'label' => __( 'Show Icon', 'thrive-cb' ),
+							'label' => __( 'Secondary Text', 'thrive-cb' ),
 						),
 						'extends' => 'Switch',
 					),
@@ -122,6 +143,28 @@ class TCB_Tab_Item_Element extends TCB_Element_Abstract {
 						'extends'    => 'Slider',
 						'css_suffix' => ' .tve-tab-icon',
 						'css_prefix' => $prefix_config,
+					),
+					'FontColor'        => array(
+						'css_suffix' => $suffix,
+						'config'  => array(
+							'default' => '000',
+							'label'   => 'Color',
+							'options' => array(
+								'output' => 'object',
+							),
+						),
+						'extends' => 'ColorPicker',
+					),
+					'FontSize'         => array(
+						'config'  => array(
+							'default' => '16',
+							'min'     => '1',
+							'max'     => '100',
+							'label'   => '',
+							'um'      => array( 'px', 'em' ),
+							'css'     => 'fontSize',
+						),
+						'extends' => 'FontSize',
 					),
 				),
 			),
@@ -155,8 +198,7 @@ class TCB_Tab_Item_Element extends TCB_Element_Abstract {
 					),
 					'TextTransform' => array(
 						'css_suffix' => $suffix,
-
-						'important' => true,
+						'important'  => true,
 					),
 				),
 				'disabled_controls' => array( 'TextAlign', '.tve-advanced-controls' ),

@@ -23,33 +23,44 @@ unset( $available_apis['zoom'] );
 <?php include TVE_DASH_PATH . '/templates/header.phtml'; ?>
 <div class="tvd-v-spacer"></div>
 <div class="tvd-container tvd-hide tvd-show-onload">
-	<h3 class="tvd-section-title"><?php echo esc_html__( "Active Connections", 'thrive-dash' ) ?></h3>
-	<div class="tvd-row tvd-api-list"></div>
+	<div class="td-api-tabs-bar">
+		<button type="button" class="td-tab-btn active" data-tab="connections"><?php echo esc_html__( 'Active Connections', 'thrive-dash' ); ?></button>
+		<button type="button" class="td-tab-btn" data-tab="api-keys"><?php echo esc_html__( 'API Keys', 'thrive-dash' ); ?> <span class="td-tab-badge"><?php echo esc_html__( 'NEW', 'thrive-dash' ); ?></span></button>
+	</div>
 
-	<?php if ( ! empty( Thrive_Dash_List_Manager::get_third_party_autoresponders() ) ) : ?>
-		<h3 class="tvd-section-title"><?php echo esc_html__( 'Third Party Connections', 'thrive-dash' ) ?></h3>
-		<div class="tvd-row tvd-third-party-api-list"></div>
-	<?php endif; ?>
+	<div class="td-tab-panel active" id="td-panel-connections">
+		<h3 class="tvd-section-title"><?php echo esc_html__( "Active Connections", 'thrive-dash' ) ?></h3>
+		<div class="tvd-row tvd-api-list"></div>
 
-	<div class="tvd-row">
-		<div class="tvd-col tvd-s12">
-			<div style="height: 100px"></div>
+		<?php if ( ! empty( Thrive_Dash_List_Manager::get_third_party_autoresponders() ) ) : ?>
+			<h3 class="tvd-section-title"><?php echo esc_html__( 'Third Party Connections', 'thrive-dash' ) ?></h3>
+			<div class="tvd-row tvd-third-party-api-list"></div>
+		<?php endif; ?>
+
+		<div class="tvd-row">
+			<div class="tvd-col tvd-s12">
+				<div style="height: 100px"></div>
+			</div>
+		</div>
+
+		<div class="tvd-row tvd-connections-footer">
+			<div class="tvd-col tvd-s12 tvd-m6">
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=tve_dash_section' ) ); ?>"
+				   class="tvd-waves-effect tvd-waves-light tvd-btn-small tvd-btn-gray">
+					<?php echo esc_html__( "Back To Dashboard", 'thrive-dash' ); ?>
+				</a>
+			</div>
+			<div class="tvd-col tvd-s12 tvd-m6">
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=tve_dash_api_error_log' ) ); ?>"
+				   class="tvd-btn-flat tvd-btn-flat-primary tvd-btn-flat-dark tvd-waves-effect tvd-right tvd-btn-small">
+					<?php echo esc_html__( "View Error Logs", 'thrive-dash' ); ?>
+				</a>
+			</div>
 		</div>
 	</div>
 
-	<div class="tvd-row tvd-connections-footer">
-		<div class="tvd-col tvd-s12 tvd-m6">
-			<a href="<?php echo esc_url( admin_url( 'admin.php?page=tve_dash_section' ) ); ?>"
-			   class="tvd-waves-effect tvd-waves-light tvd-btn-small tvd-btn-gray">
-				<?php echo esc_html__( "Back To Dashboard", 'thrive-dash' ); ?>
-			</a>
-		</div>
-		<div class="tvd-col tvd-s12 tvd-m6">
-			<a href="<?php echo esc_url( admin_url( 'admin.php?page=tve_dash_api_error_log' ) ); ?>"
-			   class="tvd-btn-flat tvd-btn-flat-primary tvd-btn-flat-dark tvd-waves-effect tvd-right tvd-btn-small">
-				<?php echo esc_html__( "View Error Logs", 'thrive-dash' ); ?>
-			</a>
-		</div>
+	<div class="td-tab-panel" id="td-panel-api-keys">
+		<?php \TVE\Dashboard\Public_API\TD_API_Admin::render_tab_content(); ?>
 	</div>
 </div>
 
@@ -62,7 +73,9 @@ unset( $available_apis['zoom'] );
 			<div class="tvd-row">
 				<div class="tvd-col tvd-s12 tvd-m6">
 					<h4>
-						<#= item.get('title') #>
+						<#= item.get('title') === 'Brevo' ? 'Brevo (SendinBlue)' : item.get('title') #>
+						<?php /* Raw HTML output intentional - badge HTML is pre-escaped in prepare_json() using esc_attr() and esc_html() */ ?>
+						<#= item.get('upgrade_badge') || '' #>
 					</h4>
 				</div>
 				<div class="tvd-col tvd-s12 tvd-m6">
@@ -159,7 +172,7 @@ unset( $available_apis['zoom'] );
 			<i class="tvd-icon-check tvd-icon-big tvd-icon-border tvd-icon-rounded"></i>
 			<h3 class="tvd-modal-title">
 				<#= item.get('title') #><br/><?php echo esc_html__( "Connection Ready!", 'thrive-dash' ) ?></h3>
-			<p>
+			<p class="tvd-open-video" data-source="KuZcvyv-Tvs">
 				<# if(typeof item.get('success_message') !== 'undefined' && item.get('success_message') != '') { #>
 				<#= item.get('success_message') #>
 				<# } else { #>
@@ -171,9 +184,12 @@ unset( $available_apis['zoom'] );
 				<?php echo esc_html__( "You can now connect your opt-in forms to ", 'thrive-dash' ) ?>
 				<#= item.get('title') #>.
 
-				<# if ( item.get('type') !== 'storage' ) { #>
-				<a class="wistia-popover[height=450,playerColor=2bb914,width=800]"
-				   href="//fast.wistia.net/embed/iframe/7sv6uvfshp?popover=true">
+				<# if ( item.get('key') === 'aweber' ) { #>
+				<a href="https://thrivethemes.com/docs/setting-up-an-api-connection-with-aweber/" target="_blank" onclick="event.stopPropagation();">
+					<?php echo esc_html__( "See how it's done.", 'thrive-dash' ) ?>
+				</a>
+				<# } else if ( item.get('type') !== 'storage' ) { #>
+				<a>
 					<?php echo esc_html__( "See how it's done.", 'thrive-dash' ) ?>
 				</a>
 				<# } #>

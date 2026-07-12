@@ -73,52 +73,52 @@ return array(
 	'PHPInsertCode'                    => __( 'PHP Insert Code', 'thrive-leads' ),
 	'MissingAssetFiles'                => __( 'At least a file is required', 'thrive-leads' ),
 	'AddNewFormVideo'                  => sprintf(
-		'<a href="%s" title="%s" class="tl-play-link wistia-popover[height=450,playerColor=2bb914,width=800]"><span class="tvd-icon-play"> </span></a>',
+		'<a data-source="%s" title="%s" class="tl-play-link tvd-open-video"><span class="tvd-icon-play"> </span></a>',
 		$tve_leads_help_videos['Forms'],
 		__( 'Creating Forms', 'thrive-leads' )
 	),
 	'AddNewGroupVideo'                 => sprintf(
-		'<a href="%s" title="%s" class="tl-play-link wistia-popover[height=450,playerColor=2bb914,width=800]"><span class="tvd-icon-play"> </span></a>',
+		'<a data-source="%s" title="%s" class="tl-play-link tvd-open-video"><span class="tvd-icon-play"> </span></a>',
 		$tve_leads_help_videos['LeadGroups'],
 		__( 'Lead Groups', 'thrive-leads' )
 	),
 	'AddNewShortcodeVideo'             => sprintf(
-		'<a href="%s" title="%s" class="tl-play-link wistia-popover[height=450,playerColor=2bb914,width=800]"><span class="tvd-icon-play"> </span></a>',
+		'<a data-source="%s" title="%s" class="tl-play-link tvd-open-video"><span class="tvd-icon-play"> </span></a>',
 		$tve_leads_help_videos['LeadShortcodes'],
 		__( 'Lead Shortcodes', 'thrive-leads' )
 	),
 	'AddNewTwoStepLightboxVideo'       => sprintf(
-		'<a href="%s" title="%s" class="tl-play-link wistia-popover[height=450,playerColor=2bb914,width=800]"><span class="tvd-icon-play"> </span></a>',
+		'<a data-source="%s" title="%s" class="tl-play-link tvd-open-video"><span class="tvd-icon-play"> </span></a>',
 		$tve_leads_help_videos['TwoStepLightbox'],
 		__( 'Lead Shortcodes', 'thrive-leads' )
 	),
 	'AddNewAssetGroupVideo'            => sprintf(
-		'<a href="%s" title="%s" class="tl-play-link wistia-popover[height=450,playerColor=2bb914,width=800]"><span class="tvd-icon-play"> </span></a>',
+		'<a data-source="%s" title="%s" class="tl-play-link tvd-open-video"><span class="tvd-icon-play"> </span></a>',
 		$tve_leads_help_videos['AssetGroup'],
 		__( 'Asset Groups', 'thrive-leads' )
 	),
 	'AddNewOneClickSignupVideo'        => sprintf(
-		'<a href="%s" title="%s" class="tl-play-link wistia-popover[height=450,playerColor=2bb914,width=800]"><span class="tvd-icon-play"> </span></a>',
+		'<a data-source="%s" title="%s" class="tl-play-link tvd-open-video"><span class="tvd-icon-play"> </span></a>',
 		$tve_leads_help_videos['SignupSegue'],
 		__( 'Signup Segue', 'thrive-leads' )
 	),
 	'TriggerSettingsVideo'             => sprintf(
-		'<a href="%s" title="%s" class="tl-play-link wistia-popover[height=450,playerColor=2bb914,width=800]"><span class="tvd-icon-play"> </span></a>',
+		'<a data-source="%s" title="%s" class="tl-play-link tvd-open-video"><span class="tvd-icon-play"> </span></a>',
 		$tve_leads_help_videos['TriggerSettings'],
 		__( 'Trigger settings', 'thrive-leads' )
 	),
 	'StartVariationTestVideo'          => sprintf(
-		'<a href="%s" title="%s" class="tl-play-link wistia-popover[height=450,playerColor=2bb914,width=800]"><span class="tvd-icon-play"> </span></a>',
+		'<a data-source="%s" title="%s" class="tl-play-link tvd-open-video"><span class="tvd-icon-play"> </span></a>',
 		$tve_leads_help_videos['VariationTest'],
 		__( 'Testing Form Variations', 'thrive-leads' )
 	),
 	'StartGroupTestVideo'              => sprintf(
-		'<a href="%s" title="%s" class="tl-play-link wistia-popover[height=450,playerColor=2bb914,width=800]"><span class="tvd-icon-play"> </span></a>',
+		'<a data-source="%s" title="%s" class="tl-play-link tvd-open-video"><span class="tvd-icon-play"> </span></a>',
 		$tve_leads_help_videos['GroupTest'],
 		__( 'Testing Opt-In Form Types', 'thrive-leads' )
 	),
 	'GroupSettingsVideo'               => sprintf(
-		'<a href="%s" title="%s" class="tl-play-link wistia-popover[height=450,playerColor=2bb914,width=800]"><span class="tvd-icon-play"> </span></a>',
+		'<a data-source="%s" title="%s" class="tl-play-link tvd-open-video"><span class="tvd-icon-play"> </span></a>',
 		$tve_leads_help_videos['GroupDisplaySettings'],
 		__( 'Group settings', 'thrive-leads' )
 	),
@@ -133,4 +133,34 @@ return array(
 	'failStopVariation'                => __( 'An error occurred while stopping the variation.', 'thrive-leads' ),
 	'successfulStopVariation'          => __( 'The variation has been stopped.', 'thrive-leads' ),
 	'stoppedVariationRowTooltip'       => __( 'Stopped on ', 'thrive-leads' ),
+	/* Duplication messages */
+	'ShortcodeDuplicated'              => __( 'Lead Shortcode duplicated successfully', 'thrive-leads' ),
+	'TwoStepLightboxDuplicated'        => __( 'ThriveBox duplicated successfully', 'thrive-leads' ),
+	'GroupDuplicated'                  => __( 'Lead Group duplicated successfully', 'thrive-leads' ),
+	'FormTypeDuplicated'               => __( 'Form Type duplicated successfully', 'thrive-leads' ),
+	'DuplicateFormTypeToGroup'         => __( 'Duplicate Form Type to Group', 'thrive-leads' ),
+	'SelectTargetGroup'                => __( '-- Select a Lead Group --', 'thrive-leads' ),
+	'FormTypeAlreadyExists'            => __( 'The selected group already has a form type of this kind. Please choose a different group.', 'thrive-leads' ),
+	'NoOtherGroupsAvailable'           => __( 'No other Lead Groups available. Please create another group first.', 'thrive-leads' ),
+	'DuplicateForm'                    => __( 'Duplicate Form', 'thrive-leads' ),
+	'DuplicateFormToShortcode'         => __( 'Duplicate Form to Another Shortcode', 'thrive-leads' ),
+	'FormDuplicatedToShortcode'        => __( 'Form duplicated to shortcode successfully', 'thrive-leads' ),
+	'SelectTargetShortcode'            => __( '-- Select a Lead Shortcode --', 'thrive-leads' ),
+	'DuplicateFormToGroup'             => __( 'Duplicate Form to Another Group', 'thrive-leads' ),
+	'FormDuplicatedToGroup'            => __( 'Form duplicated to group successfully', 'thrive-leads' ),
+	'DuplicateToAnotherGroup'          => __( 'Duplicate to another group', 'thrive-leads' ),
+	'DuplicateToAnotherGroupDesc'      => __( 'Copy this form to a different lead group', 'thrive-leads' ),
+	'ErrorDuplicatingGroup'            => __( 'Error duplicating Lead Group', 'thrive-leads' ),
+	'ErrorDuplicatingShortcode'        => __( 'Error duplicating Lead Shortcode', 'thrive-leads' ),
+	'ErrorDuplicatingThriveBox'        => __( 'Error duplicating ThriveBox', 'thrive-leads' ),
+	'ErrorDuplicatingFormType'         => __( 'Error duplicating Form Type', 'thrive-leads' ),
+	'ErrorDuplicatingFormToGroup'      => __( 'Error duplicating form to group', 'thrive-leads' ),
+	'ErrorDuplicatingFormToShortcode'  => __( 'Error duplicating form to shortcode', 'thrive-leads' ),
+	'DuplicateFormToThriveBox'         => __( 'Duplicate Form to Another ThriveBox', 'thrive-leads' ),
+	'FormDuplicatedToThriveBox'        => __( 'Form duplicated to ThriveBox successfully', 'thrive-leads' ),
+	'SelectTargetThriveBox'            => __( '-- Select a ThriveBox --', 'thrive-leads' ),
+	'NoOtherThriveBoxesAvailable'      => __( 'No other ThriveBoxes available. Please create another ThriveBox first.', 'thrive-leads' ),
+	'DuplicateToAnotherThriveBox'      => __( 'Duplicate to another ThriveBox', 'thrive-leads' ),
+	'DuplicateToAnotherThriveBoxDesc'  => __( 'Copy this form to a different ThriveBox', 'thrive-leads' ),
+	'ErrorDuplicatingFormToThriveBox'  => __( 'Error duplicating form to ThriveBox', 'thrive-leads' ),
 );

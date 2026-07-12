@@ -6,7 +6,37 @@ window.TL_Front = window.TL_Front || {};
 /* minor hackery to ensure we have this available */
 window.ThriveGlobal = window.ThriveGlobal || {$j: jQuery.noConflict()};
 
+const videoIframeSelector = '.thrv_responsive_video iframe, .thrv_custom_html_shortcode iframe';
+const videoSourceSelector = '.thrv_responsive_video video source';
 let modulesFinishedLoading = false;
+
+/**
+ * Form types that are trigger-based and should have their impressions tracked
+ * only when the form becomes visible, not on page load.
+ *
+ * This constant is populated from PHP via localized script data to ensure
+ * it stays synchronized with the server-side definition.
+ *
+ * @see https://github.com/awesomemotive/thrive-themes/issues/2956
+ * @see tve_leads_get_trigger_based_form_types() PHP function that defines these types
+ * @see tve_leads_prepare_script_config() Where this is localized to JavaScript
+ *
+ * @todo Future enhancement: Check the actual trigger type (page_load vs time/scroll/exit/click)
+ *       and only defer impressions for non-page_load triggers. All these form types support
+ *       page_load as a trigger option.
+ */
+const TRIGGER_BASED_FORM_TYPES = ( typeof TL_Const !== 'undefined' && TL_Const.trigger_based_form_types ) 
+	? TL_Const.trigger_based_form_types 
+	: [ 'lightbox', 'screen_filler', 'slide_in', 'ribbon' ]; // Fallback for edge cases
+
+/**
+ * Form type prefixes that use Intersection Observer for viewport-based impression tracking.
+ * These forms are embedded inline and may be below the fold, so we track impressions
+ * only when they become visible in the viewport.
+ *
+ * @see https://github.com/awesomemotive/thrive-themes/issues/2956
+ */
+const VIEWPORT_BASED_FORM_PREFIXES = [ 'shortcode_' ];
 
 TL_Front.add_page_css = function ( stylesheets ) {
 	ThriveGlobal.$j.each( stylesheets, function ( _id, href ) {
@@ -184,28 +214,327 @@ TL_Front.add_page_js = function ( links, onLoad ) {
 	check_loaded();
 };
 
-TL_Front.do_impression = function () {
-	var data = TL_Front.impressions_data;
-	if ( data === undefined ) {
-		console.log( "No form to register impression for !" );
+/**
+ * Send impression data to the server.
+ *
+ * @param {Object} impressionData - The impression data to send
+ * @param {Object} options - Optional settings
+ * @param {boolean} options.useBatching - Whether to use TVE_Dash batching (default: false)
+ */
+TL_Front.send_impression = function ( impressionData, options ) {
+	if ( ! impressionData ) {
 		return;
 	}
+
+	options = options || {};
 
 	var ajax_data = {
 		security: TL_Const.security,
 		action: TL_Const.action_impression,
-		tl_data: data,
+		tl_data: impressionData,
 		current_screen: TL_Const.current_screen
 	};
+
 	ThriveGlobal.$j.each( TL_Const.custom_post_data, function ( k, v ) {
 		ajax_data[ k ] = v;
 	} );
 
-	if ( window.TVE_Dash && ! TVE_Dash.ajax_sent ) {
+	if ( options.useBatching && window.TVE_Dash && ! TVE_Dash.ajax_sent ) {
 		TVE_Dash.add_load_item( 'tl_impression', ajax_data );
 	} else {
 		ThriveGlobal.$j.post( TL_Const.ajax_url, ajax_data );
 	}
+};
+
+/**
+ * Check if a form type is viewport-based (needs Intersection Observer).
+ *
+ * @param {string} formType - The form type key (e.g., 'shortcode_123')
+ * @returns {boolean}
+ */
+TL_Front.isViewportBasedForm = function ( formType ) {
+	return VIEWPORT_BASED_FORM_PREFIXES.some( function ( prefix ) {
+		return formType.indexOf( prefix ) === 0;
+	} );
+};
+
+/**
+ * Process and setup viewport-based impressions for tracking.
+ * Separates viewport-based forms from other form types and stores them for observation.
+ * Observers are initialized separately via event system.
+ *
+ * @param {Object} impressionsData - Object containing impression data keyed by formType
+ *
+ * @see https://github.com/awesomemotive/thrive-themes/issues/2956
+ */
+TL_Front.setupViewportImpressions = function ( impressionsData ) {
+	if ( ! impressionsData || Object.keys( impressionsData ).length === 0 ) {
+		return;
+	}
+
+	// Initialize storage objects
+	TL_Front.deferred_impressions = TL_Front.deferred_impressions || {};
+	TL_Front.viewport_impressions = TL_Front.viewport_impressions || {};
+
+	// Separate viewport-based forms from trigger-based forms
+	Object.keys( impressionsData ).forEach( function ( formType ) {
+		if ( TL_Front.isViewportBasedForm( formType ) ) {
+			// Viewport-based form (shortcode) - use Intersection Observer
+			TL_Front.viewport_impressions[ formType ] = impressionsData[ formType ];
+		} else if ( TRIGGER_BASED_FORM_TYPES.indexOf( formType ) !== -1 ) {
+			// Trigger-based form - use event-based tracking
+			TL_Front.deferred_impressions[ formType ] = impressionsData[ formType ];
+		}
+	} );
+};
+
+/**
+ * Track impressions for forms on page load.
+ * Uses batching when TVE_Dash is available.
+ *
+ * Note: Trigger-based forms (lightbox, screen_filler, slide_in, ribbon) are excluded from
+ * page-load impression tracking. Their impressions are tracked when they become visible.
+ *
+ * Note: Viewport-based forms (shortcodes) are also excluded. Their impressions are tracked
+ * using Intersection Observer when they enter the viewport.
+ *
+ * @see https://github.com/awesomemotive/thrive-themes/issues/2956
+ */
+TL_Front.do_impression = function () {
+	if ( ! TL_Front.impressions_data ) {
+		return;
+	}
+
+	var pageLoadImpressions = {},
+		deferredData = {};
+
+	// Separate page-load impressions from deferred impressions in a single pass
+	Object.keys( TL_Front.impressions_data ).forEach( function ( formType ) {
+		if ( TRIGGER_BASED_FORM_TYPES.indexOf( formType ) !== -1 || TL_Front.isViewportBasedForm( formType ) ) {
+			// Trigger-based or viewport-based form - defer impression tracking
+			deferredData[ formType ] = TL_Front.impressions_data[ formType ];
+		} else {
+			// Standard form - track on page load
+			pageLoadImpressions[ formType ] = TL_Front.impressions_data[ formType ];
+		}
+	} );
+
+	// Setup deferred and viewport-based impressions
+	if ( Object.keys( deferredData ).length > 0 ) {
+		TL_Front.setupViewportImpressions( deferredData );
+		// Initialize observers immediately - DOM is already ready at this point
+		TL_Front.initViewportObservers();
+	}
+
+	// Send only page-load impressions (non-deferred forms)
+	if ( Object.keys( pageLoadImpressions ).length > 0 ) {
+		TL_Front.send_impression( pageLoadImpressions, { useBatching: true } );
+	}
+};
+
+/**
+ * Initialize Intersection Observers for viewport-based forms (shortcodes).
+ * Tracks impression when the form enters the viewport.
+ *
+ * Strategy:
+ * - IntersectionObserver fires immediately when first attached with current state
+ * - We skip this initial callback and only track on actual viewport entry
+ * - This ensures impressions are only tracked when forms scroll into view
+ * - Prevents creating multiple observers for the same elements
+ *
+ * @see https://github.com/awesomemotive/thrive-themes/issues/2956
+ */
+TL_Front.initViewportObservers = function () {
+	if ( ! TL_Front.viewport_impressions || Object.keys( TL_Front.viewport_impressions ).length === 0 ) {
+		return;
+	}
+
+	// Check for Intersection Observer support
+	if ( ! ( 'IntersectionObserver' in window ) ) {
+		// Fallback: track all viewport impressions immediately if IO not supported
+		Object.keys( TL_Front.viewport_impressions ).forEach( function ( formType ) {
+			TL_Front.trackViewportImpression( formType );
+		} );
+		return;
+	}
+
+	// If observer already exists, reuse it instead of creating a new one
+	if ( ! TL_Front.viewportObserver ) {
+		// Track whether we've seen the initial callback for each element
+		// This prevents tracking impressions on the initial IO callback
+		TL_Front.viewportObserverInitialCallbacks = TL_Front.viewportObserverInitialCallbacks || new WeakMap();
+		
+		// Track which elements are already being observed to prevent duplicates
+		TL_Front.viewportObservedElements = TL_Front.viewportObservedElements || new WeakSet();
+
+		// Create observer with threshold of 0.5 (50% visible)
+		TL_Front.viewportObserver = new IntersectionObserver( function ( entries ) {
+			entries.forEach( function ( entry ) {
+				var element = entry.target;
+				
+				// Check if this is the initial callback (fired when observer is first attached)
+				if ( ! TL_Front.viewportObserverInitialCallbacks.has( element ) ) {
+					// Mark that we've seen the initial callback for this element
+					TL_Front.viewportObserverInitialCallbacks.set( element, true );
+					// Don't track impression on initial callback - only track when element
+					// transitions from not-intersecting to intersecting (i.e., scrolls into view)
+					return;
+				}
+				
+				// This is a real intersection change (element scrolled into view)
+				if ( entry.isIntersecting ) {
+					var $element = ThriveGlobal.$j( element ),
+						formType = $element.attr( 'data-tl-type' ) || $element.closest( '.tve-leads-conversion-object' ).attr( 'data-tl-type' );
+
+					if ( formType && TL_Front.viewport_impressions[ formType ] ) {
+						TL_Front.trackViewportImpression( formType );
+						// Stop observing this element and remove from tracked set
+						TL_Front.viewportObserver.unobserve( element );
+						TL_Front.viewportObservedElements.delete( element );
+					}
+				}
+			} );
+		}, {
+			threshold: 0.5 // Trigger when 50% of the element is visible
+		} );
+	}
+
+	// Observe all shortcode elements that aren't already being observed
+	Object.keys( TL_Front.viewport_impressions ).forEach( function ( formType ) {
+		// Skip if already tracked
+		if ( TL_Front.viewport_impressions[ formType ]._tracked ) {
+			return;
+		}
+		
+		// Find element by data-tl-type attribute
+		var $element = ThriveGlobal.$j( '.tve-leads-conversion-object[data-tl-type="' + formType + '"]' );
+		
+		if ( ! $element.length ) {
+			return;
+		}
+		
+		var element = $element[ 0 ];
+		
+		// Check if we're already observing this element
+		if ( TL_Front.viewportObservedElements.has( element ) ) {
+			return;
+		}
+		
+		TL_Front.viewportObservedElements.add( element );
+		TL_Front.viewportObserver.observe( element );
+	} );
+};
+
+/**
+ * Track impression for a viewport-based form when it becomes visible.
+ *
+ * @param {string} formType - The form type (e.g., 'shortcode_123')
+ *
+ * @see https://github.com/awesomemotive/thrive-themes/issues/2956
+ */
+TL_Front.trackViewportImpression = function ( formType ) {
+	if ( ! formType || ! TL_Front.viewport_impressions || ! TL_Front.viewport_impressions[ formType ] ) {
+		return;
+	}
+
+	// Check if impression was already tracked
+	if ( TL_Front.viewport_impressions[ formType ]._tracked ) {
+		return;
+	}
+
+	// Mark as tracked to prevent duplicate impressions
+	TL_Front.viewport_impressions[ formType ]._tracked = true;
+
+	var impressionData = {};
+	impressionData[ formType ] = TL_Front.viewport_impressions[ formType ];
+
+	TL_Front.send_impression( impressionData );
+};
+
+/**
+ * Track impression for a trigger-based form when it becomes visible.
+ * Called from the showform.thriveleads event handler.
+ *
+ * @param {string} formType - The form type (e.g., 'lightbox', 'screen_filler', 'slide_in')
+ *
+ * @see https://github.com/awesomemotive/thrive-themes/issues/2956
+ */
+TL_Front.do_trigger_based_impression = function ( formType ) {
+	if ( ! formType ) {
+		return;
+	}
+
+	// Check if we have deferred impression data for this form type
+	if ( ! TL_Front.deferred_impressions || ! TL_Front.deferred_impressions[ formType ] ) {
+		return;
+	}
+
+	// Check if impression was already tracked for this form type
+	if ( TL_Front.deferred_impressions[ formType ]._tracked ) {
+		return;
+	}
+
+	// Mark as tracked to prevent duplicate impressions
+	TL_Front.deferred_impressions[ formType ]._tracked = true;
+
+	var impressionData = {};
+	impressionData[ formType ] = TL_Front.deferred_impressions[ formType ];
+
+	TL_Front.send_impression( impressionData );
+};
+
+/**
+ * Track impression for a single two-step (ThriveBox) form when it's actually opened.
+ * This is called when the user clicks the trigger to open the ThriveBox.
+ *
+ * @see https://github.com/awesomemotive/thrive-themes/issues/2504
+ *
+ * @param {string} formKey - The form key (e.g., 'two_step_123')
+ */
+TL_Front.do_two_step_impression = function ( formKey ) {
+	if ( ! TL_Const || ! TL_Const.forms || ! TL_Const.forms[ formKey ] ) {
+		return;
+	}
+
+	var formConfig = TL_Const.forms[ formKey ],
+		impressionData = {};
+
+	impressionData[ formKey ] = {
+		group_id: formConfig.main_group_id,
+		form_type_id: formConfig.form_type_id,
+		variation_key: formConfig._key,
+		active_test_id: formConfig.active_test_id || null
+	};
+
+	TL_Front.send_impression( impressionData );
+};
+
+/**
+ * Attempt to track impression for two-step (ThriveBox) forms when they're opened.
+ * Only tracks if the form_id indicates a two-step form.
+ *
+ * @param {string} formId - The form ID from event data (format: 'tve-leads-track-2step-<variation_key>')
+ */
+TL_Front.maybe_track_two_step_impression = function ( formId ) {
+	if ( ! formId || formId.indexOf( '2step-' ) === -1 ) {
+		return;
+	}
+
+	if ( ! TL_Const || ! TL_Const.forms ) {
+		return;
+	}
+
+	var variationKey = formId.replace( 'tve-leads-track-2step-', '' );
+
+	var formKey = Object.keys( TL_Const.forms ).find( function ( key ) {
+		return key.indexOf( 'two_step_' ) === 0 && TL_Const.forms[ key ]._key === variationKey;
+	} );
+
+	if ( ! formKey ) {
+		return;
+	}
+
+	TL_Front.do_two_step_impression( formKey );
 };
 
 ThriveGlobal.$j( function () {
@@ -311,6 +640,23 @@ ThriveGlobal.$j( function () {
 			}
 		}, 0 );
 
+		/**
+		 * Track impression for two-step (ThriveBox) forms when they're actually opened
+		 * The form_id for two-step forms contains '2step-'
+		 *
+		 * @see https://github.com/awesomemotive/thrive-themes/issues/2504
+		 */
+		TL_Front.maybe_track_two_step_impression( data.form_id );
+
+		/**
+		 * Track impression for trigger-based forms when they become visible, not on page load.
+		 *
+		 * @see https://github.com/awesomemotive/thrive-themes/issues/2956
+		 */
+		if ( data.form_type && TRIGGER_BASED_FORM_TYPES.indexOf( data.form_type ) !== -1 ) {
+			TL_Front.do_trigger_based_impression( data.form_type );
+		}
+
 		if ( typeof TL_Front[ 'open_' + data.form_type ] === 'function' ) {
 			TL_Front[ 'open_' + data.form_type ]( $target, data.TargetEvent );
 		} else {
@@ -325,7 +671,7 @@ ThriveGlobal.$j( function () {
 			TCB_Front.resizePageSection();
 		} );
 		setTimeout( function () {
-			$target.find( '.thrv_responsive_video iframe, .thrv_custom_html_shortcode iframe' ).each( function () {
+			$target.find( videoIframeSelector + ', ' + videoSourceSelector ).each( function () {
 				var $this = ThriveGlobal.$j( this );
 				if ( $this.attr( 'data-src' ) ) {
 					$this.attr( 'src', $this.attr( 'data-src' ) );
@@ -338,7 +684,7 @@ ThriveGlobal.$j( function () {
 	ThriveGlobal.$j( 'body' ).on( 'click', '.tve-ribbon-close', function () {
 		var $target = ThriveGlobal.$j( this ).closest( '.tve-leads-ribbon' ),
 			position = $target.data( 'position' );
-		$target.find( '.thrv_responsive_video iframe, .thrv_custom_html_shortcode iframe, .thrv_responsive_video video' ).each( function () {
+		$target.find( videoIframeSelector + ', ' + videoSourceSelector ).each( function () {
 			var $this = ThriveGlobal.$j( this );
 			$this.attr( 'data-src', $this.attr( 'src' ) );
 			$this.attr( 'src', '' );
@@ -384,7 +730,27 @@ ThriveGlobal.$j( function () {
 				}
 			} );
 		}
-	} )
+	} );
+
+	/**
+	 * Initialize viewport observers when AJAX-loaded forms are ready
+	 * This event is triggered after AJAX forms are loaded and DOM is ready
+	 *
+	 * @see https://github.com/awesomemotive/thrive-themes/issues/2956
+	 */
+	ThriveGlobal.$j( TCB_Front ).on( 'tl-ajax-loaded', function() {
+		// Initialize viewport observers for AJAX-loaded forms
+		if ( TL_Front.viewport_impressions && Object.keys( TL_Front.viewport_impressions ).length > 0 ) {
+			// Use requestAnimationFrame to ensure DOM is painted
+			if ( window.requestAnimationFrame ) {
+				requestAnimationFrame( function() {
+					TL_Front.initViewportObservers();
+				} );
+			} else {
+				TL_Front.initViewportObservers();
+			}
+		}
+	} );
 
 	if ( ! TL_Const.ajax_load ) {
 		TL_Front.do_impression();
@@ -427,7 +793,10 @@ ThriveGlobal.$j( function () {
 					if ( ! post.length ) {
 						post = ThriveGlobal.$j( '#tve_editor.tar-main-content' );
 					}
-					const p = post.find( 'p' ).filter( ':visible' ).not( '.thrv_table p, form p, .tcb-post-list p, .thrv_text_element div p, p.wp-caption-text, .thrv_responsive_video p' );
+					if ( ! post.length ) {
+						post = ThriveGlobal.$j( '#post_content' );
+					}
+					const p = post.find( 'p' ).filter( ':visible' ).not( '.thrv_table p, form p, .tcb-post-list p, .thrv_text_element div p, p.wp-caption-text, .thrv_responsive_video p, .thrv_header p' );
 
 					if ( p.length === 0 && position === 0 ) {
 						post.prepend( html );
@@ -571,6 +940,18 @@ ThriveGlobal.$j( function () {
 		setTimeout( dom_ready, 50 );
 		TL_Const.forms = response.js;
 
+		/**
+		 * Store deferred impressions for trigger-based forms (lightbox, screen_filler, slide_in, ribbon)
+		 * and viewport-based forms (shortcodes). These impressions will be tracked when the form
+		 * is actually shown to the user.
+		 *
+		 * @see https://github.com/awesomemotive/thrive-themes/issues/2956
+		 */
+		if ( response.deferred_impressions ) {
+			// Setup viewport impressions (separates viewport-based from trigger-based)
+			TL_Front.setupViewportImpressions( response.deferred_impressions );
+		}
+
 		/* After the wait we should search for the placeholders and remove them
 		because for hidden displays we get no response and we don't have any way of replacing them with content */
 		setTimeout( () => {
@@ -637,6 +1018,12 @@ ThriveGlobal.$j( function () {
 				type = $form.parents( '.tve-leads-conversion-object' ).first().attr( 'data-tl-type' ),
 				custom_fields = {};
 
+			/* If conversion tracking is explicitly disabled on this form, allow native submit */
+			var $lgElement = $form.closest( '.thrv_lead_generation' );
+			if ( $lgElement.length && $lgElement.attr( 'data-tl-track-conversion' ) === '0' ) {
+				return true;
+			}
+
 			if ( $form.data( 'tve-force-submit' ) || $form.closest( '.thrv_custom_html_shortcode' ).length || $form.data( 'tl-do-submit' ) || ! type || ! TL_Const.forms[ type ] || isFluentForm( $form ) || isHappyForm( $form ) ) {
 				return true;
 			}
@@ -687,11 +1074,61 @@ ThriveGlobal.$j( function () {
 		} );
 
 		/**
+		 * Track button clicks as conversion events when the button has data-tl-track-conversion="1"
+		 */
+		ThriveGlobal.$j( 'body' ).on( 'click', '.tve-leads-conversion-object a', function () {
+			var $link = ThriveGlobal.$j( this ),
+				$button = $link.closest( '.thrv-button, .thrv_button_shortcode' );
+
+			if ( ! $button.length || $button.attr( 'data-tl-track-conversion' ) !== '1' ) {
+				return;
+			}
+
+			var type = $button.closest( '.tve-leads-conversion-object' ).first().attr( 'data-tl-type' );
+
+			if ( ! type || ! TL_Const.forms || ! TL_Const.forms[ type ] ) {
+				return;
+			}
+
+			var ajax_data = {
+				security: TL_Const.security,
+				action: TL_Const.action_button_conversion,
+				type: type,
+				tl_data: TL_Const.forms[ type ],
+				current_screen: TL_Const.current_screen
+			};
+
+			ThriveGlobal.$j.each( TL_Const.custom_post_data || {}, function ( k, v ) {
+				ajax_data[ k ] = v;
+			} );
+
+			/* Must survive page navigation (link click). sendBeacon is preferred; sync XHR as fallback when sendBeacon is unavailable or fails. */
+			var encoded = ThriveGlobal.$j.param( ajax_data ),
+				sent = navigator.sendBeacon && navigator.sendBeacon( TL_Const.ajax_url, new Blob( [ encoded ], { type: 'application/x-www-form-urlencoded' } ) );
+			if ( ! sent ) {
+				try {
+					var xhr = new XMLHttpRequest();
+					xhr.open( 'POST', TL_Const.ajax_url, false );
+					xhr.withCredentials = true;
+					xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
+					xhr.send( encoded );
+				} catch ( e ) { /* best-effort - don't break navigation */ }
+			}
+
+		} );
+
+		/**
 		 * event listener that allows setting custom post data in forms created with TCB and connected to an API
 		 */
 		ThriveGlobal.$j( 'body' ).on( 'form_conversion.tcb', '.tve-leads-conversion-object form', function ( event ) {
 			var $form = ThriveGlobal.$j( this ),
 				type = $form.parents( '.tve-leads-conversion-object' ).first().attr( 'data-tl-type' );
+
+			/* If conversion tracking is explicitly disabled on this form, skip */
+			var $lgElement = $form.closest( '.thrv_lead_generation' );
+			if ( $lgElement.length && $lgElement.attr( 'data-tl-track-conversion' ) === '0' ) {
+				return true;
+			}
 
 			if ( ! type || ! TL_Const.hasOwnProperty( 'forms' ) || ! TL_Const.forms[ type ] ) {
 				return true;
@@ -915,8 +1352,13 @@ TL_Front.close_lightbox = function () {
 		$lightbox.removeClass( 'tve_lb_open tve_lb_opening tve_lb_closing tve_p_lb_background' ).css( 'display', 'none' ).find( 'tve_p_lb_content' ).trigger( 'tve.lightbox-close' );
 	}, 200 );
 
-	$lightbox.find( '.thrv_responsive_video iframe, .thrv_custom_html_shortcode iframe, .thrv_responsive_video video' ).each( function () {
+	$lightbox.find( videoIframeSelector + ', ' + videoSourceSelector ).each( function () {
 		var $this = ThriveGlobal.$j( this );
+
+		if ( 'SOURCE' === this.tagName ) {
+			$this.parent( 'video' ).trigger( 'pause' );
+		}
+
 		$this.attr( 'data-src', $this.attr( 'src' ) );
 		$this.attr( 'src', '' );
 	} );
@@ -1022,7 +1464,7 @@ TL_Front.open_lightbox = function ( $target, TargetEvent ) {
 	$body.addClass( overflow_hidden );
 	$html.addClass( overflow_hidden );
 
-	var wHeight = ThriveGlobal.$j( window ).height(),
+	var wHeight = window.innerHeight, // Use window.innerHeight instead of jQuery which can return document height
 		page_has_scroll = wHeight < ThriveGlobal.$j( document ).height();
 
 	if ( ! is_switch_state && page_has_scroll ) {
@@ -1032,7 +1474,7 @@ TL_Front.open_lightbox = function ( $target, TargetEvent ) {
 	}
 
 	//load the responsive video iframes
-	$target.find( '.thrv_responsive_video iframe, .thrv_custom_html_shortcode iframe, .thrv_responsive_video video' ).each( function () {
+	$target.find( videoIframeSelector + ', ' + videoSourceSelector ).each( function () {
 		var $this = jQuery( this );
 		if ( $this.attr( 'data-src' ) ) {
 			$this.attr( 'src', $this.attr( 'data-src' ) );
@@ -1075,7 +1517,8 @@ TL_Front.open_lightbox = function ( $target, TargetEvent ) {
 					2 * parseInt( $target.css( 'padding-top' ) )
 				),
 				$lContent = $target.find( '.tve_p_lb_content' ),
-				wHeight = ThriveGlobal.$j( window ).height(),
+				wHeight = window.innerHeight, // Use window.innerHeight instead of jQuery which can return document height
+
 				top = (
 					      wHeight - cHeight
 				      ) / 2;
@@ -1110,6 +1553,40 @@ TL_Front.open_lightbox = function ( $target, TargetEvent ) {
 
 	setTimeout( function () {
 		$target.removeClass( 'tve_lb_opening' ).addClass( 'tve_lb_open' ).find( '.tve_p_lb_content' ).trigger( 'tve.lightbox-open' );
+		
+		/**
+		 * Fix for browser validation: Ensure form fields are focusable for browser validation
+		 * When a form is submitted with invalid required fields, the browser tries to focus
+		 * the first invalid field. If fields are not focusable (e.g., inside display:none container),
+		 * browser validation fails with "An invalid form control is not focusable" error.
+		 */
+		const $forms = $target.find( 'form' );
+		$forms.each( function() {
+			const $form = ThriveGlobal.$j( this );
+			// Find all required fields and ensure they're focusable
+			// Support both required attribute and data-required for compatibility
+			$form.find( 'input[required], textarea[required], select[required], input[data-required="true"], textarea[data-required="true"], select[data-required="true"]' ).each( function() {
+				const $field = ThriveGlobal.$j( this );
+				// Ensure field is visible (not display:none or visibility:hidden)
+				if ( $field.css( 'display' ) === 'none' ) {
+					$field.show();
+				}
+				if ( $field.css( 'visibility' ) === 'hidden' ) {
+					$field.css( 'visibility', 'visible' );
+				}
+				// Ensure parent containers are also visible
+				const $parent = $field.parentsUntil( '.tve_p_lb_content' ).filter( function() {
+					return ThriveGlobal.$j( this ).css( 'display' ) === 'none' || ThriveGlobal.$j( this ).css( 'visibility' ) === 'hidden';
+				} );
+				$parent.show().css( 'visibility', 'visible' );
+				// Remove negative tabindex that prevents focusing
+				const tabindex = $field.attr( 'tabindex' );
+				if ( tabindex && parseInt( tabindex ) < 0 ) {
+					$field.removeAttr( 'tabindex' );
+				}
+			} );
+		} );
+		
 		ThriveGlobal.$j( window ).trigger( 'scroll' );
 	}, 300 );
 
@@ -1132,6 +1609,11 @@ TL_Front.open_lightbox = function ( $target, TargetEvent ) {
 
 	/* trigger a custom event after we opened the lightbox */
 	TCB_Front.$window.trigger( 'tl_after_lightbox_open', $target );
+
+	/* make sure that its trigger after the animation is done too */
+	setTimeout( () => {
+		TCB_Front.$window.trigger( 'tve_after_content_toggle', [ $target ] );
+	}, 500 );
 };
 
 TL_Front.open_two_step_lightbox = TL_Front.open_lightbox;
@@ -1252,7 +1734,7 @@ TL_Front.open_greedy_ribbon = function ( $target ) {
 				$target.addClass( 'tve-no-animation' );
 				const greedyScroll = browserScroll - wHeight;
 				$target.removeClass( 'tve-leads-triggered' );
-				$target.find( '.thrv_responsive_video iframe, .thrv_custom_html_shortcode iframe, .thrv_responsive_video video' ).each( function () {
+				$target.find( videoIframeSelector + ', ' + videoSourceSelector ).each( function () {
 					const $this = ThriveGlobal.$j( this );
 					$this.attr( 'data-src', $this.attr( 'src' ) );
 					$this.attr( 'src', '' );
@@ -1312,7 +1794,7 @@ TL_Front.open_screen_filler = function ( $target, TargetEvent ) {
 
 	function close_it( $screen_filler ) {
 
-		$screen_filler.find( '.thrv_responsive_video iframe, .thrv_custom_html_shortcode iframe, .thrv_responsive_video video' ).each( function () {
+		$screen_filler.find( videoIframeSelector + ', ' + videoSourceSelector ).each( function () {
 			var $this = ThriveGlobal.$j( this );
 			$this.attr( 'data-src', $this.attr( 'src' ) );
 			$this.attr( 'src', '' );
@@ -1371,7 +1853,7 @@ TL_Front.open_screen_filler = function ( $target, TargetEvent ) {
 	} );
 
 	//load the responsive video iframes
-	$target.find( '.thrv_responsive_video iframe, .thrv_custom_html_shortcode iframe, .thrv_responsive_video video' ).each( function () {
+	$target.find( videoIframeSelector + ', ' + videoSourceSelector ).each( function () {
 		var $this = jQuery( this );
 		if ( $this.attr( 'data-src' ) ) {
 			$this.attr( 'src', $this.attr( 'data-src' ) );
@@ -1396,7 +1878,14 @@ TL_Front.slide_in_position = function ( $lContent ) {
 		var wHeight = $window.height();
 
 		setTimeout( function () {
-			var top = ( wHeight - elHeight ) / 2;
+			let top;
+
+			//set the top value according to the position set for the element
+			if ( $lContent.parents( '.tve-leads-slide-in' ).is( '[class*="bot"]' ) ) {
+				top = wHeight - elHeight; //bottom
+			} else {
+				top = 0; //top
+			}
 
 			$lContent.closest( '.tve-leads-slide-in' )
 			         .data( 'doc-scroll-top', document.documentElement.scrollTop )
@@ -1432,7 +1921,7 @@ TL_Front.open_slide_in = function ( $target, TargetEvent ) {
 			$body.removeClass( overflow_hidden );
 			$html.removeClass( overflow_hidden );
 		}
-		$slidein.find( '.thrv_responsive_video iframe, .thrv_custom_html_shortcode iframe, .thrv_responsive_video video' ).each( function () {
+		$slidein.find( videoIframeSelector + ', ' + videoSourceSelector ).each( function () {
 			var $this = ThriveGlobal.$j( this );
 			$this.attr( 'data-src', $this.attr( 'src' ) );
 			$this.attr( 'src', '' );
@@ -1519,7 +2008,7 @@ TL_Front.close_form = function ( element, trigger, action, config ) {
 			break;
 		case 'slide-in':
 			$parent.find( '.tve_ea_thrive_leads_form_close' ).trigger( 'click' );//there already exists a bind for close
-			$parent.find( '.thrv_responsive_video iframe, .thrv_custom_html_shortcode iframe, .thrv_responsive_video video' ).each( function () {
+			$parent.find( videoIframeSelector + ', ' + videoSourceSelector ).each( function () {
 				var $this = ThriveGlobal.$j( this );
 				$this.attr( 'data-src', $this.attr( 'src' ) );
 				$this.attr( 'src', '' );
@@ -1540,7 +2029,7 @@ TL_Front.close_form = function ( element, trigger, action, config ) {
 				$window = ThriveGlobal.$j( window ),
 				_tempMargin = $body.css( 'margin-top' );
 			$body[ 0 ].style.removeProperty( 'margin-top' );
-			$parent.find( '.thrv_responsive_video iframe, .thrv_custom_html_shortcode iframe, .thrv_responsive_video video' ).each( function () {
+			$parent.find( videoIframeSelector + ', ' + videoSourceSelector ).each( function () {
 				var $this = ThriveGlobal.$j( this );
 				$this.attr( 'data-src', $this.attr( 'src' ) );
 				$this.attr( 'src', '' );

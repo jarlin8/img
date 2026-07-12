@@ -28,7 +28,7 @@ class TVD_Smart_DB {
 	private $fields_table_name;
 
 	/**
-	 * Wordpress Database
+	 * WordPress Database
 	 *
 	 * @var wpdb
 	 */
@@ -127,16 +127,19 @@ class TVD_Smart_DB {
 				array(
 					'name'       => 'Phone number',
 					'type'       => static::$types['phone'],
+					'data'       => [ 'text' => 'Call', 'url' => '' ],
 					'identifier' => 'phone',
 				),
 				array(
 					'name'       => 'Alternative phone number',
 					'type'       => static::$types['phone'],
+					'data'       => [ 'text' => 'Call', 'url' => '' ],
 					'identifier' => 'alt_phone',
 				),
 				array(
 					'name'       => 'Email address',
 					'type'       => static::$types['email'],
+					'data'       => [ 'text' => 'Email', 'url' => '' ],
 					'identifier' => 'mail',
 				),
 				//				array(
@@ -208,10 +211,22 @@ class TVD_Smart_DB {
 					'identifier' => 'xing',
 				),
 				array(
-					'name'       => 'Twitter',
-					'icon'       => 'twitter-brands-new',
+					'name'       => 'X',
+					'icon'       => 'x-brands-new',
 					'type'       => static::$types['link'],
 					'identifier' => 't',
+				),
+				array(
+					'name'       => 'TikTok',
+					'icon'       => 'tiktok-brands-new',
+					'type'       => static::$types['link'],
+					'identifier' => 'tiktok',
+				),
+				array(
+					'name'       => 'Bluesky',
+					'icon'       => 'bluesky-brands-new',
+					'type'       => static::$types['link'],
+					'identifier' => 'bluesky',
 				),
 			),
 		);
@@ -270,7 +285,7 @@ class TVD_Smart_DB {
 			}
 		} else {
 			/*
-			 * there are entries in the table => this is the 1.0.0 -> 1.0.1 db upgrade
+			 * there are entries in the table => this is the 1.0.X -> 1.0.(X+1) db upgrade
 			 * Insert 'Xing' and 'Twitter' manually, and populate the newly added 'identifier' column for each default field
 			 */
 			$xing_twitter_row = $this->wpdb->get_row( "SELECT * FROM $this->fields_table_name WHERE `identifier`='xing' OR `identifier`='t' LIMIT 0,1", ARRAY_A );
@@ -280,7 +295,59 @@ class TVD_Smart_DB {
 				$this->insert_xing_and_twitter_default_fields();
 				$this->add_string_identifier_to_fields();
 			}
+
+			$tiktok_row = $this->wpdb->get_row( "SELECT * FROM $this->fields_table_name WHERE `identifier`='tiktok' LIMIT 0,1", ARRAY_A );
+
+			/* only continue if tiktok isn't inserted */
+			if ( empty( $tiktok_row ) ) {
+				$this->add_tiktok_field();
+			}
+
+			$bluesky_row = $this->wpdb->get_row( "SELECT * FROM $this->fields_table_name WHERE `identifier`='bluesky' LIMIT 0,1", ARRAY_A );
+
+			/* only continue if bluesky isn't inserted */
+			if ( empty( $bluesky_row ) ) {
+				$this->add_bluesky_field();
+			}
 		}
+	}
+
+	public function add_tiktok_field() {
+		$format = array(
+			'%s',
+			'%d',
+		);
+
+		$this->wpdb->insert(
+			$this->fields_table_name,
+			array(
+				'name'       => 'TikTok',
+				'type'       => static::$types['link'],
+				'identifier' => 'tiktok',
+				'is_default' => 1,
+				'group_id'   => 3,
+			),
+			$format
+		);
+	}
+
+	public function add_bluesky_field() {
+		$format = array(
+			'%s',
+			'%d',
+		);
+
+		$this->wpdb->insert(
+			$this->fields_table_name,
+			array(
+				'name'       => 'Bluesky',
+				'type'       => static::$types['link'],
+				'identifier' => 'bluesky',
+				'is_default' => 1,
+				'group_id'   => 3,
+			),
+			$format
+		);
 	}
 
 	/**
@@ -307,7 +374,7 @@ class TVD_Smart_DB {
 		$this->wpdb->insert(
 			$this->fields_table_name,
 			array(
-				'name'       => 'Twitter',
+				'name'       => 'X',
 				'type'       => static::$types['link'],
 				'identifier' => 't',
 				'is_default' => 1,
@@ -492,7 +559,7 @@ class TVD_Smart_DB {
 					if ( empty( $args['prevent-link'] ) ) {
 						$link_attr = TVD_Smart_Shortcodes::tvd_decode_link_attributes( $args );
 
-						$field_value = '<a ' . ( ! empty( $args['link-css-attr'] ) ? 'data-css="' . $args['link-css-attr'] . '"' : '' ) . ' href="' . $field_data['url'] . '" target="' . ( ! empty( $link_attr['target'] ) ? $link_attr['target']  : '' ) .'">' . $field_data['text'] . '</a>';
+						$field_value = '<a ' . ( ! empty( $args['link-css-attr'] ) ? 'data-css="' . $args['link-css-attr'] . '"' : '' ) . ' href="' . $field_data['url'] . '" target="' . ( ! empty( $link_attr['target'] ) ? $link_attr['target'] : '' ) . '">' . $field_data['text'] . '</a>';
 					} else {
 						$field_value = $field_data['text'];
 					}

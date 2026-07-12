@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="control-grid">
 				<div class="label">
 					<?php echo esc_html__( 'Form fields', 'thrive-cb' ); ?>
-					<span class="click" data-type="help" data-url="lg_custom_fields" data-link="https://help.thrivethemes.com/en/articles/4425882-how-to-add-a-custom-field-to-the-lead-generation-element" data-fn="openInstructionsLightbox"><?php tcb_icon( 'help-instructions' ); ?></span>
+					<span class="click" data-type="help" data-url="lg_custom_fields" data-link="https://help.thrivethemes.com/en/articles/4425882-how-to-add-a-custom-field-to-the-lead-generation-element" data-fn="redirectToInstructionsUrl"><?php tcb_icon( 'help-instructions' ); ?></span>
 				</div>
 				<div class="full">
 					<a class="tcb-right click tve-lg-add-field" data-fn="addLGField">
@@ -60,6 +60,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 			</div>
 		</div>
+		<div class="connection-controls mb-10" data-connection="webhook">
+			<div class="tve-control mt-10" data-view="WebhookConnections"></div>
+			<hr class="mt-10">
+			<div class="control-grid">
+				<div class="label">
+					<?php echo esc_html__( 'Form fields', 'thrive-cb' ); ?>
+					<span class="click" data-type="help" data-url="lg_custom_fields" data-link="https://help.thrivethemes.com/en/articles/4425882-how-to-add-a-custom-field-to-the-lead-generation-element" data-fn="redirectToInstructionsUrl"><?php tcb_icon( 'help-instructions' ); ?></span>
+				</div>
+				<div class="full">
+					<a class="tcb-right click tve-lg-add-field" data-fn="addLGField">
+						<i class="mr-5">
+							<?php tcb_icon( 'plus-regular' ); ?>
+						</i>
+						<?php echo esc_html__( 'Add new', 'thrive-cb' ); ?>
+					</a>
+				</div>
+			</div>
+		</div>
 		<div class="tve-control" data-key="FieldsControl" data-initializer="getFieldsControl"></div>
 
 		<div class="tve-lg-hidden-fields">
@@ -73,6 +91,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 
 		<hr>
+
+		<div class="tve-lg-sp-content" data-view="SPContainer">
+			<div class="tve-lg-prevention">
+				<div class="tcb-label"><?php echo esc_html__( 'Spam Prevention', 'thrive-cb' ); ?>
+					<span class="click tve-cb-img-info" data-fn="openTooltip"><?php tcb_icon( 'info-circle-solid' ); ?></span>
+				</div>
+				<div class="control-grid ">
+					<div class="tve-control control-grid full-width" data-view="SPTools"></div>
+					<span class="lg-api-select-arrow lg-sp-tools-select-arrow select2-arrow"><?php tcb_icon('a_down'); ?></span>
+				</div>
+			</div>
+
+			<div class="tve-api-dashboard">
+				<div></div>
+				<a class="tve-sp-redirect toggle-control mb-5" target="_blank" href="<?php echo esc_url( admin_url( 'admin.php?page=tve_dash_api_connect' ) ); ?>">
+					<span class="tve-sp-info-text"><?php echo esc_html__( 'Go to the API Dashboard', 'thrive-cb' ); ?></span>
+				</a>
+			</div>
+		</div>
 
 		<div id="lg-submit-options" class="skip-api no-service mb-5 click">
 			<span><?php echo esc_html__( 'After successful submission', 'thrive-cb' ); ?></span>
@@ -88,10 +125,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 			</div>
 			<div class="tve-lg-submit-option-control">
-				<div id="lg-custom_url" data-key="redirect" class="lg-submit-options mt-10 tcb-hidden">
-					<a class="click blue-text center-text tcb-hidden view-params" data-fn="showSentParams"><?php echo esc_html__( 'View variable details', 'thrive-cb' ); ?></a>
-					<div class="tve-send-param-control"></div>
-				</div>
+			<div id="lg-custom_url" data-key="redirect" class="lg-submit-options mt-10 tcb-hidden">
+			</div>
 				<div id="lg-success-message" data-key="message" class="lg-submit-options mt-10 tcb-hidden">
 					<span>
 						<?php echo esc_html__( 'Success message', 'thrive-cb' ); ?>
@@ -107,22 +142,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<div id="api-controls" class="mt-10">
 
-			<div class="no-api tve-advanced-controls extend-grey">
+			<div class="no-api tve-advanced-controls">
 				<div class="dropdown-header" data-prop="advanced">
 					<span>
 						<?php echo esc_html__( 'Advanced', 'thrive-cb' ); ?>
 					</span>
 				</div>
+
 				<div class="dropdown-content pt-0">
 					<?php do_action( 'tcb_lead_generation_menu' ); ?>
 					<div class="tve-control" data-view="FormIdentifier"></div>
-					<div class="tve-lg-prevention">
-						<p class="strong"><?php echo esc_html__( 'Spam prevention', 'thrive-cb' ); ?></p>
-						<div class="tve-control" data-view="Captcha"></div>
-						<a class="tcb-hidden info-link toggle-control mb-5" target="_blank" href="<?php echo esc_url( admin_url( 'admin.php?page=tve_dash_api_connect' ) ); ?>">
-							<span class="info-text"><?php echo esc_html__( 'Requires integration with Google ReCaptcha', 'thrive-cb' ); ?></span>
-						</a>
-					</div>
 					<div class="no-api tcb-text-center mt-5">
 						<button class="tve-button blue long click" data-fn="manage_error_messages">
 							<?php echo esc_html__( 'Edit error messages', 'thrive-cb' ); ?>

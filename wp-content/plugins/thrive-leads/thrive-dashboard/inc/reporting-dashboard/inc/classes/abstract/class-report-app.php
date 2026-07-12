@@ -161,6 +161,6 @@ abstract class Report_App {
 	 * @return bool
 	 */
 	public static function permission_callback(): bool {
-		return current_user_can( 'manage_options' );
+		return current_user_can( TVE_DASH_CAPABILITY );
 	}
 }

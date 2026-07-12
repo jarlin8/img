@@ -1,0 +1,88 @@
+<div class="tvd-modal-content">
+	<p style="color: #6b7280; margin-top: 0;"><?php echo __( 'Select where you would like to duplicate the', 'thrive-leads' ) ?> "<#= post_title #>" <?php echo __( 'form.', 'thrive-leads' ) ?></p>
+	<div class="tve-duplicate-options-row">
+		<div class="tve-duplicate-option-wrap">
+			<a href="javascript:void(0)" class="tve-duplicate-here tve-duplicate-option-card">
+				<div class="tve-duplicate-option-icon" style="background: #eff6ff;">
+					<i class="tvd-icon-clone2" style="color: #3b82f6;"></i>
+				</div>
+				<div class="tve-duplicate-option-title"><?php echo __( 'Duplicate here', 'thrive-leads' ) ?></div>
+				<div class="tve-duplicate-option-desc"><?php echo __( 'Create an exact copy of this form here', 'thrive-leads' ) ?></div>
+			</a>
+		</div>
+		<div class="tve-duplicate-option-wrap">
+			<a href="javascript:void(0)" class="tve-duplicate-to-other tve-duplicate-option-card">
+				<div class="tve-duplicate-option-icon" style="background: #fdf2f8;">
+					<i class="tvd-icon-clone2" style="color: #ec4899;"></i>
+				</div>
+				<div class="tve-duplicate-other-title tve-duplicate-option-title"><?php echo __( 'Duplicate to another shortcode', 'thrive-leads' ) ?></div>
+				<div class="tve-duplicate-other-desc tve-duplicate-option-desc"><?php echo __( 'Copy this form to a different lead shortcode', 'thrive-leads' ) ?></div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="tvd-modal-footer">
+	<div class="tvd-row">
+		<div class="tvd-col tvd-s12" style="text-align: right;">
+			<a href="javascript:void(0)"
+			   class="tvd-btn-flat tvd-btn-flat-secondary tvd-btn-flat-dark tvd-modal-close tvd-waves-effect"><?php echo __( 'Cancel', 'thrive-leads' ) ?></a>
+		</div>
+	</div>
+</div>
+<style>
+	.tve-duplicate-options-row {
+		display: flex;
+		gap: 16px;
+		margin-top: 24px;
+	}
+	.tve-duplicate-option-wrap {
+		flex: 1;
+		display: flex;
+		min-width: 0;
+	}
+	.tve-duplicate-option-card {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		border: 1px solid #e5e7eb;
+		border-radius: 8px;
+		padding: 24px;
+		text-decoration: none;
+		color: inherit;
+		cursor: pointer;
+		transition: border-color 0.2s, box-shadow 0.2s;
+	}
+	.tve-duplicate-option-card:hover {
+		border-color: #3b82f6 !important;
+		box-shadow: 0 1px 3px rgba(59, 130, 246, 0.15) !important;
+	}
+	.tve-duplicate-option-icon {
+		width: 40px;
+		height: 40px;
+		border-radius: 8px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-bottom: 16px;
+		font-size: 18px;
+	}
+	.tve-duplicate-option-title {
+		font-weight: 600;
+		font-size: 15px;
+		color: #1f2937;
+		margin-bottom: 8px;
+	}
+	.tve-duplicate-option-desc {
+		font-size: 13px;
+		color: #6b7280;
+		line-height: 1.5;
+	}
+	@media only screen and (max-width: 680px) {
+		.tve-duplicate-modal.tvd-modal {
+			right: unset;
+		}
+		.tve-duplicate-options-row {
+			flex-direction: column;
+		}
+	}
+</style>

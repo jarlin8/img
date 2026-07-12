@@ -57,7 +57,7 @@ function tve_compat_has_shortcode( $shortcode, $post_id = null, $use_wp_shortcod
 		return strpos( $content, $shortcode ) !== false;
 	}
 	if ( $post_id ) {
-		return has_shortcode( $content, '[' . str_replace( array( '[', ']' ), '', $shortcode ) . ']' );
+		return has_shortcode( $content, '[' . str_replace( [ '[', ']' ], '', $shortcode ) . ']' );
 	}
 
 	return false;
@@ -70,9 +70,9 @@ function tve_admin_notices() {
 	$has_wp_seo_conflict = tve_has_wordpress_seo_conflict();
 
 	if ( $has_wp_seo_conflict ) {
-		$link = sprintf( '<a href="%s">%s</a>', admin_url( 'admin.php?page=wpseo_advanced&tab=permalinks' ), __( 'Wordpress SEO settings', 'thrive-cb' ) );
+		$link = sprintf( '<a href="%s">%s</a>', admin_url( 'admin.php?page=wpseo_advanced&tab=permalinks' ), __( 'WordPress SEO settings', 'thrive-cb' ) );
 		$message
-		      = sprintf( __( 'Thrive Architect and Thrive Leads cannot work with the current configuration of Wordpress SEO. Please go to %s and disable the %s"Redirect ugly URL\'s to clean permalinks"%s option',
+		      = sprintf( __( 'Thrive Architect and Thrive Leads cannot work with the current configuration of WordPress SEO. Please go to %s and disable the %s"Redirect ugly URL\'s to clean permalinks"%s option',
 			'thrive-cb' ), $link, '<strong>', '</strong>' );
 		echo sprintf( '<div class="error"><p>%s</p></div>', esc_html( $message ) );
 	}
@@ -86,7 +86,7 @@ function tve_admin_notices() {
 function tve_hooked_in_template_redirect() {
 	include_once ABSPATH . '/wp-admin/includes/plugin.php';
 
-	$hooked_in_template_redirect = array(
+	$hooked_in_template_redirect = [
 		'wishlist-member/wpm.php',
 		'ultimate-coming-soon-page/ultimate-coming-soon-page.php',
 		'easy-pie-coming-soon/easy-pie-coming-soon.php',
@@ -99,7 +99,8 @@ function tve_hooked_in_template_redirect() {
 		'woocommerce/woocommerce.php',
 		'maintenance/maintenance.php',
 		'simply-schedule-appointments/simply-schedule-appointments.php',
-	);
+		'borlabs-cookie/borlabs-cookie.php',
+	];
 
 	foreach ( $hooked_in_template_redirect as $plugin ) {
 		if ( is_plugin_active( $plugin ) ) {
@@ -145,7 +146,7 @@ function tve_fix_plugin_conflicts() {
 	global $yarpp;
 	if ( is_editor_page_raw() ) {
 		if ( $yarpp ) {
-			remove_filter( 'the_content', array( $yarpp, 'the_content' ), 1200 );
+			remove_filter( 'the_content', [ $yarpp, 'the_content' ], 1200 );
 		}
 		/**
 		 * Theretailer theme deregisters the mediaelement for some reason
@@ -444,10 +445,10 @@ function tve_compat_survey_funnel() {
 
 	if ( stristr( $content_updated, '[survey_funnel' ) ) {
 		$is_survey_page = true;
-		wp_script_is( 'survey_funnel_ajax' ) || wp_enqueue_script( 'survey_funnel_ajax', SF_PLUGIN_URL . '/js/ajax.js', array( 'jquery' ), '1.0', false );
-		wp_script_is( 'survey_funnel' ) || wp_enqueue_script( 'survey_funnel', SF_PLUGIN_URL . '/js/survey_funnel.js', array( 'jquery' ), '1.0', false );
+		wp_script_is( 'survey_funnel_ajax' ) || wp_enqueue_script( 'survey_funnel_ajax', SF_PLUGIN_URL . '/js/ajax.js', [ 'jquery' ], '1.0', false );
+		wp_script_is( 'survey_funnel' ) || wp_enqueue_script( 'survey_funnel', SF_PLUGIN_URL . '/js/survey_funnel.js', [ 'jquery' ], '1.0', false );
 		wp_script_is( 'survey_funnel_fancybox' )
-		|| wp_enqueue_script( 'survey_funnel_fancybox', SF_PLUGIN_URL . '/jquery/fancyBox-2.1.5/source/jquery.fancybox.pack.js', array( 'jquery' ), '1.0', false );
+		|| wp_enqueue_script( 'survey_funnel_fancybox', SF_PLUGIN_URL . '/jquery/fancyBox-2.1.5/source/jquery.fancybox.pack.js', [ 'jquery' ], '1.0', false );
 
 		wp_style_is( 'survey_funnel_styles' ) || wp_enqueue_style( 'survey_funnel_styles', SF_PLUGIN_URL . '/css/styles.css' );
 		wp_style_is( 'survey_funnel_client_styles' ) || wp_enqueue_style( 'survey_funnel_client_styles', SF_PLUGIN_URL . '/css/survey_funnel.css' );
@@ -591,7 +592,7 @@ function tve_compat_re_add_template_include_filters() {
 	if ( is_plugin_active( 'maintenance/maintenance.php' ) ) {
 		global $mtnc;
 		if ( ! empty( $mtnc ) ) {
-			add_action( 'template_include', array( $mtnc, 'mtnc_template_include' ), 999999 );
+			add_action( 'template_include', [ $mtnc, 'mtnc_template_include' ], 999999 );
 		}
 	}
 }
@@ -602,7 +603,7 @@ function tve_compat_re_add_template_include_filters() {
 function tve_compat_plugins_loaded_hook() {
 	global $sitepress;
 	if ( ! empty( $sitepress ) && ! empty( $_REQUEST[ TVE_EDITOR_FLAG ] ) ) {
-		remove_action( 'init', array( $sitepress, 'js_load' ), 2 );
+		remove_action( 'init', [ $sitepress, 'js_load' ], 2 );
 	}
 }
 
@@ -853,3 +854,651 @@ add_action( 'after_thrive_clone_item', static function ( $new_id, $old_id ) {
 add_filter( 'thrive_template_structure', 'tcb_dap_shortcode_in_content' );
 add_filter( 'thrive_template_header_content', 'tcb_dap_shortcode_in_content' );
 add_filter( 'thrive_template_footer_content', 'tcb_dap_shortcode_in_content' );
+
+add_action( 'current_screen', 'tcb_current_screen' );
+
+/**
+ * Some pages don't have a title, so we need to set it manually
+ */
+function tcb_current_screen() {
+	$screen = tve_get_current_screen_key();
+	global $title;
+	if ( $screen && empty( $title ) && ( strpos( $screen, 'tcb_' ) !== false || strpos( $screen, 'tve_' ) !== false ) ) {
+		$title = 'Thrive Architect';
+	}
+}
+
+/**
+ * Returns an array containing shortcode tags, this will be used to whitelist theses shortcodes when saving the plain content
+ *
+ * @return mixed|void
+ */
+function tcb_plain_content_whitelisted_shortcodes() {
+	return apply_filters( 'tcb_plain_content_whitelisted_shortcodes', [ 'mepr-membership-registration-form' ] );
+}
+
+/**
+ * Sometimes we do not want to do shortcodes while saving the playn text content(the one added in post content)
+ * The reason we need to do this for MemberPress is because they only load the shortcode content IF it's shortcode tag is present in post content,
+ * so we cannot do_shortcode on it on save because the shortcode tag will be replaced
+ */
+/**
+ * In the actions bellow we remove the whitelisted shortcodes from the $shortcode_tags global(so they wont be computed on do_shortcode),
+ * and restore the $shortcode_tags after the do_shortcode
+ */
+add_action( 'tcb_plain_content_do_shortcode_before', function () {
+	global $shortcode_tags, $tcb_whitelisted_plain_content_shortcodes;
+
+	if ( ! is_array( $tcb_whitelisted_plain_content_shortcodes ) ) {
+		$tcb_whitelisted_plain_content_shortcodes = [];
+	}
+
+	$whitelisted_shortcodes = tcb_plain_content_whitelisted_shortcodes();
+
+	foreach ( $whitelisted_shortcodes as $tag ) {
+		if ( isset( $shortcode_tags[ $tag ] ) ) {
+			$tcb_whitelisted_plain_content_shortcodes[ $tag ] = $shortcode_tags[ $tag ];
+
+			unset( $shortcode_tags[ $tag ] );
+		}
+	}
+} );
+
+add_action( 'tcb_plain_content_do_shortcode_after', function () {
+	global $shortcode_tags, $tcb_whitelisted_plain_content_shortcodes;
+
+	if ( ! is_array( $tcb_whitelisted_plain_content_shortcodes ) ) {
+		$tcb_whitelisted_plain_content_shortcodes = [];
+	}
+
+	$whitelisted_shortcodes = tcb_plain_content_whitelisted_shortcodes();
+
+	foreach ( $whitelisted_shortcodes as $tag ) {
+		if ( isset( $tcb_whitelisted_plain_content_shortcodes[ $tag ] ) ) {
+			$shortcode_tags[ $tag ] = $tcb_whitelisted_plain_content_shortcodes[ $tag ];
+
+			unset( $tcb_whitelisted_plain_content_shortcodes[ $tag ] );
+		}
+	}
+} );
+
+/**
+ * Prevents the rendering of the specified shortcodes in the TAR editor to prevent rendering issues.
+ */
+/**
+ * Prevents the rendering of the specified shortcodes in the TAR editor to prevent rendering issues.
+ *
+ * @param string $output The shortcode output. Default empty.
+ * @param string $tag    The shortcode name.
+ * @param array  $attr   The shortcode attributes array.
+ * @param array  $m      The regex matches array.
+ *
+ * @return string The modified or original shortcode output.
+ */
+function tve_compat_pre_do_shortcode_tag( $output, $tag, $attr, $m ) {
+	// Add shortcodes to the blacklist to prevent them from being rendered in the TAR editor.
+	$blacklist = apply_filters( 'tcb_editor_shortcode_blacklist', array( 'fluentform' ) );
+
+	// If the shortcode is in the blacklist and we are in the editor, output the shortcode itself.
+	if ( 
+		in_array( $tag, $blacklist, true ) && 
+		TCB_Utils::in_editor_render( true ) 
+	) {
+		// Return the original shortcode match to prevent rendering in the TAR editor.
+		return $m[0];
+	}
+
+	return $output;
+}
+
+add_filter( 'pre_do_shortcode_tag', 'tve_compat_pre_do_shortcode_tag', 10, 4 );
+
+/**
+ * Decode HTML entities in third-party shortcode attributes.
+ * 
+ * Thrive Architect HTML-encodes content when saving, which breaks third-party shortcodes
+ * that use special characters in their attributes (e.g., MemberMouse uses & in conditions).
+ * 
+ * This function intercepts shortcode execution, decodes HTML entities in attributes,
+ * and calls the shortcode callback directly with the corrected attributes.
+ * 
+ * @param string $output The shortcode output. Default empty.
+ * @param string $tag    The shortcode name.
+ * @param array  $attr   The shortcode attributes array.
+ * @param array  $m      The regex matches array.
+ *
+ * @return string The modified or original shortcode output.
+ */
+function tve_compat_decode_shortcode_entities( $output, $tag, $attr, $m ) {
+	/**
+	 * Filter: List of exact shortcode names that need HTML entity decoding.
+	 * 
+	 * @param array $shortcodes Array of exact shortcode names to process.
+	 */
+	$shortcodes_to_decode = apply_filters( 'tcb_shortcodes_decode_entities', array(
+		'MM_Member_Decision', // MemberMouse conditional display
+	) );
+
+	// Only process if this shortcode is in our whitelist
+	if ( ! in_array( $tag, $shortcodes_to_decode, true ) ) {
+		return $output;
+	}
+
+	// Validate attributes
+	if ( ! is_array( $attr ) || empty( $attr ) ) {
+		return $output;
+	}
+
+	// Decode attributes and check if any decoding was needed (single loop)
+	$needs_decoding = false;
+	$decoded_attr = array();
+
+	foreach ( $attr as $key => $value ) {
+		if ( ! is_string( $value ) ) {
+			$decoded_attr[ $key ] = $value;
+			continue;
+		}
+
+		// Decode HTML entities
+		$decoded_value = html_entity_decode( $value, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+
+		/**
+		 * Security: Strip all HTML tags from decoded attributes.
+		 * Shortcode attributes should not contain HTML - this prevents XSS attacks
+		 * via encoded malicious content (e.g., &lt;script&gt; becoming <script>).
+		 * 
+		 * This is much more reliable than pattern matching and is WordPress-native.
+		 */
+		$decoded_value = wp_strip_all_tags( $decoded_value );
+
+		$decoded_attr[ $key ] = $decoded_value;
+
+		// Track if any decoding occurred
+		if ( $decoded_value !== $value ) {
+			$needs_decoding = true;
+		}
+	}
+
+	// If no decoding was needed, return without processing
+	if ( ! $needs_decoding ) {
+		return $output;
+	}
+
+	// Get the shortcode callback
+	global $shortcode_tags;
+
+	if ( isset( $shortcode_tags[ $tag ] ) && is_callable( $shortcode_tags[ $tag ] ) ) {
+		// Get content between shortcode tags (if any)
+		$content = isset( $m[5] ) ? $m[5] : null;
+		
+		// Call the shortcode with decoded attributes
+		return call_user_func( $shortcode_tags[ $tag ], $decoded_attr, $content, $tag );
+	}
+
+	return $output;
+}
+
+add_filter( 'pre_do_shortcode_tag', 'tve_compat_decode_shortcode_entities', 10, 4 );
+
+/**
+ * Check if content contains the SureCart cart menu icon shortcode
+ *
+ * @param string $content The content to check.
+ *
+ * @return bool True if content contains the shortcode.
+ */
+function tcb_contains_surecart_cart_shortcode( $content ) {
+	// Early exit: Empty content check
+	if ( empty( $content ) ) {
+		return false;
+	}
+
+	return strpos( $content, 'sc_cart_menu_icon' ) !== false;
+}
+
+/**
+ * Get and check content from a post for SureCart shortcode
+ *
+ * @param int $post_id The post ID to retrieve content from.
+ *
+ * @return bool True if post content contains the SureCart shortcode.
+ */
+function tcb_post_contains_surecart_shortcode( $post_id ) {
+	// Sanitize post ID
+	$post_id = absint( $post_id );
+
+	if ( ! $post_id ) {
+		return false;
+	}
+
+	$content = tve_get_post_meta( $post_id, 'tve_updated_post' );
+
+	return tcb_contains_surecart_cart_shortcode( $content );
+}
+
+/**
+ * Check if current page contains SureCart cart icon shortcode (directly or in headers/footers)
+ *
+ * @return bool True if the page needs SureCart cart compatibility.
+ */
+function tcb_is_surecart_cart_needed() {
+	if ( ! class_exists( 'SureCart' ) ) {
+		return false;
+	}
+
+	if ( ! function_exists( 'is_singular' ) || ! is_singular() ) {
+		return false;
+	}
+
+	// Get post ID with fallback to global $post
+	$post_id = get_the_ID();
+
+	if ( ! $post_id ) {
+		global $post;
+		$post_id = isset( $post->ID ) ? absint( $post->ID ) : 0;
+	}
+
+	if ( ! $post_id ) {
+		return false;
+	}
+
+	// Sanitize post ID
+	$post_id = absint( $post_id );
+
+	// Check if page content directly contains the cart shortcode
+	$content = tve_get_post_meta( $post_id, 'tve_updated_post' );
+
+	if ( tcb_contains_surecart_cart_shortcode( $content ) ) {
+		return true;
+	}
+
+	// Check if page header contains the cart shortcode
+	$header_id = absint( get_post_meta( $post_id, '_tve_header', true ) );
+
+	if ( $header_id && tcb_post_contains_surecart_shortcode( $header_id ) ) {
+		return true;
+	}
+
+	// Check if page footer contains the cart shortcode
+	$footer_id = absint( get_post_meta( $post_id, '_tve_footer', true ) );
+
+	if ( $footer_id && tcb_post_contains_surecart_shortcode( $footer_id ) ) {
+		return true;
+	}
+
+	// Check if page uses symbols that contain the cart shortcode (backward compatibility).
+	if ( empty( $content ) ) {
+		return false;
+	}
+
+	// Check if page uses symbols that contain the cart shortcode (backward compatibility)
+	$pattern = '/\[(thrive_symbol|tcb_symbol)\s+id=["\']?(\d+)["\']?/i';
+
+	if ( ! preg_match_all( $pattern, $content, $matches ) ) {
+		return false;
+	}
+
+	// Early exit: No symbol IDs found
+	if ( empty( $matches[2] ) ) {
+		return false;
+	}
+
+	// Check each symbol for the cart shortcode
+	foreach ( $matches[2] as $symbol_id ) {
+		if ( tcb_post_contains_surecart_shortcode( absint( $symbol_id ) ) ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Enqueue SureCart scripts, styles, and modules for cart functionality
+ *
+ * @return void
+ */
+function tcb_enqueue_surecart_modules() {
+	// Early exit: Check if SureCart plugin is active
+	if ( ! class_exists( 'SureCart' ) ) {
+		return;
+	}
+
+	// Enqueue main SureCart components (JS and CSS)
+	\SureCart::assets()->enqueueComponents();
+
+	// Early exit: Script module function not available
+	if ( ! function_exists( 'wp_enqueue_script_module' ) ) {
+		return;
+	}
+
+	// Enqueue script modules for cart and checkout
+	wp_enqueue_script_module( '@surecart/cart' );
+	wp_enqueue_script_module( '@surecart/checkout' );
+}
+
+/**
+ * Render SureCart cart template in footer
+ *
+ * @return void
+ */
+function tcb_render_surecart_cart_template() {
+	// Early exit: Check if SureCart plugin is active
+	if ( ! class_exists( 'SureCart' ) ) {
+		return;
+	}
+
+	// Get the cart template
+	$template = get_block_template( 'surecart/surecart//cart', 'wp_template_part' );
+
+	// Early exit: Template not found
+	if ( ! $template ) {
+		return;
+	}
+
+	// Early exit: Template has no content
+	if ( empty( $template->content ) ) {
+		return;
+	}
+
+	// Render the cart template blocks
+	// Note: do_blocks() returns escaped HTML that should not be double-escaped
+	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo do_blocks( $template->content );
+}
+
+/**
+ * Initialize SureCart compatibility for TCB landing pages
+ * Ensures cart drawer is properly added and WP Interactivity API works correctly
+ *
+ * @return void
+ */
+function tcb_init_surecart_compat() {
+	// Early exit: SureCart cart not needed on this page
+	if ( ! tcb_is_surecart_cart_needed() ) {
+		return;
+	}
+
+	// Enqueue required scripts, styles, and modules
+	add_action( 'wp_enqueue_scripts', 'tcb_enqueue_surecart_modules' );
+
+	// Add cart template to footer with priority 1 for early initialization
+	add_action( 'wp_footer', 'tcb_render_surecart_cart_template', 1 );
+
+	// Output block support styles for landing pages
+	add_action( 'wp_footer', 'tcb_output_surecart_block_support_styles', 0 );
+}
+
+add_action( 'wp', 'tcb_init_surecart_compat' );
+
+/**
+ * Output WordPress block support styles for SureCart on landing pages
+ * Landing pages don't load core-block-supports-inline-css which contains essential flex layout styles
+ * This function outputs those styles inline in the footer
+ *
+ * @return void
+ */
+function tcb_output_surecart_block_support_styles() {
+	// Early exit: Not a landing page
+	if ( ! function_exists( 'tve_post_is_landing_page' ) || ! tve_post_is_landing_page( get_the_ID() ) ) {
+		return;
+	}
+
+	// Early exit: SureCart not active
+	if ( ! class_exists( 'SureCart' ) ) {
+		return;
+	}
+
+	// Check if core-block-supports styles are already loaded
+	if ( wp_style_is( 'core-block-supports', 'done' ) || wp_style_is( 'core-block-supports', 'enqueued' ) ) {
+		return;
+	}
+
+	// Get the cart template to extract block support styles
+	$template = get_block_template( 'surecart/surecart//cart', 'wp_template_part' );
+	if ( ! $template || empty( $template->content ) ) {
+		return;
+	}
+
+	// Render the template to generate block support styles
+	// This triggers WordPress to generate the wp-container-* classes in the style engine
+	do_blocks( $template->content );
+
+	// Get the generated block support styles from the style engine
+	$block_support_styles = wp_style_engine_get_stylesheet_from_context( 'block-supports' );
+
+	// Also get any stored styles that WordPress may have queued
+	if ( function_exists( 'wp_style_engine_get_stylesheet_from_context' ) ) {
+		$stored_styles = wp_style_engine_get_stylesheet_from_context( 'block-supports', array( 'prettify' => false ) );
+		if ( ! empty( $stored_styles ) && $stored_styles !== $block_support_styles ) {
+			$block_support_styles .= $stored_styles;
+		}
+	}
+
+	if ( ! empty( $block_support_styles ) ) {
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSS output is safe
+		echo '<style id="tcb-surecart-block-supports-css">' . $block_support_styles . '</style>';
+	}
+}
+
+/**
+ * Enqueue WordPress stored block styles for landing pages with SureCart
+ * This ensures core-block-supports styles are properly enqueued
+ *
+ * @return void
+ */
+function tcb_enqueue_surecart_stored_styles() {
+	// Early exit: Not a landing page
+	if ( ! function_exists( 'tve_post_is_landing_page' ) || ! tve_post_is_landing_page( get_the_ID() ) ) {
+		return;
+	}
+
+	// Early exit: SureCart not active
+	if ( ! class_exists( 'SureCart' ) ) {
+		return;
+	}
+
+	// Force WordPress to enqueue stored block styles
+	if ( function_exists( 'wp_enqueue_stored_styles' ) ) {
+		wp_enqueue_stored_styles( array( 'prettify' => false ) );
+	}
+}
+
+add_action( 'wp_footer', 'tcb_enqueue_surecart_stored_styles', 5 );
+
+/**
+ * Whitelist SureCart CSS/JS from being stripped on landing pages
+ * This ensures SureCart assets load even when "Do not strip CSS from <head>" is unchecked
+ *
+ * @param array            $tcb_style_classes List of CSS classes/IDs to preserve.
+ * @param TCB_Landing_Page $landing_page      Landing page instance.
+ *
+ * @return array Modified list of CSS classes/IDs to preserve.
+ */
+function tcb_surecart_lp_strip_css_whitelist( $tcb_style_classes, $landing_page ) {
+	// Early exit: SureCart not active
+	if ( ! class_exists( 'SureCart' ) ) {
+		return $tcb_style_classes;
+	}
+
+	// Add SureCart CSS identifiers to whitelist
+	$surecart_styles = array(
+		'surecart-',           // All SureCart style handles
+		'sc-',                 // SureCart shorthand prefix
+		'wp-block-surecart',   // SureCart block styles
+		'core-block-supports', // WordPress block support styles (contains flex layout classes)
+		'global-styles',       // WordPress global styles (contains .is-layout-flex etc.)
+	);
+
+	return array_merge( $tcb_style_classes, $surecart_styles );
+}
+
+add_filter( 'tcb_lp_strip_css_whitelist', 'tcb_surecart_lp_strip_css_whitelist', 10, 2 );
+/**
+ * Add SureCart theme body class to landing pages
+ * Landing pages use remove_all_filters('body_class') which removes SureCart's filter
+ * This re-adds the surecart-theme-{theme} class via the tcb_lp_body_class filter
+ *
+ * @param string $classes Current body classes for landing page.
+ *
+ * @return string Modified body classes with SureCart theme class.
+ */
+function tcb_surecart_lp_body_class( $classes ) {
+	// Early exit: SureCart not active
+	if ( ! class_exists( 'SureCart' ) ) {
+		return $classes;
+	}
+
+	// Get SureCart theme setting (defaults to 'light')
+	$theme = get_option( 'surecart_theme', 'light' );
+
+	// Add the SureCart theme class
+	$classes .= ' surecart-theme-' . sanitize_html_class( $theme );
+
+	return $classes;
+}
+
+add_filter( 'tcb_lp_body_class', 'tcb_surecart_lp_body_class' );
+
+/**
+ * Compatibility with Google SiteKit - Google Tag Manager
+ *
+ * Ensures GTM scripts are properly output on Thrive landing pages when users
+ * don't have Thrive Theme Builder installed (only Thrive Architect).
+ *
+ * Landing pages use custom hooks that SiteKit doesn't hook into.
+ * This fix outputs GTM scripts at priority 1 to ensure they load before other scripts.
+ *
+ * Note: If Thrive Theme Builder is installed, the theme's compatibility.php handles this.
+ */
+if ( defined( 'GOOGLESITEKIT_PLUGIN_MAIN_FILE' ) && ! defined( 'THRIVE_THEME' ) ) {
+
+	/**
+	 * Get Google Tag Manager container ID from SiteKit settings
+	 *
+	 * @return string|false Container ID or false if not configured/disabled
+	 */
+	function tcb_get_sitekit_gtm_container_id() {
+		$settings = get_option( 'googlesitekit_tagmanager_settings' );
+
+		if ( empty( $settings ) || ! is_array( $settings ) ) {
+			return false;
+		}
+
+		// Respect user's choice to disable SiteKit snippet output
+		if ( isset( $settings['useSnippet'] ) && $settings['useSnippet'] === false ) {
+			return false;
+		}
+
+		return ! empty( $settings['containerID'] ) ? $settings['containerID'] : false;
+	}
+
+	/**
+	 * Output GTM head script
+	 *
+	 * @param string $container_id GTM container ID
+	 */
+	function tcb_output_gtm_head_script( $container_id ) {
+		if ( empty( $container_id ) ) {
+			return;
+		}
+
+		// Validate container ID format (GTM-XXXXXXX) - allows uppercase/lowercase letters and numbers
+		if ( ! preg_match( '/^GTM-[A-Za-z0-9]+$/', $container_id ) ) {
+			return;
+		}
+
+		?>
+<!-- Google Tag Manager (Thrive Architect Compatibility) -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','<?php echo esc_js( $container_id ); ?>');</script>
+<!-- End Google Tag Manager -->
+		<?php
+	}
+
+	/**
+	 * Output GTM noscript tag
+	 *
+	 * @param string $container_id GTM container ID
+	 */
+	function tcb_output_gtm_noscript( $container_id ) {
+		if ( empty( $container_id ) ) {
+			return;
+		}
+
+		// Validate container ID format - allows uppercase/lowercase letters and numbers
+		if ( ! preg_match( '/^GTM-[A-Za-z0-9]+$/', $container_id ) ) {
+			return;
+		}
+
+		?>
+<!-- Google Tag Manager (noscript) (Thrive Architect Compatibility) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<?php echo esc_attr( $container_id ); ?>"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+		<?php
+	}
+
+	/**
+	 * Ensure GTM head script is output on landing pages (with duplicate prevention)
+	 */
+	function tcb_ensure_sitekit_gtm_head() {
+		static $already_output = false;
+
+		if ( $already_output ) {
+			return;
+		}
+
+		// Skip in editor context
+		if ( function_exists( 'is_editor_page_raw' ) && is_editor_page_raw() ) {
+			return;
+		}
+
+		$container_id = tcb_get_sitekit_gtm_container_id();
+
+		if ( empty( $container_id ) ) {
+			return;
+		}
+
+		tcb_output_gtm_head_script( $container_id );
+		$already_output = true;
+	}
+
+	/**
+	 * Ensure GTM noscript is output on landing pages (with duplicate prevention)
+	 */
+	function tcb_ensure_sitekit_gtm_body_open() {
+		static $already_output = false;
+
+		if ( $already_output ) {
+			return;
+		}
+
+		// Skip in editor context
+		if ( function_exists( 'is_editor_page_raw' ) && is_editor_page_raw() ) {
+			return;
+		}
+
+		$container_id = tcb_get_sitekit_gtm_container_id();
+
+		if ( empty( $container_id ) ) {
+			return;
+		}
+
+		tcb_output_gtm_noscript( $container_id );
+		$already_output = true;
+	}
+
+	// Landing pages - output GTM script in landing page head
+	add_action( 'tcb_landing_head_frontend', static function () {
+		tcb_ensure_sitekit_gtm_head();
+	}, 1 );
+
+	// Landing pages - output noscript after landing page body opens
+	add_action( 'tcb_landing_body_open_frontend', static function () {
+		tcb_ensure_sitekit_gtm_body_open();
+	}, 1 );
+}

@@ -3,7 +3,6 @@
 namespace TVE\Dashboard\Automator;
 
 use Thrive\Automator\Items\Action_Field;
-use function wc_get_products;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
@@ -50,9 +49,9 @@ class Woo_Products_Field extends Action_Field {
 	 */
 	public static function get_options_callback( $action_id, $action_data ) {
 		$products = array();
-		foreach ( wc_get_products( array( 'limit' => - 1 ) ) as $key => $product ) {
-			$id               = $product->get_id();
-			$products[ $key ] = array(
+		foreach ( Woo::get_products() as $product ) {
+			$id              = $product->get_id();
+			$products[ $id ] = array(
 				'label' => $product->get_name(),
 				'id'    => $id,
 			);

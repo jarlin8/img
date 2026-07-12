@@ -22,7 +22,8 @@ function tve_social_get_sdk_link( $handle ) {
 
 			return '//connect.facebook.net/en_US/sdk.js#xfbml=0' . $app_id . '&version=v2.9';
 		case 'twitter':
-			return '//platform.twitter.com/widgets.js';
+		case 'x':
+			return '//platform.x.com/widgets.js';
 		case 'linkedin':
 			return '//platform.linkedin.com/in.js';
 		case 'xing':
@@ -36,13 +37,14 @@ function tve_social_get_sdk_link( $handle ) {
  * @return array
  */
 function tve_social_get_custom_networks() {
-	return array(
+	return [
 		'fb_share',
-		't_share',
+		'x_share',
 		'pin_share',
 		'in_share',
 		'xing_share',
-	);
+		'bluesky_share',
+	];
 }
 
 /**
@@ -83,27 +85,28 @@ function tve_social_render_default( $config ) {
  *
  * @return array|string
  */
-function tve_social_networks_default_html( $network = null, $config = array(), $editor_page = false ) {
-	$defaults = array(
+function tve_social_networks_default_html( $network = null, $config = [], $editor_page = false ) {
+	$defaults = [
 		'btn_type' => 'btn',
-	);
+	];
 	$config   = array_merge( $defaults, $config );
 
 	if ( ! empty( $network ) && function_exists( 'tve_social_network_default_' . $network ) ) {
 		return call_user_func( 'tve_social_network_default_' . $network, $config, $editor_page );
 	}
 
-	$networks = array(
+	$networks = [
 		'fb_share',
 		'fb_like',
-		't_share',
-		't_follow',
+		'x_share',
+		'x_follow',
 		'in_share',
 		'pin_share',
 		'xing_share',
-	);
+		'bluesky_share',
+	];
 
-	$html = array();
+	$html = [];
 	foreach ( $networks as $network ) {
 		$html[ $network ] = call_user_func( 'tve_social_network_default_' . $network, $config, $editor_page );
 	}
@@ -154,31 +157,31 @@ function tve_social_network_default_fb_like( $config ) {
  *
  * @return string
  */
-function tve_social_network_default_t_share( $config ) {
+function tve_social_network_default_x_share( $config ) {
 	return sprintf(
-		'<a href="https://twitter.com/share" class="twitter-share-button" %s %s %s %s></a>',
-		! empty( $config['t_share']['href'] ) ? 'data-url="' . $config['t_share']['href'] . '"' : '',
-		! empty( $config['t_share']['tweet'] ) ? 'data-text="' . $config['t_share']['tweet'] . '"' : '',
-		! empty( $config['t_share']['via'] ) ? 'data-via="' . $config['t_share']['via'] . '"' : '',
+		'<a href="https://x.com/share" class="twitter-share-button" %s %s %s %s></a>',
+		! empty( $config['x_share']['href'] ) ? 'data-url="' . $config['x_share']['href'] . '"' : '',
+		! empty( $config['x_share']['tweet'] ) ? 'data-text="' . $config['x_share']['tweet'] . '"' : '',
+		! empty( $config['x_share']['via'] ) ? 'data-via="' . $config['x_share']['via'] . '"' : '',
 		$config['btn_type'] == 'btn' ? ' data-count="none"' : ''
 	);
 }
 
 /**
- * default twitter follow button
+ * default X (twitter follow button
  *
  * @param array $config
  *
  * @return string
  */
-function tve_social_network_default_t_follow( $config ) {
-	$username = ! empty( $config['t_follow']['username'] ) ? trim( $config['t_follow']['username'], "@" ) : "";
+function tve_social_network_default_x_follow( $config ) {
+	$username = ! empty( $config['x_follow']['username'] ) ? trim( $config['x_follow']['username'], "@" ) : "";
 
 	return sprintf(
-		'<a href="https://twitter.com/%s" class="twitter-follow-button" %s %s>Follow</a>',
+		'<a href="https://x.com/%s" class="twitter-follow-button" %s %s>Follow</a>',
 		$username,
 		$config['btn_type'] == 'btn' ? 'data-show-count="false"' : '',
-		! empty( $config['t_follow']['hide_username'] ) ? 'data-show-screen-name="false"' : ''
+		! empty( $config['x_follow']['hide_username'] ) ? 'data-show-screen-name="false"' : ''
 
 	);
 }
@@ -265,6 +268,21 @@ function tve_social_network_default_xing_share( $config ) {
 }
 
 /**
+ * default bluesky button
+ *
+ * @param array $config
+ *
+ * @return string
+ */
+function tve_social_network_default_bluesky_share( $config ) {
+	return sprintf(
+		'<div data-type="bluesky/share" %s data-url="%s"></div>',
+		$config['btn_type'] == 'btn_count' ? 'data-counter="true"' : '',
+		! empty( $config['bluesky_share']['href'] ) ? $config['bluesky_share']['href'] : '{tcb_post_url}'
+	);
+}
+
+/**
  * fetch and decode a JSON response from a URL
  *
  * @param string $url
@@ -273,19 +291,19 @@ function tve_social_network_default_xing_share( $config ) {
  * @return array
  */
 function _tve_social_helper_get_json( $url, $fn = 'wp_remote_get' ) {
-	$response = $fn( $url, array( 'sslverify' => false ) );
+	$response = $fn( $url, [ 'sslverify' => false ] );
 	if ( $response instanceof WP_Error ) {
-		return array();
+		return [];
 	}
 
 	$body = wp_remote_retrieve_body( $response );
 	if ( empty( $body ) ) {
-		return array();
+		return [];
 	}
 
 	$data = json_decode( $body, true );
 
-	return empty( $data ) ? array() : $data;
+	return empty( $data ) ? [] : $data;
 }
 
 /**
@@ -294,7 +312,7 @@ function _tve_social_helper_get_json( $url, $fn = 'wp_remote_get' ) {
  * @param int $count
  */
 function tve_social_count_format( $count ) {
-	$suffixes = array( '', 'K', 'M', 'G' );
+	$suffixes = [ '', 'K', 'M', 'G' ];
 
 	$suffixIndex = 0;
 
@@ -316,14 +334,14 @@ function tve_social_count_format( $count ) {
  *
  * Allowed values for the network / network keys:
  *  'fb_share',
- *  't_share',
+ *  'x_share',
  *  'pin_share',
  *  'in_share',
  *  'xing_share'
  *
  * @return array
  * [fb_share] => $count
- * [t_share] => $count
+ * [_share] => $count
  * ..
  */
 function tve_social_get_share_count( $post_id, $post_permalink = null, $networks = null, $force_fetch = false ) {
@@ -337,17 +355,17 @@ function tve_social_get_share_count( $post_id, $post_permalink = null, $networks
 	/**
 	 * all possible networks
 	 */
-	$all_networks = array(
+	$all_networks = [
 		'fb_share',
-		't_share',
+		'x_share',
 		'pin_share',
 		'in_share',
 		'xing_share',
-	);
+	];
 
 	/* make sure the $networks will be an array */
 	if ( $networks !== null ) {
-		$networks = is_array( $networks ) ? $networks : array( $networks );
+		$networks = is_array( $networks ) ? $networks : [ $networks ];
 		$networks = array_intersect( $networks, $all_networks );
 	} else {
 		$networks = $all_networks;
@@ -357,7 +375,7 @@ function tve_social_get_share_count( $post_id, $post_permalink = null, $networks
 
 	/* if no cache or if the URL has changed => re-fetch the whole thing */
 	if ( empty( $count ) || $count['url'] != $post_permalink ) {
-		$count       = array();
+		$count       = [];
 		$force_fetch = true;
 	}
 
@@ -407,7 +425,7 @@ function tve_social_get_share_count( $post_id, $post_permalink = null, $networks
 function tve_social_fetch_count( $url, $for = null ) {
 	$all = tve_social_get_custom_networks();
 
-	$response = array();
+	$response = [];
 
 	if ( $for === null ) {
 		foreach ( $all as $network ) {
@@ -452,7 +470,7 @@ function tve_social_fetch_count_fb_share( $url ) {
  *
  * @return int
  */
-function tve_social_fetch_count_t_share( $url ) {
+function tve_social_fetch_count_x_share( $url ) {
 	return 0;
 }
 
@@ -464,9 +482,9 @@ function tve_social_fetch_count_t_share( $url ) {
  * @return int
  */
 function tve_social_fetch_count_pin_share( $url ) {
-	$response = wp_remote_get( 'https://api.pinterest.com/v1/urls/count.json?callback=_&url=' . rawurlencode( $url ), array(
+	$response = wp_remote_get( 'https://api.pinterest.com/v1/urls/count.json?callback=_&url=' . rawurlencode( $url ), [
 		'sslverify' => false,
-	) );
+	] );
 
 	$body = wp_remote_retrieve_body( $response );
 	if ( empty( $body ) ) {
@@ -527,10 +545,10 @@ function tve_social_dash_ajax_share_counts( $current, $post_data ) {
  * @param array $post_data allow overriding the default $_POST data
  */
 function tve_social_ajax_count( $return = false, $post_data = null ) {
-	$response = array(
-		'counts' => array(),
-		'totals' => array(),
-	);
+	$response = [
+		'counts' => [],
+		'totals' => [],
+	];
 	$data     = null !== $post_data ? $post_data : $_POST;
 
 	if ( empty( $data['for'] ) || ! is_array( $data['for'] ) ) {
@@ -539,8 +557,8 @@ function tve_social_ajax_count( $return = false, $post_data = null ) {
 		}
 		wp_send_json( $response );
 	}
-	$url_cache   = array();
-	$count_cache = array();
+	$url_cache   = [];
+	$count_cache = [];
 	foreach ( $data['for'] as $index => $item ) {
 
 		if ( ! is_array( $item ) ) {
@@ -552,7 +570,7 @@ function tve_social_ajax_count( $return = false, $post_data = null ) {
 		$total          = 0;
 		$post_permalink = empty( $data['post_id'] ) ? '' : get_permalink( $data['post_id'] );
 
-		$response['counts'][ $index ] = array();
+		$response['counts'][ $index ] = [];
 
 		foreach ( $networks as $network ) {
 			$url = $item[ $network ];

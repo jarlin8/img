@@ -11,14 +11,14 @@ use TCB\inc\helpers\FormSettings;
  * @return array map of replacements
  */
 function tve_save_form_settings( $forms, $post_parent ) {
-	$replaced   = array();
+	$replaced   = [];
 	$post_title = 'Form settings' . ( $post_parent ? ' for content ' . $post_parent : '' );
 
 	foreach ( $forms as $form ) {
 		$id       = ! empty( $form['id'] ) ? (int) $form['id'] : 0;
 		$instance = FormSettings::get_one( $form['id'], $post_parent )
 		                        ->set_config( wp_unslash( $form['settings'] ) )
-		                        ->save( $post_title, empty( $post_parent ) ? null : array( 'post_parent' => $post_parent ) );
+		                        ->save( $post_title, empty( $post_parent ) ? null : [ 'post_parent' => $post_parent ] );
 		if ( $instance->ID !== $id ) {
 			$replaced[ $form['id'] ] = $instance->ID;
 		}
@@ -38,7 +38,7 @@ function tve_delete_form_settings( $id ) {
 	}
 
 	if ( ! is_array( $id ) ) {
-		$id = array( $id );
+		$id = [ $id ];
 	}
 
 	foreach ( $id as $form_id ) {
@@ -55,14 +55,14 @@ function tve_delete_form_settings( $id ) {
  * @return void
  */
 function tve_delete_post_form_settings( $post_id ) {
-	$query = new \WP_Query( array(
-			'post_type'      => array(
+	$query = new \WP_Query( [
+			'post_type'      => [
 				FormSettings::POST_TYPE,
-			),
+			],
 			'fields'         => 'ids',
 			'post_parent'    => $post_id,
 			'posts_per_page' => '-1',
-		)
+		]
 	);
 
 	$post_ids = $query->posts;
@@ -81,6 +81,8 @@ add_action( 'before_delete_post', static function ( $post_id, $post ) {
 }, 10, 2 );
 
 add_action( 'tve_leads_delete_post', 'tve_delete_post_form_settings', 10, 1 );
+
+add_action( 'after_delete_post', 'tve_delete_post_form_settings' );
 
 /**
  * On frontend contexts, always remove form settings from content
@@ -115,6 +117,23 @@ add_filter( 'tcb.content_pre_save', static function ( $response, $post_data ) {
 			$post_id = null;
 		}
 		$response['forms'] = tve_save_form_settings( $post_data['forms'], $post_id );
+
+		// generate response list of lead gen forms.
+		$lead_gen_forms = [];
+		foreach ( $post_data['forms'] as $form ) {
+			if ( $form['settings'] ) {
+				$form_attributes = ! empty( $form['settings'] ) ? json_decode( stripslashes( $form['settings'] ) ) : null;
+				if ( ! is_null( $form_attributes ) && 'lead_generation' === $form_attributes->form_type ) {
+					$lead_gen_forms[] = array(
+						'form_identifier' => $form_attributes->form_identifier,
+						'apis'            => $form_attributes->apis ? array_keys( (array) $form_attributes->apis ) : array(),
+						'inputs'          => $form_attributes->inputs,
+					);
+				}
+			}
+		}
+
+		$response['lead_gen_forms'] = $lead_gen_forms;
 	}
 
 	if ( $process_form_settings && ! empty( $post_data['deleted_forms'] ) ) {

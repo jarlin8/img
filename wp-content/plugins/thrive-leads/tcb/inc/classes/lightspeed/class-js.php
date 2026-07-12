@@ -69,6 +69,7 @@ class JS {
 		/* enqueue general file with the base functionality */
 		tve_enqueue_script( 'tve_frontend', tve_editor_js() . '/modules/general' . \TCB_Utils::get_js_suffix(), [
 			'jquery',
+			'jquery-ui-autocomplete',
 			'jquery-masonry',
 		] );
 
@@ -151,6 +152,10 @@ class JS {
 		} else if ( Main::requires_architect_assets( $this->ID ) || Main::has_architect_content( $this->ID ) ) {
 			/* load all modules */
 			$this->modules = array_keys( static::get_module_data() );
+
+			if ( ! empty( $this->modules ) ) {
+				$this->load_module_dependencies();
+			}
 		} else {
 			$this->modules = [];
 		}
@@ -206,6 +211,12 @@ class JS {
 			'audio'                 => [
 				'identifier' => '.thrv_audio',
 			],
+			'carousel'              => [
+				'identifier' => '[data-type="carousel"]',
+				'libraries'  => [
+					'carousel-libs' => tve_editor_js( '/carousel-libs' . \TCB_Utils::get_js_suffix() ),
+				],
+			],
 			/* this is the old contact form element which is no longer visible in the sidebar, but still has frontend JS */
 			'contact-form-compat'   => [
 				'identifier' => '.thrv-contact-form',
@@ -223,7 +234,19 @@ class JS {
 				'identifier' => '.thrv-search-form',
 			],
 			'dropdown'              => [
-				'identifier' => '.tve_lg_dropdown, .tcb-form-dropdown, .tve-dynamic-dropdown',
+				'identifier' => '.tve_lg_dropdown, .tve_lg_state, .tcb-form-dropdown, .tve-dynamic-dropdown',
+			],
+			'country'               => [
+				'identifier' => '.tve_lg_country',
+			],
+			'state' => [
+				'identifier' => '.tve_lg_state',
+			],
+			'datepicker'            => [
+				'identifier' => '.lg-date-picker',
+				'libraries'  => [
+					'date-picker' => tve_editor_js( '/date-picker' . \TCB_Utils::get_js_suffix() ),
+				],
 			],
 			'divider'               => [
 				'identifier' => '.thrv-divider',
@@ -235,6 +258,14 @@ class JS {
 					'plupload' => includes_url() . 'js/plupload/plupload.min.js',
 				],
 			],
+			'avatar-picker'         => [
+				'identifier'   => '.tve-avatar-picker-element',
+				'dependencies' => [ 'google-api', 'facebook-api', 'modal' ],
+				'libraries'    => [
+					'google-client' => 'https://accounts.google.com/gsi/client',
+					'google-api'    => 'https://apis.google.com/js/api.js',
+				],
+			],
 			'fill-counter'          => [
 				'identifier' => '.thrv-fill-counter',
 			],
@@ -242,10 +273,11 @@ class JS {
 				'identifier' => '.tve-number-counter',
 			],
 			'image-gallery'         => [
-				'identifier' => '.tcb-image-gallery',
-				'libraries'  => [
+				'identifier'   => '.tcb-image-gallery',
+				'libraries'    => [
 					'image-gallery-libs' => tve_editor_js( '/image-gallery-libs.min.js' ),
 				],
+				'dependencies' => [ 'carousel' ],
 			],
 			'lead-generation'       => [
 				'identifier'   => '.thrv_lead_generation',
@@ -269,11 +301,11 @@ class JS {
 				'dependencies' => [ 'post-list' ],
 			],
 			'post-list'             => [
-				'identifier'   => '.tcb-post-list, .tva-course-list',
+				'identifier'   => '.tcb-post-list, .tva-course-list, .thrive-display-testimonials',
 				'dependencies' => [ 'post-grid-compat', 'dropdown' ],
 			],
-			'post-list-filter'             => [
-				'identifier'   => '.tcb-post-list-filter',
+			'post-list-filter'      => [
+				'identifier' => '.tcb-post-list-filter',
 			],
 			'pricing-table'         => [
 				'identifier' => '.thrv-pricing-table',

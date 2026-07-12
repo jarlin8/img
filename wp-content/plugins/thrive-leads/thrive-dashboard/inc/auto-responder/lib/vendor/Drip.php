@@ -173,11 +173,7 @@ class Thrive_Dash_Api_Drip {
 		$account_id = $params['account_id'];
 		unset( $params['account_id'] ); // clear it from the params
 
-		if ( empty( $params['campaign_id'] ) ) {
-			throw new Exception( 'Campaign ID not specified' );
-		}
-
-		$campaign_id = $params['campaign_id'];
+		$campaign_id = $params['campaign_id'] ?: ''; // campaign_id isn't really required
 		unset( $params['campaign_id'] ); // clear it from the params
 
 		if ( empty( $params['email'] ) ) {

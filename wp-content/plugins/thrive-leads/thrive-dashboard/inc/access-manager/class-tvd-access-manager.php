@@ -57,9 +57,10 @@ class Main {
 
 		foreach ( tve_dash_get_products( false ) as $product ) {
 			/* Skip old themes */
-			if ( $product->get_type() === 'theme' ) {
+			if ( 'theme' === $product->get_type() && 'thrive theme' !== strtolower( $product->get_title() ) ) {
 				continue;
 			}
+			
 			$tag                  = $product->get_tag();
 			$all_products[ $tag ] = array(
 				'name'            => $product->get_title(),

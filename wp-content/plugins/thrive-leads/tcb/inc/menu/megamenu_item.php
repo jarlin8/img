@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<i></i>
 	</div>
 	<div class="dropdown-content">
+		<div class="tve-control hide-states" data-view="Display"></div>
 		<div class="tve-control" data-view="HasIconImage"></div>
 		<div class="tve-control pb-10 i-enabled gl-st-icon-toggle-2" data-view="ModalPicker"></div>
 		<div class="if-image tve-control mb-10" data-view="ImageSide"></div>

@@ -155,12 +155,13 @@ class TVE_Dash_Product_LicenseManager {
 	}
 
 	public function checkLicense( $email, $key, $tag = false ) {
-		$api_url = "http://service-api.thrivethemes.com/license";
-
+		$service_api_url = defined( 'TD_SERVICE_API_URL' ) ? TD_SERVICE_API_URL : 'https://service-api.thrivethemes.com';
+		$api_url = rtrim($service_api_url, '/') . '/license';
 
 		$body = array(
-			'email'   => $email,
-			'license' => $key,
+			'email'   		=> $email,
+			'license' 		=> $key,
+			'site_url'   	=> get_site_url(),
 		);
 
 		if ( $tag !== false ) {
@@ -269,6 +270,6 @@ class TVE_Dash_Product_LicenseManager {
 			'thrive-product-manager' => static::TPM_TAG,
 		);
 
-		return isset( $mapping[ $text_domain ] ) ? $mapping[ $text_domain ] : '';
+		return $mapping[ $text_domain ] ?? '';
 	}
 }

@@ -7,11 +7,26 @@
 <ul class="tvd-collection tvd-with-header" id="tve-table-items">
 	<li class="tvd-collection-header">
 		<div class="tvd-row">
-			<div class="tvd-col tvd-s4">
+			<div class="tvd-col tvd-s3">
 				<h5><?php echo __( 'Date', 'thrive-leads' ); ?></h5>
 			</div>
-			<div class="tvd-col tvd-s8">
-				<h5><?php echo __( 'Rate', 'thrive-leads' ); ?></h5>
+			<div class="tvd-col tvd-s3">
+				<h5>
+					<?php echo __( 'Impressions', 'thrive-leads' ); ?>
+					<span class="tvd-icon-question-circle tvd-tooltipped" data-position="top" data-tooltip="<?php echo esc_attr__( 'Counts unique visitor impressions for this period.', 'thrive-leads' ); ?>"></span>
+				</h5>
+			</div>
+			<div class="tvd-col tvd-s3">
+				<h5>
+					<?php echo __( 'Conversions', 'thrive-leads' ); ?>
+					<span class="tvd-icon-question-circle tvd-tooltipped" data-position="top" data-tooltip="<?php echo esc_attr__( 'Includes both form submissions (identified contacts) and button clicks (anonymous engagement). Only the first conversion event per visitor session is counted.', 'thrive-leads' ); ?>"></span>
+				</h5>
+			</div>
+			<div class="tvd-col tvd-s3">
+				<h5>
+					<?php echo __( 'CR%', 'thrive-leads' ); ?>
+					<span class="tvd-icon-question-circle tvd-tooltipped" data-position="top" data-tooltip="<?php echo esc_attr__( 'Conversion rate: conversions divided by impressions.', 'thrive-leads' ); ?>"></span>
+				</h5>
 			</div>
 		</div>
 	</li>

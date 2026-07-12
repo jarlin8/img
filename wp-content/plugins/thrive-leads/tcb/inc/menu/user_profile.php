@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<i></i>
 	</div>
 	<div class="dropdown-content">
-		<div class="tcb-text-center mb-10 mr-5 ml-5 edit-mode-hidden">
+		<div class="tcb-text-center mb-10 mr-5 ml-5 user-profile-edit-mode-hidden">
 			<button class="tve-button orange click" data-fn="editElement">
 				<?php echo esc_html__( 'Edit design', 'thrive-cb' ); ?>
 			</button>
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="tve-control" data-view="UserProfilePalette"></div>
 		<div class="tve-control full-width" data-view="FieldsLabel"></div>
 		<div class="tve-control mb-5" data-view="Width"></div>
-		<div class="control-grid edit-mode-hidden">
+		<div class="control-grid user-profile-edit-mode-hidden">
 			<div class="label"><?php echo esc_html__( 'Form fields', 'thrive-cb' ); ?></div>
 			<div class="full">
 				<a class="tcb-right click tve-lg-add-field" data-fn="addField">
@@ -30,9 +30,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</a>
 			</div>
 		</div>
-		<div class="tve-control edit-mode-hidden" data-view="FieldsControl" data-initializer="getFieldsControl"></div>
+		<div class="tve-control user-profile-edit-mode-hidden" data-view="FieldsControl" data-initializer="getFieldsControl"></div>
 
-		<div id="lg-submit-options" class="skip-api no-service mb-5 click edit-mode-hidden">
+		<div id="lg-submit-options" class="skip-api no-service mb-5 click user-profile-edit-mode-hidden">
 			<div id="lg-success-message" data-key="message" class="mt-10">
 					<span>
 						<?php echo esc_html__( 'Success message', 'thrive-cb' ); ?>
@@ -43,7 +43,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 			</div>
 		</div>
-		<div class="tcb-text-center mt-5 edit-mode-hidden">
+		<div class="tcb-text-center mt-5 user-profile-edit-mode-hidden">
 			<button class="tve-button blue long click" data-fn="manageErrorMsg">
 				<?php echo esc_html__( 'Edit error messages', 'thrive-cb' ); ?>
 			</button>

@@ -20,7 +20,7 @@ trait TD_Singleton {
 	/**
 	 * General singleton implementation for class instance
 	 *
-	 * @return mixed
+	 * @return static
 	 */
 	public static function get_instance() {
 		if ( empty( static::$_instance ) ) {

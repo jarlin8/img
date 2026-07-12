@@ -17,8 +17,8 @@ class TCB_Style_Provider {
 			'link'           => array(
 				/* needs to be quite specific. some 3rd party themes are really specific */
 				/* also need to make the selector from _typography.scss */
-				'selector'    => ':not(.inc) .thrv_text_element a:not(.tcb-button-link), :not(.inc) .tcb-styled-list a, :not(.inc) .tcb-numbered-list a, .tve-input-option-text a',
-				'lp_selector' => '#tcb_landing_page .thrv_text_element a:not(.tcb-button-link), #tcb_landing_page .tcb-styled-list a, #tcb_landing_page .tcb-numbered-list a, #tcb_landing_page .tve-input-option-text a',
+				'selector'    => ':not(.inc) .thrv_text_element a:not(.tcb-button-link), :not(.inc) .tcb-styled-list a, :not(.inc) .tcb-numbered-list a, :not(.inc) .theme-dynamic-list a, .tve-input-option-text a',
+				'lp_selector' => '#tcb_landing_page .thrv_text_element a:not(.tcb-button-link), #tcb_landing_page .tcb-styled-list a, #tcb_landing_page .tcb-numbered-list a, #tcb_landing_page .theme-dynamic-list a, #tcb_landing_page .tve-input-option-text a',
 			),
 			'p_link'         => array(
 				'selector'    => ':not(.inc) .thrv_text_element p a:not(.tcb-button-link):not(.thrv-typography-link-text)',
@@ -29,17 +29,17 @@ class TCB_Style_Provider {
 				'lp_selector' => ':not(.inc) #tcb_landing_page h1 a:not(.tcb-button-link), :not(.inc) #tcb_landing_page h2 a:not(.tcb-button-link), :not(.inc) #tcb_landing_page h3 a:not(.tcb-button-link), :not(.inc) #tcb_landing_page h4 a:not(.tcb-button-link), :not(.inc) #tcb_landing_page h5 a:not(.tcb-button-link), :not(.inc) #tcb_landing_page h6 a:not(.tcb-button-link)',
 			),
 			'li_link'        => array(
-				'selector'    => ':not(.inc) .tcb-styled-list a, :not(.inc) .tcb-numbered-list a',
-				'lp_selector' => '#tcb_landing_page .tcb-styled-list a, :not(.inc) .tcb-numbered-list a',
+				'selector'    => ':not(.inc) .tcb-styled-list a, :not(.inc) .tcb-numbered-list a, :not(.inc) .theme-dynamic-list a',
+				'lp_selector' => '#tcb_landing_page .tcb-styled-list a, #tcb_landing_page .tcb-numbered-list a, #tcb_landing_page .theme-dynamic-list a',
 			),
 			'plaintext_link' => array(
 				'selector'    => ':not(.inc) .tcb-plain-text a:not(.tcb-button-link)',
 				'lp_selector' => '#tcb_landing_page .tve_lp .tcb-plain-text a:not(.tcb-button-link)',
 			),
-			'p'              => array(
+			'p'              => [
 				'selector'    => '.tcb-style-wrap p',
 				'lp_selector' => '#tcb_landing_page p',
-			),
+			],
 			'ul'             => array(
 				'selector'    => '.tcb-style-wrap ul:not([class*="menu"]), .tcb-style-wrap ol',
 				'lp_selector' => '#tcb_landing_page ul:not([class*="menu"]), #tcb_landing_page ol',
@@ -48,28 +48,31 @@ class TCB_Style_Provider {
 				'selector'    => '.tcb-style-wrap li:not([class*="menu"])',
 				'lp_selector' => '#tcb_landing_page li:not([class*="menu"])',
 			),
-			'pre'            => array(
+			'pre'            => [
 				'selector'    => '.tcb-style-wrap pre',
 				'lp_selector' => '#tcb_landing_page pre',
-			),
-			'blockquote'     => array(
+			],
+			'blockquote'     => [
 				'selector'    => '.tcb-style-wrap blockquote',
 				'lp_selector' => '#tcb_landing_page blockquote',
-			),
-			'plaintext'      => array(
+			],
+			'plaintext'      => [
 				'selector'    => '.tcb-plain-text',
 				'lp_selector' => '.tve_lp .tcb-plain-text',
-			),
+			],
 		);
 
 		foreach ( range( 1, 6 ) as $level ) {
-			$defaults[ 'h' . $level ] = array(
+			$defaults[ 'h' . $level ] = [
 				'selector'    => '.tcb-style-wrap h' . $level,
 				'lp_selector' => '#tcb_landing_page h' . $level,
-			);
+			];
 		}
 
-		return $defaults;
+		/**
+		 * When the Typography is inherited from TTB, we need to update the selectors and make them stronger
+		 */
+		return apply_filters( 'tcb_typography_inherit', $defaults );
 	}
 
 	/**
@@ -92,7 +95,7 @@ class TCB_Style_Provider {
 		$styles = (array) $styles;
 
 		/* ensure backwards compatibility -> @import rules are now stored in a single array key instead of scattered for each type */
-		$imports = isset( $styles['@imports'] ) ? $styles['@imports'] : array();
+		$imports = isset( $styles['@imports'] ) ? $styles['@imports'] : [];
 		foreach ( $styles as $style_type => &$style_data ) {
 			if ( isset( $style_data['@imports'] ) ) {
 				$imports = array_merge( $imports, $style_data['@imports'] );
@@ -127,24 +130,24 @@ class TCB_Style_Provider {
 	 * @return array formatted list of styles
 	 */
 	protected function read_styles() {
-		$styles = get_option( 'tve_default_styles', array() );
+		$styles = get_option( 'tve_default_styles', [] );
 
 		/* li gets the same styles as <p> at first, but it's stylable individually in some places */
 		if ( empty( $styles['li'] ) ) {
-			$styles['li'] = isset( $styles['p'] ) ? $styles['p'] : array();
+			$styles['li'] = isset( $styles['p'] ) ? $styles['p'] : [];
 		}
 
 		/* For the new links we need to set the styles previously added on the Link element */
 		if ( empty( $styles['p_link'] ) ) {
-			$styles['p_link'] = isset( $styles['link'] ) ? $styles['link'] : array();
+			$styles['p_link'] = isset( $styles['link'] ) ? $styles['link'] : [];
 		}
 
 		if ( empty( $styles['li_link'] ) ) {
-			$styles['li_link'] = isset( $styles['link'] ) ? $styles['link'] : array();
+			$styles['li_link'] = isset( $styles['link'] ) ? $styles['link'] : [];
 		}
 
 		if ( empty( $styles['plaintext_link'] ) ) {
-			$styles['plaintext_link'] = isset( $styles['link'] ) ? $styles['link'] : array();
+			$styles['plaintext_link'] = isset( $styles['link'] ) ? $styles['link'] : [];
 		}
 
 		return $styles;
@@ -172,8 +175,8 @@ class TCB_Style_Provider {
 	public function get_processed_styles( $raw_styles = null, $return = 'object', $include_fonts = true ) {
 		$raw_styles = $this->prepare_styles( isset( $raw_styles ) ? $raw_styles : $this->read_styles() );
 		$data       = array(
-			'@imports' => isset( $raw_styles['@imports'] ) ? $raw_styles['@imports'] : array(),
-			'media'    => array(),
+			'@imports' => isset( $raw_styles['@imports'] ) ? $raw_styles['@imports'] : [],
+			'media'    => [],
 		);
 
 		unset( $raw_styles['@imports'] );
@@ -187,7 +190,7 @@ class TCB_Style_Provider {
 				/**
 				 * Default styles should NEVER generate !important. (This was added by :hover for links from typography)
 				 */
-				$css_rules = str_replace( array( ' !important', '!important' ), '', $css_rules );
+				$css_rules = str_replace( [ ' !important', '!important' ], '', $css_rules );
 
 				/* make sure suffix selectors are built correctly */
 				$css_rules = preg_replace_callback( '#__el__([^{]{2,}?){#m', function ( $matches ) use ( $suffix_selector ) {
@@ -199,7 +202,8 @@ class TCB_Style_Provider {
 		}
 
 		if ( tve_dash_is_google_fonts_blocked() ) {
-			$data['@imports'] = array();
+			// Replace Google Fonts with Bunny Fonts instead of removing them
+			$data['@imports'] = array_map( 'tve_replace_google_font_with_bunny', $data['@imports'] );
 		}
 
 		$media_query_order = array_flip( array(
@@ -238,6 +242,6 @@ class TCB_Style_Provider {
 	public function get_css_imports() {
 		$styles = $this->read_styles();
 
-		return isset( $styles['@imports'] ) ? $styles['@imports'] : array();
+		return isset( $styles['@imports'] ) ? $styles['@imports'] : [];
 	}
 }

@@ -32,8 +32,11 @@ body {
     margin-right: 0;
 }
 
-/* using class for login so it won't be that strong */
-.login h1 a {
+/* 
+ * Using class for login so it won't be that strong.
+ * Using .wp-login-logo class to override login.min.css
+ */
+.login .wp-login-logo a {
     --logo-ratio: 3;
     --logo-size: 240px;
     background-size: var(--logo-size);

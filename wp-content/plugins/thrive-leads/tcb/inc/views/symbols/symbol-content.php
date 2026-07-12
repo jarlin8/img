@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <?php
 
 $is_gutenberg_preview = isset( $_GET['tve_block_preview'] );
-$content              = TCB_Symbol_Template::render_content( array(), true );
+$content              = TCB_Symbol_Template::render_content( [], true );
 
 /**
  * on gutenberg preview display a placeholder
@@ -25,12 +25,12 @@ if ( $is_gutenberg_preview ) {
 	 */
 	$symbol_content = TCB_Symbol_Template::content( $symbol_id );
 	if ( empty( $symbol_content ) ) {
-		$content = tcb_template( 'elements/no-symbol-content.php', array(), true );
+		$content = tcb_template( 'elements/no-symbol-content.php', [], true );
 	}
 }
 
 if ( empty( $content ) ) {
-	$content = tcb_template( 'elements/block.php', array(), true );
+	$content = tcb_template( 'elements/block.php', [], true );
 }
 
 
@@ -48,7 +48,7 @@ if ( empty( $content ) ) {
 					<p class="sym-l"><?php echo esc_html__( "Currently Editing {$type} \"{$symbol_title}\"" ); ?></p>
 					<p class="sym-r"><?php echo sprintf( esc_html__( "Note that this {$type} doesn't have any width settings. %sIt will expand to the full width of the content area of your theme." ), '<br>' ); ?></p>
 				</div>
-				<div id="tve_editor" class="tve_editable thrv_symbol thrv_symbol_empty <?php echo esc_attr( $symbol_vars['css_class'] ); ?> thrv_symbol_<?php echo esc_attr( $symbol_id ); ?>" data-content="<?php echo esc_html__( "Add {$type} Content Here" ); ?>"<?php echo $data_attr; ?>><?php echo $content; ?></div> <?php // phpcs:ignore ?>
+				<div id="tve_editor" class="tve_editable thrv_symbol thrv_symbol_empty tcb-style-wrap <?php echo esc_attr( $symbol_vars['css_class'] ); ?> thrv_symbol_<?php echo esc_attr( $symbol_id ); ?>" data-content="<?php echo esc_html__( "Add {$type} Content Here" ); ?>"<?php echo $data_attr; ?>><?php echo $content; ?></div> <?php // phpcs:ignore ?>
 			</div>
 		</div>
 	</div>

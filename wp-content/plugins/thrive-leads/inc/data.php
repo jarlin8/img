@@ -12,7 +12,7 @@
  *                         Optional. Arguments to retrieve lead groups. Available options:
  *
  * @type bool   $full_data - whether to retrieve or not the full data (including form_types)
- * }
+ *                         }
  * @return array list of all saved groups
  */
 function tve_leads_get_groups( $filter = array() ) {
@@ -116,7 +116,7 @@ function tve_leads_get_group_ids() {
  *                         Optional. Arguments to retrieve lead groups. Available options:
  *
  * @type bool   $full_data - whether to retrieve or not the full data (including form_types)
- * }
+ *                         }
  * @return WP_Post|null
  */
 function tve_leads_get_group( $id, $filter = array() ) {
@@ -657,6 +657,189 @@ function tve_leads_save_group( $model ) {
 }
 
 /**
+ * Generate an incremental copy title.
+ *
+ * Strips any existing copy prefix from the source title,
+ * then finds the next available "(Copy)" or "(Copy N)" prefix
+ * by checking against existing sibling titles.
+ *
+ * Format: (Copy) - Title, (Copy 1) - Title, (Copy 2) - Title, ...
+ *
+ * @param string $source_title    The title of the item being duplicated
+ * @param array  $existing_titles Array of sibling titles to check against
+ *
+ * @return string The generated copy title
+ */
+function tve_leads_generate_copy_title( $source_title, $existing_titles ) {
+	// Strip new "(Copy) - " or "(Copy N) - " prefix FIRST (before old format, which is case-insensitive)
+	$base_title = preg_replace( '/^\(Copy(?:\s+\d+)?\)\s*-\s*/', '', $source_title );
+	// Strip old "(COPY) " prefixes (may be stacked from previous duplication format)
+	$base_title = preg_replace( '/^(\(COPY\)\s*)+/i', '', $base_title );
+	// Strip old "Copy of " prefix (used by variation clone)
+	$base_title = preg_replace( '/^(Copy of\s*)+/', '', $base_title );
+	$base_title = trim( $base_title );
+
+	// Try "(Copy) - Base Title" first (unnumbered)
+	$candidate = '(Copy) - ' . $base_title;
+	if ( ! in_array( $candidate, $existing_titles, true ) ) {
+		return $candidate;
+	}
+
+	// Find the next available number starting from 1
+	$n = 1;
+	while ( in_array( '(Copy ' . $n . ') - ' . $base_title, $existing_titles, true ) ) {
+		$n++;
+	}
+
+	return '(Copy ' . $n . ') - ' . $base_title;
+}
+
+/**
+ * Duplicate a Lead Group with all its Form Types and their variations
+ *
+ * @param int $source_id The ID of the group to duplicate
+ *
+ * @return object|WP_Error The duplicated group data with form types
+ */
+function tve_leads_duplicate_group( $source_id ) {
+	$source = get_post( $source_id );
+
+	if ( ! $source || get_post_type( $source ) !== TVE_LEADS_POST_GROUP_TYPE ) {
+		return new WP_Error( 'invalid_source', 'Source Lead Group not found' );
+	}
+
+	// Generate incremental copy title
+	$sibling_posts   = get_posts( array(
+		'post_type'      => TVE_LEADS_POST_GROUP_TYPE,
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+	) );
+	$existing_titles = wp_list_pluck( $sibling_posts, 'post_title' );
+	$new_title       = tve_leads_generate_copy_title( $source->post_title, $existing_titles );
+
+	$new_group_data = array(
+		'post_title'  => $new_title,
+		'post_type'   => TVE_LEADS_POST_GROUP_TYPE,
+		'post_status' => 'publish',
+	);
+
+	$new_group_id = wp_insert_post( $new_group_data );
+
+	if ( is_wp_error( $new_group_id ) ) {
+		return $new_group_id;
+	}
+
+	// Reset statistics
+	update_post_meta( $new_group_id, 'tve_leads_impressions', 0 );
+	update_post_meta( $new_group_id, 'tve_leads_conversions', 0 );
+
+	// Set group order (at the end)
+	$max_order = tve_leads_get_max_group_order();
+	update_post_meta( $new_group_id, 'tve_group_order', $max_order + 1 );
+
+	// Duplicate display settings
+	tve_leads_duplicate_group_display_settings( $source_id, $new_group_id );
+
+	// Duplicate all Form Types within this group
+	$form_types     = tve_leads_get_form_types( array( 'lead_group_id' => $source_id ) );
+	$new_form_types = array();
+
+	foreach ( $form_types as $form_type ) {
+		if ( ! $form_type || empty( $form_type->ID ) ) {
+			continue;
+		}
+		$new_form_type = tve_leads_duplicate_form_type( $form_type->ID, $new_group_id );
+
+		if ( is_wp_error( $new_form_type ) ) {
+			continue;
+		}
+
+		$new_form_types[] = $new_form_type;
+	}
+
+	// Get the new group data for frontend
+	$new_group = tve_leads_get_group( $new_group_id, array(
+		'tracking_data'   => true,
+		'active_tests'    => true,
+		'completed_tests' => true,
+	) );
+
+	if ( $new_group ) {
+		// Use the duplicated form types (which include display_on_mobile/display_status)
+		$new_group->form_types = $new_form_types;
+
+		// Recalculate display summaries from the actual duplicated form types
+		$total_form_types  = count( $new_form_types );
+		$display_on_mobile = 0;
+		$display_status    = 0;
+		foreach ( $new_form_types as $ft ) {
+			$display_on_mobile += isset( $ft->display_on_mobile ) ? $ft->display_on_mobile : 0;
+			$display_status    += isset( $ft->display_status ) ? $ft->display_status : 0;
+		}
+
+		$new_group->display_on_mobile = $display_on_mobile == 0
+			? __( 'No', 'thrive-leads' )
+			: ( $display_on_mobile == $total_form_types ? __( 'Yes', 'thrive-leads' ) : __( 'Custom', 'thrive-leads' ) );
+
+		$new_group->display_status = $display_status == 0
+			? __( 'No', 'thrive-leads' )
+			: ( $display_status == $total_form_types ? __( 'Yes', 'thrive-leads' ) : __( 'Custom', 'thrive-leads' ) );
+
+		// Set has_display_settings so the UI knows whether to show the warning icon
+		global $tvedb;
+		$new_group->has_display_settings = $tvedb->has_display_settings( $new_group_id ) == null ? 0 : 1;
+	}
+
+	return $new_group;
+}
+
+/**
+ * Duplicate display settings from one group to another
+ *
+ * @param int $source_group_id
+ * @param int $target_group_id
+ */
+function tve_leads_duplicate_group_display_settings( $source_group_id, $target_group_id ) {
+	global $wpdb;
+
+	$table_name = $wpdb->prefix . 'tve_leads_group_options';
+
+	// Check if table exists
+	$table_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table_name ) ) );
+	if ( ! $table_exists ) {
+		return;
+	}
+
+	// Get source display settings
+	$source_options = $wpdb->get_row(
+		$wpdb->prepare( "SELECT * FROM {$table_name} WHERE `group` = %d", $source_group_id ),
+		ARRAY_A
+	);
+
+	if ( $source_options ) {
+		unset( $source_options['id'] );
+		$source_options['group'] = $target_group_id;
+		$wpdb->insert( $table_name, $source_options );
+	}
+}
+
+/**
+ * Get maximum group order value
+ *
+ * @return int
+ */
+function tve_leads_get_max_group_order() {
+	global $wpdb;
+
+	$max_order = $wpdb->get_var( $wpdb->prepare(
+        "SELECT MAX(CAST(meta_value AS UNSIGNED)) FROM {$wpdb->postmeta} WHERE meta_key = %s",
+        'tve_group_order'
+    ) );
+
+	return (int) $max_order;
+}
+
+/**
  * create or update a Lead Shortcode post
  *
  * can also be used to delete a lead group "internally", by setting the post_status to 'trash'
@@ -694,6 +877,61 @@ function tve_leads_save_shortcode( $model ) {
 }
 
 /**
+ * Duplicate a Lead Shortcode with all its variations
+ *
+ * @param int $source_id The ID of the shortcode to duplicate
+ *
+ * @return object|WP_Error The duplicated shortcode data
+ */
+function tve_leads_duplicate_shortcode( $source_id ) {
+	$source = get_post( $source_id );
+
+	if ( ! $source || get_post_type( $source ) !== TVE_LEADS_POST_SHORTCODE_TYPE ) {
+		return new WP_Error( 'invalid_source', 'Source shortcode not found' );
+	}
+
+	// Generate incremental copy title
+	$sibling_posts   = get_posts( array(
+		'post_type'      => TVE_LEADS_POST_SHORTCODE_TYPE,
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+	) );
+	$existing_titles = wp_list_pluck( $sibling_posts, 'post_title' );
+	$new_title       = tve_leads_generate_copy_title( $source->post_title, $existing_titles );
+
+	$new_shortcode_data = array(
+		'post_title'  => $new_title,
+		'post_type'   => TVE_LEADS_POST_SHORTCODE_TYPE,
+		'post_status' => 'publish',
+	);
+
+	$new_id = wp_insert_post( $new_shortcode_data );
+
+	if ( is_wp_error( $new_id ) ) {
+		return $new_id;
+	}
+
+	// Copy metadata (except stats)
+	update_post_meta( $new_id, 'tve_form_type', 'shortcode' );
+	update_post_meta( $new_id, 'tve_content_locking', get_post_meta( $source_id, 'tve_content_locking', true ) );
+
+	// Reset statistics
+	update_post_meta( $new_id, 'tve_leads_impressions', 0 );
+	update_post_meta( $new_id, 'tve_leads_conversions', 0 );
+
+	// Duplicate all variations
+	tve_leads_duplicate_form_variations( $source_id, $new_id );
+
+	// Return the new shortcode data for frontend
+	$new_shortcode = tve_leads_get_shortcode( $new_id, array(
+		'tracking_data'  => true,
+		'get_variations' => true,
+	) );
+
+	return $new_shortcode;
+}
+
+/**
  * create or update a 2 Step Lightbox post (new name: ThriveBox)
  *
  * can also be used to delete a lead group "internally", by setting the post_status to 'trash'
@@ -727,6 +965,65 @@ function tve_leads_save_two_step_lightbox( $model ) {
 	}
 
 	return $ID;
+}
+
+/**
+ * Duplicate a ThriveBox (Two-Step Lightbox) with all its variations
+ *
+ * @param int $source_id The ID of the ThriveBox to duplicate
+ *
+ * @return object|WP_Error The duplicated ThriveBox data
+ */
+function tve_leads_duplicate_two_step_lightbox( $source_id ) {
+	$source = get_post( $source_id );
+
+	if ( ! $source || get_post_type( $source ) !== TVE_LEADS_POST_TWO_STEP_LIGHTBOX ) {
+		return new WP_Error( 'invalid_source', 'Source ThriveBox not found' );
+	}
+
+	// Generate incremental copy title
+	$sibling_posts   = get_posts( array(
+		'post_type'      => TVE_LEADS_POST_TWO_STEP_LIGHTBOX,
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+	) );
+	$existing_titles = wp_list_pluck( $sibling_posts, 'post_title' );
+	$new_title       = tve_leads_generate_copy_title( $source->post_title, $existing_titles );
+
+	$new_thrivebox_data = array(
+		'post_title'  => $new_title,
+		'post_type'   => TVE_LEADS_POST_TWO_STEP_LIGHTBOX,
+		'post_status' => 'publish',
+	);
+
+	$new_id = wp_insert_post( $new_thrivebox_data );
+
+	if ( is_wp_error( $new_id ) ) {
+		return $new_id;
+	}
+
+	// Copy metadata
+	update_post_meta( $new_id, 'tve_form_type', 'two_step_lightbox' );
+
+	// Reset statistics
+	update_post_meta( $new_id, 'tve_leads_impressions', 0 );
+	update_post_meta( $new_id, 'tve_leads_conversions', 0 );
+
+	// Duplicate all variations (use 'two_step' type for ID reference replacement)
+	tve_leads_duplicate_form_variations( $source_id, $new_id, 'two_step' );
+
+	// Return the new ThriveBox data for frontend
+	$new_thrivebox = tve_leads_get_form_type( $new_id, array(
+		'get_variations' => true,
+	) );
+
+	if ( $new_thrivebox ) {
+		$new_thrivebox->impressions     = 0;
+		$new_thrivebox->conversions     = 0;
+		$new_thrivebox->conversion_rate = 'N/A';
+	}
+
+	return $new_thrivebox;
 }
 
 /**
@@ -919,6 +1216,315 @@ function tve_leads_save_form_type( $model ) {
 	}
 
 	return isset( $id ) ? $id : 0;
+}
+
+/**
+ * Duplicate a Form Type with all its variations
+ *
+ * @param int $source_id        The ID of the form type to duplicate
+ * @param int $target_parent_id The ID of the parent group
+ *
+ * @return object|WP_Error The duplicated form type data
+ */
+function tve_leads_duplicate_form_type( $source_id, $target_parent_id = null ) {
+	$source = get_post( $source_id );
+
+	if ( ! $source || get_post_type( $source ) !== TVE_LEADS_POST_FORM_TYPE ) {
+		return new WP_Error( 'invalid_source', 'Source Form Type not found' );
+	}
+
+	// Use source's parent if not specified
+	if ( $target_parent_id === null ) {
+		$target_parent_id = $source->post_parent;
+	}
+
+	// Get source metadata
+	$source_form_type = get_post_meta( $source_id, 'tve_form_type', true );
+
+	// Prevent duplicating to a group that already has this form type (cross-group only)
+	if ( (int) $target_parent_id !== (int) $source->post_parent ) {
+		$existing = new WP_Query( array(
+			'post_parent__in' => array( $target_parent_id ),
+			'post_type'       => TVE_LEADS_POST_FORM_TYPE,
+			'post_status'     => 'publish',
+            'meta_query' => array(
+                array(
+                    'key'   => 'tve_form_type',
+                    'value' => $source_form_type,
+                ),
+            ),
+		) );
+
+		if ( $existing->have_posts() ) {
+			return new WP_Error( 'form_type_exists', __( 'The target group already has a form type of this kind.', 'thrive-leads' ) );
+		}
+	}
+
+	// Use the original title for form types (users cannot edit it, so omit the "(Copy)" prefix)
+	$new_title = $source->post_title;
+	// Strip any existing copy prefixes to keep the title clean
+	$new_title = preg_replace( '/^\(Copy(?:\s+\d+)?\)\s*-\s*/', '', $new_title );
+	$new_title = preg_replace( '/^(\(COPY\)\s*)+/i', '', $new_title );
+	$new_title = trim( $new_title );
+
+	$new_form_type_data = array(
+		'post_title'  => $new_title,
+		'post_type'   => TVE_LEADS_POST_FORM_TYPE,
+		'post_status' => 'publish',
+		'post_parent' => $target_parent_id,
+	);
+
+	$new_id = wp_insert_post( $new_form_type_data );
+
+	if ( is_wp_error( $new_id ) ) {
+		return $new_id;
+	}
+
+	// Copy metadata
+	update_post_meta( $new_id, 'tve_form_type', $source_form_type );
+	update_post_meta( $new_id, 'display_on_mobile', 0 ); // Disabled by default
+	update_post_meta( $new_id, 'display_status', 0 );    // Disabled by default
+
+	// Reset statistics
+	update_post_meta( $new_id, 'tve_leads_impressions', 0 );
+	update_post_meta( $new_id, 'tve_leads_conversions', 0 );
+
+	// Duplicate all variations (pass the actual form type for correct ID reference replacement)
+	tve_leads_duplicate_form_variations( $source_id, $new_id, $source_form_type );
+
+	// Return the new form type data for frontend
+	$new_form_type = tve_leads_get_form_type( $new_id, array(
+		'get_variations' => true,
+	) );
+
+	if ( $new_form_type ) {
+		$new_form_type->impressions       = 0;
+		$new_form_type->conversions       = 0;
+		$new_form_type->conversion_rate   = 'N/A';
+		$new_form_type->display_on_mobile = 0;
+		$new_form_type->display_status    = 0;
+	}
+
+	return $new_form_type;
+}
+
+/**
+ * Reset tracking data from a variation array before saving a duplicate.
+ *
+ * @param array $variation Variation data array (passed by reference).
+ */
+function tve_leads_reset_variation_tracking( &$variation ) {
+	unset( $variation['key'] );
+	unset( $variation['impressions'] );
+	unset( $variation['conversions'] );
+	unset( $variation['conversion_rate'] );
+	unset( $variation['cache_impressions'] );
+	unset( $variation['cache_conversions'] );
+}
+
+/**
+ * Replace form ID references and process form settings in variation content and child states.
+ *
+ * Handles the main variation content and all child states (already-seen, already-converted).
+ *
+ * @param array  $variation     Variation data array (passed by reference).
+ * @param int    $source_id     The source form/post ID.
+ * @param int    $target_id     The target form/post ID.
+ * @param string $type          The form type identifier (e.g. 'shortcode', 'two_step', or form type value).
+ * @param string $variation_key The original variation key (used to fetch child states).
+ */
+function tve_leads_process_variation_content_for_duplication( &$variation, $source_id, $target_id, $type, $variation_key ) {
+	$can_process_form_settings = class_exists( '\TCB\inc\helpers\FormSettings' )
+		&& method_exists( '\TCB\inc\helpers\FormSettings', 'save_form_settings_from_duplicated_content' );
+
+	// Replace form ID references in main content
+	if ( ! empty( $variation['content'] ) ) {
+		$variation['content'] = tve_leads_replace_form_id_references(
+			$variation['content'],
+			$source_id,
+			$target_id,
+			$type
+		);
+	}
+
+	if ( ! empty( $variation['content'] ) && $can_process_form_settings ) {
+		$variation['content'] = \TCB\inc\helpers\FormSettings::save_form_settings_from_duplicated_content(
+			$variation['content'],
+			$target_id
+		);
+	}
+
+	// Get and process child states
+	$child_states = tve_leads_get_form_child_states( $variation_key );
+
+	if ( ! empty( $child_states ) ) {
+		foreach ( $child_states as $key => $state ) {
+			if ( empty( $state['content'] ) ) {
+				continue;
+			}
+			$child_states[ $key ]['content'] = tve_leads_replace_form_id_references(
+				$state['content'],
+				$source_id,
+				$target_id,
+				$type
+			);
+			if ( $can_process_form_settings ) {
+				$child_states[ $key ]['content'] = \TCB\inc\helpers\FormSettings::save_form_settings_from_duplicated_content(
+					$child_states[ $key ]['content'],
+					$target_id
+				);
+			}
+		}
+		$variation['form_child_states'] = $child_states;
+	}
+}
+
+/**
+ * Duplicate a single form variation to a target post (shortcode, ThriveBox, or form type under a group).
+ *
+ * Shared logic used by all duplicate-form-to-* wrappers. Validates the target, fetches the source
+ * variation, prepares the copy with reset tracking data, processes content references, and saves.
+ *
+ * @param string $variation_key    The key of the source variation.
+ * @param int    $source_parent    The post ID that currently owns the source variation.
+ * @param int    $target_id        The target post ID to duplicate into.
+ * @param string $target_post_type Expected post type of the target (for validation).
+ * @param string $type_label       Human-readable label for error messages (e.g. 'Lead Shortcode').
+ * @param string $ref_type         The type identifier for form ID reference replacement.
+ *
+ * @return array|WP_Error The new variation data on success.
+ */
+function tve_leads_duplicate_form_to_target( $variation_key, $source_parent, $target_id, $target_post_type, $type_label, $ref_type ) {
+	$target_post = get_post( $target_id );
+	if ( ! $target_post || get_post_type( $target_post ) !== $target_post_type ) {
+		return new WP_Error( 'invalid_target', sprintf( __( 'Target %s not found', 'thrive-leads' ), $type_label ) );
+	}
+
+	$source_variation = tve_leads_get_form_variation( $source_parent, $variation_key );
+	if ( empty( $source_variation ) ) {
+		return new WP_Error( 'invalid_variation', __( 'Source form variation not found', 'thrive-leads' ) );
+	}
+
+	$existing_variations = tve_leads_get_form_variations( $target_id, array( 'tracking_data' => false ) );
+	$has_existing_forms  = ! empty( $existing_variations );
+
+	// Prepare new variation data
+	$new_variation                = $source_variation;
+	$new_variation['post_parent'] = $target_id;
+
+	$existing_var_titles         = wp_list_pluck( $existing_variations ?: array(), 'post_title' );
+	$new_variation['post_title'] = tve_leads_generate_copy_title( $source_variation['post_title'], $existing_var_titles );
+
+	$new_variation['is_control'] = $has_existing_forms ? 0 : 1;
+
+	tve_leads_reset_variation_tracking( $new_variation );
+	tve_leads_process_variation_content_for_duplication( $new_variation, $source_parent, $target_id, $ref_type, $variation_key );
+
+	$saved_variation = tve_leads_save_form_variation( $new_variation );
+
+	if ( empty( $saved_variation ) ) {
+		return new WP_Error( 'save_failed', __( 'Failed to save duplicated form variation', 'thrive-leads' ) );
+	}
+
+	$saved_variation['impressions']     = 0;
+	$saved_variation['conversions']     = 0;
+	$saved_variation['conversion_rate'] = 'N/A';
+
+	return $saved_variation;
+}
+
+/**
+ * Duplicate a single form variation to a target lead group.
+ *
+ * Handles three scenarios:
+ * 1. Target group has the form type with no forms -> copy as first/control/active
+ * 2. Target group has the form type with existing forms -> copy as inactive
+ * 3. Target group doesn't have the form type -> auto-create type (display OFF), copy as first/active
+ *
+ * @param string $variation_key   The key of the source variation.
+ * @param int    $source_parent   The form type ID that currently owns this variation.
+ * @param int    $target_group_id The lead group ID to duplicate into.
+ *
+ * @return array|WP_Error The new variation data on success.
+ */
+function tve_leads_duplicate_form_to_group( $variation_key, $source_parent, $target_group_id ) {
+	$target_group = get_post( $target_group_id );
+	if ( ! $target_group || get_post_type( $target_group ) !== TVE_LEADS_POST_GROUP_TYPE ) {
+		return new WP_Error( 'invalid_group', __( 'Target Lead Group not found', 'thrive-leads' ) );
+	}
+
+	$source_form_type_value = get_post_meta( $source_parent, 'tve_form_type', true );
+	if ( empty( $source_form_type_value ) ) {
+		return new WP_Error( 'invalid_form_type', __( 'Could not determine form type', 'thrive-leads' ) );
+	}
+
+	// Check if the target group already has this form type
+	$existing_form_types = new WP_Query( array(
+		'post_parent__in' => array( $target_group_id ),
+		'post_type'       => TVE_LEADS_POST_FORM_TYPE,
+		'post_status'     => 'publish',
+		'meta_query'      => array(
+			array(
+				'key'   => 'tve_form_type',
+				'value' => $source_form_type_value,
+			),
+		),
+		'posts_per_page'  => 1,
+	) );
+
+	if ( $existing_form_types->have_posts() ) {
+		$target_form_type_id = $existing_form_types->posts[0]->ID;
+	} else {
+		// Auto-create the form type with display OFF
+		$default_types    = tve_leads_get_default_form_types( true );
+		$form_type_title  = isset( $default_types[ $source_form_type_value ] )
+			? $default_types[ $source_form_type_value ]['post_title']
+			: ucfirst( str_replace( '_', ' ', $source_form_type_value ) );
+		$target_form_type_id = wp_insert_post( array(
+			'post_title'  => $form_type_title,
+			'post_type'   => TVE_LEADS_POST_FORM_TYPE,
+			'post_status' => 'publish',
+			'post_parent' => $target_group_id,
+		) );
+
+		if ( is_wp_error( $target_form_type_id ) ) {
+			return $target_form_type_id;
+		}
+
+		update_post_meta( $target_form_type_id, 'tve_form_type', $source_form_type_value );
+		update_post_meta( $target_form_type_id, 'display_on_mobile', 0 );
+		update_post_meta( $target_form_type_id, 'display_status', 0 );
+		update_post_meta( $target_form_type_id, 'tve_leads_impressions', 0 );
+		update_post_meta( $target_form_type_id, 'tve_leads_conversions', 0 );
+	}
+
+	return tve_leads_duplicate_form_to_target( $variation_key, $source_parent, $target_form_type_id, TVE_LEADS_POST_FORM_TYPE, 'Form Type', $source_form_type_value );
+}
+
+/**
+ * Duplicate a single form variation to another lead shortcode.
+ *
+ * @param string $variation_key      The key of the source variation.
+ * @param int    $source_parent      The shortcode ID that currently owns this variation.
+ * @param int    $target_shortcode_id The target shortcode ID to duplicate into.
+ *
+ * @return array|WP_Error The new variation data on success.
+ */
+function tve_leads_duplicate_form_to_shortcode( $variation_key, $source_parent, $target_shortcode_id ) {
+	return tve_leads_duplicate_form_to_target( $variation_key, $source_parent, $target_shortcode_id, TVE_LEADS_POST_SHORTCODE_TYPE, 'Lead Shortcode', 'shortcode' );
+}
+
+/**
+ * Duplicate a form variation to a different ThriveBox.
+ *
+ * @param string $variation_key      The key of the variation to duplicate.
+ * @param int    $source_parent      The ID of the source ThriveBox.
+ * @param int    $target_thrivebox_id The ID of the target ThriveBox.
+ *
+ * @return array|WP_Error The saved variation data or WP_Error on failure.
+ */
+function tve_leads_duplicate_form_to_thrivebox( $variation_key, $source_parent, $target_thrivebox_id ) {
+	return tve_leads_duplicate_form_to_target( $variation_key, $source_parent, $target_thrivebox_id, TVE_LEADS_POST_TWO_STEP_LIGHTBOX, 'ThriveBox', 'two_step' );
 }
 
 /**
@@ -1355,9 +1961,10 @@ function tve_leads_clone_form_states( $parent_form, $original_children ) {
 	foreach ( $original_children as $child ) {
 		$original_child_key = $child['key'];
 		unset( $child['key'] );
-		$child['post_title']                 = $parent_form['post_title'];
-		$child['parent_id']                  = $parent_form['key'];
-		$child                               = tve_leads_save_form_variation( $child );
+		$child['post_title']  = $parent_form['post_title'];
+		$child['parent_id']   = $parent_form['key'];
+		$child['post_parent'] = $parent_form['post_parent']; // Ensure child states have correct post_parent
+		$child                = tve_leads_save_form_variation( $child );
 		$form_key_map[ $original_child_key ] = $child['key'];
 
 		$to_replace [] = $child;
@@ -1368,17 +1975,143 @@ function tve_leads_clone_form_states( $parent_form, $original_children ) {
 
 	/**
 	 * another pass through all forms and replace the old state ID with the new one in the event manager configuration
+	 * and also replace data-state attributes that reference old variation keys
 	 */
 	foreach ( $to_replace as $form ) {
+		$needs_save = false;
+
 		foreach ( $form_key_map as $original_key => $new_key ) {
+			// Replace event configuration IDs
 			$pattern         = str_replace( '____old_ID____', $original_key, $event_config_pattern );
 			$replacement     = str_replace( '____new_ID____', $new_key, $event_replacement );
 			$form['content'] = preg_replace( $pattern, $replacement, $form['content'], - 1, $count );
 			if ( $count ) {
-				tve_leads_save_form_variation( $form );
+				$needs_save = true;
+			}
+
+			// Replace data-state attributes (e.g., data-state="123" -> data-state="456")
+			$form['content'] = preg_replace(
+				'/data-state\s*=\s*["\']' . preg_quote( $original_key, '/' ) . '["\']/i',
+				'data-state="' . $new_key . '"',
+				$form['content'],
+				- 1,
+				$count
+			);
+			if ( $count ) {
+				$needs_save = true;
 			}
 		}
+
+		if ( $needs_save ) {
+			tve_leads_save_form_variation( $form );
+		}
 	}
+}
+
+/**
+ * Replace shortcode/form ID references in variation content
+ *
+ * When duplicating a shortcode or ThriveBox, the content may contain hardcoded
+ * references to the original ID (e.g., data-tl-type="shortcode_123"). This function
+ * replaces those references with the new ID.
+ *
+ * @param string $content        The variation content HTML
+ * @param int    $source_form_id The original form/shortcode ID
+ * @param int    $target_form_id The new form/shortcode ID
+ * @param string $type           The type prefix ('shortcode' or 'two_step')
+ *
+ * @return string Updated content with replaced IDs
+ */
+function tve_leads_replace_form_id_references( $content, $source_form_id, $target_form_id, $type = 'shortcode' ) {
+	if ( empty( $content ) || $source_form_id === $target_form_id ) {
+		return $content;
+	}
+
+	// Use regex for more flexible matching (handles spacing variations)
+	$content = preg_replace(
+		'/data-tl-type\s*=\s*["\']' . preg_quote( $type . '_' . $source_form_id, '/' ) . '["\']/i',
+		'data-tl-type="' . $type . '_' . $target_form_id . '"',
+		$content
+	);
+
+	// Replace tve-leads-track class (e.g., tve-leads-track-shortcode_123)
+	$content = str_replace(
+		'tve-leads-track-' . $type . '_' . $source_form_id,
+		'tve-leads-track-' . $type . '_' . $target_form_id,
+		$content
+	);
+
+	// Replace 2-step trigger class (e.g., tl-2step-trigger-123)
+	if ( $type === 'two_step' ) {
+		$content = str_replace(
+			'tl-2step-trigger-' . $source_form_id,
+			'tl-2step-trigger-' . $target_form_id,
+			$content
+		);
+	}
+
+	return $content;
+}
+
+/**
+ * Duplicate all form variations from one form to another
+ *
+ * @param int    $source_form_id The ID of the source form
+ * @param int    $target_form_id The ID of the target form
+ * @param string $type           The type prefix for ID replacement ('shortcode' or 'two_step')
+ *
+ * @return array Map of old keys to new keys
+ */
+function tve_leads_duplicate_form_variations( $source_form_id, $target_form_id, $type = 'shortcode' ) {
+	global $tvedb;
+
+	// Fetch raw variation rows directly — avoids the overhead of tve_leads_get_form_variations()
+	// which computes tracking data, URLs and nice names that are unnecessary for duplication
+	$variations = $tvedb->get_form_variations( array(
+		'post_parent'  => $source_form_id,
+		'post_status'  => TVE_LEADS_STATUS_PUBLISH,
+		'order'        => 'key ASC',
+	), false );
+
+	if ( empty( $variations ) ) {
+		return array();
+	}
+
+	$key_map = array(); // Map old keys to new keys
+
+	// Pre-fetch existing variation titles for the target form (for incremental copy naming)
+	$target_variations   = $tvedb->get_form_variations( array(
+		'post_parent' => $target_form_id,
+		'post_status' => TVE_LEADS_STATUS_PUBLISH,
+		'order'       => 'key ASC',
+	), false );
+	$existing_var_titles = wp_list_pluck( $target_variations, 'post_title' );
+
+	foreach ( $variations as $variation ) {
+		$full_variation = $variation;
+
+		// Prepare new variation data
+		$new_variation                = $full_variation;
+		$new_variation['post_parent'] = $target_form_id;
+		$new_variation['post_title']  = tve_leads_generate_copy_title( $full_variation['post_title'], $existing_var_titles );
+		$existing_var_titles[]        = $new_variation['post_title']; // Track for next iteration
+
+		if( isset( $full_variation['is_control'] ) ){
+			$new_variation['is_control']  = $full_variation['is_control']; // Keep control status for first variation
+		}
+
+		tve_leads_reset_variation_tracking( $new_variation );
+		tve_leads_process_variation_content_for_duplication( $new_variation, $source_form_id, $target_form_id, $type, $variation['key'] );
+
+		// Save the new variation
+		$saved_variation = tve_leads_save_form_variation( $new_variation );
+
+		if ( ! empty( $saved_variation['key'] ) ) {
+			$key_map[ $variation['key'] ] = $saved_variation['key'];
+		}
+	}
+
+	return $key_map;
 }
 
 /**
@@ -1643,14 +2376,14 @@ function tve_leads_get_list_growth( $filter, $cumulative = false ) {
 		'id'    => $cumulative ? 1 : 2, //this is more or less useless
 		'name'  => $cumulative ? __( 'Total conversions since start date', 'thrive-leads' ) : __( 'Conversions Growth', 'thrive-leads' ),
 		'color' => $tve_leads_chart_colors[0], //we just use the first color
-		'data'  => array_fill( 0, count( $data['chart_x_axis'] ), 0 ) //fill array with 0
+		'data'  => array_fill( 0, count( $data['chart_x_axis'] ), 0 ), //fill array with 0
 	);
 
 	$lead_data = array(
 		'id'    => $cumulative ? 3 : 4, //just to differentiate between the data series for the chart
 		'name'  => $cumulative ? __( 'Total leads since start date', 'thrive-leads' ) : __( 'Lead Growth', 'thrive-leads' ),
 		'color' => $tve_leads_chart_colors[1], //we use the second color
-		'data'  => array_fill( 0, count( $data['chart_x_axis'] ), 0 ) //fill array with 0
+		'data'  => array_fill( 0, count( $data['chart_x_axis'] ), 0 ), //fill array with 0
 	);
 
 	foreach ( $data['chart_data'] as $group ) {
@@ -1862,12 +2595,11 @@ function tve_leads_get_conversion_rate_test_data( $filter ) {
 		'group_by'   => array( 'main_group_id', 'date_interval' ),
 		'data_group' => 'main_group_id',
 	);
-	$filter   = array_merge( $defaults, $filter );
+	$filter = array_merge( $defaults, $filter );
 
-	global $tvedb;
-	$report_data = $tvedb->get_summary_count_for_reports( $filter );
+	global $tvedb, $wpdb;
 
-	//set names for the series in the chart - variation, form type or group
+	// Get group names efficiently - only if not provided
 	if ( empty( $filter['group_names'] ) ) {
 		$lead_groups = get_posts( array(
 			'posts_per_page' => - 1,
@@ -1884,58 +2616,172 @@ function tve_leads_get_conversion_rate_test_data( $filter ) {
 	} else {
 		$group_names = $filter['group_names'];
 	}
-	//generate interval to fill empty dates.
+
+	// Generate date intervals once
 	$dates = tve_leads_generate_dates_interval( $filter['start_date'], $filter['end_date'], $filter['interval'] );
 
-	$chart_data_temp = array();
-	foreach ( $report_data as $interval ) {
-		//Group all report data by main_group_id
-		if ( ! isset( $chart_data_temp[ $interval->data_group ] ) ) {
-			$chart_data_temp[ $interval->data_group ]['id']   = (int) $interval->data_group;
-			$chart_data_temp[ $interval->data_group ]['name'] = $group_names[ $interval->data_group ];
-			$chart_data_temp[ $interval->data_group ]['data'] = array();
-		}
+	// Get conversions from event log
+	$conversion_filter = array_merge( $filter, array(
+		'event_type' => array( TVE_LEADS_CONVERSION, TVE_LEADS_BUTTON_CLICK_CONVERSION ),
+		'group_by'   => array( $filter['data_group'], 'date_interval' ),
+	));
+	$conversion_data = $tvedb->tve_leads_get_report_data_count_event_type( $conversion_filter );
 
-		$chart_data_temp[ $interval->data_group ][ $interval->date_interval ]['impression_count'] = $interval->impression_count;
-		$chart_data_temp[ $interval->data_group ][ $interval->date_interval ]['conversion_count'] = $interval->conversion_count;
-		$chart_data_temp[ $interval->data_group ][ $interval->date_interval ]['conversion_rate']  = $interval->conversion_rate;
+	// Get impressions from form summary with optimized query
+	$form_summary_table = tve_leads_table_name( 'form_summary' );
+
+	// Build date interval SQL based on filter interval
+	$date_interval_sql = '';
+	$group_by_sql = '';
+	switch ( $filter['interval'] ) {
+		case 'month':
+			$date_interval_sql = "CONCAT(MONTHNAME(`date`),' ', YEAR(`date`)) AS date_interval";
+			$group_by_sql = "GROUP BY variation_key, YEAR(`date`), MONTH(`date`) ORDER BY `date` DESC";
+			break;
+		case 'week':
+			$year = "IF( WEEKOFYEAR(`date`) = 1 AND MONTH(`date`) = 12, 1 + YEAR(`date`), YEAR(`date`) )";
+			$date_interval_sql = "CONCAT('Week ', WEEKOFYEAR(`date`), ', ', {$year}) AS date_interval";
+			$group_by_sql = "GROUP BY variation_key, YEARWEEK(`date`) ORDER BY `date` DESC";
+			break;
+		case 'day':
+		default:
+			$date_interval_sql = "DATE(`date`) AS date_interval";
+			$group_by_sql = "GROUP BY variation_key, `date` ORDER BY `date` DESC";
+			break;
 	}
 
+	// Build optimized impression query
+	$impression_sql = "SELECT 
+		SUM(impression_count) AS impression_count,
+		variation_key AS data_group,
+		{$date_interval_sql}
+		FROM `{$form_summary_table}` 
+		WHERE 1";
+
+	$impression_params = array();
+
+	// Apply date filters
+	if ( ! empty( $filter['start_date'] ) && ! empty( $filter['end_date'] ) ) {
+		$start_date = date( 'Y-m-d', strtotime( $filter['start_date'] ) );
+		$end_date = date( 'Y-m-d', strtotime( $filter['end_date'] ) );
+
+		$impression_sql .= " AND `date` BETWEEN %s AND %s";
+		$impression_params[] = $start_date;
+		$impression_params[] = $end_date;
+	}
+
+	// Apply group filters
+	if ( ! empty( $filter['group_ids'] ) && ! empty( $filter['data_group'] ) ) {
+		// Validate column name against whitelist for security
+		$allowed_columns = array( 'main_group_id', 'variation_key', 'form_type_id' );
+		if ( in_array( $filter['data_group'], $allowed_columns, true ) ) {
+			// Sanitize IDs and create placeholders for wpdb->prepare()
+			$group_ids = array_map( 'intval', $filter['group_ids'] );
+			$placeholders = implode( ', ', array_fill( 0, count( $group_ids ), '%d' ) );
+			$impression_sql .= " AND `{$filter['data_group']}` IN ({$placeholders})";
+			// Add IDs to parameters array for wpdb->prepare()
+			$impression_params = array_merge( $impression_params, $group_ids );
+		}
+	}
+
+	$impression_sql .= " {$group_by_sql}";
+
+	// Execute query
+	$impression_results = empty( $impression_params ) ?
+		$wpdb->get_results( $impression_sql ) :
+		$wpdb->get_results( $wpdb->prepare( $impression_sql, $impression_params ) );
+
+	// Ensure we have an array
+	if ( ! is_array( $impression_results ) ) {
+		$impression_results = array();
+	}
+
+	// Process data efficiently in a single pass
+	$chart_data_temp = array();
+
+	// Process conversion data
+	foreach ( $conversion_data as $interval ) {
+		$data_group_id = $interval->data_group;
+		$date_key = $interval->date_interval;
+
+		// Format daily dates to match chart format
+		if ( $filter['interval'] == 'day' ) {
+			$date_key = date( "d M, Y", strtotime( $interval->date_interval ) );
+		}
+
+		if ( ! isset( $chart_data_temp[ $data_group_id ] ) ) {
+			$chart_data_temp[ $data_group_id ] = array(
+				'id' => (int) $data_group_id,
+				'name' => isset( $group_names[ $data_group_id ] ) ? $group_names[ $data_group_id ] : 'Unknown',
+				'impressions' => array(),
+				'conversions' => array()
+			);
+		}
+
+		$chart_data_temp[ $data_group_id ]['conversions'][ $date_key ] = $interval->log_count;
+	}
+
+	// Process impression data
+	foreach ( $impression_results as $interval ) {
+		$formatted_date_key = $interval->date_interval;
+
+		// Format daily dates to match chart format
+		if ( $filter['interval'] == 'day' ) {
+			$formatted_date_key = date( "d M, Y", strtotime( $interval->date_interval ) );
+		}
+
+		$data_group_id = $interval->data_group;
+
+		if ( ! isset( $chart_data_temp[ $data_group_id ] ) ) {
+			$chart_data_temp[ $data_group_id ] = array(
+				'id' => (int) $data_group_id,
+				'name' => isset( $group_names[ $data_group_id ] ) ? $group_names[ $data_group_id ] : 'Unknown',
+				'impressions' => array(),
+				'conversions' => array()
+			);
+		}
+
+		$chart_data_temp[ $data_group_id ]['impressions'][ $formatted_date_key ] = $interval->impression_count;
+	}
+
+	// Build final chart data efficiently
 	$chart_data = array();
+	$total_impressions = 0;
+	$total_conversions = 0;
+
 	foreach ( $group_names as $key => $name ) {
-		//when user selects only one group, we don't display the other ones.
+		// Skip if filtering by specific group
 		if ( ! empty( $filter['main_group_id'] ) && $filter['main_group_id'] > 0 && $filter['main_group_id'] != $key ) {
 			continue;
 		}
-		if ( ! isset( $chart_data[ $key ] ) ) {
-			$chart_data[ $key ]['id']               = $key;
-			$chart_data[ $key ]['name']             = $name;
-			$chart_data[ $key ]['data']             = array();
-			$chart_data[ $key ]['impression_count'] = array();
-			$chart_data[ $key ]['conversion_count'] = array();
-		}
-		//complete missing data with zero
+
+		$chart_data[ $key ] = array(
+			'id' => $key,
+			'name' => $name,
+			'data' => array()
+		);
+
+		// Process each date and calculate conversion rates
 		foreach ( $dates as $date ) {
-			if ( ! isset( $chart_data_temp[ $key ][ $date ] ) ) {
-				$chart_data[ $key ]['data'][] = 0;
-			} else {
-				$chart_data[ $key ]['data'][] = (float) $chart_data_temp[ $key ][ $date ]['conversion_rate'];
+			$impressions = isset( $chart_data_temp[ $key ]['impressions'][ $date ] ) ? $chart_data_temp[ $key ]['impressions'][ $date ] : 0;
+			$conversions = isset( $chart_data_temp[ $key ]['conversions'][ $date ] ) ? $chart_data_temp[ $key ]['conversions'][ $date ] : 0;
+
+			// Calculate conversion rate
+			$conversion_rate = 0;
+			if ( $impressions > 0 ) {
+				$conversion_rate = round( ( $conversions / $impressions ) * 100, 2 );
 			}
-			/**
-			 * count impressions and conversions so we can use those values in the "cumulative" report shown on the test screen
-			 */
-			$chart_data[ $key ]['impression_count'][] = isset( $chart_data_temp[ $key ][ $date ] ) ? $chart_data_temp[ $key ][ $date ]['impression_count'] : 0;
-			$chart_data[ $key ]['conversion_count'][] = isset( $chart_data_temp[ $key ][ $date ] ) ? $chart_data_temp[ $key ][ $date ]['conversion_count'] : 0;
+
+			$chart_data[ $key ]['data'][] = (float) $conversion_rate;
+
+			// Track totals for average calculation
+			$total_impressions += $impressions;
+			$total_conversions += $conversions;
 		}
 	}
 
-	$conversions = 0;
-	$impressions = 0;
-	foreach ( $chart_data_temp as $key ) {
-		$conversions += isset( $key['conversion_count'] ) ? array_sum( $key['conversion_count'] ) : 0;
-		$impressions += isset( $key['impression_count'] ) ? array_sum( $key['impression_count'] ) : 0;
-	}
-	$average_rate = (float) tve_leads_conversion_rate( $impressions, $conversions, '', 2 );
+	// Calculate average rate efficiently
+	$average_rate = (float) tve_leads_conversion_rate( $total_impressions, $total_conversions, '', 2 );
 
 	return array(
 		'chart_title'  => __( 'Lead generation conversion rate over time', 'thrive-leads' ),
@@ -2028,9 +2874,13 @@ function tve_leads_get_conversion_rate_report_table_data( $filter ) {
 	$report_data = $tvedb->get_summary_count_for_reports( $filter, 'date_interval' );
 
 	$table_data = array_map( function ( $date ) use ( $report_data ) {
+		$row = isset( $report_data[ $date ] ) ? $report_data[ $date ] : null;
+
 		return array(
-			'date' => $date,
-			'rate' => isset( $report_data[ $date ] ) ? $report_data[ $date ]->conversion_rate : 0,
+			'date'        => $date,
+			'impressions' => $row ? (int) $row->impression_count : 0,
+			'conversions' => $row ? (int) $row->conversion_count : 0,
+			'rate'        => $row ? $row->conversion_rate : 0,
 		);
 	}, $dates );
 
@@ -2055,7 +2905,7 @@ function tve_leads_get_comparison_report_data( $filter ) {
 	$defaults                = array(
 		'group_by'   => array( 'main_group_id' ),
 		'data_group' => 'main_group_id',
-		'event_type' => TVE_LEADS_CONVERSION,
+		'event_type' => array( TVE_LEADS_CONVERSION, TVE_LEADS_BUTTON_CLICK_CONVERSION ),
 	);
 	$filter                  = array_merge( $defaults, $filter );
 
@@ -2120,7 +2970,7 @@ function tve_leads_get_lead_referral_report_data( $filter ) {
 		'count'         => true,
 		'itemsPerPage'  => 10,
 		'page'          => 1,
-		'event_type'    => TVE_LEADS_CONVERSION,
+		'event_type'    => array( TVE_LEADS_CONVERSION, TVE_LEADS_BUTTON_CLICK_CONVERSION ),
 		'referral_type' => 'domain',
 	);
 	$filter   = array_merge( $defaults, $filter );
@@ -2221,7 +3071,7 @@ function tve_leads_get_lead_tracking_report_data( $filter ) {
 		'itemsPerPage'  => 10,
 		'page'          => 1,
 		'tracking_type' => 'all',
-		'event_type'    => TVE_LEADS_CONVERSION,
+		'event_type'    => array( TVE_LEADS_CONVERSION, TVE_LEADS_BUTTON_CLICK_CONVERSION ),
 	);
 	$filter   = array_merge( $defaults, $filter );
 
@@ -2250,6 +3100,10 @@ function tve_leads_get_test_chart_data( $test_id, $interval ) {
 	$test = $tvedb->tve_leads_get_test( $filter );
 	list( $test_items, $test_item_ids ) = tve_leads_get_test_items_with_names( $test_id );
 
+	if ( ! $test_items ) {
+		return null;
+	}
+
 	//set the group by for the log data depending on the test type
 	switch ( $test->test_type ) {
 		case TVE_LEADS_SHORTCODE_TEST_TYPE:
@@ -2266,38 +3120,45 @@ function tve_leads_get_test_chart_data( $test_id, $interval ) {
 
 	}
 
+	// Calculate end_date based on interval to ensure current period is included
+	if ( $test->date_completed && $test->status === 'archived' ) {
+		$end_date = $test->date_completed;
+	} else {
+		switch ( $interval ) {
+			case 'week':
+				// For weekly charts, extend to end of current week (Sunday 23:59:59)
+				$end_date = date( 'Y-m-d 23:59:59', strtotime( 'this Sunday' ) );
+				break;
+			case 'month':
+				// For monthly charts, extend to end of current month
+				$end_date = date( 'Y-m-t 23:59:59' );
+				break;
+			default:
+				// For daily charts, end of current day
+				$end_date = date( 'Y-m-d 23:59:59' );
+		}
+	}
+
 	$filter = array(
 		'interval'    => $interval,
 		'group_names' => $test_items,
 		'data_group'  => $data_group,
 		'group_ids'   => array_keys( $test_items ),
 		'start_date'  => $test->date_started,
-		'end_date'    => $test->date_completed && $test->status === 'archived' ? $test->date_completed : date( 'Y-m-d' ),
+		'end_date'    => $end_date,
 		'group_by'    => $group_by,
 	);
 
 	$chart_data = tve_leads_get_conversion_rate_test_data( $filter );
 
-	foreach ( $chart_data['chart_data'] as $main_id => $item ) {
-		foreach ( $item['data'] as $index => $conversion_rate ) {
-			// calculate the new conversion rate as a sum of the total numbers from the beginning of the test until at this point
-			$impressions = $conversions = 0;
-			for ( $i = 0; $i <= $index; $i ++ ) {
-				$impressions += $item['impression_count'][ $i ];
-				$conversions += $item['conversion_count'][ $i ];
-			}
-			$chart_data['chart_data'][ $main_id ]['data'][ $index ] = (float) tve_leads_conversion_rate( $impressions, $conversions, '' );
-			unset( $chart_data['chart_data'][ $main_id ]['impression_count'], $chart_data['chart_data'][ $main_id ]['conversion_count'] );
-		}
-	}
-
+	// Sort chart data according to test item order
 	$temp = array();
 	asort( $test_item_ids );
 	foreach ( $test_item_ids as $main_id => $order ) {
 		if ( ! isset( $chart_data['chart_data'][ $main_id ] ) ) {
 			continue;
 		}
-		$temp [] = $chart_data['chart_data'][ $main_id ];
+		$temp[] = $chart_data['chart_data'][ $main_id ];
 	}
 	$chart_data['chart_data'] = $temp;
 
@@ -2356,8 +3217,16 @@ function tve_leads_get_test( $test_id, $filters = array() ) {
 			//we don't calculate for the control item
 			if ( $index > 0 ) {
 				//Percentage improvement = conversion rate of variation - conversion rate of control
-				if ( is_numeric( $item->conversion_rate ) && is_numeric( $test->items[0]->conversion_rate ) ) {
-					$item->percentage_improvement = round( ( ( $item->conversion_rate - $test->items[0]->conversion_rate ) * 100 ) / $test->items[0]->conversion_rate, 2 );
+				if ( is_numeric( $test->items[0]->conversion_rate ) ) {
+					$control_rate = floatval( $test->items[0]->conversion_rate );
+					$variation_rate = is_numeric( $item->conversion_rate ) ? floatval( $item->conversion_rate ) : 'N/A';
+
+					// Prevent division by zero
+					if ( is_numeric( $variation_rate ) && is_numeric( $control_rate ) && $control_rate > 0 ) {
+						$item->percentage_improvement = round( ( ( $variation_rate - $control_rate ) * 100 ) / $control_rate, 2 );
+					} else {
+						$item->percentage_improvement = 'N/A';
+					}
 				} else {
 					$item->percentage_improvement = 'N/A';
 				}
@@ -2759,6 +3628,20 @@ function tve_leads_get_already_subscribed_state( $default_state ) {
 }
 
 /**
+ * check if form has already subscribed state
+ *
+ * @param array $form_id
+ *
+ * @return array|null
+ */
+function tve_leads_has_already_subscribed_state( $form_id ) {
+	global $tvedb;
+
+	return $tvedb->form_has_already_subscribed_state( $form_id );
+}
+
+
+/**
  * get the tracking data for a post from the post-meta option
  * if no value is present there, count the logs and update the meta option value with that number
  *
@@ -2942,111 +3825,38 @@ function tve_leads_reset_variation_tracking_data( $variation ) {
 }
 
 /**
- * Send email with the contact
- *
- * @param     $contact_id
- * @param     $email
- * @param int $save
- *
- * @return array
- */
-function tve_send_contacts_email( $contact_id, $email, $save = 0 ) {
-	global $tvedb;
-
-	if ( empty( $email ) || ! is_email( $email ) ) {
-		return array(
-			'response' => __( 'Invalid Email.', 'thrive-leads' ),
-			'type'     => 'error',
-		);
-	}
-	if ( $save ) {
-		tve_leads_update_option( 'contacts_send_email', $email );
-	} else {
-		tve_leads_update_option( 'contacts_send_email', '' );
-	}
-
-	$contact                = $tvedb->tve_get_contact( 'id', $contact_id );
-	$contact->custom_fields = json_decode( $contact->custom_fields, true );
-
-	$subject = __( 'You have a New Signup', 'thrive-leads' );
-
-	ob_start();
-	include dirname( dirname( __FILE__ ) ) . '/admin/views/contacts/email_template.php';
-	$message = ob_get_contents();
-	ob_end_clean();
-
-	$subject = apply_filters( 'tve_leads_new_contact_body_subject', $subject, $contact );
-	$message = apply_filters( 'tve_leads_new_contact_email_body', $message, $contact );
-
-	$result = wp_mail( $email, $subject, $message );
-
-	if ( $result ) {
-		$return = array(
-			'response' => __( 'Email sent successfully!', 'thrive-leads' ),
-			'type'     => 'success',
-		);
-	} else {
-		$return = array(
-			'response' => __( 'An error occurred while sending the email!', 'thrive-leads' ),
-			'type'     => 'error',
-		);
-	}
-
-	return $return;
-}
-
-/**
  * Prepare the file for download.
  *
- * @param $source
  * @param $type
- * @param $params
+ * @param $filters
  *
- * @return array|mixed|object
+ * @return array|void
  */
-function tve_leads_process_contact_download( $source, $type, $params ) {
-	require_once dirname( dirname( __FILE__ ) ) . '/admin/inc/classes/Thrive_Leads_Export.php';
-
-	$upload_dir          = wp_upload_dir();
-	$contact_upload_path = $upload_dir['basedir'] . "/thrive-contacts";
-	$contact_upload_url  = $upload_dir['baseurl'] . "/thrive-contacts";
-
-	/* if we can't create a thrive contact folder, we just use the uploads one */
-	if ( ! wp_mkdir_p( $contact_upload_path ) ) {
-		$contact_upload_path = $upload_dir['basedir'];
-		$contact_upload_url  = $upload_dir['baseurl'];
-	}
+function tve_leads_process_contact_download( $type, $filters ) {
+	require_once dirname( __FILE__, 2 ) . '/admin/inc/classes/Thrive_Leads_Export.php';
 
 	$filename = "contacts-export-" . date( 'Y-m-d_H-i-s' );
-
 	switch ( $type ) {
 		case 'excel':
-			$filename .= ".xls";
-			$exporter = new ThriveLeadsExportDataExcel( 'file', $contact_upload_path . '/' . $filename );
+			$exporter = new ThriveLeadsExportDataExcel( 'browser', "$filename.xls" );
 			break;
 
 		case 'csv':
-			$filename .= ".csv";
-			$exporter = new ThriveLeadsExportDataCSV( 'file', $contact_upload_path . '/' . $filename );
+			$exporter = new ThriveLeadsExportDataCSV( 'browser', "$filename.csv" );
 			break;
-
-		default:
-			$filename = $exporter = '';
 	}
 
-	$exporter->initialize();
-
-	if ( empty( $filename ) || empty( $exporter ) ) {
+	if ( empty( $exporter ) ) {
 		return array(
 			'response' => __( 'Invalid export type.', 'thrive-leads' ),
 		);
 	}
 
+	$exporter->initialize();
+
 	global $tvedb;
 	/* get contacts needed for export */
-	$contacts = $tvedb->tve_leads_get_contacts_stored( $source, $params );
-	/* store the download in the database */
-	$id = $tvedb->tve_leads_write_contact_download( $source, $contact_upload_url . '/' . $filename, $params );
+	$contacts = $tvedb->tve_leads_get_contacts_stored( $filters );
 
 	/* build file header with custom fields */
 	$contacts_header = array(
@@ -3080,17 +3890,8 @@ function tve_leads_process_contact_download( $source, $type, $params ) {
 	}
 
 	$exporter->finalize();
-	/* mark the download as completed */
-	$tvedb->tve_leads_update_contacts_download_status( $id, 'complete' );
 
-	$result = array(
-		'status'   => 'complete',
-		'response' => __( 'Export Completed', 'thrive-leads' ),
-		'link'     => $contact_upload_url . '/' . $filename,
-		'id'       => $id,
-	);
-
-	return $result;
+	wp_die();
 }
 
 /**

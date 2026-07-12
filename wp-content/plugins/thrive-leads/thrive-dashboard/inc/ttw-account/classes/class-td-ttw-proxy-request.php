@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class TD_TTW_Proxy_Request {
 
-	const URL = 'http://service-api.thrivethemes.com';
+	const URL = 'https://service-api.thrivethemes.com';
 
 	const API_PASS = '!!@#ThriveIsTheBest123$$@#';
 
@@ -75,7 +75,16 @@ class TD_TTW_Proxy_Request {
 			trim( $this->_get_url(), '/' ) . '/' . ltrim( $route, '/' )
 		);
 
-		return wp_remote_post( $url, $args );
+		$response = wp_remote_post( $url, $args );
+
+		if ( is_wp_error( $response ) ) {
+			$args['sslverify'] = true;
+			$response          = wp_remote_post( $url, $args );
+
+			return $response;
+		}
+
+		return $response;
 	}
 
 	/**
@@ -85,6 +94,10 @@ class TD_TTW_Proxy_Request {
 
 		if ( defined( 'TPM_DEBUG' ) && TPM_DEBUG === true && defined( 'TVE_CLOUD_URL' ) ) {
 			return TVE_CLOUD_URL;
+		}
+
+		if (defined( 'TD_SERVICE_API_URL' ) && TD_SERVICE_API_URL) {
+			return rtrim(TD_SERVICE_API_URL, '/');
 		}
 
 		return self::URL;

@@ -278,7 +278,16 @@ function tve_dash_is_crawler( $apply_filter = false ) {
 }
 
 /**
- * Defines the products order in the Thrive Dashboard Wordpress Menu
+ * Whether the server software is Apache or something else
+ *
+ * @return bool
+ */
+function tve_dash_is_apache() {
+	return ( strpos( $_SERVER['SERVER_SOFTWARE'], 'Apache' ) !== false || strpos( $_SERVER['SERVER_SOFTWARE'], 'LiteSpeed' ) !== false );
+}
+
+/**
+ * Defines the products order in the Thrive Dashboard WordPress Menu
  *
  * @return array
  */
@@ -296,17 +305,20 @@ function tve_dash_get_menu_products_order() {
 		80  => 'tu',
 		90  => 'license_manager',
 		100 => 'general_settings',
-		110 => 'ui_toolkit',
 		120 => 'font_manager',
 		130 => 'font_import_manager',
 		140 => 'icon_manager',
 		150 => 'access_manager',
+		155 => 'font_library',
 		160 => 'tcb',
 		170 => 'tcm_sub_menu',
 		/*For Thrive Themes*/
 		180 => 'thrive_theme_admin_page_templates',
 		190 => 'thrive_theme_license_validation',
 		200 => 'thrive_theme_admin_options',
+		499 => 'app_notifications',
+        /*The last menu item */
+		500 => 'growth_tools',
 	) );
 
 	ksort( $items );
@@ -448,6 +460,11 @@ function tve_get_debug_data() {
 		'value' => $wpdb->db_version(),
 	);
 
+	$info[] = array(
+		'name'  => 'Server Software',
+		'value' => $_SERVER['SERVER_SOFTWARE'],
+	);
+
 	return $info;
 }
 
@@ -541,6 +558,15 @@ function tve_dash_get_webhook_trigger_integrated_apis() {
 			'data'               => Thrive_Dash_List_Manager::connection_instance( 'fluentcrm' )->get_tags(),
 			'selected'           => false,
 			'kb_article'         => 'http://help.thrivethemes.com/en/articles/5024011-how-to-set-up-incoming-webhooks-in-thrive-ultimatum-using-fluentcrm',
+		),
+		'mailpoet'       => array(
+			'key'                => 'mailpoet',
+			'label'              => 'MailPoet',
+			'image'              => TVE_DASH_URL . '/inc/auto-responder/views/images/mailpoet.png',
+			'custom_integration' => true,
+			'data'               => Thrive_Dash_List_Manager::connection_instance( 'mailpoet' )->get_lists(),
+			'selected'           => false,
+			'kb_article'         => 'https://help.thrivethemes.com/en/articles/4625431-how-to-connect-mailpoet-with-thrive-architect',
 		),
 		'infusionsoft'   => array(
 			'key'        => 'infusionsoft',
@@ -676,4 +702,120 @@ function tve_dash_is_ttb_active() {
 	 */
 
 	return apply_filters( 'tve_dash_is_ttb_active', wp_get_theme()->get_template() === 'thrive-theme' );
+}
+
+/**
+ * Flush the cache for a certain page/post
+ * Currently works for: WP Super Cache, W3 Total Cache, WP Rocket, WP Fastest Cache
+ * Used in: Thrive Ultimatum(for promotion pages), Thrive Optimize
+ *
+ * @param $post_id
+ */
+function tve_flush_cache( $post_id ) {
+	$post_id = (int) $post_id;
+
+	if ( ! $post_id ) {
+		return;
+	}
+
+	/**
+	 * WP Super Cache flush the cache when a post is update/saved based on @see wp_transition_post_status()
+	 */
+	wp_update_post(
+		array(
+			'ID' => $post_id,
+		)
+	);
+
+	/**
+	 * W3 Total Cache
+	 */
+	if ( function_exists( 'w3tc_flush_post' ) ) {
+		w3tc_flush_post( $post_id );
+	}
+
+	/**
+	 * WP Rocket
+	 */
+	if ( function_exists( 'rocket_clean_post' ) ) {
+		rocket_clean_post( $post_id );
+	}
+
+	/**
+	 * WP Fastest Cache
+	 */
+	if ( function_exists( 'wpfc_clear_post_cache_by_id' ) ) {
+		wpfc_clear_post_cache_by_id( $post_id );
+	}
+}
+
+/**
+ * Do not cache a page
+ * Currently works for: WP Super Cache, W3 Total Cache, WP Rocket, WP Fastest Cache, or aby cache plugin that users the DONOTCACHEPAGE constant
+ */
+function tve_do_not_cache_page() {
+	! defined( 'DONOTCACHEPAGE' ) && define( 'DONOTCACHEPAGE', true );
+
+	add_filter( 'rocket_override_donotcachepage', '__return_false', PHP_INT_MAX );
+
+	if ( function_exists( 'wpfc_exclude_current_page' ) ) {
+		wpfc_exclude_current_page();
+	}
+}
+
+/**
+ * Check if the Thrive Product Manager plugin is installed.
+ *
+ * @return bool True if the plugin is installed and active or installed but inactive, false otherwise.
+ */
+function is_TPM_installed() {
+    $plugin_file = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'thrive-product-manager' . DIRECTORY_SEPARATOR . 'thrive-product-manager.php';
+
+    if (is_plugin_active($plugin_file)) {
+        // Installed and active
+        return true;
+    }
+    if (file_exists($plugin_file)) {
+        // Installed but not active
+        return true;
+    }
+    // Not installed
+    return false;
+}
+
+/**
+ * Make a request to the WordPress REST API internally.
+ * 
+ * @param string $url The URL to make the request to.
+ * @param array $data The data to send in the request.
+ * @param string $method The HTTP method to use.
+ * 
+ * @return array The response data.
+ */
+function tve_send_wp_rest_request( $url, $data = [], $method = 'GET' ) {
+	if ( ! function_exists( 'rest_do_request' ) ) {
+		return [];
+	}
+
+	$rest_url = rtrim( get_rest_url(), '/' );
+	$url      = str_replace( $rest_url, '', $url );
+
+	$server = rest_get_server();
+	$request = new WP_REST_Request( $method, $url );
+
+	if ( ! empty( $data ) ) {
+		if ( $method === 'GET' ) {
+			$request->set_query_params( $data );
+		} else {
+			$request->set_body_params( $data );
+		}
+	}
+
+	$response = rest_do_request( $request );
+
+	if ( $response->is_error() ) {
+		return $response->as_error();
+	}
+
+	return $server->response_to_data( $response, false );
 }

@@ -13,8 +13,8 @@
             <# } #>
         </div>
         <div class="tvd-col tvd-l4 tvd-s12">
-            <# if (post_status === 'publish') { #>
-                <# if (is_control) { #> (<?php echo __('control', 'thrive-leads') ?>) <# } #>
+            <# if (post_status === 'publish' && is_control) { #>
+                <# if (typeof test_running !== 'undefined' && test_running) { #> (<?php echo __('control', 'thrive-leads') ?>) <# } else { #> <?php echo __('Active', 'thrive-leads') ?> <# } #>
             <# } #>
         </div>
     </div>
@@ -26,7 +26,7 @@
 <# } else { #>
     <td colspan="3">
         <div class="inline-message">
-            <?php echo __('No traffic is currently being sent to this form. Start an A/B Test to start tracking statistics', 'thrive-leads') ?>
+            <?php echo __('This form is not yet receiving traffic. You can start an A/B test between your forms, or edit this form and archive the original to make it your new active form', 'thrive-leads') ?>
         </div>
     </td>
 <# } #>
@@ -129,10 +129,17 @@
                    class="tvd-btn-icon-solid tvd-btn-icon-solid-blue tvd-tooltipped" data-tooltip="<?php echo __('Edit Design', 'thrive-leads') ?>" data-position="top">
                     <i class="tvd-icon-pencil"></i>
                 </a>
+                <# if (typeof duplicate_context !== 'undefined' && duplicate_context) { #>
+                <a href="javascript:void(0)" title="<?php echo __('Duplicate', 'thrive-leads') ?>"
+                   class="tvd-btn-icon-solid tvd-btn-icon-solid-purple variation-duplicate-options tvd-tooltipped" data-tooltip="<?php echo __('Duplicate', 'thrive-leads') ?>" data-position="top">
+                    <i class="tvd-icon-clone2"></i>
+                </a>
+                <# } else { #>
                 <a href="javascript:void(0)" title="<?php echo __('Clone', 'thrive-leads') ?>"
                    class="tvd-btn-icon-solid tvd-btn-icon-solid-purple variation-clone tvd-tooltipped" data-tooltip="<?php echo __('Clone', 'thrive-leads') ?>" data-position="top">
                     <i class="tvd-icon-clone2"></i>
                 </a>
+                <# } #>
                 <a href="javascript:void(0)" title="<?php echo __('Reset Stats', 'thrive-leads') ?>"
                    class="tvd-btn-icon-solid tvd-btn-icon-solid-orange variation-reset tvd-tooltipped" data-tooltip="<?php echo __('Reset Stats', 'thrive-leads') ?>" data-position="top">
                     <i class="tvd-icon-undo"></i>

@@ -81,7 +81,11 @@ class Fonts {
 	public static function render_optimized_google_fonts() {
 		if ( ! empty( static::$font_families ) ) {
 
-			echo '<link href="https://fonts.gstatic.com" crossorigin rel="preconnect" />';
+			if ( tve_dash_is_google_fonts_blocked() ) {
+				echo '<link href="https://fonts.bunny.net" crossorigin rel="preconnect" />';
+			} else {
+				echo '<link href="https://fonts.gstatic.com" crossorigin rel="preconnect" />';
+			}
 
 			if ( static::is_loading_fonts_async() ) {
 				/* if we want to preload fonts async */
@@ -91,8 +95,15 @@ class Fonts {
 				$attr = 'rel="stylesheet"';
 			}
 
-			echo sprintf( '<link type="text/css" %s href="https://fonts.googleapis.com/css?family=%s&subset=%s&display=swap">',
+			$link = 'https://fonts.bunny.net';
+
+			if ( ! tve_dash_is_google_fonts_blocked() ) {
+				$link = 'https://fonts.googleapis.com';
+			}
+
+			echo sprintf( '<link type="text/css" %s href="%s/css?family=%s&subset=%s&display=swap">',
 				$attr,
+				$link,
 				implode( '|', static::$font_families ),
 				implode( '&', static::$font_subsets )
 			);
@@ -100,5 +111,4 @@ class Fonts {
 			static::$fonts_rendered = true;
 		}
 	}
-
 }

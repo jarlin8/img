@@ -115,6 +115,10 @@ class Thrive_Leads_Ajax_Controller extends Thrive_Leads_Request_Handler {
 			case 'POST':
 			case 'PUT':
 			case 'PATCH':
+				// Handle duplication
+				if ( ! empty( $model['duplicate_from'] ) ) {
+					return tve_leads_duplicate_shortcode( (int) $model['duplicate_from'] );
+				}
 				return tve_leads_save_shortcode( $model );
 			case 'DELETE':
 				return tve_leads_delete_post( $this->param( 'ID', 0 ) );
@@ -161,6 +165,10 @@ class Thrive_Leads_Ajax_Controller extends Thrive_Leads_Request_Handler {
 			case 'POST':
 			case 'PUT':
 			case 'PATCH':
+				// Handle duplication
+				if ( ! empty( $model['duplicate_from'] ) ) {
+					return tve_leads_duplicate_two_step_lightbox( (int) $model['duplicate_from'] );
+				}
 				return tve_leads_save_two_step_lightbox( $model );
 			case 'DELETE':
 				return tve_leads_delete_post( $this->param( 'ID', 0 ) );
@@ -314,6 +322,10 @@ class Thrive_Leads_Ajax_Controller extends Thrive_Leads_Request_Handler {
 			case 'POST':
 			case 'PUT':
 			case 'PATCH':
+				// Handle duplication
+				if ( ! empty( $model['duplicate_from'] ) ) {
+					return tve_leads_duplicate_group( (int) $model['duplicate_from'] );
+				}
 				return tve_leads_save_group( $model );
 			case 'DELETE':
 				return tve_leads_delete_post( $this->param( 'ID', 0 ) );
@@ -393,6 +405,16 @@ class Thrive_Leads_Ajax_Controller extends Thrive_Leads_Request_Handler {
 			case 'POST':
 			case 'PUT':
 			case 'PATCH':
+				// Handle duplication
+				if ( ! empty( $model['duplicate_from'] ) ) {
+					$result = tve_leads_duplicate_form_type( (int) $model['duplicate_from'], (int) $model['post_parent'] );
+
+					if ( is_wp_error( $result ) ) {
+						$this->error( $result->get_error_message(), '400 Bad Request' );
+					}
+
+					return $result;
+				}
 				return tve_leads_save_form_type( $model );
 			case 'DELETE':
 
@@ -477,6 +499,54 @@ class Thrive_Leads_Ajax_Controller extends Thrive_Leads_Request_Handler {
 					$variation['conversion_rate'] = 'N/A';
 
 					return $variation;
+				case 'duplicate_to_group':
+					$variation_key  = sanitize_text_field( isset( $model['variation_key'] ) ? $model['variation_key'] : '' );
+					$post_parent    = (int) ( isset( $model['post_parent'] ) ? $model['post_parent'] : 0 );
+					$target_group_id = (int) ( isset( $model['target_group_id'] ) ? $model['target_group_id'] : 0 );
+
+					if ( empty( $variation_key ) || empty( $target_group_id ) ) {
+						$this->error( __( 'Missing required parameters', 'thrive-leads' ), '400 Bad Request' );
+					}
+
+					$result = tve_leads_duplicate_form_to_group( $variation_key, $post_parent, $target_group_id );
+
+					if ( is_wp_error( $result ) ) {
+						$this->error( $result->get_error_message(), '400 Bad Request' );
+					}
+
+					return $result;
+				case 'duplicate_to_shortcode':
+					$variation_key      = sanitize_text_field( isset( $model['variation_key'] ) ? $model['variation_key'] : '' );
+					$post_parent        = (int) ( isset( $model['post_parent'] ) ? $model['post_parent'] : 0 );
+					$target_shortcode_id = (int) ( isset( $model['target_shortcode_id'] ) ? $model['target_shortcode_id'] : 0 );
+
+					if ( empty( $variation_key ) || empty( $target_shortcode_id ) ) {
+						$this->error( __( 'Missing required parameters', 'thrive-leads' ), '400 Bad Request' );
+					}
+
+					$result = tve_leads_duplicate_form_to_shortcode( $variation_key, $post_parent, $target_shortcode_id );
+
+					if ( is_wp_error( $result ) ) {
+						$this->error( $result->get_error_message(), '400 Bad Request' );
+					}
+
+					return $result;
+				case 'duplicate_to_thrivebox':
+					$variation_key       = sanitize_text_field( isset( $model['variation_key'] ) ? $model['variation_key'] : '' );
+					$post_parent         = (int) ( isset( $model['post_parent'] ) ? $model['post_parent'] : 0 );
+					$target_thrivebox_id = (int) ( isset( $model['target_thrivebox_id'] ) ? $model['target_thrivebox_id'] : 0 );
+
+					if ( empty( $variation_key ) || empty( $target_thrivebox_id ) ) {
+						$this->error( __( 'Missing required parameters', 'thrive-leads' ), '400 Bad Request' );
+					}
+
+					$result = tve_leads_duplicate_form_to_thrivebox( $variation_key, $post_parent, $target_thrivebox_id );
+
+					if ( is_wp_error( $result ) ) {
+						$this->error( $result->get_error_message(), '400 Bad Request' );
+					}
+
+					return $result;
 			}
 		}
 
@@ -526,18 +596,19 @@ class Thrive_Leads_Ajax_Controller extends Thrive_Leads_Request_Handler {
 
 					unset( $new_form['key'] );
 					$model               = $new_form;
-					$copy_of             = __( 'Copy of', 'thrive-leads' );
-					$model['post_title'] = ( strpos( $model['post_title'], $copy_of ) === false ? $copy_of . ' ' : '' ) . $model['post_title'];
+					$existing_variations = tve_leads_get_form_variations( $model['post_parent'], array( 'tracking_data' => false ) );
+					$existing_var_titles = wp_list_pluck( $existing_variations, 'post_title' );
+					$model['post_title'] = tve_leads_generate_copy_title( $model['post_title'], $existing_var_titles );
 
 					/* We need to save the form settings from the clone */
-					if ( method_exists(  FormSettings::class,'save_form_settings_from_duplicated_content' ) ) {
+					if ( method_exists( FormSettings::class, 'save_form_settings_from_duplicated_content' ) ) {
 						$model['content'] = FormSettings::save_form_settings_from_duplicated_content( $model['content'], $model['post_parent'] );
 					}
 
 					/* We also need to save settings from child states */
-					if ( ! empty( $model['form_child_states'] ) && method_exists( FormSettings::class,'save_form_settings_from_duplicated_content' ) ) {
+					if ( ! empty( $model['form_child_states'] ) && method_exists( FormSettings::class, 'save_form_settings_from_duplicated_content' ) ) {
 						foreach ( $model['form_child_states'] as $key => $state ) {
-							$model['form_child_states'][ $key ]['content'] =  FormSettings::save_form_settings_from_duplicated_content( $state['content'], $state['post_parent'] );
+							$model['form_child_states'][ $key ]['content'] = FormSettings::save_form_settings_from_duplicated_content( $state['content'], $state['post_parent'] );
 						}
 					}
 				} else {
@@ -871,12 +942,25 @@ class Thrive_Leads_Ajax_Controller extends Thrive_Leads_Request_Handler {
 			wp_die( 0 );
 		}
 		$s = wp_unslash( $this->param( 'q' ) );
+		$post_type = wp_unslash( $this->param( 'post_type' ) );
+		$args = array(
+			'posts_per_page' => 20,
+			'search_columns' => [ 'post_title' ],
+			's'              => $s
+		);
+
+		if ( 'posts' !== $post_type ) {
+			$front_page_id = get_option( 'page_on_front' );
+
+			$args = array_merge( $args, array(
+				'post_type'      => 'pages' === $post_type ? 'page' : $post_type,
+				'exclude'        => array( $front_page_id ),
+				'hierarchical'   => false
+			) );
+		}
 
 		/** @var WP_Post[] $posts */
-		$posts = get_posts( array(
-			'posts_per_page' => 10,
-			's'              => $s,
-		) );
+		$posts = get_posts( $args );
 
 		$json = array();
 		foreach ( $posts as $post ) {
@@ -918,7 +1002,7 @@ class Thrive_Leads_Ajax_Controller extends Thrive_Leads_Request_Handler {
 	 * display inboundLink Builder lightbox
 	 */
 	public function displayInboundLinkBuilderAction() {
-		include dirname( dirname( __FILE__ ) ) . '/views/inbound_link_builder.php';
+		include dirname( __FILE__, 2 ) . '/views/inbound_link_builder.php';
 		die;
 	}
 
@@ -977,30 +1061,17 @@ class Thrive_Leads_Ajax_Controller extends Thrive_Leads_Request_Handler {
 	 * @return array
 	 */
 	public function contactsAction() {
-		switch ( $this->param( 'actionType' ) ) {
-			case 'send-email':
-				$data = $this->param( 'data' );
+		$result = '';
 
-				$result = tve_send_contacts_email( $data['id'], $data['email_address'], $data['save_email'] );
-				break;
+		if ( $this->param( 'actionType' ) === 'download' ) {
+			$type   = $this->param( 'type' );
+			$params = [
+				'start_date' => $this->param( 'start_date' ),
+				'end_date'   => $this->param( 'end_date' ),
+				'source'     => $this->param( 'source' ),
+			];
 
-			case 'delete-download':
-				global $tvedb;
-				$id = $this->param( 'id' );
-
-				$result = $tvedb->tve_leads_delete_download_item( $id );
-				break;
-
-			case 'download':
-				$source = $this->param( 'source' );
-				$type   = $this->param( 'type' );
-				$params = $this->param( 'params' );
-
-				$result = tve_leads_process_contact_download( $source, $type, $params );
-				break;
-
-			default:
-				$result = '';
+			$result = tve_leads_process_contact_download( $type, $params );
 		}
 
 		return $result;

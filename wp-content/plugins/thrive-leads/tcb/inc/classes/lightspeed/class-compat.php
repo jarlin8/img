@@ -96,9 +96,19 @@ class Compat {
 	 * Disable fastest cache while optimizing assets
 	 */
 	public static function disable_wp_fastest_cache() {
-		$GLOBALS['wp_fastest_cache_options']['wpFastestCacheCombineCss'] = false;
-		$GLOBALS['wp_fastest_cache_options']['wpFastestCacheMinifyCss']  = false;
-		$GLOBALS['wp_fastest_cache_options']['wpFastestCacheStatus']     = false;
+		if ( ! isset( $GLOBALS['wp_fastest_cache_options'] ) ) {
+			return;
+		}
+		
+		if ( is_array( $GLOBALS['wp_fastest_cache_options'] ) ) {
+			$GLOBALS['wp_fastest_cache_options']['wpFastestCacheCombineCss'] = false;
+			$GLOBALS['wp_fastest_cache_options']['wpFastestCacheMinifyCss']  = false;
+			$GLOBALS['wp_fastest_cache_options']['wpFastestCacheStatus']     = false;
+		} else if ( is_object( $GLOBALS['wp_fastest_cache_options'] ) ) {
+			$GLOBALS['wp_fastest_cache_options']->wpFastestCacheCombineCss = false;
+			$GLOBALS['wp_fastest_cache_options']->wpFastestCacheMinifyCss  = false;
+			$GLOBALS['wp_fastest_cache_options']->wpFastestCacheStatus     = false;
+		}
 	}
 
 	/**

@@ -23,13 +23,13 @@ class TCB_Post_List_Filter {
 	 *
 	 * @return string
 	 */
-	public static function render_filter( $attr = array() ) {
+	public static function render_filter( $attr = [] ) {
 		$filter_type       = $attr['data-filter-type'];
 		$filter_option     = $attr['data-filter-option'];
 		$filter_all_option = $attr['data-all-option'] === 'true';
 
 		$content                        = '';
-		$attr['data-options-selection'] = str_replace( array( '|{|', '|}|' ), array( '[', ']' ), $attr['data-options-selection'] );
+		$attr['data-options-selection'] = str_replace( [ '|{|', '|}|' ], [ '[', ']' ], $attr['data-options-selection'] );
 		$filter_options_selection       = json_decode( $attr['data-options-selection'], true );
 
 		/* Add the 'All' option */
@@ -77,7 +77,7 @@ class TCB_Post_List_Filter {
 			unset( $attr['dropdown_placeholder'] );
 		}
 
-		$content .= self::get_option_template( $filter_type, $filter_option, $filter_options_selection, $extra_attributes );
+		$content .= static::get_option_template( $filter_type, $filter_option, $filter_options_selection, $extra_attributes );
 
 		unset( $attr['icon'], $attr['search'], $attr['inner-classes'] );
 
@@ -129,11 +129,13 @@ class TCB_Post_List_Filter {
 
 		if ( $filter_type !== 'search' ) {
 			foreach ( $filter_options_selection as $filter_option_id ) {
-				$filter_option_name = self::get_option_name( $filter_option, $filter_option_id, $all_label );
+				$filter_option_name = static::get_option_name( $filter_option, $filter_option_id, $all_label );
+				$filter_option_slug = static::get_option_slug( $filter_option, $filter_option_id );
 
 				$template_attributes = [
 					'id'      => $filter_option_id,
 					'name'    => $filter_option_name,
+					'slug'    => $filter_option_slug,
 					'classes' => 'tcb-filter-option ' . $filter_option_identifier_class . ' ' . $extra_attributes['classes'],
 				];
 
@@ -158,12 +160,10 @@ class TCB_Post_List_Filter {
 
 				$content .= tcb_template( $filter_element_template, $template_attributes, true );
 			}
-		} else {
-			if ( ! empty( $extra_attributes['search'] ) ) {
-				$content = $extra_attributes['search'];
+		} else if ( ! empty( $extra_attributes['search'] ) ) {
+			$content = $extra_attributes['search'];
 
-				unset( $extra_attributes['search'] );
-			}
+			unset( $extra_attributes['search'] );
 		}
 
 		$wrapper_attr = [];
@@ -198,8 +198,9 @@ class TCB_Post_List_Filter {
 	/**
 	 * Return the option name according to its id and type
 	 *
-	 * @param $filter_option
-	 * @param $filter_option_id
+	 * @param        $filter_option
+	 * @param        $filter_option_id
+	 * @param string $all_label
 	 *
 	 * @return string|WP_Error
 	 */
@@ -212,13 +213,16 @@ class TCB_Post_List_Filter {
 					$name = get_the_category_by_ID( $filter_option_id );
 					break;
 				case 'tag':
-					$name = get_tag( $filter_option_id )->name;
+					$tag  = get_tag( $filter_option_id );
+					$name = ! empty( $tag ) && ! is_wp_error( $tag ) ? $tag->name : '';
 					break;
 				case 'author':
-					$name = get_user_by( 'ID', $filter_option_id )->user_nicename;
+					$user = get_user_by( 'ID', $filter_option_id );
+					$name = ! empty( $user ) ? $user->user_nicename : '';
 					break;
 				default:
-					$name = get_term( $filter_option_id )->name;
+					$term = get_term( $filter_option_id );
+					$name = ! empty( $term ) && ! is_wp_error( $term ) ? $term->name : '';
 			}
 		}
 
@@ -226,7 +230,43 @@ class TCB_Post_List_Filter {
 	}
 
 	public static function get_author_name( $filter_option_id ) {
-		return get_user_by( 'ID', $filter_option_id )->display_name;
+		$user = get_user_by( 'ID', $filter_option_id );
+
+		return ! empty( $user ) && ! empty( $user->display_name ) ? $user->display_name : '';
+	}
+
+	/**
+	 * Return the option slug according to its id and type
+	 *
+	 * @param        $filter_option
+	 * @param        $filter_option_id
+	 *
+	 * @return string
+	 */
+	public static function get_option_slug( $filter_option, $filter_option_id ) {
+		if ( $filter_option_id === 'all' ) {
+			$slug = 'all';
+		} else {
+			switch ( $filter_option ) {
+				case 'category':
+					$term = get_term( $filter_option_id, 'category' );
+					$slug = ! is_wp_error( $term ) && ! empty( $term->slug ) ? $term->slug : '';
+					break;
+				case 'tag':
+					$term = get_term( $filter_option_id, 'post_tag' );
+					$slug = ! is_wp_error( $term ) && ! empty( $term->slug ) ? $term->slug : '';
+					break;
+			case 'author':
+				$user = get_user_by( 'ID', $filter_option_id );
+				$slug = ! empty( $user ) && ! empty( $user->user_nicename ) ? $user->user_nicename : '';
+				break;
+				default:
+					$term = get_term( $filter_option_id, $filter_option );
+					$slug = ! is_wp_error( $term ) && ! empty( $term->slug ) ? $term->slug : '';
+			}
+		}
+
+		return $slug;
 	}
 
 	/**
@@ -235,7 +275,7 @@ class TCB_Post_List_Filter {
 	 * @return string
 	 */
 	private static function get_classes( $attr ) {
-		$class = array( static::IDENTIFIER, THRIVE_WRAPPER_CLASS );
+		$class = [ static::IDENTIFIER, THRIVE_WRAPPER_CLASS ];
 
 		/* set responsive/animation classes, if they are present */
 		if ( ! empty( $attr['class'] ) ) {
@@ -279,8 +319,11 @@ class TCB_Post_List_Filter {
 				$values = explode( ',', $values );
 
 				foreach ( $values as $value ) {
+					/* Pass as slug first (new URLs use slugs), but also pass as name for backward compatibility.
+					 * The set_filter_for_terms() method will try slug first, then fallback to name. */
 					$filters[] = [
 						'filter' => $post_list_query['dynamic_filter'][ $key ],
+						'slug'   => $value,
 						'name'   => $value,
 						'origin' => $key,
 					];
@@ -305,49 +348,48 @@ class TCB_Post_List_Filter {
 
 		if ( empty( $filters ) ) {
 			return $post_list_query;
-		} else {
-			$rules = [];
+		}
 
-			foreach ( $filters as $filter ) {
-				if ( ! empty( $filter['name'] ) || ( ! empty( $filter['id'] ) && ! in_array( $filter['id'], [ 'all', 'none' ] ) ) ) {
-					switch ( $filter['filter'] ) {
-						case 'author':
-							static::set_filter_query_for_author( $post_list_query, $filter );
-							break;
-						case 'search':
-							$post_list_query['s'] = $filter['name'];
-							break;
-						case 'category':
-						case 'tag':
-						default:
-							static::set_filter_for_terms( $filter, $rules );
-							break;
-					}
+		$rules = [];
+
+		foreach ( $filters as $filter ) {
+			if ( ! empty( $filter['name'] ) || ( ! empty( $filter['id'] ) && ! in_array( $filter['id'], [ 'all', 'none' ] ) ) ) {
+				switch ( $filter['filter'] ) {
+					case 'author':
+						static::set_filter_query_for_author( $post_list_query, $filter );
+						break;
+					case 'search':
+						$post_list_query['s'] = $filter['name'];
+						break;
+					case 'category':
+					case 'tag':
+					default:
+                        static::set_filter_for_terms( $filter, $rules );
+                        break;
 				}
 			}
+		}
 
-			$rule_count = count( $rules );
+		$rule_count = count( $rules );
 
-			/* If we have rules, we update the Post List Query */
-			if ( $rule_count > 0 ) {
-				$rules = array_values( $rules );
+		/* If we have rules, we update the Post List Query */
+		if ( $rule_count > 0 ) {
+			$rules = array_values( $rules );
 
-				/* If we have more than 1 rule we need to add 'AND' relation */
-				if ( count( $rules ) > 1 ) {
-					$rules['relation'] = 'AND';
-				}
-
-				if ( empty( $post_list_query['tax_query'] ) ) {
-					$post_list_query['tax_query'] = $rules;
-				} else {
-					$post_list_query['tax_query'] = [
-						$post_list_query['tax_query'],
-						'relation' => 'AND',
-						$rules,
-					];
-				}
+			/* If we have more than 1 rule we need to add 'AND' relation */
+			if ( count( $rules ) > 1 ) {
+				$rules['relation'] = 'AND';
 			}
 
+			if ( empty( $post_list_query['tax_query'] ) ) {
+				$post_list_query['tax_query'] = $rules;
+			} else {
+				$post_list_query['tax_query'] = [
+					$post_list_query['tax_query'],
+					'relation' => 'AND',
+					$rules,
+				];
+			}
 		}
 
 		return $post_list_query;
@@ -360,25 +402,36 @@ class TCB_Post_List_Filter {
 	 * @param $rules
 	 */
 	public static function set_filter_for_terms( $filter, &$rules ) {
-		$filter_by   = isset( $filter['name'] ) ? 'name' : 'id';
-		$filter_slug = $filter['filter'] === 'tag' ? 'post_tag' : $filter['filter'];
-
-		if ( isset( $filter[ $filter_by ] ) ) {
-			$taxonomy_obj = get_term_by( $filter_by, $filter[ $filter_by ], $filter_slug );
-
-			if ( ! empty( $taxonomy_obj ) ) {
-				$taxonomy = (string) $taxonomy_obj->term_id;
-			}
+		$filter_slug     = $filter['filter'] === 'tag' ? 'post_tag' : $filter['filter'];
+		$taxonomy_obj    = false;
+		
+		// Try slug first (new behavior for better accuracy with duplicate names)
+		if ( isset( $filter['slug'] ) && ! empty( $filter['slug'] ) ) {
+			$taxonomy_obj = get_term_by( 'slug', $filter['slug'], $filter_slug );
+		}
+		
+		// Fallback to name for backward compatibility (old URLs using name)
+		if ( empty( $taxonomy_obj ) && isset( $filter['name'] ) ) {
+			$taxonomy_obj = get_term_by( 'name', $filter['name'], $filter_slug );
+		}
+		
+		// Final fallback to id
+		if ( empty( $taxonomy_obj ) && isset( $filter['id'] ) ) {
+			$taxonomy_obj = get_term_by( 'id', $filter['id'], $filter_slug );
 		}
 
-		if ( ! empty( $rules[ $filter['origin'] ] ) ) {
-			$rules[ $filter['origin'] ]['terms'][] = $taxonomy;
-		} else {
-			$rules[ $filter['origin'] ] = [
-				'taxonomy' => $filter_slug,
-				'terms'    => [ $taxonomy ],
-				'operator' => 'IN',
-			];
+		if ( ! empty( $taxonomy_obj ) && ! is_wp_error( $taxonomy_obj ) ) {
+			$taxonomy = (string) $taxonomy_obj->term_id;
+
+			if ( ! empty( $rules[ $filter['origin'] ] ) ) {
+				$rules[ $filter['origin'] ]['terms'][] = $taxonomy;
+			} else {
+				$rules[ $filter['origin'] ] = [
+					'taxonomy' => $filter_slug,
+					'terms'    => [ $taxonomy ],
+					'operator' => 'IN',
+				];
+			}
 		}
 	}
 
@@ -389,13 +442,16 @@ class TCB_Post_List_Filter {
 	 * @param $filter
 	 */
 	public static function set_filter_query_for_author( &$post_list_query, $filter ) {
+		$author = null;
+
 		if ( isset( $filter['name'] ) ) {
-			$author_id = (string) get_user_by( 'slug', $filter['name'] )->ID;
+			$author = get_user_by( 'slug', $filter['name'] );
 		} else if ( isset( $filter['id'] ) ) {
-			$author_id = (string) get_user_by( 'id', $filter['id'] )->ID;
+			$author = get_user_by( 'id', $filter['id'] );
 		}
 
-		if ( ! empty( $author_id ) ) {
+		if ( ! empty( $author ) ) {
+			$author_id = (int) $author->ID;
 			if ( ! empty( $post_list_query['author__in'] ) ) {
 				$post_list_query['author__in'][] = $author_id;
 			} else {

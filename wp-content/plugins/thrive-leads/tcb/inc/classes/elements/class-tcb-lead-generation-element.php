@@ -67,20 +67,114 @@ class TCB_Lead_Generation_Element extends TCB_Cloud_Template_Element_Abstract {
 	}
 
 	/**
+	 * Get Thrive Spam Protection API keys from endpoint with transient caching
+	 *
+	 * @return array API keys or empty array on error
+	 */
+	private function get_thrive_spam_api_keys() {
+		// Check transient first
+		if ( false !== $keys = get_transient( 'tcb_thrive_spam_api_keys' ) ) {
+			return $keys;
+		}
+
+		$endpoint = 'https://thrivethemesapi.com/api/secrets/v1/api_key_thrive_spam';
+		
+		$response = wp_remote_get( $endpoint, array( 
+			'timeout' => 10,
+			'sslverify' => true 
+		) );
+		
+		if ( is_wp_error( $response ) ) {
+			return array();
+		}
+		
+		$body = wp_remote_retrieve_body( $response );
+		$data = json_decode( $body, true );
+		
+		if ( ! is_array( $data ) || 
+			 ! isset( $data['success'] ) || 
+			 ! $data['success'] || 
+			 ! isset( $data['data']['value']['site_key'] ) ||
+			 ! isset( $data['data']['value']['secret_key'] ) ) {
+			return array();
+		}
+		
+		$keys = array(
+			'site_key'   => sanitize_text_field( $data['data']['value']['site_key'] ),
+			'secret_key' => sanitize_text_field( $data['data']['value']['secret_key'] )
+		);
+		
+		// Cache for 24 hours
+		set_transient( 'tcb_thrive_spam_api_keys', $keys, 24 * HOUR_IN_SECONDS );
+		
+		return $keys;
+	}
+
+	/**
 	 * @return array
 	 */
-	public function get_captcha_credentials() {
+	public function get_spam_prevention_tools() {
+		$spam_prevention_tools = apply_filters( 'tcb_spam_prevention_tools', [] );
+		$formatted_tools       = [];
+		foreach ( $spam_prevention_tools as $tool ) {
+			$credentials = Thrive_Dash_List_Manager::credentials( $tool );
 
-		$credentials = Thrive_Dash_List_Manager::credentials( 'recaptcha' );
+			$disabled = 1;
+			if ( ! empty( $credentials['site_key'] ) && ! empty( $credentials['secret_key'] ) ) {
+				unset( $credentials['secret_key'] );
+				$disabled = 0;
+			}
 
-		return ! empty( $credentials['site_key'] ) ? $credentials : array();
+			$config = [
+				'value'         => $tool,
+				'name'          => ucfirst( $tool ),
+				'disabled'      => $disabled,
+				'class'         => $disabled ? 'tve-disabled' : '',
+				'tool_settings' => $credentials,
+				'logo'          => $this->get_logo_url( $tool ),
+			];
+
+			$formatted_tools[ $tool ] = $config;
+		}
+
+		// Get API keys from endpoint
+		$thrive_spam_keys = $this->get_thrive_spam_api_keys();
+		
+		$formatted_tools['thrive-sp'] = [
+			'name'          => 'Thrive spam protection',
+			'value'         => 'thrive-sp',
+			'enabled'       => 0,
+			'tool_settings' => ! empty( $thrive_spam_keys ) ? $thrive_spam_keys : array(
+				'site_key'   => '',
+				'secret_key' => '',
+			),
+			'logo'          => $this->get_logo_url( 'thrive-spam-protect' ),
+		];
+
+		$formatted_tools['disabled'] = [
+			'name'          => 'Disabled',
+			'value'         => 'disabled',
+			'enabled'       => 0,
+			'tool_settings' => [
+				'site_key'   => '0i1Lk8skHd2no5d',
+				'secret_key' => 'xVCSHKWlohcZbw0hutIC93Lr2',
+			],
+			'logo'          => $this->get_logo_url( 'disabled' ),
+		];
+
+		return $formatted_tools;
+	}
+
+	public function get_logo_url( $name ) {
+		return TVE_DASH_URL . '/inc/auto-responder/views/images/' . $name . '.png';
 	}
 
 	/**
 	 * @return array
 	 */
 	public function own_components() {
-		$credentials     = $this->get_captcha_credentials();
+		$spam_prevention_tools = $this->get_spam_prevention_tools();
+
 		$lead_generation = array(
 			'lead_generation'  => array(
 				'config' => array(
@@ -89,62 +183,62 @@ class TCB_Lead_Generation_Element extends TCB_Cloud_Template_Element_Abstract {
 							'label' => __( 'Template', 'thrive-cb' ),
 						),
 					),
-					'FormPalettes'        => array(
-						'config'  => array(),
+					'FormPalettes'        => [
+						'config'  => [],
 						'extends' => 'Palettes',
-					),
+					],
 					'connectionType'      => array(
 						'config' => array(
 							'name'    => __( 'Connection', 'thrive-cb' ),
-							'buttons' => array(
-								array(
+							'buttons' => [
+								[
 									'text'    => 'API',
 									'value'   => 'api',
 									'default' => true,
-								),
-								array(
+								],
+								[
 									'text'  => 'HTML code',
 									'value' => 'custom-html',
-								),
-							),
+								],
+								[
+									'text'  => 'Webhook',
+									'value' => 'webhook',
+								],
+							],
 						),
 					),
-					'FieldsControl'       => array(
-						'config' => array(
+					'FieldsControl'       => [
+						'config' => [
 							'sortable'      => true,
 							'settings_icon' => 'pen-light',
-						),
-					),
-					'HiddenFieldsControl' => array(
-						'config'  => array(
+						],
+					],
+					'HiddenFieldsControl' => [
+						'config'  => [
 							'sortable'      => false,
 							'settings_icon' => 'pen-light',
-						),
+						],
 						'extends' => 'PreviewList',
-					),
-					'ApiConnections'      => array(
-						'config' => array(),
-					),
-					'Captcha'             => array(
+					],
+					'ApiConnections'      => [
+						'config' => [],
+					],
+					'SPTools'             => array(
 						'config'  => array(
-							'name'                 => '',
-							'label'                => __( 'Captcha spam prevention', 'thrive-cb' ),
-							'default'              => false,
-							'site_key'             => ! empty( $credentials ) ? $credentials['site_key'] : '',
-							'version'              => ! empty( $credentials ) && ! empty( $credentials['connection'] ) ? $credentials['connection']['version'] : '',
-							'use_browsing_history' => ! empty( $credentials ) && ! empty( $credentials['connection'] ) && ! empty( $credentials['connection']['browsing_history'] ) ? 1 : '',
+							'name'         => '',
+							'options'      => $spam_prevention_tools
 						),
-						'extends' => 'Switch',
+						'extends' => 'Select',
 					),
-					'consent'        => array(
+					'consent'             => array(
 						'config' => array(
 							'labels' => array(
-								'wordpress' => __( 'Create Wordpress account', 'thrive-cb' ),
+								'wordpress' => __( 'Create WordPress account', 'thrive-cb' ),
 								'default'   => __( '{service}', 'thrive-cb' ),
 							),
 						),
 					),
-					'FormIdentifier' => array(
+					'FormIdentifier'      => array(
 						'config'  => array(
 							'label'        => __( 'Form identifier', 'thrive-cb' ),
 							'full-width'   => true,
@@ -156,42 +250,42 @@ class TCB_Lead_Generation_Element extends TCB_Cloud_Template_Element_Abstract {
 					),
 				),
 			),
-			'typography'       => array(
+			'typography'       => [
 				'hidden' => true,
-			),
-			'layout'           => array(
-				'disabled_controls' => array(
+			],
+			'layout'           => [
+				'disabled_controls' => [
 					'.tve-advanced-controls',
-				),
-				'config'            => array(
-					'Width' => array(
+				],
+				'config'            => [
+					'Width' => [
 						'important' => true,
-					),
-				),
-			),
-			'borders'          => array(
-				'disabled_controls' => array(),
-				'config'            => array(
-					'Corners' => array(
+					],
+				],
+			],
+			'borders'          => [
+				'disabled_controls' => [],
+				'config'            => [
+					'Corners' => [
 						'overflow' => false,
-					),
-				),
-			),
-			'animation'        => array(
+					],
+				],
+			],
+			'animation'        => [
 				'hidden' => true,
-			),
-			'shadow'           => array(
-				'config' => array(
-					'disabled_controls' => array( 'text' ),
-				),
-			),
-			'styles-templates' => array(
-				'config' => array(
-					'ID' => array(
+			],
+			'shadow'           => [
+				'config' => [
+					'disabled_controls' => [ 'text' ],
+				],
+			],
+			'styles-templates' => [
+				'config' => [
+					'ID' => [
 						'hidden' => true,
-					),
-				),
-			),
+					],
+				],
+			],
 		);
 
 		return array_merge( $lead_generation, $this->group_component() );
@@ -212,13 +306,13 @@ class TCB_Lead_Generation_Element extends TCB_Cloud_Template_Element_Abstract {
 	 * @return string|string[][]
 	 */
 	public function info() {
-		return array(
-			'instructions' => array(
+		return [
+			'instructions' => [
 				'type' => 'help',
 				'url'  => 'lead_generation',
 				'link' => 'https://help.thrivethemes.com/en/articles/4425779-how-to-use-the-lead-generation-element',
-			),
-		);
+			],
+		];
 	}
 
 	/**
@@ -255,7 +349,7 @@ class TCB_Lead_Generation_Element extends TCB_Cloud_Template_Element_Abstract {
 				),
 				array(
 					'value'    => 'all_dropdown_elements',
-					'selector' => '.tve_lg_dropdown',
+					'selector' => '.tve_lg_dropdown, .tve_lg_country, .tve_lg_state',
 					'name'     => __( 'Grouped Dropdown', 'thrive-cb' ),
 					'singular' => __( '-- Dropdown %s', 'thrive-cb' ),
 				),

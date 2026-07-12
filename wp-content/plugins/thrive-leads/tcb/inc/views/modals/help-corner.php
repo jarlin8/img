@@ -57,12 +57,6 @@ $items = array(
 					<p><?php echo esc_html( $text ); ?></p>
 				<?php endforeach; ?>
 			</div>
-			<?php if ( $item['title'] == 'Knowledge Base' ): ?>
-				<div class="kb-search">
-					<input type="text" class="kb-input-search keyup-enter" data-fn="searchKB" placeholder="Search knowledge base" autocomplete="off">
-					<?php tcb_icon( 'search-regular', false, 'sidebar', 'click', array( 'data-fn' => 'searchKB' ) ) ?>
-				</div>
-			<?php endif ?>
 		</div>
 	<?php endforeach; ?>
 </div>

@@ -284,7 +284,7 @@ class Thrive_Dash_Api_ActiveCampaign {
 		$data = $this->_parseResponse( $body );
 
 		if ( empty( $data ) ) {
-			if ( strpos( $data, 'g-recaptcha' ) !== false ) {
+			if ( strpos( $body, 'g-recaptcha' ) !== false ) {
 				throw new Thrive_Dash_Api_ActiveCampaign_Exception( 'Unknown problem with the API request. Please recheck your account.' );
 			}
 

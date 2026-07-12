@@ -19,9 +19,8 @@ class TCB_Landing_Page_Cloud_Templates_Api {
 
 	const DEBUG_LOCAL = false;
 
-	const API_URL         = 'http://landingpages.thrivethemes.com/cloud-api/index-api.php';
-	const API_SERVICE     = 'http://service-api.thrivethemes.com/cloud-templates-api';
-	const API_SERVICE_DEV = 'http://thrive.service/cloud-api/index-api.php';
+	const API_URL     = 'https://landingpages.thrivethemes.com/cloud-api/index-api.php';
+	const API_SERVICE = 'https://service-api.thrivethemes.com/cloud-templates-api';
 
 	/**
 	 * @var TCB_Landing_Page_Cloud_Templates_Api
@@ -76,7 +75,7 @@ class TCB_Landing_Page_Cloud_Templates_Api {
 	 *
 	 */
 	public function getTemplateList() {
-		return call_user_func( array( $this, 'get_template_list' ), func_get_args() );
+		return call_user_func( [ $this, 'get_template_list' ], func_get_args() );
 	}
 
 	/**
@@ -101,11 +100,11 @@ class TCB_Landing_Page_Cloud_Templates_Api {
 		$data     = json_decode( $response, true );
 
 		if ( empty( $data['success'] ) ) {
-			throw new Exception( $data['error_message'] );
+			return [ 'error' => $data['error_message'] ];
 		}
 
 		if ( ! isset( $data['data'] ) ) {
-			throw new Exception( 'Could not fetch templates.' );
+			return [ 'error' => 'Could not fetch templates.' ];
 		}
 
 		$this->_validateReceivedHeader( $data );
@@ -139,20 +138,20 @@ class TCB_Landing_Page_Cloud_Templates_Api {
 		/* create folders in uploads - make sure all of the required folders exist */
 		$this->createFolders( $upload, $template );
 
-		$params = array(
+		$params = [
 			'route'       => 'download',
 			'tar_version' => TVE_VERSION,
 			'tpl'         => $template,
 			'uid'         => $uid,
-		);
+		];
 		// LP v2 pages
-		$version = strpos( $template, 'tcb2-' ) === 0 ? 2 : null;
+		$version = 2;
 		$body    = $this->_request( $params, $version );
 
-		$control = array(
+		$control = [
 			'auth' => $this->request['headers']['X-Thrive-Authenticate'],
 			'tpl'  => $template,
-		);
+		];
 
 		/**
 		 * this means an error -> error message is json_encoded
@@ -193,7 +192,7 @@ class TCB_Landing_Page_Cloud_Templates_Api {
 	 * @throws Exception
 	 */
 	protected function _request( $params, $version = null ) {
-
+		$params = array_merge( $params, TD_TTW_Connection::get_instance()->get_connection_data() );
 		/**
 		 * filter params before sending them to cloud
 		 */
@@ -210,10 +209,10 @@ class TCB_Landing_Page_Cloud_Templates_Api {
 			'X-Thrive-Authenticate' => $this->_buildAuthString( $params ),
 		);
 
-		$this->request = array(
+		$this->request = [
 			'headers' => $headers,
 			'body'    => $params,
-		);
+		];
 
 		$url = defined( 'TCB_CLOUD_API_LOCAL' ) && TCB_CLOUD_API_LOCAL ? TCB_CLOUD_API_LOCAL : self::API_SERVICE;
 
@@ -222,15 +221,14 @@ class TCB_Landing_Page_Cloud_Templates_Api {
 		), $url );
 
 		if ( ! empty( $version ) ) {
-			$url = add_query_arg( array(
+			$url = add_query_arg( [
 				'v' => $version,
-			), $url );
+			], $url );
 		}
-
-		$response = tve_dash_api_remote_post( $url, array(
+		$response = tve_dash_api_remote_post( $url, [
 			'headers' => $headers,
 			'body'    => $params,
-		) );
+		] );
 
 		if ( $response instanceof WP_Error ) {
 			throw new Exception( $response->get_error_message() );
@@ -317,7 +315,7 @@ class TCB_Landing_Page_Cloud_Templates_Api {
 	 * @param string $template_key
 	 */
 	public function createFolders( $wp_upload, $template_key ) {
-		$folder_list = array(
+		$folder_list = [
 			'js',
 			'lightboxes',
 			'menu',
@@ -327,7 +325,7 @@ class TCB_Landing_Page_Cloud_Templates_Api {
 			'templates/css/fonts/' . $template_key,
 			'templates/css/images',
 			'templates/thumbnails',
-		);
+		];
 
 		/**
 		 * this filter would allow adding some extra custom folders (if needed in the future)
@@ -593,12 +591,12 @@ class TCB_Landing_Page_Transfer {
 		$this->exportParseLightboxes( $page_content, $config );
 
 		if ( $return_data ) {
-			return array(
+			return [
 				'page_meta'         => $config,
 				'page_content'      => $page_content,
 				'image_map'         => $this->image_map,
 				'export_symbol_ids' => $this->export_symbol_ids,
-			);
+			];
 		}
 
 		if ( ! empty( $this->export_symbol_ids ) ) {
@@ -742,7 +740,7 @@ class TCB_Landing_Page_Transfer {
 	 * @param string $content
 	 */
 	public function exportParseImages( &$content ) {
-		$site_url = str_replace( array( 'http://', 'https://', '//' ), '', site_url() );
+		$site_url = str_replace( [ 'http://', 'https://', '//' ], '', site_url() );
 
 		/* regular expression that finds image links that point to the current server */
 		$image_regexp = '#(http:|https:)?(\\\?/\\\?/)(' . preg_quote( $site_url, '#' ) . ')([^ "\']+?)(\.[png|svg|webp|gif|jpg|jpeg]+)#is';
@@ -795,7 +793,7 @@ class TCB_Landing_Page_Transfer {
 	 */
 	protected function getTCBMeta( $post_id ) {
 		$config                = [];
-		$non_lp_dependent_keys = array( 'tve_landing_page', 'tve_disable_theme_dependency' );
+		$non_lp_dependent_keys = [ 'tve_landing_page', 'tve_disable_theme_dependency', TCB_LP_Palettes::LP_PALETTES, TCB_LP_Palettes::LP_PALETTES_CONFIG ];
 
 		foreach ( tve_get_used_meta_keys() as $key ) {
 			$config[ $key ] = in_array( $key, $non_lp_dependent_keys ) ? get_post_meta( $post_id, $key, true ) : tve_get_post_meta( $post_id, $key );
@@ -976,10 +974,10 @@ class TCB_Landing_Page_Transfer {
 			$zip->addFile( $file, 'icon-pack/fonts/' . basename( $file ) );
 		}
 
-		$config['icon_pack'] = array(
+		$config['icon_pack'] = [
 			'font-family' => $thrive_icon_pack['fontFamily'],
 			'icons'       => $thrive_icon_pack['icons'],
-		);
+		];
 	}
 
 	/**
@@ -1047,7 +1045,7 @@ class TCB_Landing_Page_Transfer {
 		$all_fonts = $this->getThriveFonts();
 
 		foreach ( $used_font_classes as $font_class ) {
-			$font_index = $this->findFontByProps( array( 'font_class' => $font_class ), $all_fonts, array( 'font_class' ) );
+			$font_index = $this->findFontByProps( [ 'font_class' => $font_class ], $all_fonts, [ 'font_class' ] );
 			if ( false === $font_index ) {
 				continue;
 			}
@@ -1324,7 +1322,7 @@ class TCB_Landing_Page_Transfer {
 		/**
 		 * For smart Landing Pages, we need to make sure that keys needed for smart landing pages exists inside the json file
 		 */
-		$smart_lp_keys = array( 'page_vars', 'page_styles', 'page_palettes' );
+		$smart_lp_keys = [ 'page_vars', 'page_styles', 'page_palettes' ];
 		foreach ( $smart_lp_keys as $smart_lp_key ) {
 			if ( ! isset( $config[ $smart_lp_key ] ) ) {
 				$config[ $smart_lp_key ] = [];
@@ -1359,6 +1357,15 @@ class TCB_Landing_Page_Transfer {
 		if ( ! empty( $config['page_palettes'] ) ) {
 			$template_data['tpl_palettes'] = $config['page_palettes'];
 		}
+
+		if ( ! empty( $config[ TCB_LP_Palettes::LP_PALETTES ] ) ) {
+			$template_data['tpl_palettes_v2'] = $config[ TCB_LP_Palettes::LP_PALETTES ];
+		}
+
+		if ( ! empty( $config[ TCB_LP_Palettes::LP_PALETTES_CONFIG ] ) ) {
+			$template_data['tpl_palettes_config_v2'] = $config[ TCB_LP_Palettes::LP_PALETTES_CONFIG ];
+		}
+
 		$elements = [
 			'button',
 			'section',
@@ -1792,9 +1799,9 @@ class TCB_Landing_Page_Transfer {
 			throw new Exception( __( 'Could not create the folder for the Icon Pack', 'thrive-cb' ) );
 		}
 
-		$icon_pack = array(
+		$icon_pack = [
 			'font-family' => $new_font_family,
-		);
+		];
 
 		$new_cls_prefix = uniqid( 'tve-icm-' ) . '-';
 
@@ -1835,13 +1842,13 @@ class TCB_Landing_Page_Transfer {
 			if ( strpos( $info['name'], 'icon-pack/fonts/' ) === 0 && ! empty( $info['size'] ) ) {
 				$pathinfo = pathinfo( $info['name'] );
 				if ( empty( $pathinfo['extension'] )
-				     || ! in_array( strtolower( $pathinfo['extension'] ), array(
+				     || ! in_array( strtolower( $pathinfo['extension'] ), [
 						'woff',
 						'woff2',
 						'ttf',
 						'svg',
 						'eot',
-					) )
+					] )
 				) {
 					$i ++;
 					continue;
@@ -1900,12 +1907,12 @@ class TCB_Landing_Page_Transfer {
 				if ( strpos( $info['name'], $family . '/fonts/' ) === 0 && ! empty( $info['size'] ) ) {
 					$pathinfo = pathinfo( $info['name'] );
 					if ( empty( $pathinfo['extension'] )
-					     || ! in_array( strtolower( $pathinfo['extension'] ), array(
+					     || ! in_array( strtolower( $pathinfo['extension'] ), [
 							'woff',
 							'ttf',
 							'svg',
 							'eot',
-						) )
+						] )
 					) {
 						$zip_index ++;
 						continue;
@@ -2128,7 +2135,7 @@ class TCB_Landing_Page_Transfer {
 
 		$pattern = '#(' . implode( '|', $search ) . ')#s';
 
-		return preg_replace_callback( $pattern, array( $this, '_importReplaceFontClassCallback' ), $content );
+		return preg_replace_callback( $pattern, [ $this, '_importReplaceFontClassCallback' ], $content );
 	}
 
 	private function _importReplaceFontClassCallback( $matches ) {

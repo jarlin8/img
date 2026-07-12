@@ -16,9 +16,9 @@ class TCB_Post_List_Shortcodes {
 
 	private static $_instance = null;
 
-	private $execution_stack = array();
+	private $execution_stack = [];
 
-	public static $dynamic_shortcodes = array(
+	public static $dynamic_shortcodes = [
 		'tcb_post_content'               => 'the_content',
 		'tcb_post_title'                 => 'the_title',
 		'tcb_post_featured_image'        => 'post_thumbnail',
@@ -41,18 +41,24 @@ class TCB_Post_List_Shortcodes {
 		'tcb_post_custom_external'       => 'externals',
 		'tcb_video_cover_featured_image' => 'video_cover_featured_image',
 		'thrive_author_url'              => 'author_link_shortcode',
-	);
+	];
 
 	public function __construct() {
-		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'init', [ $this, 'init' ] );
 
-		add_action( 'wp_print_footer_scripts', array( 'TCB_Post_List', 'wp_print_footer_scripts' ) );
+		add_action( 'wp_print_footer_scripts', [ 'TCB_Post_List', 'wp_print_footer_scripts' ] );
 
-		add_filter( 'tcb_content_allowed_shortcodes', array( $this, 'tcb_content_allowed_shortcodes' ) );
+		add_filter( 'tcb_content_allowed_shortcodes', [ $this, 'tcb_content_allowed_shortcodes' ] );
 
-		add_filter( 'tcb_inline_shortcodes', array( $this, 'tcb_inline_shortcodes' ), 11 );
+		add_filter( 'tcb_inline_shortcodes', [ $this, 'tcb_inline_shortcodes' ], 11 );
 
-		add_filter( 'aioseo_conflicting_shortcodes', array( $this, 'remove_shortcode_conflicts' ) );
+		add_filter( 'aioseo_conflicting_shortcodes', [ $this, 'remove_shortcode_conflicts' ] );
+		
+		// Ensure escaped shortcodes are replaced in all contexts, including search crawlers
+		add_filter( 'tcb_post_list_article_content', [ $this, 'replace_escaped_shortcodes' ], 999 );
+		
+		// Also handle escaped shortcodes in the main content processing
+		add_filter( 'the_content', [ $this, 'replace_escaped_shortcodes' ], 999 );
 	}
 
 	/**
@@ -64,6 +70,42 @@ class TCB_Post_List_Shortcodes {
 	 */
 	public function remove_shortcode_conflicts( $shortcodes ) {
 		return array_merge( $shortcodes, array_keys( TCB_Post_List_Shortcodes::$dynamic_shortcodes ) );
+	}
+
+	/**
+	 * Replace escaped shortcode format that might appear in certain contexts
+	 * This ensures that {({tcb_post_the_permalink})} is properly replaced with the actual URL
+	 *
+	 * @param string $content
+	 *
+	 * @return string
+	 */
+	public function replace_escaped_shortcodes( $content ) {
+		$post_id = get_the_ID();
+		
+		if ( empty( $post_id ) ) {
+			return $content;
+		}
+
+		$content = str_replace(
+			[
+				'{({tcb_post_the_permalink})}',
+				'{({tcb_post_archive_link})}',
+				'{({tcb_post_author_link})}',
+				'{({tcb_post_date_link})}',
+				'{({tcb_post_comments_link})}',
+			],
+			[
+				get_permalink( $post_id ),
+				TCB_Post_List::get_post_type_archive_link( $post_id ),
+				TCB_Post_List::get_author_posts_url( $post_id ),
+				TCB_Post_List::get_day_link(),
+				TCB_Post_List::comments_link( $post_id ),
+			],
+			$content
+		);
+
+		return $content;
 	}
 
 	/**
@@ -104,7 +146,7 @@ class TCB_Post_List_Shortcodes {
 	public function tcb_content_allowed_shortcodes( $shortcodes ) {
 		if ( is_editor_page_raw( true ) ) {
 			$shortcodes = array_merge( $shortcodes, array_keys( TCB_Post_List_Shortcodes::$dynamic_shortcodes ) );
-			$shortcodes = array_merge( $shortcodes, array( 'tcb_postlist_custom_image' ) );
+			$shortcodes = array_merge( $shortcodes, [ 'tcb_postlist_custom_image' ] );
 		}
 
 		return $shortcodes;
@@ -137,10 +179,10 @@ class TCB_Post_List_Shortcodes {
 					if ( method_exists( __CLASS__, $func ) ) {
 						$attr = TCB_Post_List_Shortcodes::parse_attr( $attr, $tag );
 
-						TCB_Post_List_Shortcodes()->execution_stack[] = array(
+						TCB_Post_List_Shortcodes()->execution_stack[] = [
 							'shortcode' => $tag,
 							'attr'      => $attr,
-						);
+						];
 
 						$output = TCB_Post_List_Shortcodes::$func( $attr, $content, $tag );
 
@@ -177,7 +219,7 @@ class TCB_Post_List_Shortcodes {
 			);
 		}
 
-		$GLOBALS[ TCB_POST_LIST_LOCALIZE ] = array();
+		$GLOBALS[ TCB_POST_LIST_LOCALIZE ] = [];
 	}
 
 	/**
@@ -186,7 +228,7 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function before_wrap( $wrap_args = array(), $attr = array() ) {
+	public static function before_wrap( $wrap_args = [], $attr = [] ) {
 
 		/* attributes that have to be present also on front */
 		$front_attr = TCB_Post_List::$front_attr;
@@ -200,12 +242,18 @@ class TCB_Post_List_Shortcodes {
 				'tag'     => 'div',
 				'id'      => '',
 				'class'   => '',
-				'attr'    => array(),
+				'attr'    => [],
 			),
 			$wrap_args
 		);
 		/* extra classes that are sent through data attr */
 		$wrap_args['class'] .= ' ' . ( strpos( $wrap_args['class'], THRIVE_WRAPPER_CLASS ) === false ? THRIVE_WRAPPER_CLASS : '' ) . ( empty( $attr['class'] ) ? '' : ' ' . $attr['class'] );
+
+		if ( ! empty( $attr['style'] ) ) {
+			$wrap_args['attr']['style'] = $attr['style'];
+			unset( $attr['style'] );
+		}
+
 		/* attributes that come directly from the shortcode */
 		foreach ( $attr as $key => $value ) {
 			if (
@@ -220,16 +268,23 @@ class TCB_Post_List_Shortcodes {
 			}
 		}
 
-		/* during ajax we can't render shortcodes, so we add the shortcode tag and class so we can fix them in JS */
-		if ( wp_doing_ajax() ) {
+		/**
+		 * During ajax we can't render shortcodes, so we add the shortcode tag and class so we can fix them in JS.
+		 * Also add data-shortcode in editor render so parseArticleElementsShortcodes can convert the element
+		 * back to a shortcode during save (important for conditional displays).
+		 * Include REST check because posts can be fetched via REST API.
+		 */
+		if ( wp_doing_ajax() || TCB_Utils::in_editor_render( true ) || TCB_Utils::is_rest() ) {
 			$last_shortcode = end( TCB_Post_List_Shortcodes()->execution_stack );
 
-			$wrap_args['attr']['data-shortcode'] = $last_shortcode['shortcode'];
+			if ( ! empty( $last_shortcode['shortcode'] ) ) {
+				$wrap_args['attr']['data-shortcode'] = $last_shortcode['shortcode'];
+			}
 
 			$wrap_args['class'] .= ' ' . TCB_SHORTCODE_CLASS;
 		}
 
-		return call_user_func_array( array( 'TCB_Utils', 'wrap_content' ), $wrap_args );
+		return call_user_func_array( [ 'TCB_Utils', 'wrap_content' ], $wrap_args );
 	}
 
 	/**
@@ -240,7 +295,7 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function post_list( $attr = array(), $article_content = '' ) {
+	public static function post_list( $attr = [], $article_content = '' ) {
 		/* don't render a post list inside another post list ( in 'the_content' shortcode ). */
 		if ( TCB_Post_List::is_outside_post_list_render() ) {
 			TCB_Post_List::enter_post_list_render();
@@ -269,7 +324,7 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public function pagination( $attr = array(), $content = '' ) {
+	public function pagination( $attr = [], $content = '' ) {
 		$pagination = '';
 
 		/* only render if we're outside the post list render */
@@ -296,7 +351,7 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function the_content( $attr = array() ) {
+	public static function the_content( $attr = [] ) {
 		return TCB_Post_List_Content::get_content( $attr );
 	}
 
@@ -307,7 +362,7 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function author_bio( $attr = array() ) {
+	public static function author_bio( $attr = [] ) {
 		$content = tcb_template( 'post-list-sub-elements/author-bio.php', $attr, true );
 
 		/**
@@ -320,7 +375,7 @@ class TCB_Post_List_Shortcodes {
 
 		if ( ! static::is_inline( $attr ) ) {
 			$tag     = empty( $attr['tag'] ) ? 'div' : $attr['tag'];
-			$classes = array( TCB_POST_AUTHOR_BIO_IDENTIFIER, TCB_SHORTCODE_CLASS );
+			$classes = [ TCB_POST_AUTHOR_BIO_IDENTIFIER, TCB_SHORTCODE_CLASS ];
 
 			if ( $tag === 'span' ) {
 				$classes[] = 'tcb-plain-text';
@@ -347,7 +402,7 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function custom_field( $attr = array(), $replacement = '' ) {
+	public static function custom_field( $attr = [], $replacement = '' ) {
 
 		$content = get_post_meta( get_the_ID(), $attr['id'], true );
 		$content = isset( $content ) ? $content : $replacement;
@@ -385,7 +440,7 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function externals( $attr = array() ) {
+	public static function externals( $attr = [] ) {
 
 		if ( ! isset( $attr['data-field-type'] ) ) {
 			return '';
@@ -408,18 +463,18 @@ class TCB_Post_List_Shortcodes {
 		$post_id = get_the_ID();
 
 		if ( empty( $post_id ) ) {
-			$content = array();
+			$content = [];
 		} else {
 			$custom_fields = TCB_Post_List::get_post_custom_fields( $post_id );
 
-			$custom_field_types = array( 'data', 'link', 'image', 'number', 'countdown', 'audio', 'video' );
+			$custom_field_types = [ 'data', 'link', 'image', 'number', 'countdown', 'audio', 'video' ];
 			foreach ( $custom_field_types as $field ) {
 				$content[ 'tcb_post_custom_fields_' . $field ] = $custom_fields[ $field ];
 			}
 		}
 
 		if ( empty( $content ) || empty( $content[ $type ] ) || empty( $content[ $type ][ $attr['data-id'] ] ) ) {
-			$content = array();
+			$content = [];
 		} else {
 			$content = $content[ $type ][ $attr['data-id'] ];
 		}
@@ -436,11 +491,11 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function the_author( $attr = array() ) {
+	public static function the_author( $attr = [] ) {
 		$content = tcb_template( 'post-list-sub-elements/author-name.php', $attr, true );
 
 		if ( ! static::is_inline( $attr ) ) {
-			$classes = array( TCB_POST_AUTHOR_IDENTIFIER, TCB_SHORTCODE_CLASS );
+			$classes = [ TCB_POST_AUTHOR_IDENTIFIER, TCB_SHORTCODE_CLASS ];
 
 			$tag = empty( $attr['tag'] ) ? 'div' : $attr['tag'];
 
@@ -466,7 +521,7 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function author_picture( $attr = array() ) {
+	public static function author_picture( $attr = [] ) {
 		return tcb_template( 'post-list-sub-elements/author-image.php', $attr, true );
 	}
 
@@ -477,12 +532,12 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function the_category( $attr = array() ) {
+	public static function the_category( $attr = [] ) {
 		$content = tcb_template( 'post-list-sub-elements/post-categories.php', $attr, true );
 
 		if ( ! static::is_inline( $attr ) ) {
 			$tag     = empty( $attr['tag'] ) ? 'span' : $attr['tag'];
-			$classes = array( TCB_POST_CATEGORIES_IDENTIFIER, TCB_SHORTCODE_CLASS );
+			$classes = [ TCB_POST_CATEGORIES_IDENTIFIER, TCB_SHORTCODE_CLASS ];
 
 			if ( $tag === 'span' ) {
 				$classes[] = 'tcb-plain-text';
@@ -505,12 +560,12 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function comments_number( $attr = array() ) {
+	public static function comments_number( $attr = [] ) {
 		$content = tcb_template( 'post-list-sub-elements/comments-number.php', $attr, true );
 
 		if ( ! static::is_inline( $attr ) ) {
 			$tag     = empty( $attr['tag'] ) ? 'div' : $attr['tag'];
-			$classes = array( TCB_POST_COMMENTS_NUMBER_IDENTIFIER, TCB_SHORTCODE_CLASS );
+			$classes = [ TCB_POST_COMMENTS_NUMBER_IDENTIFIER, TCB_SHORTCODE_CLASS ];
 
 			if ( $tag === 'span' ) {
 				$classes[] = 'tcb-plain-text';
@@ -533,7 +588,7 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function post_date( $attr = array() ) {
+	public static function post_date( $attr = [] ) {
 		/* make sure there is a default set for everything */
 		$attr = array_merge(
 			array(
@@ -570,7 +625,7 @@ class TCB_Post_List_Shortcodes {
 		$content = tcb_template( 'post-list-sub-elements/post-date.php', $attr, true );
 
 		if ( ! static::is_inline( $attr ) ) {
-			$classes = array( TCB_POST_DATE, TCB_SHORTCODE_CLASS );
+			$classes = [ TCB_POST_DATE, TCB_SHORTCODE_CLASS ];
 
 			if ( $attr['tag'] === 'span' ) {
 				$classes[] = 'tcb-plain-text';
@@ -593,9 +648,9 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function post_thumbnail( $attr = array() ) {
+	public static function post_thumbnail( $attr = [] ) {
 		if ( has_post_thumbnail() ) {
-			$image = static::shortcode_function_content( 'the_post_thumbnail', array( $attr['size'] ) );
+			$image = static::shortcode_function_content( 'the_post_thumbnail', [ $attr['size'] ] );
 		} else if (
 			TCB_Editor()->is_inner_frame() ||
 			TCB_Utils::is_rest() ||
@@ -611,7 +666,7 @@ class TCB_Post_List_Shortcodes {
 		$url_attr = $attr['type-url'] === 'post_url' ?
 			array(
 				'href' => get_permalink(),
-			) : array();
+			) : [];
 
 		$attr['post_id'] = get_the_ID();
 		$image_id        = get_post_thumbnail_id( $attr['post_id'] );
@@ -625,11 +680,20 @@ class TCB_Post_List_Shortcodes {
 				'title' => get_the_title(),
 			);
 		}
-		$classes = array( TCB_POST_THUMBNAIL_IDENTIFIER, TCB_SHORTCODE_CLASS );
+
+		/* Include tcb-post-list-shortcode class so parseArticleElementsShortcodes can find this element
+		 * and convert it back to a shortcode during save. This is especially important for conditional displays. */
+		$classes = [ TCB_POST_THUMBNAIL_IDENTIFIER, TCB_SHORTCODE_CLASS ];
+
+		if ( TCB_Utils::in_editor_render() || wp_doing_ajax() ) {
+			$classes[] = 'tcb-post-list-shortcode';
+		}
+
 		/* add the responsive classes, if they are present */
 		if ( ! empty( $attr['class'] ) ) {
 			$classes[] = $attr['class'];
 		}
+
 		$classes = implode( ' ', $classes );
 
 		return static::before_wrap( array(
@@ -647,12 +711,12 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function the_title( $attr = array() ) {
+	public static function the_title( $attr = [] ) {
 		$content = tcb_template( 'post-list-sub-elements/post-title.php', $attr, true );
 
 		if ( ! static::is_inline( $attr ) ) {
 			$tag     = empty( $attr['tag'] ) ? 'h2' : $attr['tag'];
-			$classes = array( TCB_POST_TITLE_IDENTIFIER, TCB_SHORTCODE_CLASS );
+			$classes = [ TCB_POST_TITLE_IDENTIFIER, TCB_SHORTCODE_CLASS ];
 
 			if ( $tag === 'span' ) {
 				$classes[] = 'tcb-plain-text';
@@ -675,12 +739,12 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function the_tags( $attr = array() ) {
+	public static function the_tags( $attr = [] ) {
 		$content = tcb_template( 'post-list-sub-elements/post-tags.php', $attr, true );
 
 		if ( ! static::is_inline( $attr ) ) {
 			$tag     = empty( $attr['tag'] ) ? 'div' : $attr['tag'];
-			$classes = array( TCB_POST_TAGS_IDENTIFIER, TCB_SHORTCODE_CLASS );
+			$classes = [ TCB_POST_TAGS_IDENTIFIER, TCB_SHORTCODE_CLASS ];
 
 			if ( $tag === 'span' ) {
 				$classes[] = 'tcb-plain-text';
@@ -708,15 +772,15 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function author_role( $attr = array() ) {
+	public static function author_role( $attr = [] ) {
 		$content = tcb_template( 'post-list-sub-elements/author-role', $attr, true );
 
 		if ( ! static::is_inline( $attr ) ) {
-			$content = static::before_wrap( array(
+			$content = static::before_wrap( [
 				'content' => $content,
 				'tag'     => 'div',
 				'class'   => '',
-			), $attr );
+			], $attr );
 		}
 
 		return $content;
@@ -725,11 +789,11 @@ class TCB_Post_List_Shortcodes {
 	/**
 	 * Return true if the element with the given attributes is an inline shortcode.
 	 *
-	 * @param array() $attr
+	 * @param [] $attr
 	 *
 	 * @return bool
 	 */
-	public static function is_inline( $attr = array() ) {
+	public static function is_inline( $attr = [] ) {
 		return ! empty( $attr['inline'] ) && (int) $attr['inline'] === 1;
 	}
 
@@ -740,7 +804,7 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function the_permalink( $attr = array() ) {
+	public static function the_permalink( $attr = [] ) {
 		return static::shortcode_function_content( 'the_permalink' );
 	}
 
@@ -752,12 +816,12 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function tcb_post_list_dynamic_style( $attr = array(), $dynamic_style = '' ) {
+	public static function tcb_post_list_dynamic_style( $attr = [], $dynamic_style = '' ) {
 		$style_css = do_shortcode( $dynamic_style );
 
 		$style_css .= static::tcb_get_article_dynamic_variables( get_the_ID() );
 
-		return TCB_Utils::wrap_content( $style_css, 'style', '', 'tcb-post-list-dynamic-style', array( 'type' => 'text/css' ) );
+		return TCB_Utils::wrap_content( $style_css, 'style', '', 'tcb-post-list-dynamic-style', [ 'type' => 'text/css' ] );
 	}
 
 	/**
@@ -802,16 +866,16 @@ class TCB_Post_List_Shortcodes {
 		$size = empty( $data['size'] ) ? 'full' : $data['size'];
 
 		if ( has_post_thumbnail() ) {
-			$image_url = static::shortcode_function_content( 'the_post_thumbnail_url', array( $size ) );
+			$image_url = static::shortcode_function_content( 'the_post_thumbnail_url', [ $size ] );
 		} else {
 			$image_url = TCB_Post_List_Featured_Image::get_default_url();
 		}
 		/* if we're in the editor, append a dynamic flag at the end so we can recognize that the URL is dynamic in the editor */
 		if ( TCB_Utils::in_editor_render( true ) ) {
-			$image_url = add_query_arg( array(
+			$image_url = add_query_arg( [
 				'dynamic_featured' => 1,
 				'size'             => $size,
-			), $image_url );
+			], $image_url );
 		}
 
 		return $image_url;
@@ -837,7 +901,7 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function author_image_url( $attr = array(), $content = '', $tag = 'tcb_author_image_url' ) {
+	public static function author_image_url( $attr = [], $content = '', $tag = 'tcb_author_image_url' ) {
 		/**
 		 * When we're outside the post list, skip rendering, but only if the shortcode is in the CSS.
 		 * [backwards compat only] This can also be a shortcode inside a HTML tag ( in an img src ), and it renders in do_shortcodes_in_html_tags() which is called before do_shortcode
@@ -859,7 +923,7 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function user_image_url( $attr = array(), $content = '', $tag = 'tcb_user_image_url' ) {
+	public static function user_image_url( $attr = [], $content = '', $tag = 'tcb_user_image_url' ) {
 
 		return tcb_dynamic_user_image_instance( get_current_user_id() )->user_avatar();
 	}
@@ -872,7 +936,7 @@ class TCB_Post_List_Shortcodes {
 	 *
 	 * @return string
 	 */
-	public static function shortcode_function_content( $func, $args = array() ) {
+	public static function shortcode_function_content( $func, $args = [] ) {
 		ob_start();
 
 		is_callable( $func ) && call_user_func_array( $func, $args );
@@ -893,6 +957,9 @@ class TCB_Post_List_Shortcodes {
 
 		/* in some cases, when this shortcode is in a attribute, it might not be replaced, so we do it manually */
 		$content = str_replace( '[tcb_post_the_permalink]', static::the_permalink(), $content );
+		
+		/* also handle escaped shortcode format that might appear in certain contexts */
+		$content = str_replace( '{({tcb_post_the_permalink})}', static::the_permalink(), $content );
 
 		$content = static::check_dynamic_links( $content );
 
@@ -909,7 +976,7 @@ class TCB_Post_List_Shortcodes {
 	 */
 	public static function parse_attr( $attr, $tag ) {
 		if ( ! is_array( $attr ) ) {
-			$attr = array();
+			$attr = [];
 		}
 
 		/* set default values if available */
@@ -919,7 +986,7 @@ class TCB_Post_List_Shortcodes {
 		$attr = array_map( function ( $v ) {
 			$v = esc_attr( $v );
 
-			return str_replace( array( '|{|', '|}|' ), array( '[', ']' ), $v );
+			return str_replace( [ '|{|', '|}|' ], [ '[', ']' ], $v );
 		}, $attr );
 
 		return $attr;
@@ -933,16 +1000,16 @@ class TCB_Post_List_Shortcodes {
 	 * @return array|mixed
 	 */
 	private static function default_attr( $tag ) {
-		$default = array(
-			'tcb_post_featured_image' => array(
+		$default = [
+			'tcb_post_featured_image' => [
 				'type-url'     => 'post_url',
 				'type-display' => 'default_image',
 				'css'          => '',
 				'size'         => 'full',
-			),
-		);
+			],
+		];
 
-		return isset( $default[ $tag ] ) ? $default[ $tag ] : array();
+		return isset( $default[ $tag ] ) ? $default[ $tag ] : [];
 	}
 
 	/**
@@ -955,14 +1022,43 @@ class TCB_Post_List_Shortcodes {
 	public static function check_dynamic_links( $content ) {
 		$post_id = get_the_ID();
 
-		$content = str_replace( '[tcb_post_the_permalink]', get_permalink( $post_id ), $content );
-		$content = str_replace( '[tcb_post_archive_link]', TCB_Post_List::get_post_type_archive_link( $post_id ), $content );
-		$content = str_replace( '[tcb_post_author_link]', TCB_Post_List::get_author_posts_url( $post_id ), $content );
-		$content = str_replace( '[tcb_post_date_link]', TCB_Post_List::get_day_link(), $content );
-		$content = str_replace( '[tcb_post_comments_link]', TCB_Post_List::comments_link( $post_id ), $content );
-		if ( ! is_editor_page_raw( true ) ) {
-			$content = self::replace_postlist_dynamic_link( $content );
-		}
+		$content = str_replace(
+			[
+				'[tcb_post_the_permalink]',
+				'[tcb_post_archive_link]',
+				'[tcb_post_author_link]',
+				'[tcb_post_date_link]',
+				'[tcb_post_comments_link]',
+			],
+			[
+				get_permalink( $post_id ),
+				TCB_Post_List::get_post_type_archive_link( $post_id ),
+				TCB_Post_List::get_author_posts_url( $post_id ),
+				TCB_Post_List::get_day_link(),
+				TCB_Post_List::comments_link( $post_id ),
+			],
+			$content );
+		
+		// Also handle escaped shortcode format that might appear in certain contexts
+		$content = str_replace(
+			[
+				'{({tcb_post_the_permalink})}',
+				'{({tcb_post_archive_link})}',
+				'{({tcb_post_author_link})}',
+				'{({tcb_post_date_link})}',
+				'{({tcb_post_comments_link})}',
+			],
+			[
+				get_permalink( $post_id ),
+				TCB_Post_List::get_post_type_archive_link( $post_id ),
+				TCB_Post_List::get_author_posts_url( $post_id ),
+				TCB_Post_List::get_day_link(),
+				TCB_Post_List::comments_link( $post_id ),
+			],
+			$content );
+		
+		// Always process custom field links, not just when not in editor page
+		$content = self::replace_postlist_dynamic_link( $content );
 
 		return $content;
 	}
@@ -970,10 +1066,10 @@ class TCB_Post_List_Shortcodes {
 	private static function replace_postlist_dynamic_link( $content ) {
 
 		while ( preg_match( '(\[thrive_postlist_custom_fields_shortcode_url id=(.*?)\])', $content, $aux ) ) {
-			$replacement = TCB_Post_List_Shortcodes::custom_field( array(
+			$replacement = static::custom_field( [
 				'id'          => $aux[1],
 				'do_not_wrap' => true,
-			) );
+			] );
 
 			if ( filter_var( $replacement, FILTER_VALIDATE_URL ) ) {
 				$content = preg_replace( '(\[thrive_postlist_custom_fields_shortcode_url id=.*?\])', $replacement, $content, 1 );
@@ -989,7 +1085,7 @@ class TCB_Post_List_Shortcodes {
 	 * Add the author link shortcode shortcode.
 	 */
 	public function author_link_shortcode( $attr, $content, $tag ) {
-		$key = isset( $attr['id'] ) ? $attr['id'] : '';
+		$key = $attr['id'] ?? '';
 
 		/* we shouldn't render the shortcode in the editor */
 		if ( TCB_Utils::in_editor_render( true ) ) {

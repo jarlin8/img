@@ -34,6 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="tve-control" data-view="Highlight"></div>
 				<div class="tve-control" data-view="Indent"></div>
 				<div class="tve-control" data-view="Numbering"></div>
+				<div class="tve-control" data-view="ScrollAnimation"></div>
 				<div class="tve-control" data-view="Expandable"></div>
 				<div class="tve-expandable-toc mb-10">
 					<div class="tve-control" data-view="DefaultState"></div>
@@ -42,7 +43,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 				<div class="tve-control" data-view="TextSize"></div>
 				<div class="tve-control" data-key="LineSpacing" data-initializer="lineSpacingControl"></div>
-				<div class="tve-advanced-controls extend-grey toc-items">
+				<div class="tve-advanced-controls toc-items">
 					<div class="dropdown-header" data-prop="advanced">
 						<span>
 							<?php echo esc_html__( 'Modify Headings', 'thrive-cb' ); ?>

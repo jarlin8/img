@@ -1,21 +1,22 @@
 /**
  * This file is included only when editing a TL form ( and only in the main frame )
  */
-var TL_Editor = TL_Editor || {},
-	TCB_AnimViews = TVE.Views.Components.AnimationViews;
+window.TL_Editor = window.TL_Editor || {};
+window.TCB_AnimViews = TVE.Views.Components.AnimationViews;
 
-TL_Editor.views = TL_Editor.views || {};
+window.TL_Editor.views = window.TL_Editor.views || {};
 TVE.leads = TVE.leads || {};
 
 /**
  * Modal for templates
  * Local and Cloud templates are listed in the same tab
  */
-TL_Editor.views.ModalTemplates = TVE.modal.base.extend( {
+window.TL_Editor.views.ModalTemplates = TVE.modal.base.extend( {
 	el: TVE.modal.get_element( 'tl-templates' ),
 	initialize: function () {
 		/* Items templates */
 		TVE.modal.base.prototype.initialize.apply( this, arguments );
+		this.$error = this.$( '.error-container' );
 
 		this.$template_items = this.$( '.tl-set-list' );
 		this.$saved_templates_checkbox = this.$( '.saved-templates-checkbox' );
@@ -107,11 +108,11 @@ TL_Editor.views.ModalTemplates = TVE.modal.base.extend( {
 				resolve( self.templates );
 			} else if ( self.templatesType === 'saved' ) {
 				var data = {
-					external_action: tve_leads_page_data.tpl_action,
+					external_action: window.tve_leads_page_data.tpl_action,
 					route: 'get_saved',
 					current_template: self.$( '#tl-filter-current-templates' ).is( ':checked' ) ? 1 : 0,
 					post_id: TVE.CONST.post_id,
-					_key: tve_leads_page_data._key
+					_key: window.tve_leads_page_data._key
 				};
 
 				TVE.main.overlay();
@@ -156,6 +157,10 @@ TL_Editor.views.ModalTemplates = TVE.modal.base.extend( {
 		var promises = [];
 		var self = this,
 			tpl = TVE.tpl( 'templates/item' );
+
+		if ( TVE.CONST.tl_templates_error.error ) {
+			this.$error.fadeIn( 200 ).html( TVE.tpl( 'inline-error' )( {error_message: TVE.CONST.tl_templates_error.error} ) );
+		}
 		if ( templates.length === 0 ) {
 			self.$template_items.append( 'No templates found' );
 		} else {
@@ -207,7 +212,7 @@ TL_Editor.views.ModalTemplates = TVE.modal.base.extend( {
 		$currentTemplate.siblings().addClass( 'active' ); /* Select the template title as well */
 
 		/* Display warning only when a template is set already */
-		if ( tve_leads_page_data.has_content || this.templateWasSelected ) {
+		if ( window.tve_leads_page_data.has_content || this.templateWasSelected ) {
 			this.$warning.css( 'display', 'block' );
 		}
 
@@ -307,11 +312,11 @@ TL_Editor.views.ModalTemplates = TVE.modal.base.extend( {
 		var $templateItem = jQuery( event.currentTarget ).closest( '.cloud-template-item' ),
 			self = this,
 			data = {
-				external_action: tve_leads_page_data.tpl_action,
+				external_action: window.tve_leads_page_data.tpl_action,
 				route: 'delete',
 				tpl: $templateItem.attr( 'data-id' ),
 				post_id: TVE.CONST.post_id,
-				_key: tve_leads_page_data._key
+				_key: window.tve_leads_page_data._key
 			};
 
 		TVE.main.overlay();
@@ -343,9 +348,9 @@ TL_Editor.views.ModalTemplates = TVE.modal.base.extend( {
 
 		var data = {
 			tpl: tpl_model.get( 'key' ),
-			external_action: tve_leads_page_data.tpl_action,
+			external_action: window.tve_leads_page_data.tpl_action,
 			post_id: TVE.CONST.post_id,
-			_key: tve_leads_page_data._key,
+			_key: window.tve_leads_page_data._key,
 			route: 'choose',
 			cloud: tpl_model.get( 'cloud' ) || 0,
 			multi_step: tpl_model.get( 'multi_step' ) || 0,
@@ -365,13 +370,13 @@ TL_Editor.views.ModalTemplates = TVE.modal.base.extend( {
 				   TVE.page_message( response.message, true );
 				   return TVE.main.overlay( 'close' );
 			   }
-			   TL_Editor.state.insertResponse( response );
+			   window.TL_Editor.state.insertResponse( response );
 
 			   /**
 			    * Fix form identifiers on template insert so we dont use the ones from cloud templates
 			    */
 			   TVE.Editor_Page.editor.find( TVE.identifier( 'lead_generation' ) ).each( function () {
-				   TVE.Components.lead_generation.regenerateFormIdentifier( TVE.inner_$( this ) );
+				   TVE.regenerateFormIdentifier( TVE.inner_$( this ) );
 			   } )
 
 			   try {
@@ -388,12 +393,52 @@ TL_Editor.views.ModalTemplates = TVE.modal.base.extend( {
 			   self.close();
 		   } );
 	},
+
+	/**
+	 * Invalidate the cloud templates cache and re-fetch the list from the cloud.
+	 * Mirrors the "Refresh from cloud" control from the Architect content blocks library.
+	 */
+	clearCache: function () {
+		var self = this,
+			data = {
+				external_action: window.tve_leads_page_data.tpl_action,
+				route: 'refresh_cloud',
+				post_id: TVE.CONST.post_id,
+				_key: window.tve_leads_page_data._key
+			};
+
+		TVE.main.overlay();
+		TVE.ajax( 'save_post_external', 'post', data )
+		   .fail( function () {
+			   TVE.utils.message( 'Error refreshing templates!', 'error' );
+			   TVE.main.overlay( 'close' );
+		   } )
+		   .done( function ( response ) {
+			   TVE.main.overlay( 'close' );
+
+			   /* on failure, keep the existing list intact and surface the error instead of re-rendering stale data */
+			   if ( ! response || ! response.success ) {
+				   var errorMsg = ( response && response.error && response.error.error ) || ( response && response.message ) || 'Error refreshing templates!';
+				   return TVE.utils.message( errorMsg, 'error' );
+			   }
+
+			   TVE.CONST.tl_templates = response.templates || [];
+			   TVE.CONST.tl_templates_error = response.error || {};
+
+			   /* clear any stale error notice and re-render the default (cloud) templates */
+			   self.$error.empty().hide();
+			   self.templatesType = 'default';
+			   self.$( '.tl-category-filter.active' ).removeClass( 'active' );
+			   self.$( ".tl-category-filter[data-content='default']" ).addClass( 'active' );
+			   self.renderTemplates();
+		   } );
+	},
 } );
 
 /**
  * Modal for saving current template for later use
  */
-TL_Editor.views.ModalTemplateSaving = TVE.modal.base.extend( {
+window.TL_Editor.views.ModalTemplateSaving = TVE.modal.base.extend( {
 
 	el: TVE.modal.get_element( 'tl-template-saving' ),
 
@@ -413,10 +458,10 @@ TL_Editor.views.ModalTemplateSaving = TVE.modal.base.extend( {
 		var self = this,
 			thumbnail = _name + TVE.CSS_Rule_Cache.generate_id( '' ),
 			data = {
-				external_action: tve_leads_page_data.tpl_action,
+				external_action: window.tve_leads_page_data.tpl_action,
 				route: 'save',
 				post_id: TVE.CONST.post_id,
-				_key: tve_leads_page_data._key,
+				_key: window.tve_leads_page_data._key,
 				name: _name,
 				thumbnail: thumbnail,
 			};
@@ -431,7 +476,7 @@ TL_Editor.views.ModalTemplateSaving = TVE.modal.base.extend( {
 					   return TVE.main.overlay( 'close' );
 				   }
 
-				   TL_Editor.savePreview( thumbnail );
+				   window.TL_Editor.savePreview( thumbnail );
 				   TVE.main.overlay( 'close' );
 				   self.close();
 				   TVE.page_message( response.message );
@@ -442,7 +487,7 @@ TL_Editor.views.ModalTemplateSaving = TVE.modal.base.extend( {
 
 } );
 
-TVE.leads.LightboxStateAction = TCB_AnimViews.ThriveLightbox.extend( {
+TVE.leads.LightboxStateAction = window.TCB_AnimViews.ThriveLightbox.extend( {
 	reinit: function () {
 		if ( ! this.options.actions[ this.key ] ) {
 			this.$el.closest( '.action-item' ).hide();
@@ -507,7 +552,7 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 		if ( ! _.findWhere( options, {key: 'state'} ) ) {
 			options.push( {
 				key: 'state',
-				label: tve_leads_page_data.L.switch_state,
+				label: window.tve_leads_page_data.L.switch_state,
 				icon: 'state'
 			} );
 		}
@@ -523,14 +568,14 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 			el: $( '#tl-form-states' )[ 0 ]
 		} );
 
-		TVE.add_filter( 'editor_loaded_callback', TL_Editor.tcb_editor_page_loaded );
+		TVE.add_filter( 'editor_loaded_callback', window.TL_Editor.tcb_editor_page_loaded );
 
-		TVE.add_filter( 'before_editor_events', TL_Editor.before_editor_loaded );
+		TVE.add_filter( 'before_editor_events', window.TL_Editor.before_editor_loaded );
 
 		/**
 		 * hook into JS filters for TCB
 		 */
-		TVE.add_filter( 'tcb_insert_content_template', TL_Editor.pre_process_content_template );
+		TVE.add_filter( 'tcb_insert_content_template', window.TL_Editor.pre_process_content_template );
 
 		TVE.main.on( 'animation_update', function ( $element, event_manager ) {
 			var config = event_manager.read( $element );
@@ -566,7 +611,7 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 			this.dom = {
 				btn: this.$( '.states-button-container' )
 			};
-			TL_Editor.state.fixed_height();
+			window.TL_Editor.state.fixed_height();
 		},
 		expand: function () {
 			clearTimeout( this.hide_timeout );
@@ -586,18 +631,18 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 		add: function ( e ) {
 			var link = e.currentTarget;
 			if ( link.getAttribute( 'data-subscribed' ) ) {
-				alert( tve_leads_page_data.L.only_one_subscribed );
+				alert( window.tve_leads_page_data.L.only_one_subscribed );
 				return;
 			}
 			this.collapse();
 			TVE.main.overlay();
 			TVE.Editor_Page.save( false, function () {
 				TVE.KEEP_OVERLAY = true;
-				TL_Editor.state.ajax( {
+				window.TL_Editor.state.ajax( {
 					custom_action: 'add',
 					state: link.getAttribute( 'data-state' )
 				} ).done( function ( response ) {
-					TL_Editor.state.insertResponse( response );
+					window.TL_Editor.state.insertResponse( response );
 					TVE.Components.lead_generation.removeSettingsId( TVE.Editor_Page.editor ); //remove old LG settings id
 				} );
 			} ); // passed in callback function to skip the closing of overlay
@@ -610,10 +655,10 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 			TVE.main.overlay();
 			TVE.Editor_Page.save( false, function () {
 				TVE.KEEP_OVERLAY = true;
-				TL_Editor.state.ajax( {
+				window.TL_Editor.state.ajax( {
 					custom_action: 'display',
 					id: variationId
-				} ).done( TL_Editor.state.insertResponse );
+				} ).done( window.TL_Editor.state.insertResponse );
 			} ); // passed in callback function to skip the closing of overlay
 			/**
 			 * Replace preview _key value with current state id so the preview is updated too
@@ -638,30 +683,30 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 			}
 			TVE.main.overlay();
 			this.collapse();
-			TL_Editor.state.ajax( {
+			window.TL_Editor.state.ajax( {
 				custom_action: 'visibility',
 				visible: $link.attr( 'data-visible' )
 			} ).done( function ( response ) {
 				TVE.page_message( response.message );
-				TL_Editor.state.insertResponse( response );
+				window.TL_Editor.state.insertResponse( response );
 			} );
 
 			return false;
 		},
 		duplicate: function ( e, link ) {
 			if ( link.getAttribute( 'data-state' ) === 'already_subscribed' ) {
-				alert( tve_leads_page_data.L.only_one_subscribed );
+				alert( window.tve_leads_page_data.L.only_one_subscribed );
 				return;
 			}
 			this.collapse();
 			TVE.main.overlay();
 			TVE.Editor_Page.save( false, function () {
 				TVE.KEEP_OVERLAY = true;
-				TL_Editor.state.ajax( {
+				window.TL_Editor.state.ajax( {
 					custom_action: 'duplicate',
 					id: link.getAttribute( 'data-id' )
 				} ).done( function ( response ) {
-					TL_Editor.state.insertResponse( response );
+					window.TL_Editor.state.insertResponse( response );
 					TVE.Components.lead_generation.removeSettingsId( TVE.Editor_Page.editor ); //remove old LG settings id
 				} );
 			} );
@@ -669,17 +714,17 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 			return false;
 		},
 		remove: function ( e, link ) {
-			if ( ! confirm( tve_leads_page_data.L.confirm_state_delete ) ) {
+			if ( ! confirm( window.tve_leads_page_data.L.confirm_state_delete ) ) {
 				return false;
 			}
 			this.collapse();
 			TVE.main.overlay();
-			TL_Editor.state.ajax( {
+			window.TL_Editor.state.ajax( {
 				custom_action: 'delete',
 				id: link.getAttribute( 'data-id' )
 			} ).done( function ( response ) {
-				TVE.page_message( tve_leads_page_data.L.state_deleted );
-				TL_Editor.state.insertResponse( response );
+				TVE.page_message( window.tve_leads_page_data.L.state_deleted );
+				window.TL_Editor.state.insertResponse( response );
 			} );
 
 			return false;
@@ -688,7 +733,7 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 	/**
 	 * handles all user interactions related to form states
 	 */
-	TL_Editor.state = {
+	window.TL_Editor.state = {
 		fixed_height: function () {
 			var _state_content = $( '.fix-height-states' );
 			//Test is scrollbar() is a function. Should be loaded from Architect
@@ -707,9 +752,9 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 				TVE.main.$cpanel.find( '.preview-content' ).attr( 'href', decodeURIComponent( response.preview_link ) );
 			}
 
-			TL_Editor_Page.handle_state_response( response );
+			window.TL_Editor_Page.handle_state_response( response );
 			$( '.design-states' ).replaceWith( response.state_bar );
-			TL_Editor.state.fixed_height();
+			window.TL_Editor.state.fixed_height();
 
 			if ( response.tve_path_params.tl_templates ) {
 				modal_templates.setTemplates( TVE.CONST.tl_templates );
@@ -721,15 +766,15 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 			if ( response.animation_options ) {
 				TVE.Components.animation.options = response.animation_options;
 				TVE.Components.animation.reinit();
-				TL_Editor.FLAG_RE_RENDER_EVENTS = true;
+				window.TL_Editor.FLAG_RE_RENDER_EVENTS = true;
 			}
 
-			var $total_states = $( '.total_states' );
+			const $totalStates = $( '.total_states' );
 			if ( response.tve_leads_page_data.states.length >= 2 ) {
-				$total_states.show();
-				$total_states.html( response.tve_leads_page_data.states.length - 1 );
+				$totalStates.show();
+				$totalStates.html( response.tve_leads_page_data.states.length - 1 );
 			} else {
-				$total_states.hide();
+				$totalStates.hide();
 			}
 
 			setTimeout( function () {
@@ -738,26 +783,26 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 		},
 		ajax: function ( data ) {
 			TVE.Editor_Page.blur();
-			data._key = tve_leads_page_data._key;
-			data.post_id = tve_leads_page_data.post_id;
-			data.active_state = tve_leads_page_data._key;
-			data.external_action = tve_leads_page_data.state_action;
+			data._key = window.tve_leads_page_data._key;
+			data.post_id = window.tve_leads_page_data.post_id;
+			data.active_state = window.tve_leads_page_data._key;
+			data.external_action = window.tve_leads_page_data.state_action;
 
 			return TVE.ajax( 'save_post_external', 'post', data );
 		}
 	};
 
-	TL_Editor.tcbEditorSetSelector = function () {
+	window.TL_Editor.tcbEditorSetSelector = function () {
 		/**
 		 * lightbox state has the TL element as a parent of the editor
 		 */
-		if ( ! tve_leads_page_data.form_type.includes( 'lightbox' ) ) {
-			const varData = _.findWhere( tve_leads_page_data.states, {key: tve_leads_page_data._key} );
+		if ( ! window.tve_leads_page_data.form_type.includes( 'lightbox' ) ) {
+			const varData = _.findWhere( window.tve_leads_page_data.states, {key: window.tve_leads_page_data._key} );
 			TVE.CONST.editor_selector = varData.form_state === 'lightbox' ? 'body' : '';
 		}
 	}
 
-	TL_Editor.savePreview = function ( designName ) {
+	window.TL_Editor.savePreview = function ( designName ) {
 		var saveCallback = function ( imgData ) {
 
 			var form = new FormData();
@@ -767,15 +812,15 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 
 			form.append( 'route', 'save_thumbnail' );
 			form.append( 'custom', 'save_thumbnail' );
-			form.append( 'action', tve_leads_page_data.tpl_action );
-			form.append( 'security', tve_leads_page_data.security );
-			form.append( '_key', tve_leads_page_data._key );
-			form.append( 'post_id', tve_leads_page_data.post_id );
+			form.append( 'action', window.tve_leads_page_data.tpl_action );
+			form.append( 'security', window.tve_leads_page_data.security );
+			form.append( '_key', window.tve_leads_page_data._key );
+			form.append( 'post_id', window.tve_leads_page_data.post_id );
 			form.append( 'file_name', designName );
 
 			$.ajax( {
 				type: 'POST',
-				url: tve_leads_page_data.ajaxurl,
+				url: window.tve_leads_page_data.ajaxurl,
 				data: form,
 				processData: false,
 				contentType: false,
@@ -796,12 +841,12 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 	/**
 	 * Callback for 'editor_loaded_callback' filter thrown on DOMReady in TCB
 	 */
-	TL_Editor.tcb_editor_page_loaded = function () {
-		TVE.StorageManager.unset( 'tl_design-' + tve_leads_page_data.post_id );
+	window.TL_Editor.tcb_editor_page_loaded = function () {
+		TVE.StorageManager.unset( 'tl_design-' + window.tve_leads_page_data.post_id );
 
-		TL_Editor.tcbEditorSetSelector();
+		window.TL_Editor.tcbEditorSetSelector();
 
-		modal_templates = new TL_Editor.views.ModalTemplates();
+		modal_templates = new window.TL_Editor.views.ModalTemplates();
 
 		/**
 		 * event listener for setting submit options on LG Element
@@ -824,7 +869,7 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 						state_id = parseInt( id );
 					model.set( '_state', state_id );
 					//decide if the state is a lightbox
-					$( tve_leads_page_data.states ).each( function ( index, state ) {
+					$( window.tve_leads_page_data.states ).each( function ( index, state ) {
 						if ( parseInt( state_id ) === parseInt( state.key ) && state.form_state === 'lightbox' ) {
 							event_action = 'tl_state_lightbox';
 						}
@@ -857,9 +902,9 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 			/**
 			 * append states top select element
 			 */
-			$.each( tve_leads_page_data.states, function ( index, state ) {
+			$.each( window.tve_leads_page_data.states, function ( index, state ) {
 
-				if ( ( parseInt( state.key ) === parseInt( tve_leads_page_data._key ) ) || state.form_state === 'already_subscribed' ) {
+				if ( ( parseInt( state.key ) === parseInt( window.tve_leads_page_data._key ) ) || state.form_state === 'already_subscribed' ) {
 					return;
 				}
 				var $option = $( '<option value="' + state.key + '">' + state.state_name + '</option>' );
@@ -882,7 +927,7 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 				//todo: make sure the input does not exist; unused for the moment
 				TVE.Components.lead_generation.getWrapper( 'form' ).append( TVE.Components.lead_generation.generateHiddenInput( {
 					name: '_form_type',
-					value: tve_leads_page_data.form_type
+					value: window.tve_leads_page_data.form_type
 				} ) );
 			};
 		} );
@@ -900,7 +945,7 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 		/**
 		 * if variation has no content/template set
 		 */
-		if ( ! tve_leads_page_data.has_content ) {
+		if ( ! window.tve_leads_page_data.has_content ) {
 			modal_templates.open( {
 				dismissible: false
 			} );
@@ -911,7 +956,7 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 		 */
 		TVE.main.sidebar_extra.tl_template_reset = function () {
 
-			if ( ! confirm( tve_leads_page_data.L.confirm_tpl_reset ) ) {
+			if ( ! confirm( window.tve_leads_page_data.L.confirm_tpl_reset ) ) {
 				return;
 			}
 
@@ -920,16 +965,16 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 			TVE.main.sidebar_extra.hide_drawers();
 
 			var data = {
-				_key: tve_leads_page_data._key,
+				_key: window.tve_leads_page_data._key,
 				post_id: TVE.CONST.post_id,
-				external_action: tve_leads_page_data.tpl_action,
+				external_action: window.tve_leads_page_data.tpl_action,
 				route: 'reset'
 			};
 
 			TVE.main.overlay();
 
 			TVE.ajax( 'save_post_external', 'post', data )
-			   .done( TL_Editor.state.insertResponse );
+			   .done( window.TL_Editor.state.insertResponse );
 		};
 
 		/**
@@ -940,7 +985,7 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 				return this.modal.open();
 			}
 
-			this.modal = new TL_Editor.views.ModalTemplateSaving();
+			this.modal = new window.TL_Editor.views.ModalTemplateSaving();
 			this.modal.open();
 		};
 
@@ -1006,7 +1051,7 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 		} );
 
 		TVE.add_action( 'tve.save_post.success', function () {
-			TVE.StorageManager.set( 'tl_design-' + tve_leads_page_data.post_id, true );
+			TVE.StorageManager.set( 'tl_design-' + window.tve_leads_page_data.post_id, true );
 		} );
 
 		TVE.add_action( 'component.update.layout.tl-slide-in', function ( component ) {
@@ -1019,7 +1064,7 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 	/**
 	 * Callback for 'before_editor_events' filter thrown on DOMReady in TCB
 	 */
-	TL_Editor.before_editor_loaded = function () {
+	window.TL_Editor.before_editor_loaded = function () {
 		var EDITOR_INSTANCE = 1,
 			TL_FORM_EVENTS = [
 				'thrive_leads_form_close',
@@ -1076,11 +1121,11 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 						return event;
 					},
 					reset: function ( $popup ) {
-						if ( TL_Editor.FLAG_RE_RENDER_EVENTS ) {
+						if ( window.TL_Editor.FLAG_RE_RENDER_EVENTS ) {
 							/* re-render Thrive Leads action options inside froala link editing popup */
 							$popup.find( '.tl-link-actions' ).replaceWith( this.getHtml() );
 
-							delete TL_Editor.FLAG_RE_RENDER_EVENTS;
+							delete window.TL_Editor.FLAG_RE_RENDER_EVENTS;
 						}
 
 						$popup.find( '.fr-extra-action' ).prop( 'checked', false );
@@ -1121,10 +1166,10 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 			},
 			before_open: function () {
 				CustomHTML.prototype.before_open.apply( this, arguments );
-				this.$( '#tl-custom-html-opts' ).toggle( ! tve_leads_page_data.is_default_state );
+				this.$( '#tl-custom-html-opts' ).toggle( ! window.tve_leads_page_data.is_default_state );
 			},
 			is_lazy_load: function () {
-				return ! tve_leads_page_data.is_default_state && this.$lazy_load.val() === 'lazy';
+				return ! window.tve_leads_page_data.is_default_state && this.$lazy_load.val() === 'lazy';
 			},
 			/**
 			 * If "Lazy load" content is active, wrap everything in a <script type="text/template"> node

@@ -160,7 +160,7 @@ class TVD_Content_Sets_Controller extends WP_REST_Controller {
 		$paged = false;
 		if ( $request->get_param( 'page' ) ) {
 			$paged    = (int) $request->get_param( 'page' );
-			$per_page = (int) $request->get_param( 'per_page' ) ?: 15;
+			$per_page = (int) $request->get_param( 'per_page' ) ?: 150;
 		}
 
 		return new WP_REST_Response( $rule->get_items( $request->get_param( 'query_string' ), $paged, $per_page ), 200 );

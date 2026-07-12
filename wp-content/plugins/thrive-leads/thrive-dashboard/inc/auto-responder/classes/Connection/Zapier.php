@@ -41,6 +41,8 @@ class Thrive_Dash_List_Connection_Zapier extends Thrive_Dash_List_Connection_Abs
 			'phone',
 			'url',
 			'tags',
+			'number',
+			'date',
 			'zapier_send_ip',
 			'zapier_tags',
 			'zapier_source_url',
@@ -137,7 +139,6 @@ class Thrive_Dash_List_Connection_Zapier extends Thrive_Dash_List_Connection_Abs
 		$subscribe_url = $this->_get_hook_url( $arguments );
 
 		if ( ! empty( $subscribe_url ) ) {
-
 			return $this->get_api()->trigger_subscribe( $subscribe_url, $params );
 		}
 
@@ -158,7 +159,7 @@ class Thrive_Dash_List_Connection_Zapier extends Thrive_Dash_List_Connection_Abs
 
 		// for Contact Form
 		if ( ! empty( $arguments['optin_hook'] ) && in_array( 'optin_hook', $this->_accepted_params, true ) ) {
-			$hook_name = filter_var( $arguments['optin_hook'], FILTER_SANITIZE_STRING );
+			$hook_name = sanitize_text_field( $arguments['optin_hook'] );
 		}
 
 		// Get subscribed hook option
@@ -183,52 +184,68 @@ class Thrive_Dash_List_Connection_Zapier extends Thrive_Dash_List_Connection_Abs
 		foreach ( $arguments as $param => $value ) {
 
 			$param = (string) $param;
-			if ( in_array( $param, $this->_accepted_params, true ) ) {
-
-				switch ( strtolower( $param ) ) {
-					case 'zapier_send_ip':
-						if ( 1 === (int) $value ) {
-							$params['ip_address'] = tve_dash_get_ip();
-						}
-						break;
-					case 'zapier_tags':
-						$params['tags'] = ! empty( $value ) ? filter_var_array( explode( ',', $value ), FILTER_SANITIZE_STRING ) : array();
-						break;
-					case 'zapier_thriveleads_group':
-						// Get title by Group ID
-						$params['thriveleads_group'] = (int) $value > 0 ? get_the_title( (int) $value ) : '';
-						break;
-					case 'zapier_thriveleads_type':
-						$params['thriveleads_type'] = filter_var( $value, FILTER_SANITIZE_STRING );
-						break;
-					case 'zapier_thriveleads_name':
-						$params['thriveleads_name'] = filter_var( $value, FILTER_SANITIZE_STRING );
-						break;
-					case 'url':
-						$params['website'] = filter_var( $value, FILTER_SANITIZE_URL );
-						break;
-					default:
-						if ( ! empty( $value ) ) {
-							$params[ $param ] = filter_var( $value, FILTER_SANITIZE_STRING );
-						}
-						break;
-				}
+			switch ( strtolower( $param ) ) {
+				case 'zapier_send_ip':
+					if ( 1 === (int) $value ) {
+						$params['ip_address'] = tve_dash_get_ip();
+					}
+					break;
+				case 'zapier_tags':
+					$params['tags'] = ! empty( $value ) ? array_map( 'sanitize_text_field', explode( ',', $value ) ) : array();
+					break;
+				case 'zapier_thriveleads_group':
+					// Get title by Group ID
+					$params['thriveleads_group'] = (int) $value > 0 ? get_the_title( (int) $value ) : '';
+					break;
+				case 'zapier_thriveleads_type':
+					$params['thriveleads_type'] = sanitize_text_field( $value );
+					break;
+				case 'zapier_thriveleads_name':
+					$params['thriveleads_name'] = sanitize_text_field( $value );
+					break;
+				case 'url':
+					$params['website'] = filter_var( $value, FILTER_SANITIZE_URL );
+					break;
+				case 'number':
+					$params['number'] = filter_var( $value, FILTER_SANITIZE_NUMBER_INT );
+					break;
+				case 'date':
+					$params['date'] = sanitize_text_field( $value );
+					break;
+				case 'message':
+					$params['message'] = sanitize_textarea_field( $value );
+					break;
+				default:
+					if ( ! empty( $value ) ) {
+						$params[ $param ] = map_deep( $value, 'sanitize_text_field' );
+					}
+					break;
 			}
 		}
 
-		$params['source_url'] = filter_var( $_SERVER['HTTP_REFERER'], FILTER_SANITIZE_URL ); // phpcs:ignore
+		$params['source_url'] = isset( $_SERVER['HTTP_REFERER'] ) ? filter_var( filter_var( $_SERVER['HTTP_REFERER'], FILTER_SANITIZE_URL ), FILTER_VALIDATE_URL ) ?: '' : ''; // phpcs:ignore
 
-		// Add all dynamic messages for textarea
+		// Format/Rename all the fields.
 		$messages = array();
+		$checkbox_count = 1;
+		$file_url_count = 1;
 		foreach ( $arguments as $key => $val ) {
 			if ( strpos( $key, 'mapping_textarea_' ) === 0 ) {
 				$messages[] = $arguments[ $key ];
+			} elseif ( strpos( $key, 'mapping_checkbox_' ) === 0 ) {
+				$params[ 'checkbox_' . $checkbox_count ] = $arguments[ $key ];
+				$checkbox_count++;
+			} elseif ( strpos( $key, 'mapping_file' ) === 0 ) {
+				$params[ 'file_url_' . $file_url_count ] = $val;
+				$file_url_count++;
 			}
 		}
 
 		if ( ! empty( $messages ) ) {
 			$params['message'] = $messages;
 		}
+
+		// print_r($params); die();
 
 		return $params;
 	}

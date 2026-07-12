@@ -23,6 +23,8 @@ abstract class TVE_Dash_Product_Abstract {
 
 	protected $logoUrl;
 
+	protected $logoUrlWhite;
+
 	protected $title;
 
 	protected $description;
@@ -33,7 +35,7 @@ abstract class TVE_Dash_Product_Abstract {
 
 	protected $activated = false;
 
-	protected $more_links = array();
+	protected $moreLinks = array();
 
 	protected $button = array();
 
@@ -120,20 +122,21 @@ abstract class TVE_Dash_Product_Abstract {
 	}
 
 	public function render_button() {
-		return sprintf( '<a class="%s" href="%s" target="%s">%s</a>',
+		return sprintf( '<a class="%s" href="%s" target="%s" data-source="%s">%s</a>',
 			"tvd-waves-effect tvd-waves-light tvd-btn tvd-btn-green tvd-full-btn" . ( $this->button['active'] ? '' : 'tvd-disabled' ) . ' ' . ( ! empty( $this->button['classes'] ) ? $this->button['classes'] : '' ),
 			$this->button['active'] && ! empty( $this->button['url'] ) ? $this->button['url'] : 'javascript:void(0)',
 			! empty( $this->button['target'] ) ? $this->button['target'] : '_self',
+			! empty( $this->button['data-source'] ) ? $this->button['data-source'] : '',
 			$this->button['label']
 		);
 	}
 
 	public function render_more_links() {
 
-		if ( $this->is_activated() && ! empty( $this->more_links ) ) {
+		if ( $this->is_activated() && ! empty( $this->moreLinks ) ) {
 			$links = '<a class="tvd-dropdown-button tvd-btn-floating tvd-right tvd-card-options" data-constrainwidth="false" data-beloworigin="true" data-alignment="right" data-activates="dropdown-' . $this->tag . '" href="javascript:void(0)"><i class="tvd-icon-more_vert"></i></a>';
 			$links .= '<ul id="dropdown-' . $this->tag . '" class="tvd-dropdown-content" style="white-space: nowrap; position: absolute; top: 43px; left: 162px; opacity: 1; display: none;">';
-			foreach ( $this->more_links as $link ) {
+			foreach ( $this->moreLinks as $link ) {
 				$icon_class = isset( $link['icon_class'] ) ? $link['icon_class'] : '';
 				$class      = isset( $link['class'] ) ? $link['class'] : '';
 				$target     = isset( $link['target'] ) ? $link['target'] : '_self';
@@ -172,7 +175,7 @@ abstract class TVE_Dash_Product_Abstract {
 	}
 
 	public function setMoreLinks( $links ) {
-		$this->more_links = $links;
+		$this->moreLinks = $links;
 	}
 
 	public function get_cap() {

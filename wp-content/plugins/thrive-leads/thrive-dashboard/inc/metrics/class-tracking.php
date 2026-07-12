@@ -24,6 +24,7 @@ class Tracking {
 
 	const TRACKING_NOTICE_ID = 'tve-tracking-notice';
 
+	const ALLOWED_VIEWS = [ 'admin_page_tve_dash_general_settings_section' ];
 	/**
 	 * List of our plugins that should be checked for tracking
 	 * Do it like this because on some hooks plugins files might not be loaded yet
@@ -99,6 +100,7 @@ class Tracking {
 	/**
 	 * Whether we should display the ribbon
 	 * We also need at least one license
+	 *
 	 * @return bool
 	 */
 	public static function should_display_ribbon() {
@@ -106,7 +108,18 @@ class Tracking {
 			return $product['is_activated'];
 		} );
 
-		return Main::should_enqueue() && get_option( static::TRACKING_OPTION, '' ) === '' && count( $products ) > 0;
+		return get_option( static::TRACKING_OPTION, '' ) === '' && count( $products ) > 0;
+	}
+
+	/**
+	 * Allow enqueuing of the tracking script only on General settings page or if the user hasn't made a choice yet
+	 *
+	 * @return bool
+	 */
+	public static function should_enqueue() {
+		$screen = \tve_get_current_screen_key();
+
+		return ( $screen && in_array( $screen, static::ALLOWED_VIEWS ) ) || static::should_display_ribbon();
 	}
 
 	/**
