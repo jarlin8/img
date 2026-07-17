@@ -18,7 +18,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_ACF_Base' ) ) {
 		function __construct($dashboard_key) {
             parent::__construct($dashboard_key);
             $this->dashboard_key = $dashboard_key;
-            add_filter('sm_dashboard_model',array(&$this,'get_acf_column_model'),12,2);
+            add_filter('sa_sm_dashboard_model',array(&$this,'get_acf_column_model'),12,2);
 			add_filter('sm_data_model',array(&$this,'get_acf_column_data'),12,2);
 		}
 
@@ -64,13 +64,13 @@ if ( ! class_exists( 'Smart_Manager_Pro_ACF_Base' ) ) {
                 $type = ( ( ! empty( $field['type'] ) ) ? $this->get_data_type( $field['type'] ) : 'text' );
 
                 // Code to check if field exists in column_model.
-                $index = sm_multidimesional_array_search( $src, 'src', $column_model );
+                $index = sa_multidimesional_array_search( $src, 'src', $column_model );
                 if( $index >= 0 ){
                     unset( $column_model[$index] );
                     
                     // Code to remove the key columns for the same fields to avoid confusion.
                     $key_src = 'postmeta/meta_key=_'. $name .'/meta_value=_'. $name;
-                    $key_index = sm_multidimesional_array_search( $key_src, 'src', $column_model );
+                    $key_index = sa_multidimesional_array_search( $key_src, 'src', $column_model );
                     if( $key_index >= 0 ){
                         unset( $column_model[$key_index] );
                     }
@@ -118,7 +118,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_ACF_Base' ) ) {
             }
 
             if (!empty($dashboard_model_saved)) {
-				$col_model_diff = sm_array_recursive_diff( $dashboard_model_saved,$dashboard_model );	
+				$col_model_diff = sa_array_recursive_diff( $dashboard_model_saved,$dashboard_model );	
 			}
 
 			//clearing the transients before return

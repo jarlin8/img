@@ -51,7 +51,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 
 			// Hooks for WC v7.9 (HPOS) compat
 			if ( ! empty( Smart_Manager::$sm_is_woo79 ) ) {
-				add_filter( 'sm_beta_load_default_store_model', function() { return false; } );
+				add_filter( 'sm_load_default_store_model', function() { return false; } );
 				add_filter( 'sm_default_dashboard_model', array( &$this, 'default_dashboard_model' ), 10, 1 );
 				add_filter( 'sm_get_custom_cols', array( 'Smart_Manager_Shop_Order', 'get_address_cols' ), 10, 2 );
 				add_filter( 'sm_meta_col_model_args', array( &$this, 'update_meta_col_model' ) );
@@ -70,7 +70,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 				add_filter( 'sm_beta_background_entire_store_ids_query', array( $this,'get_entire_store_ids_query' ), 12, 1 );
 
 			} else {
-				add_filter( 'sm_dashboard_model',array( &$this,'subscriptions_dashboard_model' ), 10, 2 );
+				add_filter( 'sa_sm_dashboard_model',array( &$this,'subscriptions_dashboard_model' ), 10, 2 );
 				add_filter( 'posts_where',array( &$this,'sm_query_sub_where_cond' ), 100, 2 );
 				add_filter( 'found_posts',array( 'Smart_Manager_Shop_Order' ,'kpi_data_query'), 100, 2 );
 				add_filter( 'sm_batch_update_copy_from_ids_select',array( &$this,'sm_batch_update_copy_from_ids_select' ), 10, 2 );
@@ -81,6 +81,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 			add_filter( 'sm_default_process_delete_records', function() { return false; } );
 			add_filter( 'sm_default_process_delete_records_result', array( 'Smart_Manager_Shop_Order', 'order_trash' ), 12, 2 );
 			add_action( 'sm_inline_update_post', array( &$this, 'subscriptions_inline_update' ), 10, 2 );
+			add_filter( 'sa_sm_dashboard_model', array( &$this, 'modify_dashboard_model' ), 12, 2 );
+			add_filter( 'sm_search_query_formatted', array( &$this, 'modify_itemmeta_search_query' ), 12, 2 );
 		}
 
 		public static function actions() {
@@ -93,15 +95,18 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 				include_once SM_PLUGIN_DIR_PATH . '/pro/classes/class-smart-manager-pro-shop-order.php';
 			}
 
-			add_filter( 'sm_beta_batch_update_prev_value',  __CLASS__ . '::get_previous_value', 10, 2 );
+			add_filter( 'sm_batch_update_prev_value',  __CLASS__ . '::get_previous_value', 10, 2 );
 			add_filter( 'sm_default_batch_update_db_updates',  'Smart_Manager_Pro_Shop_Order::default_batch_update_db_updates', 10, 2 );
 			add_filter( 'sm_post_batch_update_db_updates', __CLASS__ . '::post_batch_update_db_updates', 10, 2 );
 			add_filter( 'sm_pro_default_process_delete_records', function() { return false; } );
 			add_filter( 'sm_pro_default_process_delete_records_result', 'Smart_Manager_Shop_Order::process_delete', 12, 3 );
 			// Hoooks for updating line items.
-			add_filter( 'sm_beta_post_batch_process_args', array( 'Smart_Manager_Pro_Shop_Order', 'set_line_items_batch_update_args' ), 10, 1 );
-			add_action( 'sm_pro_pre_process_batch_db_updates', array( 'Smart_Manager_Pro_Shop_Order', 'process_line_items_batch_update' ) );
-			add_action( 'sm_pro_pre_process_batch_update_args', array( 'Smart_Manager_Pro_Shop_Order', 'pre_process_batch_update_args' ) );
+			add_filter( 'sm_post_batch_process_args', array( 'Smart_Manager_Pro_Shop_Order', 'set_line_items_batch_update_args' ), 10, 1 );
+			add_action( 'sm_pre_process_batch_db_updates', array( 'Smart_Manager_Pro_Shop_Order', 'process_line_items_batch_update' ) );
+			add_action( 'sm_pre_process_batch_update_args', array( 'Smart_Manager_Pro_Shop_Order', 'pre_process_batch_update_args' ) );
+			add_filter( 'sm_search_query_woocommerce_order_itemmeta_select', array( 'Smart_Manager_Pro_Shop_Order', 'orders_advanced_search_select' ), 12, 2 );
+			add_filter( 'sm_search_query_woocommerce_order_itemmeta_from', array( 'Smart_Manager_Pro_Shop_Order', 'orders_advanced_search_from' ), 12, 2 );
+			add_filter( 'sm_search_query_woocommerce_order_itemmeta_join', array( 'Smart_Manager_Pro_Shop_Order', 'orders_advanced_search_join' ), 12, 2 );
 		}
 
 		public function __call( $function_name, $arguments = array() ) {
@@ -158,7 +163,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 
 			$string_columns = array('_billing_postcode', '_shipping_postcode');
 
-			$post_status_col_index = sm_multidimesional_array_search('posts_post_status', 'data', $dashboard_model['columns']);
+			$post_status_col_index = sa_multidimesional_array_search('posts_post_status', 'data', $dashboard_model['columns']);
 			
 			if( isset( $dashboard_model['columns'][$post_status_col_index] ) && is_callable( array( 'Smart_Manager_Shop_Order', 'generate_status_col_model' ) ) ) {
 				$dashboard_model['columns'][$post_status_col_index] = Smart_Manager_Shop_Order::generate_status_col_model( $dashboard_model['columns'][$post_status_col_index], 
@@ -234,7 +239,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 			}
 
 			if (!empty( $dashboard_model_saved )) {
-				$col_model_diff = sm_array_recursive_diff($dashboard_model_saved,$dashboard_model);	
+				$col_model_diff = sa_array_recursive_diff($dashboard_model_saved,$dashboard_model);	
 			}
 
 			//clearing the transients before return
@@ -386,6 +391,101 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 			}
 
 			return $args;
+		}
+
+		/**
+		 * Function to modify the dashboard model.
+		 *
+		 * @param array $dashboard_model Default dashboard model.
+		 * @param array $dashboard_model_saved Saved dashboard model.
+		 * @return array Modified dashboard model.
+		 */
+		public function modify_dashboard_model( $dashboard_model = array(), $dashboard_model_saved = array() ) {
+			return ( ( empty( $dashboard_model ) ) || ( ! is_array( $dashboard_model ) ) || ( empty( $this->dashboard_key ) ) || ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) || ( ! is_callable( array( 'Smart_Manager_Pro_Shop_Order', 'get_orders_dashboard_model' ) ) ) ) ? $dashboard_model : Smart_Manager_Pro_Shop_Order::get_orders_dashboard_model( $dashboard_model, $dashboard_model_saved, $this->dashboard_key );
+		}
+
+		/**
+		 * Builds a search query for order item meta data based on provided parameters.
+		 *
+		 * This method constructs and returns a query array for searching order item meta data,
+		 * typically used in the context of shop subscriptions.
+		 *
+		 * @param array $query  Optional. Existing query arguments to modify or extend. Default empty array.
+		 * @param array $params Optional. Additional parameters to customize the search query. Default empty array.
+		 * @return array The modified or newly constructed query array for order item meta search.
+		 */
+		public function modify_itemmeta_search_query( $query = array(), $params = array() ) {
+			return ( ( class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) && is_callable( array( 'Smart_Manager_Pro_Shop_Order', 'get_order_itemmeta_search_query' ) ) ) ? Smart_Manager_Pro_Shop_Order::get_order_itemmeta_search_query( array(
+				'query'                     => ( ( ! empty( $query ) ) && ( is_array( $query ) ) ) ? $query : array(),
+				'params'                    => ( ( ! empty( $params ) ) && ( is_array( $params ) ) ) ? $params : array(),
+				'advanced_search_operators' => ( ( ! empty( $this->advanced_search_operators ) ) && ( is_array( $this->advanced_search_operators ) ) ) ? $this->advanced_search_operators : array()
+			) ) : $query;
+		}
+
+		/**
+		 * Sync subscription line item prices based on updated product prices.
+		 *
+		 * @param array $batch_args Should contain 'selected_ids' in format:
+		 *        [
+		 *          [ subscription_id => [ product_id_1, product_id_2 ] ],
+		 *          ...
+		 *        ]
+		 * 
+		 * @return void
+		 */
+		public static function sync_subscription_line_item_prices( $batch_args = array() ) {
+			if ( empty( $batch_args['selected_ids'] ) || ! is_array( $batch_args['selected_ids'] ) ) {
+				return;
+			}
+			foreach ( $batch_args['selected_ids'] as $subs_data ) {
+				if ( ( empty( $subs_data ) ) || ( ! is_array( $subs_data ) ) ) {
+					continue;
+				}
+				foreach ( $subs_data as $subs_id => $products ) {
+					$subs_id = absint( $subs_id );
+					if ( ( empty( $subs_id ) ) ) {
+						continue;
+					}
+					$subscription = wcs_get_subscription( $subs_id );
+					if ( ( empty( $subscription ) ) || ( ! is_callable( array( $subscription, 'get_items' ) ) ) ) {
+						continue;
+					}
+					$line_items = $subscription->get_items();
+					$updated_items = array();
+					foreach ( $line_items as $item ) {
+						if ( ( empty( $item ) ) || ( ! is_callable( array( $item, 'set_total' ) ) ) || ( ! is_callable( array( $item, 'set_subtotal' ) ) ) || ( ! is_callable( array( $item, 'get_product_id' ) ) ) || ( ! is_callable( array( $item, 'get_quantity' ) ) ) ) {
+							continue;
+						}
+						$qty = absint( $item->get_quantity() );
+						$product_id = absint( $item->get_product_id() );
+						if ( ( empty( $product_id ) ) || ( ! in_array( $product_id, $products, true ) ) ) {
+							continue;
+						}
+						$product = wc_get_product( $product_id );
+						if ( ( empty( $product ) ) || ( ! is_callable( array( $product, 'get_price' ) ) ) ) {
+							continue;
+						}
+						$new_price = wc_format_decimal( $product->get_price() );
+						// Update line item price.
+						$item->set_total( $new_price * $qty );
+						$item->set_subtotal( $new_price * $qty );
+						// Only add to updated_items if not already present
+						$item_name = ( is_callable( array( $item, 'get_name' ) ) ) ? $item->get_name() : $product_id;
+						if ( ! in_array( $item_name, $updated_items, true ) ) {
+							$updated_items[] = $item_name;
+						}
+					}
+					if ( ! empty( $updated_items ) ) {
+						/* translators: %s: list of updated line item names */
+						$note = sprintf( _x( 'Updated line items price: %s by Smart Manager.', 'order note' ,'smart-manager-for-wp-e-commerce' ),  implode( ', ', $updated_items ) );
+						if ( is_callable( array( $subscription, 'add_order_note' ) ) ) {
+							$subscription->add_order_note( $note );
+						}
+					}
+					$subscription->calculate_totals();
+					$subscription->save();
+				}
+			}
 		}
 	}
 }

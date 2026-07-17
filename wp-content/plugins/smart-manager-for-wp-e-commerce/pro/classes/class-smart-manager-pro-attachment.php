@@ -68,7 +68,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Attachment' ) ) {
 			parent::__construct( $dashboard_key );
 			$this->plugin_path = untrailingslashit( plugin_dir_path( __FILE__ ) );
 			add_filter( 'sm_data_model', array( $this, 'data_model' ), 99, 2 );
-			add_filter( 'sm_dashboard_model', array( $this, 'dashboard_model' ), 99, 2 );
+			add_filter( 'sa_sm_dashboard_model', array( $this, 'dashboard_model' ), 99, 2 );
 		}
 
 		/**

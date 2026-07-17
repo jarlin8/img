@@ -52,7 +52,7 @@ if ( ! class_exists( 'Smart_Manager_Settings' ) ) {
 		 * @return array Default settings array
 		 */
         public static function get_defaults(){
-            return apply_filters( 'sm_settings_default', array(
+            $settings = array(
                 'general' => array(
                     'toggle' => array(
                         'wp_force_collapse_admin_menu'                  => 'yes',
@@ -66,10 +66,14 @@ if ( ! class_exists( 'Smart_Manager_Settings' ) ) {
                         'per_page_record_limit' => 50
                     ),
                     'text'  => array(
-                        'grid_row_height' => '50px'
+                        'grid_row_height' => 50
                     )
                 )
-            ) );
+            );
+            if ( ( ! empty( Smart_Manager::is_wsm_stock_log_import_required() ) ) && ( ! defined('SMPRO') || false === SMPRO ) ) {
+                $settings[ 'general' ][ 'icon' ] = array( 'sync_wsm_stock_log_data' => '' );
+            }
+            return apply_filters( 'sm_settings_default', $settings );
         }
 
         /**
@@ -132,8 +136,8 @@ if ( ! class_exists( 'Smart_Manager_Settings' ) ) {
             if( empty( $default_settings ) || ( ! empty( $default_settings ) && empty( $default_settings['general'] ) ) || empty( $settings['general'] ) ){
                 return false;
             }
+            do_action( 'sa_sm_before_settings_update', $settings );
             return update_option( self::$db_option_key, self::merge( $default_settings, $settings ), 'no' );
-            
         }
 	}
 }

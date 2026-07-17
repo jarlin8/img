@@ -25,7 +25,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Course' ) ) {
 
             parent::__construct($this->dashboard_key);
 
-			add_filter( 'sm_dashboard_model',array( &$this,'dashboard_model' ), 10, 2 );
+			add_filter( 'sa_sm_dashboard_model',array( &$this,'dashboard_model' ), 10, 2 );
 		}
 
 		public static function actions() {

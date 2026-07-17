@@ -30,7 +30,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_WC_Membership_Plan' ) ) {
 		}
 
 		public function hooks() {
-			add_filter('sm_dashboard_model',array(&$this,'wc_membership_plan_dashboard_model'),10,2);
+			add_filter('sa_sm_dashboard_model',array(&$this,'wc_membership_plan_dashboard_model'),10,2);
 		}
 
 		public function wc_membership_plan_dashboard_model ($dashboard_model, $dashboard_model_saved) {
@@ -104,7 +104,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_WC_Membership_Plan' ) ) {
 			}
 
 			if (!empty($dashboard_model_saved)) {
-				$col_model_diff = sm_array_recursive_diff( $dashboard_model_saved, $dashboard_model );	
+				$col_model_diff = sa_array_recursive_diff( $dashboard_model_saved, $dashboard_model );	
 			}
 
 			//clearing the transients before return

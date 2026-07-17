@@ -25,7 +25,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Wc_Booking' ) ) {
 			$this->post_type = $dashboard_key;
 			$this->req_params = (!empty($_REQUEST)) ? $_REQUEST : array();
 
-			add_filter( 'sm_dashboard_model',array( &$this,'bookings_dashboard_model' ), 10, 2 );
+			add_filter( 'sa_sm_dashboard_model',array( &$this,'bookings_dashboard_model' ), 10, 2 );
 			add_filter( 'sm_data_model', array( &$this, 'bookings_data_model' ), 10, 2 );
 			add_filter('sm_inline_update_pre',array(&$this,'bookings_inline_update_pre'),10,1);
 		}
@@ -191,7 +191,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Wc_Booking' ) ) {
 			}
 
 			if (!empty($dashboard_model_saved)) {
-				$col_model_diff = sm_array_recursive_diff($dashboard_model_saved,$dashboard_model);	
+				$col_model_diff = sa_array_recursive_diff($dashboard_model_saved,$dashboard_model);	
 			}
 
 			//clearing the transients before return

@@ -29,7 +29,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 				$this->shop_coupon = new Smart_Manager_Shop_Coupon( $dashboard_key );
 			}
 
-			add_filter( 'sm_dashboard_model', array( &$this, 'coupons_dashboard_model' ), 10, 2 );
+			add_filter( 'sa_sm_dashboard_model', array( &$this, 'coupons_dashboard_model' ), 10, 2 );
 			add_filter( 'sm_batch_update_copy_from_ids_select', array( &$this, 'sm_batch_update_copy_from_ids_select' ), 10, 2 );
 			add_filter( 'sm_data_model', array( &$this, 'coupons_data_model' ), 10, 2 );
 			add_filter( 'sm_required_cols', array( &$this, 'sm_beta_required_cols' ), 10, 1 );
@@ -37,7 +37,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 		}
 
 		public static function actions() {
-			add_filter( 'sm_beta_post_batch_process_args', __CLASS__. '::coupons_post_batch_process_args', 10, 1 );
+			add_filter( 'sm_post_batch_process_args', __CLASS__. '::coupons_post_batch_process_args', 10, 1 );
 		}
 
 		public function __call( $function_name, $arguments = array() ) {
@@ -79,8 +79,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 					if( $action == 'add_to' ) {
 						if ( ! is_array( $product_cat_ids ) || in_array( $value, $product_cat_ids ) ) {
 							continue;
-						}	
-						$product_cat_ids[] = $value;				
+						}
+						$product_cat_ids[] = $value;
 					} else if ( $action == 'remove_from' ) {
 						$key = array_search( $value, $product_cat_ids );
 						if( false !== $key ) {
@@ -177,7 +177,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 			if ( ( file_exists( WP_PLUGIN_DIR . '/woocommerce/woocommerce.php' ) ) && ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) ) {
 				$available_shipping_methods = WC()->shipping->get_shipping_methods();
 				$available_payment_methods = WC()->payment_gateways->get_available_payment_gateways();
-				
+
 				//Code for getting all product attributes
 				if( is_callable( 'wc_get_attribute_taxonomies' ) ) {
 					$attribute_taxonomies = wc_get_attribute_taxonomies();
@@ -199,9 +199,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
     			$taxonomy_obj = get_terms( array(
 									 	   'taxonomy' => $taxonomy_names,
 											'get'      => 'all',
-									));	
+									));
     		} else {
-    			$taxonomy_obj = get_terms( $taxonomy_names );	
+    			$taxonomy_obj = get_terms( $taxonomy_names );
     		}
 
 			$editable_roles = get_editable_roles();
@@ -271,7 +271,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 				'wc_sc_max_discount'                  => __( 'Max discount', 'smart-manager-for-wp-e-commerce' )
 			);
 
-			$column_titles = array( 
+			$column_titles = array(
 				'sc_coupon_validity'                  => __( 'Coupon Validity', 'smart-manager-for-wp-e-commerce' ),
 				'validity_suffix'                     => __( 'Validity Suffix', 'smart-manager-for-wp-e-commerce' ),
 				'coupon_title_prefix'                 => __( 'Coupon Title Prefix', 'smart-manager-for-wp-e-commerce' ),
@@ -294,7 +294,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 
 			$column_model = &$dashboard_model['columns'];
 
-			$coupon_shareable_link_index = sm_multidimesional_array_search('custom/coupon_shareable_link', 'src', $column_model);
+			$coupon_shareable_link_index = sa_multidimesional_array_search('custom/coupon_shareable_link', 'src', $column_model);
 
 			foreach( $column_model as $key => &$column ) {
 				if ( empty( $column['src'] ) ) continue;
@@ -391,7 +391,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 				$index++;
 
 				$column_model [$index]['src'] = 'custom/coupon_shareable_link';
-				$column_model [$index]['data'] = sanitize_title(str_replace('/', '_', $column_model [$index]['src'])); // generate slug using the wordpress function if not given 
+				$column_model [$index]['data'] = sanitize_title(str_replace('/', '_', $column_model [$index]['src'])); // generate slug using the wordpress function if not given
 				$column_model [$index]['key'] = $column_model[$index]['name'] = __( 'Coupon shareable link', 'smart-manager-for-wp-e-commerce' );
 				$column_model [$index]['type'] = 'text';
 				$column_model [$index]['renderer'] = 'html';
@@ -412,13 +412,13 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 			}
 
 			if (!empty($dashboard_model_saved)) {
-				$col_model_diff = sm_array_recursive_diff($dashboard_model_saved,$dashboard_model);	
+				$col_model_diff = sa_array_recursive_diff($dashboard_model_saved,$dashboard_model);
 			}
 
 			//clearing the transients before return
 			if (!empty($col_model_diff)) {
-				delete_transient( 'sa_sm_'.$this->dashboard_key );	
-			}		
+				delete_transient( 'sa_sm_'.$this->dashboard_key );
+			}
 
 			return $dashboard_model;
 		}
@@ -429,11 +429,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 													'search_term' => ( !empty( $this->req_params['searchTerm'] ) ? $this->req_params['searchTerm'] : '' ),
 													'is_ajax' => false ) );
 
-			$data = $this->get_batch_update_copy_from_record_ids( $args );
+			$pro_base_instance = is_callable( array( 'Smart_Manager_Pro_Base', 'instance' ) ) ? parent::instance( $this->dashboard_key ) : null;
+			$data = ( ( ! empty( $pro_base_instance ) ) && ( is_callable( array( $pro_base_instance, 'get_batch_update_copy_from_record_ids' ) ) ) ) ? $pro_base_instance->get_batch_update_copy_from_record_ids( $args )  : array();
 
 			$products = array();
 
-			if( !empty( $data ) ) {
+			if ( ( ! empty( $data ) ) && ( is_array( $data ) ) ) {
 				foreach( $data as $id => $title ) {
 					$products[] = array( 'id' => $id, 'text' => esc_html( $title ) );
 				}
@@ -485,7 +486,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 							$data_model ['items'][$key][ 'postmeta_meta_key_'.$col.'_meta_value_'.$col.'' ] .= $multilist_separator . "" . $term_name;
 						}
 					}
-				}		
+				}
 			}
 			return $data_model;
 		}

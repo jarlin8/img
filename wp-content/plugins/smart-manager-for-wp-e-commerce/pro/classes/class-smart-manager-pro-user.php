@@ -48,16 +48,28 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 			add_filter( 'sm_search_query_terms_select', array( &$this,'search_query_terms_select' ), 10, 2 );
 			add_filter( 'sm_search_query_terms_from', array( &$this,'search_query_terms_from' ), 10, 2 );
 			add_filter( 'sm_search_query_terms_where', array( &$this,'search_query_terms_where' ), 10, 2 );
+			//Orders count advanced search.
+			add_filter( 'sm_search_query_usermeta_from',array( __CLASS__, 'search_query_usermeta_from' ), 10, 2 );
+			add_filter( 'sm_search_query_usermeta_select',array( __CLASS__, 'search_query_usermeta_select' ), 10, 2 );
+			add_filter( 'sm_search_query_usermeta_where',array( __CLASS__, 'search_query_usermeta_where' ), 10, 2 );
 		}
 
 		public static function actions() {
 			// add_filter('sm_beta_batch_update_entire_store_ids_query', __CLASS__. '::users_batch_update_entire_store_ids_query', 10, 1);
 			add_filter( 'sm_beta_background_entire_store_ids_from', __CLASS__. '::users_batch_update_entire_store_ids_from', 10, 2 );
 			add_filter( 'sm_beta_background_entire_store_ids_where', __CLASS__. '::users_batch_update_entire_store_ids_where', 10, 2 );
-			add_filter( 'sm_beta_batch_update_prev_value', __CLASS__. '::users_batch_update_prev_value', 10, 2 );
+			add_filter( 'sm_batch_update_prev_value', __CLASS__. '::users_batch_update_prev_value', 10, 2 );
 			add_filter( 'sm_default_batch_update_db_updates',  __CLASS__. '::users_default_batch_update_db_updates', 10, 2 );
 			add_filter( 'sm_post_batch_update_db_updates', __CLASS__. '::users_post_batch_update_db_updates', 10, 2 );
 			add_filter( 'sm_pro_default_process_delete_records', function() { return false; } );
+			// Filters to handle empty search value for usermeta - also match users where meta key doesn't exist.
+			add_filter( 'sm_search_query_usermeta_select', array( __CLASS__, 'empty_usermeta_search_select' ), 99, 2 );
+			add_filter( 'sm_search_query_usermeta_from', array( __CLASS__, 'empty_usermeta_search_from' ), 99, 2 );
+			add_filter( 'sm_search_usermeta_cond', array( __CLASS__, 'empty_usermeta_search_cond' ), 10, 2 );
+			// Filters to modify search value for usermeta cols during advanced search filtering.
+			add_filter( 'sm_search_format_query_usermeta_col_value', array( __CLASS__, 'format_usermeta_search_col_value' ), 10, 2 );
+			// Filter to validate batch update permissions for users.
+			add_filter( 'sa_manager_validate_batch_update_permissions', array( __CLASS__, 'validate_user_batch_update_permissions' ), 10, 2 );
 		}
 
 		public function get_batch_update_copy_from_record_ids( $args = array() ) {
@@ -374,14 +386,14 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 					$col_model [$index]['data'] = sanitize_title(str_replace('/', '_', $col_model [$index]['src'])); // generate slug using the wordpress function if not given 
 					$col_model [$index]['name'] = __(ucwords(str_replace('_', ' ', $col)), 'smart-manager-for-wp-e-commerce');
 					$col_model [$index]['key'] = $col_model [$index]['name']; //for advanced search
-					$col_model [$index]['type'] = 'text';
+					$col_model [$index]['type'] = ( in_array( $col, array( 'orders_count', 'orders_total' ), true ) ) ? 'numeric' : 'text';
 					$col_model [$index]['hidden']	= false;
 					$col_model [$index]['allow_showhide'] = true;
 					$col_model [$index]['editable']	= false;
 					$col_model [$index]['sortable']	= false;
 
 					$col_model [$index]['table_name'] = $wpdb->prefix.'usermeta';
-					$col_model [$index]['col_name'] = 'user_id';
+					$col_model [$index]['col_name'] = ( in_array( $col, array( 'orders_count', 'orders_total' ), true ) ) ? $col : 'user_id';
 					$col_model [$index]['exportable'] = true; //default true. flag for enabling the column in export
 					$col_model [$index]['searchable'] = true;
 
@@ -535,6 +547,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
             $i = 0;
 
             $search_cols_type = ( ! empty( $params['search_cols_type'] ) ) ? $params['search_cols_type'] : array();
+			$search_cols_type = apply_filters( 'sm_users_search_cols_type', $search_cols_type );
             $non_flat_table_types = ( ! empty( $this->advanced_search_table_types['meta'] ) ) ? array_merge( array( 'terms' ), array_keys( $this->advanced_search_table_types['meta'] ) ) : array( 'terms' );
 
             foreach ($rule_groups as $rule_group) {
@@ -681,7 +694,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
                                 $advanced_search_query[$i]['cond_usermeta_operator'] .= " && ";
 								$advanced_search_query[$i]['cond_usermeta_selected_search_operators'][] = $search_params['selected_search_operator'];
                             } elseif ( ( ! empty( $rule['table_name'] ) ) && $wpdb->prefix.'terms' === $rule['table_name'] ) {
-                                $advanced_search_query[$i] = $this->create_terms_table_search_query( array(
+                                $advanced_search_query[$i] = Smart_Manager_Base::create_terms_table_search_query( array(
 									'search_query' => $advanced_search_query[$i],
 									'search_params' => $search_params,
 									'rule'			=> $rule
@@ -873,6 +886,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 			$index = 0;
 
 			$join = $where = '';
+			$where = apply_filters( 'sa_sm_users_where', $where, $this->req_params );
 			$order_by = " ORDER BY {$wpdb->users}.id DESC ";
 
 			$start = (!empty($this->req_params['start'])) ? $this->req_params['start'] : 0;
@@ -948,7 +962,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 	            $join = " JOIN {$wpdb->base_prefix}sm_advanced_search_temp
                             	ON ({$wpdb->base_prefix}sm_advanced_search_temp.product_id = {$wpdb->users}.id)";
 
-                $where = " AND {$wpdb->base_prefix}sm_advanced_search_temp.flag > 0";
+                $where .= " AND {$wpdb->base_prefix}sm_advanced_search_temp.flag > 0";
 
 	        }
 
@@ -979,7 +993,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 	        		}
 	        	}
 
-				$where = " AND (({$wpdb->usermeta}.meta_value LIKE '%".$search_text."%') ";
+				$where .= " AND (({$wpdb->usermeta}.meta_value LIKE '%".$search_text."%') ";
 				$where .= ( ( !empty( $user_where_cond ) ) ? ' OR '. implode(" OR ", $user_where_cond) : '' )." )";
 			}
 
@@ -1236,7 +1250,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 			    			$role = array_keys($caps);
 			    			$items [$index]['usermeta_role'] = ( !empty($role[0]) ) ? $role[0] : '';
 
-			    			if( !empty( $items [$index]['usermeta_role'] ) && $items [$index]['usermeta_role'] == 'customer' ) {
+			    			if( !empty( $items [$index]['usermeta_role'] ) ) {
 			    				$customer_ids[$user_id] = $index;
 			    			}
 			    		}
@@ -1352,6 +1366,13 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 		//function for modifying edited data before updating
 		public function user_inline_update($edited_data, $params) {
 			if (empty($edited_data)) return $edited_data;
+			
+			// Security: Check if current user can edit users.
+			$can_edit = self::validate_can_edit_users();
+			if ( is_array( $can_edit ) && ! $can_edit['valid'] ) {
+				wp_send_json_error( array( 'message' => $can_edit['message'] ), 403 );
+			}
+			
 			global $wpdb;
 
 			$default_user_keys = array( 'ID', 'user_pass', 'user_login', 'user_nicename', 'user_url', 'user_email', 'display_name', 'nickname', 'first_name', 
@@ -1362,6 +1383,18 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 
 				if( empty( $id ) ) {
 					continue;
+				}
+				
+				// Security: Check if current user can edit this specific user.
+				$can_edit_user = self::validate_can_edit_user( $id );
+				if ( is_array( $can_edit_user ) && ! $can_edit_user['valid'] ) {
+					wp_send_json_error( array( 'message' => $can_edit_user['message'] ), 403 );
+				}
+				
+				// Security: Prevent modifying administrator accounts by non-administrators.
+				$can_modify_admin = self::validate_can_modify_admin( $id );
+				if ( is_array( $can_modify_admin ) && ! $can_modify_admin['valid'] ) {
+					wp_send_json_error( array( 'message' => $can_modify_admin['message'] ), 403 );
 				}
 
 				$default_insert_users = array();
@@ -1375,6 +1408,20 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 
 					$update_table = $edited_value_exploded[0];
 					$update_column = $edited_value_exploded[1];
+					
+					// Security: Block sensitive usermeta keys for non-administrators.
+					$key_validation = self::validate_usermeta_key( $update_column );
+					if ( is_array( $key_validation ) && ! $key_validation['valid'] ) {
+						wp_send_json_error( array( 'message' => $key_validation['message'] ), 403 );
+					}
+					
+					// Security: Validate role changes.
+					if ( 'usermeta' === $update_table && 'role' === $update_column ) {
+						$role_validation = self::validate_role_change( sanitize_text_field( $value ), $id );
+						if ( is_array( $role_validation ) && ! $role_validation['valid'] ) {
+							wp_send_json_error( array( 'message' => $role_validation['message'] ), 403 );
+						}
+					}
 
 					if ( sizeof( $edited_value_exploded ) <= 2) {
 						if( ( ($update_table == 'users') || ($update_table == 'usermeta' && $update_column == 'role') ) ) {
@@ -1678,6 +1725,13 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 		 * @return boolean
 		 */
 		public static function sm_process_delete_non_posts_records( $params = array() ) {
+			// Check if current user has permission to delete users
+			if ( ! current_user_can( 'delete_users' ) ) {
+				if ( is_callable( 'sa_manager_log' ) ) {
+					sa_manager_log( 'error', _x( 'Delete user failed: insufficient permissions', 'delete user process', 'smart-manager-for-wp-e-commerce' ) );
+				}
+				return false;
+			}
 
 			$deleting_id = ( !empty( $params['id'] ) ) ? $params['id'] : '';
 
@@ -1786,6 +1840,267 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 																			WHERE term_taxonomy_id IN (". implode( ",", $search_params['tt_ids_to_exclude'] ) .") )";
 	    	}
 			return $search_query_terms_where;
+		}
+
+		/**
+		 * Builds the SELECT part of a usermeta search query.
+		 *
+		 * @param string $select Optional. Existing SELECT clause to append to. Default empty string.
+		 * @param array  $args   Optional. Arguments to customize the query.
+		 * @return string Modified SELECT clause for the usermeta search query.
+		 */
+		public static function search_query_usermeta_select( $select = '', $args = array() ) {
+			return ( ( empty( $args ) ) || ( ! is_array( $args ) ) || ( empty( $args['cond_usermeta_operator'] ) ) || ( empty( $args['cond_usermeta_col_name'] ) ) || ( ! in_array( $args['cond_usermeta_col_name'], array( 'orders_count', 'orders_total' ), true ) ) || ( ! empty( Smart_Manager::$sm_is_woo79 ) && ! empty( Smart_Manager::$sm_is_wc_hpos_tables_exists ) ) ) ? $select : "SELECT DISTINCT pm.meta_value , 1 ,0 ";
+		}
+		/**
+		 * Constructs the SQL FROM clause for searching user meta data.
+		 *
+		 * @param string $from Optional. The initial FROM clause to build upon.
+		 * @param array  $args Optional. Additional arguments to customize the query.
+		 * @return string The modified FROM clause for the user meta search query.
+		 */
+		public static function search_query_usermeta_from( $from = '', $args = array() ) {
+			global $wpdb;
+			if ( ( empty( $args ) ) || ( ! is_array( $args ) ) || ( empty( $args['cond_usermeta_col_name'] ) ) || ( ! in_array( $args['cond_usermeta_col_name'], array( 'orders_count', 'orders_total' ), true ) ) ) {
+				return $from;
+			}
+			return ( ! empty( Smart_Manager::$sm_is_woo79 ) && ! empty( Smart_Manager::$sm_is_wc_hpos_tables_exists ) ) ? $from." JOIN {$wpdb->users} ON {$wpdb->prefix}users.ID = {$wpdb->prefix}usermeta.user_id": "FROM {$wpdb->postmeta} AS pm JOIN {$wpdb->posts} AS p ON (p.ID = pm.post_id AND p.post_type = 'shop_order' AND p.post_status IN ('wc-completed','wc-processing'))";
+		}
+
+		/**
+		 * Modifies the WHERE clause for usermeta search queries.
+		 *
+		 * @param string $where The existing WHERE clause of the query.
+		 * @param array  $args  Additional arguments that may influence the query modification.
+		 *
+		 * @return string The modified WHERE clause.
+		 */
+		public static function search_query_usermeta_where( $where = '', $args = array() ) {
+			global $wpdb;
+			// Add orders count/total search condition for HPOS and legacy tables.
+			if ( ( empty( $args ) ) || ( ! is_array( $args ) ) || ( empty( $args['cond_usermeta_operator'] ) ) || ( empty( $args['cond_usermeta_col_name'] ) ) || ( ! in_array( $args['cond_usermeta_col_name'], array( 'orders_count', 'orders_total' ), true ) ) ) {
+				return $where;
+			}
+			$operator = $args['cond_usermeta_operator'];
+			$col_name = $args['cond_usermeta_col_name'];
+			$col_value = ( 'orders_total' === $col_name ) ? floatval( $args['cond_usermeta_col_value'] ) : absint( $args['cond_usermeta_col_value'] );
+			if ( ! empty( Smart_Manager::$sm_is_woo79 ) && ! empty( Smart_Manager::$sm_is_wc_hpos_tables_exists ) ) {
+				// HPOS tables.
+				if ( 'orders_total' === $col_name ) {
+					return " AND ( SELECT IFNULL( SUM( total_amount ), 0 ) FROM {$wpdb->prefix}wc_orders WHERE customer_id = {$wpdb->prefix}users.ID AND type = 'shop_order' AND status IN ('wc-completed','wc-processing') ) {$operator} %f";
+				}
+				return " AND ( SELECT COUNT(*) FROM {$wpdb->prefix}wc_orders WHERE customer_id = {$wpdb->prefix}users.ID AND type = 'shop_order' AND status IN ('wc-completed','wc-processing') ) {$operator} %d";
+			}
+			// Legacy tables (non-HPOS).
+			if ( 'orders_total' === $col_name ) {
+				return $wpdb->prepare( "WHERE pm.meta_key = '_customer_user' GROUP BY pm.meta_value HAVING ( SELECT IFNULL( SUM( pm2.meta_value ), 0 ) FROM {$wpdb->postmeta} AS pm2 WHERE pm2.meta_key = '_order_total' AND pm2.post_id IN ( SELECT pm3.post_id FROM {$wpdb->postmeta} AS pm3 WHERE pm3.meta_key = '_customer_user' AND pm3.meta_value = pm.meta_value ) ) {$operator} %f", $col_value );
+			}
+			return $wpdb->prepare( "WHERE pm.meta_key = '_customer_user' GROUP BY pm.meta_value HAVING COUNT(pm.post_id) {$operator} %d", $col_value );
+		}
+
+		/**
+		 * Modifies the SELECT clause for empty usermeta search to use users table.
+		 *
+		 * @param string $select        The existing SELECT clause.
+		 * @param array  $search_params Search parameters containing column name, value, and operator.
+		 * @return string Modified SELECT clause.
+		 */
+		public static function empty_usermeta_search_select( $select, $search_params ) {
+			global $wpdb;
+			return ( empty( $search_params['cond_usermeta_col_value'] ) && ! empty( $search_params['cond_usermeta_col_name'] ) && ! empty( $search_params['cond_usermeta_operator'] ) && 'LIKE' === $search_params['cond_usermeta_operator'] ) ? str_replace( $wpdb->prefix . 'usermeta.user_id', $wpdb->users . '.ID', $select ) : $select;
+		}
+
+		/**
+		 * Modifies the FROM clause for empty usermeta search to use LEFT JOIN.
+		 *
+		 * @param string $from          The existing FROM clause.
+		 * @param array  $search_params Search parameters containing column name, value, and operator.
+		 * @return string Modified FROM clause with LEFT JOIN.
+		 */
+		public static function empty_usermeta_search_from( $from, $search_params ) {
+			global $wpdb;
+			$meta_key = ! empty( $search_params['cond_usermeta_col_name'] ) ? esc_sql( $search_params['cond_usermeta_col_name'] ) : '';
+			return ( empty( $search_params['cond_usermeta_col_value'] ) && ! empty( $search_params['cond_usermeta_col_name'] ) && ! empty( $search_params['cond_usermeta_operator'] ) && 'LIKE' === $search_params['cond_usermeta_operator'] ) ? "FROM {$wpdb->users} LEFT JOIN {$wpdb->usermeta} ON ({$wpdb->users}.ID = {$wpdb->usermeta}.user_id AND {$wpdb->usermeta}.meta_key = '{$meta_key}') " : $from;
+		}
+
+		/**
+		 * Modifies the WHERE condition for empty usermeta search.
+		 *
+		 * @param string $postmeta_cond The existing WHERE condition.
+		 * @param array  $search_params Search parameters containing column, value, and operator.
+		 * @return string Modified WHERE condition.
+		 */
+		public static function empty_usermeta_search_cond( $postmeta_cond, $search_params ) {
+			global $wpdb;
+			return ( empty( $search_params['search_value'] ) && ! empty( $search_params['search_col'] ) && ! empty( $search_params['search_operator'] ) && 'is' === $search_params['search_operator'] ) ? " ( {$wpdb->usermeta}.meta_value LIKE %s OR {$wpdb->usermeta}.meta_key IS NULL )" : $postmeta_cond;
+		}
+
+		/**
+		 * Format usermeta search column value.
+		 *
+		 * Converts the search value to a timestamp if the search column is 'wc_last_active'.
+		 *
+		 * @param string $search_value  The search value to format.
+		 * @param array  $search_params Search parameters containing the search column.
+		 * @return string|int The formatted search value, or timestamp if column is 'wc_last_active'.
+		 */
+		public static function format_usermeta_search_col_value( $search_value = '', $search_params = array() ){
+			return ( ( empty( $search_value ) ) || ( empty( $search_params ) ) || ( ! is_array( $search_params ) ) || empty( $search_params[ 'search_col' ] ) || ( 'wc_last_active' !== $search_params[ 'search_col' ] ) ) ? $search_value : strtotime( $search_value );
+		}
+
+		/**
+		 * Get blocked usermeta keys that non-admins cannot modify.
+		 *
+		 * @return array List of blocked keys.
+		 */
+		public static function get_blocked_usermeta_keys() {
+			return apply_filters( 'sm_blocked_usermeta_keys', array( 'user_pass' ) );
+		}
+
+		/**
+		 * Validate if current user can edit users.
+		 *
+		 * @return array Validation result with 'valid' boolean and optional 'message'.
+		 */
+		public static function validate_can_edit_users() {
+			if ( ! current_user_can( 'edit_users' ) ) {
+				return array(
+					'valid'   => false,
+					'message' => _x( 'You do not have permission to edit users.', 'Security error message', 'smart-manager-for-wp-e-commerce' ),
+				);
+			}
+			return array( 'valid' => true );
+		}
+
+		/**
+		 * Validate if current user can edit a specific user.
+		 *
+		 * @param int $user_id The user ID to check.
+		 * @return array Validation result with 'valid' boolean and optional 'message'.
+		 */
+		public static function validate_can_edit_user( $user_id = 0 ) {
+			$user_id = intval( $user_id );
+			if ( ( empty( $user_id ) ) || ( ( $user_id !== get_current_user_id() ) && ( ! current_user_can( 'edit_user', $user_id ) ) ) ) {
+				return array(
+					'valid'   => false,
+					'message' => _x( 'You do not have permission to edit this user.', 'Security error message', 'smart-manager-for-wp-e-commerce' ),
+				);
+			}
+			return array( 'valid' => true );
+		}
+
+		/**
+		 * Validate if current user can modify an administrator account.
+		 *
+		 * @param int $user_id The user ID to check.
+		 * @return array Validation result with 'valid' boolean and optional 'message'.
+		 */
+		public static function validate_can_modify_admin( $user_id = 0 ) {
+			$is_current_user_admin = current_user_can( 'administrator' );
+			$target_user           = get_userdata( intval( $user_id ) );
+			if ( ( ! empty( $target_user ) ) && ( ! empty( $target_user->roles ) ) && in_array( 'administrator', (array) $target_user->roles, true ) && ! $is_current_user_admin ) {
+				return array(
+					'valid'   => false,
+					'message' => _x( 'You cannot modify an administrator account.', 'Security error message', 'smart-manager-for-wp-e-commerce' ),
+				);
+			}
+			return array( 'valid' => true );
+		}
+
+		/**
+		 * Validate role change permission.
+		 *
+		 * @param string $target_role The target role.
+		 * @param int    $user_id     The user ID being modified (optional, for self-promotion check).
+		 * @return array Validation result with 'valid' boolean and optional 'message'.
+		 */
+		public static function validate_role_change( $target_role = '', $user_id = 0 ) {
+			$is_current_user_admin = current_user_can( 'administrator' );
+			$target_role           = sanitize_text_field( $target_role );
+
+			// Check promote_users capability.
+			if ( ! current_user_can( 'promote_users' ) ) {
+				return array(
+					'valid'   => false,
+					'message' => _x( 'You do not have permission to change user roles.', 'Security error message', 'smart-manager-for-wp-e-commerce' ),
+				);
+			}
+			// Check if role is valid.
+			if ( ! in_array( $target_role, array_keys( get_editable_roles() ), true ) ) {
+				return array(
+					'valid'   => false,
+					'message' => _x( 'Invalid role specified.', 'Security error message', 'smart-manager-for-wp-e-commerce' ),
+				);
+			}
+			// Prevent non-admin from assigning administrator role.
+			if ( 'administrator' === $target_role && ! $is_current_user_admin ) {
+				return array(
+					'valid'   => false,
+					'message' => _x( 'You cannot assign the administrator role.', 'Security error message', 'smart-manager-for-wp-e-commerce' ),
+				);
+			}
+			// Prevent self-promotion.
+			if ( ! empty( $user_id ) && get_current_user_id() === intval( $user_id ) ) {
+				$current_user   = wp_get_current_user();
+				$current_role   = ( ! empty( $current_user->roles ) && is_array( $current_user->roles ) ) ? $current_user->roles[0] : '';
+				$role_hierarchy = array( 'subscriber', 'contributor', 'author', 'editor', 'shop_manager', 'administrator' );
+				$current_level  = array_search( $current_role, $role_hierarchy, true );
+				$target_level   = array_search( $target_role, $role_hierarchy, true );
+				if ( false !== $target_level && false !== $current_level && $target_level > $current_level ) {
+					return array(
+						'valid'   => false,
+						'message' => _x( 'You cannot promote yourself to a higher role.', 'Security error message', 'smart-manager-for-wp-e-commerce' ),
+					);
+				}
+			}
+			return array( 'valid' => true );
+		}
+
+		/**
+		 * Validate blocked usermeta key modification.
+		 *
+		 * @param string $key The usermeta key to check.
+		 * @return array Validation result with 'valid' boolean and optional 'message'.
+		 */
+		public static function validate_usermeta_key( $key = '' ) {
+			$is_current_user_admin = current_user_can( 'administrator' );
+			if ( ! $is_current_user_admin ) {
+				$blocked_keys = self::get_blocked_usermeta_keys();
+				if ( in_array( $key, $blocked_keys, true ) ) {
+					return array(
+						'valid'   => false,
+						'message' => _x( 'Modifying this field is not allowed.', 'Security error message', 'smart-manager-for-wp-e-commerce' ),
+					);
+				}
+			}
+			return array( 'valid' => true );
+		}
+
+		/**
+		 * Validate batch update permissions for users.
+		 *
+		 * @param array $result The validation result.
+		 * @param array $args   The batch update arguments.
+		 * @return array Modified validation result.
+		 */
+		public static function validate_user_batch_update_permissions( $result = array(), $args = array() ) {
+			if ( ( empty( $args ) ) || ( ! is_array( $args ) ) || ( empty( $args['req_params'] ) ) ) {
+				return array( 'valid' => true );
+			}
+			$req_params = $args['req_params'];
+			// Only process for user module and non admins.
+			if ( ( ! is_array( $req_params ) ) || ( empty( $req_params['active_module'] ) ) || ( 'user' !== $req_params['active_module'] ) || ( current_user_can( 'administrator' ) ) ) {
+				return $result;
+			}
+			// Check if current user can edit users.
+			$can_edit = self::validate_can_edit_users();
+			if ( is_array( $can_edit ) && ! $can_edit['valid'] ) {
+				if ( is_callable( 'sa_manager_log' ) ) {
+					sa_manager_log( 'error', _x( 'User batch update validation failed: ', 'batch update process', 'smart-manager-for-wp-e-commerce' ) . $can_edit['message'] );
+				}
+				return $can_edit;
+			}
+			return array( 'valid' => true );
 		}
 	}
 }

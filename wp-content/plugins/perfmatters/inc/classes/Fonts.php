@@ -1,7 +1,10 @@
 <?php
 namespace Perfmatters;
 
-use Requests;
+if(!defined('REQUESTS_SILENCE_PSR0_DEPRECATIONS')) {
+    define('REQUESTS_SILENCE_PSR0_DEPRECATIONS', true);
+}
+use Requests as RequestsOld; //deprecated
 
 class Fonts
 {
@@ -10,16 +13,23 @@ class Fonts
     //initialize fonts
     public static function init() {
         if(empty(Config::$options['fonts']['disable_google_fonts'])) {
+            add_action('perfmatters_queue', array('Perfmatters\Fonts', 'queue'));
+        }
+        add_action('wp_ajax_perfmatters_clear_local_fonts', array('Perfmatters\Fonts', 'clear_local_fonts_ajax'));
+    }
 
-            //add display swap to the buffer
-            if(!empty(Config::$options['fonts']['display_swap'])) {
-                add_action('perfmatters_output_buffer_template_redirect', array('Perfmatters\Fonts', 'display_swap'));
-            }
+    //queue functions
+    public static function queue()
+    {
 
-            //add local google fonts to the buffer
-            if(!empty(Config::$options['fonts']['local_google_fonts'])) {
-                add_action('perfmatters_output_buffer_template_redirect', array('Perfmatters\Fonts', 'local_google_fonts'));
-            }
+        //add display swap to the buffer
+        if(!empty(Config::$options['fonts']['display_swap'])) {
+            add_action('perfmatters_output_buffer', array('Perfmatters\Fonts', 'display_swap'));
+        }
+
+        //add local google fonts to the buffer
+        if(!empty(Config::$options['fonts']['local_google_fonts'])) {
+            add_action('perfmatters_output_buffer', array('Perfmatters\Fonts', 'local_google_fonts'));
         }
     }
 
@@ -30,6 +40,10 @@ class Fonts
         preg_match_all('#<link[^>]+?href=(["\'])([^>]*?fonts\.googleapis\.com\/css.*?)\1.*?>#i', $html, $google_fonts, PREG_SET_ORDER);
         if(!empty($google_fonts)) {
             foreach($google_fonts as $google_font) {
+
+                if(!self::is_google_fonts_link_host($google_font[2], array('fonts.googleapis.com'))) {
+                    continue;
+                }
 
                 //replace display parameter
                 $new_href = preg_replace('/&display=(auto|block|fallback|optional|swap)/', '', html_entity_decode($google_font[2]));
@@ -64,6 +78,9 @@ class Fonts
         preg_match_all('#<link(?:[^>]+)?href=(["\'])([^>]*?fonts\.(gstatic|googleapis)\.com.*?)\1.*?>#i', $html, $google_links, PREG_SET_ORDER);
         if(!empty($google_links)) {
             foreach($google_links as $google_link) {
+                if(!self::is_google_fonts_link_host($google_link[2], array('fonts.googleapis.com', 'fonts.gstatic.com'))) {
+                    continue;
+                }
                 if(preg_match('#rel=(["\'])(.*?(preconnect|prefetch).*?)\1#i', $google_link[0])) {
                     $html = str_replace($google_link[0], '', $html);
                 }
@@ -71,12 +88,19 @@ class Fonts
         }
 
         //find google fonts
-        preg_match_all('#<link[^>]+?href=(["\'])([^>]*?fonts\.googleapis\.com\/css.*?)\1.*?>#i', $html, $google_fonts, PREG_SET_ORDER);
+        preg_match_all('#<link[^>]+?href=(["\'])([^>]*?fonts\.googleapis\.com\/(css|icon).*?)\1.*?>#i', $html, $google_fonts, PREG_SET_ORDER);
         if(!empty($google_fonts)) {
+
+            $count = 1;
+
             foreach($google_fonts as $google_font) {
+
+                if(!self::is_google_fonts_link_host($google_font[2], array('fonts.googleapis.com'))) {
+                    continue;
+                }
      
                 //create unique file details
-                $file_name = substr(md5($google_font[2]), 0, 12) . ".google-fonts.css";
+                $file_name = substr(md5($google_font[2]), 0, 12) . ".google-fonts.min.css";
                 $file_path = PERFMATTERS_CACHE_DIR . 'fonts/' . $file_name;
                 $file_url = PERFMATTERS_CACHE_URL . 'fonts/' . $file_name;
 
@@ -87,11 +111,19 @@ class Fonts
                     }
                 }
 
-                //create font tag with new url
-                $new_google_font = str_replace($google_font[2], $file_url, $google_font[0]);
-
+                //swap url in original tag
+                if(empty(Config::$options['fonts']['method'])) {
+                    $new_google_font = str_replace($google_font[2], $file_url, $google_font[0]);
+                }
+                //inline font
+                else {
+                    $new_google_font = '<style id="perfmatters-google-font-' . $count . '">' . file_get_contents($file_path) . '</style>';
+                }
+                
                 //replace original font tag
                 $html = str_replace($google_font[0], $new_google_font, $html);
+
+                $count++;
             }
         }
 
@@ -101,21 +133,47 @@ class Fonts
     //download and save google font css file
     private static function download_google_font($url, $file_path)
     {
+        if(!self::is_google_fonts_link_host($url, array('fonts.googleapis.com'))) {
+            return false;
+        }
+
+        $url = html_entity_decode($url);
+
         //add https if using relative scheme
         if(substr($url, 0, 2) === '//') {
             $url = 'https:' . $url;
         }
 
         //download css file
-        $css_response = wp_remote_get(html_entity_decode($url), array('user-agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36'));
+        $css_response = wp_remote_get($url, array(
+            'user-agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
+            'redirection' => 0,
+        ));
 
-        //check valid response
-        if(wp_remote_retrieve_response_code($css_response) !== 200) {
+        if(is_wp_error($css_response) || wp_remote_retrieve_response_code($css_response) !== 200) {
+            return false;
+        }
+
+        if(!self::is_css_content_type($css_response)) {
             return false;
         }
 
         //css content
         $css = $css_response['body'];
+
+        //limit subsets
+        if(!empty(Config::$options['fonts']['limit_subsets']) && !empty(Config::$options['fonts']['subsets'])) {
+
+            preg_match_all('/\/\*\s([a-z\-]+?)\s\*\/.*?}/s', $css, $fonts, PREG_SET_ORDER);
+
+            if(!empty($fonts)) {
+                foreach($fonts as $font) {
+                    if(!empty($font[1]) && !in_array($font[1], Config::$options['fonts']['subsets'])) {
+                        $css = str_replace($font[0], '', $css);
+                    }
+                }
+            }
+        }
 
         //find font files inside the css
         $regex = '/url\((https:\/\/fonts\.gstatic\.com\/.*?)\)/';
@@ -134,13 +192,16 @@ class Fonts
         }
 
         //download new font files to cache directory
-        if(method_exists(Requests::class, 'request_multiple')) {
-            $font_responses = Requests::request_multiple($font_requests);
+        if(method_exists('WpOrg\Requests\Requests', 'request_multiple')) { //wp 6.2+
+            $font_responses = \WpOrg\Requests\Requests::request_multiple($font_requests);
+        }
+        elseif(method_exists(RequestsOld::class, 'request_multiple')) { //deprecated
+            $font_responses = RequestsOld::request_multiple($font_requests);
+        }   
 
+        if(!empty($font_responses)) {
             foreach($font_responses as $font_response) {
-
-                if(is_a($font_response, 'Requests_Response')) {
-
+                if(is_a($font_response, 'Requests_Response') || is_a($font_response, 'WpOrg\Requests\Response')) {
                     $font_path = PERFMATTERS_CACHE_DIR . 'fonts/' . basename($font_response->url);
 
                     //save font file
@@ -149,20 +210,76 @@ class Fonts
             }
         }
 
-        //save final css file
-        file_put_contents($file_path, $css);
+        //minify and save file
+        $minifier = new \MatthiasMullie\Minify\CSS($css);
+        $minifier->minify($file_path);
 
         return true;
     }
 
-    //delete all files in the fonts cache directory
-    public static function clear_local_fonts()
+    //validate link href host against an allowed list
+    private static function is_google_fonts_link_host($url, array $allowed_hosts)
     {
-        $files = glob(PERFMATTERS_CACHE_DIR . 'fonts/*');
+        $url = html_entity_decode($url);
+
+        if(substr($url, 0, 2) === '//') {
+            $url = 'https:' . $url;
+        }
+
+        $host = wp_parse_url($url, PHP_URL_HOST);
+
+        if(empty($host)) {
+            return false;
+        }
+
+        return in_array(strtolower($host), $allowed_hosts, true);
+    }
+
+    //validate remote response content type is css
+    private static function is_css_content_type($response)
+    {
+        $content_type = wp_remote_retrieve_header($response, 'content-type');
+
+        if(is_array($content_type)) {
+            $content_type = end($content_type);
+        }
+
+        if(empty($content_type)) {
+            return false;
+        }
+
+        $content_type = strtolower(trim(strtok($content_type, ';')));
+
+        return $content_type === 'text/css';
+    }
+
+    //delete all files in the fonts cache directory
+    public static function clear_local_fonts($site = null)
+    {
+        $path = '';
+
+        //add site path if specified
+        if(is_object($site) && !empty($site->path)) {
+           $path = ltrim($site->path, '/');
+        }
+
+        $files = glob(PERFMATTERS_CACHE_DIR . $path . 'fonts/*');
         foreach($files as $file) {
             if(is_file($file)) {
                 unlink($file);
             }
         }
+    }
+
+    //clear local fonts ajax action
+    public static function clear_local_fonts_ajax() {
+
+        Ajax::security_check();
+
+        self::clear_local_fonts();
+
+        wp_send_json_success(array(
+            'message' => __('Local fonts cleared.', 'perfmatters'), 
+        ));
     }
 }

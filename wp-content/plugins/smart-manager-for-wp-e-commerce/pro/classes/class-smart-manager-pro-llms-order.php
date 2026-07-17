@@ -25,7 +25,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Llms_Order' ) ) {
 
             parent::__construct($this->dashboard_key);
 
-			add_filter( 'sm_dashboard_model',array( &$this,'dashboard_model' ), 10, 2 );
+			add_filter( 'sa_sm_dashboard_model',array( &$this,'dashboard_model' ), 10, 2 );
 		}
 
 		public static function actions() {
@@ -39,7 +39,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Llms_Order' ) ) {
 			$this->visible_columns = array();
             
             // Code for order statuses
-            $post_status_col_index = sm_multidimesional_array_search('posts_post_status', 'data', $this->dashboard_model['columns']);
+            $post_status_col_index = sa_multidimesional_array_search('posts_post_status', 'data', $this->dashboard_model['columns']);
 			
 			if( function_exists('llms_get_order_statuses') ) {
 				$order_statuses = llms_get_order_statuses();

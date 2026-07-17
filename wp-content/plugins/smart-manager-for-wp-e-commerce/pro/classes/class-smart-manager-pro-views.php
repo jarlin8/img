@@ -241,24 +241,37 @@ class Smart_Manager_Pro_Views {
 
 	/**
 	 * Function to get eligible user id for editing columns in custom view
+	 * 
+	 * @return void Sends a JSON response with:
+     * is_author (bool): Whether current user is the view author.
+     * can_delete (bool): Whether current user can delete the view.
 	 */
 	public function is_view_author() {	
 		global $wpdb;
 		$slug = ( ! empty( $this->req_params['slug'] ) ) ? sanitize_title( wp_unslash( $this->req_params['slug'] ) ) : '';
-		if( empty( $slug ) )
-		{
-			wp_send_json( false );
+		if( empty( $slug ) ) {
+			wp_send_json( array( 'is_author' => false, 'can_delete' => false ) );
 		}
 
-		$row_count = $wpdb->get_var(
-						$wpdb->prepare("SELECT COUNT(id) 
-										FROM {$wpdb->prefix}sm_views
-										WHERE author = %d AND slug = %s",
-										get_current_user_id(), $slug
-										)
-					);
+		$view_author_id = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT author FROM {$wpdb->prefix}sm_views WHERE slug = %s",
+				$slug
+			)
+		);
 
-		wp_send_json( ( ! empty( $row_count ) ) ? true : false );
+		$is_author = ( ! empty( $view_author_id ) && intval( $view_author_id ) === intval( get_current_user_id() ) ) ? true : false;
+		$can_delete = $is_author;
+
+		// Admin delete permission logic.
+		$current_user_role = ( class_exists( 'Smart_Manager' ) && is_callable( array( 'Smart_Manager', 'get_current_user_role' ) ) ) ? Smart_Manager::get_current_user_role() : '';
+		if ( ( ( ! empty( $current_user_role ) ) && ( 'administrator' === $current_user_role ) ) && ( empty( $is_author ) ) && ( ! empty( $view_author_id ) ) ) {
+			$view_author = get_userdata( intval( $view_author_id ) );
+			// Can delete if author doesn't exist or author is not an admin
+			$can_delete = ( false === $view_author || ! in_array( 'administrator', (array) $view_author->roles, true ) );
+		}
+
+		wp_send_json( array( 'is_author' => $is_author, 'can_delete' => $can_delete ) );
 	}
 
     /**

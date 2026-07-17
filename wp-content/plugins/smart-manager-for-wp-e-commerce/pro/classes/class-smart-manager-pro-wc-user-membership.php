@@ -31,8 +31,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_WC_User_Membership' ) ) {
 		}
 
 		public function hooks() {
-			add_filter('sm_dashboard_model',array(&$this,'wc_user_membership_dashboard_model'),10,2);
+			add_filter('sa_sm_dashboard_model',array(&$this,'wc_user_membership_dashboard_model'),10,2);
 			add_filter('sm_data_model',array(&$this,'wc_user_membership_data_model'),10,2);
+			add_filter( 'sm_before_search_string_process', array( $this, 'map_plan_name_search_operators' ), 12, 1 );
 		}
 
 		public static function generate_members_custom_column_model( $column_model ) {
@@ -44,12 +45,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_WC_User_Membership' ) ) {
 
 				$src = 'custom/'.$col;
 
-				$col_index = sm_multidimesional_array_search ($src, 'src', $column_model);
+				$col_index = sa_multidimesional_array_search ($src, 'src', $column_model);
 
 				if( empty( $col_index ) ) {
 					$column_model [$index]                   = array();
 					$column_model [$index]['src']            = $src;
-					$column_model [$index]['data']           = sanitize_title(str_replace('/', '_', $column_model [$index]['src'])); // generate slug using the wordpress function if not given 
+					$column_model [$index]['data']           = sanitize_title(str_replace('/', '_', $column_model [$index]['src'])); // generate slug using the wordpress function if not given
 					$column_model [$index]['name']           = __(ucwords(str_replace('_', ' ', $col)), 'smart-manager-for-wp-e-commerce');
 					$column_model [$index]['key']            = $column_model [$index]['name'];
 					$column_model [$index]['type']           = 'text';
@@ -61,7 +62,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_WC_User_Membership' ) ) {
 					$column_model [$index]['resizable']      = true;
 					$column_model [$index]['allow_showhide'] = true;
 					$column_model [$index]['exportable']     = true;
-					$column_model [$index]['searchable']     = false;
+					$column_model [$index]['searchable']     = ( 'plan' === $col ) ? true : false;
 					$column_model [$index]['save_state']     = true;
 					$column_model [$index]['values']         = array();
 					$column_model [$index]['search_values']  = array();
@@ -73,7 +74,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_WC_User_Membership' ) ) {
 		}
 
 		public function wc_user_membership_dashboard_model ($dashboard_model, $dashboard_model_saved) {
-			
+			global $wpdb;
 			$visible_columns = array( 'ID', 'name', 'email', 'plan', 'post_date', 'post_status', '_start_date', '_end_date', '_renewal_login_token', 'link' );
 
 			$readonly_columns = array( 'name', 'email', 'plan', 'link' );
@@ -81,16 +82,13 @@ if ( ! class_exists( 'Smart_Manager_Pro_WC_User_Membership' ) ) {
 			$numeric_columns = array( 'id', 'post_author', 'post_parent', 'menu_order', 'comment_count', '_edit_last', 'post_id' );
 			$datetime_columns = array( 'post_date', 'post_date_gmt', 'post_modified', 'post_modified_gmt', '_end_date', '_start_date' );
 
-			$post_status_col_index = sm_multidimesional_array_search('posts_post_status', 'data', $dashboard_model['columns']);
-			
+			$post_status_col_index = sa_multidimesional_array_search('posts_post_status', 'data', $dashboard_model['columns']);
 			$user_membership_statuses = $this->get_user_membership_statuses();
-			
 			$order_statuses_keys = ( !empty( $user_membership_statuses ) ) ? array_keys($user_membership_statuses) : array();
 
 			$dashboard_model['columns'][$post_status_col_index]['defaultValue'] = ( !empty( $user_membership_statuses_keys[0] ) ) ? $user_membership_statuses_keys[0] : 'wc-pending';
 
 			$dashboard_model['columns'][$post_status_col_index]['save_state'] = true;
-			
 			$dashboard_model['columns'][$post_status_col_index]['values'] = $user_membership_statuses;
 			$dashboard_model['columns'][$post_status_col_index]['selectOptions'] = $user_membership_statuses; //for inline editing
 
@@ -149,6 +147,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_WC_User_Membership' ) ) {
 				}
 
 				if ( ! empty( $src ) ) {
+					if ( 'plan' === $src ) {
+						$column['type'] = 'dropdown';
+						$column['values'] = array();
+						$column['table_name'] = $wpdb->prefix.'custom';
+						$column['col_name'] = 'plan';
+					}
 					if ( empty( $dashboard_model_saved ) ) {
 						if ( in_array( $src, $numeric_columns ) ) {
 							$column['type'] = 'numeric';
@@ -177,12 +181,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_WC_User_Membership' ) ) {
 			}
 
 			if (!empty($dashboard_model_saved)) {
-				$col_model_diff = sm_array_recursive_diff( $dashboard_model_saved, $dashboard_model );	
+				$col_model_diff = sa_array_recursive_diff( $dashboard_model_saved, $dashboard_model );
 			}
 
 			//clearing the transients before return
 			if (!empty($col_model_diff)) {
-				delete_transient( 'sa_sm_'.$this->dashboard_key );	
+				delete_transient( 'sa_sm_'.$this->dashboard_key );
 			}
 
 			return $dashboard_model;
@@ -227,7 +231,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_WC_User_Membership' ) ) {
 		}
 
 		public function wc_user_membership_data_model( $data_model, $data_col_params ) {
-			
 			if( is_callable( array( 'Smart_Manager_Pro_WC_User_Membership', 'generate_members_custom_column_data' ) ) ) {
 				$data_model = self::generate_members_custom_column_data( $data_model, $this->req_params );
 			}
@@ -313,6 +316,28 @@ if ( ! class_exists( 'Smart_Manager_Pro_WC_User_Membership' ) ) {
 
 		}
 
+		/**
+		 * Update rule type and operator for custom 'plan' field in advanced search.
+		 *
+		 * Converts 'custom.plan' type to 'posts.post_parent'.
+		 *
+		 * @param array $rule_group Search rule group.
+		 * @return array Modified rule group.
+		 */
+		public function map_plan_name_search_operators( $rule_group = array() ) {
+			if ( ( empty( $rule_group ) ) || ( ! is_array( $rule_group ) ) ) {
+				return $rule_group;
+			}
+			global $wpdb;
+			foreach ( $rule_group['rules'] as &$rule ) {
+				if ( ( empty( $rule ) ) || ( ! is_array( $rule ) ) || ( empty( $rule['operator'] ) ) || ( empty( $rule['type'] ) ) || ( $wpdb->prefix.'custom.plan' !== $rule['type'] ) ) {
+					continue;
+				}
+				$rule['type'] = $wpdb->prefix.'posts.post_parent';
+				$rule['operator'] = ( 'is' === $rule['operator'] ) ? 'eq' : 'neq';
+			}
+			return $rule_group;
+		}
 	}
 
 }

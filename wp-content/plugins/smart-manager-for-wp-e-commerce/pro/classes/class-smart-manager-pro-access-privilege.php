@@ -454,6 +454,25 @@ if ( ! class_exists( 'Smart_Manager_Pro_Access_Privilege' ) ) {
 		}
 
 		/**
+		 * Check if a specific dashboard is accessible for the current user.
+		 *
+		 * @param string $dashboard_key The dashboard key to check.
+		 * @return bool True if accessible, false otherwise.
+		 */
+		public static function is_dashboard_accessible( $dashboard_key = '' ) {
+			if ( empty( $dashboard_key ) ) {
+				return false;
+			}
+			// Get the user's accessible dashboards.
+			$accessible_dashboards = self::get_current_user_access_privilege_settings();
+			if( empty( $accessible_dashboards ) || ( ! is_array( $accessible_dashboards ) ) ){
+				return false;
+			}
+			// Accessible if: 'valid' list exists AND dashboard_key is present in it OR 'valid' list is empty AND 'not_valid' list exists AND dashboard_key is NOT present in it.
+			return ( ( ! empty( $accessible_dashboards['valid'] ) && is_array( $accessible_dashboards['valid'] ) && in_array( $dashboard_key, $accessible_dashboards['valid'], true ) ) || ( empty( $accessible_dashboards['valid'] ) && ! empty( $accessible_dashboards['not_valid'] ) && is_array( $accessible_dashboards['not_valid'] ) && ! in_array( $dashboard_key, $accessible_dashboards['not_valid'], true ) ) ) ? true : false;
+		}
+
+		/**
 		* Function to get accessible dashboards.
 		*
 		* @param  array $dashboards   dashboards array.

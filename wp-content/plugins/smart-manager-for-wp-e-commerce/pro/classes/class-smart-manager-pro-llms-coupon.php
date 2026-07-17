@@ -25,7 +25,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Llms_Coupon' ) ) {
 
             parent::__construct($this->dashboard_key);
 
-			add_filter( 'sm_dashboard_model',array( &$this,'dashboard_model' ), 10, 2 );
+			add_filter( 'sa_sm_dashboard_model',array( &$this,'dashboard_model' ), 10, 2 );
 		}
 
 		public static function actions() {
@@ -40,7 +40,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Llms_Coupon' ) ) {
 
             
             // Code for handling discount type for coupon
-            $discount_type_col_index = sm_multidimesional_array_search('postmeta_meta_key__llms_discount_type_meta_value__llms_discount_type', 'data', $this->dashboard_model['columns']);
+            $discount_type_col_index = sa_multidimesional_array_search('postmeta_meta_key__llms_discount_type_meta_value__llms_discount_type', 'data', $this->dashboard_model['columns']);
 
 			$discount_types = array(
                 'percent'   => __( 'Percentage Discount', 'lifterlms' ),

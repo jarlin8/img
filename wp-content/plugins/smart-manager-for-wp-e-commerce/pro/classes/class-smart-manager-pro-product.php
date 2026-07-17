@@ -29,11 +29,20 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 
 			if ( file_exists(SM_PLUGIN_DIR_PATH . '/classes/class-smart-manager-product.php') ) {
 				include_once SM_PLUGIN_DIR_PATH . '/classes/class-smart-manager-product.php';
-				$this->product = new Smart_Manager_Product( $dashboard_key );
+				$this->product = Smart_Manager_Product::instance( $dashboard_key );
 			}
-
-			add_filter('sm_dashboard_model',array(&$this,'products_dashboard_model'),12,2);
 			add_filter( 'sm_data_model', array( &$this, 'products_data_model' ), 12, 2 );
+			add_filter( 'sm_beta_background_entire_store_ids_select', array( __CLASS__, 'background_entire_store_ids_select' ), 10, 2 );
+			add_filter( 'sm_beta_background_entire_store_ids_from', array( __CLASS__, 'background_entire_store_ids_from' ), 10, 2 );
+			add_filter( 'sm_beta_background_entire_store_ids_where', array( __CLASS__, 'background_entire_store_ids_where' ), 10, 2 );
+			add_filter( 'sa_manager_batch_update_selection_data', array( __CLASS__, 'process_batch_update_selection_data' ), 10, 2 );
+			add_filter( 'sa_sm_search_results_selected_ids', array( __CLASS__, 'get_product_types_of_search_result_ids' ), 10, 2 );
+			add_filter( 'sa_sm_use_get_results_in_select_entire_store_ids_query', function( $use, $args ) {
+				// Call the callback function and return true/false based on its result
+				return self::batch_update_params_has_suscription_update_flag( $args ) ? true : false;
+			}, 10, 2 );
+			add_filter('sm_required_cols',array( __CLASS__, 'add_required_cols' ), 12, 1 );
+			add_filter( 'sa_manager_batch_update_params', array( __CLASS__, 'add_batch_update_params' ), 10, 2 );
 		}
 
 		public function __call( $function_name, $arguments = array() ) {
@@ -54,19 +63,11 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 		}
 
 		public static function actions() {
-			// add_filter('sm_beta_batch_update_entire_store_ids_query', __CLASS__. '::products_batch_update_entire_store_ids_query', 10, 1);
-			add_filter('sm_beta_post_batch_process_args', __CLASS__. '::products_post_batch_process_args', 10, 1);
-			add_action('sm_pre_batch_update_db_updates', __CLASS__. '::products_pre_batch_update_db_updates', 10, 2);
-			add_filter('sm_post_batch_update_db_updates', __CLASS__. '::products_post_batch_update_db_updates', 10, 2);
-			add_filter( 'sm_beta_batch_update_prev_value',__CLASS__. '::products_batch_update_prev_value', 12, 2 );
 			add_filter( 'sm_task_details_update_by_prev_val',__CLASS__. '::task_details_update_by_prev_val', 12, 1 );
-			add_filter( 'sm_disable_task_details_update',__CLASS__. '::disable_task_details_update', 12, 1 );
-			add_filter( 'sm_get_value_for_copy_from_operator',__CLASS__. '::get_value_for_copy_from_operator', 12, 2 );
-			add_filter( 'sm_update_value_for_copy_from_operator',__CLASS__. '::update_value_for_copy_from_operator', 12, 1 );
+			add_filter( 'sm_disable_task_details_update',__CLASS__. '::disable_task_details_update', 12, 2 );
 			add_filter( 'sm_process_undo_args_before_update',__CLASS__. '::process_undo_args_before_update', 12, 1 );
 			add_filter( 'sm_task_update_action',__CLASS__. '::task_update_action', 12, 2 );
 			add_filter( 'sm_delete_attachment_get_matching_gallery_images_post_ids',__CLASS__. '::get_matching_gallery_images_post_ids', 12, 2 );
-			add_action( 'sm_beta_pre_process_batch', __CLASS__. '::products_pre_batch_update' );
 			add_action( 'sm_pro_pre_process_delete_records', __CLASS__. '::products_pre_process_delete_records' );
 			add_action( 'sm_pro_pre_process_move_to_trash_records', __CLASS__. '::products_pre_process_move_to_trash_records' );
 			add_filter( 'sm_special_batch_update_operators', __CLASS__. '::special_batch_update_operators', 10, 2 );
@@ -80,550 +81,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 			add_filter('woocommerce_product_recount_terms', '__return_false');
 		}
 
-		public static function products_post_batch_process_args( $args ) {
-			if ( ! empty( $args['operator'] ) && ( in_array( $args['operator'], array( 'set_to_regular_price', 'set_to_sale_price', 'set_to_regular_price_and_decrease_by_per', 'set_to_regular_price_and_decrease_by_num' ) ) ) ) {
-				$price_operators = array(
-					'set_to_regular_price',
-					'set_to_sale_price',
-					'set_to_regular_price_and_decrease_by_per',
-					'set_to_regular_price_and_decrease_by_num'
-				);
-				if ( in_array( $args['operator'], $price_operators ) ) {
-					// Determine the selected field for fetching previous value.
-					$col_nm = ( 'set_to_sale_price' === $args['operator'] ) ? '_sale_price' : '_regular_price';
-					// Fetch the previous value.
-					$prev_val = get_post_meta( $args['id'], $col_nm, true );
-					if ( in_array( $args['operator'], array( 'set_to_regular_price',
-					'set_to_sale_price' ) ) ) {
-						$args['value'] = $prev_val;
-					}
-					// Modify value only for decrease operations.
-					$args['value'] = ( 'set_to_regular_price_and_decrease_by_per' === $args['operator'] ) ? self::decrease_value_by_per( $prev_val, $args['value'] ) : ( ( 'set_to_regular_price_and_decrease_by_num' === $args['operator'] ) ? self::decrease_value_by_num( $prev_val, $args['value'] ) : $args['value'] );
-				}
-			}
-			return $args;
-		}
-
-		public function products_dashboard_model ($dashboard_model, $dashboard_model_saved) {
-			global $wpdb;
-
-			$numeric_columns = array(
-				'_wc_booking_duration'               => __( 'Booking duration', 'smart-manager-for-wp-e-commerce' ),
-				'_wc_booking_min_duration'           => __( 'Minimum duration', 'smart-manager-for-wp-e-commerce' ),
-				'_wc_booking_max_duration'           => __( 'Maximum duration', 'smart-manager-for-wp-e-commerce' ),
-				'_wc_booking_cancel_limit'           => __( 'Booking can be cancelled until', 'smart-manager-for-wp-e-commerce' ),
-				'_wc_booking_min_persons_group'      => __( 'Min persons', 'smart-manager-for-wp-e-commerce' ),
-				'_wc_booking_max_persons_group'      => __( 'Max persons', 'smart-manager-for-wp-e-commerce' ),
-				'_wc_booking_qty'                    => __( 'Max bookings per block', 'smart-manager-for-wp-e-commerce' ),
-				'_wc_booking_min_date'               => __( 'Minimum block bookable', 'smart-manager-for-wp-e-commerce' ),
-				'_wc_booking_max_date'               => __( 'Maximum block bookable', 'smart-manager-for-wp-e-commerce' ),
-				'_wc_booking_buffer_period'          => __( 'Require a buffer period of', 'smart-manager-for-wp-e-commerce' ),
-				// https://woocommerce.com/products/minmax-quantities/
-				'minimum_allowed_quantity'           => __( 'Minimum quantity', 'smart-manager-for-wp-e-commerce' ),
-				'maximum_allowed_quantity'           => __( 'Maximum quantity', 'smart-manager-for-wp-e-commerce' ),
-				'group_of_quantity'                  => __( 'Group of...', 'smart-manager-for-wp-e-commerce' ),
-				'variation_minimum_allowed_quantity' => __( 'Variation Minimum quantity', 'smart-manager-for-wp-e-commerce' ),
-				'variation_maximum_allowed_quantity' => __( 'Variation Maximum quantity', 'smart-manager-for-wp-e-commerce' ),
-				'variation_group_of_quantity'        => __( 'Variation Group of...', 'smart-manager-for-wp-e-commerce' ),
-				// https://wordpress.org/plugins/minmax-quantity-for-woocommerce/
-				'min_quantity'                       => __( 'Minimum Quantity', 'smart-manager-for-wp-e-commerce' ),
-				'max_quantity'                       => __( 'Maximum Quantity', 'smart-manager-for-wp-e-commerce' ),
-				'min_quantity_var'                   => __( 'Variation Minimum Quantity', 'smart-manager-for-wp-e-commerce' ),
-				'max_quantity_var'                   => __( 'Variation Maximum Quantity', 'smart-manager-for-wp-e-commerce' ),
-				// https://wordpress.org/plugins/woo-min-max-quantity-limit/
-				'_wc_mmax_min'                       => __( 'Min Quantity', 'smart-manager-for-wp-e-commerce' ),
-				'_wc_mmax_max'                       => __( 'Max Quantity', 'smart-manager-for-wp-e-commerce' ),
-				// [WooCommerce Subscriptions](https://woocommerce.com/products/woocommerce-subscriptions/)
-				'_subscription_price'				 => __( 'Subscription Price', 'smart-manager-for-wp-e-commerce' ),
-				'_subscription_sign_up_fee'			 => __( 'Sign-up Fee', 'smart-manager-for-wp-e-commerce' ),
-				'_subscription_trial_length'		 => __( 'Free Trial', 'smart-manager-for-wp-e-commerce' ),
-				// [WooCommerce Cost Of Goods](https://woocommerce.com/products/woocommerce-cost-of-goods/)
-				'_wc_cog_cost'		 				 => __( 'Cost of Good', 'smart-manager-for-wp-e-commerce' ),
-				// [Germanized for WooCommerce](https://wordpress.org/plugins/woocommerce-germanized/)
-				'_unit_product'						 => __( 'Product Units', 'smart-manager-for-wp-e-commerce' ),
-				'_unit_base'						 => __( 'Unit Price Units', 'smart-manager-for-wp-e-commerce' ),
-				'_unit_price_regular'				 => __( 'Regular Unit Price', 'smart-manager-for-wp-e-commerce' ),
-				'_unit_price_sale'					 => __( 'Sale Unit Price', 'smart-manager-for-wp-e-commerce' ),
-			);
-
-			$numeric_text_editor_columns = array( '_wc_booking_duration', '_wc_booking_min_duration', '_wc_booking_max_duration', '_wc_booking_cancel_limit',
-												'_wc_booking_min_date', '_wc_booking_max_date' );
-
-			$checkbox_empty_one_columns = array(
-				'_wc_booking_enable_range_picker'    => __( 'Enable Calendar Range Picker?', 'smart-manager-for-wp-e-commerce' ),
-				'_wc_booking_requires_confirmation'  => __( 'Requires confirmation?', 'smart-manager-for-wp-e-commerce' ),
-				'_wc_booking_user_can_cancel'        => __( 'Can be cancelled?', 'smart-manager-for-wp-e-commerce' ),
-				'_wc_booking_has_persons'            => __( 'Has persons', 'smart-manager-for-wp-e-commerce' ),
-				'_wc_booking_has_resources'          => __( 'Has resources', 'smart-manager-for-wp-e-commerce' ),
-				'_wc_booking_person_cost_multiplier' => __( 'Multiply all costs by person count', 'smart-manager-for-wp-e-commerce' ),
-				'_wc_booking_person_qty_multiplier'  => __( 'Count persons as bookings', 'smart-manager-for-wp-e-commerce' ),
-				'_wc_booking_has_person_types'       => __( 'Enable person types', 'smart-manager-for-wp-e-commerce' ),
-				'_wc_booking_has_restricted_days'    => __( 'Restrict start and end days?', 'smart-manager-for-wp-e-commerce' ),
-				'_wc_booking_apply_adjacent_buffer'  => __( 'Adjacent Buffering?', 'smart-manager-for-wp-e-commerce' ),
-			);
-
-			$checkbox_zero_one_columns = array(
-				// https://wordpress.org/plugins/woo-min-max-quantity-limit/
-				'_wc_mmax_prd_opt_enable' => __( 'Enable Min Max Quantity', 'smart-manager-for-wp-e-commerce' ),
-			);
-
-			$checkbox_yes_no_columns = array(
-				// https://woocommerce.com/products/minmax-quantities/
-				'min_max_rules'                              => __( 'Min/Max Rules', 'smart-manager-for-wp-e-commerce' ),
-				'allow_combination'                          => __( 'Allow Combination', 'smart-manager-for-wp-e-commerce' ),
-				'minmax_do_not_count'                        => __( 'Order rules: Do not count', 'smart-manager-for-wp-e-commerce' ),
-				'minmax_cart_exclude'                        => __( 'Order rules: Exclude', 'smart-manager-for-wp-e-commerce' ),
-				'minmax_category_group_of_exclude'           => __( 'Category group-of rules: Exclude', 'smart-manager-for-wp-e-commerce' ),
-				'variation_minmax_do_not_count'              => __( 'Variation Order rules: Do not count', 'smart-manager-for-wp-e-commerce' ),
-				'variation_minmax_cart_exclude'              => __( 'Variation Order rules: Exclude', 'smart-manager-for-wp-e-commerce' ),
-				'variation_minmax_category_group_of_exclude' => __( 'Variation Category group-of rules: Exclude', 'smart-manager-for-wp-e-commerce' ),
-				// [Germanized for WooCommerce](https://wordpress.org/plugins/woocommerce-germanized/)
-				'_unit_price_auto' 							 => __( 'Calculate unit prices automatically', 'smart-manager-for-wp-e-commerce' ),
-			);
-
-			$booking_duration_unit = array(
-				'month'  => __( 'Month(s)', 'smart-manager-for-wp-e-commerce'),
-				'day'    => __( 'Day(s)', 'smart-manager-for-wp-e-commerce' ),
-				'hour'   => __( 'Hour(s)', 'smart-manager-for-wp-e-commerce' ),
-				'minute' => __( 'Minutes(s)', 'smart-manager-for-wp-e-commerce' )
-			);
-
-			$column_model = &$dashboard_model['columns'];
-
-			foreach( $column_model as $key => &$column ) {
-				if ( empty( $column['src'] ) ) continue;
-
-				$src_exploded = explode("/",$column['src']);
-
-				if (empty($src_exploded)) {
-					$col_nm = $column['src'];
-				}
-
-				if ( sizeof($src_exploded) > 2 ) {
-					$col_table = $src_exploded[0];
-					$cond = explode("=",$src_exploded[1]);
-
-					if (sizeof($cond) == 2) {
-						$col_nm = $cond[1];
-					}
-				} else {
-					$col_nm = $src_exploded[1];
-					$col_table = $src_exploded[0];
-				}
-
-				if( empty( $col_nm ) ) {
-					continue;
-				}
-
-				switch( $col_nm ) {
-					case '_wc_booking_duration_type':
-						$column['key'] = __( 'Booking Duration (Type)', 'smart-manager-for-wp-e-commerce' );
-						$column['name'] = $column['key'];
-						$booking_duration_type = array( 'fixed' => __( 'Fixed blocks of', 'smart-manager-for-wp-e-commerce'),
-														'customer' => __( 'Customer defined blocks of', 'smart-manager-for-wp-e-commerce' ) );
-
-						$column = $this->generate_dropdown_col_model( $column, $booking_duration_type );
-						break;
-					case '_wc_booking_duration_unit':
-						$column['key'] = __( 'Booking Duration (Unit)', 'smart-manager-for-wp-e-commerce' );
-						$column['name'] = $column['key'];
-						$column = $this->generate_dropdown_col_model( $column, $booking_duration_unit );
-						break;
-					case '_wc_booking_cancel_limit_unit':
-						$column['key'] = __( 'Booking can be cancelled until (Unit)', 'smart-manager-for-wp-e-commerce' );
-						$column['name'] = $column['key'];
-						$column = $this->generate_dropdown_col_model( $column, $booking_duration_unit );
-						break;
-					case '_wc_booking_min_date_unit':
-						$column['key'] = __( 'Minimum block bookable (Unit)', 'smart-manager-for-wp-e-commerce' );
-						$column['name'] = $column['key'];
-						$column = $this->generate_dropdown_col_model( $column, $booking_duration_unit );
-						break;
-					case '_wc_booking_max_date_unit':
-						$column['key'] = __( 'Maximum block bookable (Unit)', 'smart-manager-for-wp-e-commerce' );
-						$column['name'] = $column['key'];
-						$column = $this->generate_dropdown_col_model( $column, $booking_duration_unit );
-						break;
-					case '_wc_booking_calendar_display_mode':
-						$column['key'] = __( 'Calendar display mode', 'smart-manager-for-wp-e-commerce' );
-						$column['name'] = $column['key'];
-						$booking_calendar_display_mode = array( ''               => __( 'Display calendar on click', 'smart-manager-for-wp-e-commerce' ),
-															'always_visible' => __( 'Calendar always visible', 'smart-manager-for-wp-e-commerce' )
-														);
-						$column = $this->generate_dropdown_col_model( $column, $booking_calendar_display_mode );
-						break;
-					case '_wc_booking_resources_assignment':
-						$column['key'] = __( 'Resources are...', 'smart-manager-for-wp-e-commerce' );
-						$column['name'] = $column['key'];
-						$booking_resources_assignment = array( 'customer'  => __( 'Customer selected', 'smart-manager-for-wp-e-commerce' ),
-																'automatic' => __( 'Automatically assigned', 'smart-manager-for-wp-e-commerce' )
-															);
-						$column = $this->generate_dropdown_col_model( $column, $booking_resources_assignment );
-						break;
-					case '_wc_booking_default_date_availability':
-						$column['key'] = __( 'All dates are...', 'smart-manager-for-wp-e-commerce' );
-						$column['name'] = $column['key'];
-						$booking_resources_date_availability = array( 'available'     => __( 'available by default', 'smart-manager-for-wp-e-commerce' ),
-																'non-available' => __( 'not-available by default', 'smart-manager-for-wp-e-commerce' )
-															);
-						$column = $this->generate_dropdown_col_model( $column, $booking_resources_date_availability );
-						break;
-					case '_wc_booking_check_availability_against':
-						$column['key'] = __( 'Check rules against...', 'smart-manager-for-wp-e-commerce' );
-						$column['name'] = $column['key'];
-						$booking_resources_date_availability = array(   ''        => __( 'All blocks being booked', 'smart-manager-for-wp-e-commerce' ),
-																		'start'   => __( 'The starting block only', 'smart-manager-for-wp-e-commerce' )
-																	);
-						$column = $this->generate_dropdown_col_model( $column, $booking_resources_date_availability );
-						break;
-					case '_product_addons':
-						$column['editor_schema'] = file_get_contents( SM_PLUGIN_DIR_PATH . '/pro/assets/js/json-schema/product-addons.json' );
-						break;
-					case '_subscription_period_interval':
-						$column['key'] = __( 'Subscription Periods', 'smart-manager-for-wp-e-commerce' );
-						$column['name'] = $column['key'];
-						$subscription_period_interval = ( function_exists('wcs_get_subscription_period_interval_strings') ) ? wcs_get_subscription_period_interval_strings() : array();
-						$column = $this->generate_dropdown_col_model( $column, $subscription_period_interval );
-						break;
-					case '_subscription_period':
-						$column['key'] = $column['name'] = __( 'Billing Period', 'smart-manager-for-wp-e-commerce' );
-						$subscription_period = ( function_exists('wcs_get_subscription_period_strings') ) ? wcs_get_subscription_period_strings() : array();
-						$column = $this->generate_dropdown_col_model( $column, $subscription_period );
-						break;
-					case '_subscription_length':
-						$column['key'] = __( 'Expire After', 'smart-manager-for-wp-e-commerce' );
-						$column['name'] = $column['key'];
-						$wcs_subscription_ranges = ( function_exists('wcs_get_subscription_ranges') ) ? wcs_get_subscription_ranges() : array();
-						$subscription_ranges = array( __( 'Never expire', 'smart-manager-for-wp-e-commerce' ) );
-						if( !empty( $wcs_subscription_ranges['day'] ) ) {
-							foreach( $wcs_subscription_ranges['day'] as $key => $values ) {
-								if( $key > 0 ) {
-									$subscription_ranges[ $key ] = $key .' Renewals';
-								}
-							}
-						}
-						$column = $this->generate_dropdown_col_model( $column, $subscription_ranges );
-						break;
-					case '_subscription_trial_period':
-						$column['key'] = __( 'Subscription Trial Period', 'smart-manager-for-wp-e-commerce' );
-						$column['name'] = $column['key'];
-						$subscription_time_periods = ( function_exists('wcs_get_available_time_periods') ) ? wcs_get_available_time_periods() : array();
-						$column = $this->generate_dropdown_col_model( $column, $subscription_time_periods );
-						break;
-					case ( !empty( $numeric_columns[ $col_nm ] ) ):
-					  		$column['key'] = $numeric_columns[ $col_nm ];
-					  		$column['name'] = $column['key'];
-					  		$column['type'] = 'numeric';
-					  		$column['editor'] = ( in_array( $col_nm, $numeric_text_editor_columns ) ) ? $column['type'] : 'customNumericEditor';
-							$column['min'] = 0;
-							$column['width'] = 50;
-							$column['align'] = 'right';
-							break;
-					case ( !empty( $checkbox_empty_one_columns[ $col_nm ] ) ):
-						$column['key'] = $checkbox_empty_one_columns[ $col_nm ];
-						$column['name'] = $column['key'];
-						$column['type'] = 'checkbox';
-						$column['editor'] = $column['type'];
-						$column['checkedTemplate'] = 1;
-      					$column['uncheckedTemplate'] = '';
-						$column['width'] = 30;
-						break;
-					case ( !empty( $checkbox_zero_one_columns[ $col_nm ] ) ):
-						$column['key'] = $checkbox_zero_one_columns[ $col_nm ];
-						$column['name'] = $column['key'];
-						$column['type'] = 'checkbox';
-						$column['editor'] = $column['type'];
-						$column['checkedTemplate'] = 1;
-      					$column['uncheckedTemplate'] = 0;
-						$column['width'] = 30;
-						break;
-					case ( !empty( $checkbox_yes_no_columns[ $col_nm ] ) ):
-						$column['key'] = $checkbox_yes_no_columns[ $col_nm ];
-						$column['name'] = $column['key'];
-						$column['type'] = 'checkbox';
-						$column['editor'] = $column['type'];
-						$column['checkedTemplate'] = 'yes';
-      					$column['uncheckedTemplate'] = 'no';
-						$column['width'] = 30;
-						break;
-					// [Germanized for WooCommerce](https://wordpress.org/plugins/woocommerce-germanized/)
-					case 'product_unit':
-						$column ['type']= 'dropdown';
-						$column ['renderer']= 'selectValueRenderer';
-						$column ['editable']= false;
-						$column ['editor']= 'select';
-						$column ['strict'] = true;
-						$column ['allowInvalid'] = false;
-						$column ['selectOptions'] = $column['values'];
-						break;
-					case '_unit':
-						$column ['type']= 'dropdown';
-						$column ['renderer']= 'selectValueRenderer';
-						$column ['editable']= false;
-						$column ['editor']= 'select';
-						$column ['strict'] = true;
-						$column ['allowInvalid'] = false;
-
-						$column ['values'] = $column ['selectOptions'] = array();
-						$column ['search_values'] = array();
-						if( function_exists( 'WC_Germanized' ) ){
-							$wc_germanized = WC_Germanized();
-							if( is_callable( array( $wc_germanized, 'plugin_path' ) ) ){
-								$column ['values'] = $column ['selectOptions'] = ( file_exists( $wc_germanized->plugin_path() . '/i18n/units.php' ) ) ? include( $wc_germanized->plugin_path() . '/i18n/units.php' ) : array();
-								if( ! empty( $column ['values'] ) ){
-									foreach( $column ['values'] as $key => $value ) {
-										$column['search_values'][] = array( 'key' => $key, 'value' => $value );
-									}
-								}
-							}
-						}
-						break;
-				}
-			}
-
-			if (!empty($dashboard_model_saved)) {
-				$col_model_diff = sm_array_recursive_diff($dashboard_model_saved,$dashboard_model);
-			}
-
-			//clearing the transients before return
-			if (!empty($col_model_diff)) {
-				delete_transient( 'sa_sm_'.$this->dashboard_key );
-			}
-
-			return $dashboard_model;
-		}
-
 		public static function products_batch_update_entire_store_ids_query( $query ) {
 
 			global $wpdb;
 
 			$query = $wpdb->prepare( "SELECT ID FROM {$wpdb->prefix}posts WHERE 1=%d AND post_type IN ('product', 'product_variation')", 1 );
 			return $query;
-		}
-
-		public static function products_pre_batch_update_db_updates($args) {
-
-			if( !empty( $args['id'] ) && ( !empty( $args['table_nm'] ) && $args['table_nm'] == 'posts' ) && ( !empty( $args['col_nm'] ) && $args['col_nm'] == 'post_title' ) && !empty( Smart_Manager::$sm_is_woo30 ) ) {
-				$results = sm_get_current_variation_title( array($args['id']) );
-
-	            if( count( $results ) > 0 ) {
-	                foreach( $results as $result ) {
-	                    self::$_instance->variation_product_old_title[ $result['id'] ] = $result['post_title'];
-	                }
-	            }
-			}
-		}
-
-		public static function products_post_batch_update_db_updates($update_flag = false, $args = array()) {
-
-			//code for handling updation of price & sales pice in woocommerce
-			$price_columns = array( '_regular_price', '_sale_price', '_sale_price_dates_from', '_sale_price_dates_to');
-			if ( ! empty( $args['table_nm'] ) && ( 'postmeta' === $args['table_nm'] ) && ( ( ! empty( $args['col_nm'] ) ) && ( true === in_array( $args['col_nm'], $price_columns ) ) ) ) {
-				switch ( $args['col_nm'] ) {
-					case '_sale_price_dates_from':
-						update_post_meta( $args['id'], '_sale_price_dates_from', sa_sm_get_utc_timestamp_from_site_date( $args['value'].' 00:00:00' ) );
-						break;
-					case '_sale_price_dates_to':
-						update_post_meta( $args['id'], '_sale_price_dates_to', sa_sm_get_utc_timestamp_from_site_date( $args['value'].' 23:59:59' ) );
-						break;
-					// Code to handle setting of 'regular_price' & 'sale_price' in proper way
-					case ( empty( $args['operator'] ) || ( ! empty( $args['operator'] ) && ! in_array( $args['operator'], array( 'set_to_regular_price', 'set_to_sale_price', 'copy_from_field' ) ) ) ):
-						$regular_price = ( '_regular_price' === $args['col_nm'] ) ? $args['value'] : get_post_meta( $args['id'], '_regular_price', true );
-						$sale_price = ( '_sale_price' === $args['col_nm'] ) ? $args['value'] : get_post_meta( $args['id'], '_sale_price', true );
-						$sale_price = ( $sale_price >= $regular_price ) ? '' : $sale_price;
-						update_post_meta( $args['id'], '_sale_price', $sale_price );
-						break;
-				}
-				sm_update_price_meta(array($args['id']));
-				//Code For updating the parent price of the product
-				sm_variable_parent_sync_price(array($args['id']));
-				$update_flag = true;
-			}
-
-			if ( ! empty( $args['table_nm'] ) && 'postmeta' === $args['table_nm'] && ( ! empty( $args['col_nm'] ) && in_array( $args['col_nm'], array( '_stock', '_backorders' ) ) ) ) { //For handling product inventory updates
-                $update_flag = sm_update_stock_status( $args['id'], $args['col_nm'], $args['value'] );
-            }
-
-			// Code for 'WooCommerce Product Stock Alert' plugin compat -- triggering `save_post` action
-			if ( !empty($args['table_nm']) && $args['table_nm'] == 'postmeta' && (!empty($args['col_nm']) && ( '_stock' === $args['col_nm'] || '_manage_stock' === $args['col_nm'] )) ) {
-				sm_update_post( $args['id'] );
-            }
-
-			//code to sync the variations title if the variation parent title has been updated
-			if( !empty( Smart_Manager::$sm_is_woo30 ) && ( !empty( $args['table_nm'] ) && $args['table_nm'] == 'posts' ) && ( !empty( $args['col_nm'] ) && $args['col_nm'] == 'post_title' ) ) {
-
-				$new_title = ( !empty( $args['value'] ) ) ? $args['value'] : '';
-
-				if( !empty( self::$_instance->variation_product_old_title[ $args['id'] ] ) && self::$_instance->variation_product_old_title[ $args['id'] ] != $new_title ) {
-                    $new_title_update_case = 'WHEN post_parent='. $args['id'] .' THEN REPLACE(post_title, \''. self::$_instance->variation_product_old_title[ $args['id'] ] .'\', \''. $new_title .'\')';
-                    sm_sync_variation_title( array($new_title_update_case), array($args['id']) );
-                }
-			}
-
-			if( ( ! empty( $args['table_nm'] ) && 'terms' === $args['table_nm'] ) && ( ! empty( $args['col_nm'] ) && 'product_visibility' === $args['col_nm'] ) ) {
-				$val = ( ! empty( $args['value'] ) ) ? $args['value'] : '';
-				$update_flag = self::$_instance->set_product_visibility( $args['id'], $val );
-			}
-
-			if( ( !empty( $args['table_nm'] ) && $args['table_nm'] == 'terms' ) && ( !empty( $args['col_nm'] ) && $args['col_nm'] == 'product_visibility_featured' ) ) {
-				$val = ( !empty( $args['value'] ) ) ? $args['value'] : '';
-				$update_flag = ( $val == "Yes" || $val == "yes" ) ? wp_set_object_terms( $args['id'], 'featured', 'product_visibility', true ) : wp_remove_object_terms( $args['id'], 'featured', 'product_visibility' );
-			}
-
-			//Code for updating product attributes
-			if ( ! empty( $args['table_nm'] ) && 'custom' === $args['table_nm'] && ( !empty( $args['col_nm'] ) && in_array( $args['col_nm'], array( 'product_attributes', 'product_attributes_add', 'product_attributes_remove' ) ) || ( ! empty($args['operator'] ) && in_array( $args['operator'], array( 'add_to', 'remove_from', 'copy_from' ) ) ) ) && ( ! empty( $args['meta']['attributeName'] ) ) ) {
-				$action = $args['meta']['attributeName'];
-				$current_term_ids = array();
-
-				if( !empty($action) ) {
-					delete_transient( 'wc_layered_nav_counts_' . $action );
-				}
-
-				$product_attributes = get_post_meta( $args['id'], '_product_attributes', true );
-
-				if( empty( $product_attributes ) || ! is_array( $product_attributes ) ) {
-					$product_attributes = array();
-				}
-
-				$all_terms_ids = array();
-
-				if( !empty($action) && $action != 'custom' ) {
-					$current_term_ids = wp_get_object_terms( $args['id'], $action, 'orderby=none&fields=ids' );
-					$current_term_ids = ( ! is_wp_error( $current_term_ids ) ) ? $current_term_ids : array();
-					if( !empty($args['value']) && $args['value'] == 'all' ) { //creating array of all values for the attribute
-						$taxonomy_terms = get_terms($action, array('hide_empty'=> 0,'orderby'=> 'id'));
-
-						if (!empty($taxonomy_terms)) {
-							foreach ($taxonomy_terms as $term_obj) {
-								$all_terms_ids[] = $term_obj->term_id;
-							}
-						}
-					}
-				}
-
-				if ( 'add_to' === $args['operator'] ) {
-
-					if( !empty($action) && $action != 'custom' ) {
-
-						if( ( is_array( $current_term_ids ) ) && !in_array($args['value'], $current_term_ids) ) {
-
-							if( $args['value'] != 'all' ) {
-								$current_term_ids[] = intval( $args['value'] );
-							} else {
-								$current_term_ids = $all_terms_ids;
-							}
-
-							$update_flag = wp_set_object_terms( $args['id'], $current_term_ids, $action );
-						}
-
-						if( empty($product_attributes[$action]) ) {
-							$product_attributes[$action] = array( 'name' => $action,
-															            'value' => '',
-															            'position' => 1,
-															            'is_visible' => 1,
-															            'is_variation' => 0,
-															            'is_taxonomy' => 1 );
-						}
-
-					} else if( !empty($action) && $action == 'custom' ) {
-						$value = ( ! empty( $args['meta']['attribute_values'] ) ) ? $args['meta']['attribute_values'] : '';
-						if( !empty($product_attributes[$args['value']]) ) {
-							$product_attributes[$args['value']]['value'] = $value;
-						} else {
-							$product_attributes[$args['value']] = array( 'name' => $args['value'],
-															            'value' => $value,
-															            'position' => 1,
-															            'is_visible' => 1,
-															            'is_variation' => 0,
-															            'is_taxonomy' => 0 );
-						}
-
-						$update_flag = true;
-
-					}
-
-				} else if ( 'remove_from' === $args['operator'] ) {
-					if( !empty($action) && $action != 'custom' ) {
-
-						$all = ( !empty($args['value']) && $args['value'] == 'all') ? true : false;
-
-						$key = array_search($args['value'], $current_term_ids);
-
-						if( $key !== false ) {
-							unset($current_term_ids[$key]);
-							$update_flag = wp_set_object_terms( $args['id'], $current_term_ids, $action );
-						} else if( $all === true ) {
-							$update_flag = wp_set_object_terms( $args['id'], array(), $action );
-						}
-
-						if( (count($current_term_ids) == 0 || $all === true) && !empty($product_attributes[$action]) ) {
-							unset($product_attributes[$action]);
-						}
-					}
-				} else if ( 'copy_from' === $args['operator'] && ( ! empty( $args['selected_value'] ) ) && ( ! empty( $args['id'] ) ) ) {
-					if ( ! empty( $args['value'] ) && is_array( $args['value'] ) ) {
-						foreach ( $args['value'] as $action => $value ) {
-							wp_set_object_terms( $args['id'], array(), $action );
-							$current_term_ids = wp_get_object_terms( $args['selected_value'], $action, 'orderby=none&fields=ids' );
-							$update_flag = wp_set_object_terms( $args['id'], $current_term_ids, $action );
-							if ( empty( $product_attributes[ $action ] ) ) {
-								$product_attributes[ $action ] = array( 'name' => $action,
-																       'value' => '',
-																       'position' => 1,
-																       'is_visible' => 1,
-																       'is_variation' => 0,
-																        'is_taxonomy' => 1 );
-							}
-
-						}
-					}
-
-				}
-
-				update_post_meta( $args['id'], '_product_attributes', $product_attributes );
-				sm_update_product_attribute_lookup_table( array( $args['id'] ) );
-			}
-
-			//Code for updating product categories
-			if( !empty($args['table_nm']) && $args['table_nm'] == 'custom' && (!empty($args['col_nm']) && strpos($args['col_nm'], 'product_cat') !== false ) ) {
-
-				$action = ( !empty($args['operator']) ) ? $args['operator'] : '';
-				$value = ( !empty($args['value']) ) ? intval( $args['value'] ) : 0;
-				$taxonomy_nm = 'product_cat';
-				$current_term_ids = array();
-
-				if( !empty($action) && $action != 'set_to' ) {
-					$current_term_ids = wp_get_object_terms( $args['id'], $taxonomy_nm, 'orderby=none&fields=ids' );
-
-					if( $action == 'add_to' ) {
-						$current_term_ids[] = $value;
-					} else if( $action == 'remove_from' ) {
-						$key = array_search($value, $current_term_ids);
-						if( $key !== false ) {
-							unset($current_term_ids[$key]);
-						}
-					}
-
-				} else if( !empty($action) && $action == 'set_to' ) {
-					$current_term_ids = array( $value );
-				}
-
-				$update_flag = wp_set_object_terms( $args['id'], $current_term_ids, $taxonomy_nm );
-
-			}
-
-
-			//product clear_caches
-			clean_post_cache( $args['id'] );
-			wc_delete_product_transients( $args['id'] );
-			if ( class_exists( 'WC_Cache_Helper' ) ) {
-				( !empty( Smart_Manager::$sm_is_woo39 ) && is_callable( array('WC_Cache_Helper', 'invalidate_cache_group') ) ) ? WC_Cache_Helper::invalidate_cache_group( 'product_' . $args['id'] ) : WC_Cache_Helper::incr_cache_prefix( 'product_' . $args['id'] );
-			}
-
-			do_action( 'woocommerce_update_product', $args['id'], wc_get_product( $args['id'] ) );
-
-			return ( ( ! empty( $update_flag ) ) && ( ! is_wp_error( $update_flag ) ) ) ? true : false;
-
 		}
 
 		//function to process duplicate products logic
@@ -723,21 +186,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 				return true;
 			}
 		}
-		/**
-		* Get previous values for the taxonomy
-		*
-		* @param string $prev_val previous value for current taxonomy
-		* @param array $args args has id, column name and table name
-		* @return result of function call or empty value
-		*/
-		public static function products_batch_update_prev_value( $prev_val = '', $args = array() ) {
-			if ( 'custom' === $args['table_nm'] && 'product_attributes' === $args['col_nm'] && !empty( $args['meta']['attributeName'] ) ) {
-				$result = wp_get_object_terms( $args['id'], $args['meta']['attributeName'], 'orderby=none&fields=ids' );
-				return ( ( ! empty( $result ) ) && ( ! is_wp_error( $result ) ) ) ? $result : $prev_val;
-			}
-			return $prev_val;
-		}
-
 
 		/**
 		* Update update_task_details_params param by using previous value
@@ -797,21 +245,22 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 		}
 
 		/**
-		* Disable task details update
-		*
-		* @param array $args
-		* @return boolean
-		*/
-		public static function disable_task_details_update( $args = array() ) {
+		 * Disable task details update
+		 *
+		 * @param boolean $update_flag
+		 * @param array $args
+		 * @return boolean
+		 */
+		public static function disable_task_details_update( $update_flag = false, $args = array() ) {
 			if ( ( empty( $args ) ) || ( ! is_array( $args ) ) || ( empty( $args['prev_vals'] ) ) || ( empty( $args['record_id'] ) ) || ( empty( $args['field_name'] ) ) ) {
-				return false;
+				return $update_flag;
 			}
 			switch ( $args['field_name'] ) {
 				case 'postmeta/meta_key=_product_attributes/meta_value=_product_attributes':
 					return true;
 				case 'postmeta/meta_key=_stock/meta_value=_stock':
 					if ( ( empty( Smart_Manager_Base::$update_task_details_params ) ) || ( empty( $args['data'] ) ) || ( ! is_array( $args['data'] ) ) || ( empty( $args['data']['task_id'] ) ) ) {
-						return false;
+						return $update_flag;
 					}
 					foreach ( Smart_Manager_Base::$update_task_details_params as $task_data ) {
 						if ( ( empty( $task_data ) ) || ( ! is_array( $task_data ) ) || ( empty( $task_data['record_id'] ) ) || ( empty( $task_data['task_id'] ) ) || ( empty( $task_data['field'] ) ) ) {
@@ -825,33 +274,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 					return false;
 			}
 			return false;
-		}
-
-		/**
-		* Get value for copy from operator
-		*
-		* @param string $new_val new value
-		* @param array $args array of selected field, operator and value
-		* @return array value of selected column
-		*/
-		public static function get_value_for_copy_from_operator( $new_val = '', $args = array() ) {
-			if ( empty( $args['selected_column_name'] ) || ( 'product_attributes' !== $args['selected_column_name'] ) || empty( intval( $args['selected_value'] ) ) ) {
-				return $new_val;
-			}
-			return get_post_meta( $args['selected_value'], '_product_attributes', true );
-		}
-
-		/**
-		* Update value for copy from operator
-		*
-		* @param array $args array of selected field, operator and value
-		* @return boolean
-		*/
-		public static function update_value_for_copy_from_operator( $args = array() ) {
-			if ( empty( $args['id'] ) || ( 'product_attributes' !== $args['col_nm'] ) || ( ! isset( $args['value'] ) ) ) {
-				return false;
-			}
-			return update_post_meta( $args['id'], '_product_attributes', $args['value'] );
 		}
 
 		/**
@@ -947,22 +369,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 				$data_model['items'][ $key ]['custom_stock_color_code'] = $color_code;
 			}
 			return $data_model;
-		}
-
-		/**
-		* Update certain columns before doing batch update
-		*
-		* @param array $args array of update related data.
-		* @return void
-		*/
-		public static function products_pre_batch_update( $args = array() ) {
-			if ( empty( $args['type'] ) || ( ! empty( $args['type'] ) && ( 'postmeta/meta_key=_sale_price/meta_value=_sale_price' !== $args['type'] ) ) || ( ! in_array( $args['operator'], array( 'increase_by_per', 'decrease_by_per', 'increase_by_num', 'decrease_by_num' ) ) ) || empty( $args['id'] ) ) {
-				return;
-			}
-			$regular_price = get_post_meta( $args['id'], '_regular_price', true );
-			if ( ! empty( $regular_price ) && empty( get_post_meta( $args['id'], '_sale_price', true ) ) ) {
-				update_post_meta( $args['id'], '_sale_price', $regular_price );
-			}
 		}
 
 		/**
@@ -1399,6 +805,210 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 			$args['prev_postmeta_values'][$id]['_manufacturer_slug'] = ( ! empty( $term_obj ) && ! empty( $term_obj->slug ) ) ? $term_obj->slug : '';
 
 			return $args;
+		}
+
+		/**
+		 * Checks if the batch update parameters include a subscription update flag.
+		 *
+		 * @param array $args An array of parameters to check for the subscription update flag. Default empty array.
+		 * 
+		 * @return bool True if the subscription update flag is present, false otherwise.
+		 */
+		public static function batch_update_params_has_suscription_update_flag( $args = array() ){
+			if ( ( empty( $args ) ) || ( ! is_array( $args ) ) ) {
+				return;
+			}
+			return ( ( ! empty( $args['update_product_subscriptions_price'] ) ) && ( 'true' === $args['update_product_subscriptions_price'] ) ) ? true : false;
+		}
+
+		/**
+		 * Extends a SELECT SQL query for retrieving IDs and product type of all products in the store, when updating the subscription product price.
+		 *
+		 * @param string $select The base SELECT statement to use. Default is an empty string.
+		 * @param array  $args   Additional arguments to customize the query. Default is an empty array.
+		 * 
+		 * @return string The generated SELECT SQL query for product IDs.
+		 */
+		public static function background_entire_store_ids_select( $select = '', $args = array() ) {
+			if ( ( empty( $select ) ) || ( empty( $args ) ) || ( ! is_array( $args ) ) || ( empty( self::batch_update_params_has_suscription_update_flag( $args ) ) ) ) {
+				return  $select;
+			}
+			global $wpdb;
+			return "SELECT {$wpdb->prefix}posts.ID AS product_id, t.slug AS product_type";
+		}
+
+		/**
+		 * Extends From clause of the query for selecting product IDs across the entire store in a background process when updating the subscription product price.
+		 *
+		 * @param string $from From clause
+		 * @param array  $args Additional arguments to filter or modify the query. Default empty array.
+		 * 
+		 * @return array List of product IDs matching the criteria.
+		 */
+		public static function background_entire_store_ids_from( $from = '', $args = array() ) {
+			if ( ( empty( $from ) ) || ( empty( $args ) ) || ( ! is_array( $args ) ) || ( empty( self::batch_update_params_has_suscription_update_flag( $args ) ) ) ) {
+				return  $from;
+			}
+			global $wpdb;
+			return $from." 
+			LEFT JOIN {$wpdb->prefix}posts AS parent ON {$wpdb->prefix}posts.post_parent = parent.ID
+			LEFT JOIN {$wpdb->prefix}term_relationships AS tr 
+				ON (
+					CASE 
+						WHEN {$wpdb->prefix}posts.post_type = 'product_variation' THEN parent.ID
+						ELSE {$wpdb->prefix}posts.ID
+					END
+				) = tr.object_id
+			LEFT JOIN {$wpdb->prefix}term_taxonomy AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id AND tt.taxonomy = 'product_type'
+			LEFT JOIN {$wpdb->prefix}terms AS t ON tt.term_id = t.term_id";
+
+		}
+
+		/**
+		 * Extends a WHERE clause for selecting product IDs across the entire store in a background process when updating the subscription product price.
+		 *
+		 * @param string $where Existing WHERE clause to append to. Default empty.
+		 * @param array  $args  Additional arguments for customizing the WHERE clause. Default empty array.
+		 * 
+		 * @return string Modified WHERE clause for querying product IDs.
+		 */
+		public static function background_entire_store_ids_where( $where = '', $args = array() ) {
+			if ( ( empty( $where ) ) || ( empty( $args ) ) || ( ! is_array( $args ) ) || ( empty( self::batch_update_params_has_suscription_update_flag( $args ) ) ) ) {
+				return  $where;
+			}
+			global $wpdb;
+			return " WHERE {$wpdb->prefix}posts.post_type IN ('" . implode("','", $args['post_type']) . "') AND tt.taxonomy = 'product_type'";
+		}
+
+		/**
+		 * Process batch updates selection data based on the provided parameters.
+		 *
+		 * @param array $selected_data Array of selected product data to be updated.
+		 * @param array $args    Array of request parameters for the batch update operation.
+		 * @return void
+		 */
+		public static function process_batch_update_selection_data( $selected_data = array(), $args = array() ) {
+			if( ( empty( $selected_data ) ) || ( ! is_array( $selected_data ) ) || ( empty( $selected_data['selected_ids'] ) ) || ( empty( $args ) ) || ( ! is_array( $args ) ) || ( empty( Smart_Manager_Pro_Product::batch_update_params_has_suscription_update_flag( $args ) ) ) || ( empty( $selected_data['entire_store'] ) ) ) {
+				return $selected_data;
+			}
+			$subscription_types = array( 'subscription', 'variable-subscription' );
+			// Get only subscription product IDs.
+			$selected_data['subscription_product_ids'] = array_column(
+				array_filter(
+					$selected_data['selected_ids'],
+					function( $row ) use ( $subscription_types ) {
+						return in_array( $row['product_type'], $subscription_types, true );
+					}
+				),
+				'product_id'
+			);
+			// Flatten all product IDs.
+			$selected_data['selected_ids'] = array_column( $selected_data['selected_ids'], 'product_id' );
+			return $selected_data;
+		}
+
+		/**
+		 * Retrieves an array containing product IDs and their corresponding product types from the transient list.
+		 * 
+		 * @param array $selected_ids Array of selected product ids.
+		 * @param array $args    Array of request parameters for the batch update operation.
+		 * 
+		 * @return array Array of product data, where each element contains a product ID and its type.
+		 */
+		public static function get_product_types_of_search_result_ids( $selected_ids = array(), $args = array() ) {
+			if ( ( empty( self::batch_update_params_has_suscription_update_flag( $args ) ) ) ) {
+				return $selected_ids;
+			}
+			global $wpdb;
+			// Prepare the SQL query, TODO: Later add the joins in the advanced_search_temp table in place of FIND_IN_SET to optimize the performance.
+			$query = "
+				SELECT 
+					p.ID AS product_id,
+					t.slug AS product_type
+				FROM {$wpdb->prefix}posts AS p
+				LEFT JOIN {$wpdb->prefix}posts AS parent 
+					ON p.post_parent = parent.ID
+				LEFT JOIN {$wpdb->prefix}term_relationships AS tr 
+					ON (
+						CASE 
+							WHEN p.post_type = 'product_variation' THEN parent.ID
+							ELSE p.ID
+						END
+					) = tr.object_id
+				LEFT JOIN {$wpdb->prefix}term_taxonomy AS tt 
+					ON tr.term_taxonomy_id = tt.term_taxonomy_id
+				LEFT JOIN {$wpdb->prefix}terms AS t 
+					ON tt.term_id = t.term_id
+				WHERE FIND_IN_SET(
+					p.ID,
+					(
+						SELECT option_value
+						FROM {$wpdb->prefix}options 
+						WHERE option_name =  %s
+						LIMIT 1
+					)
+				)
+				AND tt.taxonomy = 'product_type'
+				AND p.post_type IN ('product', 'product_variation')
+			";
+			$results = $wpdb->get_results( $wpdb->prepare( $query, '_transient_sa_sm_search_post_ids' ) );
+			if ( ( empty( $results ) ) || ( is_wp_error( $results ) ) || ( ! is_array( $results ) ) ) {
+				return $selected_ids;
+			}
+			$products = array();
+			foreach ( $results as $row ) {
+				if ( ( empty( $row ) ) || ( empty( $row->product_id ) ) || ( empty( $row->product_type ) ) ) {
+					continue;
+				}
+				$products[] = array(
+					'product_id'   => $row->product_id,
+					'product_type' => $row->product_type,
+				);
+			}
+			return $products;
+		}
+
+		/**
+		 * Adds required columns to the provided array of columns.
+		 *
+		 * @param array $cols Optional. An array of existing columns. Default is an empty array.
+		 * @return array The array of columns with required columns added.
+		 */
+		public static function add_required_cols( $cols = array() ) {
+			if ( ! is_array( $cols ) ) {
+				return;
+			}
+			$susbcriptions_exist  = ( class_exists( 'WC_Subscriptions' ) && function_exists( 'wcs_do_subscriptions_exist' ) ) ? wcs_do_subscriptions_exist() : false;
+			if ( empty( $susbcriptions_exist ) ) {
+				return $cols;
+			}
+			$cols[]  = 'terms_product_type';
+			return $cols;
+		}
+
+		/**
+		 * Adds batch update parameters for products.
+		 *
+		 * @param array $params Existing parameters to be updated.
+		 * @param array $args Additional arguments for batch update.
+		 * @return array Modified parameters array including batch update arguments.
+		 */
+		public static function add_batch_update_params( $params = array(), $args = array() ) {
+			if ( ( empty( $params ) ) || ( ! is_array( $params ) ) || ( empty( $args ) ) || ( ! is_array( $args ) ) || ( empty( $args['req_params'] ) ) || ( ! is_array( $args['req_params'] ) ) || ( empty( $args['req_params']['update_product_subscriptions_price'] ) ) || ( 'true' !==  $args['req_params']['update_product_subscriptions_price'] ) ) {
+				return $params;
+			}
+			//Get subscription product ids.
+			$subscription_product_ids = ( ! empty(  $args['req_params']['subscription_product_ids'] ) ) ? trim( $args['req_params']['subscription_product_ids'], '[]' ) : array();
+			$subscription_product_ids = json_decode( "[$subscription_product_ids]" );
+			if ( ( ! empty( $params['entire_store'] ) ) && ( ! empty( $args['selected_ids_and_entire_store_flag']['subscription_product_ids'] ) && ( is_array( $args['selected_ids_and_entire_store_flag']['subscription_product_ids'] ) ) ) ) {
+				$subscription_product_ids = $args['selected_ids_and_entire_store_flag']['subscription_product_ids'];
+			}
+			if ( ( empty( $subscription_product_ids ) ) || ( ! is_array( $subscription_product_ids ) ) ) {
+				return $params;
+			}
+			update_option( $args['identifier'] . '_subscription_product_ids', $subscription_product_ids, 'no' );
+			$params['update_product_subscriptions_price'] = true;
+			return $params;
 		}
 	} //End of Class
 }

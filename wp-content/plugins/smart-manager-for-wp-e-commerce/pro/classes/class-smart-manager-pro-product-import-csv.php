@@ -191,8 +191,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product_Import_CSV' ) ) {
 					}
 				}
 			}
-
-			$max_length = absint( apply_filters( 'sa_sm_sku_max_length', absint( get_option( 'sa_sm_sku_max_length', 15 ) ) ) );
+			$max_length = absint( get_option( 'sa_sm_sku_max_length', 15 ) );
+			$sku_parts_length = 3;
+			$max_length = absint( apply_filters( 'sa_sm_sku_max_length', $max_length ) );
 			$sku_parts = [];
 
 			// Use $item['category_ids'] or fallback categories for SKU part (3 chars)
@@ -200,17 +201,17 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product_Import_CSV' ) ) {
 				//In case the term($item['category_ids'][0]) does not exist, WC will create it before this function hook runs.
 				$term = get_term( absint( $item['category_ids'][0] ), 'product_cat' );
 				if ( ! empty( $term ) && ! is_wp_error( $term ) && ! empty( $term->slug ) ) {
-					$sku_parts[] = substr( sanitize_title( $term->slug ), 0, 3 );
+					$sku_parts[] = substr( sanitize_title( $term->slug ), 0, $sku_parts_length );
 				}
 			} elseif ( ( ! empty( $fallback_cats ) ) && ( is_array( $fallback_cats ) ) && ( ! empty( $fallback_cats[0] ) ) ) {
-				$sku_parts[] = substr( sanitize_title( $fallback_cats[0] ), 0, 3 );
+				$sku_parts[] = substr( sanitize_title( $fallback_cats[0] ), 0, $sku_parts_length );
 			}
 
 			// Add slug or name (3 chars)
 			if ( ( ! empty( $item['slug'] ) ) || ( ! empty( $item['name'] ) ) ) {
 				$slug = sanitize_title( ( ! empty( $item['slug'] ) ) ? $item['slug'] : $item['name'] );
 				if ( ! empty( $slug ) ) {
-					$sku_parts[] = substr( $slug, 0, 3 );
+					$sku_parts[] = substr( $slug, 0, $sku_parts_length );
 				}
 			}
 
@@ -224,8 +225,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product_Import_CSV' ) ) {
 					if ( empty( $val ) ) {
 						continue;
 					}
-					$part = substr( $val, 0, 3 );
-					if ( ! in_array( $part, $sku_parts, true ) ) { //
+					$part = substr( $val, 0, $sku_parts_length );
+					if ( ! in_array( $part, $sku_parts, true ) ) {
 						$sku_parts[] = $part;
 						if ( ++$count >= 2 ) {
 							break;

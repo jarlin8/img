@@ -9,6 +9,22 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		public static $post_table_cols = array();
 		protected static $sm_beta_background_updater_action;
 		public static $dashboard = '';
+		public $common_pro_base = null;
+		protected static $_instance = null;
+
+		/**
+		 * Get the singleton instance of the class.
+		 *
+		 * @param string $dashboard_key dashboard key for constructor.
+		 * @return self
+		 */
+		public static function instance( $dashboard_key ) {
+			if ( is_null( self::$_instance ) ) {
+				self::$_instance = new self( $dashboard_key );
+			}
+			return self::$_instance;
+		}
+
 		function __construct($dashboard_key) {
 			$this->dashboard_key = $dashboard_key;
 			parent::__construct($dashboard_key);
@@ -22,14 +38,15 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				'notAnyOf' => 'not like'
 			 ) );
 
-			add_filter( 'sm_dashboard_model', array( &$this, 'pro_dashboard_model' ), 11, 2 );
+			add_filter( 'sa_sm_dashboard_model', array( &$this, 'pro_dashboard_model' ), 11, 2 );
 			add_filter( 'sm_data_model', array( &$this, 'pro_data_model' ), 11, 2);
 			add_filter( 'sm_inline_update_pre', array( &$this, 'pro_inline_update_pre' ), 11, 1);
 			add_filter( 'sm_default_dashboard_model_postmeta_cols', array( &$this, 'pro_custom_postmeta_cols' ), 11, 1 );
 			remove_action( 'transition_post_status', '_update_term_count_on_transition_post_status', 10, 3 ); //removed because taking time in bulk edit, when assign terms to post.
 			//map inline terms update data
 			add_filter( 'sm_process_inline_terms_update', array( &$this, 'map_inline_terms_update_data' ), 10, 1);
-			add_action( 'sm_inline_update_post_data', __CLASS__. '::update_posts' );
+			add_filter( 'sm_inline_update_post_data', 'SA_Manager_Pro_Base::update_posts' );
+			add_action( 'sm_update_posts_after_update_actions', 'SA_Manager_Pro_Base::update_posts_after_update_actions' );
 			// Code for handling of `starts with/ends with` advanced search operators
 			$advanced_search_filter_tables = array( 'posts', 'postmeta', 'terms' );
 			switch(  $this->advanced_search_table_types ) {
@@ -46,15 +63,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			if( ! empty( $advanced_search_filter_tables ) && is_array( $advanced_search_filter_tables ) ){
 				foreach( $advanced_search_filter_tables as $table ){
 					add_filter( 'sm_search_format_query_' . $table . '_col_value', array( &$this, 'format_search_value' ), 11, 2 );
-					add_filter( 'sm_search_'. $table .'_cond', array( &$this, 'modify_search_cond' ), 11, 2 );
+					add_filter( 'sm_search_'. $table .'_cond', array( __CLASS__, 'modify_search_cond' ), 11, 2 );
 				}
 			}
 			add_filter(
 				'sm_get_process_names_for_adding_tasks',
-				function( $process_name = '' ) {
-					if( empty( $process_name ) ) {
-						return;
-					}
+				function() {
 					return array(
 						'bulk_edit',
 					);
@@ -62,6 +76,43 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			);
 			if ( 'yes' === Smart_Manager_Settings::get( 'delete_media_when_permanently_deleting_post_type_records' ) ) {
 				add_action( 'before_delete_post', array( &$this, 'delete_attached_media' ), 11, 2 );
+			}
+			add_filter( 'sm_get_previous_data_for_batch_update', __CLASS__. '::get_previous_data_for_batch_update', 10, 2 );
+			add_filter( 'sm_handle_post_processing_batch_update', __CLASS__. '::handle_post_processing_updates' );
+			add_filter( 'sm_handle_post_processing_inline_update', __CLASS__. '::handle_post_processing_updates' );
+			add_action( 'sm_update_params_post_processing_batch_update', array( &$this, 'update_params_post_processing_batch_update' ) );
+			if (file_exists(SM_PLUGIN_DIR_PATH . '/pro/common-pro/classes/class-sa-manager-pro-base.php')) {
+				include_once SM_PLUGIN_DIR_PATH . '/pro/common-pro/classes/class-sa-manager-pro-base.php';
+				$this->common_pro_base = SA_Manager_Pro_Base::instance( $this->sa_manager_common_params );
+			}
+			add_filter(
+				'sa_manager_batch_update_params',
+				function ( $params = array() ) {
+					return array_merge( $params, array(
+						'SM_IS_WOO30' => $this->req_params['SM_IS_WOO30']
+					) );
+				}
+			);
+			add_filter( 'sm_update_params_before_processing_batch_update', __CLASS__ . '::update_task_params_before_batch_update' );
+			add_action( 'sa_manager_update_meta_action_details', __CLASS__ . '::update_meta_action_details' );
+			add_action( 'sa_manager_update_action_params', __CLASS__ . '::update_action_params' );
+			add_action( 'sm_after_update_post_term', __CLASS__ . '::after_update_post_term' );
+		}
+
+		public function __call( $function_name, $arguments = array() ) {
+
+			if( empty( $this->common_pro_base ) ) {
+				return;
+			}
+
+			if ( ! is_callable( array( $this->common_pro_base, $function_name ) ) ) {
+				return;
+			}
+
+			if ( ! empty( $arguments ) ) {
+				return call_user_func_array( array( $this->common_pro_base, $function_name ), $arguments );
+			} else {
+				return call_user_func( array( $this->common_pro_base, $function_name ) );
 			}
 		}
 
@@ -114,7 +165,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 					if( !isset( $postmeta_cols[ $meta_key ] ) ) {
 						$postmeta_cols[ $meta_key ] = array( 'meta_key' => $meta_key, 'meta_value' => '' );
 					}
-				}	
+				}
 			}
 
 			if ( ( in_array( 'seo-by-rank-math/rank-math.php', $active_plugins, true ) || array_key_exists( 'seo-by-rank-math/rank-math.php', $active_plugins ) ) ) {
@@ -126,7 +177,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 					if( !isset( $postmeta_cols[ $meta_key ] ) ) {
 						$postmeta_cols[ $meta_key ] = array( 'meta_key' => $meta_key, 'meta_value' => '' );
 					}
-				}	
+				}
 			}
 
 			return $postmeta_cols;
@@ -135,17 +186,17 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		//Function to handle custom fields common in more than 1 post type
 		public function pro_dashboard_model( $dashboard_model, $dashboard_model_saved ) {
 
-			$colum_name_titles = array( 	'_yoast_wpseo_title' => __( 'Yoast SEO Title', 'smart-manager-for-wp-e-commerce' ), 
-					 						'_yoast_wpseo_metadesc' => __( 'Yoast Meta Description', 'smart-manager-for-wp-e-commerce' ), 
-					 						'_yoast_wpseo_metakeywords' => __( 'Yoast Meta Keywords', 'smart-manager-for-wp-e-commerce' ), 
-					 						'_yoast_wpseo_focuskw' => __( 'Yoast Focus Keyphrase', 'smart-manager-for-wp-e-commerce' ), 
+			$colum_name_titles = array( 	'_yoast_wpseo_title' => __( 'Yoast SEO Title', 'smart-manager-for-wp-e-commerce' ),
+					 						'_yoast_wpseo_metadesc' => __( 'Yoast Meta Description', 'smart-manager-for-wp-e-commerce' ),
+					 						'_yoast_wpseo_metakeywords' => __( 'Yoast Meta Keywords', 'smart-manager-for-wp-e-commerce' ),
+					 						'_yoast_wpseo_focuskw' => __( 'Yoast Focus Keyphrase', 'smart-manager-for-wp-e-commerce' ),
 			 						);
 
 			$html_columns = array( '_yoast_wpseo_content_score' => __( 'Yoast Readability Score', 'smart-manager-for-wp-e-commerce' ),
 									'_yoast_wpseo_linkdex' => __( 'Yoast SEO Score', 'smart-manager-for-wp-e-commerce' ),
 									'rank_math_seo_score' => __( 'Rank Math SEO Score', 'smart-manager-for-wp-e-commerce' ) );
 
-			$product_cat_index = sm_multidimesional_array_search('terms_product_cat', 'data', $dashboard_model['columns']);
+			$product_cat_index = sa_multidimesional_array_search('terms_product_cat', 'data', $dashboard_model['columns']);
 
 			$column_model = &$dashboard_model['columns'];
 
@@ -172,7 +223,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 
 				switch( $col_nm ) {
 					case '_yoast_wpseo_meta-robots-noindex':
-						$column['key'] = $column['name'] = sprintf( 
+						$column['key'] = $column['name'] = sprintf(
 							/* translators: %1$s: dashboard title */
 							__( 'Allow search engines to show this %1$s in search results?', 'smart-manager-for-wp-e-commerce' ), rtrim( $this->dashboard_title, 's' ) );
 						$yoast_noindex = array( '0' => __( 'Default', 'smart-manager-for-wp-e-commerce'),
@@ -206,7 +257,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 						$product_cat_values = array();
 
 						$taxonomy_terms = get_terms('product_cat', array('hide_empty'=> 0,'orderby'=> 'id'));
-						
+
 
 						if( !empty( $taxonomy_terms ) ) {
 							foreach ($taxonomy_terms as $term_obj) {
@@ -262,12 +313,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			}
 
 			if (!empty($dashboard_model_saved)) {
-				$col_model_diff = sm_array_recursive_diff($dashboard_model_saved,$dashboard_model);	
+				$col_model_diff = sa_array_recursive_diff($dashboard_model_saved,$dashboard_model);
 			}
 
 			//clearing the transients before return
 			if (!empty($col_model_diff)) {
-				delete_transient( 'sa_sm_'.$this->dashboard_key );	
+				delete_transient( 'sa_sm_'.$this->dashboard_key );
 			}
 
 			return $dashboard_model;
@@ -321,7 +372,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 						$data_model['items'][$key]['postmeta_meta_key__yoast_wpseo_meta-robots-adv_meta_value__yoast_wpseo_meta-robots-adv'] = implode(', <br>', $formatted_value);
 					} else {
 						$data_model['items'][$key]['postmeta_meta_key__yoast_wpseo_meta-robots-adv_meta_value__yoast_wpseo_meta-robots-adv'] = $actual_values['-'];
-					}	
+					}
 				}
 
 				//Code for handling Yoast Meta Robots
@@ -413,7 +464,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		}
 
 		public function generate_multilist_col_model( $colObj, $values = array() ) {
-			
+
 			$colObj ['values'] = array();
 
 			foreach( $values as $key => $value ) {
@@ -439,7 +490,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			$dropdownKeys = ( !empty( $dropdownValues ) ) ? array_keys( $dropdownValues ) : array();
 			$colObj['defaultValue'] = ( !empty( $dropdownKeys[0] ) ) ? $dropdownKeys[0] : '';
 			$colObj['save_state'] = true;
-			
+
 			$colObj['values'] = $dropdownValues;
 			$colObj['selectOptions'] = $dropdownValues; //for inline editing
 
@@ -457,410 +508,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			return $colObj;
 		}
 
-		public function get_entire_store_ids() {
-
-			global $wpdb;
-
-			$selected_ids = array();
-
-			if( !empty( $this->req_params['filteredResults'] ) ) {
-				$post_ids = get_transient('sa_sm_search_post_ids');
-				$selected_ids = ( !empty( $post_ids ) ) ? explode( ",", $post_ids ) : array();
-			} else {
-
-				$post_type = (!empty($this->req_params['table_model']['posts']['where'])) ? $this->req_params['table_model']['posts']['where'] : array('post_type' => $this->dashboard_key);
-
-				if( !empty( $this->req_params['table_model']['posts']['where']['post_type'] ) ) {
-            		$post_type = ( is_array( $this->req_params['table_model']['posts']['where']['post_type'] ) ) ? $this->req_params['table_model']['posts']['where']['post_type'] : array( $this->req_params['table_model']['posts']['where']['post_type'] );
-            	}
-
-				$from = " FROM {$wpdb->prefix}posts ";
-				$where = " WHERE post_type IN ('". implode( "','", $post_type ) ."') ";
-
-				$update_trash_records = apply_filters( 'sm_update_trash_records', ( 'yes' === get_option( 'sm_update_trash_records', 'no' ) ) );
-				if( empty( $update_trash_records ) && ( is_callable( array( $this, 'is_show_trash_records' ) ) && empty( $this->is_show_trash_records() ) ) ){
-					$where .= " AND post_status != 'trash'";
-				}
-				
-				$from	= apply_filters('sm_beta_background_entire_store_ids_from', $from, $this->req_params);
-				$where	= apply_filters('sm_beta_background_entire_store_ids_where', $where, $this->req_params);
-				
-				$query = apply_filters( 'sm_beta_background_entire_store_ids_query', $wpdb->prepare( "SELECT ID ". $from ." ". $where ." AND 1=%d", 1 ) );
-				$selected_ids = $wpdb->get_col( $query );
-			}
-
-			return $selected_ids;
-		}
-
-		//function to handle batch update request
-		public function batch_update() {
-			global $wpdb, $current_user;
-			$col_data_type = self::get_column_data_type( $this->dashboard_key ); // For fetching column data type		
-			$batch_update_actions = (!empty($this->req_params['batch_update_actions'])) ? json_decode(stripslashes($this->req_params['batch_update_actions']), true) : array();
-			$dashboard_key = $this->dashboard_key; //fix for PHP 5.3 or earlier	
-			$batch_update_actions = array_map( function( $batch_update_action ) use ( $dashboard_key, $col_data_type ) {
-				$batch_update_action['dashboard_key'] = $dashboard_key;
-				$batch_update_action['date_type'] = ( ! empty( $col_data_type[$batch_update_action['type']] ) ) ? $col_data_type[$batch_update_action['type']] : 'text';
-				//data type for handling copy_from_field operator
-				if ( 'copy_from_field' === $batch_update_action['operator'] ) { 
-					$batch_update_action['copy_field_data_type'] = ( ! empty( $col_data_type[$batch_update_action['value']] ) ) ? $col_data_type[$batch_update_action['value']] : 'text';
-				}
-				return $batch_update_action;
-			}, $batch_update_actions);
-			$get_selected_ids_and_entire_store_flag = $this->get_selected_ids_and_entire_store_flag();
-			$selected_ids = ( ! empty( $get_selected_ids_and_entire_store_flag['selected_ids'] ) ) ? $get_selected_ids_and_entire_store_flag['selected_ids'] : array();
-			$is_entire_store = ( ! empty( $get_selected_ids_and_entire_store_flag['entire_store'] ) ) ? $get_selected_ids_and_entire_store_flag['entire_store'] : false;
-
-			self::send_to_background_process( array( 'process_name' => _x( 'Bulk Edit', 'process name', 'smart-manager-for-wp-e-commerce' ),
-														'process_key' => 'bulk_edit',
-													 	'callback' => array( 'class_path' => $this->req_params['class_path'],
-																			'func' => array( $this->req_params['class_nm'], 'process_batch_update' ) ),
-													 	'actions' => $batch_update_actions,
-														'is_scheduled' => $this->req_params['isScheduled'],
-														'scheduled_for' => $this->req_params['scheduledFor'],
-														'title' => $this->req_params['title'],
-														'selected_ids' => $selected_ids,
-														'entire_task' => $this->entire_task,
-														'storewide_option' => $this->req_params['storewide_option'],
-														'active_module' => $this->req_params['active_module'],
-														'entire_store' => $is_entire_store,
-														'dashboard_key' => $this->dashboard_key,
-														'dashboard_title' => $this->dashboard_title,
-														'class_path' => $this->req_params['class_path'],
-														'class_nm' => $this->req_params['class_nm'],
-														'backgroundProcessRunningMessage' => $this->req_params['backgroundProcessRunningMessage'],
-														'SM_IS_WOO30' => $this->req_params['SM_IS_WOO30'],
-														'scheduled_action_admin_url' => $this->req_params['scheduledActionAdminUrl']
-														 ) );
-		}
-
-		//function to handle batch update request
-		public static function send_to_background_process( $params = array() ) {
-			if ( empty( $params ) || ! is_array( $params ) ) {
-				return;
-			}
-		 	if ( ( isset( $params['is_scheduled'] ) && ! empty( $params['is_scheduled'] ) ) && ( isset( $params['scheduled_for'] ) && ! empty( $params['scheduled_for'] && '0000-00-00 00:00:00' !==  $params['scheduled_for'] ) ) && ( isset( $params['scheduled_action_admin_url'] ) && ! empty( $params['scheduled_action_admin_url'] ) ) ) {
-				$timestamp = strtotime( date( $params['scheduled_for'] ) );
-				as_schedule_single_action( $timestamp, 'storeapps_smart_manager_scheduled_actions', array( $params ) );
-				echo sprintf(
-					/* translators: %1$d: number of updated record %2$s: record update message */ 
-					_x( "Bulk Edit action scheduled successfully. Check all your scheduled actions <a target='_blank' href='%s'>here</a>.", 'success notification', 'smart-manager-for-wp-e-commerce' ), $params['scheduled_action_admin_url'] );
-				exit;
-			}
-			$identifier = '';
-			$process_names = apply_filters( 'sm_get_process_names_for_adding_tasks', $params['process_key'] );
-			if ( ! empty( $process_names ) && ( is_array( $process_names ) ) && in_array( $params['process_key'], $process_names ) ) {
-				$task_id = 0;
-				if ( is_callable( array( 'Smart_Manager_Task', 'task_update' ) ) && ( isset( $params['title'] ) && ( ! empty( $params['title'] ) ) ) && ( ! empty( $params['dashboard_key'] ) ) && ( ! empty( $params['actions'] ) ) && ( ! empty( $params['selected_ids'] ) && is_array( $params['selected_ids'] ) ) ) {
-					$task_id = Smart_Manager_Task::task_update(
-						array(
-							'title' => $params['title'],
-							    'created_date' => date('Y-m-d H:i:s'),
-							    'completed_date' => '0000-00-00 00:00:00',
-							    'post_type' => $params['dashboard_key'],
-							    'type' => 'bulk_edit',
-							    'status' => 'in-progress',
-							    'actions' => ( ! empty( $params['is_scheduled'] ) && is_array( $params['actions'] ) ) ? array_merge( $params['actions'], array( 'is_scheduled' => $params['is_scheduled'] ) ) : $params['actions'],
-							    'record_count' => count( $params['selected_ids'] ),
-							)
-					);
-				}
-				$params['actions'] = array_map( function( $params_action ) use( $task_id ) {
-					$params_action['task_id'] = $task_id;
-					return $params_action;
-				}, $params['actions'] );
-			}
-			if ( is_callable( array( 'Smart_Manager_Pro_Background_Updater', 'get_identifier' ) ) ) {
-				$identifier = Smart_Manager_Pro_Background_Updater::get_identifier();
-			}
-			if ( !empty( $identifier ) && ! empty( $params['selected_ids'] ) ) {
-				$default_params = array( 'process_name' => _x( 'Bulk edit / Batch update', 'process name', 'smart-manager-for-wp-e-commerce' ),
-										'process_key' => 'bulk_edit',
-										'callback' => array( 'class_path' => $params['class_path'],
-															'func' => array( $params['class_nm'], 'process_batch_update' ) ),
-										'id_count' => count( $params['selected_ids'] ),
-										'active_dashboard' => $params['dashboard_title']
-									);
-				$params = ( !empty( $params ) ) ? array_merge( $default_params, $params ) : $default_params;
-				update_option( $identifier.'_params', $params, 'no' );
-				update_option( $identifier.'_ids', $params['selected_ids'], 'no' );
-				update_option( $identifier.'_initial_process', 1, 'no' );
-
-				//Calling the initiate_batch_process function to initiaite the batch process
-				if ( is_callable( array( Smart_Manager_Pro_Background_Updater::instance(), 'initiate_batch_process' ) ) ) {
-					Smart_Manager_Pro_Background_Updater::instance()->initiate_batch_process();
-				}
-			}
-		}
-
-		/**
-		 * Processes batch update conditions and prepares database updates.
-		 *
-		 * @param array $batch_args Arguments for the batch update, including:
-		 *     - 'selected_ids': (array) IDs to be updated in the batch.
-		 *     - 'batch_params': (array) Parameters for batch processing
-		 *     - 'task_details_data': (array) Optional, data for undoing tasks.
-		 * @return void
-		*/
-		public static function process_batch_update( $batch_args = array() ) {
-			if ( empty( $batch_args ) || ( ! is_array( $batch_args ) ) || empty( $batch_args['selected_ids'] ) || empty( $batch_args['batch_params'] ) || empty( $batch_args['batch_params']['process_name'] )) {
-				return;
-			}
-			do_action( 'sm_pro_pre_process_batch_update_args' );
-			$db_updates_args = array(); // For storing all of the selected/entire ids args with its actions.
-			if ( ( "Undo Tasks" === $batch_args['batch_params']['process_name'] ) || ( ! empty( $batch_args['task_details_data'] ) ) ) {
-				foreach ( $batch_args['task_details_data'] as $args ) {
-					$args  = self::process_batch_update_args( $args );
-					if ( empty( $args ) ) {
-						continue;
-					}
-					$db_updates_args[] = $args;
-				}
-			} else {
-				foreach ( $batch_args['selected_ids'] as $selected_id ) {
-					$prev_vals = array();
-					foreach ( $batch_args['batch_params']['actions'] as $key => $args ) {
-						$args['id'] = $selected_id;
-						$args  = self::process_batch_update_args( $args, $prev_vals );
-						if ( empty( $args ) ) {
-							continue;
-						}
-						$special_batch_update_operators = ( ( ! empty( $args['operator'] ) ) && ( 'copy_from_field' === $args['operator'] ) && ( ! empty( $args['selected_column_name'] ) ) ) ? array( $args['selected_column_name'] => 'copy_from_field' ) : array();
-						$special_batch_update_operators = apply_filters( 'sm_special_batch_update_operators', $special_batch_update_operators, $args );
-						if ( ( ! empty( $prev_vals ) ) && is_array( $prev_vals ) && ( ! empty( $special_batch_update_operators ) ) && is_array( $special_batch_update_operators ) ) { // To handle operators like 'set_to_regular_price, set_to_sale_price'.
-							$operator_key = array_search( $args['operator'], $special_batch_update_operators );
-							$args['value'] = ( ! empty( $operator_key ) && in_array( $operator_key, array_keys( $prev_vals ) ) ) ? $prev_vals[ $operator_key ] : $args['value'];
-						}
-						$db_updates_args[] = $args;
-						if ( $key === ( count( $batch_args['batch_params']['actions'] ) - 1 ) ) {
-							continue;
-						}
-						$prev_vals[ $args['col_nm'] ] = $args['value'];						
-					}
-				}
-			}
-			//update the data in database.
-			do_action( 'sm_pro_pre_process_batch_db_updates' );
-			if ( empty( $db_updates_args ) ) {
-				return;
-			}
-			self::process_batch_update_db_updates( $db_updates_args );
-		}
-
-		/**
-		 * Processes and validates arguments for batch updates.
-		 *
-		 * @param array $args Arguments for the batch update, including:
-		 *     - 'type': (string) The data type and table/column identifiers.
-		 *     - 'operator': (string) Operation to perform (e.g., set, append, increase).
-		 *     - 'id': (int) ID of the record to update.
-		 *     - 'date_type': (string) Specifies if data is a date, time, or numeric.
-		 *     - 'value': (mixed) New value or modifier for the batch update.
-		 *     - 'meta': (array) Additional meta options for the update.
-		 *
-		 * @param array $prev_vals Array of previous values in case of multiple actions for same column.
-		 * @return array|false Processed and validated batch update arguments, or false if invalid.
-		*/
-		public static function process_batch_update_args( $args = array(), $prev_vals = array() ) {
-			if ( empty( $args ) ) {
-				return false;
-			}
-			do_action( 'sm_beta_pre_process_batch', $args );
-			// code for processing logic for batch update.
-			if ( empty( $args['type'] ) || empty( $args['operator'] ) || empty( $args['id'] ) || empty( $args['date_type'] ) ) {
-				return false;
-			}
-			$type_exploded = explode("/",$args['type']);
-			if ( empty( $type_exploded ) ) {
-				return false;
-			}
-			if ( sizeof($type_exploded) > 2 ) {
-				$args['table_nm'] = $type_exploded[0];
-				$cond = explode("=",$type_exploded[1]);
-				if (sizeof($cond) == 2) {
-					$args['col_nm'] = $cond[1];
-				}
-			} else {
-				$args['col_nm'] = $type_exploded[1];
-				$args['table_nm'] = $type_exploded[0];
-			}
-			$prev_val = $new_val = '';
-			if ( ( ! empty( $prev_vals ) ) && is_array( $prev_vals ) && ( ! empty( $prev_vals[ $args['col_nm'] ] ) ) ) {
-				$prev_val = $prev_vals[ $args['col_nm'] ];
-			} else {
-				$prev_val = apply_filters( 'sm_beta_batch_update_prev_value', $prev_val, $args );
-				if ( empty( $prev_val ) ) {
-					if ( is_callable( array( 'Smart_Manager_Task', 'get_previous_data' ) ) ) {
-						$prev_val = Smart_Manager_Task::get_previous_data( $args['id'], $args['table_nm'], $args['col_nm'] );
-					}
-				}
-				if ( 'numeric' === $args['date_type'] ) {
-					$prev_val = ( ! empty( $prev_val ) ) ? floatval( $prev_val ) : 0;
-				}
-			}
-			$args['prev_val'] = $prev_val;
-			$value1 = $args['value'];
-			$args_meta = ( ! empty( $args['meta'] ) ) ? $args['meta'] : array();
-			if( $args['date_type'] == 'numeric' ) {
-				$value1 = ( ! empty( $value1 ) ) ? floatval( $value1 ) : 0;
-			}
-			//Code for handling different conditions for updating datetime fields
-			if( $args['date_type'] == 'sm.datetime' && ( $args['operator'] == 'set_date_to' || $args['operator'] == 'set_time_to' ) ) {
-				//if prev_val is null
-				if( empty($prev_val) ) {
-					$date = ( $args['operator'] == 'set_date_to' ) ? $value1 : current_time( 'Y-m-d' );
-					$time = ( $args['operator'] == 'set_time_to' ) ? $value1 : current_time( 'H:i:s' );
-				} else {
-					$date = ( $args['operator'] == 'set_date_to' ) ? $value1 : date('Y-m-d', strtotime($prev_val));
-					$time = ( $args['operator'] == 'set_time_to' ) ? $value1 : date('H:i:s', strtotime($prev_val));
-				}
-				$value1 = $date.' '.$time;
-			}
-			if( ( $args['date_type'] == 'sm.datetime' || $args['date_type'] == 'sm.date' || $args['date_type'] == 'sm.time' ) && !empty( $args['date_type'] ) && $args['date_type'] == 'timestamp' ) { //code for handling timestamp values
-				if( $args['date_type'] == 'sm.time' ) {
-					$value1 = '1970-01-01 '.$value1;
-				}
-				$value1 = strtotime( $value1 );
-			}
-			// Code for handling increase/decrease date by operator
-			$date_type_fields = array( 'sm.date', 'sm.datetime', 'sm.time', 'timestamp' );
-			$date_format = 'Y-m-d';
-			if ( in_array( $args['date_type'], $date_type_fields ) ) {
-				switch ( $args['date_type'] ) {
-					case 'timestamp': 
-					case 'sm.date':
-						$date_format = 'Y-m-d';												
-						break;
-					case 'sm.datetime':
-						$date_format = 'Y-m-d H:i:s';							
-						break;
-					case 'sm.time':
-						$date_format = 'h:i';
-						break;
-				}
-				$args['prev_val'] = ( ! empty( $prev_val ) ? ( strtotime( $prev_val ) ? $prev_val : date( $date_format, $prev_val ) ) : current_time( $date_format ) );
-				$value1 = ( ! empty( $value1 ) ? ( strtotime( $value1 ) ? $value1 : date( $date_format, $value1 ) ) : $value1 );
-			}
-			$additional_date_operators = array( 'increase_date_by', 'decrease_date_by' );
-			if( in_array( $args['date_type'], $date_type_fields ) && in_array( $args['operator'], $additional_date_operators ) )
-			{
-				$args['meta']['dateDuration'] = !empty ( $args['meta']['dateDuration'] ) ? $args['meta']['dateDuration'] : ( ( 'sm.time' === $args['date_type'] ) ? 'hours' : 'days' );
-				$args['value'] = !empty ( $args['value'] ) ? $args['value'] : 0;
-				$prev_val = ( ! empty( $args['prev_val'] ) ) ? $args['prev_val'] : current_time( $date_format );
-				$value1  =  date( $date_format, strtotime( $prev_val. ( ( 'increase_date_by' === $args['operator'] ) ? '+' : '-' ) .$args['value']. $args['meta']['dateDuration'] ) );
-			}
-			if( $args['date_type'] == 'dropdown' || $args['date_type'] == 'multilist' ) {
-				if( $args['operator'] == 'add_to' || $args['operator'] == 'remove_from' ) {
-					if( $args['table_nm'] == 'terms' ) {
-						$prev_val = wp_get_object_terms( $args['id'], $args['col_nm'], 'orderby=none&fields=ids' );
-					} else {
-						if( !empty( $args['multiSelectSeparator'] ) && !empty( $prev_val ) ) {
-							$prev_val = explode( $args['multiSelectSeparator'], $prev_val );
-						} else {
-							$prev_val = ( !empty( $prev_val ) ) ? $prev_val : array();	
-						}
-					}
-					$value1 = ( !is_array( $value1 ) ) ? array( $value1 ) : $value1;
-					if( !empty( $prev_val ) ) {
-						$value1 = ( $args['operator'] == 'add_to' ) ? array_merge($prev_val, $value1) : array_diff($prev_val, $value1);
-					}
-					$value1 = array_unique( $value1 );
-				} 
-				
-				$separator = ( !empty( $args['multiSelectSeparator'] ) ) ? $args['multiSelectSeparator'] : ",";
-				$value1 = ( !empty( $separator ) && is_array( $value1 ) ) ? implode( $separator, $value1 ) : $value1;
-			}
-			if( $args['date_type'] == 'sm.multilist' && $args['operator'] != 'set_to' && $args['table_nm'] == 'postmeta' ) { //code for handling multilist values
-				
-			}
-			// Code for handling serialized data updates
-			if( $args['date_type'] == 'sm.serialized' ) {
-				$value1 = maybe_unserialize( $value1 );
-			}
-			// default value for prev_val
-			$numeric_operators = array( 'increase_by_per', 'decrease_by_per', 'increase_by_num', 'decrease_by_num' );
-			if ( in_array( $args['operator'], $numeric_operators ) && empty( $prev_val ) ) {
-				$prev_val = 0;
-			}
-			//cases to update the value based on the batch update actions
-			switch( $args['operator'] ) {
-				case 'set_to':
-					$new_val = $value1;
-					break;
-				case 'prepend':
-					$new_val = $value1.''.$prev_val;
-					break;
-				case 'append':
-					$new_val = $prev_val.''.$value1;
-					break;
-				case 'search_and_replace':
-					if( isset( $args_meta['replace_value'] ) ){
-						$replace_val = ( ! empty( $args_meta['replace_value'] ) ) ? $args_meta['replace_value'] : '';
-						$new_val = str_replace( $value1, $replace_val, $prev_val );
-					} else {
-						$new_val = $prev_val;
-					}
-					break;
-				case 'increase_by_per':
-					$new_val = ( ! empty( $prev_val ) ) ? round( ($prev_val + ($prev_val * ($value1 / 100))), apply_filters('sm_beta_pro_num_decimals',get_option( 'woocommerce_price_num_decimals' )) ) : '';
-					break;
-				case 'decrease_by_per':
-					$new_val = self::decrease_value_by_per( $prev_val, $value1 );
-					break;
-				case 'increase_by_num':
-					$new_val = round( ($prev_val + $value1), apply_filters('sm_beta_pro_num_decimals',get_option( 'woocommerce_price_num_decimals' )) );
-					break;
-				case 'decrease_by_num':
-					$new_val = self::decrease_value_by_num( $prev_val, $value1 );
-					break;
-				default:
-					$new_val = $value1;
-					break;
-			}
-			//Code for handling 'copy_from' and 'copy_from_field' action
-			$args['copy_from_operators'] = array('copy_from', 'copy_from_field');
-			$value1 = ( 'copy_from_field' === $args['operator'] && empty( $args['value'] ) ) ? $args['type'] : $args['value'];
-			if( in_array( $args['operator'], $args['copy_from_operators'] ) && ( ! empty( $value1 ) ) ) {
-				$args['selected_table_name'] = $args['table_nm'];
-				$args['selected_column_name'] = $args['col_nm'];
-				$args['selected_value'] = $value1;
-				if( 'copy_from_field' === $args['operator'] ) {
-					$explode_selected_value = ( false !== strpos( $args['selected_value'], '/' ) ) ? explode('/', $args['selected_value']) : $args['selected_value'];
-					if ( is_array( $explode_selected_value ) && sizeof( $explode_selected_value ) >= 2 ) {
-						$args['selected_table_name'] = $explode_selected_value[0];
-						$args['selected_column_name'] = $explode_selected_value[1];
-						$cond = ( false !== strpos( $args['selected_column_name'], '=' ) ) ? explode( "=", $args['selected_column_name'] ) : $args['selected_column_name'];
-						$args['selected_column_name'] = ( ( is_array( $cond ) ) && ( 2 === sizeof( $cond ) ) ) ? $cond[1] : $cond;				
-					}  
-					$args['selected_value'] = $args['id'];	
-				}
-				switch ( $args['selected_table_name'] ) {
-					case 'posts':
-						$new_val = get_post_field( $args['selected_column_name'], $args['selected_value'] );
-						break;
-					case 'postmeta':
-						$new_val = get_post_meta( $args['selected_value'], $args['selected_column_name'], true );
-						break;
-					case 'terms':
-						$term_ids = wp_get_object_terms( $args['selected_value'], $args['selected_column_name'], array( 'orderby' => 'term_id', 'order' => 'ASC', 'fields' => 'ids' ) );
-						$new_val = ( ! is_wp_error( $term_ids ) && ! empty( $term_ids ) ) ? $term_ids : array();
-						break;
-					case 'custom':
-						$new_val = apply_filters( 'sm_get_value_for_copy_from_operator', $new_val, $args );
-						break;
-					default:
-						$new_val = $value1;
-						break;
-				}
-				$new_val = ( 'numeric' === $args['date_type'] && empty( $new_val ) ) ? 0 : $new_val;
-				$args['new_value'] = $new_val;
-				$new_val = ( ( 'copy_from_field' === $args['operator'] && ( ! empty ( $args['copy_field_data_type'] ) ) ) && is_callable( array( 'Smart_Manager_Pro_Base', 'handle_serialized_data' ) ) ) ? self::handle_serialized_data( $args ) : $new_val;	
-			}
-			$args['value'] = $new_val;
-			$args = apply_filters( 'sm_beta_post_batch_process_args', $args );
-			return $args;
-		}
-
 		//function to handle serialized values for copy from field operator
 		public static function handle_serialized_data( $args = array() ) {
 
@@ -876,207 +523,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				default:
 					return $args['new_value'];
 			}
-		}
-
-		//function to handle the batch update db updates
-		public static function process_batch_update_db_updates( $arguments = array() ) {
-			if ( empty( $arguments ) || ( ! is_array( $arguments ) ) ) {
-				return;
-			}
-			$update = false;
-			$default_batch_update = true;
-			$post_data = array();
-			$update_result = array();
-			$postmeta_failed_to_update = array();
-			$taxonomies = array();
-			//code to map data for updation.
-			foreach ( $arguments as $key => $args ) {
-				if ( empty( $args['id'] ) ) {
-					continue;
-				}
-				if(empty($post_data[ $args['id'] ]['meta_input'])){
-					$post_data[ $args['id'] ]['meta_input'] = array();
-				}
-				if(empty($post_data[ $args['id'] ]['tax_input'])){
-					$post_data[ $args['id'] ]['tax_input'] = array();
-				}
-				do_action( 'sm_pre_batch_update_db_updates', $args );		
-				$default_batch_update = apply_filters( 'sm_default_batch_update_db_updates', $default_batch_update, $args );
-				if ( empty( $default_batch_update ) ) {
-					continue;
-				}
-				switch ( $args['table_nm'] ) {
-					case 'posts':
-						$post_data[ $args['id'] ][ $args['col_nm'] ] = $args['value'];
-						if ( 'post_date' === $args['col_nm'] ) {
-							$post_data[ $args['id'] ]['edit_date'] = true;
-							$post_data[ $args['id'] ]['post_date_gmt'] = get_gmt_from_date( $args['value'] );
-						}
-					break;
-					case 'postmeta':
-						$post_data[ $args['id'] ]['meta_input'][ $args['col_nm'] ] = $args['value'];
-						break;
-					case 'terms':
-						$post_data[ $args['id'] ]['tax_input'][$args['col_nm']][] = self::batch_update_terms_table_data( $args, true );
-						if ( ! in_array( $args['col_nm'], $taxonomies ) ) {
-							$taxonomies[] = $args['col_nm'];
-						}
-						break;
-					case 'custom':
-						if ( 'copy_from' === $args['operator'] ) {
-							$arguments[ $key ]['update'] = apply_filters( 'sm_update_value_for_copy_from_operator', $args );
-						}
-						break;
-					default:
-						$post_data[ $args['id'] ][ $args['col_nm'] ] = $args['value'];
-						break;
-				}
-			}
-			set_transient( 'sm_beta_skip_delete_dashboard_transients', 1, DAY_IN_SECONDS ); // for preventing delete dashboard transients
-			Smart_Manager_Base::$update_task_details_params = array();
-			if ( ! empty( $post_data ) ) {
-				$update_result = self::update_posts( array( 'posts_data' => $post_data, 'taxonomies' => $taxonomies ) );
-				//for handling failed post metas status
-				if( ( ! empty( $update_result ) ) && ( ! empty( $update_result['postmeta_update_result'] ) ) ){
-					if ( ( 'success' !== $update_result['postmeta_update_result'] ) && is_array( $update_result['postmeta_update_result'] ) && ( ! empty( $update_result['postmeta_update_result'] ) ) ) {
-						$postmeta_failed_to_update = $update_result['postmeta_update_result'];
-					}
-				}
-			}
-			foreach ( $arguments as $args ) {
-				if ( empty ( $args['id'] ) ) {
-					continue;
-				}
-				$custom_update_status = array_key_exists( 'update', $args ) ? $args['update'] : true;
-				switch ( $args['table_nm'] ) {
-					case 'posts':
-						$update = ( ( empty( $update_result ) ) || ( ! is_array( $update_result ) ) || ( empty( $update_result['posts_update_result'] ) ) ) ? false : true; 
-						break;
-					case 'postmeta':
-						if ( empty ( $args['col_nm'] ) ) break;
-						$update = true;
-						if( ( empty( $update_result ) ) || ( ! is_array( $update_result ) ) ){ //if all meta data is not updated
-							$update = false; 
-						} elseif ( ! empty( $postmeta_failed_to_update ) ){ //else check if any meta data failed to update
-							$update = ( in_array( $args['id'] . "/" . $args['col_nm'], $postmeta_failed_to_update ) ) ? false : true;
-						}
-						break;
-					case 'terms':
-						$update = ( empty( $update_result ) || ( is_array( $update_result ) && ( ( empty( $update_result[ 'taxonomies_update_result' ] ) ) || ( empty( $update_result[ 'taxonomies_update_result' ][ 'status' ] ) ) ) ) ) ? false : true;
-						break;
-					case 'custom':
-						$update = $custom_update_status;
-						break;
-					default:
-						$update = ( ( empty( $update_result ) ) || ( !is_array( $update_result ) ) || ( empty( $update_result['posts_update_result'] ) ) ) ? false : true; 
-						break;
-				}
-				$update = apply_filters( 'sm_post_batch_update_db_updates', $update, $args );
-				if ( empty( $update ) ) {
-					if ( is_callable( array( 'Smart_Manager', 'log' ) ) ) {
-						/* translators: %s process name */
-						Smart_Manager::log( 'error', sprintf( _x( '%s failed', 'update status', 'smart-manager-for-wp-e-commerce' ), ( ! empty( $args['process_name'] ) ? $args['process_name'] : '' ) ) );
-					}
-					continue;
-				} elseif ( ! empty( $args['task_id'] ) && ( ! empty( property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) ) ) {
-					$action = 'set_to';
-					if ( in_array( $args['operator'], array( 'add_to', 'remove_from' ) ) ) {
-						$action = apply_filters( 'sm_task_update_action', $args['operator'], $args );
-					}
-					//Special handling for add_to and remove_from operations for terms table.
-					if ( ( 'terms' === $args['table_nm'] ) ) {
-						$existing_relationships = ( ( ! empty( $update_result[ 'taxonomies_update_result' ] ) ) && ( ! empty( $update_result[ 'taxonomies_update_result' ][ 'existing_relationships' ] ) ) ) ? $update_result[ 'taxonomies_update_result' ][ 'existing_relationships' ] : array();
-
-						if ( ( empty( $args[ 'col_nm' ] ) ) || ( empty( $existing_relationships ) ) || ( empty( $existing_relationships[ $args[ 'id' ] ] ) ) || empty( $existing_relationships[ $args[ 'id' ] ][ $args[ 'col_nm' ] ] ) ) {
-							continue;
-						}
-						$terms_undo_details = self::get_terms_undo_details( $existing_relationships, $args );
-						if ( ( empty( $terms_undo_details ) ) || ( ! is_array( $terms_undo_details ) ) || ( empty( $terms_undo_details['action'] ) ) || ( empty( $terms_undo_details['prev_val'] ) ) || ( empty( $terms_undo_details['updated_val'] ) ) ) {
-							continue;
-						}
-						$action = $terms_undo_details['action'];
-						$args['prev_val'] =  $terms_undo_details['prev_val'];
-						$args['value'] =  $terms_undo_details['updated_val'];
-						if ( in_array( $args['operator'], array( 'add_to', 'remove_from' ) ) ) {
-							list( $args['prev_val'], $args['value'] ) = [$args['value'], $args['prev_val']];
-						}
-					}
-					Smart_Manager_Base::$update_task_details_params[] = array(
-						'task_id' => $args['task_id'],
-								'action' => $action,
-								'status' => 'completed',
-								'record_id' => $args['id'],
-								'field' => $args['type'],  
-								'prev_val' => ( ( ! empty( $args['col_nm'] ) ) && ( ! empty( $args['date_type'] ) ) ) ? sa_sm_format_prev_val( array(
-												'prev_val' => $args['prev_val'],
-												'update_column' => $args['col_nm'],
-												'col_data_type' => $args['date_type'],
-												'updated_val' => $args['value']
-												)
-											) : $args['prev_val'],
-								'updated_val' => $args['value'],
-								'operator' => $args['operator'],
-					);
-				}
-			}
-			if ( ! empty( Smart_Manager_Base::$update_task_details_params ) ) {
-				apply_filters( 'sm_task_details_update_by_prev_val', Smart_Manager_Base::$update_task_details_params );
-				// For updating task details table
-				if ( ( ! empty( Smart_Manager_Base::$update_task_details_params ) ) && is_callable( array( 'Smart_Manager_Task', 'task_details_update' ) ) ) {
-					return Smart_Manager_Task::task_details_update();
-				}
-			}
-			return true;		
-		}
-
-		//function to handle batch process complete
-		public static function batch_process_complete() {
-			$identifier = '';
-
-			if ( is_callable( array( 'Smart_Manager_Pro_Background_Updater', 'get_identifier' ) ) ) {
-				$identifier = Smart_Manager_Pro_Background_Updater::get_identifier();
-			}
-
-			if( empty( $identifier ) ) {
-				return;
-			}
-
-			$background_process_params = get_option( $identifier.'_params', false );
-
-			if( empty( $background_process_params ) ) {
-				if ( is_callable( array( 'Smart_Manager', 'log' ) ) ) {
-					Smart_Manager::log( 'error', _x( 'No batch process params found', 'batch process', 'smart-manager-for-wp-e-commerce' ) );
-				}
-				return;
-			}
-			delete_option( $identifier.'_params' );
-
-			// Preparing email content
-			$email = get_option('admin_email');
-			$site_title = get_option( 'blogname' );
-
-			$email_heading_color = get_option('woocommerce_email_base_color');
-			$email_heading_color = (empty($email_heading_color)) ? '#96588a' : $email_heading_color; 
-			$email_text_color = get_option('woocommerce_email_text_color');
-			$email_text_color = (empty($email_text_color)) ? '#3c3c3c' : $email_text_color; 
-
-			$actions = ( !empty($background_process_params['actions']) ) ? $background_process_params['actions'] : array();
-
-			$records_str = $background_process_params['id_count'] .' '. (( $background_process_params['id_count'] > 1 ) ? __( 'records', SM_TEXT_DOMAIN ) : __( 'record', SM_TEXT_DOMAIN ));
-			$records_str .= ( $background_process_params['entire_store'] ) ? ' ('. __( 'entire store', SM_TEXT_DOMAIN ) .')' : '';
-
-			$background_process_param_name = $background_process_params['process_name'];
-
-			$title = sprintf( __( '[%1s] %2s process completed!', SM_TEXT_DOMAIN ), $site_title, $background_process_param_name );
-
-			ob_start();
-
-			include( apply_filters( 'sm_beta_pro_batch_email_template', SM_PRO_EMAIL_TEMPLATE_PATH.'/bulk-edit.php' ) );
-
-			$message = ob_get_clean();
-
-			$subject = $title;
-			self::send_email( array( 'subject' => $subject, 'message' => $message, 'email' => $email ) );
 		}
 
 		//Function to generate the data for print_invoice
@@ -1119,10 +565,11 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 
 		//function to handle duplicate records functionality
 		public function duplicate_records() {
-			$get_selected_ids_and_entire_store_flag = $this->get_selected_ids_and_entire_store_flag();
+			$get_selected_ids_and_entire_store_flag = apply_filters(
+				'get_selected_ids_and_entire_store_flag', array() );
 			$selected_ids = ( ! empty( $get_selected_ids_and_entire_store_flag['selected_ids'] ) ) ? $get_selected_ids_and_entire_store_flag['selected_ids'] : array();
 			$is_entire_store = ( ! empty( $get_selected_ids_and_entire_store_flag['entire_store'] ) ) ? $get_selected_ids_and_entire_store_flag['entire_store'] : false;
-			self::send_to_background_process( array( 'process_name' => _x( 'Duplicate Records', 'process name', 'smart-manager-for-wp-e-commerce' ),
+			SA_Manager_Pro_Base::send_to_background_process( array( 'process_name' => _x( 'Duplicate Records', 'process name', 'smart-manager-for-wp-e-commerce' ),
 														'process_key' => 'duplicate_records',
 														'callback' => array( 'class_path' => $this->req_params['class_path'],
 																			'func' => array( $this->req_params['class_nm'], 'process_duplicate_record' ) ),
@@ -1141,7 +588,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		}
 
 		public static function get_duplicate_record_settings() {
-	
+
 			$defaults = array(
 				'status' => 'same',
 				'type' => 'same',
@@ -1155,9 +602,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				'time_offset_seconds' => 0,
 				'time_offset_direction' => 'newer'
 			);
-			
+
 			$settings = apply_filters( 'sm_beta_duplicate_records_settings', $defaults );
-			
+
 			return $settings;
 		}
 
@@ -1177,28 +624,28 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 
 			// Get the post as an array
 			$duplicate = get_post( $original_id, 'ARRAY_A' );
-				
+
 			$settings = self::get_duplicate_record_settings();
-			
+
 			// Modify title
 			$appended = ( $settings['title'] != '' ) ? ' '.$settings['title'] : '';
 			$duplicate['post_title'] = $duplicate['post_title'].' '.$appended;
 			$duplicate['post_name'] = sanitize_title($duplicate['post_name'].'-'.$settings['slug']);
-			
+
 			// Set the post status
 			if( $settings['status'] != 'same' ) {
 				$duplicate['post_status'] = $settings['status'];
 			}
-			
+
 			// Set the post type
 			if( $settings['type'] != 'same' ) {
 				$duplicate['post_type'] = $settings['type'];
 			}
-			
+
 			// Set the post date
 			$timestamp = ( $settings['timestamp'] == 'duplicate' ) ? strtotime($duplicate['post_date']) : current_time('timestamp',0);
 			$timestamp_gmt = ( $settings['timestamp'] == 'duplicate' ) ? strtotime($duplicate['post_date_gmt']) : current_time('timestamp',1);
-			
+
 			if( $settings['time_offset'] ) {
 				$offset = intval($settings['time_offset_seconds']+$settings['time_offset_minutes']*60+$settings['time_offset_hours']*3600+$settings['time_offset_days']*86400);
 				if( $settings['time_offset_direction'] == 'newer' ) {
@@ -1221,14 +668,14 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 
 			// Insert the post into the database
 			$duplicate_id = wp_insert_post( $duplicate );
-			
+
 			// Duplicate all the taxonomies/terms
 			$taxonomies = get_object_taxonomies( $duplicate['post_type'] );
 			foreach( $taxonomies as $taxonomy ) {
 				$terms = wp_get_post_terms( $original_id, $taxonomy, array('fields' => 'names') );
 				wp_set_object_terms( $duplicate_id, $terms, $taxonomy );
 			}
-		  
+
 			// Duplicate all the custom fields
 			$custom_fields = get_post_custom( $original_id );
 
@@ -1237,7 +684,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			foreach ( $custom_fields as $key => $value ) {
 			  if( is_array($value) && count($value) > 0 ) { //TODO: optimize
 					foreach( $value as $i=>$v ) {
-						$postmeta_data[] = '('.$duplicate_id.',\''.$key.'\',\''.$v.'\')'; 
+						$postmeta_data[] = '('.$duplicate_id.',\''.$key.'\',\''.$v.'\')';
 					}
 				}
 			}
@@ -1250,8 +697,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 
 			do_action( 'sm_beta_post_process_duplicate_records', array( 'original_id' => $original_id, 'duplicate_id' => $duplicate_id, 'settings' => $settings, 'duplicate' => $duplicate ) );
 			if( is_wp_error($duplicate_id) ) {
-				if ( is_callable( array( 'Smart_Manager', 'log' ) ) ) {
-					Smart_Manager::log( 'error', _x( 'Duplicate process failed', 'duplicate process', 'smart-manager-for-wp-e-commerce' ) );
+				if ( is_callable( 'sa_manager_log' ) ) {
+					sa_manager_log( 'error', _x( 'Duplicate process failed', 'duplicate process', 'smart-manager-for-wp-e-commerce' ) );
 				}
 				return false;
 			} else {
@@ -1264,7 +711,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		 * Function to handle deletion via background process
 		 */
 		public function delete_all() {
-			$get_selected_ids_and_entire_store_flag = $this->get_selected_ids_and_entire_store_flag();
+			$get_selected_ids_and_entire_store_flag = apply_filters(
+				'get_selected_ids_and_entire_store_flag',
+				array()
+			);
 			$selected_ids = ( ! empty( $get_selected_ids_and_entire_store_flag['selected_ids'] ) ) ? $get_selected_ids_and_entire_store_flag['selected_ids'] : array();
 			$is_entire_store = ( ! empty( $get_selected_ids_and_entire_store_flag['entire_store'] ) ) ? $get_selected_ids_and_entire_store_flag['entire_store'] : false;
 			$process_name = _x( 'Move to trash', 'process name', 'smart-manager-for-wp-e-commerce' );
@@ -1281,7 +731,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				$process_key = 'delete_non_post_type_records';
 			}
 			$callback_func = ( ! empty( $default_delete_process ) ) ? $callback_func : 'sm_process_delete_non_posts_records';
-			self::send_to_background_process( array( 'process_name' => $process_name,
+			SA_Manager_Pro_Base::send_to_background_process( array( 'process_name' => $process_name,
 													'process_key' => $process_key,
 														'callback' => array( 'class_path' => $this->req_params['class_path'],
 																			'func' => array( $this->req_params['class_nm'], $callback_func ) ),
@@ -1328,8 +778,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				),
 				'ARRAY_A'
 			);
-			if ( ( empty( $post_results ) || ( is_wp_error( $post_results ) ) ) && is_callable( array( 'Smart_Manager', 'log' ) ) || ( ! is_array( $post_results ) ) ) {
-				Smart_Manager::log( 'error', _x( 'Move to trash failed', 'move to trash process', 'smart-manager-for-wp-e-commerce' ) );
+			if ( ( empty( $post_results ) || ( is_wp_error( $post_results ) ) ) && is_callable( 'sa_manager_log' ) || ( ! is_array( $post_results ) ) ) {
+				sa_manager_log( 'error', _x( 'Move to trash failed', 'move to trash process', 'smart-manager-for-wp-e-commerce' ) );
 				return false;
 			}
 			if ( class_exists( 'WooCommerce' ) && class_exists( 'WC_Post_Data' ) ) {
@@ -1352,7 +802,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				do_action( 'wp_trash_post', $post_result['ID'], $post_result['post_status'] );
 			}
 			if ( ( ! isset( $args['move_to_trash_pre_action'] ) ) && empty( $args['move_to_trash_pre_action'] ) ) { // Shouldn't trigger below in case of call to this function from products_pre_process_move_to_trash_records() for varitions.
-				do_action( 'sm_pro_pre_process_move_to_trash_records', array( 
+				do_action( 'sm_pro_pre_process_move_to_trash_records', array(
 					'selected_post_ids' => $selected_post_ids,
 					'post_id_placeholders' => $post_id_placeholders
 				) );
@@ -1377,7 +827,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			}
 			// Update status to "trash".
 			$wpdb->query(
-			   	$wpdb->prepare( 
+			   	$wpdb->prepare(
 					"UPDATE {$wpdb->prefix}posts SET post_status = 'trash' WHERE ID IN ( $ids_to_trash_placeholder )", $ids_to_trash
 				)
 			);
@@ -1439,13 +889,13 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		 *
 		 * @param  string $cond Search condition.
 		 * @param  array $search_params Advanced search params.
-		 * 
+		 *
 		 * @return string $cond Updated search condition.
 		 */
-		public function modify_search_cond( $cond = '', $search_params = array() ) {
-		
+		public static function modify_search_cond( $cond = '', $search_params = array() ) {
+
 			$operator = ( ! empty( $search_params['selected_search_operator'] ) ) ? $search_params['selected_search_operator'] : '';
-			
+
 			if( empty( $operator ) ){
 				return $cond;
 			}
@@ -1471,16 +921,16 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			}
 			$col = $search_params['table_nm'] . "." . $col;
 			$cond = array_reduce( $val, function( $carry, $item ) use( $col, $operator, $addln_cond, $search_params ) {
-				$condition = " ( " . $addln_cond . " " . $col . " " . 
-							( ( 'notAnyOf' === $operator ) ? 'NOT ' : '' ) . 
-							"LIKE" . 
-							( ! empty( $search_params['skip_placeholders'] ) ? 
-								( " '%" . trim( $item ) . "%'" ) : 
-								" %s" ) . 
+				$condition = " ( " . $addln_cond . " " . $col . " " .
+							( ( 'notAnyOf' === $operator ) ? 'NOT ' : '' ) .
+							"LIKE" .
+							( ! empty( $search_params['skip_placeholders'] ) ?
+								( " '%" . trim( $item ) . "%'" ) :
+								" %s" ) .
 							" ) ";
 				$condition .= ( 'notAnyOf' === $operator ) ? 'AND' : 'OR';
 				return $carry . $condition;
-			
+
 			}, '' );
 			return ( 'notAnyOf' === $operator ) ? ( ( " AND" === substr( $cond, -4 ) ) ? "( " . substr( $cond, 0, -4 ) . " )" : $cond ) : ( ( " OR" === substr( $cond, -3 ) ) ? "( " . substr( $cond, 0, -3 ) . " )" : $cond );
 		}
@@ -1490,7 +940,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		 *
 		 * @param  string $search_value Searched value.
 		 * @param  array $search_params Advanced search params.
-		 * 
+		 *
 		 * @return string $search_value Formatted searched value.
 		 */
 		public function format_search_value( $search_value = '', $search_params = array() ) {
@@ -1512,37 +962,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		}
 
 		/**
-		 * Function to fetch column data type
-		 *
-		 * @param  string $dashboard_key current dashboard name.
-		 * @return string $col_data_type column data type
-		 */
-		public static function get_column_data_type( $dashboard_key = '' ) {
-			if ( empty( $dashboard_key ) ) {
-				return;
-			}
-			$current_store_model = get_transient( 'sa_sm_' . $dashboard_key );
-			if ( empty( $current_store_model ) && is_array( $current_store_model ) ) {
-				return;
-			}
-			$current_store_model = json_decode( $current_store_model, true );
-			$col_model = ( ! empty( $current_store_model['columns'] ) ) ? $current_store_model['columns'] : array();
-			if ( empty( $col_model ) ) {
-				return;
-			}
-			$col_data_type = array();
-			$date_type_cols = array( 'sm.date', 'sm.datetime', 'sm.time', 'timestamp' );
-			//Code for storing the timestamp cols
-			foreach ( $col_model as $col ) {
-				if ( empty( $col['type'] ) ) {
-					continue;
-				}
-				$col_data_type[ $col['src'] ] = ( ( in_array( $col['type'], $date_type_cols, true ) ) && ( ! empty( $col['date_type'] ) && ( 'timestamp' === $col['date_type'] ) ) ) ? 'timestamp' : $col['type'];
-			} 
-			return $col_data_type;	
-		}
-
-		/**
 		 * Function update the edited column titles for the specific dashboard
 		 *
 		 * @param  array $args request params array.
@@ -1550,34 +969,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		 */
 		public static function update_column_titles( $args = array() ){
 			( ! empty( $args['edited_column_titles'] ) && ! empty( $args['state_option_name'] ) ) ? update_option( $args['state_option_name'] .'_columns', array_merge( get_option( $args['state_option_name'] .'_columns', array() ), $args['edited_column_titles'] ), 'no' ) : '';
-		}
-
-		/**
-		 * Function to batch update terms table related data
-		 *
-		 * @param  array $args request params array.
-		 * @return boolean $update result of the function call.
-		 */
-		public static function batch_update_terms_table_data( $args = array(), $is_post_terms = false ) {
-			if ( empty( $args ) || ( ! is_array( $args ) ) || empty( $args['operator'] ) || empty( $args['id'] ) || empty( $args['col_nm'] ) ) {
-				return false;
-			}
-			$value = ( is_array( $args['value'] ) && ! empty( $args['value'][0] ) ) ? intval( $args['value'][0] ) : intval( $args['value'] );
-			if ( ( ! empty( $args['copy_from_operators'] )  && is_array( $args['copy_from_operators'] ) ) && in_array( $args['operator'], $args['copy_from_operators'] ) ) {
-				$value = $args['value'];
-			}
-			if ( $is_post_terms ) {
-				return array(
-					'value'  => $value,
-					'operator' => $args[ 'operator' ]
-				);
-			}
-			if ( 'remove_from' === $args['operator'] ) {
-				return wp_remove_object_terms( $args['id'], $value, $args['col_nm'] );
-			} else {
-				$append = ( 'add_to' === $args['operator'] ) ? true : false;
-				return wp_set_object_terms( $args['id'], $value, $args['col_nm'], $append );
-			}
 		}
 
 		/**
@@ -1593,9 +984,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			global $wpdb;
 			$attachments = get_children( array(
 				'post_parent' => $post_id,
-				'post_type'   => 'attachment', 
+				'post_type'   => 'attachment',
 				'numberposts' => -1,
-				'post_status' => 'any' 
+				'post_status' => 'any'
 		  	) );
 			if ( empty( $attachments ) || ! is_array( $attachments ) ) {
 				return;
@@ -1610,7 +1001,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				$attached_media_post_ids = $wpdb->get_col(
 											$wpdb->prepare( "SELECT DISTINCT post_id 
 											FROM {$wpdb->prefix}postmeta WHERE post_id <> %d AND meta_key = %s AND meta_value = %s", $post_id, '_thumbnail_id', $attachment_id )
-										); 
+										);
 				$attached_media_post_ids = apply_filters( 'sm_delete_attachment_get_matching_gallery_images_post_ids', $attached_media_post_ids, array(
 					'post_id' => $post_id,
 					'attachment_id' => $attachment_id
@@ -1624,24 +1015,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				wp_delete_attachment( $attachment_id, true );
 				wp_delete_post( $attachment_id, true );
 			}
-		}
-
-		/**
-		 * Get selected ids.
-		 *
-		 * @param WP_Post $post Post data.
-		 */
-		public function get_selected_ids_and_entire_store_flag() {
-			$selected_ids =  ( ! empty( $this->req_params['selected_ids'] ) ) ? json_decode( stripslashes( $this->req_params['selected_ids'] ), true ) : array();
-			$entire_store = false;
-			if ( ( false === $this->entire_task ) && ( ! empty( $this->req_params['storewide_option'] ) ) && ( 'entire_store' === $this->req_params['storewide_option'] ) && ( ! empty( $this->req_params['active_module'] ) ) ) {
-				$selected_ids = $this->get_entire_store_ids();
-				$entire_store = true;
-			}
-			return array(
-				'selected_ids' => $selected_ids,
-				'entire_store' => $entire_store
-			);
 		}
 
 		/**
@@ -1665,7 +1038,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			}
 			// Prepare a placeholder string for the post IDs
 			$post_id_placeholders = implode( ',', array_fill( 0, $num_ids, '%d' ) );
-			$args = array( 
+			$args = array(
 				'selected_post_ids' => $selected_post_ids,
 				'post_id_placeholders' => $post_id_placeholders
 			);
@@ -1725,7 +1098,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			// Check if there are comment IDs to delete
 			if ( ! empty( $comment_ids ) ) {
 				// Prepare a string of comma-separated comment IDs for the delete query.
-				$comment_ids_placeholder = implode( ',', array_fill( 0, count( $comment_ids ), '%d' ) );	
+				$comment_ids_placeholder = implode( ',', array_fill( 0, count( $comment_ids ), '%d' ) );
 				// Delete comments from the comments table
 				$wpdb->query(
 					$wpdb->prepare(
@@ -1768,8 +1141,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				// Collect deleted post ID
 				$deleted_posts[] = $post->ID;
 			}
-			if ( ( empty( $deleted_posts ) || ( is_wp_error( $deleted_posts ) ) ) && is_callable( array( 'Smart_Manager', 'log' ) ) ) {
-				Smart_Manager::log( 'error', _x( 'Delete records permanently failed', 'delete permanently', 'smart-manager-for-wp-e-commerce' ) );
+			if ( ( empty( $deleted_posts ) || ( is_wp_error( $deleted_posts ) ) ) && is_callable( 'sa_manager_log' ) ) {
+				sa_manager_log( 'error', _x( 'Delete records permanently failed', 'delete permanently', 'smart-manager-for-wp-e-commerce' ) );
 				return false;
 			}
 			return true;
@@ -1829,7 +1202,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 						AND meta_value IN (" . $args['post_id_placeholders'] . ")
 				)
 			", $args['selected_post_ids'] );
-			
+
 			// Additional conditions based on object type
 			if ( 'post_type' === $object_type ) {
 				$metu_items_query .= " AND EXISTS (
@@ -1882,8 +1255,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			$result = apply_filters( 'sm_pro_default_process_delete_records_result', $result, $deleting_id, $params );
 			do_action( 'sm_pro_post_process_delete_non_posts_records', array( 'deleting_id' => $deleting_id, 'source' => __CLASS__ ) );
 			if ( empty( $result ) ) {
-				if ( is_callable( array( 'Smart_Manager', 'log' ) ) ) {
-					Smart_Manager::log( 'error', _x( 'Delete process failed', 'delete process', 'smart-manager-for-wp-e-commerce' ) );
+				if ( is_callable( 'sa_manager_log' ) ) {
+					sa_manager_log( 'error', _x( 'Delete process failed', 'delete process', 'smart-manager-for-wp-e-commerce' ) );
 				}
 				return false;
 			}
@@ -1952,1262 +1325,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		}
 
 		/**
-		 * Check whether to skip post data update based on specific parameters.
-		 *
-		 * @param array $update_params Parameters provided for the update, expected to include 'tax_input'.
-		 * @param array $post_data Data of the post being updated, including post type.
-		 * 
-		 * @return bool|void Returns true to skip update, false to proceed, or void if input is invalid.
-		*/
-		public static function is_skip_post_data_update( $update_params = array(), $post_data = array() ) {
-			if ( ( empty( $update_params ) ) || ( empty( $post_data ) ) || ( ! is_array( $post_data ) ) || ( empty( $post_data['post_type'] ) ) || ( ! is_array( $update_params ) ) ) {
-				return;
-			}
-			$skip_update = false;
-			if ( ( count( $update_params ) !== 1 ) || ( ! array_key_exists('tax_input', $update_params ) ) ) {
-				return $skip_update;
-			}
-			if ( ( ! is_array( $update_params['tax_input'] ) ) || ( empty( $update_params['tax_input'] ) ) ) {
-				return $skip_update;
-			}
-			foreach ( array_keys( $update_params['tax_input'] ) as $taxonomy ) {
-				if ( ( taxonomy_exists( $taxonomy ) ) && ( is_object_in_taxonomy( $post_data['post_type'], $taxonomy ) ) ) {
-					return false;
-				}
-				$skip_update = true;
-			}
-			return $skip_update;
-		}
-
-		/**
-		 * Updates multiple posts with provided data.
-		 *
-		 * @param array $request_params Array of post data and fields to update where each key in array is a post ID and the value is an associative array of post fields to update.
-		 * @param bool  $wp_error Optional. Whether to return WP_Error on failure. Default false.
-		 * @param bool  $fire_after_hooks Optional. Whether to fire the after insert hooks.
-		 * @return array|false Array of updated post IDs or false if an error occurs in update.
-		 */
-		public static function update_posts( $request_params = array(), $wp_error = false, $fire_after_hooks = true ) {
-			if ( ( ! is_array( $request_params ) ) || empty( $request_params ) || empty( $request_params['posts_data'] ) || ( ! is_array( $request_params['posts_data'] ) ) ) {
-				return;
-			}
-			$posts_parms_arr = $request_params['posts_data'];
-			global $wpdb;
-			$post_ids                  = array_map( 'intval', array_keys( $request_params['posts_data'] ) ); // Sanitize ids.
-			if ( empty( $post_ids ) ) {
-				return;
-			}
-			$posts                     = self::get_post_obj_from_ids( $post_ids );
-			if ( empty( $posts ) || ( ! is_array( $posts ) ) ) {
-				return;
-			}
-			$posts_data_to_update      = array();
-			$posts_meta_data_to_update = array();
-			$posts_meta_keys           = array();
-			$posts_before              = array();
-			$posts_data_for_after_hook = array(); // data maybe modified by filter wp_insert_post_data.
-			$posts_args_for_after_hook = array(); // unmodified data.
-			$update                    = true;
-			$posts_update_result       = true;
-			$postmeta_update_result    = array();
-			$terms_update_result       = array();
-			$updated_posts_obj         = array();
-			$taxonomies		   		   = ( ! empty( $request_params['taxonomies'] ) ) ? $request_params['taxonomies'] : array();
-			$taxonomy_data_to_update   = array();
-			$taxonomies_update_result  = true;
-			$all_term_ids              = array();
-			// compat for 'Germanized for WooCommerce Pro' plugin.
-			$taxonomy_terms = apply_filters( 
-				'sm_pro_get_taxonomy_terms',
-				$taxonomies
-			);
-			// code for mapping posts update data.
-			foreach ( $posts as $post ) {
-				if ( empty( $post->ID ) ) {
-					continue;
-				}
-				$post_parms = $posts_parms_arr[ $post->ID ]; //original post parms array, may have structure different from WP post parms array
-				if ( is_object( $post_parms ) ) {
-					// Non-escaped post was passed.
-					$post_parms = get_object_vars( $post_parms ); // convert an object into an associative array.
-					$post_parms = wp_slash( $post_parms );
-				}
-				$postarr = self::process_post_update_data( $post, $post_parms );
-				if ( ( true === self::is_skip_post_data_update( $post_parms, $postarr ) ) ) {
-					continue;
-				}
-				//map $postarr['tax_input'] just like wp does.
-				if ( ! empty( $postarr['tax_input'] ) && is_array( $postarr['tax_input'] ) ) {
-					$postarr['tax_input'] = array_map(
-						function( $terms ) {
-							return array_column(
-								array_filter(
-									$terms,
-									function( $term ) {
-										return ( ( ! empty( $term['operator'] ) ) && ( 'remove_from' !== $term['operator'] ) );
-									}
-								),
-								'value'
-							);
-						},
-						$postarr['tax_input']
-					);
-				}
-				if ( empty( $postarr ) ) {
-					continue;
-				}
-				// Capture original pre-sanitized array for passing into filters.
-				$unsanitized_postarr = $postarr;
-				$user_id = get_current_user_id();
-				$defaults = array(
-					'post_author'           => $user_id,
-					'post_content'          => '',
-					'post_content_filtered' => '',
-					'post_title'            => '',
-					'post_excerpt'          => '',
-					'post_status'           => 'draft',
-					'post_type'             => 'post',
-					'comment_status'        => '',
-					'ping_status'           => '',
-					'post_password'         => '',
-					'to_ping'               => '',
-					'pinged'                => '',
-					'post_parent'           => 0,
-					'menu_order'            => 0,
-					'guid'                  => '',
-					'import_id'             => 0,
-					'context'               => '',
-					'post_date'             => '',
-					'post_date_gmt'         => '',
-				);
-				$postarr = wp_parse_args( $postarr, $defaults );
-				unset( $postarr['filter'] );
-				$postarr = sanitize_post( $postarr, 'db' );
-				$guid    = $postarr['guid'];
-				// Get the post ID and GUID.
-				$post_id                  = $post->ID;
-				$post_before              = $post;
-				$posts_before[ $post_id ] = $post_before; // posts before array with key as id and value as post obj.
-				if ( is_null( $post_before ) ) {
-					continue;
-				}
-				$guid            = $post->guid;
-				$previous_status = $post->post_status;
-				$post_type    = empty( $postarr['post_type'] ) ? 'post' : $postarr['post_type'];
-				$post_title   = $postarr['post_title'];
-				$post_content = $postarr['post_content'];
-				$post_excerpt = $postarr['post_excerpt'];
-				$post_name = ( ! empty( $postarr['post_name'] ) ) ? $postarr['post_name'] : $post_before->post_name;
-				$maybe_empty = 'attachment' !== $post_type
-				&& ! $post_content && ! $post_title && ! $post_excerpt
-				&& post_type_supports( $post_type, 'editor' )
-				&& post_type_supports( $post_type, 'title' )
-				&& post_type_supports( $post_type, 'excerpt' );
-				//Filters whether the post should be considered "empty".
-				if ( apply_filters( 'wp_insert_post_empty_content', $maybe_empty, $postarr ) ) {
-					continue;
-				}
-				$post_status = empty( $postarr['post_status'] ) ? 'draft' : $postarr['post_status'];
-				if ( 'attachment' === $post_type && ( ! in_array( $post_status, array( 'inherit', 'private', 'trash', 'auto-draft' ), true ) ) ) {
-					$post_status = 'inherit';
-				}
-				if ( ! empty( $postarr['post_category'] ) ) {
-					// Filter out empty terms.
-					$post_category = array_filter( $postarr['post_category'] );
-				} elseif ( ! isset( $postarr['post_category'] ) ) {
-					$post_category = $post_before->post_category;
-				}
-				// Make sure we set a valid category.
-				if ( empty( $post_category ) || ( 0 === count( $post_category ) ) || ( ! is_array( $post_category ) ) ) {
-					// 'post' requires at least one category.
-					$post_category = ( 'post' === $post_type && 'auto-draft' !== $post_status ) ? array( get_option( 'default_category' ) ) : array();
-				}
-				/*
-				* Don't allow contributors to set the post slug for pending review posts.
-				*
-				* For new posts check the primitive capability, for updates check the meta capability.
-				*/
-				if ( 'pending' === $post_status ) {
-					$post_type_object = get_post_type_object( $post_type );
-					if ( ! current_user_can( 'publish_post', $post_id ) ) {
-						$post_name = '';
-					}
-				}
-				/*
-				* Create a valid post name. Drafts and pending posts are allowed to have
-				* an empty post name.
-				*/
-				if ( empty( $post_name ) ) {
-					$post_name = ( ! in_array( $post_status, array( 'draft', 'pending', 'auto-draft' ), true ) ) ? sanitize_title( $post_title ) : '';
-				} else {
-					// On updates, we need to check to see if it's using the old, fixed sanitization context.
-					$check_name = sanitize_title( $post_name, '', 'old-save' );
-					$post_name = ( ( strtolower( urlencode( $post_name ) ) === $check_name ) && ( $post->post_name === $check_name ) ) ?  $check_name : sanitize_title( $post_name );
-				}
-				/*
-				* Resolve the post date from any provided post date or post date GMT strings.
-				* if none are provided, the date will be set to now.
-				*/
-				$post_date = wp_resolve_post_date( $postarr['post_date'], $postarr['post_date_gmt'] );
-				if ( ! $post_date ) {
-					continue;
-				}
-				$post_date_gmt = ( empty( $postarr['post_date_gmt'] ) || ( '0000-00-00 00:00:00' === $postarr['post_date_gmt'] ) ) ? ( ( ! in_array( $post_status, get_post_stati( array( 'date_floating' => true ) ), true ) ) ? get_gmt_from_date( $post_date ) : '0000-00-00 00:00:00' ) : $postarr['post_date_gmt'];
-				$post_modified     = current_time( 'mysql' );
-				$post_modified_gmt = current_time( 'mysql', 1 );
-				//set modified date parms to posts_parms_arr to update it in DB.
-				if( ( empty( $posts_parms_arr[ $post->ID ]['post_modified'] ) ) ){
-					$posts_parms_arr[ $post->ID ]['post_modified'] = $post_modified;
-				}
-				if( ( empty( $posts_parms_arr[ $post->ID ]['post_modified_gmt'] ) ) ){
-					$posts_parms_arr[ $post->ID ]['post_modified_gmt'] = $post_modified_gmt;
-				}
-				// Comment status.
-				$comment_status = ( empty( $postarr['comment_status'] ) ) ? 'closed' : $postarr['comment_status'];
-				// These variables are needed by compact() later.
-				$post_content_filtered = $postarr['post_content_filtered'];
-				$post_author           = ( ! empty( $postarr['post_author'] ) ) ? $postarr['post_author'] : $user_id;
-				$ping_status           = empty( $postarr['ping_status'] ) ? get_default_comment_status( $post_type, 'pingback' ) : $postarr['ping_status'];
-				$to_ping               = ( ! empty( $postarr['to_ping'] ) ) ? sanitize_trackback_urls( $postarr['to_ping'] ) : '';
-				$pinged                = ( ! empty( $postarr['pinged'] ) ) ? $postarr['pinged'] : '';
-				$import_id             = ( ! empty( $postarr['import_id'] ) ) ? $postarr['import_id'] : 0;
-				/*
-				* The 'wp_insert_post_parent' filter expects all variables to be present.
-				* Previously, these variables would have already been extracted
-				*/
-				$menu_order = ( ( ! empty( $postarr['menu_order'] ) ) ) ? (int) $postarr['menu_order'] : 0;
-				$post_password = ( ! empty( $postarr['post_password'] ) ) ? $postarr['post_password'] : '';
-				$post_password = ( 'private' === $post_status ) ? '' : $post_password;
-				$post_parent = ( ( ! empty( $postarr['post_parent'] ) ) ) ? (int) $postarr['post_parent'] : 0;
-				$new_postarr = array_merge(
-					array(
-						'ID' => $post_id,
-					),
-					compact( array_diff( array_keys( $defaults ), array( 'context', 'filter' ) ) )
-				);
-				// Filters the post parent -- used to check for and prevent hierarchy loops.
-				$post_parent = apply_filters( 'wp_insert_post_parent', $post_parent, $post_id, $new_postarr, $postarr );
-				/*
-				* If the post is being untrashed and it has a desired slug stored in post meta,
-				* reassign it.
-				*/
-				if ( ( 'trash' === $previous_status ) && ( 'trash' !== $post_status ) ) {
-					$desired_post_slug = get_post_meta( $post_id, '_wp_desired_post_slug', true );
-					if ( $desired_post_slug ) {
-						delete_post_meta( $post_id, '_wp_desired_post_slug' );
-						$post_name = $desired_post_slug;
-					}
-				}
-				// If a trashed post has the desired slug, change it and let this post have it.
-				if (  ( 'trash' !== $post_status ) && $post_name ) {
-					//Filters whether or not to add a `__trashed` suffix to trashed posts that match the name of the updated post.
-					$add_trashed_suffix = apply_filters( 'add_trashed_suffix_to_trashed_posts', true, $post_name, $post_id );
-					if ( $add_trashed_suffix ) {
-						wp_add_trashed_suffix_to_post_name_for_trashed_posts( $post_name, $post_id );
-					}
-				}
-				// When trashing an existing post, change its slug to allow non-trashed posts to use it.
-				if ( ( 'trash' === $post_status ) && ( 'trash' !== $previous_status ) && ( 'new' !== $previous_status ) ) {
-					$post_name = wp_add_trashed_suffix_to_post_name_for_post( $post_id );
-				}
-				$post_name = wp_unique_post_slug( $post_name, $post_id, $post_status, $post_type, $post_parent );
-				// Don't unslash.
-				$post_mime_type = ( ! empty( $postarr['post_mime_type'] ) ) ? $postarr['post_mime_type'] : '';
-				$data = compact(
-					'post_author',
-					'post_date',
-					'post_date_gmt',
-					'post_content',
-					'post_content_filtered',
-					'post_title',
-					'post_excerpt',
-					'post_status',
-					'post_type',
-					'comment_status',
-					'ping_status',
-					'post_password',
-					'post_name',
-					'to_ping',
-					'pinged',
-					'post_modified',
-					'post_modified_gmt',
-					'post_parent',
-					'menu_order',
-					'post_mime_type',
-					'guid'
-				);
-				$emoji_fields = array( 'post_title', 'post_content', 'post_excerpt' );
-				if ( ! empty( $emoji_fields ) && ( is_array( $emoji_fields ) ) ) {
-					foreach ( $emoji_fields as $emoji_field ) {
-						if ( ! empty( $data[ $emoji_field ] ) ) {
-							$charset = $wpdb->get_col_charset( $wpdb->posts, $emoji_field );
-							if ( 'utf8' === $charset ) {
-								$data[ $emoji_field ] = wp_encode_emoji( $data[ $emoji_field ] );
-							}
-						}
-					}
-				}
-				//Filters slashed post data just before it is inserted into the database.
-				$data = apply_filters( 'wp_insert_post_data', $data, $postarr, $unsanitized_postarr, $update );
-				$data  = wp_unslash( $data );
-				// Fires immediately before an existing post is updated in the database.
-				do_action( 'pre_post_update', $post_id, $data );
-				// $posts_data_to_update[ $post_id ] = $data;
-				$posts_data_to_update[ $post_id ] = $posts_parms_arr[ $post->ID ];
-				if ( empty( $data['post_name'] ) && ( ! in_array( $data['post_status'], array( 'draft', 'pending', 'auto-draft' ), true ) ) ) {
-					$data['post_name'] = wp_unique_post_slug( sanitize_title( $data['post_title'], $post_id ), $post_id, $data['post_status'], $post_type, $post_parent );
-					$posts_data_to_update[ $post_id ]['post_name'] = $data['post_name'];
-				}
-				if ( is_object_in_taxonomy( $post_type, 'category' ) ) {
-					wp_set_post_categories( $post_id, $post_category );
-				}
-				if ( ( ! empty( $postarr['tags_input'] ) ) && is_object_in_taxonomy( $post_type, 'post_tag' ) ) {
-					wp_set_post_tags( $post_id, $postarr['tags_input'] );
-				}
-				
-				if ( ! empty( $post_parms['tax_input'] ) && is_array( $post_parms['tax_input'] ) ) {
-					foreach ( $post_parms['tax_input'] as $taxonomy => $terms_data ) {
-						if ( ( ! taxonomy_exists( $taxonomy ) ) || ( empty( $terms_data ) ) || ( ! is_object_in_taxonomy( $post_type, $taxonomy ) ) ) {
-							continue;
-						}
-						// Prepare an array to hold term values.
-						$term_ids_set    = array();
-						$term_ids_remove = array();
-						$append = false; // Default append to false.
-						$remove_all_terms = false;
-						foreach ( $terms_data as $term_data ) {
-							if ( ( empty( $term_data ) ) || ( empty( $term_data['operator'] ) ) ) {
-								continue;
-							}
-							$remove_all_terms = ( ! empty( $term_data['remove_all_terms'] ) && $term_data['remove_all_terms'] === true ) ? true : false;
-							if ( ( $term_data['operator'] !== 'remove_from' ) ){
-								if ( ( is_array( $term_data['value'] ) ) ) {
-									$term_ids_set = array_map( 'absint', $term_data['value'] );
-								} else {
-									$term_ids_set[] = ( ! empty( $term_data['value'] ) ) ? absint( $term_data['value'] ) : 0;
-								}
-								if ( $term_data['operator'] === 'add_to' ){ 
-									$append = true; // Set append if any term needs it.
-								}
-							} else {
-								if ( ( is_array( $term_data['value'] ) ) ) {
-									$term_ids_remove = array_map( 'absint', $term_data['value'] );
-								} else {
-									$term_ids_remove[] = ( ! empty( $term_data['value'] ) ) ? absint( $term_data['value'] ) : 0;
-								}
-							}
-						}
-						// compat for 'Germanized for WooCommerce Pro' plugin.
-						$postarr = apply_filters( 'sm_pro_update_meta_args',
-							$postarr,
-							array( 'taxonomy' => $taxonomy,
-								'term_ids' => $term_ids_set,
-								'term_ids_remove' => $term_ids_remove,
-								'taxonomy_terms' => $taxonomy_terms
-							) 
-						);
-						$all_term_ids = array_merge( $all_term_ids, array_unique( array_merge( $term_ids_set, $term_ids_remove ) ) );
-						$taxonomy_data_to_update[ $post_id ][$taxonomy] = array( 'term_ids_set'=>$term_ids_set,'taxonomy' => $taxonomy, 'append' => $append, 'term_ids_remove' => $term_ids_remove, 'remove_all_terms' => $remove_all_terms );
-					}
-				}
-				if ( ! empty( $postarr['meta_input'] ) ) {
-					$posts_meta_data_to_update[ $post_id ] = $postarr['meta_input'];
-					$posts_meta_keys = array_unique( array_merge(
-						$posts_meta_keys,
-						array_keys( $postarr['meta_input'] )
-					));
-				}
-				$posts_data_for_after_hook[ $post_id ] = $data; // modified data by filter wp_insert_post_data.
-				$posts_args_for_after_hook[ $post_id ] = $postarr; // same as data but unmodified, since data is filtered by hook.
-				$updated_posts_obj[ $post_id ] = self::update_post_object( $post, (object) $data );
-			}
-
-			if ( empty( $posts_data_to_update ) ) return;
-			// Update posts data.
-			$posts_update_result = self::run_bulk_update_posts_query( $posts_data_for_after_hook, $post_ids );
-			if ( empty( $posts_update_result ) ) {
-				return array(
-					'taxonomies_update_result' => false,
-					'postmeta_update_result' => false,
-					'posts_update_result'     => false
-				);
-			}
-			// update post_meta data.
-			if ( ( ! empty( $posts_meta_data_to_update ) ) && ( ! empty( $posts_meta_keys ) ) ) {
-				$postmeta_update_result = self::update_meta_tables(
-					array(
-						'meta_data_edited'=>array(
-							'postmeta' => $posts_meta_data_to_update,
-						),
-						'meta_keys_edited'=>( ! empty( $posts_meta_keys ) && is_array( $posts_meta_keys ) ) ? array_unique( $posts_meta_keys ) : array(),
-						'task_id'         => ( ! empty( $request_params['task_id'] ) ) ? absint( $request_params['task_id'] ) : 0,
-						'prev_postmeta_values' => ( ! empty( $request_params['prev_postmeta_values'] ) ) ? $request_params['prev_postmeta_values'] : array()
-					)
-				);
-			}
-			// update terms data.
-			if( ( ! empty( $taxonomy_data_to_update ) ) && ( ! empty( $taxonomies ) ) ){
-				$taxonomies_update_result = self::set_or_remove_object_terms( 
-					array(
-						'taxonomy_data_to_update' => $taxonomy_data_to_update,
-						'taxonomies'              => $taxonomies,
-						'task_id'                 => ( ! empty( $request_params['task_id'] ) ) ? absint( $request_params['task_id'] ) : 0,
-						'term_ids'                => ( ! empty( $all_term_ids ) && is_array( $all_term_ids ) ) ? $all_term_ids : array()
-					)
-				);
-			}
-			// execute actions after updating a post.
-			self::update_posts_after_update_actions(
-				array(
-					'post_ids'                  => $post_ids,
-					'posts_data_for_after_hook' => $posts_data_for_after_hook,
-					'posts_args_for_after_hook' => $posts_args_for_after_hook,
-					'fire_after_hooks'          => $fire_after_hooks,
-					'posts_before'              => $posts_before,
-					'task_id'                   => ( ! empty( $request_params['task_id'] ) ) ? absint( $request_params['task_id'] ) : 0,
-					'posts_fields_edited'       => $posts_parms_arr,
-					'updated_posts'             => $updated_posts_obj,
-				)
-			);
-			//return update result.
-			return array(
-				'taxonomies_update_result' => ( ! empty( $taxonomies_update_result ) ) ? $taxonomies_update_result : false,
-				'postmeta_update_result' => $postmeta_update_result,
-				'posts_update_result'     => $posts_update_result
-			);
-		}
-
-		/**
-		 * Updates or inserts metadata for meta tables.
-		 *
-		 * Metadata is either added if missing, or updated if it already exists.
-		 *
-		 * @param array $meta_data_edited   The main data array structured as:
-		 *                                  [table_name => [id => [meta_key => meta_value]]].
-		 *                                  table_name` (string): The name of the table to update.
-		 *                                  id (int): The identifier for each record (e.g., post ID).
-		 *                                  meta_key (string): The meta key to be updated.
-		 *                                  meta_value (mixed): The new value to store.
-		 *
-		 * @param array $meta_keys_edited   Array of specific meta keys to update.
-		 *
-		 * @return array|true update_failed_data array, true if all ids are updated successfully.
-		*/
-		public static function update_meta_tables( $args = array() ){
-			if ( empty( $args['meta_data_edited'] ) ) {
-				return;
-			}
-			global $wpdb;
-			$update_params_meta = array(); // for all tables with meta_key = meta_value like structure for updating the values.
-			$insert_params_meta = array(); // for all tables with meta_key = meta_value like structure for inserting the values.
-			$update_failed_data = array();
-			$field_names = array();
-			foreach ( $args['meta_data_edited'] as $update_table => $update_params ) {
-				if ( empty( $update_params ) ) {
-					continue;
-				}
-				$post_ids = array_keys( $update_params );
-				$meta_keys_edited = ( ! empty( $args['meta_keys_edited'] ) ) ? $args['meta_keys_edited'] : array();
-				$update_table_key = ''; //pkey for the update table.
-				if ( 'postmeta' === $update_table ) {
-					$update_table_key = 'post_id';
-				}
-				//Code for getting the old values and meta_ids
-				$old_meta_data = self::get_meta_data( $post_ids, $meta_keys_edited, $update_table, $update_table_key );
-				$meta_data = array();
-				if ( ! empty( $old_meta_data ) ) {
-					foreach ( $old_meta_data as $key => $old_values ) {
-						foreach ( $old_values as $data ) {
-							if ( empty( $meta_data[ $key ] ) ) {
-								$meta_data[ $key ] = array();
-							}
-							$meta_data[ $key ][ $data['meta_key'] ] = array();
-							$meta_data[ $key ][ $data['meta_key'] ]['meta_id'] = $data['meta_id'];
-							$meta_data[ $key ][ $data['meta_key'] ]['meta_value'] = $data['meta_value'];
-						}
-					}
-				}
-				$meta_index = 0;
-				$insert_meta_index = 0;
-				$index = 0;
-				$insert_index = 0;
-				$old_post_id = '';
-				$update_params_index = 0;
-				//Code for generating the query.
-				foreach ( $update_params as $id => $updated_data ) {
-					$updated_data_index = 0;
-					$update_params_index++;
-					foreach ( $updated_data as $key => $value ) {
-						$updated_data_index++;
-						$field_names[ $id ][ $key ] = "{$update_table}/meta_key={$key}/meta_value={$key}";
-						$key = wp_unslash($key);
-						$value = esc_sql( wp_unslash( $value ) );
-						$meta_type = 'post';
-						if ( 'postmeta' === $update_table ) {
-							$value = sanitize_meta( $key, $value, 'post' );
-						}
-						// Filter whether to update metadata of a specific type.
-						$check = apply_filters( "update_{$meta_type}_metadata", null, $id, $key, $value, '' );
-						if ( null !== $check ) {
-							continue;
-						}
-						if ( is_numeric( $value ) ) {
-							$value = strval( $value );
-						}
-						// Code for handling if the meta key does not exist.
-						if ( empty( $meta_data[ $id ][ $key ] ) ) {
-							// Filter whether to add metadata of a specific type.
-							$check = apply_filters( "add_{$meta_type}_metadata", null, $id, $key, $value, false );
-							if ( null !== $check ) {
-								continue;
-							}
-							if ( empty( $insert_params_meta[ $update_table ] ) ) {
-								$insert_params_meta[ $update_table ] = array();
-								$insert_params_meta[ $update_table ][ $insert_meta_index ] = array();
-								$insert_params_meta[ $update_table ][ $insert_meta_index ]['values'] = array();
-							}
-							if ( $insert_index >= 5 ) { // Code to have not more than 5 value sets in single insert query.
-								$insert_index = 0;
-								$insert_meta_index++;
-							}
-							$insert_params_meta[ $update_table ][ $insert_meta_index ]['values'][] = array(
-								'id' => $id,
-								'meta_key' => $key,
-								'meta_value' => $value
-							);
-							$value = maybe_serialize( $value );
-							if ( empty( $insert_params_meta[ $update_table ][ $insert_meta_index ]['query'] ) ) {
-								$insert_params_meta[ $update_table ][ $insert_meta_index ]['query'] = "(" . $id . ", '" . $key . "', '" . $value . "')";
-							} else {
-								$insert_params_meta[ $update_table ][ $insert_meta_index ]['query'] .= ", (" . $id . ", '" . $key . "', '" . $value . "')";
-							}
-							$insert_index++;
-							continue;
-						}
-						$value = maybe_serialize($value);
-						if (empty($update_params_meta[$update_table])) {
-							$update_params_meta[$update_table] = array();
-							$update_params_meta[$update_table][$meta_index] = array();
-							$update_params_meta[$update_table][$meta_index]['ids'] = array();
-							$update_params_meta[$update_table][$meta_index]['query'] = '';
-						}
-		
-						//if meta old value & new value does not match then create a query for updating.
-						if (! empty($meta_data[$id][$key]) && $meta_data[$id][$key]['meta_value'] !== $value) {
-							$meta_data[$id][$key]['meta_value'] = $value;
-							if ($index >= 5 && $old_post_id != $id) {
-								$update_params_meta[$update_table][$meta_index]['query'] .= ' ELSE meta_value END END ';
-								$index = 0;
-								$meta_index++;
-							}
-		
-							if (empty($update_params_meta[$update_table][$meta_index]['query'])) {
-								$update_params_meta[$update_table][$meta_index]['query'] = ' CASE post_id ';
-							}
-		
-							if ($old_post_id != $id) {
-								if (!empty($index)) {
-									$update_params_meta[$update_table][$meta_index]['query'] .= ' ELSE meta_value END ';
-								}
-								$update_params_meta[$update_table][$meta_index]['query'] .= " WHEN '" . $id . "' THEN 
-																									CASE meta_key ";
-		
-								$old_post_id = $id;
-								$update_params_meta[$update_table][$meta_index]['ids'][] = $id;
-								$index++;
-							}
-							$update_params_meta[$update_table][$meta_index]['query'] .= " WHEN '" . $key . "' THEN '" . $value . "' ";
-						}	
-					}
-					//Code for the last condition.
-					if ($update_params_index === sizeof($update_params) &&  $updated_data_index === sizeof($updated_data) && !empty($update_params_meta[$update_table][$meta_index]['query'])) {
-						$update_params_meta[$update_table][$meta_index]['query'] .= ' ELSE meta_value END END ';
-					}
-				}
-		
-				// Start here... update the actions and query in for loop.
-				if (!empty($insert_params_meta)) {
-					foreach ($insert_params_meta as $insert_table => $data) {
-						if (empty($data)) {
-							continue;
-						}
-		
-						$insert_table_key = 'post_id';
-						foreach ($data as $insert_params) {
-							if (empty($insert_params['values']) || empty($insert_params['query'])) {
-								continue;
-							}
-		
-							$insert_meta_query = "INSERT INTO {$wpdb->prefix}" . $insert_table . " (" . $insert_table_key . ",meta_key,meta_value)
-																	VALUES " . $insert_params['query'];
-		
-							if ($insert_table == 'postmeta') {
-								// function to replicate wordpress add_metadata().
-								self::add_post_meta(
-									array(
-										'meta_type' => 'post',
-										'insert_values' => $insert_params['values'],
-										'insert_meta_query' => $insert_meta_query,
-										'insert_table_key'=> $insert_table_key,
-										'field_names'=> $field_names,
-										'task_id'=> !empty( $args['task_id'] ) ? $args['task_id'] : 0,
-										'prev_postmeta_values'=> !empty( $args['prev_postmeta_values'] ) ? $args['prev_postmeta_values'] : array()
-									)
-								);
-							} else {
-								$result_insert_meta = $wpdb->query($insert_meta_query);
-							}
-						}
-					}
-				}
-		
-				// data updation for meta tables.
-				if (!empty($update_params_meta)) {
-					foreach ($update_params_meta as $update_table => $data) {
-						if (empty($data)) {
-							continue;
-						}
-		
-						$update_table_key = (empty($update_table_key)) ? 'post_id' : $update_table_key;
-						foreach ($data as $update_params) {
-							if (empty($update_params['ids']) || empty($update_params['query'])) {
-								continue;
-							}
-							$update_meta_query = "UPDATE {$wpdb->prefix}$update_table
-																SET meta_value = " . $update_params['query'] . "
-																WHERE $update_table_key IN (" . implode(',', $update_params['ids']) . ")";
-							if ('postmeta' === $update_table) {
-								// function to replicate wordpress update_postmeta().
-								$update_result = self::update_post_meta(
-									array(
-										'meta_type' => 'post',
-										'update_ids' => (! empty($update_params['ids'])) ? $update_params['ids'] : array(),
-										'meta_data' => (! empty($meta_data)) ? $meta_data : array(),
-										'update_meta_query' => (! empty($update_meta_query)) ? $update_meta_query : '',
-										'update_table_key' => (! empty($update_table_key)) ? $update_table_key : 'post_id',
-										'field_names'=> $field_names,
-										'task_id'=> !empty( $args['task_id'] ) ? $args['task_id'] : 0,
-										'prev_postmeta_values'=> !empty( $args['prev_postmeta_values'] ) ? $args['prev_postmeta_values'] : array(),
-									)
-								);
-								if ( $update_result['update_status']!==true && !empty( $update_result['update_failed_data'] && is_array( $update_result['update_failed_data'] ) )  ) {
-									$update_failed_data = array_merge( $update_failed_data, $update_result['update_failed_data'] );
-								}
-							}
-						}
-					}
-				}
-			}
-			return ! empty( $update_failed_data ) ? $update_failed_data : 'success';
-		}
-		// Function to get the meta data for the given ids
-		public static function get_meta_data($ids, $meta_keys, $update_table, $update_table_key = 'post_id') {
-			global $wpdb;
-
-			$ids_format = implode(', ', array_fill(0, count($ids), '%s'));
-			$meta_keys_format = implode(', ', array_fill(0, count($meta_keys), '%s'));
-			$group_by = '';
-
-			if ( $update_table == 'postmeta' ) {
-				$group_by = 'GROUP BY '.$update_table_key.' , meta_id';
-			}
-
-			$old_meta_data_query = "SELECT *
-								FROM {$wpdb->prefix}$update_table
-								WHERE post_id IN (".implode(',',$ids).")
-									AND meta_key IN ('".implode("','",$meta_keys)."')
-									AND 1=%d
-								$group_by";
-
-			$old_meta_data_results = $wpdb->get_results( $wpdb->prepare( $old_meta_data_query, 1 ), 'ARRAY_A');  // passed 1 to avoid the debug warning
-
-			$old_meta_data = array();
-
-			if ( count($old_meta_data_results) > 0) {
-				foreach ($old_meta_data_results as $meta_data) {
-
-					$post_id = $meta_data[$update_table_key];
-					unset($meta_data[$update_table_key]);
-
-					if ( empty($old_meta_data[$post_id]) ) {
-						$old_meta_data[$post_id] = array();
-					}
-					
-					$old_meta_data[$post_id][] = $meta_data;
-				}
-			}
-
-			return $old_meta_data;
-		}
-		/**
-		 * Updates meta data in batch for various WordPress meta types, with action hooks for pre- and post-update events.
-		 *
-		 * This function replicates the functionality of `update_post_meta()` but allows batch updating for multiple meta IDs
-		 *
-		 * @param array $args {
-		 *     Arguments for updating meta data.
-		 *
-		 *     @type array  $update_ids        Array of IDs for posts, users, or other objects to update.
-		 *     @type array  $meta_data         Nested array where each ID has meta keys with corresponding meta values.
-		 *     @type string $meta_type         Type of meta (e.g., 'post', 'user') used for triggering specific hooks.
-		 *     @type string $update_table_key  Database column used as the key for the update (e.g., 'post_id' for post meta).
-		 *     @type string $update_meta_query Optional. SQL query string for executing the batch update.
-		 * }
-		 *
-		 * @global wpdb $wpdb WordPress database abstraction object.
-		 * @return void
-		*/
-		public static function update_post_meta( $args = array() ) {
-			if ( empty( $args['update_ids'] ) || empty( $args['meta_data'] ) ) {
-				return;
-			}
-			$result = array( 'update_status'=> false, 'update_failed_data' => [] );
-			global $wpdb;
-			$update_query_values = $update_query_ids = array();
-			// Code for executing actions pre update.
-			foreach ( $args['update_ids'] as $id ) {
-				if ( empty( $args['meta_data'][ $id ] ) ) {
-					continue;
-				}
-				$meta_key_update_values = '';
-				foreach ( $args['meta_data'][ $id ] as $meta_key => $value ) {
-					do_action( "update_{$args['meta_type']}_meta", $value['meta_id'], $id, $meta_key, $value['meta_value'] );
-					$meta_value = maybe_serialize( $value['meta_value'] );
-					if ( 'post' === $args['meta_type'] ) {
-						do_action( 'update_postmeta', $value['meta_id'], $id, $meta_key, $value['meta_value'] );
-					}
-					if ( empty( $args['update_meta_query'] ) ) {
-						$meta_key_update_values .= " WHEN '". $meta_key ."' THEN '". $value['meta_value'] ."' ";
-					}
-				}
-				if ( empty( $args['update_meta_query'] ) && ! empty( $meta_key_update_values ) ) {
-					$update_query_ids[] = $id;
-					$update_query_values[] = " WHEN '". $id ."' THEN CASE meta_key ". $meta_key_update_values ." ELSE meta_value END ";
-				}
-			}
-			if ( empty( $args['update_meta_query'] ) && ! empty( $update_query_values ) ) {
-				$args['update_meta_query'] = "UPDATE {$wpdb->prefix}". $args['meta_type'] ."meta SET meta_value = CASE ". $args['update_table_key'] ." ". implode( ' ', $update_query_values ) ." END 
-									WHERE ". $args['update_table_key'] ." IN (". implode( ',', $update_query_ids ) ." ) ";
-			}
-			if ( empty( $args['update_meta_query'] ) ) {
-				return;
-			}
-			$result_update_meta = $wpdb -> query( $args['update_meta_query'] );
-			if( !empty( $result_update_meta ) && !is_wp_error( $result_update_meta ) ){
-				$result['update_status'] = true;
-			}
-			// Code for executing actions post update
-			foreach ( $args['update_ids'] as $id ) {
-				if ( empty( $args['meta_data'][ $id] ) ) {
-					continue;
-				}
-				wp_cache_delete($id, $args['meta_type'] . '_meta');
-				foreach ( $args['meta_data'][ $id ] as $meta_key => $meta_data ) {
-					do_action( "updated_{$args['meta_type']}_meta", $meta_data['meta_id'], $id, $meta_key, $meta_data['meta_value'] );
-					$meta_value = maybe_serialize( $meta_data['meta_value'] );
-					if ( 'post' === $args['meta_type'] ) {
-						do_action( 'updated_postmeta', $meta_data['meta_id'], $id, $meta_key, $meta_value );
-					}
-					if( empty( $result_update_meta ) || ( is_wp_error( $result_update_meta ) ) ){
-						$result['update_status'] = false;
-						$result['update_failed_data'][] = $id. "/" . $meta_key;
-					}
-					if( empty($args['field_names'][ $id ][ $meta_key ] ) ) continue;
-					
-					$disable_task_details_update = apply_filters(
-						'sm_disable_task_details_update',
-						array(
-							'prev_vals'=>('postmeta/meta_key=_product_attributes/meta_value=_product_attributes' === $args['field_names'][ $id ][ $meta_key ]) ? Smart_Manager_Base::$previous_vals : $args['prev_postmeta_values'],
-							'field_name'=>!empty( $args['field_names'][ $id ][ $meta_key ] ) ? $args['field_names'][ $id ][ $meta_key ] : '',
-							'data'=>!empty( $args ) ? $args : array(),
-							'record_id'=>!empty( $id ) ? intval( $id ) : 0,
-						)
-					);
-					
-					if ( empty($args['task_id'] ) || empty( $id ) || empty( $meta_key ) || ! isset($args['field_names'][ $id ][ $meta_key ] ) || ( ! empty( $disable_task_details_update ) ) ) {
-							continue;
-					}
-					Smart_Manager_Base::$update_task_details_params[] = array(
-						'task_id' =>$args['task_id'],
-						'action' => 'set_to',
-						'status' => 'completed',
-						'record_id' => $id,
-						'field' =>$args['field_names'][ $id ][ $meta_key ],                                                               
-						'prev_val' =>$args['prev_postmeta_values'][ $id ][ $meta_key ],
-						'updated_val' => $meta_value,
-					);	
-				}
-			}
-			return $result;
-		}
-		
-		// Function to replicate wordpress add_metadata()
-		public static function add_post_meta( $args = array() ) {
-			if( empty( $args ) ) return;
-			global $wpdb;
-			if ( empty($args['insert_values']) ) {
-				return;
-			}
-		
-			$insert_query_values = array();
-		
-			// Code for executing actions pre insert
-			foreach ( $args['insert_values'] as $insert_value ) {
-				do_action( "add_{$args['meta_type']}_meta", $insert_value['id'], $insert_value['meta_key'], $insert_value['meta_value'] );
-				
-				if( empty($args['insert_meta_query']) ) {
-					$insert_query_values[] = " ( ". $insert_value['id'] .", '". $insert_value['meta_key'] ."', '". $insert_value['meta_value'] ."' ) ";
-				}
-			}
-		
-			if( empty($args['insert_meta_query']) && !empty($insert_query_values) ) {
-				$args['insert_meta_query'] = "INSERT INTO {$wpdb->prefix}". $args['meta_type'] ."meta(". $args['insert_table_key'] .", meta_key, meta_value) VALUES ". implode(",", $insert_query_values);
-			}
-			
-		
-			//Code for inserting the values
-			$result_insert_meta = $wpdb->query($args['insert_meta_query']);
-			$mid = '';
-		
-			// Code for executing actions pre insert
-			foreach ( $args['insert_values'] as $insert_value ) {
-				
-				if ( empty($first_insert_id) ) {
-					$mid = $wpdb->insert_id;
-				}
-				wp_cache_delete($insert_value['id'], $args['meta_type'] . '_meta');
-				do_action( "added_{$args['meta_type']}_meta", $mid, $insert_value['id'], $insert_value['meta_key'], $insert_value['meta_value'] );
-		
-				$mid++;
-				if ( ( defined('SMPRO') && empty( SMPRO ) ) || empty( $args['task_id'] ) || empty( $insert_value['id'] ) || empty( $insert_value['meta_key'] ) || ( is_wp_error( $result_insert_meta ) ) || ! isset( $args['field_names'][ $insert_value['id'] ][ $insert_value['meta_key'] ] ) ) {
-					continue;
-				}
-				Smart_Manager_Base::$update_task_details_params[] = array(
-						'task_id' => $args['task_id'],
-						'action' => 'set_to',
-						'status' => 'completed',
-						'record_id' => $insert_value['id'],
-						'field' => $args['field_names'][ $insert_value['id'] ][ $insert_value['meta_key'] ],                                                               
-						'prev_val' => $args['prev_postmeta_values'][ $insert_value['id'] ][ $insert_value['meta_key'] ],
-						'updated_val' => $insert_value['meta_value'],
-				);
-			}
-			return;
-		}
-		
-		/**
-		 * Updates multiple posts in the WordPress posts table using a single database call.
-		 *
-		 * @param array $posts_data_to_update Associative array of post data with post IDs as keys.
-		 * @param array $selected_post_ids Array of post IDs to update.
-		 * @return void|false|int Number of rows affected if the update is successful, or false if the update fails or returns an error.
-		 */
-		public static function run_bulk_update_posts_query( $posts_data_to_update = array(), $selected_post_ids = array() ) {
-			if ( empty( $posts_data_to_update ) || ( ! is_array( $posts_data_to_update ) ) || empty( $selected_post_ids ) || ( ! is_array( $selected_post_ids ) ) ) return;
-			global $wpdb;
-			// Sanitize and count post IDs.
-			$selected_post_ids = array_map( 'intval', $selected_post_ids );
-			$num_ids           = count( $selected_post_ids );
-			// Return early if there are no valid IDs.
-			if ( empty( $num_ids ) ) return;
-			// Prepare placeholders for the post IDs.
-			$post_id_placeholders = implode( ',', array_fill( 0, $num_ids, '%d' ) );
-			if ( empty( $post_id_placeholders ) ) return;
-			$columns = array(
-				'post_author',
-				'post_date',
-				'post_date_gmt',
-				'post_content',
-				'post_content_filtered',
-				'post_title',
-				'post_excerpt',
-				'post_status',
-				'post_type',
-				'comment_status',
-				'ping_status',
-				'post_password',
-				'post_name',
-				'to_ping',
-				'pinged',
-				'post_modified',
-				'post_modified_gmt',
-				'post_parent',
-				'menu_order',
-				'post_mime_type',
-				'guid'
-			);
-			// Initialize arrays to hold SQL parts.
-			$case_statements = array_fill_keys( $columns, array() );
-			// Build CASE statements for each field.
-			foreach ( $posts_data_to_update as $post_id => $post_data ) {
-				if ( ! in_array( $post_id, $selected_post_ids, true ) ) continue;
-				if ( empty( $case_statements ) || ( ! is_array( $case_statements ) ) ) {
-					continue;
-				}
-				foreach ( $case_statements as $field => &$case_clause ) {
-					if ( ! isset( $post_data[ $field ] ) ) continue;
-					$case_clause[] = $wpdb->prepare( 'WHEN %d THEN %s', $post_id, $post_data[ $field ] );
-				}
-			}
-
-			// Construct SET clauses with CASE expressions.
-			$set_clauses = array();
-			if ( ! empty( $case_statements ) && ( is_array( $case_statements ) ) ) {
-				foreach ( $case_statements as $field => $clauses ) {
-					if ( empty( $clauses ) ) continue;
-					$set_clauses[] = "{$field} = CASE ID " . implode( ' ', $clauses ) . " ELSE {$field} END";
-				}
-			}
-			// If there are no valid fields to update, exit.
-			if ( empty( $set_clauses ) ) return;
-			// Execute the query with the selected post IDs.
-			if ( ( is_wp_error( $wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}posts SET " . implode( ', ', $set_clauses ) . " WHERE ID IN ( $post_id_placeholders )", $selected_post_ids ) ) ) ) && is_callable( array( 'Smart_Manager', 'log' ) ) ) {
-				Smart_Manager::log( 'error', _x( 'Bulk update posts batch failed', 'bulk update process', 'smart-manager-for-wp-e-commerce' ) );
-				return false;
-			}
-			return true;
-		}
-
-		/**
-		 * Function for actions to execute after updating a post.
-		 *
-		 * @param array $parms Parameters for actions to fire after post update.
-		 * @return void
-		*/
-		public static function update_posts_after_update_actions( $parms = array() ) {
-			$post_ids                  = ( ! empty( $parms['post_ids'] ) ) ? $parms['post_ids'] : array();
-			$posts_data_for_after_hook = ( ! empty( $parms['posts_data_for_after_hook'] ) ) ? $parms['posts_data_for_after_hook'] : array();
-			$posts_args_for_after_hook = ( ! empty( $parms['posts_args_for_after_hook'] ) ) ? $parms['posts_args_for_after_hook'] : array();
-			$fire_after_hooks          = ( ! empty( $parms['fire_after_hooks'] ) ) ? $parms['fire_after_hooks'] : false;
-			$posts_before              = ( ! empty( $parms['posts_before'] ) ) ? $parms['posts_before'] : array();
-			$posts_fields_edited       = ( ! empty( $parms['posts_fields_edited'] ) ) ? $parms['posts_fields_edited'] : array();
-			$task_id          		   = ( ! empty( $parms['task_id'] ) ) ? $parms['task_id'] : 0;
-			$update                    = true;
-			$updated_posts_obj         = ( ! empty( $parms['updated_posts'] ) ) ? $parms['updated_posts'] : array();
-			if ( ( empty( $posts_fields_edited ) ) || ( empty( $post_ids ) ) || ( empty( $posts_data_for_after_hook ) ) || ( empty( $posts_args_for_after_hook ) ) || ( empty( $posts_before ) ) ) {
-				return;
-			}
-			if ( ( empty( $updated_posts_obj ) ) || ( ! is_array( $updated_posts_obj ) ) ) return;
-			foreach ( $updated_posts_obj as $post ) {
-				if ( ( empty( $post->ID ) ) ) continue;
-				$post_id = $post->ID;
-				$post_before     = $posts_before[ $post_id ];
-				$data            = $posts_data_for_after_hook[ $post_id ];//post data that maybe modified by filter
-				$args            = $posts_args_for_after_hook[ $post_id ];//unmodified post data
-				if ( ! empty( $args['page_template'] ) ) {
-					$post->page_template = $args['page_template'];
-					$page_templates      = wp_get_theme()->get_page_templates( $post );
-					( ( 'default' !== $args['page_template'] ) && ( ! isset( $page_templates[ $args['page_template'] ] ) ) ) ? update_post_meta( $post_id, '_wp_page_template', 'default' ) : update_post_meta( $post_id, '_wp_page_template', $args['page_template'] );
-				}
-				self::fire_post_update_hooks( $post, $post_before, $update, $post_before->post_status, $data['post_status'] );
-				if ( $fire_after_hooks ) {
-					wp_after_insert_post( $post, $update, $post_before );
-				}
-				if ( ( empty( $task_id ) ) || ( ! is_array( $posts_fields_edited ) ) ) continue;
-				foreach ( $posts_fields_edited[ $post_id ] as $key => $value ) {
-					if ( ( ! empty( $key ) ) && ( 'ID' === $key ) ) continue;
-					Smart_Manager_Base::$update_task_details_params[] = array(
-						'task_id' => $task_id,
-						'action' => 'set_to',
-						'status' => 'completed',
-						'record_id' => $post_id,
-						'field' => 'posts/'.$key,                                                               
-						'prev_val' => $post_before->$key,
-						'updated_val' => $value
-					);
-				}
-			}
-		}
-
-		//Fires when an existing post has been updated. 
-		public static function fire_post_update_hooks( $post = null, $post_before = null, $update = true, $previous_status = '', $new_status = '' ){
-			if( ( empty( $post ) ) || ( empty( $post_before ) ) || ( empty( $previous_status ) ) || ( empty( $new_status ) ) ) return;
-			do_action( 'sm_pro_before_run_after_update_hooks', $post, $post_before );
-			do_action( 'transition_post_status', $new_status, $previous_status, $post );
-			do_action( "{$previous_status}_to_{$new_status}", $post );
-			do_action( "{$new_status}_{$post->post_type}", $post->ID, $post, $previous_status );
-			do_action( "edit_post_{$post->post_type}", $post->ID, $post );
-			do_action( 'edit_post', $post->ID, $post );
-			do_action( 'post_updated', $post->ID, $post, $post_before );
-			do_action( "save_post_{$post->post_type}", $post->ID, $post, $update );
-			do_action( 'save_post', $post->ID, $post, $update );
-			do_action( 'wp_insert_post', $post->ID, $post, $update );
-		}
-
-		/**
-		 * Function Clones a post object and updates its properties without modifying the original.
-		 *
-		 * @param object|null $post_object The original post object to be cloned and updated.
-		 * @param object|null $update_properties Key-value pairs of properties to update.
-		 * 
-		 * @return object|null The updated post object or null
-		*/
-		public static function update_post_object( $post_object = null, $update_properties = null ) {
-			if ( ( empty( $post_object ) ) || ( empty( $update_properties ) ) ) return;
-			// Clone the post object to avoid modifying the original
-			$post_object = clone $post_object;
-			foreach ( $update_properties as $property => $value ) {
-				if ( ! property_exists( $post_object, $property ) ) continue;
-				$post_object->$property = $value; // Override existing property with new value.
-			}
-			return $post_object;
-		}
-		
-		/**
-		 * Bulk updates terms for multiple posts, replicating wp_set_object_terms & wp_remove_object_terms functionality.
-		 *
-		 * handles term relationships, updates taxonomy counts, and triggers relevant WordPress actions.
-		 *
-		 * @param array $args
-		 *
-		 * @return bool True on success, array of taxonomy data failed to update on failure, void when data is invalid
-		*/
-		public static function set_or_remove_object_terms( $args = array() ) {
-			if ( ( empty( $args ) ) || ( empty( $args['taxonomy_data_to_update'] ) ) || ( empty( $args['taxonomies'] ) ) || ( ! is_array( $args['taxonomies'] ) ) || ( ! is_array( $args['taxonomy_data_to_update'] ) ) || ( empty( $args['term_ids'] ) ) || ( ! is_array( $args['term_ids'] ) ) ) {
-				return;
-			}
-			global $wpdb;
-			$posts_params_arr       = $args['taxonomy_data_to_update'];
-			$taxonomies             = array_map( 'sanitize_text_field', array_unique( $args['taxonomies'] ) );
-			$objects_new_tt_ids     = array(); //tt ids to create relationship for.
-			$tt_ids                 = array(); //tt ids (passed + newly created).
-			$objects_tt_ids         = array(); 
-			$taxonomy_count_data    = array();
-			$insert_tt_placeholders = array();
-			$delete_tt_placeholders = array();
-			$delete_tt_ids          = array(); //all tt ids to delete relationship.
-			$objects_delete_tt_ids  = array(); //tt ids to delete relationship keyed by object id.
-			$existing_relationships = array(); 
-			$insert_result          = false;
-			$delete_result          = false;
-			$task_id 				= ( ! empty( $args['task_id'] ) ) ? $args['task_id'] : 0;
-			$terms_taxonomy_ids     = self::get_term_taxonomy_ids_by_term_ids( array_unique( $args['term_ids'] ) );
-			// Fetch existing term relationships for objects/posts and taxonomies.
-			$existing_terms = wp_get_object_terms( 
-				array_map( 'absint', array_keys( $posts_params_arr ) ),//passing object ids.
-				$taxonomies,
-				[
-					'fields' => 'all_with_object_id',
-					'orderby' => 'none',
-					'update_term_meta_cache' => false,
-				] 
-			);
-			//extract old terms ids and map existing term relationships.
-			foreach ( $existing_terms as $term ) {
-				if ( ( empty( $term ) ) || ( empty( $term->taxonomy ) ) || ( empty($term->term_taxonomy_id) ) || ( empty( $term->object_id ) ) ) {
-					continue;
-				}
-				$existing_relationships[ $term->object_id ][ $term->taxonomy ][] = $term->term_taxonomy_id;
-			}
-			// Process the term relationships for each object.
-			foreach ( $posts_params_arr as $object_id => $params ) {
-				if( ( empty( $object_id ) ) || ( empty( $params ) ) || ( ! is_array( $params ) ) ) {
-					continue;
-				}
-				$object_id = absint( $object_id ); //sanitize object_id or post id.
-				
-				foreach ( $params as $taxonomy => $taxonomy_data ) {
-					if ( ( empty( $taxonomy_data ) ) || ( empty( $taxonomy ) )  || ( empty( $taxonomy_data[ 'term_ids_set' ] ) && empty( $taxonomy_data[ 'term_ids_remove' ] ) ) ) {
-						continue;
-					}
-					$taxonomy   = sanitize_text_field( $taxonomy ); //sanitize taxonomy.
-					$append     = ( ! empty( $taxonomy_data['append'] ) ) ? true : false;
-
-					$object_rel = ( ( ! empty( $existing_relationships ) ) && ( ! empty( $existing_relationships[ $object_id ] ) ) ) ? $existing_relationships[ $object_id ] : array();
-
-					$object_existing_tt_ids = ( ( ! empty( $object_rel ) ) && ( ! empty( $object_rel[ $taxonomy ] ) ) ) ? $object_rel[ $taxonomy ] : array();
-
-					$objects_delete_tt_ids[ $object_id ][ $taxonomy ] = array();
-					$objects_new_tt_ids[ $object_id ][ $taxonomy ]    = array();
-					$objects_tt_ids[ $object_id ][ $taxonomy ]        = array();
-					if ( ( ! empty( $taxonomy_data['remove_all_terms'] ) ) ) {
-						$taxonomy_data['term_ids_remove'] = $object_existing_tt_ids;
-					}
-					foreach ( $taxonomy_data['term_ids_set'] as $t_id ) {
-						if ( empty( $t_id ) || ( is_string( $t_id ) && '' === trim( $t_id ) ) ) {
-							continue;
-						}
-						$tt_id = ( ( is_array( $terms_taxonomy_ids ) ) && ( ! empty( $terms_taxonomy_ids[$t_id] ) ) ) ? absint( $terms_taxonomy_ids[$t_id] ) : 0;
-						//code for creating the terms.
-						if ( ! is_int( $t_id ) ) { //if not int then value assumed to be new term name (default wordpress behaviour).
-							$term_info = wp_insert_term( $t_id, $taxonomy );
-							if ( is_wp_error( $term_info ) || ( empty( $term_info ) ) || ( ! is_array( $term_info ) ) || ( empty( $term_info['term_taxonomy_id'] ) ) ) {
-								continue;
-							}
-							$tt_id = absint( $term_info['term_taxonomy_id'] ); //sanitize term taxonomy id.
-						}
-						if ( empty( $tt_id ) ) {
-							continue;
-						}
-						if ( ( empty( $tt_ids[ $taxonomy ] ) ) || ( ! in_array( $tt_id, $tt_ids[ $taxonomy ], true ) ) ) { 
-							$tt_ids[ $taxonomy ][] = $tt_id;
-						}
-						if ( ( empty( $objects_tt_ids[ $object_id ][ $taxonomy ] ) ) || ( ! in_array( $tt_id, $objects_tt_ids[ $object_id ][ $taxonomy ], true ) ) ) { 
-							$objects_tt_ids[ $object_id ][ $taxonomy ][] = $tt_id;
-						}
-						// skip if the term relationship already exists.
-						if( ( in_array( $tt_id, $object_existing_tt_ids, true ) ) ) {
-							continue;
-						}
-						if ( ( empty( $objects_new_tt_ids[ $object_id ][ $taxonomy ] ) ) || ( ! in_array( $tt_id, $objects_new_tt_ids[ $object_id ][ $taxonomy ], true ) ) ) { 
-							//Fires immediately before an object-term relationship is added.
-							$objects_new_tt_ids[ $object_id ][ $taxonomy ][] = $tt_id;
-							do_action( 'add_term_relationship', $object_id, $tt_id, $taxonomy );
-							$insert_tt_placeholders[] = $wpdb->prepare( '(%d, %d)', $object_id, $tt_id );
-						}
-					}
-					// Collect old term relationships for deletion if not appending.
-					if ( ( ! $append ) && ( ! empty( $object_existing_tt_ids ) ) ) { 
-						foreach ( $object_existing_tt_ids as $old_tt_id ) {
-							if ( ( empty( $old_tt_id ) ) || ( empty( $tt_ids[ $taxonomy ] ) ) || ( in_array( $old_tt_id, $tt_ids[ $taxonomy ], true ) ) ) {
-								continue;
-							}
-							if ( ( empty( $objects_delete_tt_ids[ $object_id ][ $taxonomy ] ) ) || ( ! in_array( $old_tt_id, $objects_delete_tt_ids[ $object_id ][ $taxonomy ], true ) ) ) { 
-								$delete_tt_placeholders[] = $wpdb->prepare( '(%d, %d)', $object_id, $old_tt_id );
-								$objects_delete_tt_ids[ $object_id ][ $taxonomy ][] =  $old_tt_id;
-							}
-							if ( ( empty( $delete_tt_ids[ $taxonomy ] ) ) || ( ! in_array( $old_tt_id, $delete_tt_ids[ $taxonomy ], true ) ) ) { 
-								$delete_tt_ids[ $taxonomy ][] = $old_tt_id;
-							}
-						}
-					}
-					if ( ( empty( $taxonomy_data['term_ids_remove'] ) ) || ( ! is_array( $taxonomy_data['term_ids_remove'] ) ) ) {
-						if( ( ! empty( $objects_delete_tt_ids[ $object_id ][ $taxonomy ] ) ) ) {
-							do_action( 'delete_term_relationships', $object_id, $objects_delete_tt_ids[ $object_id ][ $taxonomy ], $taxonomy );
-						}
-						continue;
-					}
-					foreach ( $taxonomy_data['term_ids_remove'] as $t_id ) {
-						if ( empty( $t_id ) ) {
-							continue;
-						}
-						$tt_id = empty( $taxonomy_data['remove_all_terms'] ) ? ( ( is_array( $terms_taxonomy_ids ) && ! empty( $terms_taxonomy_ids[ $t_id ] ) ) ? absint( $terms_taxonomy_ids[ $t_id ] ) : 0 ) : absint( $t_id );
-						if ( ( empty( $tt_id ) ) || ( ! in_array( $tt_id, $object_existing_tt_ids ) ) ) {
-							continue;
-						}
-						if ( ( ! in_array( $tt_id, $objects_delete_tt_ids[ $object_id ][ $taxonomy ], true ) ) ) { 
-							$delete_tt_placeholders[] = $wpdb->prepare( '(%d, %d)', $object_id, $tt_id );
-							$objects_delete_tt_ids[ $object_id ][ $taxonomy ][] = $tt_id;
-						}
-						if ( ( empty( $delete_tt_ids[ $taxonomy ] ) ) || ( ! in_array( $tt_id, $delete_tt_ids[ $taxonomy ], true ) ) ) { 
-							$delete_tt_ids[ $taxonomy ][] = $tt_id;
-						}
-					}
-					if( ( ! empty( $objects_delete_tt_ids[ $object_id ][ $taxonomy ] ) ) ) {
-						do_action( 'delete_term_relationships', $object_id, $objects_delete_tt_ids[ $object_id ][ $taxonomy ], $taxonomy );
-					}
-				}
-			}
-
-			$all_tts = array(); //for updating counts of the taxonomies.
-			foreach ( $taxonomies as $taxonomy ) {
-				if ( empty( $tt_ids[ $taxonomy ] ) && empty( $delete_tt_ids[ $taxonomy ] ) ) {
-					continue;
-				}
-				$taxonomy_count_data[$taxonomy]  = array();
-				if ( ( ! empty( $tt_ids[ $taxonomy ] ) ) ) {
-					$all_tts = array_merge( $all_tts, $tt_ids[ $taxonomy ] );
-					$taxonomy_count_data[$taxonomy] = array_merge( $taxonomy_count_data[$taxonomy], $tt_ids[ $taxonomy ] );
-				}
-				if ( ( ! empty( $delete_tt_ids[ $taxonomy ] ) ) ) {
-					$all_tts = array_merge( $all_tts, $delete_tt_ids[ $taxonomy ] );
-					$taxonomy_count_data[$taxonomy] = array_merge( $taxonomy_count_data[$taxonomy], $delete_tt_ids[ $taxonomy ] );
-				}
-			}
-			if ( empty( $all_tts ) ) {
-				return;
-			}
-			$all_tts = array_unique( $all_tts );
-			// Perform bulk insert.
-			if ( ( ! empty( $insert_tt_placeholders ) ) ) {
-				$insert_result = $wpdb->query( "INSERT INTO $wpdb->term_relationships (object_id, term_taxonomy_id) VALUES " . implode( ',', $insert_tt_placeholders ) . " ON DUPLICATE KEY UPDATE term_taxonomy_id = term_taxonomy_id" );
-			}
-			// Perform bulk delete.
-			if ( ( ! empty( $delete_tt_placeholders ) ) ) {
-				$delete_result = $wpdb->query( "DELETE FROM $wpdb->term_relationships WHERE (object_id, term_taxonomy_id) IN (" . implode( ',', $delete_tt_placeholders ) . ")" );
-			}
-			if ( ( empty( $delete_result ) ) && ( empty( $insert_result ) ) ) {
-				return;
-			}
-			//Remove the WC action.
-			if ( class_exists( 'WooCommerce' ) ) {
-				remove_action( 'set_object_terms', 'wc_clear_term_product_ids', 10 );
-			}
-			//fire add and delete terms post actions.
-			foreach ( $posts_params_arr as $object_id => $params ) {
-				if( ( empty( $object_id ) ) || ( empty( $params ) ) || ( ! is_array( $params ) ) ) {
-					continue;
-				}
-				foreach ( $params as $taxonomy => $taxonomy_data ) {
-					if ( ( empty( $taxonomy_data ) ) || ( empty( $taxonomy ) )  || ( empty( $taxonomy_data[ 'term_ids_set' ] ) && empty( $taxonomy_data[ 'term_ids_remove' ] ) ) ) {
-						continue;
-					}
-					// $existing_relationships
-					$taxonomy_old_tt_ids = ( ( ! empty( $existing_relationships[ $object_id ] ) ) && ( ! empty( $existing_relationships[ $object_id ][ $taxonomy ] ) ) ) ? $existing_relationships[ $object_id ][ $taxonomy ] : array();
-					//fire add terms post action for each term.
-					if ( ( ! empty( $insert_result ) ) && ( ! is_wp_error( $insert_result ) ) && ( ! empty( $objects_new_tt_ids[ $object_id ] ) ) && ( ! empty( $objects_new_tt_ids[ $object_id ][ $taxonomy ] ) ) ) {
-						foreach ( $objects_new_tt_ids[ $object_id ][ $taxonomy ] as $tt_id ) { 
-							do_action( 'added_term_relationship', $object_id, $tt_id, $taxonomy );
-							if ( empty( $task_id ) ) {
-								continue;
-							}
-							Smart_Manager_Base::$update_task_details_params[] = array(
-								'task_id' => $task_id,
-								'action' => 'remove_from',
-								'status' => 'completed',
-								'record_id' => $object_id ,
-								'field' => 'terms/'.$taxonomy,  
-								'prev_val' => $tt_id,
-								'updated_val' => $taxonomy_old_tt_ids,
-							);
-						}
-					}
-					if ( ( ! empty( $objects_tt_ids ) ) && ( ! empty( $objects_tt_ids[ $object_id ] ) ) && ( ! empty( $objects_tt_ids[ $object_id ][ $taxonomy ] ) ) ) {
-						do_action( 'set_object_terms', $object_id, $taxonomy_data[ 'term_ids_set' ], $objects_tt_ids[ $object_id ][ $taxonomy ], $taxonomy, $taxonomy_data[ 'append' ], $taxonomy_old_tt_ids );//check
-					}
-					//fire delete terms post action.
-					if( ( ! empty( $delete_result ) ) && ( ! is_wp_error( $delete_result ) ) && ( ! empty( $delete_tt_ids ) ) ) {
-						if ( empty( $objects_delete_tt_ids ) || ( empty( $objects_delete_tt_ids[ $object_id ] ) ) || ( empty( $objects_delete_tt_ids[ $object_id ][ $taxonomy ] ) ) ) {
-							continue;
-						}
-						
-						do_action( 'deleted_term_relationships', $object_id, $objects_delete_tt_ids[ $object_id ][ $taxonomy ], $taxonomy );
-						wp_cache_delete( $object_id, $taxonomy . '_relationships' );
-						if ( empty( $task_id ) ) {
-							continue;
-						}
-						foreach ( $objects_delete_tt_ids[ $object_id ][ $taxonomy ] as $delete_tt_id ) {
-							Smart_Manager_Base::$update_task_details_params[] = array(
-								'task_id' => $task_id,
-								'action' => 'add_to',
-								'status' => 'completed',
-								'record_id' => $object_id ,
-								'field' => 'terms/'.$taxonomy,  
-								'prev_val' => $delete_tt_id,
-								'updated_val' =>  $taxonomy_old_tt_ids,
-							);
-						}
-					}
-				}
-			}
-			// update terms count.
-			self::update_term_count( $taxonomy_count_data );
-			do_action( 'sm_pro_post_process_terms_update', $all_tts );
-			//clear cache.
-			wp_cache_set_terms_last_changed();
-			return array(
-				'status'=>true,
-				'existing_relationships'=>$existing_relationships,
-			);
-		}
-
-		/**
 		 * Deletes multiple metadata entries in bulk.
 		 *
 		 * @param string $meta_type  The type of object metadata is for (e.g., 'post', 'user').
 		 * @param array  $meta_data  An array of metadata to delete. Each item should be an associative array with keys:
 		 *                           'object_id', 'meta_key', 'meta_value' (optional).
-		 * @return bool|null True on success else null 
+		 * @return bool|null True on success else null
 		*/
 		public static function delete_metadata( $args = array() ) {
 			if ( ( empty( $args ) ) || ( ! is_array( $args ) ) || (  empty( $args[ 'meta_type' ] ) ) || (  empty( $args[ 'meta_data' ] ) ) || (  ! is_array( $args[ 'meta_data' ] ) ) ) {
@@ -3271,7 +1394,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				if ( ( empty( $data ) ) || ( empty( $data['meta_ids'] ) ) || ( empty($data['object_id']) ) || ( empty( $data['meta_key'] ) ) || ( ! isset( $data['meta_value'] ) ) ) {
 					continue;
 				}
-				$object_ids[] = $object_id; 
+				$object_ids[] = $object_id;
 				do_action( "delete_{$meta_type}_meta", $data['meta_ids'], $data['object_id'], $data['meta_key'], $data['meta_value'] );
 				if ( 'post' === $meta_type ) {
 					do_action( 'delete_postmeta', $data['meta_ids'] );
@@ -3304,8 +1427,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		 * Deletes multiple metadata entries in bulk.
 		 *
 		 * @param object $meta_objects  The post metadata.
-		 * 
-		 * @return array|void array of grouped meta data else void 
+		 *
+		 * @return array|void array of grouped meta data else void
 		*/
 		public static function group_meta_data_to_delete( $meta_objects = array() ) {
 			if ( ( empty( $meta_objects ) ) || ( ! is_array( $meta_objects ) ) ) {
@@ -3347,7 +1470,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 					continue;
 				}
 				$terms = array_map( 'intval', $terms );
-			
+
 				$taxonomy = get_taxonomy( $taxonomy );
 				if ( ( empty( $taxonomy ) ) ) {
 					return;
@@ -3366,7 +1489,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 							list( $object_type ) = explode( ':', $object_type );
 						}
 					}
-			
+
 					if ( array_filter( $object_types, 'post_type_exists' ) == $object_types ) {
 						// Only post types are attached to this taxonomy.
 						self::update_post_term_count( $terms, $taxonomy );
@@ -3392,15 +1515,15 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				return;
 			}
 			global $wpdb;
-		
+
 			$object_types = (array) $taxonomy->object_type;
-			
+
 			foreach ( $object_types as &$object_type ) {
 				list( $object_type ) = explode( ':', $object_type );
 			}
-		
+
 			$object_types = array_unique( $object_types );
-		
+
 			$check_attachments = array_search( 'attachment', $object_types, true );
 			if ( false !== $check_attachments ) {
 				unset( $object_types[ $check_attachments ] );
@@ -3448,7 +1571,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 					),
 					OBJECT_K
 				);
-		
+
 				$counts = array_merge_recursive( $counts, $post_counts );
 			}
 			$updates = [];
@@ -3468,9 +1591,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				// Collect update data.
 				$updates[] = $wpdb->prepare( "(%d, %d)", $term, $count );
 			}
-		
+
 			// Perform bulk update query.
-			if ( empty( $updates ) ) { 
+			if ( empty( $updates ) ) {
 				return;
 			}
 			$query = "
@@ -3482,7 +1605,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				return;
 			}
 			// Post-action for the term count update.
-			foreach ( (array) $terms as $term ) { 
+			foreach ( (array) $terms as $term ) {
 				do_action( 'edited_term_taxonomy', $term, $taxonomy->name );
 			}
 		}
@@ -3500,10 +1623,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				return;
 			}
 			global $wpdb;
-		
+
 			// Prepare the placeholders for the terms in a single query.
 			$placeholders = implode( ',', array_fill( 0, count( $terms ), '%d' ) );
-		
+
 			// Fetch counts for all terms in one query.
 			$counts = $wpdb->get_results(
 				$wpdb->prepare(
@@ -3515,7 +1638,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				),
 				OBJECT_K
 			);
-		
+
 			$updates = array();
 			foreach ( (array) $terms as $term ) {
 				if ( ( empty( $term ) ) ) {
@@ -3533,11 +1656,11 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				}
 				// Pre-action for the term.
 				do_action( 'edit_term_taxonomy', $term, $taxonomy->name );
-		
+
 				// Collect update data.
 				$updates[] = $wpdb->prepare( "(%d, %d)", $term, $count );
 			}
-		
+
 			// Perform bulk update query.
 			if ( ! empty( $updates ) ) {
 				$query = "INSERT INTO $wpdb->term_taxonomy (term_taxonomy_id, count) VALUES " . implode( ', ', $updates ) . " ON DUPLICATE KEY UPDATE count = VALUES(count)";
@@ -3556,7 +1679,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		 *
 		 * @param array $existing_relationships
 		 * @param array $args
-		 * 
+		 *
 		 * @return void|array{action: string, prev_val: mixed, updated_val: mixed}
 		*/
 		public static function get_terms_undo_details( $existing_relationships = array(), $args = array() ) {
@@ -3585,7 +1708,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				)
 			);
 		}
-		
+
 		/**
 		 * Function to get Term By ID form the array of term objects.
 		 *
@@ -3610,9 +1733,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 
 		/**
 	     * Function to map inline terms update data.
-		 * 
+		 *
 		 * @param  array $args array data.
-		 * 
+		 *
 		 * @return array $args array data.
 		 */
 		public static function map_inline_terms_update_data( $args = array() ) {
@@ -3628,9 +1751,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 					$args[ 'term_ids' ] = array( $default_term );
 				}
 			}
-			$args[ 'taxonomy_data_to_update' ][ $args['id'] ][ $args[ 'update_column' ] ] = array( 
+			$args[ 'taxonomy_data_to_update' ][ $args['id'] ][ $args[ 'update_column' ] ] = array(
 				'term_ids_set' => $args[ 'term_ids' ],
-				'taxonomy' => $args[ 'update_column' ], 
+				'taxonomy' => $args[ 'update_column' ],
 				'append' => false,
 				'remove_all_terms' => ( empty( absint( $args[ 'value' ] ) ) ) ? true : false,
 			);
@@ -3638,234 +1761,76 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		}
 
 		/**
-		 * Decreases the given value by a specified percentage.
-		 *
-		 * @param float|int $prev_val The initial value before the decrease.
-		 * @param float|int $per The percentage by which to decrease the initial value.
-		 * @return int The value after the decrease.
-		 */
-		public static function decrease_value_by_per( $prev_val = 0, $per = 0 ) {
-			if ( ( empty( $prev_val ) ) || ( empty( $per ) ) ) {
-				return $prev_val;
-			}
-			return round( ( $prev_val - ( $prev_val * ( $per / 100 ) ) ), apply_filters( 'sm_beta_pro_num_decimals', get_option( 'woocommerce_price_num_decimals' ) ) );
-		}
-
-		/**
-		 * Decreases the given value by a specified number.
-		 *
-		 * @param float|int $prev_val The initial value before decrease. Default is 0.
-		 * @param float|int $num The number to decrease the initial value by. Default is 0.
-		 * @return int The resulting value after decrease.
-		 */
-		public static function decrease_value_by_num( $prev_val = 0, $num = 0 ) {
-			if ( empty( $prev_val ) || empty( $num ) ) {
-				return $prev_val;
-			}
-			return round( ( $prev_val - $num ), apply_filters( 'sm_beta_pro_num_decimals', get_option( 'woocommerce_price_num_decimals' ) ) );
-		}
-
-		/**
-		 * Generates an advanced search query for scheduled exports.
-		 *
-		 * When order statuses are provided in the parameters, the query will include a separate
-		 * condition for each order status along with the date range.
-		 * @param array  $args Array of arguments.
-		 *                               
-		 * @return string JSON-encoded advanced search query.
-		 */
-		public static function get_scheduled_exports_advanced_search_query( $args = array() ) {
-			if ( ( empty( $args ) ) || ( ! is_array( $args ) ) || ( empty( $args['interval_days'] ) ) || ( empty( $args['table_nm'] ) ) || ( empty( $args['date_col'] ) ) ) {
-				return '';
-			}
-			global $wpdb;
-			// Get the export date range.
-			$date_range = self::get_scheduled_export_date_range( (int) $args['interval_days'] );
-			if ( ( empty( $date_range ) ) || ( ! is_array( $date_range ) ) || ( empty( $date_range['start_date'] ) ) || ( empty( $date_range['end_date'] ) ) ) {
-				return '';
-			}
-			// Determine if order statuses are provided and not empty.
-			if ( ! empty( $args['order_statuses'] ) && is_array( $args['order_statuses'] ) && ( ! empty( $args['status_col'] ) ) ) {
-				$rules = array();
-				// Build a separate AND block for each order status.
-				foreach ( $args['order_statuses'] as $status ) {
-					$rules[] = array(
-						'condition' => 'AND',
-						'rules'     => array(
-							array(
-								'type'     => $wpdb->prefix . $args['table_nm'] . '.' . $args['status_col'],
-								'operator' => 'is',
-								'value'    => $status,
-							),
-							array(
-								'type'     => $wpdb->prefix . $args['table_nm'] . '.' . $args['date_col'],
-								'operator' => 'gte',
-								'value'    => $date_range['start_date'],
-							),
-							array(
-								'type'     => $wpdb->prefix . $args['table_nm'] . '.' . $args['date_col'],
-								'operator' => 'lte',
-								'value'    => $date_range['end_date'],
-							),
-						),
-					);
-				}
-				return wp_json_encode( 
-					array(
-						array(
-							'condition' => 'OR',
-							'rules'     => $rules,
-						),
-					)
-				);
-			} else {
-				// If no order statuses are provided, only use the date range.
-				return wp_json_encode( 
-					array(
-						array(
-							'condition' => 'OR',
-							'rules'     => array(
-								array(
-									'condition' => 'AND',
-									'rules'     => array(
-										array(
-											'type'     => $wpdb->prefix . $args['table_nm'] . '.' . $args['date_col'],
-											'operator' => 'gte',
-											'value'    => $date_range['start_date'],
-										),
-										array(
-											'type'     => $wpdb->prefix . $args['table_nm'] . '.' . $args['date_col'],
-											'operator' => 'lte',
-											'value'    => $date_range['end_date'],
-										),
-									),
-								),
-							),
-						),
-					) 
-				);
-			}
-		}
-
-		/**
-		 * Calculates the start and end date range for exporting orders based on run time and interval.
-		 *
-		 * @param int    $interval_days  The number of past days to include in the export.
-		 * @param string $end_date_time  The scheduled run time in 'Y-m-d H:i:s' format.
-		 * @return array                 Associative array with 'start_date' and 'end_date'.
-		*/
-		public static function get_scheduled_export_date_range( $interval_days = 0, $end_date_time = '' ) {
-			$interval_days = intval( $interval_days );
-			if ( ( empty( $interval_days ) ) ) {
-				return;
-			}
-			if ( ( empty( $end_date_time  ) ) ) {
-				$end_date_time = current_time( 'Y-m-d H:i:s' );
-			}
-			// Convert GMT offset (in hours) to seconds.
-			$offset = (float)get_option( 'gmt_offset', 0 ) * HOUR_IN_SECONDS;
-			$timestamp = strtotime( $end_date_time  );
-			if ( ! $timestamp ) {
-				return;
-			}
-			return array(
-				'start_date' => gmdate( 'Y-m-d', strtotime( "-{$interval_days} days", $timestamp - $offset ) + $offset ) . ' 00:00:00',
-				'end_date'   => gmdate( 'Y-m-d', strtotime( '-1 days', $timestamp - $offset ) + $offset ) . ' 23:59:59',
-			);
-		}
-
-		/**
-		 * Sends an email using WooCommerce's `wc_mail` if available,
-		 * otherwise falls back to WordPress's `wp_mail`.
-		 *
-		 * @param array $args {
-		 *     @type string $subject Email subject.
-		 *     @type string $email   Recipient's email address.
-		 *     @type string $message Email body content.
-		 * }
-		 * @return void
-		 */
-		public static function send_email( $args = array() ) {
-			if( ( empty( $args ) ) || ( ! is_array( $args ) ) || ( empty( $args['subject'] ) ) || ( empty( $args['email'] ) ) || ( empty( $args['message'] ) ) ) {
-				return;
-			}
-			if( function_exists( 'wc_mail' ) ) {
-				wc_mail( sanitize_email( $args['email'] ), $args['subject'], $args['message'] );
-			} elseif( function_exists( 'wp_mail' ) ) {
-				wp_mail( sanitize_email( $args['email'] ), $args['subject'], $args['message'] );
-			}
-		}
-
-		/**
 		 * Processes a scheduled export CSV file and sends an email with the download link.
 		 *
 		 * @param array $args Parameters for processing the CSV export.
 		 * @return void
-		*/
-		public static function process_scheduled_csv_email_export( $args = array() ) {
-			if ( ( empty( $args ) ) || ( ! is_array( $args ) ) || ( empty( $args['scheduled_export_params'] ) ) || ( empty( $args['csv_file_name'] ) ) || ( empty( $args['file_data'] ) ) || ( empty( $args['file_data']['upload_dir'] ) ) || ( ! is_array( $args['file_data']['upload_dir'] ) ) || ( empty( $args['file_data']['file_content'] ) ) || ( empty( $args['scheduled_export_params']['schedule_export_email'] ) ) ) {
-				Smart_Manager::log( 'error', _x( 'Export CSV: Missing required CSV file data.', 'process scheduled export file data', 'smart-manager-for-wp-e-commerce' ) );
+		 */
+		public static function process_scheduled_csv_email_export($args = array())
+		{
+			if ((empty($args)) || (! is_array($args)) || (empty($args['scheduled_export_params'])) || (empty($args['csv_file_name'])) || (empty($args['file_data'])) || (empty($args['file_data']['upload_dir'])) || (! is_array($args['file_data']['upload_dir'])) || (empty($args['file_data']['file_content'])) || (empty($args['scheduled_export_params']['schedule_export_email']))) {
+				sa_manager_log('error', _x('Export CSV: Missing required CSV file data.', 'process scheduled export file data', 'smart-manager-for-wp-e-commerce'));
 				return;
 			}
-			$csv_upload_dir = trailingslashit( $args['file_data']['upload_dir']['basedir'] ) . 'woocommerce_uploads/';
-			if ( ( ! file_exists( $csv_upload_dir ) ) ) {
-				if ( false === wp_mkdir_p( $csv_upload_dir ) ) {
+			$csv_upload_dir = trailingslashit($args['file_data']['upload_dir']['basedir']) . 'woocommerce_uploads/';
+			if ((! file_exists($csv_upload_dir))) {
+				if (false === wp_mkdir_p($csv_upload_dir)) {
 					/* translators: %s: Directory path */
-					Smart_Manager::log( 'error', sprintf( _x( 'Export CSV: unable to create directory %s', 'export file data', 'smart-manager-for-wp-e-commerce' ), $csv_upload_dir ) );
+					sa_manager_log('error', sprintf(_x('Export CSV: unable to create directory %s', 'export file data', 'smart-manager-for-wp-e-commerce'), $csv_upload_dir));
 					return;
 				};
 			}
-			$csv_file_name  = sanitize_file_name( $args['csv_file_name'] );
-			$full_file_path = trailingslashit( $csv_upload_dir ) . $csv_file_name;
+			$csv_file_name  = sanitize_file_name($args['csv_file_name']);
+			$full_file_path = trailingslashit($csv_upload_dir) . $csv_file_name;
 			//check file write permissions.
-			if ( false === file_put_contents( $full_file_path, $args['file_data']['file_content'] ) ) {
+			if (false === file_put_contents($full_file_path, $args['file_data']['file_content'])) {
 				/* translators: %s: File path */
-				Smart_Manager::log( 'error', sprintf( _x( 'Export CSV: unable to write file to %s', 'process scheduled export file data', 'smart-manager-for-wp-e-commerce' ), $full_file_path ) );
+				sa_manager_log('error', sprintf(_x('Export CSV: unable to write file to %s', 'process scheduled export file data', 'smart-manager-for-wp-e-commerce'), $full_file_path));
 				return;
 			}
 
-			$filetype = wp_check_filetype( $csv_file_name, null );
-			if ( ( empty( $filetype ) ) || ( ! is_array( $filetype ) ) || ( empty( $filetype['type'] ) ) ) {
-				Smart_Manager::log( 'error', _x( 'Export CSV: error in checking file type', 'process scheduled export file data', 'smart-manager-for-wp-e-commerce' ) );
+			$filetype = wp_check_filetype($csv_file_name, null);
+			if ((empty($filetype)) || (! is_array($filetype)) || (empty($filetype['type']))) {
+				sa_manager_log('error', _x('Export CSV: error in checking file type', 'process scheduled export file data', 'smart-manager-for-wp-e-commerce'));
 				return;
 			}
-			$attachment_id = wp_insert_attachment( array(
-				'guid'           => trailingslashit( $args['file_data']['upload_dir']['baseurl'] ) . 'woocommerce_uploads/' . $csv_file_name,
+			$attachment_id = wp_insert_attachment(array(
+				'guid'           => trailingslashit($args['file_data']['upload_dir']['baseurl']) . 'woocommerce_uploads/' . $csv_file_name,
 				'post_mime_type' => $filetype['type'],
 				'post_title'     => $csv_file_name,
 				'post_status'    => 'inherit'
-			), $full_file_path );
+			), $full_file_path);
 
-			if ( ( empty( $attachment_id ) ) || ( is_wp_error( $attachment_id ) ) ) {
+			if ((empty($attachment_id)) || (is_wp_error($attachment_id))) {
 				/* translators: %s: File path */
-				Smart_Manager::log( 'error', sprintf( _x( 'Export CSV: failed to insert attachment for file %s', 'process scheduled export file data', 'smart-manager-for-wp-e-commerce' ), $full_file_path ) );
+				sa_manager_log('error', sprintf(_x('Export CSV: failed to insert attachment for file %s', 'process scheduled export file data', 'smart-manager-for-wp-e-commerce'), $full_file_path));
 				return;
 			}
 			// Update attachment meta to mark as a scheduled export file.
-			update_post_meta( $attachment_id, 'sa_sm_is_scheduled_export_file', true );
+			update_post_meta($attachment_id, 'sa_sm_is_scheduled_export_file', true);
 			//generate media URL and send email.
-			$csv_url  = wp_get_attachment_url( $attachment_id );
-			if( empty( $csv_url  ) ) {
-				Smart_Manager::log( 'error', _x( 'Export CSV: error in getting csv url', 'process scheduled export file data', 'smart-manager-for-wp-e-commerce' ) );
+			$csv_url  = wp_get_attachment_url($attachment_id);
+			if (empty($csv_url)) {
+				sa_manager_log('error', _x('Export CSV: error in getting csv url', 'process scheduled export file data', 'smart-manager-for-wp-e-commerce'));
 				return;
 			}
 			// Preparing email content.
 			$site_name = get_bloginfo();
-			$date = date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) );
+			$date = date_i18n(get_option('date_format'), current_time('timestamp'));
 			$email_subject = sprintf(/* translators: 1: Site title, 2: Date */
-				_x( 'Your Scheduled Orders Export from %1$s on %2$s Is Ready', 'Email subject for scheduled export', 'smart-manager-for-wp-e-commerce' ),
+				_x('Your Scheduled Orders Export from %1$s on %2$s Is Ready', 'Email subject for scheduled export', 'smart-manager-for-wp-e-commerce'),
 				$site_name,
 				$date
 			);
 			ob_start();
-			include( apply_filters( 'sm_beta_pro_scheduled_export_email_template', SM_PRO_EMAIL_TEMPLATE_PATH.'/scheduled-export.php' ) );
+			include(apply_filters('sm_beta_pro_scheduled_export_email_template', SM_EMAIL_TEMPLATE_PATH . '/scheduled-export.php'));
 			$email_message = ob_get_clean();
 			//send email.
-			self::send_email( array(
-				'email' => sanitize_email( $args['scheduled_export_params']['schedule_export_email'] ),
-				'subject' => ( ! empty( $email_subject ) ) ? $email_subject : '',
-				'message' => ( ! empty( $email_message ) ) ? $email_message : ''
-			) );
+			SA_Manager_Pro_Base::send_email(array(
+				'email' => sanitize_email($args['scheduled_export_params']['schedule_export_email']),
+				'subject' => (! empty($email_subject)) ? $email_subject : '',
+				'message' => (! empty($email_message)) ? $email_message : ''
+			));
 		}
 
 		/**
@@ -3873,27 +1838,28 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		 *
 		 * @return void
 		 */
-		public static function schedule_scheduled_exports_cleanup() {
-			if ( ! function_exists( 'as_schedule_recurring_action' ) ||  ! function_exists( 'as_next_scheduled_action' ) ) {
+		public static function schedule_scheduled_exports_cleanup()
+		{
+			if (! function_exists('as_schedule_recurring_action') ||  ! function_exists('as_next_scheduled_action')) {
 				return;
 			}
-			if ( as_next_scheduled_action( 'storeapps_smart_manager_scheduled_export_cleanup' ) ) {
+			if (as_next_scheduled_action('storeapps_smart_manager_scheduled_export_cleanup')) {
 				return;
 			}
-			$file_deletion_days = intval( get_option( 'sa_sm_scheduled_export_file_expiration_days' ) );
-			if ( empty( $file_deletion_days ) ) {
-				$file_deletion_days = intval( apply_filters( 'sa_sm_scheduled_export_file_expiration_days', 30 ) );
-				if ( empty( $file_deletion_days ) ) {
+			$file_deletion_days = intval(get_option('sa_sm_scheduled_export_file_expiration_days'));
+			if (empty($file_deletion_days)) {
+				$file_deletion_days = intval(apply_filters('sa_sm_scheduled_export_file_expiration_days', 30));
+				if (empty($file_deletion_days)) {
 					return;
 				}
-				update_option( 'sa_sm_scheduled_export_file_expiration_days', $file_deletion_days, 'no' );
+				update_option('sa_sm_scheduled_export_file_expiration_days', $file_deletion_days, 'no');
 			}
-			$timestamp = strtotime( date('Y-m-d H:i:s', strtotime( "+".$file_deletion_days." Days" ) ) );
-			if ( empty( $timestamp ) ) {
+			$timestamp = strtotime(date('Y-m-d H:i:s', strtotime("+" . $file_deletion_days . " Days")));
+			if (empty($timestamp)) {
 				return;
 			}
 			// Schedule the recurring action to run daily.
-			as_schedule_recurring_action( $timestamp, DAY_IN_SECONDS, 'storeapps_smart_manager_scheduled_export_cleanup' );
+			as_schedule_recurring_action($timestamp, DAY_IN_SECONDS, 'storeapps_smart_manager_scheduled_export_cleanup');
 		}
 
 		/**
@@ -3903,11 +1869,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		 *
 		 * @return array Filtered parameters for the scheduled export action.
 		 */
-		public static function get_scheduled_export_action_params( $params = array() ) {
-			if ( empty( $params ) || ! is_array( $params ) ) {
+		public static function get_scheduled_export_action_params($params = array())
+		{
+			if (empty($params) || ! is_array($params)) {
 				return;
 			}
-			return array_intersect_key( $params, array_flip( array(
+			return array_intersect_key($params, array_flip(array(
 				'action',
 				'cmd',
 				'active_module',
@@ -3920,25 +1887,334 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				'dashboard_key',
 				'table_model',
 				'sort_params'
-			) ) );
+			)));
 		}
 
 		/**
-		 * Get term_taxonomy_ids for the given term_ids using raw SQL.
+		 * Handles the batch update process for post-processing bacth update.
 		 *
-		 * @param array $term_ids Array of term IDs.
-		 * @return array List of term_taxonomy_id.
+		 * @param bool $update Optional. Default value to return if no update is performed. Default true.
+		 *
+		 * @return bool|mixed Returns the result of `Smart_Manager_Task::task_details_update()` if callable,
+		 *                    otherwise returns the `$update` parameter.
 		 */
-		public static function get_term_taxonomy_ids_by_term_ids( $term_ids = array() ) {
-			if ( empty( $term_ids ) || ! is_array( $term_ids ) ) {
+		public static function handle_post_processing_updates( $update = true ) {
+			if ( empty( Smart_Manager_Base::$update_task_details_params ) ) {
+				return $update;
+			}
+			apply_filters('sm_task_details_update_by_prev_val', Smart_Manager_Base::$update_task_details_params);
+			// For updating task details table
+			if ((! empty(Smart_Manager_Base::$update_task_details_params)) && is_callable(array('Smart_Manager_Task', 'task_details_update'))) {
+				return Smart_Manager_Task::task_details_update();
+			}
+		}
+
+		/**
+		 * Handles post-processing of parameters after a batch update operation.
+
+		 * @param array $args Optional. An associative array of arguments for post-processing.
+		 * Default is an empty array.
+		 *
+		 * @return void
+		 */
+		public static function update_params_post_processing_batch_update( $args = array() ) {
+			if ( empty( $args ) || ( empty( $args['task_id'] ) ) || ( empty( property_exists('Smart_Manager_Base', 'update_task_details_params') ) ) ) {
 				return;
 			}
+			$action = 'set_to';
+			if (in_array($args['operator'], array('add_to', 'remove_from'))) {
+				$action = apply_filters('sm_task_update_action', $args['operator'], $args);
+			}
+			//Special handling for add_to and remove_from operations for terms table.
+			if (('terms' === $args['table_nm'])) {
+				$existing_relationships = ((! empty($args['update_result']['taxonomies_update_result'])) && (! empty($args['update_result']['taxonomies_update_result']['existing_relationships']))) ? $args['update_result']['taxonomies_update_result']['existing_relationships'] : array();
+
+				if ((empty($args['col_nm'])) || (empty($existing_relationships)) || (empty($existing_relationships[$args['id']])) || empty($existing_relationships[$args['id']][$args['col_nm']])) {
+					return;
+				}
+				$terms_undo_details = self::get_terms_undo_details($existing_relationships, $args);
+				if ((empty($terms_undo_details)) || (! is_array($terms_undo_details)) || (empty($terms_undo_details['action'])) || (empty($terms_undo_details['prev_val'])) || (empty($terms_undo_details['updated_val']))) {
+					return;
+				}
+				$action = $terms_undo_details['action'];
+				$args['prev_val'] =  $terms_undo_details['prev_val'];
+				$args['value'] =  $terms_undo_details['updated_val'];
+				if (in_array($args['operator'], array('add_to', 'remove_from'))) {
+					list($args['prev_val'], $args['value']) = [$args['value'], $args['prev_val']];
+				}
+			}
+			Smart_Manager_Base::$update_task_details_params[] = array(
+				'task_id' => $args['task_id'],
+				'action' => $action,
+				'status' => 'completed',
+				'record_id' => $args['id'],
+				'field' => $args['type'],
+				'prev_val' => ((! empty($args['col_nm'])) && (! empty($args['date_type']))) ? sa_sm_format_prev_val(
+					array(
+						'prev_val' => $args['prev_val'],
+						'update_column' => $args['col_nm'],
+						'col_data_type' => $args['date_type'],
+						'updated_val' => $args['value']
+					)
+				) : $args['prev_val'],
+				'updated_val' => $args['value'],
+				'operator' => $args['operator'],
+			);
+		}
+
+		/**
+		 * Updates task parameters before performing a batch update.
+		 *
+		 * @param array $params An array of parameters for the batch update.
+		 *
+		 * @return array|null The modified parameters with task ID included in actions, or null if invalid input.
+		 */
+		public static function update_task_params_before_batch_update($params = array())
+		{
+			if (empty($params) || (! is_array($params))) {
+				return;
+			}
+			$process_names = apply_filters('sm_get_process_names_for_adding_tasks', $params['process_key']);
+			if (empty($process_names) || (! is_array($process_names)) || (! in_array($params['process_key'], $process_names))) {
+				return $params;
+			}
+			$task_id = 0;
+			if (function_exists('sm_task_update') && (isset($params['title']) && (! empty($params['title']))) && (! empty($params['dashboard_key'])) && (! empty($params['actions'])) && (! empty($params['selected_ids']) && is_array($params['selected_ids']))) {
+				$task_id = sm_task_update(
+					array(
+						'title' => $params['title'],
+						'created_date' => date('Y-m-d H:i:s'),
+						'completed_date' => '0000-00-00 00:00:00',
+						'post_type' => $params['dashboard_key'],
+						'type' => 'bulk_edit',
+						'status' => 'in-progress',
+						'actions' => (! empty($params['is_scheduled']) && is_array($params['actions'])) ? array_merge($params['actions'], array('is_scheduled' => $params['is_scheduled'])) : $params['actions'],
+						'record_count' => count($params['selected_ids']),
+					)
+				);
+			}
+			$params['actions'] = array_map(function ($params_action) use ($task_id) {
+				$params_action['task_id'] = $task_id;
+				return $params_action;
+			}, $params['actions']);
+			return $params;
+		}
+
+		/**
+		 * Update meta action details
+		 *
+		 * @param array $params task details.
+		 * @return void
+		 */
+		public static function update_meta_action_details( $params = array() )
+		{
+			if ( empty( $params ) || ( ! is_array( $params ) ) || empty( $params['task_id'] ) || empty( $params['id'] ) || empty( $params['meta_key'] ) ) {
+				return;
+			}
+			$id = $params['id'];
+			$meta_key = $params['meta_key'];
+			$disable_task_details_update = apply_filters(
+				'sm_disable_task_details_update',
+				false,
+				array(
+					'prev_vals' => ( 'postmeta/meta_key=_product_attributes/meta_value=_product_attributes' === $params['field_names'][ $id ][ $meta_key ] ) ? Smart_Manager_Base::$previous_vals : $params['prev_postmeta_values'],
+					'field_name' => ( ! empty( $params['field_names'][ $id ][ $meta_key ] ) ) ? $params['field_names'][ $id ][ $meta_key ] : '',
+					'data' => ( ! empty( $params ) ) ? $params : array(),
+					'record_id' => ( ! empty( $id ) ) ? intval( $id ) : 0,
+				)
+			);
+			if ( empty( $params['task_id'] ) || empty( $id ) || empty( $meta_key ) || ( ! isset( $params['field_names'][$id][$meta_key] ) ) || ( ! empty( $disable_task_details_update ) ) ) {
+				return;
+			}
+			Smart_Manager_Base::$update_task_details_params[] = array(
+				'task_id' => $params['task_id'],
+				'action' => 'set_to',
+				'status' => 'completed',
+				'record_id' => $id,
+				'field' => $params['field_names'][$id][$meta_key],
+				'prev_val' => $params['prev_postmeta_values'][$id][$meta_key],
+				'updated_val' => $params['meta_value']
+			);
+		}
+
+		/**
+		 * Update task details
+		 *
+		 * @param array $params task details.
+		 * @return void
+		 */
+		public static function update_action_params( $params = array() )
+		{
+			if ( empty( $params ) || ( ! is_array( $params ) ) || ( defined('SMPRO') && empty( SMPRO ) ) ) {
+				return;
+			}
+			Smart_Manager_Base::$update_task_details_params[] = $params;
+		}
+
+		/**
+		 * Retrieves a list of subscriptions for the specified product IDs.
+		 *
+		 * @param array $product_ids An array of product IDs to filter the subscriptions. Default empty array.
+		 * @return array List of subscriptions associated with the given product IDs.
+		 */
+		public static function get_products_subscriptions( $product_ids = array() ) {
+			if ( ( empty( $product_ids ) ) || ( ! is_array( $product_ids ) ) ) {
+				return;
+			}
+			// Sanitize product IDs using absint.
+			$product_ids = array_map( 'absint', $product_ids );
 			global $wpdb;
-			$term_ids = array_unique( array_map( 'absint', $term_ids ) );
-			return array_column( $wpdb->get_results( $wpdb->prepare(
-				"SELECT term_id, term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id IN (" . implode( ',', array_fill( 0, count( $term_ids ), '%d' ) ) . ")",
-				...$term_ids
-			), ARRAY_A ), 'term_taxonomy_id', 'term_id' );
+			$args = array(
+				'exclude_subscription_status' => array( 'expired', 'cancelled' ),
+				'limit'                       => -1,
+				'offset'                      => 0,
+				'auto_renew_only'             => true,
+				'stripe_only'                 => true,
+			);
+
+			$is_hpos = function_exists( 'wcs_is_custom_order_tables_usage_enabled' ) && wcs_is_custom_order_tables_usage_enabled();
+			$orders_table = $is_hpos ? 'wc_orders' : 'posts';
+			$order_id_col = $is_hpos ? 'id' : 'ID';
+			$order_type_col = $is_hpos ? 'type' : 'post_type';
+			$order_status_col = $is_hpos ? 'status' : 'post_status';
+			$order_meta_table = $is_hpos ? 'wc_orders_meta' : 'postmeta';
+			$payment_column   = $is_hpos ? 'payment_method' : 'meta_value';
+
+			$where = array(
+				"orders.{$order_type_col} = 'shop_subscription'",
+				"order_items.order_item_type = 'line_item'",
+				"itemmeta.meta_key IN ('_product_id', '_variation_id')",
+			);
+
+			$product_placeholders = implode( ', ', array_fill( 0, count( $product_ids ), '%d' ) );
+			$where[] = "itemmeta.meta_value IN ( $product_placeholders )";
+
+			if ( ! in_array( 'any', $args['exclude_subscription_status'], true ) ) {
+				$statuses = array_map( 'wcs_sanitize_subscription_status_key', $args['exclude_subscription_status'] );
+				$status_placeholders = implode( ', ', array_fill( 0, count( $statuses ), '%s' ) );
+				$where[] = "orders.{$order_status_col} NOT IN ( $status_placeholders )";
+				$product_ids = array_merge( $product_ids, $statuses );
+			}
+
+			$auto_renew_join = '';
+			$meta_join_column = $is_hpos ? 'order_id' : 'post_id';
+			if ( ! empty( $args['auto_renew_only'] ) ) {
+				$auto_renew_join = "LEFT JOIN {$wpdb->prefix}{$order_meta_table} AS autorenew ON autorenew.{$meta_join_column} = orders.{$order_id_col}";
+				$where[]         = "(autorenew.meta_key = '_schedule_next_payment' AND autorenew.meta_value > 0)";
+			}
+			// Stripe-only filter.
+			$stripe_join = '';
+			if ( ! empty( $args['stripe_only'] ) ) {
+				if ( $is_hpos ) {
+					// HPOS: Use payment_method column.
+					$where[] = "orders.{$payment_column} = 'stripe'";
+				} else {
+					// Non-HPOS: Join postmeta and filter _payment_method.
+					$stripe_join = "LEFT JOIN {$wpdb->prefix}postmeta AS paymeta ON paymeta.post_id = orders.{$order_id_col}";
+					$where[]     = "(paymeta.meta_key = '_payment_method' AND paymeta.meta_value = 'stripe')";
+				}
+			}
+			$where_sql = implode( ' AND ', $where );
+			$limit_sql  = ( $args['limit'] > 0 ) ? $wpdb->prepare( 'LIMIT %d', $args['limit'] ) : '';
+			$offset_sql = ( $args['limit'] > 0 && $args['offset'] > 0 ) ? $wpdb->prepare( 'OFFSET %d', $args['offset'] ) : '';
+
+			$results = $wpdb->get_results( 
+				$wpdb->prepare( 
+					"SELECT DISTINCT order_items.order_id AS subscription_id, itemmeta.meta_value AS product_id
+					FROM {$wpdb->prefix}woocommerce_order_items AS order_items
+					LEFT JOIN {$wpdb->prefix}woocommerce_order_itemmeta AS itemmeta ON order_items.order_item_id = itemmeta.order_item_id
+					LEFT JOIN {$wpdb->prefix}{$orders_table} AS orders ON order_items.order_id = orders.{$order_id_col}
+					$auto_renew_join
+					$stripe_join
+					WHERE $where_sql
+					$limit_sql $offset_sql", 
+					$product_ids 
+				), 
+				ARRAY_A 
+			);
+			if ( ( empty( $results ) ) || ( is_wp_error( $results ) ) ) {
+				return;
+			}
+			$subcriptions = array();
+			foreach ( $results as $row ) {
+				if ( ( empty( absint( $row['subscription_id'] ) ) ) || ( empty( absint( $row['product_id'] ) ) ) ) {
+					continue;
+				}
+				$subcriptions[ absint( $row['subscription_id'] ) ][] = absint( $row['product_id'] );
+			}
+			return array_map(
+				function( $sub_id ) use ( $subcriptions ) {
+					return array( $sub_id => $subcriptions[ $sub_id ] );
+				},
+				array_keys( $subcriptions )
+			);
+		}
+
+		/**
+		 * Trigger WPML terms translations sync after updating post terms via inline edit.
+		 *
+		 * @param array $args update arguments.
+		 * @return void
+		 */
+		public static function after_update_post_term( $args = array() ) {
+			if ( ( empty( $args ) ) || ( ! is_array( $args ) ) || ( empty( $args['id'] ) ) || ( ! class_exists( 'SA_Manager_Pro_Base' ) ) || ( ! is_callable( array( 'SA_Manager_Pro_Base', 'sync_wpml_terms_translations' ) ) ) ) {
+				return;
+			}
+			SA_Manager_Pro_Base::sync_wpml_terms_translations( $args['id'] );
+		}
+
+		/**
+		 * Function to update recent searches for current user via AJAX.
+		 *
+		 * @return void
+		 */
+		public function update_recent_searches() {
+			$search_term = ( ! empty( $this->req_params['search_term'] ) ) ? trim( sanitize_text_field( wp_unslash( $this->req_params['search_term'] ) ) ) : '';
+			$dashboard_key = ( ! empty( $this->req_params['active_module'] ) ) ? sanitize_text_field( $this->req_params['active_module'] ) : '';
+
+			if ( ( empty( $search_term ) ) || ( empty( $dashboard_key ) ) ) {
+				return;
+			}
+			
+			$user_id = get_current_user_id();
+			$all_searches = get_user_meta( $user_id, 'sa_sm_recent_simple_searches', true );
+			$all_searches = ( ( ! empty( $all_searches ) ) && ( is_array( $all_searches ) ) ) ? $all_searches : array();
+			$dashboard_searches = ( ( is_array( $all_searches ) ) && ( ! empty( $all_searches[ $dashboard_key ] ) ) ) ? $all_searches[ $dashboard_key ] : array();
+			
+			// Remove duplicate if exists, add to top, and limit to 10
+			$dashboard_searches = array_slice( 
+				array_merge( 
+					array( $search_term ), 
+					array_diff( (array) $dashboard_searches, array( $search_term ) )
+				), 
+				0, 
+				10 
+			);
+			
+			$all_searches[ $dashboard_key ] = $dashboard_searches;
+			if ( update_user_meta( $user_id, 'sa_sm_recent_simple_searches', $all_searches ) ) {
+				wp_send_json( array( 'ACK' => 'Success', 'recent_searches' => $dashboard_searches ) );
+			}
+		}
+
+		/**
+		 * Function to clear recent searches for current user via AJAX.
+		 *
+		 * @return void
+		 */
+		public function clear_recent_searches() {
+			$dashboard_key = ( ! empty( $this->req_params['active_module'] ) ) ? sanitize_text_field( $this->req_params['active_module'] ) : '';
+			if ( empty( $dashboard_key ) ) {
+				return;						
+			}
+			// Clear only for specific dashboard.
+			$all_recent_searches = get_user_meta( get_current_user_id(), 'sa_sm_recent_simple_searches', true );
+			if ( empty( $all_recent_searches ) || ! is_array( $all_recent_searches ) || empty( $all_recent_searches[ $dashboard_key ] ) ) {
+				return;	
+			}
+			unset( $all_recent_searches[ $dashboard_key ] );
+			update_user_meta( get_current_user_id(), 'sa_sm_recent_simple_searches', $all_recent_searches );
+			wp_send_json( array( 'ACK' => ( 'Success' ) ) );
 		}
 	}
 }

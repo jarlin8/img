@@ -31,7 +31,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Taxonomy_Base' ) ) {
 			$this->post_type = $dashboard_key;
 			$this->req_params  	= ( ! empty( $_REQUEST ) ) ? $_REQUEST : array();
 
-            add_filter( 'sm_beta_load_default_store_model', function() { return false; } );
+            add_filter( 'sm_load_default_store_model', function() { return false; } );
             add_filter( 'sm_default_dashboard_model', array( $this, 'default_taxonomy_dashboard_model' ) );
 
 			add_filter( 'sm_beta_load_default_data_model', function() { return false; } );
@@ -55,7 +55,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Taxonomy_Base' ) ) {
 			add_filter( 'sm_pro_default_process_delete_records_result', __CLASS__. '::process_delete_terms', 12, 3 );
 
 			// hooks for bulk edit functionality
-			add_filter( 'sm_beta_batch_update_prev_value', __CLASS__. '::terms_batch_update_prev_value', 10, 2 );
+			add_filter( 'sm_batch_update_prev_value', __CLASS__. '::terms_batch_update_prev_value', 10, 2 );
 			add_filter( 'sm_default_batch_update_db_updates', function() { return false; } );
 			add_filter( 'sm_post_batch_update_db_updates', __CLASS__. '::terms_post_batch_update_db_updates', 10, 2 );
         }

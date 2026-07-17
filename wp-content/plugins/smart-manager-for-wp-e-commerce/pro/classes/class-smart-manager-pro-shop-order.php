@@ -6,13 +6,19 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 	class Smart_Manager_Pro_Shop_Order extends Smart_Manager_Pro_Base {
 		public $dashboard_key = '',
 				$req_params = array(),
-				$plugin_path = '',
-				$custom_product_search_key_prefix = 'sm_custom_product_',
-				$custom_product_search_cols = array();
-		public static $custom_search_cols = array();
+				$plugin_path = '';
+		public static $custom_search_cols = array(
+				'coupons_used'		=> 'woocommerce_order_items/coupon',
+				'shipping_method'	=> 'woocommerce_order_items/shipping'
+			),
+			$custom_product_search_cols = array(
+				'sku'	=> 'postmeta/_sku',
+				'title'	=> 'posts/post_title'
+			),
+			$custom_product_search_key_prefix = 'sm_custom_product_';
 		public static $advanced_search_option_name = 'sa_sm_search_order_product_ids',
-			$hpos_tables_default_visible_cols = array( 
-				'wc_orders_id', 'wc_orders_date_created_gmt', 'wc_order_addresses_billing_first_name', 'wc_order_addresses_billing_last_name', 'wc_orders_billing_email', 'wc_orders_status', 'wc_orders_total_amount', 'custom_details', 'wc_orders_payment_method_title', 'shipping_method', 'coupons_used', 'custom_line_items' 
+			$hpos_tables_default_visible_cols = array(
+				'wc_orders_id', 'wc_orders_date_created_gmt', 'wc_order_addresses_billing_first_name', 'wc_order_addresses_billing_last_name', 'wc_orders_billing_email', 'wc_orders_status', 'wc_orders_total_amount', 'custom_details', 'wc_orders_payment_method_title', 'shipping_method', 'coupons_used', 'custom_line_items'
 			),
 			$non_hpos_tables_default_visible_cols = array(
 				'ID', 'post_date', '_billing_first_name', '_billing_last_name', '_billing_email', 'post_status', '_order_total', 'custom_details', '_payment_method_title', 'shipping_method', 'coupons_used', 'custom_line_items'
@@ -51,28 +57,19 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 			self::actions();
 
 			$this->plugin_path  = untrailingslashit( plugin_dir_path( __FILE__ ) );
-			$this->custom_product_search_cols = array( 
-														'sku'	=> 'postmeta/_sku',
-														'title'	=> 'posts/post_title'
-													);
-
-			self::$custom_search_cols = array( 
-												'coupons_used'		=> 'woocommerce_order_items/coupon',
-												'shipping_method'	=> 'woocommerce_order_items/shipping'
-											);
 
 			if ( file_exists(SM_PLUGIN_DIR_PATH . '/classes/class-smart-manager-shop-order.php') ) {
 				include_once SM_PLUGIN_DIR_PATH . '/classes/class-smart-manager-shop-order.php';
 				$this->shop_order = new Smart_Manager_Shop_Order( $dashboard_key );
 			}
-			
-			add_filter( 'sm_dashboard_model', array( &$this, 'orders_dashboard_model' ), 12, 2 );
+
+			add_filter( 'sa_sm_dashboard_model', array( &$this, 'orders_dashboard_model' ), 12, 2 );
 			add_filter( 'sm_search_query_formatted', array( &$this, 'order_itemmeta_search_query' ), 12, 2 );
 
 			// Filters for modifying advanced search query clauses
-			add_filter( 'sm_search_query_woocommerce_order_itemmeta_select', array( &$this, 'orders_advanced_search_select' ), 12, 2 );
-			add_filter( 'sm_search_query_woocommerce_order_itemmeta_from', array( &$this, 'orders_advanced_search_from' ), 12, 2 );
-			add_filter( 'sm_search_query_woocommerce_order_itemmeta_join', array( &$this, 'orders_advanced_search_join' ), 12, 2 );
+			add_filter( 'sm_search_query_woocommerce_order_itemmeta_select', array( __CLASS__, 'orders_advanced_search_select' ), 12, 2 );
+			add_filter( 'sm_search_query_woocommerce_order_itemmeta_from', array( __CLASS__, 'orders_advanced_search_from' ), 12, 2 );
+			add_filter( 'sm_search_query_woocommerce_order_itemmeta_join', array( __CLASS__, 'orders_advanced_search_join' ), 12, 2 );
 			add_filter( 'sm_search_woocommerce_order_items_cond', 'Smart_Manager_Pro_Shop_Order::orders_advanced_search_flat_table_cond', 12, 2 );
 
 			add_action( 'sm_advanced_search_processing_complete', array( &$this, 'orders_advanced_search_post_processing' ), 12, 1 );
@@ -85,16 +82,16 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 		}
 
 		public static function actions() {
-			add_filter( 'sm_beta_batch_update_prev_value',  'Smart_Manager_Shop_Order::get_previous_value', 10, 2 );
+			add_filter( 'sm_batch_update_prev_value',  'Smart_Manager_Shop_Order::get_previous_value', 10, 2 );
 
 			add_filter( 'sm_default_batch_update_db_updates',  __CLASS__. '::default_batch_update_db_updates', 10, 2 );
 			add_filter( 'sm_post_batch_update_db_updates', __CLASS__. '::post_batch_update_db_updates', 10, 2 );
 			add_filter( 'sm_pro_default_process_delete_records', function() { return false; } );
 			add_filter( 'sm_pro_default_process_delete_records_result', 'Smart_Manager_Shop_Order::process_delete', 12, 3 );
 			// Hoooks for updating line items.
-			add_filter( 'sm_beta_post_batch_process_args', array( __CLASS__, 'set_line_items_batch_update_args' ), 10, 1 );
-			add_action( 'sm_pro_pre_process_batch_db_updates', array( __CLASS__, 'process_line_items_batch_update' ) );
-			add_action( 'sm_pro_pre_process_batch_update_args', array( __CLASS__, 'pre_process_batch_update_args' ) );
+			add_filter( 'sm_post_batch_process_args', array( __CLASS__, 'set_line_items_batch_update_args' ), 10, 1 );
+			add_action( 'sm_pre_process_batch_db_updates', array( __CLASS__, 'process_line_items_batch_update' ) );
+			add_action( 'sm_pre_process_batch_update_args', array( __CLASS__, 'pre_process_batch_update_args' ) );
 		}
 
 		public function __call( $function_name, $arguments = array() ) {
@@ -167,7 +164,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 							)
 						);
 				}
-				return ( is_callable( array( 'Smart_Manager_Shop_Order', 'update_order_data') ) ) ? Smart_Manager_Shop_Order::update_order_data( $args ) : $update_flag; 
+				return ( is_callable( array( 'Smart_Manager_Shop_Order', 'update_order_data') ) ) ? Smart_Manager_Shop_Order::update_order_data( array_merge( $args, array( 'update_flag' => $update_flag ) ) ) : $update_flag;
 			}
 			if( 'posts' === $args['table_nm'] && 'post_status' === $args['col_nm'] && ! empty( $args['value'] ) && class_exists( 'WC_Order' ) ){
 				$order = new WC_Order( $args['id'] );
@@ -177,14 +174,32 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 		}
 
 		/**
+		 * Processes the dashboard model.
+		 *
+		 * This method is responsible for generating or modifying the dashboard model, utilize a previously saved dashboard model and apply necessary changes or enhancements.
+		 *
+		 * @param array $dashboard_model        The current dashboard model data.
+		 * @param array $dashboard_model_saved  The previously saved dashboard model data.
+		 * @return array                       The processed dashboard model for the orders dashboard.
+		 */
+		public function orders_dashboard_model( $dashboard_model = array(), $dashboard_model_saved = array() ){
+			if ( empty( $dashboard_model ) || ( ! is_array( $dashboard_model ) ) || empty( $this->dashboard_key ) ){
+				return $dashboard_model;
+			}
+			return self::get_orders_dashboard_model( $dashboard_model, $dashboard_model_saved, $this->dashboard_key );
+		}
+
+		/**
 		 * Function for adding custom columns for Orders dashboard
 		 *
 		 * @param array $dashboard_model array of dashboard model.
 		 * @param array $dashboard_model_saved The saved dashboard model.
+		 * @param string $dashboard_key Dashboard key, post type.
+		 * 
 		 * @return array $dashboard_model updated dashboard model.
 		 */
-		public function orders_dashboard_model( $dashboard_model = array(), $dashboard_model_saved = array() ){
-			if( empty( $this->custom_product_search_cols ) ){
+		public static function get_orders_dashboard_model( $dashboard_model = array(), $dashboard_model_saved = array(), $dashboard_key = '' ){
+			if ( ( empty( self::$custom_product_search_cols ) ) || ( ! is_array( self::$custom_product_search_cols ) ) || ( empty( $dashboard_key ) ) || empty( $dashboard_model ) || ( ! is_array( $dashboard_model ) ) ) {
 				return $dashboard_model;
 			}
 
@@ -195,9 +210,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 			}
 			$column_model = &$dashboard_model['columns'];
 
-			foreach( array_keys( $this->custom_product_search_cols ) as $col ){
-				$col_name = $this->custom_product_search_key_prefix. '' .$col;
-				$col_index = sm_multidimesional_array_search ( 'woocommerce_order_itemmeta/meta_key='. $col_name .'/meta_value='. $col_name, 'src', $column_model );
+			foreach( array_keys( self::$custom_product_search_cols ) as $col ){
+				$col_name = self::$custom_product_search_key_prefix. '' .$col;
+				$col_index = sa_multidimesional_array_search ( 'woocommerce_order_itemmeta/meta_key='. $col_name .'/meta_value='. $col_name, 'src', $column_model );
 
 				if( ! empty( $col_index ) ) {
 					continue;
@@ -207,7 +222,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 				$column_model [$index] = array();
 
 				$column_model [$index]['src'] = 'woocommerce_order_itemmeta/meta_key='. $col_name .'/meta_value='. $col_name;
-				$column_model [$index]['data'] = sanitize_title( str_replace( '/', '_', $column_model [$index]['src'] ) ); // generate slug using the wordpress function if not given 
+				$column_model [$index]['data'] = sanitize_title( str_replace( '/', '_', $column_model [$index]['src'] ) ); // generate slug using the wordpress function if not given
 				$column_model [$index]['name'] = __( 'Product '. ( ( 'sku' === $col ) ? 'SKU' : ucwords( str_replace('_', ' ', $col) ) ), 'smart-manager-for-wp-e-commerce' );
 				$column_model [$index]['key'] = $column_model[$index]['name'];
 				$column_model [$index]['type'] = 'text';
@@ -229,13 +244,13 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 				$column_model [$index]['search_values'] = array();
 			}
 
-			if( !empty( $dashboard_model_saved ) ) {
-				$col_model_diff = sm_array_recursive_diff( $dashboard_model_saved,$dashboard_model );	
+			if ( ( ! empty( $dashboard_model_saved ) ) && ( is_array( $dashboard_model_saved ) ) ) {
+				$col_model_diff = sa_array_recursive_diff( $dashboard_model_saved, $dashboard_model );
 			}
 
 			//clearing the transients before return
 			if ( !empty( $col_model_diff ) ) {
-				delete_transient( 'sa_sm_'.$this->dashboard_key );	
+				delete_transient( 'sa_sm_'.$dashboard_key );
 			}
 			return $dashboard_model;
 		}
@@ -243,14 +258,35 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 		/**
 		 * Function for modifying search query for meta tables for advanced search.
 		 *
-		 * @param array $query The search query array.
-		 * @param array $params The search condition params.
-		 * @return array $query updated search query array.
+		 * @param array $query  Optional. Existing query array to modify or extend. Default empty array.
+		 * @param array $params Optional. Parameters to use for building the search query. Default empty array.
+		 * @return array Modified query array with applied search conditions.
 		 */
 		public function order_itemmeta_search_query( $query = array(), $params = array() ){
+			return self::get_order_itemmeta_search_query( array(
+				'query'                     => ( ( ! empty( $query ) ) && ( is_array( $query ) ) ) ? $query : array(),
+				'params'                    => ( ( ! empty( $params ) ) && ( is_array( $params ) ) ) ? $params : array(),
+				'advanced_search_operators' => ( ( ! empty( $this->advanced_search_operators ) ) && ( is_array( $this->advanced_search_operators ) ) ) ? $this->advanced_search_operators : array()
+			) );
+		}
+
+		/**
+		 * Function for modifying search query for meta tables for advanced search.
+		 *
+		 * @param array $args Search arguments and parameters.
+		 * @return array Modified search query.
+		 */
+		public static function get_order_itemmeta_search_query( $args = array() ){
+			if ( ( empty( $args ) ) || ( ! is_array( $args ) ) ) {
+				return array();
+			}
+			$query = ( ( ! empty( $args['query'] ) ) && ( is_array(  $args['query'] ) ) ) ? $args['query'] : array();
+			$params = ( ( ! empty( $args['params'] ) ) && ( is_array(  $args['params'] ) ) ) ? $args['params'] : array();
+
 			$search_string = ( ! empty( $params['search_string'] ) ) ? $params['search_string'] : array();
 			$actual_selected_operator = $params['selected_search_operator'];
 			$actual_search_value = $params['search_value'];
+
 			if( empty( $search_string ) || ( ! empty( $search_string ) && empty( $search_string['table_name'] ) ) ){
 				return $query;
 			}
@@ -258,13 +294,13 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 			$col = ( ! empty( $params['search_col'] ) ) ? $params['search_col'] : '';
 			$searched_col_table_nm = $search_string['table_name'];
 
-			if( empty( $col ) ||  strlen( $col ) < strlen( $this->custom_product_search_key_prefix ) || ( ! empty( $col ) &&  strlen( $col ) > strlen( $this->custom_product_search_key_prefix ) && ! in_array( substr( $col, strlen( $this->custom_product_search_key_prefix ) ), array_keys( $this->custom_product_search_cols ) ) ) ){
+			if( empty( $col ) ||  strlen( $col ) < strlen( self::$custom_product_search_key_prefix ) || ( ! empty( $col ) &&  strlen( $col ) > strlen( self::$custom_product_search_key_prefix ) && ! in_array( substr( $col, strlen( self::$custom_product_search_key_prefix ) ), array_keys( self::$custom_product_search_cols ) ) ) ){
 				return $query;
 			}
 
 			global $wpdb;
 
-			$search_meta = ( ! empty( $this->custom_product_search_cols[ substr( $col, strlen( $this->custom_product_search_key_prefix ) ) ] ) ) ? explode( "/", $this->custom_product_search_cols[ substr( $col, strlen( $this->custom_product_search_key_prefix ) ) ] ) : array();
+			$search_meta = ( ! empty( self::$custom_product_search_cols[ substr( $col, strlen( self::$custom_product_search_key_prefix ) ) ] ) ) ? explode( "/", self::$custom_product_search_cols[ substr( $col, strlen( self::$custom_product_search_key_prefix ) ) ] ) : array();
 			if( empty( $search_meta ) ){
 				return $query;
 			}
@@ -289,7 +325,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 				'col_name' => $search_col
 			);
 			$selected_search_operator = ( ! empty( $rule['operator'] ) ) ? $rule['operator'] : '';
-			$search_operator = ( ! empty( $this->advanced_search_operators[$selected_search_operator] ) ) ? $this->advanced_search_operators[$selected_search_operator] : $selected_search_operator;
+			$search_operator = ( ( is_array( $args['advanced_search_operators'] ) ) && ( ! empty( $args['advanced_search_operators'][$selected_search_operator] ) ) ) ? $args['advanced_search_operators'][$selected_search_operator] : $selected_search_operator;
 			$params = array(
 				'table_nm'	=> $search_table,
 				'search_query' => array(
@@ -317,11 +353,11 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 				$params['search_params']['table_nm'] = $search_table;
 				$params['search_params']['is_meta_table'] = ( 'postmeta' === $search_table ) ? true : false;
 				$params['search_params']['skip_placeholders'] = true;
-				$meta_query = $this->modify_search_cond( $query['cond_woocommerce_order_itemmeta'], $params['search_params'] );
+				$meta_query = ( ( class_exists( 'Smart_Manager_Pro_Base' ) ) && ( is_callable( array( 'Smart_Manager_Pro_Base', 'modify_search_cond' ) ) ) ) ? Smart_Manager_Pro_Base::modify_search_cond( $query['cond_woocommerce_order_itemmeta'], $params['search_params'] ) : array();
 			}
 			// code for postmeta cols
 			if( 'postmeta' === $search_table ){
-				$meta_query = $this->create_meta_table_search_query( $params );
+				$meta_query = Smart_Manager_Base::create_meta_table_search_query( $params );
 				if( empty( $meta_query ) || ( ! empty( $meta_query ) && empty( $meta_query['cond_postmeta'] ) ) ){
 					return $query;
 				}
@@ -332,7 +368,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 				//Query to get the post_id of the products whose meta value matches with the one type in the search text box of the Orders Module
 				$p_ids  = $wpdb->get_col( "SELECT DISTINCT(post_id) FROM {$wpdb->prefix}postmeta WHERE 1=1 AND ". $cond ); //not using wpdb->prepare as its failing if the `cond` is having `%s`
 			} else if( 'posts' === $search_table ){
-				$meta_query = $this->create_flat_table_search_query( $params );
+				$meta_query = Smart_Manager_Base::create_flat_table_search_query( $params );
 				if( empty( $meta_query ) || ( ! empty( $meta_query ) && empty( $meta_query['cond_posts'] ) ) ){
 					return $query;
 				}
@@ -369,7 +405,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 			$table_types['meta']['woocommerce_order_itemmeta'] =  'order_id';
 			return $table_types;
 		}
-		
+
 		/**
 		 * Function for modifying select clause for meta tables for advanced search.
 		 *
@@ -377,7 +413,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 		 * @param array $params The search condition params.
 		 * @return string updated search query select clause.
 		 */
-		public function orders_advanced_search_select( $select = '', $params = array() ){
+		public static function orders_advanced_search_select( $select = '', $params = array() ){
 			return str_replace( 'woocommerce_order_itemmeta.order_id', 'woocommerce_order_items.order_id', $select );
 		}
 
@@ -388,7 +424,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 		 * @param array $params The search condition params.
 		 * @return string updated search query from clause.
 		 */
-		public function orders_advanced_search_from( $from = '', $params = array() ){
+		public static function orders_advanced_search_from( $from = '', $params = array() ){
 			global $wpdb;
 			return $from. '' .( ( false === strpos( $from, 'woocommerce_order_items' ) ) ? " JOIN {$wpdb->prefix}woocommerce_order_items
 																					ON ({$wpdb->prefix}woocommerce_order_itemmeta.order_item_id = {$wpdb->prefix}woocommerce_order_items.order_item_id)" : '' );
@@ -401,10 +437,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 		 * @param array $params The search condition params.
 		 * @return string updated search query join clause.
 		 */
-		public function orders_advanced_search_join( $join = '', $params = array() ){
+		public static function orders_advanced_search_join( $join = '', $params = array() ){
 			return str_replace( 'woocommerce_order_itemmeta.order_id', 'woocommerce_order_items.order_id', $join );
 		}
-		
+
 		/**
 		 * Function for modifying condition for flat tables for advanced search.
 		 *
@@ -431,7 +467,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 			$updated_cond = "(". $wpdb->prefix ."woocommerce_order_items.order_item_type = '". $search_col ."' AND ". str_replace( $col, 'order_item_name', $cond ) ." )";
 			if( ! empty( $updated_cond ) && !empty( $params['search_operator'] ) && 'not like' === $params['search_operator'] ){
 				$o_ids = $wpdb->get_col( "SELECT DISTINCT(order_id) FROM {$wpdb->prefix}woocommerce_order_items WHERE ". str_replace( 'not like', 'like', $updated_cond ) );
-				
+
 				if( is_wp_error( $o_ids ) || empty( $o_ids ) ) {
 					return $updated_cond;
 				}
@@ -484,7 +520,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 				$pro_base_instance->get_batch_update_copy_from_record_ids( $args );
 				return;
 			}
-			
+
 			global $wpdb;
 			$data = array();
 
@@ -736,7 +772,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 		 * Set batch update data for line items by order ID and operation.
 		 * Handles actions like add/remove/copy product or coupon.
 		 *
-		 * @param array $args array of data to be updated. 
+		 * @param array $args array of data to be updated.
 		 * @return array
 		 */
 		public static function set_line_items_batch_update_args( $args = array() ) {
@@ -758,7 +794,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 
 		/**
 		 * Processes batch updates on order line items.
-		 * 
+		 *
 		 * @return void
 		 */
 		public static function process_line_items_batch_update() {
@@ -818,7 +854,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 									$order_note[] = $new_item_data['order_note'];
 								}
 							}
-							if ( ! empty( $order_note ) ) { 
+							if ( ! empty( $order_note ) ) {
 								self::save_order( $order, sprintf(
 									/* translators: %s: list of item names */
 									_x( 'Added line items: %s by Smart Manager', 'order note', 'smart-manager-for-wp-e-commerce' ),
@@ -886,7 +922,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 						}
 						//Add coupons.
 						if ( ( ! empty( $source_order_coupons ) ) && ( is_array( $source_order_coupons ) ) ) {
-							self::handle_order_coupons( 
+							self::handle_order_coupons(
 								array(
 									'order'        => wc_get_order( $order_id ),
 									'coupon_codes' => $source_order_coupons,
@@ -903,7 +939,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 					}
 					$coupons_fetched = self::get_coupon_codes_by_ids( array_diff( $args[ $key ], array_keys( $cached_coupon_codes ) ) );
 					$cached_coupon_codes += ( ( ! empty( $coupons_fetched ) ) && ( is_array( $coupons_fetched ) ) ) ? $coupons_fetched : array();
-					self::handle_order_coupons( 
+					self::handle_order_coupons(
 						array(
 							'order'        => wc_get_order( $order_id ),
 							'coupon_codes' => array_values( array_intersect_key( $cached_coupon_codes, array_flip( $args[ $key ] ) ) ),
@@ -924,14 +960,13 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 		 *     @type array    coupon_codes Optional. Array of coupon code strings.
 		 *     @type string   action       Required. 'add' or 'remove'.
 		 * }
-		 * 
+		 *
 		 * @return void
 		 */
 		public static function handle_order_coupons( $args = array() ) {
 			if ( ( empty( $args ) ) || ( ! is_array( $args ) ) || ( empty( $args['order'] ) ) || ( ! is_a( $args['order'], 'WC_Order' ) ) || ( empty( $args['action'] ) ) || ( ! in_array( $args['action'], array( 'add', 'remove' ), true ) ) || ( empty( $args['coupon_codes'] ) ) || ( ! is_array( $args['coupon_codes'] ) ) || ( ! is_callable( array( $args['order'], 'is_editable' ) ) ) || ( empty( $args['order']->is_editable() ) )) {
 				return;
 			}
-			
 			//Add/Remove coupons.
 			foreach ( $args['coupon_codes'] as $code ) {
 				$code = wc_format_coupon_code( wp_unslash( $code ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
@@ -981,7 +1016,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 			}
 			return $line_items;
 		}
-		
+
 		/**
 		 * Copy line items from one WooCommerce order to another.
 		 *
@@ -1072,8 +1107,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 					$to_order,
 					sprintf(
 						/* translators: %1$s: list of item names %2$d: from order id */
-						_x( 'Copied items: %s from order #%d, by Smart Manager', 'order note', 'smart-manager-for-wp-e-commerce' ),
-						implode( ', ', $order_note ), absint( $from_order->get_id() )
+						_x( 'Copied items: %1$s from order #%2$d, by Smart Manager', 'order note', 'smart-manager-for-wp-e-commerce' ),
+						implode( ', ', $order_note ), ( is_callable( array( $from_order, 'get_id' ) ) ) ? absint( $from_order->get_id() ) : ''
 					)
 				);
 			}
@@ -1138,7 +1173,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 		 */
 		public static function get_coupon_codes_by_ids( $coupon_ids = array() ) {
 			global $wpdb;
-			if ( empty( $coupon_ids ) || ! is_array( $coupon_ids ) ) { 
+			if ( empty( $coupon_ids ) || ! is_array( $coupon_ids ) ) {
 				return;
 			}
 			$placeholders = implode( ',', array_fill( 0, count( $coupon_ids ), '%d' ) );

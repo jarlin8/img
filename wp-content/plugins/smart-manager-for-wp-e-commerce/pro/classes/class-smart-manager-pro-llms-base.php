@@ -25,7 +25,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_LLMS_Base' ) ) {
             $this->strings_to_remove_from_title = array( '_llms', 'llms_', '_courses', 'course_', 'post_' , '_' );
 
             if( empty( $this->is_dashboard_class_called ) ){
-                add_filter( 'sm_dashboard_model',array( &$this,'base_dashboard_model' ), 10, 2 );
+                add_filter( 'sa_sm_dashboard_model',array( &$this,'base_dashboard_model' ), 10, 2 );
             }
 		}
 
@@ -111,7 +111,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_LLMS_Base' ) ) {
 
 
 			if ( ! empty( $this->dashboard_model_saved ) ) {
-				$col_model_diff = sm_array_recursive_diff( $this->dashboard_model_saved,$this->dashboard_model);	
+				$col_model_diff = sa_array_recursive_diff( $this->dashboard_model_saved,$this->dashboard_model);	
 			}
 
 			//clearing the transients before return

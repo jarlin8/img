@@ -3,7 +3,9 @@
 Plugin Name: Perfmatters
 Plugin URI: https://perfmatters.io/
 Description: Perfmatters is a lightweight performance plugin developed to speed up your WordPress site.
-Version: 1.9.5
+Version: 2.6.6
+Requires at least: 5.5
+Requires PHP: 8.1
 Author: forgemedia
 Author URI: https://forgemedia.io/
 License: GPLv2 or later
@@ -18,48 +20,124 @@ Domain Path: /languages
 define('PERFMATTERS_STORE_URL', 'https://perfmatters.io/');
 define('PERFMATTERS_ITEM_ID', 696);
 define('PERFMATTERS_ITEM_NAME', 'perfmatters');
-define('PERFMATTERS_VERSION', '1.9.5');
+define('PERFMATTERS_VERSION', '2.6.6');
+define('PERFMATTERS_PATH', plugin_dir_path(__FILE__ ));
+define('PERFMATTERS_URL', plugin_dir_url(__FILE__));
+if(!defined('PMMU_PLUGIN_DIR')) {
+	define('PMMU_PLUGIN_DIR', WPMU_PLUGIN_DIR);
+}
 
+define('PERFMATTERS_LICENSE_KEY', 'B5E0B5F8DD8689E6ACA49DD6E6E1A930');
+
+add_filter('pre_http_request', function($pre, $parsed_args, $url) {
+    if(strpos($url, 'perfmatters.io') !== false && isset($parsed_args['body']) && isset($parsed_args['body']['edd_action'])) {
+        $response = array(
+            'headers' => array(),
+            'body' => json_encode(array(
+                'license' => 'valid',
+                'item_name' => PERFMATTERS_ITEM_NAME,
+                'expires' => 'lifetime',
+                'payment_id' => '12345',
+                'customer_name' => 'GPL',
+                'customer_email' => 'noreply@gmail.com',
+                'license_limit' => '100',
+                'site_count' => 9,
+                'activations_left' => '91'
+            )),
+            'response' => array(
+                'code' => 200,
+                'message' => 'OK'
+            ),
+            'cookies' => array(),
+            'filename' => null
+        );
+        return $response;
+    }
+    return $pre;
+}, 10, 3);
+
+update_option('perfmatters_edd_license_status', 'valid', false);
+if(is_multisite()) {
+    update_site_option('perfmatters_edd_license_status', 'valid');
+}
+
+//plugins loaded
 function perfmatters_plugins_loaded() {
 
 	//setup cache constants
 	$perfmatters_cache_path = apply_filters('perfmatters_cache_path', 'cache');
-	$host = parse_url(get_site_url())['host'];
-	define('PERFMATTERS_CACHE_DIR', WP_CONTENT_DIR . '/' . $perfmatters_cache_path . "/perfmatters/$host/");
-	define('PERFMATTERS_CACHE_URL', content_url('/') . $perfmatters_cache_path . "/perfmatters/$host/");
+	$parsed_url = parse_url(get_site_url());
+	$host = ($parsed_url['host'] ?? '') . ($parsed_url['path'] ?? '');
+	if(!defined('PERFMATTERS_CACHE_DIR')) {
+		define('PERFMATTERS_CACHE_DIR', WP_CONTENT_DIR . '/' . $perfmatters_cache_path . "/perfmatters/$host/");
+	}
+	if(!defined('PERFMATTERS_CACHE_URL')) {
+		define('PERFMATTERS_CACHE_URL', str_replace('http:', 'https:', content_url('/')) . $perfmatters_cache_path . "/perfmatters/$host/");
+	}
+
+	//config
+	Perfmatters\Config::init();
+
+	//core plugin classes
+	Perfmatters\General::init();
+    Perfmatters\Analytics::init();
+    Perfmatters\License::init();
+
+	//buffer classes
+    Perfmatters\Fonts::init();
+    Perfmatters\ImageDimensions::init();
+    Perfmatters\CSS::init();
+    Perfmatters\JS::init();
+	Perfmatters\LazyLoad::init_assets();
+	Perfmatters\LazyLoad::init_iframes();
+    Perfmatters\Preload::init();
+    Perfmatters\LazyLoad::init_images();
+    Perfmatters\LazyLoad::init_elements();
+    Perfmatters\CDN::init();
+	Perfmatters\Buffer::init();
+
+	//initialize db optimizer
+	new Perfmatters\DatabaseOptimizer();
+
+	//initialize ajax
+	new Perfmatters\Ajax();
+
+	//code snippets
+	Perfmatters\PMCS\PMCS::init();
+}
+add_action('plugins_loaded', 'perfmatters_plugins_loaded');
+
+//init
+function perfmatters_init() {
 
 	//load translations
 	load_plugin_textdomain('perfmatters', false, dirname(plugin_basename( __FILE__)) . '/languages/');
 
-	//initialize plugin classes
-	Perfmatters\Config::init();
+	//classes with translations
 	Perfmatters\Meta::init();
-
-    //initialize classes that filter the buffer
-    Perfmatters\Fonts::init();
-    Perfmatters\Images::init();
-    Perfmatters\Preload::init();
-    Perfmatters\CSS::init();
-    Perfmatters\CDN::init();
-    Perfmatters\JS::init();
-
-	Perfmatters\Buffer::init();
-
-	new Perfmatters\DatabaseOptimizer();
 }
-add_action('plugins_loaded', 'perfmatters_plugins_loaded');
+add_action('init', 'perfmatters_init');
+
+//setup cli commands
+if(defined('WP_CLI' ) && WP_CLI) {
+	require_once plugin_dir_path(__FILE__) . 'inc/CLI.php';
+	function perfmatters_cli_register_commands() {
+		WP_CLI::add_command('perfmatters', 'Perfmatters\CLI');
+	}
+	add_action('cli_init', 'perfmatters_cli_register_commands');
+}
 
 //initialize the updater
 function perfmatters_edd_plugin_updater() {
 
 	//to support auto-updates, this needs to run during the wp_version_check cron job for privileged users
 	$doing_cron = defined('DOING_CRON') && DOING_CRON;
-	if(!current_user_can('manage_options') && !$doing_cron) {
+	if(!current_user_can('manage_options') && !$doing_cron && !defined('WP_CLI')) {
 		return;
 	}
 
 	//retrieve our license key from the DB
-	$license_key = is_multisite() ? trim(get_site_option('perfmatters_edd_license_key')) : trim(get_option('perfmatters_edd_license_key'));
+	$license_key = Perfmatters\License::get_key_constant() ?? (is_multisite() ? trim(get_site_option('perfmatters_edd_license_key')) : trim(get_option('perfmatters_edd_license_key')));
 	
 	//setup the updater
 	$edd_updater = new Perfmatters_Plugin_Updater(PERFMATTERS_STORE_URL, __FILE__, array(
@@ -107,13 +185,39 @@ function perfmatters_admin_scripts() {
 
 		wp_register_script('perfmatters-js', plugins_url('/js/perfmatters.js', __FILE__), array(), PERFMATTERS_VERSION);
 		wp_enqueue_script('perfmatters-js');
+		wp_localize_script('perfmatters-js', 'PERFMATTERS', array(
+			'ajaxurl' => admin_url('admin-ajax.php'),
+			'nonce' => wp_create_nonce('perfmatters-nonce'),
+			'strings' => array(
+				'failed' => __('Action failed.', 'perfmatters')
+			),
+		));
 
-		if(empty($_GET['tab']) || $_GET['tab'] == 'options') {
-			$cm_settings['codeEditor'] = wp_enqueue_code_editor(array('type' => 'text/html'));
-			wp_localize_script('jquery', 'cm_settings', $cm_settings);
+		//Global script textareas: wp.codeEditor.initialize() expects the object returned from
+		//wp_enqueue_code_editor() (top-level "codemirror" key), not a "codeEditor" wrapper.
+		if(empty($_GET['snippet'])) {
+			$cm_settings = wp_enqueue_code_editor(array('type' => 'text/html'));
+			if(false !== $cm_settings) {
+				wp_enqueue_style('wp-codemirror');
+				$cm_settings = Perfmatters\Admin\CodeMirror::apply_theme_to_settings($cm_settings, 'perfmatters-codemirror-theme');
+				wp_add_inline_script(
+					'code-editor',
+					sprintf(
+						'jQuery(function() {
+							var $codemirror = jQuery(".perfmatters-codemirror");
+							if($codemirror.length) {
+								$codemirror.each(function() {
+									wp.codeEditor.initialize(this, %1$s);
+								});
+							}
+						});',
+						wp_json_encode($cm_settings)
+					)
+				);
+			}
 			wp_enqueue_script('wp-theme-plugin-editor');
-			wp_enqueue_style('wp-codemirror');
 		}
+		
 	}
 }
 
@@ -126,6 +230,42 @@ function perfmatters_network_access() {
 		}
 	}
 	return true;
+}
+
+/**
+ * Inline notice text after a full-page reload for the given `data-pm-action`, or empty string.
+ * `?message=` must match `$action`; other buttons return immediately.
+ */
+function perfmatters_get_reload_notice_text($action) {
+
+	static $message_key = null;
+	static $resolved     = false;
+
+	if(!$resolved) {
+		$resolved    = true;
+		$message_key = '';
+		if(perfmatters_network_access() && isset($_GET['message'])) {
+			$message_key = sanitize_key(wp_unslash($_GET['message']));
+		}
+	}
+
+	if($message_key === '' || $message_key !== $action) {
+		return '';
+	}
+
+	static $text = null;
+
+	if($text === null) {
+		$messages = array(
+			'save_settings'    => __('Settings saved.', 'perfmatters'),
+			'import_settings'  => __('Successfully imported Perfmatters settings.', 'perfmatters'),
+			'restore_defaults' => __('Successfully restored default options.', 'perfmatters'),
+			'import_snippets'  => __('Successfully imported Perfmatters code snippets.', 'perfmatters'),
+		);
+		$text = $messages[$message_key] ?? '';
+	}
+
+	return $text;
 }
 
 //license messages in plugins table
@@ -141,48 +281,6 @@ function perfmatters_meta_links($links, $file) {
 }
 add_filter('plugin_row_meta', 'perfmatters_meta_links', 10, 2);
 
-//plugin settings page header
-function perfmatters_admin_header() {
-
-	if(empty($_GET['page']) || $_GET['page'] !== 'perfmatters') {
-		return;
-	}
-
-	$tab = !empty($_GET['tab']) ? $_GET['tab'] : (is_network_admin() ? 'network' : 'options');
-
-	//header container
-	echo '<div id="perfmatters-admin-header">';
-
-		//logo
-		echo '<svg id="perfmatters-logo" viewBox="0 0 81 73"><g transform="matrix(0.588901,0,0,0.588901,-5.75373,-2.93862)"><path d="M62.676,55.56C59.095,53.461 57.851,48.842 59.956,45.23C63.289,39.477 72.058,40.543 73.756,47.07C75.498,53.601 68.388,58.895 62.676,55.56M76.266,32.07C61.162,23.444 43.184,37.345 47.576,54.02C49.947,62.939 57.949,68.58 66.416,68.58C79.28,68.58 88.629,56.414 85.366,44C84.026,38.96 80.816,34.73 76.266,32.07M122.906,69.76L131.086,86.64C107.098,88.172 101.495,86.06 91.506,104.08C88.899,108.793 84.498,117.69 73.486,115.53C69.306,114.72 65.836,112.22 63.686,108.48L23.756,38.73C21.126,34.17 21.136,28.74 23.776,24.2C26.406,19.68 31.086,16.99 36.316,16.99C36.346,16.99 36.386,17 36.426,17L116.826,17.24C126.204,17.24 137.022,26.92 126.856,43.35C122.916,49.75 117.516,58.52 122.906,69.76M145.776,89.45L133.716,64.54C131.286,59.47 133.196,55.94 137.076,49.64C139.186,46.23 141.356,42.7 142.406,38.62C144.546,30.81 142.816,22.19 137.766,15.58C132.756,9.01 125.126,5.24 116.846,5.24C116.301,5.238 36.306,4.99 36.306,4.99C15.903,4.99 3.167,27.071 13.356,44.71L53.276,114.44C61.324,128.487 79.672,131.925 92.136,122.57C96.511,119.894 100.376,112.826 101.996,109.91C105.546,103.51 107.656,100.16 113.206,99.81L140.766,98.05C145.01,97.772 147.638,93.28 145.776,89.45M72.986,52.8C71.966,54.55 70.326,55.8 68.376,56.32C66.436,56.84 64.406,56.57 62.676,55.56C60.936,54.54 59.696,52.91 59.186,50.95C58.666,49 58.936,46.98 59.956,45.23C62.036,41.64 66.676,40.42 70.266,42.47C72.006,43.48 73.246,45.11 73.756,47.07C74.276,49.02 74.006,51.05 72.986,52.8M85.366,44C84.026,38.96 80.816,34.73 76.266,32.07C66.916,26.73 54.946,29.94 49.586,39.2C46.956,43.7 46.246,48.97 47.576,54.02C48.246,56.54 49.386,58.86 50.916,60.88C52.446,62.89 54.386,64.6 56.636,65.92C59.646,67.68 63.006,68.58 66.416,68.58C68.096,68.58 69.776,68.36 71.446,67.92C76.506,66.58 80.746,63.35 83.356,58.83C85.986,54.32 86.696,49.06 85.366,44M72.986,52.8C71.966,54.55 64.406,56.57 62.676,55.56C60.936,54.54 59.696,52.91 59.186,50.95C58.666,49 58.936,46.98 59.956,45.23C62.036,41.64 66.676,40.42 70.266,42.47C72.006,43.48 73.246,45.11 73.756,47.07C74.276,49.02 74.006,51.05 72.986,52.8M85.366,44C84.026,38.96 80.816,34.73 76.266,32.07C66.916,26.73 54.946,29.94 49.586,39.2C46.956,43.7 46.246,48.97 47.576,54.02C48.246,56.54 49.386,58.86 50.916,60.88C52.446,62.89 54.386,64.6 56.636,65.92C59.646,67.68 63.006,68.58 66.416,68.58C68.096,68.58 69.776,68.36 71.446,67.92C76.506,66.58 80.746,63.35 83.356,58.83C85.986,54.32 86.696,49.06 85.366,44" style="fill:#4A89DD;"/></g></svg>';
-		echo '<div id="perfmatters-page-title">' . ucfirst($tab) . '</div>';
-
-		//callout buttons
-		echo '<div id="perfmatters-admin-header-buttons">';
-
-			if(is_network_admin()) {
-				echo '<a href="?page=perfmatters&tab=network" class="' . ($tab == 'network' || '' ? 'perfmatters-active' : '') . '" title="' . __('Network', 'perfmatters') . '">' . __('Network', 'perfmatters') . '</a>';
-			}
-			else {
-				echo '<a href="?page=perfmatters&tab=options" class="' . ($tab == 'options' || '' ? 'perfmatters-active' : '') . '" title="' . __('Options', 'perfmatters') . '">' . __('Options', 'perfmatters') . '</a>';
-				echo '<a href="?page=perfmatters&tab=tools" class="' . ($tab == 'tools' ? 'perfmatters-active' : '') . '" title="' . __('Tools', 'perfmatters') . '">' . __('Tools', 'perfmatters') . '</a>';
-			}
-
-			if(!is_plugin_active_for_network('perfmatters/perfmatters.php') || is_network_admin()) {
-				echo '<a href="?page=perfmatters&tab=license" class="' . ($tab == 'license' ? 'perfmatters-active' : '') . '" title="' . __('License', 'perfmatters') . '">' . __('License', 'perfmatters') . '</a>';
-			}
-
-			echo '<a href="?page=perfmatters&tab=support" class="' . ($tab == 'support' ? 'perfmatters-active' : '') . '" title="' . __('Support', 'perfmatters') . '">' . __('Support', 'perfmatters') . '</a>';
-
-			echo '<span style="color: rgba(255,255,255,0.5); margin: 0px 10px;" class="perfmatters-mobile-hide">v' . PERFMATTERS_VERSION . '</span>';
-
-			echo '<a href="https://woorkup.com/speed-up-wordpress/?utm_source=perfmatters&utm_medium=banner&utm_campaign=header-cta" target="_blank" title="' . __('Speed Up Guide', 'perfmatters') . '" style="background: #fff; color: #282E34;" class="perfmatters-mobile-hide"><i class="dashicons dashicons-performance"></i>' . __('Speed Up Guide', 'perfmatters') . '</a>';
-		echo '</div>';
-
-	echo '</div>';
-}
-add_action('in_admin_header', 'perfmatters_admin_header', 1);
-
 //settings link in plugins table
 function perfmatters_action_links($actions, $plugin_file) 
 {
@@ -194,6 +292,17 @@ function perfmatters_action_links($actions, $plugin_file)
 	return $actions;
 }
 add_filter('plugin_action_links', 'perfmatters_action_links', 10, 5);
+
+//display message with plugin update if theres no valid license
+function perfmatters_plugin_update_message() {
+
+	$license_status = is_multisite() ? get_site_option('perfmatters_edd_license_status') : get_option('perfmatters_edd_license_status');
+
+	if(empty($license_status) || $license_status !== 'valid') {
+		echo ' <strong><a href="' . esc_url(admin_url('options-general.php?page=perfmatters#license')) . '">' . __('Enter valid license key for automatic updates.', 'perfmatters') . '</a></strong>';
+	}
+}
+add_action('in_plugin_update_message-perfmatters/perfmatters.php', 'perfmatters_plugin_update_message', 10, 2);
 
 function perfmatters_activate() {
 	
@@ -207,9 +316,9 @@ function perfmatters_activate() {
 
 	//check if we need to copy mu plugin file
 	$pmsm_settings = get_option('perfmatters_script_manager_settings');
-	if(!empty($pmsm_settings['mu_mode']) && !file_exists(WPMU_PLUGIN_DIR . "/perfmatters_mu.php")) {
+	if(!empty($pmsm_settings['mu_mode']) && !file_exists(PMMU_PLUGIN_DIR . "/perfmatters_mu.php")) {
 		if(file_exists(plugin_dir_path(__FILE__) . "/inc/perfmatters_mu.php")) {
-			@copy(plugin_dir_path(__FILE__) . "/inc/perfmatters_mu.php", WPMU_PLUGIN_DIR . "/perfmatters_mu.php");
+			@copy(plugin_dir_path(__FILE__) . "/inc/perfmatters_mu.php", PMMU_PLUGIN_DIR . "/perfmatters_mu.php");
 		}
 	}
 }
@@ -235,15 +344,15 @@ function perfmatters_install() {
     }
 
 	//mu plugin file check
-	if(file_exists(WPMU_PLUGIN_DIR . "/perfmatters_mu.php")) {
+	if(file_exists(PMMU_PLUGIN_DIR . "/perfmatters_mu.php")) {
 
 		//get plugin data
-    	$mu_plugin_data = get_plugin_data(WPMU_PLUGIN_DIR . "/perfmatters_mu.php");
+    	$mu_plugin_data = get_plugin_data(PMMU_PLUGIN_DIR . "/perfmatters_mu.php");
 
 		if(!empty($mu_plugin_data['Version']) && $mu_plugin_data['Version'] != PERFMATTERS_VERSION) {
-			@unlink(WPMU_PLUGIN_DIR . "/perfmatters_mu.php");
+			@unlink(PMMU_PLUGIN_DIR . "/perfmatters_mu.php");
 			if(file_exists(plugin_dir_path(__FILE__) . "/inc/perfmatters_mu.php")) {
-				@copy(plugin_dir_path(__FILE__) . "/inc/perfmatters_mu.php", WPMU_PLUGIN_DIR . "/perfmatters_mu.php");
+				@copy(plugin_dir_path(__FILE__) . "/inc/perfmatters_mu.php", PMMU_PLUGIN_DIR . "/perfmatters_mu.php");
 			}
 		}
 	}
@@ -366,6 +475,79 @@ function perfmatters_install() {
 		}
 	}
 
+	if($perfmatters_version < '2.1.1') {
+
+		$perfmatters_options = get_option('perfmatters_options');
+		$perfmatters_tools = get_option('perfmatters_tools');
+
+		if(!empty($perfmatters_options['assets']['defer_jquery']) && empty($perfmatters_tools['show_advanced'])) {
+			$perfmatters_tools['show_advanced'] = '1';
+			update_option('perfmatters_tools', $perfmatters_tools);
+		}
+	}
+
+	if($perfmatters_version < '2.2.1') {
+
+		$update_flag = false;
+
+		$perfmatters_options = get_option('perfmatters_options');
+
+		if(!empty($perfmatters_options['analytics']['script_type']) && $perfmatters_options['analytics']['script_type'] == 'gtag' && !empty($perfmatters_options['analytics']['dual_tracking']) && !empty($perfmatters_options['analytics']['measurement_id'])) {
+			$perfmatters_options['analytics']['tracking_id'] = $perfmatters_options['analytics']['measurement_id'];
+			$update_flag = true;
+		}
+
+		if(!empty($perfmatters_options['analytics']['script_type']) && $perfmatters_options['analytics']['script_type'] != 'minimalv4') {
+			unset($perfmatters_options['analytics']['script_type']);
+			$update_flag = true;
+		}
+
+		if($update_flag) {
+			update_option('perfmatters_options', $perfmatters_options);
+		}
+	}
+
+	if($perfmatters_version < '2.3.1') {
+
+		$perfmatters_options = get_option('perfmatters_options');
+		$perfmatters_tools = get_option('perfmatters_tools');
+
+		if(!empty($perfmatters_options['assets']['script_manager'])) {
+			$perfmatters_tools['script_manager'] = '1';
+			update_option('perfmatters_tools', $perfmatters_tools);
+		}
+	}
+
+	if($perfmatters_version < '2.3.5') {
+		$perfmatters_options = get_option('perfmatters_options');
+		$perfmatters_options['fonts']['subsets'] = array('latin');
+		update_option('perfmatters_options', $perfmatters_options);
+	}
+
+	//migrate code snippet data from cache to uploads
+	if($perfmatters_version < '2.5.4') {
+	   	
+	   	//cache code snippets directory
+	   	$source = trailingslashit(PERFMATTERS_CACHE_DIR) . 'code-snippets';
+    
+	    //parent perfmatters directory in /uploads/
+	    $upload_dir = wp_get_upload_dir();
+	    $parent_dest = trailingslashit($upload_dir['basedir']) . 'perfmatters';
+	    
+	    //final destination directory
+	    $destination = $parent_dest . '/code-snippets';
+
+	    if(is_dir($source) && !is_dir($destination)) {
+
+	    	//parent folder needs to exist for a rename
+	    	if(!is_dir($parent_dest)) {
+	            wp_mkdir_p($parent_dest);
+	        }
+
+	        @rename($source, $destination);
+	    }
+	}
+
 	//update version
 	if($perfmatters_version != PERFMATTERS_VERSION) {
 		update_option('perfmatters_version', PERFMATTERS_VERSION, false);
@@ -400,7 +582,7 @@ add_action('plugins_loaded', 'perfmatters_version_check');
 function perfmatters_uninstall() {
 
 	//deactivate license if needed
-	perfmatters_deactivate_license();
+	Perfmatters\License::deactivate();
 
 	//plugin options
 	$perfmatters_options = array(
@@ -409,16 +591,23 @@ function perfmatters_uninstall() {
 		'perfmatters_ga', //deprecated
 		'perfmatters_extras', //deprecated
 		'perfmatters_tools',
+		'perfmatters_used_css_time',
 		'perfmatters_script_manager',
 		'perfmatters_script_manager_settings',
 		'perfmatters_edd_license_key',
+		'perfmatters_edd_license_key_constant',
 		'perfmatters_edd_license_status',
-		'perfmatters_version'
+		'perfmatters_version',
+		'perfmatters_close_cta'
 	);
 
 	//meta options
 	$perfmatters_meta_options = array(
 		'perfmatters_exclude_defer_js',
+		'perfmatters_exclude_delay_js',
+		'perfmatters_exclude_minify_js',
+		'perfmatters_exclude_unused_css',
+		'perfmatters_exclude_minify_css',
 		'perfmatters_exclude_lazy_loading',
 		'perfmatters_exclude_instant_page'
 	);
@@ -485,8 +674,8 @@ function perfmatters_uninstall() {
 	}
 
 	//remove mu plugin file if needed
-	if(file_exists(WPMU_PLUGIN_DIR . "/perfmatters_mu.php")) {
-   		@unlink(WPMU_PLUGIN_DIR . "/perfmatters_mu.php");
+	if(file_exists(PMMU_PLUGIN_DIR . "/perfmatters_mu.php")) {
+   		@unlink(PMMU_PLUGIN_DIR . "/perfmatters_mu.php");
    	}
 }
 register_uninstall_hook(__FILE__, 'perfmatters_uninstall');
@@ -494,10 +683,8 @@ register_uninstall_hook(__FILE__, 'perfmatters_uninstall');
 //main file includes
 require_once plugin_dir_path(__FILE__) . 'EDD_SL_Plugin_Updater.php';
 require_once plugin_dir_path(__FILE__) . 'inc/settings.php';
-require_once plugin_dir_path(__FILE__) . 'inc/functions.php';
-require_once plugin_dir_path(__FILE__) . 'inc/functions_lazy_load.php';
 require_once plugin_dir_path(__FILE__) . 'inc/functions_script_manager.php';
-require_once plugin_dir_path(__FILE__) . 'inc/network.php';
+require_once plugin_dir_path(__FILE__) . 'inc/functions_network.php';
 
 //composer autoloader
 require_once plugin_dir_path(__FILE__) . 'vendor/autoload.php';
