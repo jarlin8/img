@@ -6,19 +6,7 @@ defined('ABSPATH') OR exit;
 
 class Video{
 
-	protected $name = 'video';
-
-	final public static function instance(){
-		static $instance = null;
-
-		if(is_null($instance)) {
-			$instance = new static();
-		}
-
-		return $instance;
-	}
-
-	protected function __construct(){
+	public function __construct(){
 		add_action('init', array( $this, 'init_handler' ));
 	}
 
@@ -27,5 +15,3 @@ class Video{
 	}
 
 }
-
-Video::instance();

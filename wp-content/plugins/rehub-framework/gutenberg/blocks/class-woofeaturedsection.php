@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) OR exit;
 class WooFeaturedSection extends Basic {
 	protected $name = 'wc-featured-section';
 
-	protected function __construct() {
+	public function __construct() {
 		parent::__construct();
 	}
 

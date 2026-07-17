@@ -117,6 +117,7 @@
 .gc-offer-listing-item {
   width: 100%;
   margin-top: 20px;
+  position:  relative;
 }
 .gc-offer-listing-item:first-of-type {
   margin-top: 0;

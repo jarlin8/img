@@ -101,7 +101,7 @@ function widget( $args, $instance ) {
 	<div class="color_sidebar <?php if ($color == 'dark') :?>  dark_sidebar darkbg whitecolor whitecolorinner padd20<?php endif ;?>">
 		<div class="tabs-item clearfix">
 		<?php if ($color == 'dark') :?>
-			<style scoped>
+			<style>
 				/* style for darksidebar */
 				.dark_sidebar .tabs-item > div { border-color: #515151;}
 				.dark_sidebar .tabs-item .detail .post-meta a.cat{color:#fff;}
@@ -115,7 +115,7 @@ function widget( $args, $instance ) {
 	            	<?php wpsm_thumb('minithumb'); ?>
 	            </a></figure>
 	            <div class="detail floatright width-100-calc pl15 rtlpr15">
-		            <h5 class="mt0 lineheight20 fontnormal font95"><a href="<?php the_permalink();?>"><?php the_title();?></a></h5>
+		            <div class="mt0 lineheight20 fontnormal font95"><a href="<?php the_permalink();?>"><?php the_title();?></a></div>
 
 		            <?php if ('post' == get_post_type($post->ID)) :?>
 	            	<div class="post-meta">

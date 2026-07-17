@@ -64,7 +64,7 @@ class Toc extends Basic{
 		$id = 'rh-gut-'.mt_rand();
 		$out = '';
 		$out .= '<div id="'.$id.'">
-		<style scoped>
+		<style>
 		#'.$id.' .autocontents li{margin: 0 0 '.$margin.'px 0; font-size: '.$fontSize.'px; line-height:'.$lineHeight.'px}
 		#'.$id.' .autocontents li a{
 			'.(($textColor) ? "color:".$textColor.";" : "").'

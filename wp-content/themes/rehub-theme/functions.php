@@ -6,13 +6,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 update_option( 'Rehub_Key', [
-'tf_username' => 'lovegpl',
-'tf_purchase_code' => 'activated-activated',
-'tf_support_date' => '01.01.2030',
+	'tf_username'      => 'GPL',
+	'tf_purchase_code' => 'C6D0D7F8DB6898D6ACA49DC6C9F4B996',
+	'tf_support_date'  => '01.01.2050',
 ] );
 
 if ( !defined( 'RH_MAIN_THEME_VERSION' ) ) {
-	define('RH_MAIN_THEME_VERSION', '19.9.9.2');
+	define('RH_MAIN_THEME_VERSION', '19.9.9.8');
 }
 if(!defined('REHUB_NAME_ACTIVE_THEME')){
 	define('REHUB_NAME_ACTIVE_THEME', 'REHUB');
@@ -1622,7 +1622,7 @@ function my_theme_register_required_plugins() {
 			'slug'     				=> 'rehub-framework', // The plugin slug (typically the folder name)
 			'source'   				=> get_template_directory() . '/plugins/rehub-framework.zip', 
 			'required' 				=> true,
-			'version' 				=> '19.9.9',
+			'version' 				=> '19.9.9.7',
 			'force_activation' 		=> false, 
 			'force_deactivation' 	=> false, 
 			'external_url' 			=> '',
@@ -1783,12 +1783,7 @@ function re_add_openschema() {
 					"bestRating" => "5",
 					"name"=> $tagobj->name,					
 					"ratingValue" => round($rate/$count,2),
-					"reviewCount" => $count,
-					"itemReviewed" => array(
-						"name"=> $tagobj->name,	
-						"@type" => "Store",
-						"image" => $brandimage
-					)
+					"reviewCount" => $count
 				);
 			}			
 		}

@@ -36,7 +36,9 @@ class OfferListing extends Basic {
 					'oldPrice'       => '',
 					'button'         => array(
 						'text' => 'Buy this item',
-						'url'  => ''
+						'url'  => '',
+						'noFollow' => true,
+						'newTab' => true,
 					),
 					'coupon'         => '',
 					'maskCoupon'     => false,
@@ -45,6 +47,7 @@ class OfferListing extends Basic {
 					'offerExpired'   => false,
 					'readMore'       => 'Read full review',
 					'readMoreUrl'    => '',
+					'readMoreExt'    => false,
 					'disclaimer'     => 'Disclaimer text...'
 				)
 			),
@@ -79,7 +82,10 @@ class OfferListing extends Basic {
 			$old_price         = !empty($offer['oldPrice']) ? $offer['oldPrice'] : '';
 			$button_text       = !empty($offer['button']['text']) ? $offer['button']['text'] : '';
 			$read_more_text    = !empty($offer['readMore']) ? $offer['readMore'] : '';
+			$button_nofollow       = !empty($offer['button']['noFollow']) ? ' rel="nofollow sponsored"' : '';
+			$button_target       = !empty($offer['button']['newTab']) ? ' target="_blank""' : '';
 			$read_more_url     = !empty($offer['readMoreUrl']) ? $offer['readMoreUrl'] : '';
+			$read_more_ext     = !empty($offer['readMoreExt']) ? $offer['readMoreExt'] : '';
 			$disclaimer        = !empty($offer['disclaimer']) ? $offer['disclaimer'] : '';
 			$enable_badge      = !empty($offer['enableBadge']) ? $offer['enableBadge'] : '';
 			$enable_score      = !empty($offer['enableScore']) ? $offer['enableScore'] : '';
@@ -151,8 +157,8 @@ class OfferListing extends Basic {
 			}
 			$html .= '      <div class="rh-flex-grow1 border-right listitem_title listitem_column pt15 pb15 pr20 pl20">';
 			$html .= '          <' . $title_tag . ' class="font120 mb10 mt0 list_heading fontbold">';
-			$html .= '            <a href="' . esc_url( $offer_url ) . '" class="rehub-main-color" target="_blank" rel="nofollow sponsored">';
-			$html .= '              ' . esc_html( trim( $title ) ) . '';
+			$html .= '            <a href="' . esc_url( $offer_url ) . '" class="rehub-main-color"'.$button_target.$button_nofollow.'>';
+			$html .= '              ' . wp_kses_post( $title ) . '';
 			$html .= '            </a>';
 
 			if ( $enable_badge ) {
@@ -185,7 +191,7 @@ class OfferListing extends Basic {
 
 			if ( $offer_url ) {
 				$html .= '<span class="rh_button_wrapper">';
-				$html .= '	<a href="' . esc_url( $offer_url ) . '" class="btn_offer_block re_track_btn" target="_blank" rel="nofollow sponsored">';
+				$html .= '	<a href="' . esc_url( $offer_url ) . '" class="btn_offer_block re_track_btn"'.$button_target.$button_nofollow.'>';
 
 				if ( $button_text ) {
 					$html .= wp_kses_post( trim( $button_text ) );
@@ -207,6 +213,7 @@ class OfferListing extends Basic {
 					if ( ! empty( $offer_coupon_date ) ) {
 						$html .= $coupon_style;
 					}
+					wp_enqueue_script('zeroclipboard');
 					wp_enqueue_script('affegg_coupons');
 					$html .= '" data-clipboard-text="'.rawurlencode(esc_html($offer_coupon)).'" data-codetext="'.rawurlencode(esc_html($offer_coupon)).'" data-dest="'.esc_url($offer_url).'">';
 
@@ -238,9 +245,10 @@ class OfferListing extends Basic {
                 }
 			}
 
-			if ( $read_more_url ) {
-				$html .= '<a href="' . esc_url( $read_more_url ) . '" class="read_full font85">';
+			$readmoreext = ($read_more_ext) ? 'rel="nofollow sponsored" target="_blank"' : '';
 
+			if ( $read_more_url ) {
+				$html .= '<a href="' . esc_url( $read_more_url ) . '" class="read_full font85" '.$readmoreext.'>';
 				if ( $read_more_text ) {
 					$html .= esc_html( trim( $read_more_text ) );
 				} elseif ( \REHub_Framework::get_option( 'rehub_readmore_text' ) != '' ) {

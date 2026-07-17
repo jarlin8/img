@@ -51,13 +51,13 @@ class rehub_tabs_widget extends WP_Widget {
             </li>
        </ul>
     <div class="color_sidebar padd20<?php if ($color == 'dark') :?> dark_sidebar darkbg whitecolor whitecolorinner<?php else:?> border-lightgrey<?php endif ;?>">
-    	<style scoped>
+    	<style>
 			.widget.tabs > ul { border-bottom: 1px solid #000000; }
 			.widget.tabs > ul > li { float: left; margin: 0 2% 0 0; padding: 10px 0px; width: 49%; display: block;}
 			.widget.tabs > ul > li:last-child { margin-right: 0px; float: right; }
 		</style>
 		<?php if ($color == 'dark') :?>
-			<style scoped>
+			<style>
 				/* style for darksidebar */
 				.dark_sidebar .tabs-item > div { border-color: #515151;}
 				.dark_sidebar .tabs-item .detail .post-meta a.cat{color:#fff;}

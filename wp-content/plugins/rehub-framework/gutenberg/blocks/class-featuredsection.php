@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) OR exit;
 class FeaturedSection extends Basic {
 	protected $name = 'featured-section';
 
-	protected function __construct() {
+	public function __construct() {
 		parent::__construct();
 	}
 

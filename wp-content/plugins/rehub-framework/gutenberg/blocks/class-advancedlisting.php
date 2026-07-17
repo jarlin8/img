@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) OR exit;
 class AdvancedListing extends Basic {
 	protected $name = 'advanced-listing';
 
-	protected function __construct() {
+	public function __construct() {
 		parent::__construct();
 	}
 
@@ -79,7 +79,8 @@ class AdvancedListing extends Basic {
 			'default'=> array(
 				'image'=> '1',
 				'button'=> '1',
-				'review'=> false,
+				'review'=> '1',
+				'userrating'=> false,
 				'contentpos'=>'titleexc',
 				'metastretchdisable'=>'',
 				'headingtag'=> 'h2',
@@ -107,6 +108,10 @@ class AdvancedListing extends Basic {
 	protected function render( $settings = array(), $inner_content = '' ) {
 		if(!empty($settings['listargs'])){
 
+			if(!empty($settings['listargs']['contshortcode'])){
+            	$rhshortcontent = str_replace('"', '\'', $settings['listargs']['contshortcode']);
+            	$settings['listargs']['contshortcode'] = urlencode($rhshortcontent);
+        	}
 			if(!empty( $settings['listargs']['section'])){
 				foreach($settings['listargs']['section'] as $index=>$section){
 					if(!empty($section['imageMapper'])){

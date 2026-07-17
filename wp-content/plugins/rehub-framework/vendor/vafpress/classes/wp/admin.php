@@ -52,7 +52,7 @@ class VP_WP_Admin
 		{
 			$uri_parts = parse_url($uri);
 
-			$file = basename($uri_parts['path']);
+			$file = !empty($uri_parts['path']) ? basename($uri_parts['path']) : 'nourl';
 
 			if ($uri AND in_array($file, array('post.php', 'post-new.php')))
 			{

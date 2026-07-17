@@ -23,6 +23,16 @@ add_filter('mime_types', 'rh_webp_upload_mimes');
 
 
 //////////////////////////////////////////////////////////////////
+// str_contains polyfill
+//////////////////////////////////////////////////////////////////
+if (!function_exists('str_contains')) {
+    function str_contains (string $haystack, string $needle)
+    {
+        return empty($needle) || strpos($haystack, $needle) !== false;
+    }
+}
+
+//////////////////////////////////////////////////////////////////
 // Logger function
 //////////////////////////////////////////////////////////////////
 function rh_logger( $value, $variable = '' ) {
@@ -339,6 +349,14 @@ function rh_wp_reusable_render( $atts ){
             $postget = get_page_by_path($id, OBJECT, array('wp_block') );
             $id = $postget->ID;
         }
+        $post_css = get_post_meta((int)$id, '_gspb_post_css', true);
+        if(!empty($post_css) && function_exists('gspb_get_final_css') && function_exists('gspb_quick_minify_css')){
+            $dynamic_style = wp_kses_post($post_css);
+            $dynamic_style = gspb_get_final_css($dynamic_style);
+            $dynamic_style = gspb_quick_minify_css($dynamic_style);
+            $dynamic_style = htmlspecialchars_decode($dynamic_style);
+            echo '<style>' . $dynamic_style . '</style>';
+        }
         if(!empty($ajax)){
             wp_enqueue_style( 'wp-block-library' );
             wp_enqueue_script( 'rhelreusableloader' );
@@ -349,10 +367,11 @@ function rh_wp_reusable_render( $atts ){
             wp_localize_script( 'rhelreusableloader', 'gcreusablevars', $scriptvars );
             $content = '<div class="gc-ajax-load-block gc-ajax-load-block-'.$id.'"></div>'; 
             if(!empty($height)){
-                $content = '<div style="min-height:'.$height.'">'.$content.'</div>';
+                $content = '<div style="min-height:'.esc_attr($height).'">'.$content.'</div>';
             }       
         } else{
             $content_post = get_post( $id );
+            if(!is_object($content_post)) return;
             $content = $content_post->post_content;
             $content = do_blocks($content);
             $content = do_shortcode($content);
@@ -367,6 +386,7 @@ function rh_el_reusable_load() {
     check_ajax_referer( 'gcreusable', 'security' );  
     $post_id = intval($_POST['post_id']);
     $content_post = get_post(  $post_id );
+    if ($content_post->post_type != 'wp_block' || $content_post->post_status != 'publish') return false;
     $content = $content_post->post_content;
     $content = apply_filters( 'the_content', $content);
     if( $content){
@@ -440,8 +460,8 @@ function rehub_social_share($small = '', $favorite = '', $rh_favorite = '', $typ
     if ($rh_favorite == '1' && function_exists('RH_get_wishlist')) {
         $output .= RH_get_wishlist($post->ID);
     }    
-    if($type=='user' && function_exists('bp_core_get_user_domain')){
-      $link = bp_core_get_user_domain(bp_displayed_user_id());
+    if($type=='user' && function_exists('bp_members_get_user_url')){
+      $link = bp_members_get_user_url(bp_displayed_user_id());
       $image = bp_get_displayed_user_avatar('type=full&html=false');
       $title = get_the_title().' - '.get_bloginfo('name' );
     }
@@ -460,7 +480,7 @@ function rehub_social_share($small = '', $favorite = '', $rh_favorite = '', $typ
     $output .='<span data-href="https://pinterest.com/pin/create/button/?url='.urlencode($link).'&amp;media='.$image.'&amp;description='.urlencode($title).'" class="pn share-link-image" data-service="pinterest"><i class="rhicon rhi-pinterest-p"></i></span>';
     //$output .='<span data-href="whatsapp://send?&text='.urlencode(html_entity_decode($title, ENT_COMPAT, 'UTF-8')).' - '.urlencode($link).'" data-action="share/whatsapp/share" class="wa share-link-image" data-service="whatsapp"><i class="rhicon rhi-whatsapp"></i></span>';    
     if ($small =='row' || $small =='flat' || $small =='square') {
-        $output .='<span data-href="mailto:?subject='.urlencode(html_entity_decode($title, ENT_COMPAT, 'UTF-8')).'&body='.__('Check out:', 'rehub-theme').' '.urlencode($link).' - '.urlencode(html_entity_decode(get_bloginfo("name"), ENT_COMPAT, 'UTF-8')).'" class="in share-link-image" data-service="email"><i class="rhicon rhi-envelope"></i></span>';    
+        $output .='<span data-href="mailto:?subject='.urlencode(html_entity_decode($title, ENT_COMPAT, 'UTF-8')).'&body='.__('Check out:', 'rehub-framework').' '.urlencode($link).' - '.urlencode(html_entity_decode(get_bloginfo("name"), ENT_COMPAT, 'UTF-8')).'" class="in share-link-image" data-service="email"><i class="rhicon rhi-envelope"></i></span>';    
         //$output .='<span data-href="https://www.linkedin.com/shareArticle?mini=true&url='.urlencode($link).'&title='.urlencode(html_entity_decode($title, ENT_COMPAT, 'UTF-8')).'&source='.urlencode(html_entity_decode(get_bloginfo("name"), ENT_COMPAT, 'UTF-8')).'" class="in share-link-image" data-service="linkedin"><i class="rhicon rhi-linkedin"></i></span>';
     }
     $moreicon = '';
@@ -566,7 +586,7 @@ function RH_AlreadyHot( $post_id ) { // test if user liked before
         $user_id = $current_user->ID; // current user
         $meta_USERS = get_post_meta( $post_id, "_user_liked" ); // user ids from post meta
         $liked_USERS = ""; // set up array variable     
-        if ( count( $meta_USERS ) != 0 ) { // meta exists, set up values
+        if ( is_array($meta_USERS) && count( $meta_USERS ) != 0 ) { // meta exists, set up values
             $liked_USERS = $meta_USERS[0];
         }       
         if( !is_array( $liked_USERS ) ) // make array just in case
@@ -580,7 +600,7 @@ function RH_AlreadyHot( $post_id ) { // test if user liked before
         $meta_IPS = get_post_meta($post_id, "_user_IP"); // get previously voted IP address
         $ip = rh_framework_user_ip(); // Retrieve current user IP
         $liked_IPS = ""; // set up array variable
-        if ( count( $meta_IPS ) != 0 ) { // meta exists, set up values
+        if ( is_array($meta_IPS) && count( $meta_IPS ) != 0 ) { // meta exists, set up values
             $liked_IPS = $meta_IPS[0];
         }
         if ( !is_array( $liked_IPS ) ) // make array just in case

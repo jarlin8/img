@@ -1,6 +1,7 @@
 /**
  * Utility methods for use when generating build configuration objects.
  */
+const _ = require('lodash');
 const { join } = require( 'path' );
 
 /**
@@ -45,7 +46,7 @@ const externals = [
 		react: 'React', // React itself is there in Gutenberg.
 		jquery: 'jQuery', // import $ from 'jquery'; // Use jQuery from WP after enqueuing it.
 		'react-dom': 'ReactDOM',
-		lodash: 'lodash', // Lodash is there in Gutenberg.
+		lodash: '_', // Lodash is there in Gutenberg.
 		cgbGlobal: 'cgbGlobal', // import globals from 'cgbGlobal'; // Localized data.
 	}
 );

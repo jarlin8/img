@@ -7,8 +7,6 @@
 }
 
 .comparison-item {
-	-webkit-flex: 1 0 0;
-	-ms-flex: 1 0 0px;
 	flex: 1 0 0;
 	position: relative;
 	background: #fff;
@@ -19,8 +17,6 @@
 }
 
 .comparison-item.comparison-header {
-	-webkit-flex: 0 0 100px;
-	-ms-flex: 0 0 100px;
 	flex: 0 0 100px;
 	border-left: 1px solid rgba(206,206,206,0.5)
 }
@@ -45,14 +41,8 @@
 	background-color: #ccc;
 	color: #fff;
 	z-index: 1;
-	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
-	-webkit-align-items: center;
-	-ms-flex-align: center;
 	align-items: center;
-	-webkit-justify-content: center;
-	-ms-flex-pack: center;
 	justify-content: center
 }
 .comparison-item .item-header {
@@ -199,11 +189,7 @@
 }
 
 .comparison-item .item-rating .item-stars-rating {
-	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
-	-webkit-justify-content: center;
-	-ms-flex-pack: center;
 	justify-content: center;
 	overflow: hidden;
 	font-size: 1.5rem;
@@ -237,15 +223,11 @@
 }
 
 [dir=rtl] .comparison-item .item-rating .item-stars-rating {
-	-webkit-flex-direction: row-reverse;
-	-ms-flex-direction: row-reverse;
 	flex-direction: row-reverse
 }
 
 .comparison-table {
 	position: relative;
-	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 	width: 100%;
 	margin-bottom: 30px;
@@ -267,29 +249,19 @@
 	}
 	.comparison-table.overflow .comparison-item {
 		width: 200px;
-		-webkit-flex: 0 0 auto;
-		-ms-flex: 0 0 auto;
 		flex: 0 0 auto
 	}
 	.comparison-table.overflow .comparison-header {
 		width: 100px;
-		-webkit-flex: 0 0 auto;
-		-ms-flex: 0 0 auto;
 		flex: 0 0 auto
 	}
 	.comparison-table.stacked .comparison-wrapper{
-		-webkit-flex-wrap: wrap;
-		-ms-flex-wrap: wrap;
 		flex-wrap: wrap
 	}
 	.comparison-table.slide{
-		-webkit-flex-wrap: wrap;
-		-ms-flex-wrap: wrap;
 		flex-wrap: wrap;
 	}
 	.comparison-table.slide .comparison-wrapper {
-		-webkit-flex-wrap: nowrap;
-		-ms-flex-wrap: nowrap;
 		flex-wrap: nowrap;
 		flex: 0 0 auto;
 	}
@@ -299,8 +271,6 @@
 	}
 	.comparison-table.stacked .comparison-item,
 	.comparison-table.slide .comparison-item  {
-		-webkit-flex: 0 0 auto;
-		-ms-flex: 0 0 auto;
 		flex: 0 0 auto;
 		width: 100%;
 		border-left: 1px solid rgba(206,206,206,0.5);

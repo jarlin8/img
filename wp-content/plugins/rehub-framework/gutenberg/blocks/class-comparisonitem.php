@@ -30,6 +30,7 @@ class ComparisonItem extends Basic {
 		'responsiveView' => array( 'type' => 'string', 'default' => 'stacked' ),
         // State variables
         'enableBadge' => array( 'type' => 'boolean', 'default' => false ),
+		'urlBadges' => array('type'    => 'boolean','default' => false ),
         'enableBadges' => array('type'    => 'boolean','default' => false ),
 		'enableImage' => array('type'    => 'boolean','default' => true ),
 		'enableTitle' => array('type' => 'boolean','default' => true ),
@@ -51,6 +52,8 @@ class ComparisonItem extends Basic {
 		'prosTitle' => array( 'type' => 'string', 'default' => 'Pros' ),
 		'consTitle' => array( 'type' => 'string', 'default' => 'Cons' ),
 		'specTitle' => array( 'type' => 'string', 'default' => 'Spec' ),
+		'extraColumns'=> array( 'type' => 'array', 'default' => array()),
+		'extraFirstColumns'=> array( 'type' => 'array', 'default' => array())
 	);
 
 	protected function render( $settings = array(), $inner_content = '' ) {
@@ -59,15 +62,35 @@ class ComparisonItem extends Basic {
 		<div class="comparison-item <?php echo $settings['responsiveView'] ==='slide' ? 'swiper-slide' : ''; ?>">
 			<div class="item-header" data-match-height="itemHeader">
 				<?php if($settings['enableBadge'] && $settings['enableBadges']): ?>
-					<div class="item-badge" style="background-color: <?php echo esc_attr($settings['badgeColor']); ?>;"><?php echo wp_kses_post($settings['productBadge']) ?></div>
+					<?php if($settings['urlBadges'] && $settings['enableButton']):?>
+						<a 
+							class="item-badge re_track_btn" 
+							style="background-color: <?php echo esc_attr($settings['badgeColor']); ?>;"
+							href="<?php echo esc_url($settings['buttonUrl']) ?>"
+							rel="<?php echo (!empty($settings['buttonRel'])) ? 'nofollow sponsored' : ''; ?>"
+							target="<?php echo (!empty($settings['buttonTarget'])) ? '_blank' : ''; ?>"
+						>
+							<?php echo wp_kses_post($settings['productBadge']) ?>
+						</a>
+					<?php else:?>
+						<div class="item-badge" style="background-color: <?php echo esc_attr($settings['badgeColor']); ?>;"><?php echo wp_kses_post($settings['productBadge']) ?></div>
+					<?php endif;?>
 				<?php endif; ?>
+
 				<?php if($settings['numberValue'] && $settings['enableNumbers']): ?>
 					<div class="item-number" style="background-color: <?php echo esc_attr($settings['numberColor']); ?>;"><?php echo esc_attr($settings['numberValue']) ?></div>
 				<?php endif; ?>
 				<?php if($settings['enableImage'] && !empty($settings['productImage'])): ?>
 					<div class="product-image">
 						<div class="image">
-							<img data-src="<?php echo esc_url($settings['productImage']['url']); ?>" class="lazyload" data-skip-lazy=""  src="<?php echo get_template_directory_uri() . '/images/default/blank.gif';?>" alt="<?php echo esc_attr($settings['productTitle']) ?>" />
+						<?php 
+								if(!empty($settings['productImage']['id'])){
+									echo wp_get_attachment_image($settings['productImage']['id'], 'full', false);
+								}
+								else if(!empty($settings['productImage']['url'])){
+									echo '<img width="160" height="160" src="'.esc_url($settings['productImage']['url']).'" class="attachment-full size-full" alt="" loading="lazy">';
+								}
+							?>
 						</div>
 					</div>
 				<?php endif; ?>
@@ -155,6 +178,16 @@ class ComparisonItem extends Basic {
 					<?php endif; ?>
 					<?php echo ''.$settings['specText'] ?>
 				</div>
+			<?php endif; ?>
+			<?php if(!empty($settings['extraColumns'])): ?>
+				<?php foreach($settings['extraColumns'] as $key=>$value):?>
+					<div class="item-row-description item-row-extra row-extra<?php echo (int)$key;?>" data-match-height="row-extra<?php echo (int)$key;?>">
+						<?php if($settings['responsiveView'] !== 'overflow' && !empty($settings['extraFirstColumns'])): ?>
+							<div class="item-row-title"><?php echo esc_attr($settings['extraFirstColumns'][$key]['content']) ?></div>
+						<?php endif; ?>
+						<?php echo wp_kses_post($value['content']); ?>
+					</div>
+				<?php endforeach;?>
 			<?php endif; ?>
 			<?php if($settings['enableCallout']): ?>
 				<div class="item-row-description item-row-callout" data-match-height="itemCallout">

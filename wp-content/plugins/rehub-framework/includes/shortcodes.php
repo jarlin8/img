@@ -141,6 +141,7 @@ return array(
 	'rh_is_wcfm_role' => 'rh_is_wcfm_role',
 	'rh_is_not_wcfm_role' => 'rh_is_not_wcfm_role',
 	'rh_side_contents' => 'wpsm_contents_shortcode',
+	'rehub_simple_star'=> 'rehub_simple_star'
 );
 
 /**

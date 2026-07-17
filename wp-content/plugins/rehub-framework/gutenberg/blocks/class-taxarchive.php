@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) OR exit;
 class TaxArchive extends Basic {
 	protected $name = 'tax-archive';
 
-	protected function __construct() {
+	public function __construct() {
 		parent::__construct();
 	}
 
@@ -19,12 +19,16 @@ class TaxArchive extends Basic {
 			'default' => 'category',
 		),
 		'child_of' => array(
-			'type' => 'array',
+			'type' => 'object',
 			'default' => null
 		),
 		'include' => array(
 			'type' => 'array',
 			'default' => null
+		),
+		'excludeToggle' => array(
+			'type' => 'string',
+			'default' => ''
 		),
 		'type' => array(
 			'type' => 'string',
@@ -91,14 +95,16 @@ class TaxArchive extends Basic {
 	protected function render( $settings = array(), $inner_content = '' ) {
 
 		if ( !empty( $settings['child_of'] ) ) {
-			$settings['child_of'] = get_term_by( 'slug', $settings['child_of']['id'], $settings['taxonomy'] )->term_id;
+			$settings['child_of'] = $settings['child_of']['value'];
 		}
 
 		if ( !empty( $settings['include'] ) ) {
 			$this->normalize_terms( $settings );
 		}
 
-		$output = str_replace( "{{ content }}", wpsm_tax_archive_shortcode( $settings ), $inner_content );
+		$taxrender = wpsm_tax_archive_shortcode( $settings ) ? wpsm_tax_archive_shortcode( $settings ) : '';
+
+		$output = str_replace( "{{ content }}", $taxrender, $inner_content );
 		
 		echo $output;
 	}

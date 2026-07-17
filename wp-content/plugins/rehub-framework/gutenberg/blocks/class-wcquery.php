@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) OR exit;
 class WCQuery extends Basic {
 	protected $name = 'wc-query';
 
-	protected function __construct() {
+	public function __construct() {
 		parent::__construct();
 	}
 

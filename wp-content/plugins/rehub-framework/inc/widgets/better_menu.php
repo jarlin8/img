@@ -56,7 +56,7 @@ function widget( $args, $instance ) {
 	echo ''.$before_widget;
 
 	echo '<div class="'.$type.'_menu_widget'.$colored.'">';
-		echo '<style scoped>
+		echo '<style>
 		.widget.better_menu li{font-size: 14px;margin-bottom: 14px;padding-left: 12px;position: relative;}
 		.widget.better_menu a{ color: #111}
 		.widget.better_menu .title i{ padding-right: 8px;color: #F90000;}

@@ -43,7 +43,7 @@ class RH_Meta_Box_Post {
 		add_action( 'woocommerce_product_options_pricing', array( $this, 'show_rehub_woo_meta_box_inner' ) ); //Fields for external products
 		add_filter( 'woocommerce_product_data_tabs', array($this, 'rh_custom_code_data_tab'));
 		add_action('woocommerce_product_data_panels', array($this, 'rh_custom_code_data_fields'));
-		add_action( 'save_post', array( $this, 'save_meta_boxes' ), 10, 2);
+		add_action( 'save_post', array( $this, 'save_meta_boxes' ), 1, 2);
 		add_action( 'admin_head', array( $this, 'meta_scripts' ));
 		//script for panels are loaded in vendor\vafpress\public\js\metabox.min.js, vendor\vafpress\css\metabox.min.css
 
@@ -128,7 +128,7 @@ class RH_Meta_Box_Post {
 			'rehub-metabox-css',
 			RH_FRAMEWORK_URL . '/assets/css/theme-metabox.css',
 			false,
-			'2.2'
+			'2.4'
 		);
 
 		wp_enqueue_script(
@@ -183,7 +183,7 @@ class RH_Meta_Box_Post {
 
 					<div data-groupid="<?php echo esc_attr( $field['id'] ); ?>" id="<?php echo esc_attr( $field['id'] ); ?>_repeat" class="rehub-repeatable-group repeatable">
 						<?php
-						if ( ! empty( $value ) ) :
+						if ( ! empty( $value ) && is_array($value) ) :
 							foreach ( $value as $field_value ) :
 								echo $this->render_group_fields( $field_value, $field, $post );
 								$field[ 'index' ]++;
@@ -707,7 +707,7 @@ class RH_Meta_Box_Post {
 		$type = $field[ 'type' ];
 
 		if ( 'text' == $type ) {
-			return sanitize_text_field( $input );
+			return wp_kses_post( $input );
 		} elseif ( 'number' == $type ) {
 			return floatval( $input );
 		} elseif ( 'range' == $type ) {
@@ -821,6 +821,12 @@ class RH_Meta_Box_Post {
 		        'id'    => 're_post_expired',
 		        'labelsingle' => esc_html__('Yes', 'rehub-framework'),
 		        'type'  => 'checkbox'
+		    ),
+		    array(
+		        'label'=>  esc_html__('Verify label', 'rehub-framework'),
+		        'desc'  => esc_html__('Set custom text here to show verification icon', 'rehub-framework'),
+		        'id'    => 'rehub_offer_verify_label',
+		        'type'  => 'text'
 		    ),
 		    array(
 		        'label'=> esc_html__('Button text', 'rehub-framework'),
@@ -1185,6 +1191,8 @@ class RH_Meta_Box_Post {
 		add_meta_box( 'side_rh_post_high', esc_html__( "Post settings", "rehub-framework" ), array($this, 'post_side_output_high'), $def_p_types, 'side', 'high' );
 		add_meta_box( 'rehub-post-images', esc_html__( "Post Thumbnails and video", "rehub-framework"  ), array( $this, 'gallery_output' ), $def_p_types, 'side', 'low' );
 		add_meta_box( 'side_rh_page', esc_html__( "Page settings", "rehub-framework" ), array($this, 'page_side_output'), 'page', 'side', 'high' );
+		//add_meta_box( 'side_rh_section', esc_html__( "Section type", "rehub-framework" ), array($this, 'wpblock_side_output'), 'wp_block', 'side', 'high' );
+
 		if(function_exists('rh_review_inner_custom_box')){
 			add_meta_box( 'rh_review_section', esc_html__( "Post User Review", "rehub-framework" ), 'rh_review_inner_custom_box', 'comment', 'normal' );
 		}
@@ -1434,6 +1442,25 @@ class RH_Meta_Box_Post {
 		<?php
 	}
 
+	//Add Side panel WP block
+	public function wpblock_side_output($post){
+		$sectionmeta = get_post_meta($post->ID, '_rh_section_type', true);
+		$sections = apply_filters( 'rehub_product_sections', array(
+			'' => esc_html__('Template', 'rehub-framework'),
+			'header' => esc_html__('Header', 'rehub-framework'),
+			'footer' => esc_html__('Footer', 'rehub-framework'),
+			'woosingle' => esc_html__('Product Single page', 'rehub-framework'),
+			'wooarchive' => esc_html__('Product Archive page', 'rehub-framework'),
+			)
+		);
+		echo '<div class="rehub-meta_factory-metabox">';
+		foreach ($sections as $key => $value) {
+			echo '<input type="radio" id="section_'.$key.'" name="_rh_section_type" value="'.$key.'" '.checked($key, $sectionmeta, false).'><label for="section_'.$key.'">'.$value.'</label><div class="rh-meta-divider"></div>';
+		}
+		echo '<br /><p>'.__('Check this if you want to use this template as your Header/Footer or Product Single page. After creation, you can select this template in theme options as your Header/Footer/Product layout', 'rehub-framework').'</p></div><style>#side_rh_section .postbox-header{border:none}</style></div>';
+		wp_nonce_field( 'rehub_post_meta_save', 'rehub_post_meta_nonce' );
+	}
+
 	//Add Side panel Woocommerce
 	public function wc_side_output($post){
 		$meta = get_post_meta($post->ID, '_rh_woo_product_layout', true);
@@ -1445,6 +1472,7 @@ class RH_Meta_Box_Post {
 				'default_no_sidebar' => esc_html__('Default full width 3 column', 'rehub-framework'),
 				'full_width_extended' => esc_html__('Full width Extended', 'rehub-framework'),
 				'full_width_advanced' => esc_html__('Full width Advanced', 'rehub-framework'),
+				'marketplace' => esc_html__('Full width Marketplace', 'rehub-framework'),
 				'side_block' => esc_html__('Side Block', 'rehub-framework'),
 				'side_block_light' => esc_html__('Side Block Light', 'rehub-framework'),
 				'side_block_video' => esc_html__('Video Block', 'rehub-framework'),
@@ -1461,6 +1489,17 @@ class RH_Meta_Box_Post {
 				'woostack' => esc_html__('Photo Stack Layout', 'rehub-framework'),
 				)
 			);
+			$productlayouts = get_posts(array(
+				'post_type' => 'wp_block',
+				'meta_key'   => '_rh_section_type',
+				'meta_value' => 'woosingle'
+			));
+		
+			if(!empty($productlayouts)){
+				foreach($productlayouts as $layout){
+					$product_layouts[$layout->ID] = get_the_title($layout->ID);
+				}
+			}
 			foreach ($product_layouts as $key => $value) {
 		    	echo '<option value="'.$key.'" '.selected($key, $meta).'>'.$value.'</option>';
 			}
@@ -1788,6 +1827,11 @@ class RH_Meta_Box_Post {
 
 
 			self::$saved_meta_boxes = true;
+		}elseif($posttype == 'wp_block'){
+			if (isset ($_POST['_rh_section_type'])) {
+				$value = sanitize_text_field( $_POST['_rh_section_type']);
+				update_post_meta( $post_id, '_rh_section_type', $value);
+		    }
 		}
 
 		if($posttype == 'page'){
@@ -1962,6 +2006,11 @@ class RH_Meta_Box_Post {
 		    add_action( 'product_tag_add_form_fields', array( $this, 'rhwoostore_tax_fields_new'));
 		    add_action( 'edited_product_tag', array( $this, 'rhwoostore_tax_fields_save'), 10, 2 );
 		    add_action( 'create_product_tag', array( $this, 'rhwoostore_tax_fields_save'), 10, 2 );
+
+		    add_action( 'blog_category_edit_form_fields', array( $this, 'rhwoostore_tax_fields_edit'), 10, 2 );
+		    add_action( 'blog_category_add_form_fields', array( $this, 'rhwoostore_tax_fields_new'));
+		    add_action( 'edited_blog_category', array( $this, 'rhwoostore_tax_fields_save'), 10, 2 );
+		    add_action( 'create_blog_category', array( $this, 'rhwoostore_tax_fields_save'), 10, 2 );
 	    }
 	}
 
@@ -2054,9 +2103,9 @@ class RH_Meta_Box_Post {
 			'auth_callback'     => 'rh_auth_custom_meta',
 			'show_in_rest'      => true,
 		) );
-		register_meta( 'post', 'rehub_offer_coupon_date', array(
+		register_meta( 'post', 'rehub_woo_coupon_code', array(
 			'type'              => 'string',
-			'description'       => __('Offer Expiration date', 'rehub-framework'),
+			'description'       => __('Woocommerce Coupon', 'rehub-framework'),
 			'single'            => true,
 			'sanitize_callback' => 'rh_sanitize_custom_meta',
 			'auth_callback'     => 'rh_auth_custom_meta',
@@ -2065,6 +2114,22 @@ class RH_Meta_Box_Post {
 		register_meta( 'post', 'rehub_offer_coupon_date', array(
 			'type'              => 'string',
 			'description'       => __('Offer Expiration date', 'rehub-framework'),
+			'single'            => true,
+			'sanitize_callback' => 'rh_sanitize_custom_meta',
+			'auth_callback'     => 'rh_auth_custom_meta',
+			'show_in_rest'      => true,
+		) );
+		register_meta( 'post', '_notice_custom', array(
+			'type'              => 'string',
+			'description'       => __('Custom notice', 'rehub-framework'),
+			'single'            => true,
+			'sanitize_callback' => 'rh_sanitize_custom_meta',
+			'auth_callback'     => 'rh_auth_custom_meta',
+			'show_in_rest'      => true,
+		) );
+		register_meta( 'post', 'rehub_offer_verify_label', array(
+			'type'              => 'string',
+			'description'       => __('Custom notice', 'rehub-framework'),
 			'single'            => true,
 			'sanitize_callback' => 'rh_sanitize_custom_meta',
 			'auth_callback'     => 'rh_auth_custom_meta',

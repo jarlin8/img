@@ -4,66 +4,60 @@ namespace Rehub\Gutenberg;
 defined('ABSPATH') OR exit;
 
 final class Init {
-    private static $instance = null;
 
-    /** @return Assets */
-    public static function instance(){
-        if(is_null(static::$instance)) {
-            static::$instance = new static();
-        }
-        return static::$instance;
-    }
-
-    private function __construct(){
+    public function __construct(){
         add_filter('block_categories_all', array($this,'block_categories_filter'), 10, 2);
 
-        Assets::instance();
-        Blocks\Box::instance();
-        Blocks\TitleBox::instance();
-        Blocks\Heading::instance();
-        Blocks\PostOfferbox::instance();
-        Blocks\Offerbox::instance();
-        Blocks\ReviewBox::instance();
-        Blocks\ConsPros::instance();
-        Blocks\Accordion::instance();
-        Blocks\PostOfferListing::instance();
-        Blocks\OfferListing::instance();
-        Blocks\WCList::instance();
-        Blocks\VersusTable::instance();
-        Blocks\WCBox::instance();
-        Blocks\Itinerary::instance();
-        Blocks\Slider::instance();
-        Blocks\PrettyList::instance();
-        Blocks\PromoBox::instance();
-        Blocks\ReviewHeading::instance();
-        Blocks\ColorHeading::instance();
-        Blocks\ComparisonTable::instance();
-        Blocks\ComparisonItem::instance();
-        Blocks\Howto::instance();
-        Blocks\OfferListingFull::instance();
-        Blocks\Colortitlebox::instance();
-        Blocks\Countdown::instance();
-        Blocks\Video::instance();
-        Blocks\Toc::instance();
-        Blocks\Metaget::instance();
-        Blocks\Postelement::instance();
-        Blocks\AdvancedListing::instance();
-        Blocks\ContentToggler::instance();
-        Blocks\WCQuery::instance();
-        Blocks\ColoredPostGrid::instance();
-        Blocks\DealGrid::instance();
-        Blocks\DealList::instance();
-        Blocks\SimpleList::instance();
-        Blocks\WCDeal::instance();
-        Blocks\NewsDirectoryList::instance();
-        Blocks\NewsBlock::instance();
-        Blocks\WooFeaturedSection::instance();
-        Blocks\FeaturedSection::instance();
-        Blocks\Scorebox::instance();
-        Blocks\Popupbutton::instance();
-        Blocks\TaxArchive::instance();
-        Blocks\Searchbox::instance();
-	    REST::instance();
+        new Assets;
+        new Blocks\Box;
+        new Blocks\TitleBox;
+        new Blocks\Heading;
+        new Blocks\PostOfferbox;
+        new Blocks\Offerbox;
+        new Blocks\ReviewBox;
+        new Blocks\ConsPros;
+        new Blocks\Accordion;
+        new Blocks\PostOfferListing;
+        new Blocks\OfferListing;
+        new Blocks\WCList;
+        new Blocks\VersusTable;
+        new Blocks\WCBox;
+        new Blocks\Itinerary;
+        new Blocks\Slider;
+        new Blocks\PrettyList;
+        new Blocks\PromoBox;
+        new Blocks\ReviewHeading;
+        new Blocks\ColorHeading;
+        new Blocks\ComparisonTable;
+        new Blocks\ComparisonItem;
+        new Blocks\Howto;
+        new Blocks\OfferListingFull;
+        new Blocks\Colortitlebox;
+        new Blocks\Countdown;
+        new Blocks\Video;
+        new Blocks\Toc;
+        new Blocks\Metaget;
+        new Blocks\Postelement;
+        new Blocks\AdvancedListing;
+        new Blocks\ContentToggler;
+        new Blocks\WCQuery;
+        new Blocks\ColoredPostGrid;
+        new Blocks\DealGrid;
+        new Blocks\DealList;
+        new Blocks\SimpleList;
+        new Blocks\WCDeal;
+        new Blocks\NewsDirectoryList;
+        new Blocks\NewsBlock;
+        new Blocks\WooFeaturedSection;
+        new Blocks\FeaturedSection;
+        new Blocks\Scorebox;
+        new Blocks\Popupbutton;
+        new Blocks\TaxArchive; 
+        new Blocks\Searchbox;
+        new Blocks\ContentEgg;
+        new Blocks\WooCompareBars;
+        new Blocks\Wooday;
+        new REST;
     }
 
     public function block_categories_filter($categories, $post){

@@ -21,6 +21,10 @@ class RH_Install_Theme {
 	
 	protected $tgmpa;
 
+	public $mobilelogo = '';
+
+	public $slidinglogo = '';
+
 	function __construct() {
 		$this->logo = (REHub_Framework::get_option('rehub_logo')) ? '<img src="'. esc_url(REHub_Framework::get_option('rehub_logo')) .'" class="rehub_install_logo_preview" />' : '';
 		$this->mobilelogo = (REHub_Framework::get_option('rehub_logo_inmenu_url')) ? '<img src="'. esc_url(REHub_Framework::get_option('rehub_logo_inmenu_url')) .'" class="rehub_install_logo_preview" />' : '';
@@ -506,7 +510,7 @@ class RH_Install_Theme {
 			<title><?php echo $stepDetails['title']; ?></title>
 			<?php do_action( 'admin_print_styles' ); ?>
 			<?php do_action( 'admin_print_scripts' ); ?>
-			<?php do_action( 'admin_head' ); ?>
+			
 		</head>
 		<body class="merlin__body merlin__body--<?php echo esc_attr( $current_step ); ?>">
 		<?php
@@ -661,7 +665,7 @@ class RH_Install_Theme {
 		//$buddypress = array( 'remarket', 'dokan', 'recash', 'redeal' );
 		//$woocommerce = array( 'redirect', 'rewise', 'retour', 'recompare', 'redokannew', 'revendor', 'recart'  );
 	
-		if( $design != 'repick' ){
+		if( $design != 'repick' && $design != 'recash' && $design != 'remag' && $design != 'remart' && $design != 'reviewit' && $design != 'recart' && $design != 'recompare' && $design != 'redeal' && $design != 'rewise' && $design != 'regame' && $design != 'relearn' && $design != 'refashion'){
 			$plugins[] = array(
 				'name' => 'Elementor',
 				'slug' => 'elementor',
@@ -778,7 +782,7 @@ class RH_Install_Theme {
 	
 	/*  */
 	function themes(){
-		return array( '', 'ReMag', 'RePick', 'ReThing', 'ReCash', 'ReDirect', 'ReVendor', 'ReWise', 'ReDokanNew', 'ReMarket', 'ReCompare', 'ReCart', 'ReTour', 'ReDokanNew', 'ReDeal', 'ReFashion', 'ReViewit', 'ReDigit', 'ReGame', 'ReLearn' );
+		return array( '', 'ReMag', 'RePick', 'ReThing', 'ReCash', 'ReDirect', 'ReVendor', 'ReWise', 'ReDokanNew', 'ReMarket', 'ReCompare', 'ReCart', 'ReTour', 'ReDokanNew', 'ReDeal', 'ReFashion', 'ReViewit', 'ReDigit', 'ReGame', 'ReLearn', 'ReMart' );
 	}
 	
 	/*  */
@@ -809,6 +813,14 @@ class RH_Install_Theme {
 	
 	/* Theme installing config array */
 	function _install_config(){
+		$rehub_mobile_header_bg = REHub_Framework::get_option('rehub_mobile_header_bg');
+		if($rehub_mobile_header_bg){
+			$rehub_mobile_header_bg = sanitize_hex_color($rehub_mobile_header_bg);
+		}
+		$rehub_mobile_header_color = REHub_Framework::get_option('rehub_mobile_header_color');
+		if($rehub_mobile_header_color){
+			$rehub_mobile_header_color = sanitize_hex_color($rehub_mobile_header_color);
+		}
 		return array(
 			'start_steps' => 1,
 			'total_steps' => 8,
@@ -839,9 +851,9 @@ class RH_Install_Theme {
 						<input type="hidden" value="" class="regular-text process_custom_images" id="process_custom_images" name="rehub_logo_inmenu_url" value="">
 						<button type="button" class="set_custom_images merlin__button merlin__button--blue">Set Logo</button>'. $this->mobilelogo .'</li>
 						<li class="rehub_install_center"><label for="rehub_mobile_header_bg"><span>'. __('Mobile header background', 'rehub-framework') .'</span></label>
-						<input type="text" class="color-field" name="rehub_mobile_header_bg" id="rehub_mobile_header_bg" value="'. sanitize_hex_color(REHub_Framework::get_option('rehub_mobile_header_bg')) .'"></li>
+						<input type="text" class="color-field" name="rehub_mobile_header_bg" id="rehub_mobile_header_bg" value="'. $rehub_mobile_header_bg .'"></li>
 						<li class="rehub_install_center"><label for="rehub_mobile_header_color"><span>'. __('Mobile header link color', 'rehub-framework') .'</span></label>
-						<input type="text" class="color-field" name="rehub_mobile_header_color" id="rehub_mobile_header_color" value="'. sanitize_hex_color(REHub_Framework::get_option('rehub_mobile_header_color')) .'"></li>'
+						<input type="text" class="color-field" name="rehub_mobile_header_color" id="rehub_mobile_header_color" value="'. $rehub_mobile_header_color.'"></li>'
 				),
 				5 => array(
 					'title' => esc_html__('Upload logo in Sliding panel', 'rehub-framework'),
@@ -850,7 +862,7 @@ class RH_Install_Theme {
 						<input type="hidden" value="" class="regular-text process_custom_images" id="process_custom_images" name="logo_mobilesliding" value="">
 						<button type="button" class="set_custom_images merlin__button merlin__button--blue">Set Logo</button>'. $this->slidinglogo .'</li>
 						<li class="rehub_install_center"><label for="color_mobilesliding"><span>'. __('Background color under logo', 'rehub-framework') .'</span></label>
-						<input type="text" class="color-field" name="color_mobilesliding" id="color_mobilesliding" value="'. sanitize_hex_color(REHub_Framework::get_option('color_mobilesliding')) .'"></li>'
+						<input type="text" class="color-field" name="color_mobilesliding" id="color_mobilesliding" value="'. REHub_Framework::get_option('color_mobilesliding') .'"></li>'
 				),
 				6 => array(
 					'title' => esc_html__('Create pages', 'rehub-framework'),

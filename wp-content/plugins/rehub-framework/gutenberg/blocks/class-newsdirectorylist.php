@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) OR exit;
 class NewsDirectoryList extends Basic {
 	protected $name = 'news-directory-list';
 
-	protected function __construct() {
+	public function __construct() {
 		parent::__construct();
 	}
 

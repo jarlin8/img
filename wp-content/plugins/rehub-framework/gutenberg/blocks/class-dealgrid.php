@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) OR exit;
 class DealGrid extends Basic {
 	protected $name = 'deal-coupon-grid';
 
-	protected function __construct() {
+	public function __construct() {
 		parent::__construct();
 	}
 

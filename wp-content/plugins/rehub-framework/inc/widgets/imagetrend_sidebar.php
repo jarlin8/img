@@ -51,7 +51,7 @@ function widget( $args, $instance ) {
 		echo '<div class="title">' . $title . '</div>';
 	?>
 		<div class="postimagetrend<?php echo esc_attr($nohead); echo esc_attr($two);?>">
-		<style scoped>
+		<style>
 			.postimagetrend .title{padding: 8px 15px}
 			.postimagetrend .wrap{ height: 220px; overflow: hidden; position: relative; margin: 0 0 15px 0}
 			.postimagetrend .wrap img{ min-height: 220px; width: 100%}

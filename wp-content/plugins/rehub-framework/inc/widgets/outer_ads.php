@@ -60,7 +60,7 @@ function widget( $args, $instance ) {
 
 	?>
 	<div class="mediad outer_mediad_<?php echo esc_attr($side);?>" style="margin-left: <?php echo (int)$position;?>px; top: <?php echo (int)$margin;?>px; width: <?php echo (int)$width;?>px; position: <?php echo esc_attr($fixed);?>; left: 50%">
-		<style scoped>
+		<style>
 			@media screen and (max-width: 1279px) {
 				.outer_mediad_left, .outer_mediad_right{display:none;}
 			}			

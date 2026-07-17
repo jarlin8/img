@@ -104,7 +104,7 @@ if( !function_exists('vp_ajax_wrapper') )
 /////////////////////////////////
 // Pool and Dependencies Init  //
 /////////////////////////////////
-add_action( 'init'                 , 'vp_metabox_enqueue' );
+add_action( 'init', 'vp_metabox_enqueue', 20 );
 add_action( 'admin_enqueue_scripts', 'vp_enqueue_scripts' );
 //add_filter( 'script_loader_tag', 'acereaddutf', 10, 3 );
 //function acereaddutf( $tag, $handle, $src ) {   

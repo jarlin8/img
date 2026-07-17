@@ -21,20 +21,7 @@ abstract class Basic
 
 	protected $attributes = array();
 
-	protected static $instance = null;
-
-	final public static function instance()
-	{
-		static $instance = null;
-
-		if (is_null($instance)) {
-			$instance = new static();
-		}
-
-		return $instance;
-	}
-
-	protected function __construct()
+	public function __construct()
 	{
 		add_action('init', array($this, 'init_handler'));
 		add_filter('rehub/gutenberg/default_attributes', array($this, 'get_default_attributes'));
@@ -195,7 +182,7 @@ abstract class Basic
 		return $haystack;
 	}
 
-	protected function normalize_arrays(&$settings, $fields = ['cat', 'tag', 'ids', 'taxdropids', 'field', 'cat_exclude', 'tag_exclude', 'postid', 'tax_slug_exclude', 'tax_slug', 'user_id'])
+	protected function normalize_arrays(&$settings, $fields = ['cat', 'tag', 'ids', 'field', 'cat_exclude', 'tag_exclude', 'postid', 'tax_slug_exclude', 'tax_slug', 'user_id'])
 	{
 		foreach ($fields as $field) {
 
@@ -222,8 +209,15 @@ abstract class Basic
 	{
 		$terms = [];
 		foreach ((array) $settings['include'] as $include) {
-			$terms[] = get_term_by('slug', $include['id'], $settings['taxonomy'])->term_id;
+			if(!empty($settings['taxonomy'])){
+				if(!empty($include['value'])){
+					$terms[] = (int)$include['value'];
+				}else{
+					$terms[] = get_term_by('slug', $include['id'], $settings['taxonomy'])->term_id;
+				}
+			}
 		}
+
 		return $settings['include'] = implode(',', $terms);
 	}
 
@@ -241,7 +235,7 @@ abstract class Basic
 		ob_start();
 		$content = $this->render($settings, $inner_content);
 
-		return strlen($content) ? $content : ob_get_clean();
+		return !empty($content) ? $content : ob_get_clean();
 	}
 
 	protected function array_column_ext($array, $columnkey, $indexkey = null)
@@ -379,11 +373,11 @@ abstract class Basic
 		global $wpdb;
 
 		$query = [
-			"select" => "SELECT SQL_CALC_FOUND_ROWS ID, post_title FROM {$wpdb->posts}",
-			"where"  => "WHERE post_type IN ('post', 'product', 'blog', 'page')",
-			"like"   => "AND post_title NOT LIKE %s",
-			"offset" => "LIMIT %d, %d"
-		];
+            "select" => "SELECT SQL_CALC_FOUND_ROWS ID, post_title FROM {$wpdb->posts}",
+            "where"  => "WHERE post_type IN ('post', 'product', 'blog', 'page') AND post_status = 'publish'",
+            "like"   => "AND post_title NOT LIKE %s",
+            "offset" => "LIMIT %d, %d"
+        ];
 
 		$search_term = '';
 		if (!empty($_POST['search'])) {
@@ -402,6 +396,7 @@ abstract class Basic
 
 		if (!empty($_POST['saved']) && is_array($_POST['saved'])) {
 			$saved_ids = $_POST['saved'];
+			$saved_ids = array_map('intval', $saved_ids);
 			$placeholders = array_fill(0, count($saved_ids), '%d');
 			$format = implode(', ', $placeholders);
 

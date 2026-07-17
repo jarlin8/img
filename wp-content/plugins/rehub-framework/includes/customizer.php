@@ -88,6 +88,7 @@ final class REHub_Framework_Customizer {
 		'header_six_src',
 		'header_six_menu',
 		'rehub_footer_widgets',
+		'footer_template',
 		'footer_style',
 		'footer_color_background',
 		'footer_background_image',
@@ -193,17 +194,7 @@ final class REHub_Framework_Customizer {
 		'rehub_headings_font_upper',
 		'rehub_btn_font_upper_dis', 
 		'body_font_size'
-	);
-
-	/* The single instance of the class.*/
-	public static $_instance = null;
-
-	public static function instance() {
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	}	
+	);	
 
 	public function __construct() {
 		add_action( 'customize_register', array( $this, 'rh_customize_register'));
@@ -617,21 +608,35 @@ final class REHub_Framework_Customizer {
 			'sanitize_callback' => 'sanitize_key',
 			'default' => 'header_seven'
 		));
+		$headerlayout = apply_filters( 'rehub_global_header_layout_array_customizer', array(
+			'header_first' => esc_html__('Logo + code zone 468X60 + search box', 'rehub-framework'),
+			'header_eight' => esc_html__('Logo + slogan + search box', 'rehub-framework'),
+			'header_clean' => esc_html__('Clean code zone and regular menu', 'rehub-framework'),
+			'header_fullclean' => esc_html__('Clean code zone and custom menu', 'rehub-framework'),
+			'header_five' => esc_html__('Logo + menu in one row', 'rehub-framework'),
+			'header_six' => esc_html__('Customizable header', 'rehub-framework'),
+			'header_third' => esc_html__('Just Logo on center and code zone below', 'rehub-framework'),
+			'header_seven' => esc_html__('Shop/Comparison header (logo + search + login + cart/compare icon)', 'rehub-framework'),											
+		));
+	
+		$headers = get_posts(array(
+			'post_type' => 'wp_block',
+			'meta_key'   => '_rh_section_type',
+			'meta_value' => 'header'
+		 ));
+	
+		 if(!empty($headers)){
+			 foreach($headers as $header){
+				$headerlayout[$header->ID] = get_the_title($header->ID);
+			 }
+		 }
+
 		$wp_customize->add_control('rehub_header_style', array(
 			'type' => 'select',
 			'settings' => 'rehub_header_style',
 			'label' => esc_html__('Select Header style', 'rehub-framework'),
 			'section' => 'rh_header_settings',
-			'choices' => array(
-				'header_first' => esc_html__('Logo + code zone 468X60 + search box', 'rehub-framework'),
-				'header_eight' => esc_html__('Logo + slogan + search box', 'rehub-framework'),
-				'header_clean' => esc_html__('Clean code zone and regular menu', 'rehub-framework'),
-				'header_fullclean' => esc_html__('Clean code zone and custom menu', 'rehub-framework'),
-				'header_five' => esc_html__('Logo + menu in one row', 'rehub-framework'),
-				'header_six' => esc_html__('Customizable header', 'rehub-framework'),
-				'header_third' => esc_html__('Just Logo on center and code zone below', 'rehub-framework'),
-				'header_seven' => esc_html__('Shop/Comparison header (logo + search + login + cart/compare icon)', 'rehub-framework'),	
-			)
+			'choices' => $headerlayout
 		));
 			/* Subfields 'seven' header */
 			//Enable Compare Icon
@@ -1314,6 +1319,36 @@ final class REHub_Framework_Customizer {
 			'priority'  => 126,
 			'panel' => 'panel_id',
 		));
+
+		$footerlayout = array('no'=> esc_html__('No', 'rehub-framework'));
+		$footers = get_posts(array(
+			'post_type' => 'wp_block',
+			'meta_key'   => '_rh_section_type',
+			'meta_value' => 'footer'
+		 ));
+	
+		if(!empty($footers)){
+			foreach($footers as $footer){
+				$footerlayout[$footer->ID] = get_the_title($footer->ID);
+			}
+		}
+		if(!empty($footerlayout)){
+			$wp_customize->add_setting('footer_template', array(
+				'sanitize_callback' => 'sanitize_key',
+				'default' => ''
+			));
+			
+	
+			$wp_customize->add_control('footer_template', array(
+				'type' => 'select',
+				'settings' => 'footer_template',
+				'label' => esc_html__('Use Custom Footer template', 'rehub-framework'),
+				'description' => esc_html__('You can create custom template in Reusable template section', 'rehub-framework'),
+				'section' => 'rh_footer_settings',
+				'choices' => $footerlayout
+			));
+		}
+
 		
 		// Footer Widgets
 		$wp_customize->add_setting( 'rehub_footer_widgets', array(
@@ -1453,6 +1488,25 @@ final class REHub_Framework_Customizer {
 			'panel' => 'panel_id',
 		));
 
+		$productarchive_layouts = apply_filters( 'rehub_productarchive_layout_array', array(
+			'3_col' => esc_html__('As 3 columns with sidebar', 'rehub-framework'),
+			'4_col' => esc_html__('As 4 columns full width', 'rehub-framework'),
+			'4_col_side' => esc_html__('As 4 columns + sidebar', 'rehub-framework'),
+			'5_col_side' => esc_html__('As 5 columns + sidebar', 'rehub-framework'),						
+			)
+		);
+		$productarchivelayouts = get_posts(array(
+			'post_type' => 'wp_block',
+			'meta_key'   => '_rh_section_type',
+			'meta_value' => 'wooarchive'
+		));
+	
+		if(!empty($productarchivelayouts)){
+			foreach($productarchivelayouts as $layout){
+				$productarchive_layouts[$layout->ID] = get_the_title($layout->ID);
+			}
+		}
+
 		$wp_customize->add_setting('woo_columns', array(
 			'sanitize_callback' => 'sanitize_key',
 			'default' => '3_col',
@@ -1462,12 +1516,7 @@ final class REHub_Framework_Customizer {
 			'label' => esc_html__('How to show archives', 'rehub-framework'),
 			'section' => 'rh_shop_settings',
 			'type' => 'select',
-			'choices' => array(
-				'3_col' => esc_html__('As 3 columns with sidebar', 'rehub-framework'),
-				'4_col' => esc_html__('As 4 columns full width', 'rehub-framework'),
-				'4_col_side' => esc_html__('As 4 columns + sidebar', 'rehub-framework'),
-				'5_col_side' => esc_html__('As 5 columns + sidebar', 'rehub-framework'),
-			),
+			'choices' => $productarchive_layouts,
 		));	
 		$wp_customize->add_setting( 'rehub_sidebar_left_shop', array(
 			'sanitize_callback' => 'sanitize_key',
@@ -1495,6 +1544,7 @@ final class REHub_Framework_Customizer {
 			'choices' => array(
 				'simple' => esc_html__('Columns', 'rehub-framework'),
 				'grid' => esc_html__('Grid', 'rehub-framework'),
+				'gridmart' => esc_html__('Market Grid', 'rehub-framework'),
 				'gridtwo' => esc_html__('Compact Grid', 'rehub-framework'),
 				'gridrev' => esc_html__('Directory Grid', 'rehub-framework'),
 				'griddigi' => esc_html__('Digital Grid', 'rehub-framework'),
@@ -1602,11 +1652,12 @@ final class REHub_Framework_Customizer {
 			'section' => 'rh_shop_settings',
 			'type' => 'select',
 			'choices' => array(
-				'12' => esc_html__('12', 'rehub-framework'),
-				'16' => esc_html__('16', 'rehub-framework'),
-				'24' => esc_html__('24', 'rehub-framework'),
-				'30' => esc_html__('30', 'rehub-framework'),
-				'36' => esc_html__('36', 'rehub-framework'),
+				'12' => '12',
+				'16' => '16',
+				'20' => '20',
+				'24' => '24',
+				'30' => '30',
+				'36' => '36',
 			),
 		));		
 
@@ -1729,6 +1780,7 @@ final class REHub_Framework_Customizer {
 			'default_no_sidebar' => esc_html__('Default full width 3 column', 'rehub-framework'),
 			'full_width_extended' => esc_html__('Full width Extended', 'rehub-framework'),
 			'full_width_advanced' => esc_html__('Full width Advanced', 'rehub-framework'),
+			'marketplace' => esc_html__('Full Width Marketplace', 'rehub-framework'),
 			'side_block' => esc_html__('Side Block', 'rehub-framework'),
 			'side_block_light' => esc_html__('Side Block Light', 'rehub-framework'),
 			'side_block_video' => esc_html__('Video Block', 'rehub-framework'),
@@ -1745,6 +1797,17 @@ final class REHub_Framework_Customizer {
 			'woostack' => esc_html__('Photo Stack Layout', 'rehub-framework'),							
 			)
 		);
+		$productlayouts = get_posts(array(
+			'post_type' => 'wp_block',
+			'meta_key'   => '_rh_section_type',
+			'meta_value' => 'woosingle'
+		));
+	
+		if(!empty($productlayouts)){
+			foreach($productlayouts as $layout){
+				$product_layouts[$layout->ID] = get_the_title($layout->ID);
+			}
+		}
 		$wp_customize->add_setting('product_layout_style', array(
 			'sanitize_callback' => 'sanitize_key',
 			'default' => 'default_full_width',
@@ -3199,4 +3262,4 @@ function rh_customizer_extend_classes($wp_customize) {
 }
 
 
-REHub_Framework_Customizer::instance();
+new REHub_Framework_Customizer;

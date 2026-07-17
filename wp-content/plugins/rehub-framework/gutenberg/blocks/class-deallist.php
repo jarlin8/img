@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) OR exit;
 class DealList extends Basic {
 	protected $name = 'deal-coupon-list';
 
-	protected function __construct() {
+	public function __construct() {
 		parent::__construct();
 	}
 

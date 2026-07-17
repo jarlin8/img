@@ -288,7 +288,11 @@ $theme_options =  array(
 								array(
 									'value' => 'recash',
 									'label' => esc_html__('Recash', 'rehub-framework'),
-								),		
+								),	
+								array(
+									'value' => 'remart',
+									'label' => esc_html__('ReMart', 'rehub-framework'),
+								),	
 							),
 							'default' => array(
 								'flat',
@@ -350,6 +354,15 @@ $theme_options =  array(
 							'default' => array(
 								'default',
 							),
+						),	
+						array(
+							'type' => 'textbox',
+							'name' => 'blog_posttype_label',
+							'label' => esc_html__('Set custom label for Arhive and Breadcrumbs. Default is - Blog', 'rehub-framework'),	
+							'dependency' => array(
+	                        	'field' => 'enable_blog_posttype',
+	                        	'function' => 'vp_dep_boolean',
+	                        ),												
 						),					
 						array(
 							'type' => 'textbox',
@@ -681,43 +694,8 @@ $theme_options =  array(
 							'name' => 'rehub_header_style',
 							'label' => esc_html__('Select Header Layout', 'rehub-framework'),
 							'description' => esc_html__('Code for code zone can be added in Theme option - Ads and Code zones', 'rehub-framework'),							
-							'items' => array(
-								array(
-									'value' => 'header_seven',
-									'label' => esc_html__('Shop/Comparison header (logo + search + login + cart/compare icon)', 'rehub-framework'),
-								),	
-								array(
-									'value' => 'header_six',
-									'label' => esc_html__('Customizable header', 'rehub-framework'),
-								),	
-								array(
-									'value' => 'header_five',
-									'label' => esc_html__('Logo + menu in one row', 'rehub-framework'),
-								),
-								array(
-									'value' => 'header_first',
-									'label' => esc_html__('Logo + code zone 468X60 + search box', 'rehub-framework'),
-								),
-								array(
-									'value' => 'header_eight',
-									'label' => esc_html__('Logo + slogan + search box', 'rehub-framework'),
-								),								
-								array(
-									'value' => 'header_third',
-									'label' => esc_html__('Just Logo on center and code zone below', 'rehub-framework'),
-								),
-								array(
-									'value' => 'header_clean',
-									'label' => esc_html__('Clean code zone and regular menu', 'rehub-framework'),
-								),
-								array(
-									'value' => 'header_fullclean',
-									'label' => esc_html__('Clean code zone and custom menu', 'rehub-framework'),
-								),																				
-							),
-								'default' => array(
-								'header_seven',
-							),
+							'items' => rehub_get_header_layouts(),
+							'default' => array('header_seven'),
 						),
 						array(
 							'type' => 'textbox',
@@ -1234,6 +1212,19 @@ $theme_options =  array(
 			'controls' => array(
 				array(
 					'type' => 'section',
+					'title' => esc_html__('Custom footer templates', 'rehub-framework'),
+					'fields' => array(						
+						array(
+							'type' => 'select',
+							'name' => 'footer_template',
+							'label' => esc_html__('Select Footer Layout', 'rehub-framework'),
+							'description' => esc_html__('You can create them in Reusable template section', 'rehub-framework'),							
+							'items' => rehub_get_footer_layouts(),
+						),
+					),
+				),
+				array(
+					'type' => 'section',
 					'title' => esc_html__('Footer options', 'rehub-framework'),
 					'fields' => array(
 						array(
@@ -1522,8 +1513,8 @@ $theme_options =  array(
 						array(
 							'type' => 'toggle',
 							'name' => 'woo_wholesale',
-							'label' => esc_html__('Enable quantity near button', 'rehub-framework'),
-							'description' => esc_html__('Enable also ajax add to cart option in Woocommerce - settings - products', 'rehub-framework'),						
+							'label' => esc_html__('Enable quantity near button for regular grid', 'rehub-framework'),
+							'description' => esc_html__('This will also disable sliding cart in Market grid layout. Enable also ajax add to cart option in Woocommerce - settings - products', 'rehub-framework'),						
 							'default' => '0',
 						),	
 						array(
@@ -1702,25 +1693,15 @@ $theme_options =  array(
 							'type' => 'select',
 							'name' => 'woo_columns',
 							'label' => esc_html__('How to show archives', 'rehub-framework'),
-							'items' => array(
-								array(
-								'value' => '3_col',
-								'label' => esc_html__('As 3 columns with sidebar', 'rehub-framework'),
-								),
-								array(
-								'value' => '4_col',
-								'label' => esc_html__('As 4 columns full width', 'rehub-framework'),
-								),
-								array(
-								'value' => '4_col_side',
-								'label' => esc_html__('As 4 columns + sidebar', 'rehub-framework'),
-								),	
-								array(
-								'value' => '5_col_side',
-								'label' => esc_html__('As 5 columns + sidebar', 'rehub-framework'),
-								),																					
-							),
 							'default' => '3_col',
+							'items' => array(
+								'data' => array(
+									array(
+										'source' => 'function',
+										'value'  => 'rehub_get_productarchive_layout_array',
+									),
+								),
+							),
 							'description' => esc_html__('Use 5 columns only in Extended Width Layout (Theme option - General - Width Style) and 30 products in loop', 'rehub-framework'),		
 						),	
 						array(
@@ -1741,6 +1722,10 @@ $theme_options =  array(
 								array(
 								'value' => 'grid',
 								'label' => esc_html__('Grid', 'rehub-framework'),
+								),
+								array(
+									'value' => 'gridmart',
+									'label' => esc_html__('Market Grid', 'rehub-framework'),
 								),
 								array(
 								'value' => 'gridtwo',
@@ -1784,23 +1769,27 @@ $theme_options =  array(
 							'items' => array(
 								array(
 								'value' => '12',
-								'label' => esc_html__('12', 'rehub-framework'),
+								'label' => '12',
 								),
 								array(
 								'value' => '16',
-								'label' => esc_html__('16', 'rehub-framework'),
+								'label' => '16',
 								),	
 								array(
+								'value' => '20',
+								'label' => '20',
+								),
+								array(
 								'value' => '24',
-								'label' => esc_html__('24', 'rehub-framework'),
+								'label' => '24',
 								),
 								array(
 								'value' => '30',
-								'label' => esc_html__('30', 'rehub-framework'),
+								'label' => '30',
 								),	
 								array(
 									'value' => '36',
-									'label' => esc_html__('36', 'rehub-framework'),
+									'label' => '36',
 								),																					
 							),
 							'default' => '12',
@@ -1845,8 +1834,8 @@ $theme_options =  array(
 						array(
 							'type' => 'textarea',
 							'name' => 'woo_code_zone_footer',
-							'label' => esc_html__('Before footer', 'rehub-framework'),
-							'description' => esc_html__('This code zone is visible on all products Before Footer', 'rehub-framework'),
+							'label' => esc_html__('Additional zone', 'rehub-framework'),
+							'description' => esc_html__('This code zone is visible on all products and place of rendering is depending on product layout', 'rehub-framework'),
 							'default' => '',
 						),	
 						array(
@@ -2674,6 +2663,13 @@ $theme_options =  array(
 						),	
 						array(
 							'type' => 'textarea',
+							'name' => 'rehub_single_after_comment',
+							'label' => esc_html__('After comment', 'rehub-framework'),
+							'description' => esc_html__('This code will be visible after comment section', 'rehub-framework'),
+							'default' => '',
+						),	
+						array(
+							'type' => 'textarea',
 							'name' => 'rehub_shortcode_ads',
 							'label' => esc_html__('Insert custom ads code for shortcode', 'rehub-framework'),
 							'description' => esc_html__('You can insert this code in any place of content by shortcode [wpsm_ads1]', 'rehub-framework'),
@@ -3475,6 +3471,12 @@ $theme_options =  array(
 							'type' => 'textbox',
 							'name' => 'rehub_youtube',
 							'label' => esc_html__('Youtube link', 'rehub-framework'),
+							'validation' => 'url',
+						),
+						array(
+							'type' => 'textbox',
+							'name' => 'rehub_tiktok',
+							'label' => esc_html__('Tiktok link', 'rehub-framework'),
 							'validation' => 'url',
 						),
 						array(

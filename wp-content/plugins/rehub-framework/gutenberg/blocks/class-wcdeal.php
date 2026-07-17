@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) OR exit;
 class WCDeal extends Basic {
 	protected $name = 'wc-deal';
 
-	protected function __construct() {
+	public function __construct() {
 		parent::__construct();
 	}
 

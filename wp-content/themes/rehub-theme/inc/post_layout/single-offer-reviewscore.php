@@ -28,14 +28,24 @@
                             <div class="title_single_area mb15">
                             <h1 class="<?php if(rehub_option('hotmeter_disable') !='1') :?><?php echo getHotIconclass($post->ID); ?><?php endif ;?>"><?php the_title(); ?></h1>
                             </div> 
-                            <?php if(rehub_option('hotmeter_disable') !='1' && function_exists('RHgetHotLike')) :?><?php echo RHgetHotLike($post->ID); ?><?php endif ;?>                                                 
+                            <?php if(rehub_option('hotmeter_disable') !='1' && function_exists('RHgetHotLike')) :?><?php echo RHgetHotLike($post->ID); ?><?php endif ;?> 
+                                
+                                
+                            <?php $disableimage = get_post_meta($post->ID, 'show_featured_image', true); ?>
+                            <?php $offer_thumb = get_post_meta($post->ID, 'rehub_offer_product_thumb', true); ?>
+                            <?php if (rehub_option('rehub_disable_feature_thumb') !='1' && !$disableimage ) : ?>
                             <div class="wpsm-one-third wpsm-column-first compare-full-images">
                                 <figure>
                                     <?php echo re_badge_create('tablelabel'); ?>      
-                                    <?php echo WPSM_image_resizer::show_wp_image('large_inner', '', array('lazydisable'=>true, 'loading'=>'eager')); ?> 
+                                    <?php if (!has_post_thumbnail() && !empty($offer_thumb)) : ?>
+                                        <?php WPSM_image_resizer::show_static_resized_image(array('lazy' => false, 'src' => $offer_thumb, 'crop' => false, 'height' => 450, 'width' => 350, 'no_thumb_url' => get_template_directory_uri() . '/images/default/noimage_450_350.png')); ?>
+                                    <?php else : ?>
+                                        <?php echo WPSM_image_resizer::show_wp_image('large_inner', '', array('lazydisable'=>true, 'loading'=>'eager')); ?> 
+                                    <?php endif; ?>
                                 </figure> 
                                 <?php echo rh_get_post_thumbnails(array('video'=>1, 'columns'=>4, 'height'=>50));?>                                         
                             </div>
+                            <?php endif; ?>
                             <div class="wpsm-two-third wpsm-column-last">
                                 <div class="flowhidden">
                                     <span class="floatleft meta post-meta">

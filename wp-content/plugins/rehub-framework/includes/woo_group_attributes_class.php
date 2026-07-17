@@ -4,6 +4,8 @@
  */
 
 class REHub_WC_Group_Attributes {
+
+	public $version;
 	
 	/*  */
 	public function __construct( $version ) {

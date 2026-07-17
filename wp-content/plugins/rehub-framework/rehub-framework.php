@@ -3,7 +3,7 @@
 Plugin Name: REHub Framework
 Plugin URI: https://themeforest.net/item/rehub-directory-multi-vendor-shop-coupon-affiliate-theme/7646339
 Description: Framework plugin for REHub - Price Comparison, Affiliate Marketing, Multi Vendor Store, Community Theme.
-Version: 16.4
+Version: 19.9.9.7
 Author: Wpsoul
 Author URI: https://wpsoul.com/
 Text Domain: rehub-framework
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /* Costants */
 if ( ! defined( 'RH_PLUGIN_VER' ) ){
-	define( 'RH_PLUGIN_VER', '16.4' );
+	define( 'RH_PLUGIN_VER', '19.9.9.7' );
 }
 
 if ( ! defined( 'RH_FRAMEWORK_ABSPATH' ) ) {
@@ -35,17 +35,18 @@ if ( get_template() === 'rehub-theme' ) {
 	}
 	
 	// run the plugin
-	REHub_Framework::instance();
+	new REHub_Framework;
 
 	//run Gutenberg
 	require_once RH_FRAMEWORK_ABSPATH .'/class-autoload.php';
-	\Rehub\Gutenberg\Init::instance();
+	new \Rehub\Gutenberg\Init;
 
 	// Gutenberg patterns
 	if(function_exists('register_block_pattern')){
 		require_once RH_FRAMEWORK_ABSPATH .'/gutenberg/gutenbergtemplates.php';
 		remove_theme_support( 'core-block-patterns' );
 	}	
+
 
 }
 else {

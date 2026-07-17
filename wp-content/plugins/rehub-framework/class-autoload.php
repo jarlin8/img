@@ -4,19 +4,9 @@ namespace Rehub;
 defined('ABSPATH') OR exit;
 
 final class Autoload {
-    private static $instance = null;
     private static $inited = false;
 
-    /** @return static */
-    public static function instance(){
-        if(is_null(static::$instance)) {
-            static::$instance = new static();
-        }
-
-        return static::$instance;
-    }
-
-    private function __construct(){
+    public function __construct(){
         try {
             spl_autoload_register(array( __CLASS__, 'autoload' ));
         } catch(\Exception $e) {
@@ -64,4 +54,4 @@ final class Autoload {
     }
 }
 
-Autoload::instance();
+new Autoload;

@@ -21,6 +21,7 @@ class MicrodataDOMDocument extends \DOMDocument {
 	 * {@inheritdoc}
 	 * Also assigns $xpath with DOMXPath of freshly loaded DOMDocument
 	 */
+	#[\ReturnTypeWillChange] // While supporting PHP 7
 	public function loadHTML( $source, $options = 0 ) {
 		$return = parent::loadHTML( $source, $options );
 
@@ -33,6 +34,7 @@ class MicrodataDOMDocument extends \DOMDocument {
 	 * {@inheritdoc}
 	 * Also assigns $xpath with DOMXPath of freshly loaded DOMDocument
 	 */
+	#[\ReturnTypeWillChange] // While supporting PHP 7
 	public function loadHTMLFile( $filename, $options = 0 ) {
 		$return = parent::loadHTMLFile( $filename, $options );
 

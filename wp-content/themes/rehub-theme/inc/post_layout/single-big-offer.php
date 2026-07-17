@@ -81,7 +81,7 @@
                                 <?php $outsidelinkpart = ($coupon_mask_enabled == '1') ? 'data-codeid="' . $post->ID . '" data-dest="' . $offer_url . '" data-clipboard-text="' . $offer_coupon . '" class="re_track_btn masked_coupon"' : 'class="re_track_btn"'; ?>
                                 <div class="border-grey-bottom flowhidden mb25 pb20 <?php echo '' . $reveal_enabled;echo '' . $coupon_style; ?>">
                                     <?php $disableimage = get_post_meta($post->ID, 'show_featured_image', true); ?>
-                                    <?php if (!$disableimage) : ?>
+                                    <?php if (rehub_option('rehub_disable_feature_thumb') !='1' && !$disableimage ) : ?>
                                         <div class="featured_compare_left wpsm-one-half">
                                             <figure class="position-relative text-center img-maxh-350 img-width-auto img-mobs-maxh-250">
                                                 <?php

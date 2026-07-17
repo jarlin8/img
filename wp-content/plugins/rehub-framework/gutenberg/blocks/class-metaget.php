@@ -116,6 +116,7 @@ class Metaget extends Basic{
 	protected function render($settings = array(), $inner_content = ''){
 		extract($settings);
 		global $post;
+		if(!is_object($post)) return;
 		$postId = $post->ID;
 		$id = 'rh-metaget-'.mt_rand();
 		$alignflex = '';
@@ -135,7 +136,7 @@ class Metaget extends Basic{
 			$textalign = ' style="text-align:'.$align.'"';
 		}
 		$out .= '<div id="'.$id.'" class="'.$class.'"'.$textalign.'>
-		<style scoped>
+		<style>
 			#'.$id.' .meta_v_value{
 				'.((isset($valueSize)) ? "font-size:".$valueSize."px;" : "").'
 				'.(($valueColor) ? "color:".$valueColor.";" : "").'

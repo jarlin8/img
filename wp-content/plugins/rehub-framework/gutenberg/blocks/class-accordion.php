@@ -17,11 +17,15 @@ class Accordion extends Basic {
 				)
 			),
 		),
+		'disableschema' => array(
+			'type' => 'boolean'
+		)
 	);
 
 	protected function render( $settings = array(), $inner_content = '' ) {
 		$items_html = '';
 		$tabs       = $settings['tabs'];
+		$disableschema = (!empty( $settings['disableschema'])) ? $settings['disableschema'] : '';
 
 		if ( empty( $tabs ) ) {
 			echo '';
@@ -29,9 +33,9 @@ class Accordion extends Basic {
 		}
 
 		foreach ( $tabs as $tab ) {
-			$items_html .= wpsm_accordion_section_shortcode( array( 'title' => $tab['title'] ), $tab['content'] );
+			$items_html .= wpsm_accordion_section_shortcode( array( 'title' => $tab['title'], 'disableschema' => $disableschema ), $tab['content'] );
 		}
 
-		echo wpsm_accordion_main_shortcode( array(), $items_html );
+		echo wpsm_accordion_main_shortcode( array('disableschema' => $disableschema), $items_html );
 	}
 }

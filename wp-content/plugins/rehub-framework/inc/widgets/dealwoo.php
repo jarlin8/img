@@ -27,6 +27,8 @@ function widget( $args, $instance ) {
 	/* Our variables from the widget settings. */
 	$title = isset($instance['title']) ? apply_filters( 'widget_title', $instance['title'] ) : '';
 	$dealtype = ( !empty( $instance['dealtype'] ) ) ? $instance['dealtype'] : 'product';
+	$dealcategory = ( !empty( $instance['dealcategory'] ) ) ? $instance['dealcategory'] : '';
+	$dealtaxonomy = ( !empty( $instance['dealtaxonomy'] ) ) ? $instance['dealtaxonomy'] : '';
 	$dealid = (!empty($instance['dealid'])) ? $instance['dealid'] : '';
 	$faketimer = (!empty($instance['faketimer'])) ? $instance['faketimer'] : '';
 	$fakebar = (!empty($instance['fakebar'])) ? $instance['fakebar'] : '';
@@ -45,6 +47,13 @@ function widget( $args, $instance ) {
 			'post_type' => $dealtype, 
 			'no_found_rows'=>1
 		);
+		if($dealcategory && $dealtaxonomy){
+			$query['tax_query'][] = array(
+				'taxonomy' => $dealtaxonomy,
+				'field' => 'slug',
+				'terms' => array_map( 'trim', explode( ",", $dealcategory ) )
+			);
+		}
 		if($carousel){
 			$query['post__in'] = $dealidarray;
 		}else{
@@ -56,13 +65,21 @@ function widget( $args, $instance ) {
             'post_type'=> $dealtype, 
             'ignore_sticky_posts' => 1,            
         );
+		if($dealcategory && $dealtaxonomy){
+			$query['tax_query'][] = array(
+				'taxonomy' => $dealtaxonomy,
+				'field' => 'slug',
+				'terms' => array_map( 'trim', explode( ",", $dealcategory ) )
+			);
+		}
         if($carousel){
         	$query['posts_per_page'] = $carouselnumber;
         }else{
         	$query['posts_per_page'] = '1';
         }
 		
-		$meta_query = $tax_query = array();
+		$meta_query = array();
+		$tax_query = isset($query['tax_query']) ? $query['tax_query'] : array();
 		
 		if ( 'product' == $dealtype && class_exists('Woocommerce')) {
 			$product_ids_on_sale = wc_get_product_ids_on_sale();
@@ -70,9 +87,9 @@ function widget( $args, $instance ) {
 		} else {
 			$product_ids_on_sale = rh_get_post_ids_on_sale();
 		}
+	    $query['post__in'] = array_merge( array( 0 ), $product_ids_on_sale );
 
 	    $query['tax_query'] = $tax_query;
-	    $query['post__in'] = array_merge( array( 0 ), $product_ids_on_sale );
 	    $query['no_found_rows'] = 1;     	
 	}
 	$autodata = ($autorotate) ? 'data-auto="1"' : 'data-auto="0"' ;
@@ -82,7 +99,7 @@ function widget( $args, $instance ) {
 	/* Before widget (defined by themes). */
 	echo ''.$before_widget; $index = 0;
 	echo '<div class="deal_daywoo woocommerce position-relative custom-nav-car flowhidden">';
-	echo '<style scoped>
+	echo '<style>
 		.deal_daywoo .price{ color: #489c08; font-weight: bold;font-size: 22px; line-height: 18px }
 		.deal_daywoo figure a{min-height: 250px}
 		.deal_daywoo figure img{width: auto !important;}
@@ -339,6 +356,8 @@ function widget( $args, $instance ) {
 		/* Strip tags for title and name to remove HTML (important for text inputs). */
 		$instance['title'] = strip_tags( $new_instance['title'] );
 		$instance['dealtype'] = strip_tags( $new_instance['dealtype'] );
+		$instance['dealcategory'] = strip_tags( $new_instance['dealcategory'] );
+		$instance['dealtaxonomy'] = strip_tags( $new_instance['dealtaxonomy'] );
 		$instance['faketimer'] = ( isset( $new_instance['faketimer'] ) ) ? strip_tags( $new_instance['faketimer'] ) : '';
 		$instance['fakebar'] = ( isset( $new_instance['fakebar'] ) ) ? strip_tags( $new_instance['fakebar'] ) : '';
 		$instance['fakebar_sold'] = (int)( $new_instance['fakebar_sold'] );
@@ -359,6 +378,8 @@ function widget( $args, $instance ) {
 		$defaults = array( 
 			'title' => esc_html__( 'Deal of the day', 'rehub-framework' ),
 			'dealtype' => 'product', 
+			'dealcategory' => '',
+			'dealtaxonomy' => '',
 			'dealid' => '', 
 			'faketimer' => '', 
 			'fakebar' => '', 
@@ -384,6 +405,18 @@ function widget( $args, $instance ) {
 				<option value="post" <?php if ( 'post' == $instance['dealtype'] ) : echo 'selected="selected"'; endif; ?>><?php esc_html_e('Post', 'rehub-framework'); ?></option>
 			</select>
 		</p>
+
+		<p>
+			<label for="<?php echo ''.$this->get_field_id( 'dealcategory' ); ?>"><?php esc_html_e('Deal category:', 'rehub-framework'); ?></label>
+			<input  type="text" class="widefat" id="<?php echo ''.$this->get_field_id( 'dealcategory' ); ?>" name="<?php echo ''.$this->get_field_name( 'dealcategory' ); ?>" value="<?php echo ''.$instance['dealcategory']; ?>" size="3" />
+			<small><?php esc_html_e('By default, widget shows items from all categories. You can specify category slug to show items from specific category. You can specify multiple categories if you separate them by commas', 'rehub-framework'); ?></small>
+		</p>	
+		
+		<p>
+			<label for="<?php echo ''.$this->get_field_id( 'dealtaxonomy' ); ?>"><?php esc_html_e('Deal taxonomy:', 'rehub-framework'); ?></label>
+			<input  type="text" class="widefat" id="<?php echo ''.$this->get_field_id( 'dealtaxonomy' ); ?>" name="<?php echo ''.$this->get_field_name( 'dealtaxonomy' ); ?>" value="<?php echo ''.$instance['dealtaxonomy']; ?>" size="3" />
+			<small><?php esc_html_e('Set taxonomy slug to show items from specific taxonomy. For posts - it will be "category", for products - it will be "product_cat". But you can set any taxonomy slug', 'rehub-framework'); ?></small>
+		</p>	
 		
 		<p>
 			<label for="<?php echo ''.$this->get_field_id( 'dealid' ); ?>"><?php esc_html_e('Ids of product to show:', 'rehub-framework'); ?></label>

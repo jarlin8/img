@@ -11,6 +11,8 @@ use WC_Abstract_Order;
 
 /**
  * WooPayments incentives provider class.
+ *
+ * @internal
  */
 class WooPayments extends Incentive {
 	/**
@@ -64,7 +66,7 @@ class WooPayments extends Incentive {
 	 * @return boolean Whether the incentive should be visible.
 	 */
 	public function is_visible( string $id, string $country_code, bool $skip_extension_active_check = false ): bool {
-		// Always skip the extension active check since we will check bellow.
+		// Always skip the extension active check since we will check below.
 		if ( false === parent::is_visible( $id, $country_code, true ) ) {
 			return false;
 		}

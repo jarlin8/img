@@ -125,6 +125,13 @@ class WPAlchemy_MetaBox
 	var $autosave = TRUE;
 
 	/**
+	 * @since	1.0
+	 * @access	public
+	 * @var		string|null
+	 */
+	var $fieldtype = NULL;
+
+	/**
 	 * Used to set how the class does its data storage, data will be stored as
 	 * an associative array in a single meta entry in the wp_postmeta table or
 	 * data can be set and individual entries in the wp_postmeta table, the 

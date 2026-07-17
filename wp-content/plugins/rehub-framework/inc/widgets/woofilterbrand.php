@@ -421,7 +421,11 @@ class rehub_better_woofilterbrand_widget extends WC_Widget {
 		foreach ( $terms as $term ) {
 			$current_values = isset( $_chosen_attributes[ $taxonomy ]['terms'] ) ? $_chosen_attributes[ $taxonomy ]['terms'] : array();
 			$option_is_set  = in_array( $term->slug, $current_values, true );
-			$count          = isset( $term_counts[ $term->term_id ] ) ? $term_counts[ $term->term_id ] : 0;
+			if('yes' === get_option( 'woocommerce_attribute_lookup_enabled' )){
+				$count = $term->count;
+			}else{
+				$count          = isset( $term_counts[ $term->term_id ] ) ? $term_counts[ $term->term_id ] : 0;
+			}
 // print_r( [ $term, $this->get_current_term_id() ] );exit()
 			// Skip the term for the current archive.
 			if ( $this->get_current_term_id() === $term->term_id ) {
@@ -479,7 +483,12 @@ class rehub_better_woofilterbrand_widget extends WC_Widget {
 				$term_html = '<span>' . esc_html( $term->name ) . '</span>';
 			}
 
-			$term_html .= ' ' . apply_filters( 'woocommerce_layered_nav_count', '<span class="count">(' . absint( $count ) . ')</span>', $count, $term );
+			if('yes' === get_option( 'woocommerce_attribute_lookup_enabled' )){
+				$term_html .= ' ' . apply_filters( 'woocommerce_layered_nav_count', '', $count, $term );
+			}else{
+				$term_html .= ' ' . apply_filters( 'woocommerce_layered_nav_count', '<span class="count">(' . absint( $count ) . ')</span>', $count, $term );
+			}
+
 
 			echo '<li class="woocommerce-widget-layered-nav-list__item wc-layered-nav-term ' . ( $option_is_set ? 'woocommerce-widget-layered-nav-list__item--chosen chosen' : '' ) . '">';
 			echo apply_filters( 'woocommerce_layered_nav_term_html', $term_html, $term, $link, $count );

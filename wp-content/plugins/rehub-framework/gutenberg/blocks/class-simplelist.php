@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) OR exit;
 class SimpleList extends Basic {
 	protected $name = 'simple-list';
 
-	protected function __construct() {
+	public function __construct() {
 		parent::__construct();
 	}
 
@@ -113,6 +113,12 @@ class SimpleList extends Basic {
 			'type'    => 'boolean',
 		),
 		'aff_link' => array(
+			'type'    => 'boolean',
+		),
+		'center' => array(
+			'type'    => 'boolean',
+		),
+		'fullsizeimage' => array(
 			'type'    => 'boolean',
 		),
 		'bordercolor' => array(

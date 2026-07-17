@@ -67,7 +67,7 @@ if(is_singular('post')) :
 	            	<?php wpsm_thumb('minithumb'); ?>
 	            </figure>
 	            <div class="detail floatright width-100-calc pl15 rtlpr15">
-		            <h5 class="mt0 lineheight20 fontnormal font95"><a href="<?php the_permalink();?>"><?php the_title();?></a></h5>
+		            <div class="mt0 lineheight20 fontnormal font95"><a href="<?php the_permalink();?>"><?php the_title();?></a></div>
 	            	<div class="post-meta">
 	                	<?php meta_small( false, false, true ); ?>
 	                </div>

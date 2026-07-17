@@ -56,6 +56,8 @@ class Parsedown
 
     function parse($text)
     {
+
+        if (!$text) return '';
         # standardize line breaks
         $text = str_replace("\r\n", "\n", $text);
         $text = str_replace("\r", "\n", $text);

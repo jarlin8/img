@@ -49,6 +49,11 @@ function widget( $args, $instance ) {
 				}
 				foreach ($comparedarray as $key => $value) {
 					$value = explode(',', $value);
+					$posttype1 = get_post_type($value[0]);
+					$posttype2 = get_post_type($value[1]);
+					if($posttype1 != 'product' || $posttype2 != 'product'){
+						continue;
+					}
 					echo '<div class="wpsm-versus-item">';
 
 						echo '<div class="vs-1-col vs-conttext rh_deal_block">';
@@ -58,7 +63,7 @@ function widget( $args, $instance ) {
 		  						$image_url = wp_get_attachment_image_src($image_id,'full');
 								$image_url = (!empty($image_url)) ? $image_url[0] : '';
 
-								WPSM_image_resizer::show_static_resized_image(array('src'=> $image_url, 'crop'=> false, 'height'=> 70, 'no_thumb_url' => get_template_directory_uri() . '/images/default/noimage_70_70.png'));
+								WPSM_image_resizer::show_static_resized_image(array('src'=> $image_url, 'crop'=> false, 'height'=> 70, 'title'=> get_the_title($value[0]), 'no_thumb_url' => get_template_directory_uri() . '/images/default/noimage_70_70.png'));
 							echo '</div>';
 							echo '<div class="cmpr-title fontnormal mb10 flowhidden">'.get_the_title((int)$value[0]).'</div>'; 
 							echo '</a>'; 
@@ -76,7 +81,7 @@ function widget( $args, $instance ) {
 		  						$image_url = wp_get_attachment_image_src($image_id,'full');
 								$image_url = (!empty($image_url)) ? $image_url[0] : '';
 
-								WPSM_image_resizer::show_static_resized_image(array('src'=> $image_url, 'crop'=> false, 'height'=> 70, 'no_thumb_url' => get_template_directory_uri() . '/images/default/noimage_70_70.png'));
+								WPSM_image_resizer::show_static_resized_image(array('src'=> $image_url, 'crop'=> false, 'height'=> 70, 'title'=> get_the_title($value[1]), 'no_thumb_url' => get_template_directory_uri() . '/images/default/noimage_70_70.png'));
 							echo '</div>';
 							echo '<div class="fontnormal mb10 flowhidden cmpr-title">'.get_the_title((int)$value[1]).'</div>';
 							echo '</a>';

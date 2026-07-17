@@ -5,17 +5,7 @@ defined('ABSPATH') OR exit;
 
 class OfferListingFull{
 
-	final public static function instance(){
-		static $instance = null;
-
-		if(is_null($instance)) {
-			$instance = new static();
-		}
-
-		return $instance;
-	}
-
-	protected function __construct(){
+	public function __construct(){
 		add_action('init', array( $this, 'init_handler' ));
 	}
 
@@ -145,7 +135,9 @@ class OfferListingFull{
 					'oldPrice'       => '',
 					'button'         => array(
 						'text' => 'Buy Now',
-						'url'  => ''
+						'url'  => '',
+						'noFollow' => true,
+						'newTab' => true,
 					),
 					'couponCode'         => '',
 					'expirationDate' => '',
@@ -202,10 +194,14 @@ class OfferListingFull{
 			$offer_coupon_date = !empty($offer['expirationDate']) ? $offer['expirationDate'] : '';
 			$coupon_style      = '';
 			$scoretext = !empty($offer['scoretext']) ? $offer['scoretext'] : __('EXCELLENT', 'rehub-framework');
+			$button_nofollow       = !empty($offer['button']['noFollow']) ? ' rel="nofollow sponsored"' : '';
+			$button_target       = !empty($offer['button']['newTab']) ? ' target="_blank""' : '';
 
 			if ( empty( $image_url ) ) {
 				$image_url = plugin_dir_url( __DIR__ ) . '/assets/icons/noimage-placeholder.png';
 			}
+
+			$coupon_text = '';
 
 			if ( ! empty( $offer_coupon_date ) ) {
 				$timestamp1 = strtotime($offer_coupon_date);
@@ -262,8 +258,8 @@ class OfferListingFull{
 					$html .= '<div class="gc-offer-listing-contwrap">';
 						$html .= '<div class="gc-offer-listing-content">';
 							$html .= '<'.$titleTag . ' class="gc-offer-listing__title">';
-								$html .= '<a href="' . esc_url( $offer_url ) . '" class="re_track_btn" target="_blank" rel="nofollow sponsored" '.$titlestyles.'>';
-									$html .= '' . esc_html( trim( $title ) ) . '';
+								$html .= '<a href="' . esc_url( $offer_url ) . '" class="re_track_btn" '.$button_target.$button_nofollow.$titlestyles.'>';
+									$html .= '' . wp_kses_post( $title ) . '';
 								$html .= '</a>';
 							$html .= '</' . $titleTag . '>';
 							if ( $current_price && $pricecontent ) {
@@ -306,7 +302,7 @@ class OfferListingFull{
 						}
 						if ( $offer_url ) {
 							$html .= '<div class="priced_block priced_block--sm">';
-								$html .= '<a href="' . esc_url( $offer_url ) . '" target="_blank" rel="nofollow sponsored" class="btn_offer_block gc_track_btn" '.$btnstyles.$schemaurl.'>';
+								$html .= '<a href="' . esc_url( $offer_url ) . '" class="btn_offer_block gc_track_btn" '.$button_target.$button_nofollow.$btnstyles.$schemaurl.'>';
 									$html .= $button_text;
 								$html .= '</a>';
 							$html .= '</div>';
@@ -338,7 +334,7 @@ class OfferListingFull{
 				}
 				if ( $enableexpand && $expandcontent  ) {
 					$html .= '<div class="gc-listing-expand gc-expandable-content" style="background-color:'.$expandbg.';color:'.$expandcolor.';display:none">';
-					$html .= wp_kses_post( $expandcontent  );
+					$html .= do_shortcode(wp_kses_post($expandcontent));
 					$html .= '</div>';
 				}	
 			$html .= ' </div>';

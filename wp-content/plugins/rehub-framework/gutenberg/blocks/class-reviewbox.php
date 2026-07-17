@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) OR exit;
 class ReviewBox extends Basic {
 	protected $name = 'reviewbox';
 
-	protected function __construct() {
+	public function __construct() {
 		$this->action();
 		parent::__construct();
 	}

@@ -6,17 +6,7 @@ defined('ABSPATH') OR exit;
 
 class ReviewHeading{
 
-	final public static function instance(){
-		static $instance = null;
-
-		if(is_null($instance)) {
-			$instance = new static();
-		}
-
-		return $instance;
-	}
-
-	protected function __construct(){
+	public function __construct(){
 		add_action('init', array( $this, 'init_handler' ));
 	}
 
@@ -103,9 +93,9 @@ class ReviewHeading{
 			$anchor = substr( $anchor, 0, 70 );
 		}
 
-		$html .= '	<div>';
+		$html .= '	<div id="'.$anchor.'">';
 		$html .= '		<' . $title_tag . ' class="mt0 mb0">' . do_shortcode( $title ) . '</' . $title_tag . '>';
-		$html .= '		<div class="mt5 lineheight20 greycolor" id="'.$anchor.'">' . do_shortcode( $subtitle ) . '</div>';
+		$html .= '		<div class="mt5 lineheight20 greycolor">' . do_shortcode( $subtitle ) . '</div>';
 		$html .= '	</div>';
 
 		if ( $include_image && ! empty( $image['url'] ) ) {

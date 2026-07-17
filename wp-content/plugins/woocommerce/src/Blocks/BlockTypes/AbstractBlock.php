@@ -72,9 +72,9 @@ abstract class AbstractBlock {
 	}
 
 	/**
-	 * Get the interactivity namespace. Only used when utilizing the interactivity API.
-
-	 * @return string The interactivity namespace, used to namespace interactivity API actions and state.
+	 * Get the full block name, including namespace.
+	 *
+	 * @return string
 	 */
 	protected function get_full_block_name() {
 		return $this->namespace . '/' . $this->block_name;
@@ -226,12 +226,14 @@ abstract class AbstractBlock {
 		];
 
 		// Conditionally override these, otherwise rely on block.json metadata.
-		if ( $this->get_block_type_style() ) {
-			$block_settings['style'] = $this->get_block_type_style();
+		$block_type_style = $this->get_block_type_style();
+		if ( $block_type_style ) {
+			$block_settings['style'] = $block_type_style;
 		}
 
-		if ( $this->get_block_type_editor_style() ) {
-			$block_settings['editor_style'] = $this->get_block_type_editor_style();
+		$block_type_editor_style = $this->get_block_type_editor_style();
+		if ( $block_type_editor_style ) {
+			$block_settings['editor_style'] = $block_type_editor_style;
 		}
 
 		if ( isset( $this->api_version ) ) {
@@ -239,36 +241,6 @@ abstract class AbstractBlock {
 		}
 
 		$metadata_path = $this->asset_api->get_block_metadata_path( $this->block_name );
-
-		/**
-		 * We always want to load block styles separately, for every theme.
-		 * When the core assets are loaded separately, other blocks' styles get
-		 * enqueued separately too. Thus we only need to handle the remaining
-		 * case.
-		 */
-		if (
-			! is_admin() &&
-			! wp_is_block_theme() &&
-			! empty( $block_settings['style'] ) &&
-			(
-				! function_exists( 'wp_should_load_separate_core_block_assets' ) ||
-				! wp_should_load_separate_core_block_assets()
-			)
-		) {
-			$style_handles           = $block_settings['style'];
-			$block_settings['style'] = null;
-			add_filter(
-				'render_block',
-				function ( $html, $block ) use ( $style_handles ) {
-					if ( $block['blockName'] === $this->get_block_type() ) {
-						array_map( 'wp_enqueue_style', $style_handles );
-					}
-					return $html;
-				},
-				10,
-				2
-			);
-		}
 
 		// Prefer to register with metadata if the path is set in the block's class.
 		if ( ! empty( $metadata_path ) ) {
@@ -289,7 +261,7 @@ abstract class AbstractBlock {
 		$block_settings['uses_context'] = $this->get_block_type_uses_context();
 
 		register_block_type(
-			$this->get_block_type(),
+			$this->get_full_block_name(),
 			$block_settings
 		);
 	}
@@ -297,10 +269,12 @@ abstract class AbstractBlock {
 	/**
 	 * Get the block type.
 	 *
+	 * @deprecated 10.9.0 Use get_full_block_name() instead.
 	 * @return string
 	 */
 	protected function get_block_type() {
-		return $this->namespace . '/' . $this->block_name;
+		wc_deprecated_function( __METHOD__, '10.9.0', 'get_full_block_name' );
+		return $this->get_full_block_name();
 	}
 
 	/**

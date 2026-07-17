@@ -10,7 +10,9 @@ use Automattic\WooCommerce\Admin\API\Reports\Orders\DataStore as OrdersDataStore
 use Automattic\WooCommerce\Admin\Features\Features;
 use Automattic\WooCommerce\Admin\PageController;
 use Automattic\WooCommerce\Admin\PluginsHelper;
+use Automattic\WooCommerce\Internal\Admin\Settings\SettingsUIRequestContext;
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
+use Automattic\WooCommerce\Utilities\OrderUtil;
 use WC_Marketplace_Suggestions;
 
 /**
@@ -153,6 +155,8 @@ class Settings {
 		//phpcs:ignore
 		$preload_options = apply_filters( 'woocommerce_admin_preload_options', array() );
 		if ( ! empty( $preload_options ) ) {
+			// Prime caches to reduce future queries.
+			wp_prime_option_caches( $preload_options );
 			foreach ( $preload_options as $option ) {
 				$settings['preloadOptions'][ $option ] = get_option( $option );
 			}
@@ -174,13 +178,7 @@ class Settings {
 			}
 		}
 
-		$user_controller = new \WP_REST_Users_Controller();
-		$request         = new \WP_REST_Request();
-		$request->set_query_params( array( 'context' => 'edit' ) );
-		$user_response     = $user_controller->get_current_item( $request );
-		$current_user_data = is_wp_error( $user_response ) ? (object) array() : $user_response->get_data();
-
-		$settings['currentUserData']      = $current_user_data;
+		$settings['currentUserData']      = WCAdminUser::get_user_data();
 		$settings['reviewsEnabled']       = get_option( 'woocommerce_enable_reviews' );
 		$settings['manageStock']          = get_option( 'woocommerce_manage_stock' );
 		$settings['commentModeration']    = get_option( 'comment_moderation' );
@@ -217,12 +215,14 @@ class Settings {
 			// We may have synced orders with a now-unregistered status.
 			// E.g. an extension that added statuses is now inactive or removed.
 			$settings['unregisteredOrderStatuses'] = $this->get_unregistered_order_statuses();
+			$settings['usesNewFullRefundData']     = OrderUtil::uses_new_full_refund_data();
 		}
 
 		// The separator used for attributes found in Variation titles.
 		//phpcs:ignore
 		$settings['variationTitleAttributesSeparator'] = apply_filters( 'woocommerce_product_variation_title_attributes_separator', ' - ', new \WC_Product() );
 
+		$settings = $this->add_settings_ui_schema( $settings );
 		if ( ! empty( $preload_data_endpoints ) ) {
 			$settings['dataEndpoints'] = isset( $settings['dataEndpoints'] )
 				? $settings['dataEndpoints']
@@ -245,6 +245,7 @@ class Settings {
 		$settings['connectNonce']                     = wp_create_nonce( 'connect' );
 		$settings['wcpay_welcome_page_connect_nonce'] = wp_create_nonce( 'wcpay-connect' );
 		$settings['email_preview_nonce']              = wp_create_nonce( 'email-preview-nonce' );
+		$settings['email_listing_nonce']              = wp_create_nonce( 'email-listing-nonce' );
 		$settings['wc_helper_nonces']                 = array(
 			'refresh' => wp_create_nonce( 'refresh' ),
 		);
@@ -351,6 +352,34 @@ class Settings {
 				'date_completed' => 'date_completed',
 			),
 		);
+
+		if ( Features::is_enabled( 'analytics-scheduled-import' ) ) {
+			$settings[] = array(
+				'id'          => 'woocommerce_analytics_scheduled_import',
+				'option_key'  => 'woocommerce_analytics_scheduled_import',
+				'label'       => __( 'Updates', 'woocommerce' ),
+				'description' => __( 'Controls how analytics data is imported from orders.', 'woocommerce' ),
+				'type'        => 'radio',
+				'default'     => null, // Default to null so we can know if it's a new site or an existing site. New sites will have the option set.
+				'options'     => array(
+					'yes' => __( 'Scheduled (recommended)', 'woocommerce' ),
+					'no'  => __( 'Immediately', 'woocommerce' ),
+				),
+			);
+
+			// Add hidden setting for the import interval to display in the client side.
+			$import_interval = \Automattic\WooCommerce\Internal\Admin\Schedulers\OrdersScheduler::get_import_interval();
+			$import_interval = absint( $import_interval );
+			// Format the import interval to a human-readable string.
+			$import_interval_string = human_time_diff( 0, $import_interval );
+			$settings[]             = array(
+				'id'         => 'woocommerce_analytics_import_interval',
+				'option_key' => 'woocommerce_analytics_import_interval',
+				'type'       => 'hidden',
+				'default'    => $import_interval_string,
+			);
+		}
+
 		return $settings;
 	}
 
@@ -370,6 +399,47 @@ class Settings {
 				$settings['wcAdminSettings'][ $setting['id'] ] = $setting['value'];
 			}
 		}
+		return $settings;
+	}
+
+	/**
+	 * Add the settings UI schema for the current classic settings page.
+	 *
+	 * @param array $settings Array of component settings.
+	 * @return array
+	 */
+	private function add_settings_ui_schema( array $settings ): array {
+		try {
+			if ( ! class_exists( SettingsUIRequestContext::class ) ) {
+				return $settings;
+			}
+
+			$context = SettingsUIRequestContext::get_current();
+		} catch ( \Throwable $e ) {
+			return $settings;
+		}
+
+		if ( ! $context ) {
+			return $settings;
+		}
+
+		$schema = $context->get_schema();
+		if ( ! is_array( $schema ) ) {
+			return $settings;
+		}
+
+		$page_id     = $context->get_page_id();
+		$section_key = $context->get_current_section_key();
+
+		if ( ! isset( $settings['settingsUI'] ) || ! is_array( $settings['settingsUI'] ) ) {
+			$settings['settingsUI'] = array();
+		}
+		if ( ! isset( $settings['settingsUI'][ $page_id ] ) || ! is_array( $settings['settingsUI'][ $page_id ] ) ) {
+			$settings['settingsUI'][ $page_id ] = array();
+		}
+
+		$settings['settingsUI'][ $page_id ][ $section_key ] = $schema;
+
 		return $settings;
 	}
 }

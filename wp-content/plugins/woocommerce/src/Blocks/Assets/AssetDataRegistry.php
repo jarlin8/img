@@ -1,7 +1,9 @@
 <?php
 namespace Automattic\WooCommerce\Blocks\Assets;
 
+use Automattic\WooCommerce\Admin\Features\Features;
 use Automattic\WooCommerce\Blocks\Package;
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 use Automattic\WooCommerce\Blocks\Domain\Services\Hydration;
 use Automattic\WooCommerce\Internal\Logging\RemoteLogger;
 use Exception;
@@ -153,9 +155,7 @@ class AssetDataRegistry {
 			'terms'     => wc_terms_and_conditions_page_id(),
 		];
 
-		if ( is_callable( '_prime_post_caches' ) ) {
-			_prime_post_caches( array_values( $store_pages ), false, false );
-		}
+		_prime_post_caches( array_values( $store_pages ), false, false );
 
 		return array_map(
 			[ $this, 'format_page_resource' ],
@@ -253,8 +253,11 @@ class AssetDataRegistry {
 			);
 		}
 
+		$core_data                                 = $this->get_core_data();
+		$core_data['experimentalWcRestApiV4']      = Features::is_enabled( 'rest-api-v4' );
+		$core_data['experimentalCartSaveForLater'] = FeaturesUtil::feature_is_enabled( 'cart_save_for_later' );
 		// note this WILL wipe any data already registered to these keys because they are protected.
-		$this->data = array_replace_recursive( $settings, $this->get_core_data() );
+		$this->data = array_replace_recursive( $settings, $core_data );
 	}
 
 	/**
@@ -387,7 +390,7 @@ class AssetDataRegistry {
 			$this->execute_lazy_data();
 
 			$data                          = rawurlencode( wp_json_encode( $this->data ) );
-			$wc_settings_script            = "var wcSettings = wcSettings || JSON.parse( decodeURIComponent( '" . esc_js( $data ) . "' ) );";
+			$wc_settings_script            = "var wcSettings = JSON.parse( decodeURIComponent( '" . esc_js( $data ) . "' ) );";
 			$preloaded_api_requests_script = '';
 
 			if ( count( $this->preloaded_api_requests ) > 0 ) {

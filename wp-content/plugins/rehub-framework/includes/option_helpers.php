@@ -474,6 +474,10 @@ function rehub_get_product_layout_array()
 			'label' => esc_html__('Full width Advanced', 'rehub-framework'),
 		),	
 		array(
+			'value' => 'marketplace',
+			'label' => esc_html__('Full width Marketplace', 'rehub-framework'),
+		),	
+		array(
 			'value' => 'side_block',
 			'label' => esc_html__('Side Block', 'rehub-framework'),
 		),
@@ -531,7 +535,146 @@ function rehub_get_product_layout_array()
 		),											
 	));
 
+	$productlayouts = get_posts(array(
+		'post_type' => 'wp_block',
+		'meta_key'   => '_rh_section_type',
+		'meta_value' => 'woosingle'
+	));
+
+	if(!empty($productlayouts)){
+		foreach($productlayouts as $layout){
+			$productlayout[] = array(
+				'value' => $layout->ID,
+				'label' => get_the_title($layout->ID)
+			);
+		}
+	}
+
 	return $productlayout;   
+}
+
+VP_Security::instance()->whitelist_function('rehub_get_productarchive_layout_array');
+function rehub_get_productarchive_layout_array()
+{
+	$productarchivelayout = apply_filters( 'rehub_global_productarchive_layout_array', array(
+			array(
+			'value' => '3_col',
+			'label' => esc_html__('As 3 columns with sidebar', 'rehub-framework'),
+			),
+			array(
+			'value' => '4_col',
+			'label' => esc_html__('As 4 columns full width', 'rehub-framework'),
+			),
+			array(
+			'value' => '4_col_side',
+			'label' => esc_html__('As 4 columns + sidebar', 'rehub-framework'),
+			),	
+			array(
+			'value' => '5_col_side',
+			'label' => esc_html__('As 5 columns + sidebar', 'rehub-framework'),
+			),												
+	));
+
+	$productarchivelayouts = get_posts(array(
+		'post_type' => 'wp_block',
+		'meta_key'   => '_rh_section_type',
+		'meta_value' => 'wooarchive'
+	));
+
+	if(!empty($productarchivelayouts)){
+		foreach($productarchivelayouts as $layout){
+			$productarchivelayout[] = array(
+				'value' => $layout->ID,
+				'label' => get_the_title($layout->ID)
+			);
+		}
+	}
+
+	return $productarchivelayout;   
+}
+
+VP_Security::instance()->whitelist_function('rehub_get_header_layouts');
+function rehub_get_header_layouts()
+{
+	$headerlayout = apply_filters( 'rehub_global_header_layout_array', array(
+		array(
+			'value' => 'header_seven',
+			'label' => esc_html__('Shop/Comparison header (logo + search + login + cart/compare icon)', 'rehub-framework'),
+		),	
+		array(
+			'value' => 'header_six',
+			'label' => esc_html__('Customizable header', 'rehub-framework'),
+		),	
+		array(
+			'value' => 'header_five',
+			'label' => esc_html__('Logo + menu in one row', 'rehub-framework'),
+		),
+		array(
+			'value' => 'header_first',
+			'label' => esc_html__('Logo + code zone 468X60 + search box', 'rehub-framework'),
+		),
+		array(
+			'value' => 'header_eight',
+			'label' => esc_html__('Logo + slogan + search box', 'rehub-framework'),
+		),								
+		array(
+			'value' => 'header_third',
+			'label' => esc_html__('Just Logo on center and code zone below', 'rehub-framework'),
+		),
+		array(
+			'value' => 'header_clean',
+			'label' => esc_html__('Clean code zone and regular menu', 'rehub-framework'),
+		),
+		array(
+			'value' => 'header_fullclean',
+			'label' => esc_html__('Clean code zone and custom menu', 'rehub-framework'),
+		),												
+	));
+
+	$headers = get_posts(array(
+		'post_type' => 'wp_block',
+		'meta_key'   => '_rh_section_type',
+		'meta_value' => 'header'
+	 ));
+
+	 if(!empty($headers)){
+		 foreach($headers as $header){
+			$headerlayout[] = array(
+				'value' => $header->ID,
+				'label' => get_the_title($header->ID)
+			);
+		 }
+	 }
+
+	return $headerlayout;   
+}
+
+VP_Security::instance()->whitelist_function('rehub_get_footer_layouts');
+function rehub_get_footer_layouts()
+{
+	$footerlayout = apply_filters( 'rehub_global_footer_layout_array', array(
+		array(
+			'value' => '',
+			'label' => esc_html__('No footer templates', 'rehub-framework'),
+		),													
+	));
+
+	$footers = get_posts(array(
+		'post_type' => 'wp_block',
+		'meta_key'   => '_rh_section_type',
+		'meta_value' => 'footer'
+	 ));
+
+	 if(!empty($footers)){
+		 foreach($footers as $footer){
+			$footerlayout[] = array(
+				'value' => $footer->ID,
+				'label' => get_the_title($footer->ID)
+			);
+		 }
+	 }
+
+	return $footerlayout;   
 }
 
 ////////

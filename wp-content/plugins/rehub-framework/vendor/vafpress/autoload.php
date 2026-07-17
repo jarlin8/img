@@ -123,7 +123,9 @@ class VP_AutoLoader
 	{
 		self::$namespaces = array_merge(self::$namespaces, (array) $namespaces);
 		self::$namespaces = array_unique(self::$namespaces);
-		usort(self::$namespaces, array('self', 'sort'));
+		usort(self::$namespaces, function ($a, $b) {
+            return self::sort($a, $b); // Assuming sort is a method of this class
+        });
 	}
 
 	/**

@@ -13,7 +13,7 @@
             $brandurl = apply_filters('rh_post_offer_url_filter', $brandurlurl);
             $brandurl = apply_filters('rehub_create_btn_url', $brandurl, $tagslug);
             if($brandurl){
-                $brandurl = str_replace( '#038;', '&', $brandurl);
+                $brandurl = wp_specialchars_decode($brandurl);
             }
             $brand_heading = get_term_meta( $tagid, 'brand_heading', true ); 
             $taglink = get_term_link( $tagid );
@@ -86,28 +86,28 @@
                     $prepare_filter[] = array (
                         'filtertitle' => esc_html__('All', 'rehub-theme'),
                         'filtertype' => 'all',
-                        'filterorderby' => 'date',
+                        'filterorderby' => 'modified',
                         'filterorder'=> 'DESC', 
                         'filterdate' => 'all',                        
                     );
                     $prepare_filter[] = array (
                         'filtertitle' => esc_html__('Deals', 'rehub-theme'),
                         'filtertype' => 'deals',
-                        'filterorderby' => 'date',
+                        'filterorderby' => 'modified',
                         'filterorder'=> 'DESC', 
                         'filterdate' => 'all',                        
                     );                    
                     $prepare_filter[] = array (
                         'filtertitle' => esc_html__('Coupons', 'rehub-theme'),
                         'filtertype' => 'coupons',
-                        'filterorderby' => 'date',
+                        'filterorderby' => 'modified',
                         'filterorder'=> 'DESC', 
                         'filterdate' => 'all',                        
                     ); 
                     $prepare_filter[] = array (
                         'filtertitle' => esc_html__('Sales', 'rehub-theme'),
                         'filtertype' => 'sales',
-                        'filterorderby' => 'date',
+                        'filterorderby' => 'modified',
                         'filterorder'=> 'DESC', 
                         'filterdate' => 'all',                        
                     ); 
@@ -115,7 +115,7 @@
                         $prepare_filter[] = array (
                             'filtertitle' => esc_html__('Expired', 'rehub-theme'),
                             'filtertype' => 'expired',
-                            'filterorderby' => 'date',
+                            'filterorderby' => 'modified',
                             'filterorder'=> 'DESC', 
                             'filterdate' => 'all',                        
                         );  
@@ -127,6 +127,7 @@
                     'tax_name' => 'dealstore',
                     'tax_slug' => $tagslug,
                     'data_source' => 'cat',
+                    'orderby' => 'modified',
                     'filterpanel' => $prepare_filter,
                     'show'=> 30,
                     'enable_pagination'=> '2',

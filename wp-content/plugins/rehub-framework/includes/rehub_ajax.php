@@ -41,7 +41,7 @@ function rehub_increment_views() {
 		}
 		
 		$count_for_day = (int)get_metadata('post', $post_id, 'rehub_views_day', true);
-		if($today_day == $curr_date['day']){
+		if(is_array($curr_date) && $today_day == $curr_date['day']){
 			$count_for_day++;
 			$update_cur_day = false;
 		}else{
@@ -51,7 +51,7 @@ function rehub_increment_views() {
 		update_metadata('post', $post_id, 'rehub_views_day', (int)$count_for_day);
 
 		$count_for_mon = (int)get_metadata('post', $post_id, 'rehub_views_mon', true);
-		if($today_month == $curr_date['mon']){
+		if(is_array($curr_date) && $today_month == $curr_date['mon']){
 			$count_for_mon++;
 			$update_cur_mon = false;
 		}else{
@@ -61,7 +61,7 @@ function rehub_increment_views() {
 		update_metadata('post', $post_id, 'rehub_views_mon', (int)$count_for_mon);
 		
 		$count_for_year = (int)get_metadata('post', $post_id, 'rehub_views_year', true);
-		if($today_year == $curr_date['year']){
+		if(is_array($curr_date) && $today_year == $curr_date['year']){
 			$count_for_year++;
 			$update_cur_year = false;
 		}else{
@@ -71,7 +71,7 @@ function rehub_increment_views() {
 		update_metadata('post', $post_id, 'rehub_views_year', (int)$count_for_year);
 		
 		//changes current date elements
-		if($update_cur_day || $update_cur_mon || $update_cur_year){
+		if(is_array($curr_date) && ($update_cur_day || $update_cur_mon || $update_cur_year)){
 			if($update_cur_day){
 				$curr_date['day'] = $update_cur_day;
 			}
@@ -93,19 +93,30 @@ function rehub_increment_views() {
 }
 
 /* The function which is not available from the theme */
+
 function rh_framework_user_ip() {
-	foreach (array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR') as $key) {
-		if (array_key_exists($key, $_SERVER) === true) {
-			$ip = $_SERVER[$key];
-	        if(strpos($ip, ',') !== false) {
-	            $ip = explode(',', $ip);
-	            $ip = $ip[0];
-	        }	
-	        if($ip){substr_replace($ip,0,-1);} //GDRP        		
-			return ''.$ip;
-		}
-	}
-	return '127.0.0.3';
+    $ip_keys = [
+        'HTTP_CLIENT_IP',
+        'HTTP_X_FORWARDED_FOR',
+        'HTTP_X_FORWARDED',
+        'HTTP_X_CLUSTER_CLIENT_IP',
+        'HTTP_FORWARDED_FOR',
+        'HTTP_FORWARDED',
+        'REMOTE_ADDR'
+    ];
+
+    foreach ($ip_keys as $key) {
+        if (!empty($_SERVER[$key])) {
+            $ip_list = explode(',', $_SERVER[$key]);
+            foreach ($ip_list as $ip) {
+                $ip = trim($ip);
+                if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                    return esc_attr($ip);
+                }
+            }
+        }
+    }
+    return '127.0.0.3'; // Fallback
 }
 
 /* Removes or Adds Posts from | to cached user Wishlist */

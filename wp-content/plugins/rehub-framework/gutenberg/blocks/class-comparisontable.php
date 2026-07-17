@@ -6,17 +6,7 @@ defined('ABSPATH') OR exit;
 
 class ComparisonTable{
 
-	final public static function instance(){
-		static $instance = null;
-
-		if(is_null($instance)) {
-			$instance = new static();
-		}
-
-		return $instance;
-	}
-
-	protected function __construct(){
+	public function __construct(){
 		add_action('init', array( $this, 'init_handler' ));
 	}
 
@@ -29,6 +19,7 @@ class ComparisonTable{
 
 	public $attributes = array(
         'enableBadges' => array('type'    => 'boolean','default' => false ),
+		'urlBadges' => array('type'    => 'boolean','default' => false ),
 		'enableImage' => array('type'    => 'boolean','default' => true ),
 		'enableTitle' => array('type' => 'boolean','default' => true ),
 		'enableSubtitle' => array('type' => 'boolean','default' => true ),
@@ -51,6 +42,8 @@ class ComparisonTable{
 		'specTitle' => array( 'type' => 'string', 'default' => 'Spec' ),
 		'responsiveView' => array( 'type' => 'string', 'default' => 'stacked' ),
 		'disablefirst' => array('type'    => 'boolean','default' => false ),
+		'extraColumns'=> array( 'type' => 'array', 'default' => array()),
+		'firstColumnWidth'=> array( 'type' => 'number', 'default' => 100),
 	);
 
 	public function render_block( $settings = array(), $inner_content='' ) {
@@ -58,7 +51,7 @@ class ComparisonTable{
 		ob_start();
 	?>
 		<div class="<?php echo ''.$alignclass;?>comparison-table <?php echo $settings['responsiveView'] ==='slide' ? 'swiper-container' : ''; ?> <?php echo $settings['responsiveView']; ?> <?php echo $settings['enableBadges'] ? 'has-badges' : ''; ?> <?php echo $settings['disablefirst'] ? 'noheadertable' : ''; ?>" data-table-type="<?php echo $settings['responsiveView']; ?>">
-			<div class="comparison-item comparison-header">
+			<div class="comparison-item comparison-header" style="flex: 0 0 <?php echo (int)$settings['firstColumnWidth'];?>px">
 				<div class="item-header" data-match-height="itemHeader"></div>
 				<?php if($settings['enableBottom']): ?>
 					<div class="item-row-description item-row-bottomline" data-match-height="itemBottomline">
@@ -80,6 +73,13 @@ class ComparisonTable{
 						<?php echo $settings['specTitle']; ?>
 					</div>
 				<?php endif; ?>
+				<?php if(!empty($settings['extraColumns'])): ?>
+						<?php foreach($settings['extraColumns'] as $key=>$value):?>
+							<div class="item-row-description item-row-extra row-extra<?php echo (int)$key;?>" data-match-height="row-extra<?php echo (int)$key;?>">
+								<?php echo esc_attr($value['content']); ?>
+							</div>
+						<?php endforeach;?>
+					<?php endif; ?>
 				<?php if($settings['enableCallout']): ?>
 					<div class="item-row-description item-row-callout" data-match-height="itemCallout">&nbsp;</div>
 				<?php endif; ?>

@@ -150,7 +150,7 @@ function widget( $args, $instance ) {
 	wp_enqueue_script('rhbettercategory', get_template_directory_uri() . '/js/bettercategory.js');
 	echo ''.$args['before_widget'];
 
-	echo '<style scoped>
+	echo '<style>
 		.widget.better_woocat ul li:first-child, .better_woocat .category-single .show-all-cat>li, .widget.better_woocat .category-single>li {border: none;}
 		.widget.better_woocat ul{margin: 0}
 		.widget.better_woocat ul li {border-top: 1px solid #ddd; list-style: none; margin:0;}

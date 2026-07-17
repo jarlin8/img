@@ -21,19 +21,7 @@ use YusufKandemir\MicrodataParser\Microdata;
 class REST {
 	private $rest_namespace = 'rehub/v2';
 
-
-	private static $instance = null;
-
-	/** @return Assets */
-	public static function instance() {
-		if ( is_null( static::$instance ) ) {
-			static::$instance = new static();
-		}
-
-		return static::$instance;
-	}
-
-	private function __construct() {
+	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'action_rest_api_init_trait' ) );
 	}
 
@@ -112,6 +100,40 @@ class REST {
 					return current_user_can( 'editor' ) || current_user_can( 'administrator' );
 				},
 				'callback' => array( $this, 'rest_parse_rehub_element' ),
+			)
+		);
+
+		register_rest_route(
+			$this->rest_namespace,
+			"/ceelement/",
+			array(
+				'methods'  => WP_REST_Server::CREATABLE,
+				'permission_callback' => function ( WP_REST_Request $request ) {
+					return current_user_can( 'editor' ) || current_user_can( 'administrator' );
+				},
+				'callback' => array( $this, 'rest_parse_ceelement' ),
+			)
+		);
+		register_rest_route(
+			$this->rest_namespace,
+			"/wooday/",
+			array(
+				'methods'  => WP_REST_Server::CREATABLE,
+				'permission_callback' => function ( WP_REST_Request $request ) {
+					return current_user_can( 'editor' ) || current_user_can( 'administrator' );
+				},
+				'callback' => array( $this, 'rest_parse_wooday' ),
+			)
+		);
+		register_rest_route(
+			$this->rest_namespace,
+			"/woocomparebars/",
+			array(
+				'methods'  => WP_REST_Server::CREATABLE,
+				'permission_callback' => function ( WP_REST_Request $request ) {
+					return current_user_can( 'editor' ) || current_user_can( 'administrator' );
+				},
+				'callback' => array( $this, 'rest_parse_woocomparebars' ),
 			)
 		);
 
@@ -554,6 +576,7 @@ class REST {
 	public function rest_parse_metavalue( WP_REST_Request $request ) {
 		$field = sanitize_text_field($request->get_param('field'));
 		$postId = (int)$request->get_param('postId');
+		$post_type = sanitize_text_field($request->get_param('post_type'));
 		$type = sanitize_text_field($request->get_param('type'));
 		$show_empty = sanitize_text_field($request->get_param('show_empty'));
 		$label = sanitize_text_field($request->get_param('prefix'));
@@ -561,7 +584,11 @@ class REST {
 		$icon = sanitize_text_field($request->get_param('icon'));
 		$labelblock = sanitize_text_field($request->get_param('labelblock'));
 		$showtoggle = sanitize_text_field($request->get_param('showtoggle'));
-		$value = wpsm_get_custom_value(array('field'=>$field, 'post_id'=>$postId, 'type'=>$type, 'show_empty'=>$show_empty, 'label'=>$label, 'posttext'=>$posttext, 'icon'=>$icon, 'labelblock'=>$labelblock, 'showtoggle'=>$showtoggle, 'spanvalue'=>1));
+		if($post_type){
+			$latest_cpt = get_posts("post_type='.$post_type.'&numberposts=1");
+			$postId = $latest_cpt[0]->ID;
+		}
+		$value = wpsm_get_custom_value(array('field'=>$field, 'post_id'=>$postId, 'type'=>$type, 'show_empty'=>$show_empty, 'label'=>$label, 'posttext'=>$posttext, 'icon'=>$icon, 'labelblock'=>$labelblock, 'showtoggle'=>$showtoggle, 'spanvalue'=>1, 'post_type'=>$post_type));
 		return json_encode($value);
 	}
 
@@ -694,6 +721,19 @@ class REST {
 			$value = '<div class="header_icons_menu">';
 				$value .= wp_nav_menu( array( 'container_class' => 'top_menu', 'container' => 'nav', 'theme_location' => 'primary-menu', 'fallback_cb' => 'add_menu_for_blank', 'walker' => new \Rehub_Walker, 'echo'=>false ) ); 
 			$value .='</div>';
+			if($request->get_param('convertmenumobile')){
+				$value .= '<div class="rh_mobile_menu desktopdisplaynone"><div id="dl-menu" class="dl-menuwrapper rh-flex-center-align">';
+					$value .= '<button id="dl-trigger" class="dl-trigger" aria-label="Menu">
+					<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+						<g>
+							<line stroke-linecap="round" id="rhlinemenu_1" y2="7" x2="29" y1="7" x1="3"/>
+							<line stroke-linecap="round" id="rhlinemenu_2" y2="16" x2="18" y1="16" x1="3"/>
+							<line stroke-linecap="round" id="rhlinemenu_3" y2="25" x2="26" y1="25" x1="3"/>
+						</g>
+					</svg>
+				</button>'; 
+				$value .='</div></div>';
+			}
 		}
 		else if($type=='mobilemenu'){  
 			$value = '<div class="rh_mobile_menu"><div id="dl-menu" class="dl-menuwrapper rh-flex-center-align">';
@@ -721,6 +761,90 @@ class REST {
 			$value = ob_get_contents();
 			ob_end_clean(); 
 		}
+
+		return json_encode($value);
+	}
+	public function rest_parse_ceelement( WP_REST_Request $request ) {
+		$value = '';
+        $offertype = sanitize_text_field($request->get_param('type'));
+        $post_id = (int)$request->get_param('postId');
+        if(!$post_id){
+            $post_id = get_the_ID();
+        }
+        if($offertype == 'ceoffer'){
+            $value = wpsm_get_bigoffer(array('post_id'=> $post_id));
+        }else{
+            if($offertype == 'cemerchant'){
+                $template = 'custom/all_merchant_widget_group';
+            }
+            else if($offertype == 'cewidget'){
+                $template = 'custom/all_logolist_widget';
+            }   
+            else if($offertype == 'cegrid'){
+                $template = 'custom/all_offers_grid';
+            }
+
+            else if($offertype == 'celist'){
+                $template = 'custom/all_offers_list';
+            }               
+
+            else if($offertype == 'celistlogo'){
+                $template = 'custom/all_offers_logo_group';
+            }
+
+            else if($offertype == 'celistdef'){
+                $template = 'offers_list';
+            }               
+
+            else if($offertype == 'celistdeflogo'){
+                $template = 'offers_logo';
+            }               
+
+            else if($offertype == 'cestat'){
+                $template = 'price_statistics';
+            }   
+
+            else if($offertype == 'cehistory'){
+                $template = 'custom/all_pricehistory_full';
+            }   
+
+            else if($offertype == 'cealert'){
+                $template = 'custom/all_pricealert_full';
+            } 
+            $atts = array();
+            $atts['post_id'] = $post_id;
+            $atts['template'] = $template;
+            if(defined('\ContentEgg\PLUGIN_PATH')) {
+                $value = \ContentEgg\application\BlockShortcode::getInstance()->viewData($atts);
+            }
+        }  
+
+		return json_encode($value);
+	}
+	public function rest_parse_wooday( WP_REST_Request $request ) {
+		$value = '';
+		$settings= array();
+        $settings['ids'] = $request->get_param('ids');
+        $settings['title'] = sanitize_text_field($request->get_param('title'));
+        $settings['faketimer'] = sanitize_text_field($request->get_param('faketimer'));
+        $settings['fakebar'] = sanitize_text_field($request->get_param('fakebar'));
+        $settings['autorotate'] = sanitize_text_field($request->get_param('autorotate'));
+        $settings['markettext'] = sanitize_text_field($request->get_param('markettext'));
+        $settings['fakebar_sold'] = sanitize_text_field($request->get_param('fakebar_sold'));
+        $settings['fakebar_stock'] = sanitize_text_field($request->get_param('fakebar_stock'));
+		$wooblock = new \Rehub\Gutenberg\Blocks\Wooday;
+		$value = $wooblock->render($settings);
+		return json_encode($value);
+	}
+	public function rest_parse_woocomparebars( WP_REST_Request $request ) {
+		$value = '';
+        $ids = sanitize_text_field($request->get_param('ids'));
+        $attr = sanitize_text_field($request->get_param('attr'));
+        $min = sanitize_text_field($request->get_param('min'));
+        $color = sanitize_text_field($request->get_param('color'));
+        $markcolor = sanitize_text_field($request->get_param('markcolor'));
+
+        $value = wpsm_woo_versus_function(array('ids'=> $ids, 'attr'=> $attr, 'min'=> $min, 'color'=> $color, 'markcolor'=> $markcolor)); 
 
 		return json_encode($value);
 	}

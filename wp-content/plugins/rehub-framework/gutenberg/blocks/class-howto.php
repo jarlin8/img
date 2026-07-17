@@ -7,17 +7,7 @@ defined('ABSPATH') OR exit;
 
 class Howto{
 
-	final public static function instance(){
-		static $instance = null;
-
-		if(is_null($instance)) {
-			$instance = new static();
-		}
-
-		return $instance;
-	}
-
-	protected function __construct(){
+	public function __construct(){
 		add_action('init', array( $this, 'init_handler' ));
 	}
 
@@ -86,7 +76,7 @@ class Howto{
 		$blockid = substr($blockId, 0, 6);
 		$uniqueid = 'gc-howid'.$blockid;
 
-		$numberstyle = ($numberBgColor || $numberColor) ? '<style scoped>#'.$uniqueid.' .gc-howtoitem__heading:before{background-color:'.$numberBgColor.';color:'.$numberColor.';}</style>' : '';
+		$numberstyle = ($numberBgColor || $numberColor) ? '<style>#'.$uniqueid.' .gc-howtoitem__heading:before{background-color:'.$numberBgColor.';color:'.$numberColor.';}</style>' : '';
 		$out ='';
 
 

@@ -5,23 +5,13 @@ namespace Rehub\Gutenberg;
 defined('ABSPATH') OR exit;
 
 final class Assets {
-	private static $instance = null;
-
-	/** @return Assets */
-	public static function instance(){
-		if(is_null(static::$instance)) {
-			static::$instance = new static();
-		}
-
-		return static::$instance;
-	}
 
 	protected $is_rest = false;
 
 	/** @var \stdClass $assets */
 	protected $assets = null;
 
-	private function __construct(){
+	public function __construct(){
 		add_action('enqueue_block_editor_assets', array( $this, 'editor_gutenberg' ));
 		add_action('init', array( $this, 'init' ));
 		add_filter('render_block', array( $this, 'guten_render_assets' ), 10, 2); //conditional assets loading
@@ -41,7 +31,7 @@ final class Assets {
 	public function init(){
 		$this->is_rest = defined('REST_REQUEST');
 		wp_register_style('rh-gutenberg-admin',$this->assets->url_css.'editor.css', array(), '16.2');
-		wp_register_style('rhgutslider', $this->assets->url_css . 'slider.css', array(), '1.0');
+		wp_register_style('rhgutslider', $this->assets->url_css . 'slider.css', array(), '1.2');
 		wp_register_style('rhgutreviewheading', $this->assets->url_css . 'review-heading.css', array(), '1.0');
 		wp_register_style('rhgutcomparison', $this->assets->url_css . 'comparison-table.css', array(), '1.3');
 		wp_register_style('rhgutswiper', $this->assets->url_css . 'swiper-bundle.min.css', array(), '1.1');
@@ -57,7 +47,7 @@ final class Assets {
 
 		wp_register_script('rhgutslider', $this->assets->url_js . 'slider.js', array(), '1.1');
 		wp_register_script('rhgutswiper', $this->assets->url_js . 'swiper-bundle.min.js', array(), true, '1.1');
-		wp_register_script('rhgutequalizer', $this->assets->url_js . 'equalizer.js', array(), true, '1.1');	
+		wp_register_script('rhgutequalizer', $this->assets->url_js . 'equalizer.js', array(), true, '1.2');	
 		wp_register_script( 'rhpb-video',  $this->assets->url_js . 'rhpb-video.js', array(), true, '1.0' );
 		wp_register_script( 'rhpb-lightbox',  $this->assets->url_js . 'simpleLightbox.min.js', array(), '1.0' );
 		wp_register_script('lazysizes', $this->assets->url_js . 'lazysizes.js', array('jquery'), '5.2');
@@ -78,10 +68,6 @@ final class Assets {
 
 		//Register core block styles
 		wp_register_style('rhcoreblock_halfbackground', $this->assets->url_css . 'coreblock_halfbackground.css', array(), '1.0');
-		wp_register_style('rhcoreblock_image150', $this->assets->url_css . 'coreblock_image150.css', array(), '1.0');
-		wp_register_style('rhcoreblock_image180', $this->assets->url_css . 'coreblock_image180.css', array(), '1.0');
-		wp_register_style('rhcoreblock_image230', $this->assets->url_css . 'coreblock_image230.css', array(), '1.0');
-		wp_register_style('rhcoreblock_image350', $this->assets->url_css . 'coreblock_image350.css', array(), '1.0');
 		wp_register_style('rhcoreblock_borderquery', $this->assets->url_css . 'coreblock_borderquery.css', array(), '1.0');
 		wp_register_style('rhcoreblock_bordernopaddquery', $this->assets->url_css . 'coreblock_bordernopaddquery.css', array(), '1.0');
 		wp_register_style('rhcoreblock_borderpaddradius', $this->assets->url_css . 'coreblock_borderpaddradius.css', array(), '1.0');
@@ -91,33 +77,16 @@ final class Assets {
 		wp_register_style('rhcoreblock_shadow3', $this->assets->url_css . 'coreblock_shadow3.css', array(), '1.0');
 
         //Add style to blocks
+		register_block_style(
+			'core/list',
+			array(
+				'name'  => 'nounderline',
+				'label' => __('Unstyled view', 'rehub-framework'),
+			)
+		);
         register_block_style('core/post-featured-image', [
             'name' => 'halfbackground',
             'label' => __('Half white background under image', 'rehub-framework'),
-        ]);
-        register_block_style('woocommerce/product-image', [
-            'name' => 'height150',
-            'label' => __('Height 150px', 'rehub-framework'),
-        ]);
-        register_block_style('core/post-featured-image', [
-            'name' => 'height150',
-            'label' => __('Height 150px', 'rehub-framework'),
-        ]);
-        register_block_style('core/post-featured-image', [
-            'name' => 'height180',
-            'label' => __('Height 180px', 'rehub-framework'),
-        ]);
-        register_block_style('woocommerce/product-image', [
-            'name' => 'height180',
-            'label' => __('Height 180px', 'rehub-framework'),
-        ]);
-        register_block_style('core/post-featured-image', [
-            'name' => 'height230',
-            'label' => __('Height 230px', 'rehub-framework'),
-        ]);
-        register_block_style('core/post-featured-image', [
-            'name' => 'height350',
-            'label' => __('Height 350px', 'rehub-framework'),
         ]);
 		register_block_style('core/query', [
 			'name' => 'rhborderquery',
@@ -147,6 +116,12 @@ final class Assets {
 			'name' => 'rhelshadow3',
 			'label' => __('Smooth shadow', 'rehub-framework'),
 		]);
+
+		register_post_meta( 'wp_block', 'rh_template_section', array(
+			'show_in_rest' => true,
+			'single' => true,
+			'type' => 'string',
+		) );
 
 	}
 
@@ -197,6 +172,7 @@ final class Assets {
 				true
 			);
 			wp_enqueue_script('lazysizes');
+			wp_enqueue_script('rh-flexslider');
 		}
 
 	}
@@ -293,7 +269,7 @@ final class Assets {
 					wp_enqueue_style('rhpb-video');
 				}
 				wp_enqueue_script( 'rhpb-video');
-				if( $block['attrs']['provider'] === "vimeo" ){
+				if( !empty($block['attrs']['provider']) && $block['attrs']['provider'] === "vimeo" ){
 					wp_enqueue_script( 'vimeo-player', 'https://player.vimeo.com/api/player.js', array(), true, '1.0' );
 				}				
 				if( isset($block['attrs']['overlayLightbox']) && $block['attrs']['overlayLightbox'] ){
@@ -338,53 +314,46 @@ final class Assets {
 				$block_style .= "} }";
 				//wp_add_inline_style( 'rhpb-video', $block_style );
 			}
-			if ( $block['blockName'] === 'rehub/wc-featured-section' ) {
+			if ( $block['blockName'] === 'rehub/wc-featured-section' && !empty($block['attrs']['feat_type']) && $block['attrs']['feat_type'] == '1' ) {
 				wp_enqueue_script('rh-flexslider');
 			}
-			if ( $block['blockName'] === 'rehub/featured-section' ) {
+			if ( $block['blockName'] === 'rehub/featured-section' && !empty($block['attrs']['feat_type']) && $block['attrs']['feat_type'] == '2' ) {
 				wp_enqueue_script('rh-flexslider');
 			}       
 			if(!empty( $block['attrs']['className'])){
-				if(strpos('is-style-height150', $block['attrs']['className']) !== false){
-					$block_style = '.is-style-height150{height:150px; overflow:hidden} .is-style-height150 img{object-fit: cover;flex-grow: 0;height: 100% !important;width: 100%;}';
-				}
-				elseif(strpos('is-style-halfbackground', $block['attrs']['className']) !== false){
+				if(str_contains($block['attrs']['className'], 'is-style-halfbackground') !== false){
 					$block_style = '.is-style-halfbackground::before {content: "";position: absolute;left: 0;bottom: 0;height: 50%;background-color: white;width:100vw;margin-left: calc(-100vw / 2 + 100% / 2);margin-right: calc(-100vw / 2 + 100% / 2);}.is-style-halfbackground, .is-style-halfbackground img{position:relative; margin-top:0; margin-bottom:0}';
 				}
-				elseif(strpos('is-style-height180', $block['attrs']['className']) !== false){
-					$block_style = '.is-style-height180{height:180px; overflow:hidden} .is-style-height180 img{object-fit: cover;flex-grow: 0;height: 100% !important;width: 100%;}';
-				}
-				elseif(strpos('is-style-height230', $block['attrs']['className']) !== false){
-					$block_style = '.is-style-height230{height:230px; overflow:hidden} .is-style-height230 img{object-fit: cover;flex-grow: 0;height: 100% !important;width: 100%;}';
-				}
-				elseif(strpos('is-style-height350', $block['attrs']['className']) !== false){
-					$block_style = '.is-style-height350{height:350px; overflow:hidden} .is-style-height350 img{object-fit: cover;flex-grow: 0;height: 100% !important;width: 100%;}';
-				}
-				elseif(strpos('is-style-rhborderquery', $block['attrs']['className']) !== false){
+				elseif(str_contains($block['attrs']['className'], 'is-style-rhborderquery') !== false){
 					$block_style = '.is-style-rhborderquery > ul > li{border:1px solid #eee; padding:15px;box-sizing: border-box; margin-bottom:1.25em}.is-style-rhborderquery figure{margin-top:0}';
 				}
-				elseif(strpos('is-style-rhbordernopaddquery', $block['attrs']['className']) !== false){
+				elseif(str_contains($block['attrs']['className'], 'is-style-rhbordernopaddquery') !== false){
 					$block_style = '.is-style-rhbordernopaddquery > ul > li{border:1px solid #eee; padding:15px;box-sizing: border-box;margin-bottom:1.25em}.editor-styles-wrapper .is-style-rhbordernopaddquery figure.wp-block-post-featured-image, .is-style-rhbordernopaddquery figure.wp-block-post-featured-image{margin:-15px -15px 12px -15px !important}';
 				}
-				elseif(strpos('is-style-brdnpaddradius', $block['attrs']['className']) !== false){
-					$block_style = '.is-style-brdnpaddradius > ul > li{border-radius:8px; padding:15px;box-sizing: border-box;box-shadow:-2px 3px 10px 1px rgb(202 202 202 / 26%);margin-bottom:1.25em}.editor-styles-wrapper .is-style-brdnpaddradius figure.wp-block-post-featured-image, .is-style-brdnpaddradius figure.wp-block-post-featured-image{margin:-15px -15px 12px -15px !important}.is-style-brdnpaddradius figure.wp-block-post-featured-image img{border-radius:8px 8px 0 0}';
+				else if ($block['blockName'] == 'core/list') {
+					if (str_contains($block['attrs']['className'], 'is-style-nounderline') !== false) {
+						$block_style .= 'ul.is-style-nounderline {margin:0; padding:0;list-style:none}ul.is-style-nounderline a{text-decoration:none}ul.is-style-nounderline li{list-style:none}';
+					}
+				} 
+				elseif(str_contains($block['attrs']['className'], 'is-style-brdnpaddradius') !== false){
+					$block_style = '.is-style-brdnpaddradius > ul > li{background:#fff;border-radius:8px; padding:15px;box-sizing: border-box;box-shadow:-2px 3px 10px 1px rgb(202 202 202 / 26%);margin-bottom:1.25em}.editor-styles-wrapper .is-style-brdnpaddradius figure.wp-block-post-featured-image, .is-style-brdnpaddradius figure.wp-block-post-featured-image{margin:-15px -15px 12px -15px !important}.is-style-brdnpaddradius figure.wp-block-post-featured-image img{border-radius:8px 8px 0 0}';
 				}
-				elseif(strpos('is-style-smartscrollposts', $block['attrs']['className']) !== false){
+				elseif(str_contains($block['attrs']['className'], 'is-style-smartscrollposts') !== false){
 					$block_style = '.is-style-smartscrollposts{overflow-x: auto !important;overflow-y: hidden;white-space: nowrap; -webkit-overflow-scrolling: touch;scroll-behavior: smooth;scroll-snap-type: x mandatory;}.is-style-smartscrollposts > ul{flex-wrap: nowrap !important;}.is-style-smartscrollposts > ul > li{border-radius:8px; padding:15px;box-sizing: border-box;border:1px solid #eee;margin-bottom:1.25em; min-width:230px;display: inline-block;margin: 0 13px 0px 0 !important;white-space: normal !important;scroll-snap-align: start;}.editor-styles-wrapper .is-style-smartscrollposts figure.wp-block-post-featured-image, .is-style-smartscrollposts figure.wp-block-post-featured-image{margin:-15px -15px 12px -15px !important}.is-style-smartscrollposts figure.wp-block-post-featured-image img{border-radius:8px 8px 0 0}.is-style-smartscrollposts::-webkit-scrollbar-track{background-color:transparent;border-radius:20px}.is-style-smartscrollposts::-webkit-scrollbar-thumb{background-color:transparent;border-radius:20px;border:1px solid transparent}.is-style-smartscrollposts:hover::-webkit-scrollbar-thumb{background-color:#ddd;}.is-style-smartscrollposts:hover{scrollbar-color: #ddd #fff;}';
 				}
-				elseif(strpos('is-style-rhelshadow1', $block['attrs']['className']) !== false){
+				elseif(str_contains($block['attrs']['className'], 'is-style-rhelshadow1') !== false){
 					$block_style = '.is-style-rhelshadow1{box-shadow: 0px 5px 20px 0 rgb(0 0 0 / 3%);}';
 				}
-				elseif(strpos('is-style-rhelshadow2', $block['attrs']['className']) !== false){
+				elseif(str_contains($block['attrs']['className'], 'is-style-rhelshadow2') !== false){
 					$block_style = '.is-style-rhelshadow2{box-shadow: 0 5px 21px 0 rgb(0 0 0 / 7%);}';
 				}
-				elseif(strpos('is-style-rhelshadow3', $block['attrs']['className']) !== false){
+				elseif(str_contains($block['attrs']['className'], 'is-style-rhelshadow3') !== false){
 					$block_style = '.is-style-rhelshadow3{box-shadow: 0 5px 23px rgb(188 207 219 / 35%);border-top: 1px solid #f8f8f8;}';
 				}
 			}        
 		}
 		if($block_style){
-			$html = '<style scoped>'.$block_style.'</style>'.$html;
+			$html = '<style>'.$block_style.'</style>'.$html;
 		}
 
         return $html;

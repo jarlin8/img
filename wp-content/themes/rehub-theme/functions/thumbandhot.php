@@ -153,7 +153,7 @@ function AlreadyHot( $post_id ) { // test if user liked before
         $user_id = $current_user->ID; // current user
         $meta_USERS = get_post_meta( $post_id, "_user_liked" ); // user ids from post meta
         $liked_USERS = ""; // set up array variable     
-        if ( is_numeric($meta_USERS) && count( $meta_USERS ) != 0 ) { // meta exists, set up values
+        if ( is_array($meta_USERS) && count( $meta_USERS ) != 0 ) { // meta exists, set up values
             $liked_USERS = $meta_USERS[0];
         }       
         if( !is_array( $liked_USERS ) ) // make array just in case

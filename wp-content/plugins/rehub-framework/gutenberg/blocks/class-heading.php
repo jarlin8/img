@@ -63,7 +63,7 @@ class Heading extends Basic {
 		));
 
 		$out = '<div '.$this->get_render_attribute_string('wrapper').'>
-			<style scoped>.wpsm_heading_number{min-height: 6em;}.wpsm_heading_number .number{color:#f0f0f0;font-size:6em;font-weight:600;line-height:1; z-index: 1}.wpsm_heading_number .wpsm_heading_context{ z-index: 2;}.rtl .wpsm_heading_number .number{left:auto;right:0;text-align:right}</style>
+			<style>.wpsm_heading_number{min-height: 6em;}.wpsm_heading_number .number{color:#f0f0f0;font-size:6em;font-weight:600;line-height:1; z-index: 1}.wpsm_heading_number .wpsm_heading_context{ z-index: 2;}.rtl .wpsm_heading_number .number{left:auto;right:0;text-align:right}</style>
             <div '.$this->get_render_attribute_string('number').'>'.$settings['backgroundText'].'</div>
             <div class="wpsm_heading_context position-relative">
             <'.$level.' class="mt0 mb0 ml15 mr15">

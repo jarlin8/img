@@ -36,12 +36,13 @@ class ColorHeading extends Basic {
 
 	protected function render( $settings = array(), $inner_content = '' ) {
 		$html            = '';
-		$title           = $settings['title'];
-		$subtitle        = $settings['subtitle'];
+		$title           = esc_html($settings['title']);
+		$subtitle        = esc_html($settings['subtitle']);
 		$styles          = 'background-color:' . $settings['backgroundColor'] . ';';
 		$title_styles    = 'color:' . $settings['titleColor'] . ';';
 		$subtitle_styles = 'color:' . $settings['subtitleColor'] . ';';
-		$title_tag        = $settings['titleTag'];
+		$allowed_tags = array('h1', 'h2', 'h3', 'h4', 'h5', 'h6');
+		$title_tag        = in_array($settings['titleTag'], $allowed_tags) ? $settings['titleTag'] : 'h2';
 
 		if ( empty( $title ) && empty( $subtitle ) ) {
 			return;
@@ -63,7 +64,7 @@ class ColorHeading extends Basic {
 	    $paddingcss = (\REHub_Framework::get_option('rehub_content_shadow')) ? '' : ' pr25 pl25';
 
 		$html .= '<div class="rh-color-heading alignfull pt30 pb30 blackcolor mb35" style="' . esc_attr( $styles ) . '">';
-		$html .= '<style scoped>.main-side:not(.alignfulloutside):not(.fullgutenberg) .rh-color-heading .rh-container{width:auto;}</style>';
+		$html .= '<style>.main-side:not(.alignfulloutside):not(.fullgutenberg) .rh-color-heading .rh-container{width:auto;}</style>';
 		$html .= '	<div class="rh-container'.$paddingcss.'">';
 		$html .= '			<p id="'.$anchor.'" class="mb15 font130" style="' . esc_attr( $subtitle_styles ) . '">';
 		$html .= '			' . $subtitle . '';

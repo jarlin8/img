@@ -756,9 +756,12 @@ function rh_register_block_meta() {
 
 add_action('enqueue_block_editor_assets', 'rh_block_sidebar_script');
 function rh_block_sidebar_script() {
-    // Only load on wp_block post type
+    // Only load on wp_block post type - get_current_screen() is only available in admin
+    if (!function_exists('get_current_screen')) {
+        return;
+    }
     $screen = get_current_screen();
-    if ($screen->post_type !== 'wp_block') {
+    if (!$screen || $screen->post_type !== 'wp_block') {
         return;
     }
 

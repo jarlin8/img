@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) OR exit;
 class Searchbox extends Basic {
 	protected $name = 'searchbox';
 
-	protected function __construct() {
+	public function __construct() {
 		parent::__construct();
 	}
 

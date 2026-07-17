@@ -4,9 +4,9 @@
 	"private": true,
 	"scripts": {
 		"lint": "eslint src",
-		"start": "node scripts/start.js",
+		"start": "cross-env NODE_OPTIONS=--openssl-legacy-provider node scripts/start.js",
 		"start:css": "gulp watch",
-		"build": "node scripts/build.js"
+		"build": "cross-env NODE_OPTIONS=--openssl-legacy-provider node scripts/build.js"
 	},
 	"keywords": [
 		"webpack",
@@ -106,7 +106,7 @@
 		"react-click-outside": "^3.0.1",
 		"react-color": "^2.19.3",
 		"react-dom": "^16.14.0",
-		"react-select": "^3.2.0",
+		"react-select": "^4.2.0",
 		"react-select2-wrapper": "^1.0.4-beta6",
 		"react-stickynode": "^2.1.1",
 		"react-tabs": "^3.2.0",
@@ -121,6 +121,7 @@
 		"update-notifier": "^2.3.0",
 		"vue": "^2.6.12",
 		"waypoints": "^4.0.1",
+		"lodash": "^4.17.21",
 		"webpack": "^3.1.0"
 	},
 	"devDependencies": {

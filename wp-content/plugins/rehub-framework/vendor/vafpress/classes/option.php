@@ -33,6 +33,10 @@ class VP_Option
 
 	public static $pool;
 
+	public $_dev_mode = false;
+
+	public $_minimum_role = 'edit_theme_options';
+
 	public function __construct(array $configs)
 	{
 

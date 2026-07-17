@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) OR exit;
 class NewsBlock extends Basic {
 	protected $name = 'news-block';
 
-	protected function __construct() {
+	public function __construct() {
 		parent::__construct();
 	}
 
