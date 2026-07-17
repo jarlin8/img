@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48.877" height="42.004" viewBox="0 0 48.877 42.004">
+  <g id="bestseller-list" transform="translate(0 -35.999)">
+    <path id="Pfad_1759" data-name="Pfad 1759" d="M10,47.909V74.161H24.8V46H11.909A1.915,1.915,0,0,0,10,47.909Z" transform="translate(-9.045 -9.046)" fill="#fff" fill-rule="evenodd"/>
+    <g id="Gruppe_1875" data-name="Gruppe 1875" transform="translate(0 35.999)">
+      <path id="Pfad_1760" data-name="Pfad 1760" d="M46.013,36H2.864A2.867,2.867,0,0,0,0,38.863V67.5a2.867,2.867,0,0,0,2.864,2.864H18.723l-.81,5.728H16.8A.955.955,0,0,0,16.8,78H32.076a.955.955,0,0,0,0-1.909H30.964l-.81-5.728H46.013A2.867,2.867,0,0,0,48.877,67.5V38.863A2.867,2.867,0,0,0,46.013,36ZM2.864,37.908H46.013a.956.956,0,0,1,.955.955v25.3H1.909v-25.3a.956.956,0,0,1,.955-.955ZM29.036,76.094H19.841l.81-5.728h7.575Zm16.977-7.637H2.864a.956.956,0,0,1-.955-.955V66.07H46.968V67.5A.956.956,0,0,1,46.013,68.456Z" transform="translate(0 -35.999)" fill="#120b46"/>
+      <path id="Pfad_1764" data-name="Pfad 1764" d="M196.013,97.908h24.057a.955.955,0,0,0,0-1.909H196.013A.955.955,0,0,0,196.013,97.908Z" transform="translate(-176.443 -90.271)" fill="#120b46"/>
+      <path id="Pfad_1765" data-name="Pfad 1765" d="M196.013,185.408h24.057a.955.955,0,0,0,0-1.909H196.013A.955.955,0,0,0,196.013,185.408Z" transform="translate(-176.443 -169.418)" fill="#120b46"/>
+      <path id="Pfad_1766" data-name="Pfad 1766" d="M196.013,272.908h24.057a.955.955,0,0,0,0-1.909H196.013A.955.955,0,0,0,196.013,272.908Z" transform="translate(-176.443 -248.565)" fill="#120b46"/>
+      <path id="Pfad_1767" data-name="Pfad 1767" d="M196.013,141.658h12.028a.955.955,0,0,0,0-1.909H196.013A.955.955,0,0,0,196.013,141.658Z" transform="translate(-176.443 -129.845)" fill="#120b46"/>
+      <path id="Pfad_1768" data-name="Pfad 1768" d="M196.013,229.158h12.028a.955.955,0,0,0,0-1.909H196.013A.955.955,0,0,0,196.013,229.158Z" transform="translate(-176.443 -208.992)" fill="#120b46"/>
+      <g id="Gruppe_1876" data-name="Gruppe 1876">
+        <text id="_1" data-name="1" transform="translate(6.015 7.059)" fill="#120b46" font-size="5" font-family="Gilroy-Bold, Gilroy" font-weight="700"><tspan x="0" y="0">1</tspan></text>
+        <text id="_2" data-name="2" transform="translate(6.015 13.073)" fill="#120b46" font-size="5" font-family="Gilroy-Bold, Gilroy" font-weight="700"><tspan x="0" y="0">2</tspan></text>
+        <text id="_3" data-name="3" transform="translate(6.015 19.087)" fill="#120b46" font-size="5" font-family="Gilroy-Bold, Gilroy" font-weight="700"><tspan x="0" y="0">3</tspan></text>
+        <text id="_4" data-name="4" transform="translate(6.015 25.102)" fill="#120b46" font-size="5" font-family="Gilroy-Bold, Gilroy" font-weight="700"><tspan x="0" y="0">4</tspan></text>
+      </g>
+    </g>
+  </g>
+</svg>

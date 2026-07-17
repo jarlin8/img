@@ -1,0 +1,10 @@
+.gitattributes export-ignore
+.gitignore export-ignore
+.editorconfig export-ignore
+codesniffer.ruleset.xml export-ignore
+phpunit.xml export-ignore
+.travis.yml export-ignore
+/tools export-ignore
+/documentation export-ignore
+documenter.json export-ignore
+release-tags export-ignore

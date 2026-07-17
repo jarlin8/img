@@ -1,0 +1,38 @@
+/* .archive-page ul li, .entry-content ul li, .entry-content ol, .entry-content ul {
+    list-style-type: none;
+    margin: 0 0 0 0;
+} */
+
+li.lslide {
+    margin: 0 !important;
+}
+
+.lSSlideWrapper .lSFade {
+    position: unset !important;
+}
+
+/* fifu slider as woo gallery */
+
+div.fifu-woo-gallery img.fifu {
+    cursor: zoom-in;
+}
+
+div.fifu-woo-gallery ul.lSPager.lSGallery {
+    display: block;
+}
+
+ul.lSPager.lSGallery {
+    /* display: none; */
+}
+
+/* fix thumbnail gallery for some themes: Twenty Twenty, Rehub, etc */
+ul.lSPager.lSGallery li {
+    list-style: none;
+    margin: 0;
+    height: auto !important;
+}
+
+/* fix lightGallery for storefront */
+button::after, button::before {
+    display: inline !important;
+}

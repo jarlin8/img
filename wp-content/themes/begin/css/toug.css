@@ -1,0 +1,535 @@
+#bet-new-post {
+	position: relative;
+	padding: 20px 0;
+}
+
+#bet-new-post .wp-editor-container {
+	overflow: hidden;
+	border-radius: 5px 0 5px 5px;
+}
+
+#bet-post-title,#bet-tags,#bet-about {
+	background: var(--be-bg-tou);
+	clear: both;
+	margin: 10px 0;
+	padding: 5px 10px;
+	border-radius: 5px;
+	border: none;
+}
+
+#bet-post-title:focus,#bet-tags:focus,#bet-about:focus,.info-type:focus {
+	background: var(--be-bg-white);
+	box-shadow: 0 0 0 1px var(--be-shadow);
+}
+
+#bet-category {
+	clear: both;
+	margin: 10px 0;
+	padding: 7px 10px;
+	border-radius: 2px;
+	border: var(--be-bg-tou);
+}
+
+#bet-new-post label {
+	font-size: 15px;
+	font-weight: bold;
+	display: table;
+	cursor: pointer;
+}
+
+#bet-post-title,#bet-tags,#bet-new-post {
+	box-sizing: border-box;
+	width: 100%;
+}
+
+#bet-category {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+#bet-new-post #bet-about {
+	width: 100%;
+}
+
+#bet-new-post #bet-post-title {
+	font-size: 16px;
+}
+
+#bet-new-post .nice-select {
+	-webkit-tap-highlight-color: transparent;
+	background-color: var(--be-bg-tou);
+	border: none;
+}
+
+#bet-new-post .wp-editor-area {
+	background: var(--be-white);
+}
+
+#wp-bet-post-content-wrap {
+	margin: 10px 0;
+}
+
+#bet-featured-image-container {
+	float: left;
+}
+
+#bet-featured-image-container img {
+	margin: 10px 0;
+	border-radius: 5px;
+	box-shadow: 0 0 0 1px var(--be-shadow);
+}
+
+#bet-featured-image a {
+	background: var(--be-bg-white);
+	color: #555;
+	font-size: 14px;
+	display: block;
+	display: table;
+	margin: 20px 0;
+	padding: 8px 19px;
+	text-align: center;
+	border-radius: 5px;
+	border: none;
+	box-shadow: 0 0 0 1px var(--be-shadow);
+}
+
+#bet-featured-image a:hover {
+	color: var(--be-white);
+	background: var(--be-bg-grey-6);
+}
+
+img.bet-loading-img {
+	display: none;
+	box-shadow: none;
+	margin-left: 10px;
+}
+
+.bet-tougao .bet-btn {
+	background: var(--be-bg-btn);
+	float: left;
+	color: var(--be-white);
+	font-size: 15px;
+	cursor: pointer;
+	margin: 15px 0;
+	padding: 6px 40px;
+	border-radius: 5px;
+	outline: none;
+	border: none;
+	box-shadow: 0 0 0 1px var(--be-shadow);
+}
+
+.bet-tougao .bet-btn:hover,.bet-tougao .bet-btn.closeto:hover {
+	background: var(--be-bg-grey-6);
+}
+
+.bet-tougao .bet-btn:active {
+	background: var(--be-bg-btn);
+}
+
+.passive-btn, 
+.passive-btn:active, 
+.passive-btn:hover {
+	background: var(--be-bg-tou);
+	cursor: default;
+	color: var(--be-white);
+	font-weight: 700;
+	box-shadow: 0 0 0 1px var(--be-shadow);
+}
+
+#no-js, #bet-message {
+	padding: 10px 20px;
+	clear: both;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+.warning {
+	position: absolute;
+	top: 20%;
+	left: 50%;
+	background: var(--be-yellow);
+	display: none;
+	-webkit-transform: translateX(-50%);
+	transform: translateX(-50%);
+}
+
+.warning {
+	color: var(--be-white);
+}
+
+.bet-btn.closeto {
+	background: var(--be-bg-btn);
+}
+
+.tou-success {
+	font-size: 2rem;
+	color: var(--be-body);
+	text-align: center;
+	margin: 0 0 50px 0;
+}
+
+.btn-continue {
+	background: var(--be-bg-btn);
+	font-size: 1.5rem;
+	color: var(--be-white);
+	margin: 0 5px;
+	padding: 5px 15px;
+	cursor: pointer;
+	-webkit-appearance: none;
+	border-radius: 5px;
+	border: none;
+}
+
+.btn-continue-quit {
+	background: var(--be-bg-grey-6);
+}
+
+.btn-continue:hover, 
+#bet-continue-editing:hover {
+	background: var(--be-bg-grey-6);
+}
+
+#bet-continue-editing {
+	background: var(--be-bg-btn);
+	color: var(--be-white);
+	font-size: 1.5rem;
+	margin: 0 5px;
+	padding: 8px 15px;
+	border-radius: 5px;
+}
+
+.btn-continue-quit:hover {
+	background: var(--be-bg-red);
+}
+
+.clear-vh {}
+
+.bet-author-bio {
+	width: 100%;
+	clear: both;
+	padding: 20px 0;
+}
+
+#bet-posts>ul {
+	list-style: none outside none;
+	margin: 0;
+}
+
+#bet-posts li {
+	display: table;
+	list-style: none outside none;
+	margin: 0 5px 0 5px;
+	padding: 0;
+	float: left;
+}
+
+#bet-posts li a {
+	background: var(--be-bg-tou);
+	border-style: solid;
+	border-width: 1px;
+	box-shadow: 0 0 10px #eee inset;
+	color: #858585;
+	display: table;
+	padding: 8px 20px;
+	text-decoration: none;
+	margin-bottom: -1px;
+}
+
+#bet-posts li a.active {
+	background: #fff;
+	border-bottom: 1px solid #FFF;
+	box-shadow: none;
+}
+
+.bet-posts-tab li {
+	line-height: 130% !important;
+}
+
+#bet-posts .bet-fixed-td {
+	width: 8%;
+	text-align: center;
+}
+
+@media screen and (max-width:640px) {
+	#bet-posts .bet-fixed-td {
+		width: 14%;
+	}
+}
+
+.bet-fixed-td a {
+	display: block;
+	color: #888!important;
+}
+
+.bet-fixed-td a:hover {
+	color: #000!important;
+}
+
+.bet-title {
+	text-align: left!important;
+}
+
+#bet-post-table-container {
+	border-top: 1px solid #e7e7e7;
+	clear: both;
+	padding-top: 20px;
+}
+
+#bet-posts .bet-nav {
+	clear: both;
+	display: block;
+}
+
+.bet-nav-link {
+	background: #4d8cb8;
+	color: #fff !important;
+	font-size: 14px;
+	font-size: 1.4rem;
+	line-height: 30px;
+	padding: 0 10px;
+	border-radius: 2px;
+	border: 1px solid #4d8cb8;
+}
+
+.bet-nav-link:hover {
+	color: #fff;
+	opacity: .8;
+}
+
+.bet-nav-link .bet-nav-link-left {
+	float: left;
+}
+
+.bet-nav-link .bet-nav-link-right {
+	float: right;
+}
+
+#sc_select {
+	border: 1px solid #e7e7e7;
+}
+
+#bet-post-table-container table {
+	width: 100%;
+}
+
+#wp-bet-post-content-wrap #sc_select {
+	display: none;
+}
+
+.single-footer .views,.single-footer .edit-link,.single-footer #fontsize,.single-footer .print {
+	display: none!important;
+}
+
+.tou-login-tip {
+	color: var(--be-body);
+	text-align: center;
+	font-weight: 700;
+	margin: 20px auto;
+}
+
+.toubtn {
+	background: var(--be-bg-white);
+	text-align: center;
+	width: 150px;
+	cursor: pointer;
+	margin: 20px auto;
+	padding: 7px 0;
+	border-radius: 5px;
+	box-shadow: 0 0 0 1px var(--be-shadow);
+}
+
+.toubtn:hover {
+	background: var(--be-bg-btn);
+	color: var(--be-white);
+	-webkit-transition: all 0.2s ease-in 0s;
+	transition: all 0.2s ease-in 0s;
+}
+
+.bet-tags input {
+	background: #fff;
+}
+
+.bet-new-post .wp-core-ui .button {
+	min-height: 0 !important;
+	line-height: 2 !important;
+}
+
+.info-type {
+	background: var(--be-bg-tou);
+	font-size: 16px;
+	font-size: 1.6rem;
+	clear: both;
+	margin: 10px 0;
+	padding: 5px 10px;
+	border-radius: 5px;
+	border: none;
+}
+
+#bet-info-c {
+	clear: both;
+	margin: 10px 0;
+	padding: 7px 10px;
+	border-radius: 2px;
+	border: 1px solid #ff0000;
+}
+
+.info-submit label {
+	float: left;
+	width: 190px;
+	padding: 15px 0;
+}
+
+.info-type {
+	width: 100% !important;
+}
+
+.p-info {
+	text-indent: 0 !important;
+	margin: 0 !important;
+}
+
+.info-submit .text-input {
+	min-width: 280px;
+	padding: 5px 10px;
+	resize: vertical;
+	border-radius: 2px;
+	-webkit-appearance: none;
+	border: none;
+	box-shadow: 0 0 0 1px var(--be-shadow);
+}
+
+.tou-cat-hide {
+	display: none;
+}
+
+.p-info .be-star {
+	display: inline-block;
+	color: var(--be-red) !important;
+	font-size: 12px !important;
+	font-weight: normal;
+	padding-left: 3px;
+	vertical-align: 50%;
+	transform: scale(0.8);
+	-webkit-transform: scale(0.8);
+}
+
+.bet-tags {
+	float: left;
+	width: 100%;
+	margin: 10px 0 0 0;
+}
+
+.tou-cat .nice-select {
+	margin: 5px 0 0 0;
+}
+
+.p-info .nice-select {
+	clear: none;
+	margin: 5px 0;
+}
+
+@media screen and (min-width:1025px) {
+	.toug-content-area {
+	}
+
+	.be-tou-editor {
+		float: left;
+		width: 82.4%;
+	}
+
+	.be-tou-inf {
+		float: right;
+		width: 16.6%;
+		margin: 38px 0 0 0;
+	}
+
+	.be-tou-inf .tou-cat {
+		padding: 0 0 0 10px;
+		border-radius: 5px;
+	}
+
+	#bet-featured-image {
+		float: left;
+		width: 100%;
+		margin: 0;
+		padding: 10px 0 0 10px;
+		border-radius: 5px;
+	}
+
+	.be-tou-inf .tou-cat.bet-category {
+		padding: 0 0 0 10px;
+	}
+
+	.be-tou-inf #bet-tags {
+		background: var(--be-bg-tou);
+		border: none;
+	}
+
+	.bet-tougao .be-tou-inf .bet-btn {
+		float: right;
+		margin: 15px 0 20px 0;
+	}
+
+	.be-tou-inf #bet-featured-image a {
+		margin: 0;
+	}
+
+	.be-tou-inf .nice-select {
+		width: 100%;
+	}
+
+	.info-type {
+		width: 35% !important;
+	}
+}
+
+@media screen and (max-width:1025px) {
+	.info-submit label {
+		padding: 0;
+	}
+}
+
+@media screen and (max-width:782px) {
+	.bet-tougao .wp-core-ui .button {
+		line-height: 2;
+		min-height: 30px;
+	}
+}
+
+.night #bet-new-post .mce-container {
+	background: #262626 !important;
+}
+
+.night #bet-new-post .quicktags-toolbar,.night #bet-new-post .mce-container,.night #bet-new-post .mce-container *,.night #bet-new-post .mce-widget,.night #bet-new-post .mce-widget *,.night #bet-new-post .mce-reset,.night #bet-new-post .wp-switch-editor,.night #bet-new-post .tmce-active .switch-tmce,.night #bet-new-post .wp-core-ui .button {
+	background: #262626 !important;
+}
+
+.night .wp-core-ui .button,.night .wp-core-ui .button-secondary {
+	color: #808080;
+	border-color: #262626 !important;
+}
+
+.night #bet-new-post .wp-editor-container {
+	border: 1px solid #262626;
+}
+
+.night .mce-toolbar .mce-btn-group .mce-btn.mce-listbox {
+	border: 1px solid #323232;
+}
+
+.night .wp-switch-editor {
+	border: 1px solid #262626;
+}
+
+.night .html-active .switch-html,.night .tmce-active .switch-tmce {
+	border-bottom-color: #262626;
+}
+
+.night #bet-new-post .wp-editor-area {
+	background: #262626;
+}
+
+.night .quicktags-toolbar {
+	border-bottom: 1px solid #262626;
+}
