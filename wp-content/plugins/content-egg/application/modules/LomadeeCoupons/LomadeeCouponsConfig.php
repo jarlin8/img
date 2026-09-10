@@ -11,14 +11,14 @@ use ContentEgg\application\components\AffiliateParserModuleConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class LomadeeCouponsConfig extends AffiliateParserModuleConfig
 {
 
 	public function options()
 	{
-		$optiosn = array(
+		$options = array(
 			'sourceId'                => array(
 				'title'       => 'Source ID <span class="cegg_required">*</span>',
 				'description' => __('You can find your Source ID <a target="_blank" href="https://www.lomadee.com/dashboard/#/toolkit">here</a>.', 'content-egg'),
@@ -35,7 +35,7 @@ class LomadeeCouponsConfig extends AffiliateParserModuleConfig
 			),
 			'entries_per_page'        => array(
 				'title'       => __('Results', 'content-egg'),
-				'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
+				'description' => __('Specify the number of results to display for a single search query.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 10,
 				'validator'   => array(
@@ -46,7 +46,7 @@ class LomadeeCouponsConfig extends AffiliateParserModuleConfig
 			),
 			'entries_per_page_update' => array(
 				'title'       => __('Results for updates', 'content-egg'),
-				'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg'),
+				'description' => __('Specify the number of results for automatic updates and autoblogging.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 6,
 				'validator'   => array(
@@ -73,6 +73,7 @@ class LomadeeCouponsConfig extends AffiliateParserModuleConfig
 			),
 		);
 
-		return array_merge(parent::options(), $optiosn);
+		$options = array_merge(parent::options(), $options);
+		return self::moveRequiredUp($options);
 	}
 }

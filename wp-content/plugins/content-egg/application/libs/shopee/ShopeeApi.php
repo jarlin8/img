@@ -11,7 +11,7 @@ use ContentEgg\application\libs\RestClient;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
@@ -74,7 +74,7 @@ class ShopeeApi extends RestClient
         if (isset($data['errors'][0]['message']))
         {
             $mess = $data['errors'][0]['message'];
-            throw new \Exception($mess);
+            throw new \Exception(esc_html($mess));
         }
 
         return parent::myErrorHandler($response);

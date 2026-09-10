@@ -11,7 +11,7 @@ use ContentEgg\application\libs\RestClient;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  * @link: https://kb.optimisemedia.com/?article=omg-network-api-affiliate
  */
@@ -59,7 +59,7 @@ class OptimisemediaApi extends RestClient
 		return $this->_decodeResponse($response);
 	}
 
-	public function restGet($path, array $query = null)
+	public function restGet($path, ?array $query = null)
 	{
 		// API authentication
 		$query['Key'] = $this->api_key;

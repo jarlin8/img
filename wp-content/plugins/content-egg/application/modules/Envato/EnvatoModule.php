@@ -17,7 +17,7 @@ use ContentEgg\application\components\LinkHandler;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class EnvatoModule extends AffiliateParserModule
 {
@@ -123,6 +123,7 @@ class EnvatoModule extends AffiliateParserModule
 			$content->orig_url     = $r['url'];
 			$content->url          = $this->createAffUrl($content->orig_url);
 			$content->rating       = TextHelper::ratingPrepare($r['rating']['rating']);
+			$content->ratingDecimal       = TextHelper::ratingPrepare($r['rating']['rating']);
 			$content->reviewsCount = (int) $r['rating']['count'];
 			if (!empty($r['previews']['landscape_preview']))
 			{
@@ -231,5 +232,12 @@ class EnvatoModule extends AffiliateParserModule
 		}
 
 		return $url;
+	}
+
+	public static function getSortByNewestParamMap()
+	{
+		return [
+			'date' => 'this month'
+		];
 	}
 }

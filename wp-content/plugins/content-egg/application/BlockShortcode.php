@@ -6,21 +6,20 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ModuleManager;
 use ContentEgg\application\components\BlockTemplateManager;
-use ContentEgg\application\helpers\TextHelper;
-use ContentEgg\application\helpers\TemplateHelper;
+use ContentEgg\application\components\ShortcodeAtts;
 
 use function ContentEgg\prn;
+use function ContentEgg\prnx;;
 
 /**
  * BlockShortcode class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
-class BlockShortcode
+class BlockShortcode extends EggShortcode
 {
-
     const shortcode = 'content-egg-block';
 
     private static $instance = null;
@@ -34,105 +33,31 @@ class BlockShortcode
 
     private function __construct()
     {
-        \add_shortcode(self::shortcode, array($this, 'viewData'));
+        \add_shortcode(self::shortcode, array($this, 'viewDataShortcode'));
     }
 
-    private function prepareAttr($atts)
+    public function viewDataShortcode($atts, $content = '')
     {
-        $allowed_atts = array(
-            'modules' => null,
-            'template' => '',
-            'post_id' => 0,
-            'limit' => 0,
-            'offset' => 0,
-            'next' => 0,
-            'title' => '',
-            'cols' => 0,
-            'sort' => '',
-            'order' => '',
-            'currency' => '',
-            'groups' => '',
-            'group' => '',
-            'products' => '',
-            'product' => '',
-            'hide' => '',
-            'show' => '',
-            'btn_text' => '',
-            'btn_class' => '',
-            'locale' => '',
-            'ean' => '',
-            'add_query_arg' => '',
-            'remove_duplicates_by' => '',
+        return $this->viewData($atts, $content);
+    }
+
+    protected function renderAsyncPlaceholder($post_id, array $a, $content = '')
+    {
+        $html = $this->buildAsyncPlaceholderHtml(
+            'cegg-block-',
+            'cegg-block',
+            'block',
+            $post_id,
+            $a,
+            $content
         );
 
-        $allowed_atts = \apply_filters('cegg_block_shortcode_atts', $allowed_atts);
-        $a = \shortcode_atts($allowed_atts, $atts);
-
-        $a['next'] = (int) $a['next'];
-        $a['limit'] = (int) $a['limit'];
-        $a['offset'] = (int) $a['offset'];
-        $a['cols'] = (int) $a['cols'];
-        $a['title'] = \sanitize_text_field($a['title']);
-        $a['currency'] = strtoupper(TextHelper::clear($a['currency']));
-        $a['groups'] = \sanitize_text_field($a['groups']);
-        $a['group'] = \sanitize_text_field($a['group']);
-        $a['hide'] = TemplateHelper::hideParamPrepare($a['hide']);
-        $a['show'] = strtolower(sanitize_text_field($a['show']));
-        $a['btn_text'] = \wp_strip_all_tags($a['btn_text'], true);
-        $a['btn_class'] = \sanitize_text_field($a['btn_class']);
-        $a['add_query_arg'] = \sanitize_text_field(\wp_strip_all_tags($a['add_query_arg'], true));
-        $a['locale'] = TextHelper::clear($a['locale']);
-        $a['ean'] = TemplateHelper::eanParamPrepare($a['ean']);
-        $a['remove_duplicates_by'] = \sanitize_text_field(\wp_strip_all_tags($a['remove_duplicates_by'], true));
-
-        if ($a['group'] && !$a['groups'])
-            $a['groups'] = $a['group'];
-        if ($a['groups'])
-            $a['groups'] = TextHelper::getArrayFromCommaList($a['groups']);
-        if ($a['product'] && !$a['products'])
-            $a['products'] = $a['product'];
-        if ($a['products'])
-            $a['products'] = TextHelper::getArrayFromCommaList($a['products']);
-        if ($a['add_query_arg'])
-            parse_str($a['add_query_arg'], $a['add_query_arg']);
-
-        $allowed_sort = array('price', 'discount', 'reverse', 'total_price');
-        $allowed_order = array('asc', 'desc');
-        $a['sort'] = strtolower($a['sort']);
-        $a['order'] = strtolower($a['order']);
-        if (!in_array($a['sort'], $allowed_sort))
-            $a['sort'] = '';
-        if (!in_array($a['order'], $allowed_order))
-            $a['order'] = '';
-        if ($a['sort'] == 'discount' && !$a['order'])
-            $a['order'] = 'desc';
-
-        if ($a['modules'])
-        {
-            $modules = explode(',', $a['modules']);
-            $module_ids = array();
-            foreach ($modules as $key => $module_id)
-            {
-                $module_id = trim($module_id);
-                if (ModuleManager::getInstance()->isModuleActive($module_id))
-                    $module_ids[] = $module_id;
-            }
-            $a['modules'] = $module_ids;
-        }
-        else
-            $a['modules'] = array();
-
-        if ($a['template'])
-        {
-            $a['template'] = BlockTemplateManager::getInstance()->prepareShortcodeTempate($a['template']);
-        }
-        $a['post_id'] = (int) $a['post_id'];
-        return $a;
+        return $this->getAsyncInlineCssOnce() . $html;
     }
 
-    public function viewData($atts, $content = "")
+    public function viewData($atts, $content = '', $only_return_data = false)
     {
-        $a = $this->prepareAttr($atts);
+        $a = ShortcodeAtts::prepare($atts);
 
         if (empty($a['post_id']))
         {
@@ -145,39 +70,74 @@ class BlockShortcode
         else
             $post_id = $a['post_id'];
 
-        $tpl_manager = BlockTemplateManager::getInstance();
-        if (empty($a['template']) || !$tpl_manager->isTemplateExists($a['template']))
-            return;
-
-        if (!$template_file = $tpl_manager->getViewPath($a['template']))
+        if (empty($a['template']))
             return '';
 
-        // Get supported modules for this tpl
-        $headers = \get_file_data($template_file, array('module_ids' => 'Modules', 'module_types' => 'Module Types', 'shortcoded' => 'Shortcoded'));
-        $supported_module_ids = array();
-        if ($headers && !empty($headers['module_ids']))
+        if ($a['template'] != 'block_greenshift')
         {
-            $supported_module_ids = explode(',', $headers['module_ids']);
-            $supported_module_ids = array_map('trim', $supported_module_ids);
+            $tpl_manager = BlockTemplateManager::getInstance();
+
+            if (!$tpl_manager->isTemplateExists($a['template']))
+                return '';
+
+            $template_file = $tpl_manager->getViewPath($a['template']);
+            if (!$template_file)
+                return '';
+
+            // Get supported modules for this tpl
+            $headers = \get_file_data($template_file, array(
+                'module_ids'   => 'Modules',
+                'module_types' => 'Module Types',
+                'shortcoded'   => 'Shortcoded'
+            ));
+
+            $supported_module_ids = array();
+
+            if ($headers && !empty($headers['module_ids']))
+            {
+                $supported_module_ids = explode(',', $headers['module_ids']);
+                $supported_module_ids = array_map('trim', $supported_module_ids);
+            }
+            elseif ($headers && !empty($headers['module_types']))
+            {
+                $module_types = explode(',', $headers['module_types']);
+                $module_types = array_map('trim', $module_types);
+                $supported_module_ids = ModuleManager::getInstance()->getParserModuleIdsByTypes($module_types, true);
+            }
+            elseif (!$headers || empty($headers['module_types']))
+                $module_types = 'PRODUCT';
+
+            if ($headers && !empty($headers['shortcoded']))
+                $a['shortcoded'] = filter_var($headers['shortcoded'], FILTER_VALIDATE_BOOLEAN);
         }
-        elseif ($headers && !empty($headers['module_types']))
+        else
         {
-            $module_types = explode(',', $headers['module_types']);
-            $module_types = array_map('trim', $module_types);
-            $supported_module_ids = ModuleManager::getInstance()->getParserModuleIdsByTypes($module_types, true);
+            $a['shortcoded'] = true;
+            $supported_module_ids = ModuleManager::getInstance()->getParserModuleIdsByTypes('PRODUCT', true);
         }
 
-        if ($headers && !empty($headers['shortcoded']))
-            $a['shortcoded'] = filter_var($headers['shortcoded'], FILTER_VALIDATE_BOOLEAN);
+        if (!$supported_module_ids)
+            return '';
+
+        /**
+         * Async mode (frontend only)
+         * - Do NOT use for editor preview or internal data-only calls.
+         */
+        if (!$this->isEditorRenderRequest() && !$only_return_data && !empty($a['async']))
+        {
+            return $this->renderAsyncPlaceholder($post_id, $a, $content);
+        }
 
         if ($a['modules'])
             $module_ids = $a['modules'];
         else
             $module_ids = ModuleManager::getInstance()->getParserModulesIdList(true);
 
-        if ($supported_module_ids)
-            $module_ids = array_intersect($module_ids, $supported_module_ids);
+        $module_ids = array_intersect($module_ids, $supported_module_ids);
 
-        return ModuleViewer::getInstance()->viewBlockData($module_ids, $post_id, $a, $content);
+        if ($a['exclude_modules'])
+            $module_ids = array_diff($module_ids, $a['exclude_modules']);
+
+        return ModuleViewer::getInstance()->viewBlockData($module_ids, $post_id, $a, $content, $only_return_data);
     }
 }

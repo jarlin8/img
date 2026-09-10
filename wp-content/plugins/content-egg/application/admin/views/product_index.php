@@ -1,15 +1,32 @@
 <?php defined('\ABSPATH') || exit; ?>
-<div id="cegg_waiting_products" style="display:none; text-align: center;"> 
+<div id="cegg_waiting_products" style="display:none; text-align: center;">
     <h2><?php esc_html_e('Scanning... Please wait...', 'content-egg'); ?></h2>
     <p>
-        <img src="<?php echo esc_url_raw(\ContentEgg\PLUGIN_RES); ?>/img/egg_waiting.gif"; />
+        <img src="<?php echo esc_url_raw(\ContentEgg\PLUGIN_RES); ?>/img/egg_waiting.gif" ; />
     </p>
 </div>
 <script type="text/javascript">
+    "use strict";
     var $j = jQuery.noConflict();
-    $j(document).ready(function () {
-        $j('#btn_scan_products').click(function () {
-            $j.blockUI({message: $j('#cegg_waiting_products')});
+    $j(document).ready(function() {
+        $j(document).on('click', '#btn_scan_products', function() {
+            $j.blockUI({
+                message: $j('#cegg_waiting_products')
+            });
+        });
+
+        // Start a new search or filter at page 1. Core does this in
+        // wp-admin/js/common.js, but only when a bulk-action dropdown is
+        // present -- this table has none, so its reset never fired here and the
+        // page number you were on got re-submitted with the new query.
+        // Comparing against the initial value keeps a hand-typed page working.
+        var $pageInput = $j('input.current-page');
+        var initialPage = $pageInput.val();
+
+        $j('#cegg-products-table').on('submit', function() {
+            if ($pageInput.val() === initialPage) {
+                $pageInput.val('1');
+            }
         });
     });
 </script>
@@ -18,24 +35,54 @@
 $message = '';
 ?>
 
-<?php if (\ContentEgg\application\Plugin::isFree() || \ContentEgg\application\Plugin::isInactiveEnvato()): ?>
+<?php if (\ContentEgg\application\Plugin::isInactiveEnvato()) : ?>
     <div class="cegg-maincol">
     <?php endif; ?>
 
     <div class="wrap">
-        <h1 class="wp-heading-inline">
-            <?php esc_html_e('Products', 'content-egg'); ?>
-        </h1>
-        <a id="btn_scan_products" href="<?php echo esc_url_raw(\get_admin_url(\get_current_blog_id(), 'admin.php?page=content-egg-product&action=scan')); ?>" class="page-title-action"><?php  esc_html_e('Scan Products', 'content-egg'); ?></a>
-        &nbsp;<small><?php echo esc_html(sprintf(__('Last scanned: %s', 'content-egg'), $last_scaned_str)); ?></small>
 
+        <div class="cegg5-container">
+            <h1 class="wp-heading-inline h3">
+                <?php esc_html_e('Products', 'content-egg'); ?>
+            </h1>
+            <a
+                id="btn_scan_products"
+                href="<?php echo esc_url(admin_url('admin.php?page=content-egg-product&action=scan')); ?>"
+                class="page-title-action">
+                <?php esc_html_e('Scan Products', 'content-egg'); ?>
+            </a>
+            <?php if (current_user_can('manage_options')) : ?>
+                <a
+                    href="<?php echo esc_url(admin_url('admin.php?page=content-egg-product&action=bridge-backfill')); ?>"
+                    title="<?php echo esc_attr__('Create missing Bridge Page links for product pages you imported earlier', 'content-egg'); ?>"
+                    class="page-title-action">
+                    <?php esc_html_e('Bridge Mappings', 'content-egg'); ?>
+                </a>
+            <?php endif; ?>
+
+            <p class="description">
+                <?php
+                /* translators: %s: date/time of last scan */
+                printf(
+                    esc_html__('Last scanned: %s', 'content-egg'),
+                    esc_html($last_scaned_str)
+                );
+                ?>
+            </p>
+
+            <p>
+                <?php esc_html_e(
+                    'This page displays all Content Egg products you’ve added across your posts.',
+                    'content-egg'
+                ); ?>
+            </p>
+        </div>
         <?php echo wp_kses_post($message); ?>
 
-
         <form id="cegg-products-table" method="GET">
-            <input type="hidden" name="page" value="content-egg-product"/>
-            <?php if (isset($_REQUEST['stock_status'])): ?>
-                <input type="hidden" name="stock_status" value="<?php echo \esc_attr(\sanitize_text_field(wp_unslash($_REQUEST['stock_status']))); ?>"/>
+            <input type="hidden" name="page" value="content-egg-product" />
+            <?php if (isset($_REQUEST['stock_status'])) : ?>
+                <input type="hidden" name="stock_status" value="<?php echo \esc_attr(\sanitize_text_field(wp_unslash($_REQUEST['stock_status']))); ?>" />
             <?php endif; ?>
             <?php $table->views(); ?>
             <?php $table->search_box(__('Search products', 'content-egg'), 'key'); ?>
@@ -43,7 +90,19 @@ $message = '';
         </form>
     </div>
 
-    <?php if (\ContentEgg\application\Plugin::isFree() || \ContentEgg\application\Plugin::isInactiveEnvato()): ?>
-    </div>    
+    <?php if (\ContentEgg\application\Plugin::isInactiveEnvato()) : ?>
+    </div>
     <?php include('_promo_box.php'); ?>
-<?php endif; ?>        
+<?php endif; ?>
+
+<style>
+    table.wp-list-table .column-clicks_30d {
+        text-align: left !important;
+        width: 8ch;
+    }
+
+    table.wp-list-table .column-clicks_total {
+        text-align: left !important;
+        width: 8ch;
+    }
+</style>

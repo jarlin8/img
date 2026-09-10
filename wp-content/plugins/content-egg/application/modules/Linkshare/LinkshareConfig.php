@@ -5,23 +5,23 @@ namespace ContentEgg\application\modules\Linkshare;
 defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\AffiliateParserModuleConfig;
+use ContentEgg\application\Plugin;
 
 /**
  * LinkshareConfig class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class LinkshareConfig extends AffiliateParserModuleConfig
 {
-
 	public function options()
 	{
-		$optiosn = array(
-			'token'                   => array(
-				'title'       => 'Web Services Token <span class="cegg_required">*</span>',
-				'description' => __('Linkshare access key. Go to your account in Linkshare and follow "LINKS -> Web Service".', 'content-egg'),
+		$options = array(
+			'sid'                   => array(
+				'title'       => 'SID <span class="cegg_required">*</span>',
+				'description' => sprintf(__('Enter your SID (your account ID) provided by Rakuten. <a target="_blank" href="%s">Learn more</a>.', 'content-egg'), 'https://ce-docs.keywordrush.com/modules/affiliate/linkshare'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
@@ -29,14 +29,48 @@ class LinkshareConfig extends AffiliateParserModuleConfig
 					array(
 						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'required'),
 						'when'    => 'is_active',
-						'message' => __('The field "Web Services Token" can not be empty.', 'content-egg'),
+						'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'SID'),
 					),
 				),
+			),
+			'client_id' 	  => array(
+				'title'       => 'Client ID <span class="cegg_required">*</span>',
+				'description' => sprintf(__('Generate your Client ID and Client Secret by logging into your Rakuten Developers account. <a target="_blank" href="%s">Learn more</a>.', 'content-egg'), 'https://ce-docs.keywordrush.com/modules/affiliate/linkshare'),
+				'callback'    => array($this, 'render_input'),
+				'default'     => '',
+				'validator'   => array(
+					'trim',
+					array(
+						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'required'),
+						'when'    => 'is_active',
+						'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'Client ID'),
+					),
+				),
+			),
+			'client_secret' 	=> array(
+				'title'       => 'Client Secret <span class="cegg_required">*</span>',
+				'callback'    => array($this, 'render_password'),
+				'default'     => '',
+				'validator'   => array(
+					'trim',
+					array(
+						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'required'),
+						'when'    => 'is_active',
+						'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'Client Secret'),
+					),
+				),
+			),
+
+			'token'                   => array(
+				'title'       => 'Web Services Token' . ' ' . '(deprecated)',
+				'description' => __('Linkshare access key. Go to your account in Linkshare and follow "LINKS -> Web Service".', 'content-egg'),
+				'callback'    => array($this, 'render_password'),
+				'default'     => '',
 				'section'     => 'default',
 			),
 			'entries_per_page'        => array(
 				'title'       => __('Results', 'content-egg'),
-				'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
+				'description' => __('Specify the number of results to display for a single search query.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 10,
 				'validator'   => array(
@@ -46,8 +80,8 @@ class LinkshareConfig extends AffiliateParserModuleConfig
 				'section'     => 'default',
 			),
 			'entries_per_page_update' => array(
-				'title'       => __('Results for updates and autoblogging', 'content-egg'),
-				'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg'),
+				'title'       => __('Results for Updates and Autoblogging', 'content-egg'),
+				'description' => __('Specify the number of results for automatic updates and autoblogging.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 6,
 				'validator'   => array(
@@ -58,7 +92,20 @@ class LinkshareConfig extends AffiliateParserModuleConfig
 			),
 			'mid'                     => array(
 				'title'       => 'Advertiser ID',
-				'description' => __('Limit search by Advertiser ID. Login in account LinkShare and follow: PROGRAMS -> My Advertisers -> Choose advertiser -> Advertiser Info.', 'content-egg'),
+				'description' => __('Limit search results by Advertiser ID. Only results from the specified advertiser will be shown.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
+				'default'     => '',
+				'validator'   => array(
+					'trim',
+				),
+				'section'     => 'default',
+			),
+			'u1'                      => array(
+				'title'       => __('Sub ID', 'content-egg'),
+				'description' => sprintf(
+					__('Optional Rakuten u1 tracking ID used to track conversions by page, campaign, or channel. Enter a fixed value or use dynamic placeholders (e.g., {{post_id}}, {{post_slug}}, {{item_sku}}) to set it per link automatically. Max 72 characters. <a target="_blank" href="%s">Placeholder guide</a>.', 'content-egg'),
+					'https://ce-docs.keywordrush.com/features/subid-tracking'
+				),
 				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
@@ -71,9 +118,9 @@ class LinkshareConfig extends AffiliateParserModuleConfig
 				'description'      => '',
 				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
-					'AND'   => __('Search across all words - AND', 'content-egg'),
-					'OR'    => __('Any of word - OR', 'content-egg'),
-					'EXACT' => __('Exactly compliance - EXACT', 'content-egg'),
+					'AND'   => __('Match all words (AND)', 'content-egg'),
+					'OR'    => __('Match any word (OR)', 'content-egg'),
+					'EXACT' => __('Exact match only (EXACT)', 'content-egg'),
 				),
 				'default'          => 'AND',
 				'section'          => 'default',
@@ -128,7 +175,7 @@ class LinkshareConfig extends AffiliateParserModuleConfig
 			),
 			'description_size'        => array(
 				'title'       => __('Trim description', 'content-egg'),
-				'description' => __('Description size in characters (0 - do not cut)', 'content-egg'),
+				'description' => __('Maximum description length in characters. Set to 0 to disable trimming.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => '300',
 				'validator'   => array(
@@ -137,8 +184,33 @@ class LinkshareConfig extends AffiliateParserModuleConfig
 				),
 				'section'     => 'default',
 			),
+			'stock_status' => array(
+				'title'            => __('Stock Status', 'content-egg'),
+				'description'      => __('Select the stock status to use when a product is not found.', 'content-egg'),
+				'callback'         => array($this, 'render_dropdown'),
+				'dropdown_options' => array(
+					'unknown'      => __('Unknown', 'content-egg'),
+					'out_of_stock' => __('Out of Stock', 'content-egg'),
+				),
+				'default'          => 'unknown',
+			),
+
 		);
 
-		return array_merge(parent::options(), $optiosn);
+		$parent                             = parent::options();
+		$parent['ttl_items']['default']     = 0;
+		$parent['ttl_items']['description'] = __('Time interval in seconds for updating prices. Set to 0 to disable updates.', 'content-egg')
+			. ' ' . __('This is an experimental feature of the module.', 'content-egg');
+
+		$options = array_merge($parent, $options);
+		return self::moveRequiredUp($options);
+	}
+
+	public function deleteToken()
+	{
+		$id = 'Linkshare';
+		$transient_name = Plugin::slug() . '-' . $id . '-access_token';
+		\delete_transient($transient_name);
+		return true;
 	}
 }

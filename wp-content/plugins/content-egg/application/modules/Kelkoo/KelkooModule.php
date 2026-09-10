@@ -18,13 +18,17 @@ use ContentEgg\application\Plugin;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class KelkooModule extends AffiliateParserModule
 {
+    public function isGtinSearchAllowed()
+    {
+        return true;
+    }
+
 
     private $api_client = null;
-    private $merchants = array();
 
     public function info()
     {
@@ -53,7 +57,14 @@ class KelkooModule extends AffiliateParserModule
         }
 
         echo '<div class="notice notice-warning is-dismissible">';
-        echo '<p>' . sprintf(__('Kelkoo launched a new tool for API that will replace the current eCS integration. Please visit <a href="%s">Kelkoo module settings</a> to get started with the new API.', 'content-egg'), \get_admin_url(\get_current_blog_id(), 'admin.php?page=content-egg-modules--Kelkoo')) . '</p>';
+        echo '<p>' . wp_kses(
+            sprintf(
+                /* translators: %s: URL to Kelkoo module settings page */
+                __('Kelkoo launched a new tool for API that will replace the current eCS integration. Please visit <a href="%s">Kelkoo module settings</a> to get started with the new API.', 'content-egg'),
+                esc_url(get_admin_url(get_current_blog_id(), 'admin.php?page=content-egg-modules--Kelkoo'))
+            ),
+            array('a' => array('href' => array()))
+        ) . '</p>';
         echo '</div>';
     }
 
@@ -152,6 +163,13 @@ class KelkooModule extends AffiliateParserModule
     private function prepareResult(array $r)
     {
         $content = new ContentProduct;
+
+        $fields = array('description', 'price', 'priceWithoutRebate', 'availabilityStatus');
+        foreach ($fields as $field)
+        {
+            if (!isset($r[$field]))
+                $r[$field] = '';
+        }
 
         $content->unique_id = $r['offerId'];
         $content->title = $r['title'];
@@ -285,5 +303,13 @@ class KelkooModule extends AffiliateParserModule
     public function renderUpdatePanel()
     {
         $this->render('update_panel', array('module_id' => $this->getId()));
+    }
+
+    public static function getPriceParamMap()
+    {
+        return [
+            'min' => 'price_min',
+            'max' => 'price_max',
+        ];
     }
 }

@@ -15,11 +15,10 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class DataRestController extends \WP_REST_Controller
 {
-
     protected $namespace = 'cegg/v1/data';
 
     const VERSION = 1;

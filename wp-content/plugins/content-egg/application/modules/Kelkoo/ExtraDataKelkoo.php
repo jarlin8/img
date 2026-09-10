@@ -11,7 +11,7 @@ use ContentEgg\application\components\ExtraData;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  */
 class ExtraDataKelkoo extends ExtraData
@@ -32,7 +32,6 @@ class ExtraDataKelkoo extends ExtraData
 	public $warranty;
 	public $greenLabel;
 	public $flag = array();
-	//public $features = array();
 	public $merchant = array();
 	public $googleProductCategory = array();
 	public $ecotax;

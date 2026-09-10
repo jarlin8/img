@@ -6,12 +6,14 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\libs\RestClient;
 
+
+
 /**
  * ImpactradiusApi class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  * @link: https://developer.impact.com/docs/apis/media-partners-product-data/versions/11/getting-started
  */
@@ -48,7 +50,7 @@ class ImpactradiusApi extends RestClient
 
     /**
      * Catalog Item Search
-     * @link https://developer.impact.com/docs/apis/media-partners-product-data/versions/11/resources/catalog-items
+     * @link https://integrations.impact.com/impact-publisher/reference/search-catalog-items
      */
     public function search($keyword, array $options = array())
     {
@@ -66,7 +68,7 @@ class ImpactradiusApi extends RestClient
         return $this->_decodeResponse($response);
     }
 
-    public function restGet($path, array $query = null)
+    public function restGet($path, ?array $query = null)
     {
         $query['IrVersion'] = self::_API_VERSION; // force API version
         $path = '/' . $this->AccountSid . $path;

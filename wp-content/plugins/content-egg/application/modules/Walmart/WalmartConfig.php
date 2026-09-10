@@ -11,14 +11,14 @@ use ContentEgg\application\components\AffiliateParserModuleConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class WalmartConfig extends AffiliateParserModuleConfig
 {
 
 	public function options()
 	{
-		$optiosn = array(
+		$options = array(
 			'publisherId'             => array(
 				'title'       => 'Impact Publisher ID <span class="cegg_required">*</span>',
 				'description' => __('Your Impact Radius Publisher ID.', 'content-egg'),
@@ -47,7 +47,7 @@ class WalmartConfig extends AffiliateParserModuleConfig
 			 */
 			'entries_per_page'        => array(
 				'title'       => __('Results', 'content-egg'),
-				'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
+				'description' => __('Specify the number of results to display for a single search query.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 8,
 				'validator'   => array(
@@ -61,8 +61,8 @@ class WalmartConfig extends AffiliateParserModuleConfig
 				),
 			),
 			'entries_per_page_update' => array(
-				'title'       => __('Results for updates and autoblogging', 'content-egg'),
-				'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg'),
+				'title'       => __('Results for Updates and Autoblogging', 'content-egg'),
+				'description' => __('Specify the number of results for automatic updates and autoblogging.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 6,
 				'validator'   => array(
@@ -83,6 +83,33 @@ class WalmartConfig extends AffiliateParserModuleConfig
 				'validator'   => array(
 					'trim',
 				),
+				'section'     => 'default',
+			),
+			'subId1' => array(
+				'title'       => __('Sub ID 1', 'content-egg'),
+				'description' => sprintf(
+					__('Optional Impact SubId1 used to track conversions by page, campaign, or channel. Enter a fixed value or use dynamic placeholders (e.g., {{post_id}}, {{post_slug}}, {{item_sku}}) to set it per link automatically. Max 255 characters. <a target="_blank" href="%s">Placeholder guide</a>.', 'content-egg'),
+					'https://ce-docs.keywordrush.com/features/subid-tracking'
+				),
+				'callback'    => array($this, 'render_input'),
+				'default'     => '',
+				'validator'   => array('trim'),
+				'section'     => 'default',
+			),
+			'subId2' => array(
+				'title'       => __('Sub ID 2', 'content-egg'),
+				'description' => __('Optional Impact SubId2. Fixed value or dynamic placeholders. Max 255 characters.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
+				'default'     => '',
+				'validator'   => array('trim'),
+				'section'     => 'default',
+			),
+			'subId3' => array(
+				'title'       => __('Sub ID 3', 'content-egg'),
+				'description' => __('Optional Impact SubId3. Fixed value or dynamic placeholders. Max 255 characters.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
+				'default'     => '',
+				'validator'   => array('trim'),
 				'section'     => 'default',
 			),
 			'categoryId'              => array(
@@ -202,6 +229,7 @@ class WalmartConfig extends AffiliateParserModuleConfig
 			),
 		);
 
-		return array_merge(parent::options(), $optiosn);
+		$options = array_merge(parent::options(), $options);
+		return self::moveRequiredUp($options);
 	}
 }

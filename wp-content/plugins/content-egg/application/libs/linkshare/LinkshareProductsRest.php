@@ -4,19 +4,18 @@ namespace ContentEgg\application\libs\linkshare;
 
 defined('\ABSPATH') || exit;
 
-use ContentEgg\application\libs\RestClient;
+use ContentEgg\application\libs\RestClient;;
 
 /**
  * LinkshareProductsRest class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
- * @link: https://rakutenlinkshare.zendesk.com/hc/en-us/articles/200973227-Product-Search-API-Overview
- * @link: https://developers.rakutenmarketing.com/console/registry/resource/_system/governance/apimgt/applicationdata/provider/LinkShare/ProductSearch/1.0/documentation/files/ProductSearch_1.0-Guide(updated).pdf
  * @link: https://developers.rakutenadvertising.com/documentation/en-US/affiliate_apis
  * @link: https://developers.rakutenadvertising.com/guides/product_search
+ * @link: https://pubhelp.rakutenadvertising.com/hc/en-us/articles/5949953174029-Product-Search-API
  *
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';

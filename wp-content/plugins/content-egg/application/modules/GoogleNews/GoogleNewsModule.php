@@ -16,7 +16,7 @@ use ContentEgg\application\admin\GeneralConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class GoogleNewsModule extends ParserModule
 {
@@ -32,6 +32,11 @@ class GoogleNewsModule extends ParserModule
 	public function getParserType()
 	{
 		return self::PARSER_TYPE_CONTENT;
+	}
+
+	public function isDeprecated()
+	{
+		return true;
 	}
 
 	public function doRequest($keyword, $query_params = array(), $is_autoupdate = false)
@@ -55,7 +60,7 @@ class GoogleNewsModule extends ParserModule
 		}
 		catch (\Exception $e)
 		{
-			throw new \Exception(strip_tags($e->getMessage()));
+			throw new \Exception(esc_html(wp_strip_all_tags($e->getMessage())));
 		}
 		if (!is_array($results))
 		{

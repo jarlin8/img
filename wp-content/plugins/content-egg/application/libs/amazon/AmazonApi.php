@@ -15,7 +15,7 @@ use function ContentEgg\prnx;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  * @link: https://webservices.amazon.com/paapi5/documentation/
  */
@@ -144,16 +144,10 @@ class AmazonApi extends RestClient
                 return;
             }
 
-            if ($error['Code'] == 'TooManyRequests')
-            {
-                $message = str_replace('Please verify the number of requests made per second to the Amazon Product Advertising API.', '', $message);
-                $message .= ' For more information please refer to https://ce-docs.keywordrush.com/modules/affiliate/amazon#api-rates';
-            }
-
             $errors[] = $error['Code'] . ': ' . $message;
         }
         $error_mess = join('; ', $errors);
 
-        throw new \Exception($error_mess, $response_code);
+        throw new \Exception(esc_html($error_mess), (int) $response_code);
     }
 }

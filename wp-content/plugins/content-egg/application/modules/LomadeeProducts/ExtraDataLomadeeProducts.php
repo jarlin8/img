@@ -11,11 +11,20 @@ use ContentEgg\application\components\ExtraData;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  */
 class ExtraDataLomadeeProducts extends ExtraData
 {
+	public $product_id;
+	public $product_mongo_id;
+	public $organizationId;
 
-	public $store = array();
+	public $createdAt;
+	public $updatedAt;
+	public $lastUpdate;
+
+	public $seller;
+	public $stock_value;
+	public $option_id;
 }

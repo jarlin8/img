@@ -9,7 +9,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class ShopeeLocales
 {
@@ -91,7 +91,7 @@ class ShopeeLocales
         if (isset($locales[$locale]))
             return $locales[$locale];
         else
-            throw new \Exception("Locale {$locale} does not exist.");
+            throw new \Exception("Locale " . esc_html($locale) . " does not exist.");
     }
 
     static public function getApiHost($locale)

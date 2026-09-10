@@ -11,7 +11,7 @@ use ContentEgg\application\components\AffiliateParserModuleConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class BestbuyConfig extends AffiliateParserModuleConfig
 {
@@ -22,7 +22,7 @@ class BestbuyConfig extends AffiliateParserModuleConfig
             'api_key' => array(
                 'title' => 'API Key <span class="cegg_required">*</span>',
                 'description' => sprintf(__('You can find your API Key <a target="_blank" href="%s">here</a>.', 'content-egg'), 'https://developer.bestbuy.com/login'),
-                'callback' => array($this, 'render_input'),
+                'callback' => array($this, 'render_password'),
                 'default' => '',
                 'validator' => array(
                     'trim',
@@ -50,7 +50,7 @@ class BestbuyConfig extends AffiliateParserModuleConfig
             ),
             'entries_per_page' => array(
                 'title' => __('Results', 'content-egg'),
-                'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
+                'description' => __('Specify the number of results to display for a single search query.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 10,
                 'validator' => array(
@@ -65,7 +65,7 @@ class BestbuyConfig extends AffiliateParserModuleConfig
             ),
             'entries_per_page_update' => array(
                 'title' => __('Results for updates', 'content-egg'),
-                'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg'),
+                'description' => __('Specify the number of results for automatic updates and autoblogging.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 6,
                 'validator' => array(

@@ -5,9 +5,11 @@ namespace ContentEgg\application\modules\Linkshare;
 defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\AffiliateParserModule;
+use ContentEgg\application\libs\linkshare\RakutenApiClient;
 use ContentEgg\application\libs\linkshare\LinkshareProductsRest;
 use ContentEgg\application\components\ContentProduct;
 use ContentEgg\application\admin\PluginAdmin;
+use ContentEgg\application\components\LinkHandler;
 use ContentEgg\application\helpers\TextHelper;
 
 /**
@@ -15,7 +17,7 @@ use ContentEgg\application\helpers\TextHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class LinkshareModule extends AffiliateParserModule
 {
@@ -25,8 +27,7 @@ class LinkshareModule extends AffiliateParserModule
     public function info()
     {
         return array(
-            'name' => 'Linkshare',
-            'description' => __('Adds products from Rakuten Linkshare. You must have approval from each program separately.', 'content-egg'),
+            'name' => 'Rakuten (Linkshare)',
         );
     }
 
@@ -42,7 +43,7 @@ class LinkshareModule extends AffiliateParserModule
 
     public function isItemsUpdateAvailable()
     {
-        return false;
+        return true;
     }
 
     public function doRequest($keyword, $query_params = array(), $is_autoupdate = false)
@@ -58,28 +59,7 @@ class LinkshareModule extends AffiliateParserModule
             $options['max'] = $this->config('entries_per_page');
         }
 
-        $invalid_characters = array(
-            '&',
-            '=',
-            '?',
-            '{',
-            '}',
-            '\\',
-            '(',
-            ')',
-            '[',
-            ']',
-            '-',
-            ';',
-            '~',
-            '|',
-            '$',
-            '!',
-            '>',
-            '*',
-            '%'
-        );
-        $query = str_replace($invalid_characters, '', $keyword);
+        $query = self::_sanitizeKeyword($keyword);
 
         if ($this->config('cat'))
         {
@@ -107,6 +87,106 @@ class LinkshareModule extends AffiliateParserModule
         }
 
         return $this->prepareResults($results['item']);
+    }
+
+    public function doRequestItems(array $items)
+    {
+        foreach ($items as $key => $item)
+        {
+            $options = array();
+            $options['max'] = 10;
+
+            if (!empty($item['extra']['mid']))
+            {
+                $options['mid'] = $item['extra']['mid'];
+            }
+
+            $keyword = $item['title'];
+            $query = self::_sanitizeKeyword($keyword);
+
+            try
+            {
+                $results = $this->getApiClient()->search($query, $options, 'AND');
+            }
+            catch (\Exception $e)
+            {
+                continue;
+            }
+
+            if (!is_array($results) || !isset($results['item']))
+            {
+                continue;
+            }
+
+            if (!isset($results['item'][0]) && isset($results['item']['mid']))
+            {
+                $results['item'] = array($results['item']);
+            }
+
+            $results = $this->prepareResults($results['item']);
+
+            $product = null;
+            foreach ($results as $i => $r)
+            {
+                if ($this->isProductsMatch($item, $r))
+                {
+                    $product = $r;
+                    break;
+                }
+            }
+            if (!$product)
+            {
+                if ($this->config('stock_status') == 'out_of_stock')
+                {
+                    $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
+                }
+                else
+                {
+                    $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_UNKNOWN;
+                }
+                continue;
+            }
+            // assign new price
+            $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
+            $items[$key]['price'] = $product->price;
+            $items[$key]['url'] = $this->applySubId($product->url, $items[$key]);
+        }
+
+        return $items;
+    }
+
+    public function isProductsMatch(array $p1, ContentProduct $p2)
+    {
+        $p2 = json_decode(json_encode($p2), true);
+
+        if ($p1['url'] == $p2['url'])
+        {
+            return true;
+        }
+
+        if ($p1['domain'] && $p1['domain'] != $p2['domain'])
+        {
+            return false;
+        }
+
+        if ($p1['sku'] && $p1['sku'] == $p2['sku'])
+        {
+            return true;
+        }
+        if ($p1['ean'] && $p1['ean'] == $p2['ean'])
+        {
+            return true;
+        }
+        if ($p1['img'] && $p1['img'] == $p2['img'])
+        {
+            return true;
+        }
+        if ($p1['title'] == $p2['title'] && $p1['domain'] == $p2['domain'])
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private function prepareResults($results)
@@ -161,8 +241,18 @@ class LinkshareModule extends AffiliateParserModule
                 $content->priceOld = (float) $r['price'];
             }
 
+            if ($content->priceOld && $content->price && $content->price > $content->priceOld)
+            {
+                $old_price = $content->priceOld;
+                $content->priceOld = $content->price;
+                $content->price = $old_price;
+            }
+
+            if ($content->price == $content->priceOld)
+                $content->priceOld = 0;
+
             $content->currency = TextHelper::currencyTyping($content->currencyCode);
-            $content->url = $r['linkurl'];
+            $content->url = $this->applySubId($r['linkurl'], (array) $content);
             $content->orig_url = TextHelper::parseOriginalUrl($r['linkurl'], 'murl');
             $content->img = (!empty($r['imageurl'])) ? $r['imageurl'] : '';
             $content->merchant = ($r['merchantname']) ? $r['merchantname'] : '';
@@ -207,14 +297,83 @@ class LinkshareModule extends AffiliateParserModule
         return $data;
     }
 
+    public function viewDataPrepare($data)
+    {
+        if ($this->config('u1'))
+        {
+            foreach ($data as $key => $d)
+            {
+                $data[$key]['url'] = $this->applySubId($d['url'], $d);
+            }
+        }
+
+        return parent::viewDataPrepare($data);
+    }
+
+    /**
+     * Append the Rakuten "u1" SubID parameter to an affiliate URL.
+     *
+     * The configured value may contain {{placeholders}} which are resolved per link
+     * and sanitized to a Rakuten-safe token (max 72 characters).
+     */
+    private function applySubId($url, array $item)
+    {
+        if (!$u1 = $this->config('u1'))
+            return $url;
+
+        $u1 = LinkHandler::resolveSubId($u1, $item, 72);
+        if ($u1 === '')
+            return $url;
+
+        return LinkHandler::getUrlWithTail($url, 'u1=' . $u1);
+    }
+
     private function getApiClient()
     {
-        if ($this->api_client === null)
+        if ($this->api_client !== null)
         {
-            $this->api_client = new LinkshareProductsRest($this->config('token'));
+            return $this->api_client;
+        }
+
+        $clientId = $this->config('client_id');
+        $clientSecret = $this->config('client_secret');
+        $sid = $this->config('sid');
+        $token = $this->config('token'); // Deprecated
+
+        if ($clientId && $clientSecret && $sid)
+        {
+            $this->api_client = new RakutenApiClient($clientId, $clientSecret, $sid);
+            $this->api_client->setAccessToken($this->getAccessToken());
+        }
+        elseif ($token)
+        {
+            // Deprecated fallback
+            $this->api_client = new LinkshareProductsRest($token);
+        }
+        else
+        {
+            throw new \RuntimeException(
+                esc_html__(
+                    'Linkshare module is not configured. Please set Client ID, Client Secret and SID in module settings.',
+                    'content-egg'
+                )
+            );
         }
 
         return $this->api_client;
+    }
+
+    public function requestAccessToken()
+    {
+        $api_client = $this->getApiClient();
+        $response = $api_client->requestAccessToken();
+
+        if (!$response || empty($response['access_token']) || empty($response['expires_in']))
+        {
+            throw new \Exception('Rakuten API: Invalid Response Format.');
+        }
+
+        return array($response['access_token'], (int) $response['expires_in']);
     }
 
     public function renderResults()
@@ -225,5 +384,32 @@ class LinkshareModule extends AffiliateParserModule
     public function renderSearchResults()
     {
         PluginAdmin::render('_metabox_search_results', array('module_id' => $this->getId()));
+    }
+
+    private static function _sanitizeKeyword($keyword)
+    {
+        $invalidCharacters = [
+            '&',
+            '=',
+            '?',
+            '{',
+            '}',
+            '\\',
+            '(',
+            ')',
+            '[',
+            ']',
+            '-',
+            ';',
+            '~',
+            '|',
+            '$',
+            '!',
+            '>',
+            '*',
+            '%'
+        ];
+
+        return str_replace($invalidCharacters, '', $keyword);
     }
 }

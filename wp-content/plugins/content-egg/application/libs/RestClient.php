@@ -2,14 +2,14 @@
 
 namespace ContentEgg\application\libs;
 
-use ContentEgg\application\helpers\TextHelper;
+use ContentEgg\application\helpers\TextHelper;;
 
 /**
  * RestClient class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  * Simple Rest Client
  * @todo: PUT/DELETE Request
@@ -80,7 +80,7 @@ class RestClient
     public static function getHttpClient($opts = array())
     {
         $_opts = array(
-            'sslverify' => false,
+            'sslverify' => WpHttpClient::sslVerifyDefault(),
             'redirection' => 5,
             'timeout' => static::$timeout,
             'user-agent' => static::$useragent,
@@ -133,12 +133,11 @@ class RestClient
      * @param string $path
      * @param array $query Array of GET parameters
      */
-    public function restGet($path, array $query = null)
+    public function restGet($path, ?array $query = null)
     {
         $this->_prepareRest($path);
         $client = self::getHttpClient();
         $client->setParameterGet($query);
-
         return $this->_getResult($client->request('GET'));
     }
 
@@ -193,17 +192,21 @@ class RestClient
         return $this->_getResult($client->request('POST'));
     }
 
-    final public function get($path, array $query = null)
+    final public function get($path, ?array $query = null)
     {
         return $this->restGet($path, $query);
     }
 
     protected function _getResult($response)
     {
-        if (\is_wp_error($response))
+        if (is_wp_error($response))
         {
-            $error_mess = "HTTP request fails: " . $response->get_error_code() . " - " . $response->get_error_message() . '.';
-            throw new \Exception($error_mess);
+            $error_mess = sprintf(
+                'HTTP request fails: %s - %s.',
+                esc_html($response->get_error_code()),
+                esc_html($response->get_error_message())
+            );
+            throw new \Exception(esc_html($error_mess));
         }
 
         $this->myErrorHandler($response);
@@ -219,7 +222,7 @@ class RestClient
             $response_message = \wp_remote_retrieve_response_message($response);
             $error_mess = "HTTP request status fails: " . $response_code . " - " . $response_message . '.';
             $error_mess .= ' Server replay: ' . \wp_remote_retrieve_body($response);
-            throw new \Exception($error_mess, $response_code);
+            throw new \Exception(esc_html($error_mess), (int) $response_code);
         }
     }
 
@@ -265,6 +268,9 @@ class RestClient
 
     protected function _fixUtf8(&$text)
     {
+        if (!$text)
+            return;
+
         $regex = '/
 					(
 						(?: [\x00-\x7F]                  # single-byte sequences   0xxxxxxx

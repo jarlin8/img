@@ -6,19 +6,17 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ModuleManager;
 use ContentEgg\application\components\ContentManager;
-use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\components\FeaturedImage;
 use ContentEgg\application\helpers\TemplateHelper;
 use ContentEgg\application\admin\GeneralConfig;
-
-use function ContentEgg\prn;
+use ContentEgg\application\helpers\ProductHelper;
 
 /**
  * AutoblogModel class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class AutoblogModel extends Model
 {
@@ -234,7 +232,7 @@ class AutoblogModel extends Model
                 // module not found?
                 if (!isset($module_ids[$required_module]))
                 {
-                    throw new \Exception(sprintf(__('Required module %s will not run. The module is not configured or deleted.', 'content-egg'), $required_module));
+                    throw new \Exception(sprintf(esc_html__('Required module %s will not run. The module is not configured or deleted.', 'content-egg'), esc_html($required_module)));
                 }
 
                 unset($module_ids[$required_module]);
@@ -315,7 +313,7 @@ class AutoblogModel extends Model
             }
             elseif ($autoblog['required_modules'] && in_array($module_id, $autoblog['required_modules']))
             {
-                throw new \Exception(sprintf(__('Data was not found for required module %s.', 'content-egg'), $module_id));
+                throw new \Exception(sprintf(esc_html__('Data was not found for required module %s.', 'content-egg'), esc_html($module_id)));
             }
 
             // check min count modules
@@ -323,7 +321,7 @@ class AutoblogModel extends Model
             {
                 if (count($modules_data) + $count < $autoblog['min_modules_count'])
                 {
-                    throw new \Exception(sprintf(__('It does not reach the desired amount of data. Minimum required modules: %d.', 'content-egg'), $autoblog['min_modules_count']));
+                    throw new \Exception(sprintf(esc_html__('It does not reach the desired amount of data. Minimum required modules: %d.', 'content-egg'), (int) $autoblog['min_modules_count']));
                 }
             }
             $count--;
@@ -341,7 +339,7 @@ class AutoblogModel extends Model
             }
             if ($comments_count < (int) $autoblog['config']['min_comments_count'])
             {
-                throw new \Exception(sprintf(__('Total reviews found: %d. Minimum reviews required: %d.', 'content-egg'), $comments_count, $autoblog['config']['min_comments_count']));
+                throw new \Exception(sprintf(esc_html__('Total reviews found: %d. Minimum reviews required: %d.', 'content-egg'), (int) $comments_count, (int) $autoblog['config']['min_comments_count']));
             }
         }
 
@@ -351,13 +349,17 @@ class AutoblogModel extends Model
         // avoid EAN/ISBN duplicates
         if (GeneralConfig::getInstance()->option('sync_ean') == 'enabled')
         {
-            if (isset($autoblog['config']['avoid_duplicates']) && $autoblog['config']['avoid_duplicates'] == 'enabled' && $autoblog['post_type'] == 'product')
+            if (isset($autoblog['config']['avoid_duplicates']) && $autoblog['config']['avoid_duplicates'] === 'enabled' && $autoblog['post_type'] === 'product')
             {
-                if ($main_product['ean'] && self::isProductExistsByEan($main_product['ean']))
-                    throw new \Exception(sprintf(__('Product with EAN %s already exists.', 'content-egg'), $main_product['ean']));
+                if (! empty($main_product['ean']) && self::isProductExistsByEan($main_product['ean']))
+                {
+                    throw new \Exception(sprintf(esc_html__('Product with EAN %s already exists.', 'content-egg'), esc_html($main_product['ean'])));
+                }
 
-                if ($main_product['isbn'] && self::isProductExistsByIsbn($main_product['isbn']))
-                    throw new \Exception(sprintf(__('Product with ISBN %s already exists.', 'content-egg'), $main_product['isbn']));
+                if (! empty($main_product['isbn']) && self::isProductExistsByIsbn($main_product['isbn']))
+                {
+                    throw new \Exception(sprintf(esc_html__('Product with ISBN %s already exists.', 'content-egg'), esc_html($main_product['isbn'])));
+                }
             }
         }
 
@@ -393,14 +395,13 @@ class AutoblogModel extends Model
         else
             $slug = '';
 
-        if ((bool) $autoblog['post_status'])
-        {
-            $post_status = 'publish';
-        }
-        else
-        {
-            $post_status = 'pending';
-        }
+        // post status
+        $code = isset($autoblog['post_status'])
+            ? (int) $autoblog['post_status']
+            : 1;
+
+        $map = static::getPostStatusMap();
+        $post_status = $map[$code] ?? 'publish';
 
         // custom fields
         $meta_input = array();
@@ -482,7 +483,7 @@ class AutoblogModel extends Model
 
         if (!$post_id = \wp_insert_post($post))
         {
-            throw new \Exception(sprintf(__('Post can\'t be created. Unknown error.', 'content-egg'), $autoblog['min_modules_count']));
+            throw new \Exception(esc_html__('Post can\'t be created. Unknown error.', 'content-egg'));
         }
 
         // woocommerce product
@@ -535,144 +536,7 @@ class AutoblogModel extends Model
 
     public static function buildTemplate($template, array $modules_data, $keyword, $module_keywords = array(), $main_product = null)
     {
-        if (!$template)
-        {
-            return $template;
-        }
-
-        $template = TextHelper::spin($template);
-        if (!preg_match_all('/%[a-zA-Z0-9_\.\,\(\)]+%/', $template, $matches))
-        {
-            return $template;
-        }
-
-        $replace = array();
-
-        foreach ($matches[0] as $pattern)
-        {
-            // random
-            if (stristr($pattern, '%RANDOM'))
-            {
-                preg_match('/%RANDOM\((\d+),(\d+)\)%/', $pattern, $rmatches);
-                if ($rmatches)
-                {
-                    $replace[$pattern] = rand((int) $rmatches[1], (int) $rmatches[2]);
-                }
-                else
-                {
-                    $replace[$pattern] = rand(0, 9999999);
-                }
-                continue;
-            }
-
-            // keyword
-            if (stristr($pattern, '%KEYWORD%'))
-            {
-                $replace[$pattern] = $keyword;
-                continue;
-            }
-
-            // module keyword
-            if (stristr($pattern, '%KEYWORD.'))
-            {
-                $pattern_parts = explode('.', $pattern);
-                $module_id = rtrim($pattern_parts[1], '%');
-                $module_id = str_replace(' ', '', $module_id); // name -> id
-                if (isset($module_keywords[$module_id]))
-                {
-                    $replace[$pattern] = $module_keywords[$module_id];
-                }
-                else
-                {
-                    $replace[$pattern] = '';
-                }
-                continue;
-            }
-
-            // main product
-            if (stristr($pattern, '%PRODUCT.'))
-            {
-                if (!$main_product)
-                {
-                    $replace[$pattern] = '';
-                    continue;
-                }
-
-                $extra = false;
-                if (strstr($pattern, '.extra.'))
-                {
-                    $tpattern = str_replace('.extra.', '.', $pattern);
-                    $extra = true;
-                }
-                else
-                    $tpattern = $pattern;
-
-                $pattern_parts = explode('.', $tpattern);
-                $var_name = $pattern_parts[1];
-                $var_name = rtrim($var_name, '%');
-
-                if (!$extra && isset($main_product[$var_name]))
-                    $replace[$pattern] = $main_product[$var_name];
-                elseif ($extra && isset($main_product['extra'][$var_name]))
-                    $replace[$pattern] = $main_product['extra'][$var_name];
-                elseif ($extra && isset($main_product['extra']['data'][$var_name]))
-                    $replace[$pattern] = $main_product['extra']['data'][$var_name];
-            }
-
-            // module data
-            if (!stristr($pattern, '%PRODUCT.'))
-            {
-                $extra = false;
-                if (strstr($pattern, '.extra.'))
-                {
-                    $tpattern = str_replace('.extra.', '.', $pattern);
-                    $extra = true;
-                }
-                else
-                    $tpattern = $pattern;
-
-                $pattern_parts = explode('.', $tpattern);
-
-                if (count($pattern_parts) == 3 && is_numeric($pattern_parts[1]))
-                {
-                    $index = (int) $pattern_parts[1]; // Amazon.0.title
-                    $var_name = $pattern_parts[2];
-                }
-                elseif (count($pattern_parts) == 2)
-                {
-                    $index = 0; // Amazon.title
-                    $var_name = $pattern_parts[1];
-                }
-                else
-                {
-                    $replace[$pattern] = '';
-                    continue;
-                }
-                $module_id = ltrim($pattern_parts[0], '%');
-                $var_name = rtrim($var_name, '%');
-
-                if (array_key_exists($module_id, $modules_data) && isset($modules_data[$module_id][$index]))
-                {
-                    if (!$extra && property_exists($modules_data[$module_id][$index], $var_name))
-                        $replace[$pattern] = $modules_data[$module_id][$index]->$var_name;
-                    elseif ($extra && property_exists($modules_data[$module_id][$index]->extra, $var_name))
-                        $replace[$pattern] = $modules_data[$module_id][$index]->extra->$var_name;
-                    elseif ($extra && isset($modules_data[$module_id][$index]->extra->data[$var_name]))
-                        $replace[$pattern] = $modules_data[$module_id][$index]->extra->data[$var_name];
-                }
-            }
-
-            if (!isset($replace[$pattern]))
-                $replace[$pattern] = '';
-
-            if (!is_scalar($replace[$pattern]))
-                $replace[$pattern] = '';
-
-            if ($replace[$pattern] === null)
-                $replace[$pattern] = '';
-        }
-
-        return str_ireplace(array_keys($replace), array_values($replace), $template);
+        return ProductHelper::replacePatterns($template, $modules_data, $keyword, $module_keywords, $main_product);
     }
 
     public static function getNextKeywordId(array $keywords)
@@ -827,5 +691,25 @@ class AutoblogModel extends Model
             return true;
         else
             return false;
+    }
+
+    public static function getPostStatusOptions()
+    {
+        return [
+            1 => __('Published', 'content-egg'),
+            0 => __('Pending',   'content-egg'),
+            2 => __('Draft',     'content-egg'),
+            3 => __('Private',   'content-egg'),
+        ];
+    }
+
+    public static function getPostStatusMap()
+    {
+        return [
+            1 => 'publish',
+            0 => 'pending',
+            2 => 'draft',
+            3 => 'private',
+        ];
     }
 }

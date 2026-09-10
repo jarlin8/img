@@ -3,6 +3,8 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ModuleManager;
 use ContentEgg\application\helpers\AdminHelper;
+use ContentEgg\application\models\AutoblogModel;
+
 ?>
 <table cellspacing="2" cellpadding="5" style="width: 100%;" class="form-table">
     <tbody>
@@ -83,11 +85,9 @@ use ContentEgg\application\helpers\AdminHelper;
 
                                         <div id="sug_btn_group" class="btn-group" data-toggle="buttons-radio" style="margin-bottom: 10px;">
                                             <input id="sug_google" name="sug_radio" value="sug_google" type="radio" checked="checked"><label for="sug_google">Google</label>
+                                            <?php /*
                                             <input id="sug_amazon" name="sug_radio" value="sug_amazon" type="radio"><label for="sug_amazon">Amazon</label>
-                                            <?php if (\ContentEgg\application\admin\GeneralConfig::getInstance()->option('lang') == 'ru') : ?>
-                                                <input id="sug_yandex" name="sug_radio" value="sug_yandex" type="radio"><label for="sug_yandex"><?php esc_html_e('Yandex', 'content-egg'); ?></label>
-                                                <input id="sug_market" name="sug_radio" value="sug_market" type="radio"><label for="sug_market"><?php esc_html_e('Yandex.Market', 'content-egg'); ?></label>
-                                            <?php endif; ?>
+                                            */ ?>
                                         </div>
                                         <input type="text" id="sug_query" placeholder="<?php esc_html_e('Start enter keyword', 'content-egg'); ?>" />
                                         <select multiple="multiple" id="sug_keywords" style="width: 98%" size="23"></select>
@@ -273,17 +273,36 @@ use ContentEgg\application\helpers\AdminHelper;
             </td>
         </tr>
 
-        <tr class="form-field">
-            <th valign="top" scope="row">
-                <label for="post_status"><?php esc_html_e('Post status', 'content-egg'); ?></label>
-            </th>
-            <td>
-                <select id="post_status" name="item[post_status]">
-                    <option value="1" <?php if ($item['post_status'] == 1) echo ' selected="selected"'; ?>>Publish</option>
-                    <option value="0" <?php if ($item['post_status'] == 0) echo ' selected="selected"'; ?>>Pending</option>
-                </select>
-            </td>
-        </tr>
+        <?php
+
+        $options = AutoblogModel::getPostStatusOptions();
+
+        $current = isset($item['post_status'])
+            ? (int) $item['post_status']
+            : 1;
+
+        echo '<tr class="form-field">';
+        echo '<th scope="row"><label for="post_status">'
+            . esc_html__('Post status', 'content-egg')
+            . '</label></th>';
+        echo '<td>';
+        echo '<select id="post_status" name="item[post_status]">';
+
+        foreach ($options as $value => $label)
+        {
+            printf(
+                '<option value="%s" %s>%s</option>',
+                esc_attr($value),
+                selected($current, $value, false),
+                esc_html($label)
+            );
+        }
+
+        echo '</select>';
+
+        echo '</td>';
+        echo '</tr>';
+        ?>
 
         <tr class="form-field">
             <th valign="top" scope="row">
@@ -338,7 +357,9 @@ use ContentEgg\application\helpers\AdminHelper;
                 <?php
                 \wp_dropdown_users(array(
                     'name' => 'item[user_id]',
-                    'capability' => array('edit_posts'), 'id' => 'user_id', 'selected' => $item['user_id']
+                    'capability' => array('edit_posts'),
+                    'id' => 'user_id',
+                    'selected' => $item['user_id']
                 ));
                 ?>
                 <p class="description"><?php esc_html_e('This user will be author of posts.', 'content-egg'); ?></p>

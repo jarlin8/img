@@ -9,36 +9,17 @@ use ContentEgg\application\components\ContentProduct;
 use ContentEgg\application\admin\PluginAdmin;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\libs\avantlink\AvantlinkApi;
-use ContentEgg\application\modules\AvantlinkProducts\ExtraDataAvantlinkProducts;
+use ContentEgg\application\modules\AvantlinkProducts\ExtraDataAvantlinkProducts;;
 
 /**
  * AvantlinkProductsModule class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class AvantlinkProductsModule extends AffiliateParserModule
 {
-
-    private $merchant2domain = array(
-        'GritrSports' => 'gritrsports.com',
-        'Amazon' => 'amazon.com',
-        'Ace Link Armor' => 'acelinkarmor.com',
-        'Brownells' => 'brownells.com',
-        'GUNS.COM' => 'guns.com',
-        'Palmetto State Armory' => 'palmettostatearmory.com',
-        'GunSkins' => 'gunskins.com',
-        'Rossignol' => 'rossignol.com',
-        'Creedmoor Sports' => 'creedmoorsports.com',
-        'GritrSports' => 'gritrsports.com',
-        'Gritr Outdoors' => 'gritroutdoors.com',
-        'Spartan Armor Systems' => 'spartanarmorsystems.com',
-        'WMD Guns' => 'wmdguns.com',
-        'Shoot Steel' => 'shootsteel.com',
-        'GunMag Warehouse' => 'gunmagwarehouse.com',
-        'Alien Gear Holsters' => 'aliengearholsters.com',
-    );
 
     private $api_client = null;
 
@@ -128,7 +109,7 @@ class AvantlinkProductsModule extends AffiliateParserModule
         {
             if ($value = $this->config($param))
             {
-                $values = TextHelper::getArrayFromCommaList($values);
+                $values = TextHelper::getArrayFromCommaList($value);
                 $options[$param] = join(',', $values);
             }
         }
@@ -205,14 +186,16 @@ class AvantlinkProductsModule extends AffiliateParserModule
                 $content->merchant = $r['strMerchantName'];
             }
 
-            $merchant = strtolower($content->merchant);
-            if (TextHelper::isValidDomainName($merchant))
+            if ($domain = self::getMerchantDomain($content->merchant))
             {
-                $content->domain = $merchant;
+                $content->domain = $domain;
             }
-
-            if ($content->merchant && isset($this->merchant2domain[$content->merchant]))
-                $content->domain = $this->merchant2domain[$content->merchant];
+            else
+            {
+                $merchant = strtolower($content->merchant);
+                if (TextHelper::isValidDomainName($merchant))
+                    $content->domain = $merchant;
+            }
 
             $content->extra = new ExtraDataAvantlinkProducts();
             ExtraDataAvantlinkProducts::fillAttributes($content->extra, $r);
@@ -245,8 +228,8 @@ class AvantlinkProductsModule extends AffiliateParserModule
             $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
 
             // fix domains
-            if ($item['merchant'] && isset($this->merchant2domain[$item['merchant']]))
-                $items[$key]['domain'] = $this->merchant2domain[$item['merchant']];
+            if ($domain = self::getMerchantDomain($item['merchant']))
+                $items[$key]['domain'] = $domain;
         }
 
         return $items;
@@ -280,5 +263,47 @@ class AvantlinkProductsModule extends AffiliateParserModule
     public function renderUpdatePanel()
     {
         $this->render('update_panel', array('module_id' => $this->getId()));
+    }
+
+    public static function getMerchantDomain($merchant)
+    {
+        $list = self::getMerchantDomains();
+        if (isset($list[$merchant]))
+            return $list[$merchant];
+        else
+            return false;
+    }
+
+    public static function getMerchantDomains()
+    {
+        $m2d = array(
+            'GritrSports' => 'gritrsports.com',
+            'Amazon' => 'amazon.com',
+            'Ace Link Armor' => 'acelinkarmor.com',
+            'Brownells' => 'brownells.com',
+            'GUNS.COM' => 'guns.com',
+            'Palmetto State Armory' => 'palmettostatearmory.com',
+            'GunSkins' => 'gunskins.com',
+            'Rossignol' => 'rossignol.com',
+            'Creedmoor Sports' => 'creedmoorsports.com',
+            'GritrSports' => 'gritrsports.com',
+            'Gritr Outdoors' => 'gritroutdoors.com',
+            'Spartan Armor Systems' => 'spartanarmorsystems.com',
+            'WMD Guns' => 'wmdguns.com',
+            'Shoot Steel' => 'shootsteel.com',
+            'GunMag Warehouse' => 'gunmagwarehouse.com',
+            'Alien Gear Holsters' => 'aliengearholsters.com',
+            'RTS TACTICAL' => 'rtstactical.com',
+        );
+
+        return \apply_filters('cegg_avantlink_merchant2domain', $m2d);
+    }
+
+    public static function getPriceParamMap()
+    {
+        return [
+            'min' => 'search_price_minimum',
+            'max' => 'search_price_maximum',
+        ];
     }
 }

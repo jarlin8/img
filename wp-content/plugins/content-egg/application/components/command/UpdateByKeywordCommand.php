@@ -5,9 +5,7 @@ namespace ContentEgg\application\components\command;
 use ContentEgg\application\components\ModuleManager;
 use ContentEgg\application\ModuleUpdateScheduler;
 use ContentEgg\application\components\ContentManager;
-use ContentEgg\application\components\stopwatch\Stopwatch;
-
-use function ContentEgg\prnx;
+use ContentEgg\application\components\stopwatch\Stopwatch;;
 
 defined('\ABSPATH') || exit;
 
@@ -16,7 +14,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class UpdateByKeywordCommand extends AbstractCommand
 {

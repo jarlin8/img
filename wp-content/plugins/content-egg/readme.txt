@@ -1,13 +1,13 @@
 === Content Egg Pro ===
 Contributors: keywordrush.com
 
-Easily adding auto updating products from affiliate systems and additional content to posts.
+All in one solution for creating affiliate websites.
 
 == Installation ==
 
 **Requirements**
-* PHP 5.4+
-* Wordpress 4.6.1+
+* PHP 8.0+
+* WordPress 6.9+
 
 This section describes how to install the plugin and get it working.
 1. Upload `content-egg` folder to the `/wp-content/plugins/` directory.
@@ -16,6 +16,472 @@ This section describes how to install the plugin and get it working.
 4. You can find manual how to configure each module - [Content Egg User Guide](https://ce-docs.keywordrush.com/)
 
 == Changelog ==
+
+= Version 21.11.1 =
+* Fixed: sort=price in a block shortcode was ignored whenever the products carried a manual order (drag-and-drop, the Order field, or a [1] title prefix). An explicit sort now takes priority over that order.
+
+= Version 21.11.0 =
+* New: AllKeyShop module — CD key and game key price comparison. A game arrives as a single product at its cheapest price, or as one product per offer for a comparison table, each with its merchant, region and coupon code.
+* Changed: Affiliate modules now default to Cron Job updates instead of Page View, so every post refreshes on the same schedule instead of waiting for a visitor to arrive.
+
+= Version 21.10.1 =
+* Fixed: "Save images on server" — every automatic price update downloaded the product image again, filling the uploads folder with product-1.jpg, product-2.jpg and so on. Affects Amazon, Amazon No API, Awin, Ebay, AE, Bolcom, Impact Radius, Kelkoo and custom feed modules.
+
+= Version 21.10.0 =
+* New: Egg Blocks — a Plain variant for nine blocks, including Product Card, Verdict, Pros & Cons and Callout. No panel, no tinted background, no bordered tags: the blocks line up on a shared label column so a review reads as one article instead of a stack of widgets.
+* New: Import presets — Category Mapping. Send a merchant's feed category to one of your own categories, so products arrive filed correctly instead of needing cleanup. A rule can name the full path or a single level, and * matches a whole branch.
+* Improved: All feed modules — an offer stayed out of stock for good once a merchant re-listed the product under a new ID. The lookup now falls back to the EAN within the same merchant and reconnects the offer on a single unambiguous match, refreshing price, stock, image and links while keeping the saved product data and price history.
+* Fixed: AWIN — the maximum price was ignored when searching a feed.
+
+= Version 21.9.1 =
+* New: Editorial Product — an alt text field for the product image.
+* Fixed: Editorial Product was missing from the block catalog the agent API publishes, so an AI agent could not create or validate one.
+
+= Version 21.9.0 =
+* New: Editorial Product block — show a product as part of the article, not as an advert. Four layouts, from a full-width figure to a one-line mention, with no price, rating, score or buy button; the link rides on the product name and image.
+* New: Amazon NoAPI — Bright Data support. Its Web Unlocker fetches each locale from that country's IPs, so amazon.de prices match what German shoppers see.
+* New: Amazon NoAPI — Decodo joins the list of supported scraping services.
+* New: Amazon NoAPI — a "Scraping service" setting. Leave it on Auto to spread usage across every service you have configured, or pin a single one while you test a new key.
+
+= Version 21.8.0 =
+* New: Cashback Tracker integration — the cashback rate now appears in every product template that shows coupons, and reads as a sentence: "Plus 4.5% Cash Back".
+* Improved: Egg Blocks could be wrecked by plugins that rewrite post content, such as internal linking tools — a link inserted into a block's stored settings broke the block and left its raw code showing in the article. Content Egg now refuses such a save and keeps the working version.
+
+= Version 21.7.0 =
+* New: Shops — one screen for every shop in your product data. Give a shop a display name or a logo, or attach a coupon code that shows up beside that shop's offers in your product blocks.
+* New: Shop coupons — set a start and end date, and limit a coupon to chosen categories so it only appears on the posts it applies to. One click copies the code and opens the shop.
+* New: Shop coupons — limit a coupon to specific products, for time-limited per-product promotions like a free bonus item with one product. The offer retires itself on its end date.
+* New: Products — "Copy product reference" in a product row's menu, for binding a coupon to that product.
+* Improved: Shop logos — a shop can now use a logo you choose, instead of whatever the logo provider returns.
+
+= Version 21.6.0 =
+* New: Feed modules — import only the products you need from a huge catalog. Filter by category, title or brand, and the rest is skipped before it ever reaches your database.
+
+= Version 21.5.1 =
+* New: Product Import — custom prompts can build on each other. Write %AI.other_prompt% inside a prompt and that one runs first, so a single AI-generated focus keyword can feed your SEO title, meta description and product text.
+
+= Version 21.5.0 =
+* New: All Products — "Bridge Mappings" creates the missing canonical Bridge Page links for product pages you imported earlier, so those products link to your pages site-wide.
+
+= Version 21.4.4 =
+* Fixed: AI Agents — creating posts, inserting blocks and editing products failed or silently did nothing from a custom GPT. After updating, re-import the action schema in your GPT.
+* Fixed: AI Agents — MCP tool calls failed with a missing "input" argument; reconnect your MCP client to refresh the tool definitions.
+* Changed: AI Agents — an assistant can no longer switch on automatic product updates for a module, because that replaces the products it just added.
+
+= Version 21.4.1 =
+* Improved: AI Agents — polishing across the agent API.
+* Fixed: Feed — sync state was lost with a persistent object cache (Redis, LiteSpeed Cache 7.8+), causing repeated re-imports.
+
+= Version 21.4.0 =
+* New: Import presets — Custom Prompts: add as many as you need instead of five. Name a prompt, then use its %AI.name% placeholder in the title and body templates, in custom meta fields, or pick it in the AI Title/Content/Short Description menus. Existing presets, including Extra Sections, are converted automatically.
+* New: Import presets — "Add a known field" fills in SEO meta keys for Yoast SEO, Rank Math, SEOPress and The SEO Framework.
+
+= Version 21.3.0 =
+* New: Amazon, Amazon No API — Global Earning: added a "No redirect" option that turns off Amazon's international redirect entirely and keeps shoppers in the module's own store. Useful when you curate one store's catalog for readers in another country. Set it per module, including clones. Experimental.
+
+= Version 21.2.0 =
+* New: Amazon, Amazon No API — "Global Earning fallback" option. Amazon now sends international shoppers to their local store and may offer a similar product when the exact one is unavailable there. This option sends them to local search results instead. Experimental.
+
+= Version 21.1.0 =
+* New: Image Optimization — resize oversized locally saved product images in the background for faster pages. Configurable max size and quality; existing images included.
+* Improved: Locally saved images get readable, SEO-friendly file names from the product title.
+
+= Version 21.0.0 =
+* New: Agent Access — connect your own AI assistant (ChatGPT, Claude, and others) to operate Content Egg in plain language: build Egg Blocks pages, find and edit products, refresh prices, and manage modules and feeds. Secured with WordPress application passwords; [Guide](https://ce-docs.keywordrush.com/ai-agents).
+* New: Product Manager — manage products inside the editor instead of the metabox below: a Content Egg sidebar in the block editor, or inline on Classic/WooCommerce/other post types. Search, add, edit (rich-text), reorder, group, refresh prices, and insert blocks without leaving the editor. Default for new installs; pick your interface under Settings. The classic metabox is now deprecated.
+* New: Coupons manager — manage vouchers and deals in the editor: search coupon networks or add coupons by hand, then list, reorder, edit, and insert them.
+* New: Coupons block — display coupons on the page: all coupons on the post, narrowed by module or group, or specific ones. Aggregates every coupon source into one list.
+* New: Coupons block — two templates: a voucher-style "Coupon ticket" (default; tear-off stub, click-to-reveal, one-click copy) and a "Coupon list".
+* New: Media manager — manage images and videos in the editor: search media sources, add them to a post, then list, reorder, edit, and group them — no metabox.
+* New: Images and Videos blocks — display media on the page: all media, filtered by module or group, or specific items dragged from the sidebar.
+* New: Media templates — new layouts for the Images and Videos blocks: "Big images", "Images masonry" (with lightbox), "Videos grid", and "Videos playlist".
+* New: Products block — Product Binding: keep showing every attached product (default), or switch to "Choose products" to display only specific ones — so multiple product blocks can sit on the same page, each with its own set.
+* New: Content Egg block category — the Products, Coupons, Images and Videos blocks are now grouped in a "Content Egg" section in the block inserter.
+* New: Media modules — image and video sources grouped under "Media modules"; Google Books, Google News, RSS Fetcher and Related Keywords are deprecated.
+* New: Prefill — "ThirstyAffiliates Link" keyword source: resolves a product's affiliate link and searches by it, so URL-lookup modules match the exact product.
+* Changed: The Global auto-update keyword now applies to product modules only; coupon, image and video modules use their own per-module keyword.
+
+= Version 20.11.0 =
+* New: Feed — "Add a Feed" setup wizard: paste a feed URL and the plugin auto-detects the format, encoding, currency and CSV settings, lets you map fields against real sample data, then imports in the background with live progress.
+* New: Feed — option to clear the cached feed file from the module's settings page.
+* Improved: Feed, Daisycon, Awin, Webgains — feeds are now cached and reused between syncs instead of being re-downloaded and reprocessed when nothing changed, and imports always run in the background so pages never wait on a slow feed download.
+* Fixed: Feed — the "Loading data feed…" message in product search no longer shows misleadingly when the catalog is empty and an import is pending or has failed.
+* Fixed: Security hardening and fixes. Updating is recommended for all users.
+
+
+= Version 20.10.0 =
+* New: Amazon — per-region Creators API credentials (NA / EU / FE) so one module can update products across multiple regions (e.g. US + EU).
+
+= Version 20.9.0 =
+* New: Merchant Names — map a shop domain to a display name from the Shops settings, used for the %MERCHANT% tag and the merchant label in templates.
+
+= Version 20.8.0 =
+* New: Affiliate Egg integration — connect almost any online store as a module by its domain and pull live product data. Requires the Affiliate Egg plugin.
+* New: Added latest OpenAI (GPT-5.5/5.4/5-pro) and Anthropic (Claude Sonnet 5, Fable 5, Opus 4.8/4.7) AI models.
+
+= Version 20.6.0 =
+* New: `[content-egg-block]` `sources` attribute — aggregate curated picks (per-post, group-filtered, price-sorted, badge-tagged) from multiple posts into one block.
+
+= Version 20.5.2 =
+* New: Sub ID tracking for CJ, Impact Radius, Walmart and Rakuten modules, with dynamic placeholders ({{post_id}}, {{post_slug}}, {{item_sku}}, etc.).
+
+= Version 20.5.0 =
+* New: Unsplash module.
+* New: Pexels module.
+* New: Pexels Videos module.
+
+= Version 20.3.0 =
+* Improved: Egg Blocks polishing, new attributes, and design improvements.
+* Improved: Price history chart now plots points on a real time axis.
+
+= Version 20.2.0 =
+* New: WordPress 7.0 compatibility.
+* New: EggBlocks — 4 new conversion blocks: contextual-cta, pricing, testimonial, trust-signals.
+* New: EggBlocks — profile hydration: conversion blocks auto-fill from a linked TMN Offer/Business Profile at render time.
+* New: Feed modules — "Filter variations" option to skip duplicate product variants (colors, sizes, etc.) during import.
+
+= Version 20.1.0 =
+* New: Added "Copy all product references" button to the metabox.
+* New: EggBlocks Writer skill now auto-assigns product_ref when product data is pasted from the metabox.
+
+= Version 20.0.0 =
+* New: Egg Blocks — 21 purpose-built Gutenberg blocks for product reviews, roundups, and buying guides.
+* New: Article structure blocks: intro, conclusion, section-header, toc, faq, callout, step-list.
+* New: Editorial insight blocks: key-takeaways, criteria, methodology, definitions, myth-fact, pros-cons.
+* New: Product & commerce blocks: product-card, quick-picks, where-to-buy, comparison-table, verdict, rating-breakdown, specifications.
+* New: Navigation block: related-posts.
+* New: Product-bound blocks pull live price, stock, merchant logo, and affiliate URL from Content Egg automatically.
+* New: EggBlocks Writer skill — a free external skill for ChatGPT, Claude, and other AI chats that generates complete articles in Egg Blocks markup, ready to paste into WordPress.
+* New: Global theme and color scheme settings (light / dark / auto) for consistent styling across all blocks.
+* New: Billigerde module
+* New: Geizhalsde module
+
+= Version 18.16.5 =
+* New: Amazon module — added support for v3.x (LwA) Creators API credentials with auto-detection.
+
+= Version 18.16.0 =
+* New: Amazon module — added support for Amazon Creators API (OAuth 2.0).
+* New: Amazon module — introduced “Auto” API mode (Creators API preferred, PA-API 5.0 fallback).
+* New: Amazon module — smooth migration path from PA-API 5.0 to Creators API without breaking existing setups.
+* Deprecated: Amazon module — PA-API 5.0 (AWS Access/Secret keys) marked as deprecated.
+
+= Version 18.15.0 =
+* New: Product Blocks/Shortcodes — added optional async (AJAX) rendering with lazy loading support.
+* New: Added a “Both (affiliate and bridge)” link destination option for dual action buttons.
+* New: Lomadee Products module — updated to the latest API version.
+* New: Import Presets — added two new custom prompts.
+* New: Import Presets — added two new AI-powered sections for generating custom post content in separate blocks.
+* New: Import Presets — added a custom AI model selection option.
+* New: Added support for OpenAI gpt-5.2 and gpt-5.2-pro models.
+* New: Offers Count Shortcodes — added `[content-egg-offers-count]` and `[content-egg-offers-badge]` for displaying offers count anywhere.
+* New: Added offers count badge support for WooCommerce shop and archive pages.
+
+= Version 18.13.0 =
+* New: Added “Amazon Checkout Button” option — enables “Checkout on Amazon” for WooCommerce cart.
+* Deprecated: Lomadee modules are deprecated, and the API is shutting down.
+
+= Version 18.12.0 =
+* New: Feed module — added “Decimal separator for price data” option.
+* New: ImpactRadius module — added support for filtering by Catalog IDs and Campaign IDs.
+
+= Version 18.11.0 =
+* New: Added “Reset presets” action in Import Presets tab, allowing quick restoration of all built-in presets.
+
+= Version 18.10.2 =
+* Improved: Amazon NoAPI module - added random rotation of scraping services when multiple API keys are provided.
+
+= Version 18.10.1 =
+* Improved: Amazon module now retrieves the full category path for products.
+
+= Version 18.10.0 =
+* New: Amazon module – added "Price source" option (Buy Box, Prime, All customers).
+* New: Amazon module – deal badges now displayed for active deals.
+* Improved: Amazon module migrated to OffersV2 API.
+
+= Version 18.9.0 =
+* New: SubID tracking parameters for the Feed module.
+* New: SubID option for the Awin module with dynamic placeholders.
+* New: Added support for syncing GTIN to WooCommerce native field.
+* New: Added “Avoid Duplicates by WooCommerce GTIN/EAN” import preset option.
+* New: The Price Comparison feature in Import Tools now also searches within the main module.
+
+= Version 18.8.0 =
+* New: Feed module — added manual CSV Delimiter option for custom field separation.
+* New: Feed module — added manual CSV Enclosure option for defining text qualifiers.
+
+= Version 18.7.0 =
+* New: Feed module — added support for FTP and FTPS feed URLs.
+* New: Feed module — added support for GZIP archive format.
+* New: Feed module — added XML processor option.
+
+= Version 18.6.0 =
+* New: Safe placeholders to use for SubIDs/deeplinks.
+* Improved: Feed modules are now used for automatic price comparison for Import tools.
+
+= Version 18.5.1 =
+* Fix: Content module clicks were excluded from statistics.
+
+= Version 18.5.0 =
+* New: Clicks Statistics dashboard.
+* New: Track Clicks With Redirect - record aggregated clicks for local redirect links.
+* New: Track Clicks Without Redirect - count clicks on direct affiliate links.
+* New: Local redirect links with human-readable product-title slugs.
+* New: Click Stats Retention (days) setting.
+* New: Redirect Status Code setting for local redirects.
+* New: “All Products” admin table - shows total clicks and last 30 days.
+* New: Post edit screen — per-product total and last 30 days clicks.
+* New: Deeplinks - support for advanced placeholders.
+* Improved: Added extra parameters to GA4 events.
+* Fix: Multiple price history charts now display correct data.
+
+= Version 18.1.0 =
+* New: Added Coupang module.
+
+= Version 18.0.0 =
+* New: Bridge Pages import from the post editor.
+* New: Preset option — make imported Bridge Pages canonical.
+* New: Frontend setting — link destination preference (affiliate vs bridge).
+* New: Shortcode parameter — link_target: affiliate|bridge|auto.
+* New: Products block option — Link Destination.
+* New: Products block option — Source Post ID.
+* New: Setting — Bridge Button Text.
+
+= Version 17.4.1 =
+* Deprecated: ShareASale is shutting down and is fully transitioning to the Awin platform.
+
+= Version 17.4.0 =
+* New: Added `group_pick` shortcode parameter to select one product per group.
+
+= Version 17.3.4 =
+* Fix: Importing to the selected category.
+* Fix: Unable to disable "Skip import if product already exists" option.
+
+= Version 17.3.1 =
+* Improvement: Enhanced compatibility with older MySQL versions.
+
+= Version 17.3.0 =
+* New: Added "Generate Search Keyword" option to import presets.
+* New: Import presets now support any number of custom fields.
+
+= Version 17.2.0 =
+* New: Feed module - added "additional image link" field for gallery images.
+* New: Added support for GPT-5 models.
+* New: Content modules - auto-update by keyword.
+* New: Content modules - support for the keyword shortcode parameter.
+
+= Version 17.1.0 =
+* New: Bol.com module – added product category option.
+* Fix: Bol.com module – gallery images.
+
+= Version 17.0.0 =
+* New: Search and import products by keywords.
+* New: Bulk import using multiple keywords or product URLs.
+* New: Feed Import – import all products from a feed with one click.
+* New: Auto Import – scheduled imports based on keywords.
+* New: Import Presets – reusable settings for import configuration.
+* New: Import Queue – background task manager for all imports.
+* New: Bolcom module – added gallery images support.
+* New: WooCommerce sync gallery option.
+* New: External gallery image support via direct image URLs.
+* New: WP Media Library gallery scheduler.
+* New: WooCommerce Brand taxonomy support for product sync.
+* Deprecated: Autoblogging feature.
+
+= Version 16.3.0 =
+* New: Added Logo Source option with support for Clearbit, Brandfetch, and Logodev.
+* New: Purge Cached Logos link.
+* New: Added Logo Hotlinking option.
+* New: Added support for attribute placeholders %PRODUCT.ATTRIBUTE.attribute-name% in prefill custom fields.
+* Improved: Prefill settings are now automatically saved and restored.
+
+= Version 16.2.0 =
+* New: AI-powered field mapping in the Feed module.
+* New: Feed sync interval setting to control how often product feeds are re-synced with the local database.
+* New: "Reload feed data" button in the Feed module settings.
+* New: Subtitle field added to the Feed module.
+* Improved: "All Products" page now ignore trashed posts.
+* Improved: Autoblogging now supports Draft and Private post statuses.
+* Improved: Significantly reduced memory usage when processing large ZIP-compressed feeds.
+
+= Version 16.1.0 =
+* New: Rakuten module – migrated to the new API version.
+* New: Rakuten module – added support for price updates.
+* New: Price Drops widget – added ability to include or exclude specific module IDs.
+* New: Amazon API module – added ability to search using category URLs.
+* Improvement: Tradetracker module – improved duplicate filtering with stricter logic.
+
+= Version 16.0.0 =
+* New: Prefill tool to add products to existing posts, with AI-powered product selection.
+* New: Prefill now runs in the background via WP-Cron.
+* New: Prefill button on the post edit page to automatically add product offers.
+* New: Export/Import plugin settings to a file.
+* New: Export/Import module settings to a file.
+
+= Version 15.11.0 =
+* Improvement: Enhanced EAN search in the Tradetracker module.
+* Improvement: Added support for WordPress 6.8.
+* Fix: Security patch.
+
+= Version 15.10.1 =
+* Deprecated: The Udemy module is now deprecated as Udemy has closed their API.
+
+= Version 15.10.0 =
+* New: Bol.com module – create bestseller lists using a category URL.
+* New: AI prompts to generate concise bullet points and product subtitles.
+
+= Version 15.9.0 =
+* New: Added support for Amazon.ie.
+
+= Version 15.8.0 =
+* New: Clone option added for all affiliate modules.
+* New: Feed modules can now be deleted along with all associated data.
+* New: Support for OpenRouter, a unified interface for LLMs.
+* New: Added AI models – GPT-4.5-preview and Claude-3.7-Sonnet-latest.
+
+= Version 15.7.0 =
+* New: Udemy module – Full course description option.
+
+= Version 15.6.0 =
+* New: Added local proxy support for external images.
+
+= Version 15.5.0 =
+*  Improvement: Updated Shopee module to support s.shopee link format.
+
+= Version 15.4.0 =
+* New: WooCommerce Settings: Added a shortcode for Single Product Pages.
+* New: WooCommerce Settings: Added a shortcode for Archive Pages.
+
+= Version 15.3.0 =
+* New: Added a new template: Review Box.
+* New: Added a new template: Top Listings with "Show More" Button.
+* New: Introduced a Feed Module supporting regex syntax for extracting product data from feed fields.
+* Improvements: Added a Products IDs Filter to the CE block.
+* Improvements: Autoupdate existing Shopee links to the new format.
+
+= Version 15.2.0 =
+* New: Bol.com module now supports search by product ID or product URL.
+
+= Version 15.1.0 =
+* New: Added a new template, "Sorted offers list with store logos and buttons".
+
+= Version 15.0.2 =
+* Improvement: Price history charts: dates follow WordPress date settings.
+* Improvement: Price history charts: prices follow locale settings.
+
+= Version 15.0.1 =
+* Improvement: Added support for Claude 3.5 haiku.
+
+= Version 15.0.0 =
+* New: Introduced Gutenberg product blocks for product display.
+* New: Enabled attribute mapping support in Feed modules.
+* Improvement: Enhanced template designs.
+* Deprecated: Discontinued support for the Pepperjam module.
+
+= Version 14.2.0 =
+* New: `hide=coupon_reveal` shortcode parameter added.
+* Improvement: Avantlink module - merchant-to-domain filter added.
+* Improvement: Frontend search - shortcode parameters applied.
+
+= Version 14.1.1 =
+* Fix: Price alert JS included for backward compatibility with Rehub templates.
+
+= Version 14.1.0 =
+* New: Added full Bootstrap 5 CSS for custom templates.
+
+= Version 14.0.0 =
+* New: Complete redesign and improvement of all templates.
+* New: Dark mode added, which can be enabled via global settings or shortcode parameter.
+* New: Affiliate link tracking integrated with GA4 custom events for better analytics.
+* New: Price history charts now show the lowest prices from multiple merchants.
+* New: Reveal coupon feature added.
+* New: Affiliate disclaimer option for posts.
+* New: Affiliate disclaimer feature for individual product blocks.
+* New: Product badge label and badge color fields.
+* New: Badge icons available.
+* New: Added product subtitle field for additional details.
+* New: Product rating field.
+* New: Product order number field added.
+* New: Button variants added, customizable through global options or shortcode parameters.
+* New: Option to display Amazon price update date.
+* New: `exclude_modules` shortcode parameter.
+* New: `tabs_type` shortcode parameter.
+* New: `border` and `border_color` shortcode parameters.
+* New: `start_number` shortcode parameter.
+* New: `title_tag` shortcode parameter.
+* New: `img_ratio` shortcode parameter.
+* New: Shortcode parameters: `cols_sm`, `cols_md`, `cols_lg`, `cols_xl`, `cols_xxl`.
+* New: Show/hide values: `price_update` and `disclaimer`.
+* New: Show/hide values: `cols_order`, `shipping_cost`, `new_used_price`, `logo`, `prime`.
+* New: Show/hide values: `button`, `percentageSaved`, `priceOld`, `badge`, `merchant`.
+* New: CSS purge optimization for faster load times and cleaner code.
+* New: Default sorting by product badge and module priority for improved user experience.
+* New: Amazon module: Prime prices.
+* Deprecated: "Title" module option removed.
+* Deprecated: "Show stock status" option removed.
+* Deprecated: Shop info > Popup type option removed.
+* Deprecated: `btn_color` and `btn_class` shortcode parameters.
+* Deprecated: QwantImages module.
+* Deprecated: Twitter module.
+
+= Version 13.3.0 =
+* New: Shipping cost field for the Awin module.
+* New: Added Deeplink settings to the CJ Products module.
+
+= Version 13.2.0 =
+* New: Smart Groups added to categorize products with AI.
+
+= Version 13.1.0 =
+* New: Added Deeplink settings to the NoAPI Amazon module.
+
+= Version 13.0.0 =
+* New: AI features to generate unique product content.
+* New: Clear, compact interface for CE metabox.
+* New: Amazon NoAPI module: Promocodes support.
+* New: 'Description only' template added.
+* Improvement: Feed module limit increased to 50 individual feed modules.
+* Improvement: Amazon module: Product features now uses as product description.
+
+= Version 12.16.0 =
+* New: ChatGTP Template Creator: https://ce-docs.keywordrush.com/custom-templates/chatgtp-template-creator
+
+= Version 12.15.5 =
+* Fix: AmazonNoAPI module for IN locale.
+
+= Version 12.15.2 =
+* Improvement: Enhanced grid templates.
+
+= Version 12.15.0 =
+* New: Sovrn (Viglink) module updated with the new Sovrn Product API.
+
+= Version 12.14.0 =
+* New: Greenshift template: Grid template added.
+
+= Version 12.13.0 =
+* New: AE:Amazon modules now support search by ASIN.
+* Fix: Grid template fix.
+
+= Version 12.12.0 =
+* New: Kieskeurignl module - Migrated to the new API.
+
+= Version 12.11.0 =
+* New: The Admitad coupons module can now return all coupons by advertiser ID.
+
+= Version 12.10.0 =
+* New: Added large image format to the Pixabay module.
+
+= Version 12.9.0 =
+* New: Preparation for integration with the GreenShift plugin.
+
+= Version 12.8.0 =
+* New: Added an option in the Amazon NoAPI module to delegate the task of updating prices to the Amazon module via API.
+* New: Amazon NoAPI module: option to hide outdated prices.
+* New: Amazon module: option to hide prices.
+
+= Version 12.7.0 =
+* New: Bol.com module - Migrated to the new Marketing Catalog API.
+
+= Version 12.6.0 =
+* New: Support for Scrapeowl added to the AmazonNoAPI module.
 
 = Version 12.5.0 =
 * Improvement: The AmazonNoAPI module now functions as a web scraper.
@@ -126,8 +592,8 @@ This section describes how to install the plugin and get it working.
 * New: Displaying EAN codes on post edit pages.
 
 = 10.10.0 =
-* New: Option to add Product/AggregateOffer markup to posts. 
-* New: Feed modules: XML mapping: xPath syntax is allowed. 
+* New: Option to add Product/AggregateOffer markup to posts.
+* New: Feed modules: XML mapping: xPath syntax is allowed.
 
 = 10.9.0 =
 * Improvement: Block shortcodes: Sorting is applied before limit/offset.
@@ -250,9 +716,9 @@ This section describes how to install the plugin and get it working.
 
 = 8.6.0 =
 * New: Feed module to work with custom CSV feeds.
-* New: Option to import all product URLs/EANs for Feed modules. 
+* New: Option to import all product URLs/EANs for Feed modules.
 * Improvement: Optimisation for amazon images.
-* Improvement: Glyphicons are no longer used on frontend. 
+* Improvement: Glyphicons are no longer used on frontend.
 
 = 8.5.0 =
 * Improvement: Ebay module: New tracking link format.
@@ -318,7 +784,7 @@ This section describes how to install the plugin and get it working.
 * Fix: Aliexpress module: Some images are not saved to local server.
 
 = 6.8.2 =
-* Improvement: Amazon module: New product prices takes precedence over used products. 
+* Improvement: Amazon module: New product prices takes precedence over used products.
 
 = 6.8.0 =
 * New: Option: Rel attribute for affiliate links.
@@ -354,7 +820,7 @@ This section describes how to install the plugin and get it working.
 * Fix: Ebay module: prices.
 
 = 6.5.0 =
-* New: Aliexpress module through new API. The old module was marked as "legacy". 
+* New: Aliexpress module through new API. The old module was marked as "legacy".
 
 = 6.4.0 =
 * New: Awin module: Search partial URL.
@@ -500,7 +966,7 @@ This section describes how to install the plugin and get it working.
 * New: Sort order (asc/desc) for block shortcodes: [content-egg-block template=offers_list order=desc].
 * New: Amazon price disclaimer.
 * New: Amazon module: Show small logos option.
-* New: Woocommerce synchronization for Offer module.
+* New: WooCommerce synchronization for Offer module.
 * New: Сurrency converter for order products by price.
 * New: Ability to edit Domain field for products.
 
@@ -674,7 +1140,7 @@ This section describes how to install the plugin and get it working.
 * New: Block template: All offers list with logos.
 * Improvement: Module templates.
 
-= 2.8.0 = 
+= 2.8.0 =
 * New: Price tracker.
 * New: Price alert.
 * New: Title shortcode param [content-egg module=Amazon title="My Title"].
@@ -682,22 +1148,22 @@ This section describes how to install the plugin and get it working.
 * Fix: Admitad Products search.
 * Fix: Same Amazon ASIN in different locales.
 
-= 2.7.0 = 
+= 2.7.0 =
 * New: PayTM module.
 * New: Admitad Products module.
 * New: 301 local redirect for outbound affiliate links.
 
-= 2.6.0 = 
+= 2.6.0 =
 * New: Fkipkart module.
 * New: Autoblogging batch creation.
 * Improvement: Fill utility now works for all post types that are checked in the general CE settings.
 * Improvement: Fill utility now works for post statuses: 'publish', 'future'.
 
-= 2.5.0 = 
+= 2.5.0 =
 * New: Affiliate Egg plugin integration.
 * Fix: Bug Fixes.
 
-= 2.4.0 = 
+= 2.4.0 =
 * New: Admitad Coupons module.
 * New: Affilitewindow module.
 * New: Otimisemedia module.

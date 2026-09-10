@@ -6,12 +6,14 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\helpers\TextHelper;
 
+use function ContentEgg\prnx;
+
 /**
  * AffiliateParserModule abstract class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 abstract class AffiliateParserModule extends ParserModule
 {
@@ -83,7 +85,10 @@ abstract class AffiliateParserModule extends ParserModule
                 $data[$key]['currency'] = TextHelper::currencyTyping($item['currencyCode']);
 
             if (!empty($data[$key]['domain']))
-                $data[$key]['merchant'] = \apply_filters('content_egg_custom_merchant', $data[$key]['merchant'], $data[$key]['domain']);
+            {
+                $marchant = isset($data[$key]['merchant']) ? $data[$key]['merchant'] : '';
+                $data[$key]['merchant'] = \apply_filters('content_egg_custom_merchant', $marchant, $data[$key]['domain']);
+            }
         }
 
         return $data;
@@ -91,5 +96,60 @@ abstract class AffiliateParserModule extends ParserModule
 
     public function renderUpdatePanel()
     {
+    }
+
+    public static function getPriceParamMap()
+    {
+        return [];
+    }
+
+    public static function getLocaleParamMap()
+    {
+        return '';
+    }
+
+    public static function getSortByNewestParamMap()
+    {
+        return [];
+    }
+
+    public function getSearchFilters()
+    {
+        $filters = array();
+
+        $config = $this->getConfigInstance();
+        if (method_exists($config, 'getActiveLocalesList'))
+        {
+            $locales = (array) $config->getActiveLocalesList();
+            if (count($locales) > 1)
+            {
+                $options = array();
+                foreach ($locales as $value => $name)
+                {
+                    $options[] = array('value' => (string) $value, 'label' => (string) $name);
+                }
+
+                $filters[] = array(
+                    'key' => 'locale',
+                    'type' => 'select',
+                    'label' => \__('Locale', 'content-egg'),
+                    'options' => $options,
+                    'default' => (string) $config->option('locale'),
+                );
+            }
+        }
+
+        $filters[] = array(
+            'key' => 'minimum_price',
+            'type' => 'number',
+            'label' => \__('Min. price', 'content-egg'),
+        );
+        $filters[] = array(
+            'key' => 'maximum_price',
+            'type' => 'number',
+            'label' => \__('Max. price', 'content-egg'),
+        );
+
+        return $filters;
     }
 }

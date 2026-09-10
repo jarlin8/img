@@ -12,12 +12,14 @@ use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\components\LinkHandler;
 use ContentEgg\application\helpers\ArrayHelper;
 
+
+
 /**
  * AliexpressModule class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class Aliexpress2Module extends AffiliateParserModule
 {
@@ -213,9 +215,14 @@ class Aliexpress2Module extends AffiliateParserModule
             $content->url = $this->getAffiliateLink($r);
             $content->extra = new ExtraDataAliexpress2();
             ExtraDataAliexpress2::fillAttributes($content->extra, $r);
-            if (isset($r['product_small_image_urls']['string']))
+            if (isset($r['product_small_image_urls']['string']) && is_array($r['product_small_image_urls']['string']))
             {
-                $content->extra->image_urls = $r['product_small_image_urls']['string'];
+                $content->images = $r['product_small_image_urls']['string'];
+            }
+
+            if (is_array($content->images) && count($content->images) > 0 && $content->img == $content->images[0])
+            {
+                array_shift($content->images);
             }
 
             $data[] = $content;
@@ -299,7 +306,7 @@ class Aliexpress2Module extends AffiliateParserModule
     {
         if ($this->api_client === null)
         {
-            $this->api_client = new Aliexpress2Api($this->config('app_key'), $this->config('app_secret'), $this->config('api_platform'));
+            $this->api_client = new Aliexpress2Api($this->config('app_key'), $this->config('app_secret'));
         }
 
         return $this->api_client;
@@ -377,5 +384,13 @@ class Aliexpress2Module extends AffiliateParserModule
         {
             return '';
         }
+    }
+
+    public static function getPriceParamMap()
+    {
+        return [
+            'min' => 'min_sale_price',
+            'max' => 'max_sale_price',
+        ];
     }
 }

@@ -1,10 +1,8 @@
 <?php
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 /*
   Name: Grid
  */
 
-__( 'Grid', 'content-egg-tpl' );
-
-$this->renderPartial( 'grid' );
+$this->renderPartial('grid');

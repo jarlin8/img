@@ -1,28 +1,47 @@
 <?php
+
+use ContentEgg\application\helpers\TemplateHelper;
+
 defined('\ABSPATH') || exit;
 /*
   Name: Simple
  */
-__('Simple', 'content-egg-tpl');
+
 ?>
-<?php \wp_enqueue_style('egg-bootstrap'); ?>
 
+<div class="container px-0 mb-5 mt-1" <?php $this->colorMode(); ?>>
 
-<div class="egg-container egg-image">
-    <?php if ($title): ?>
-        <h3><?php echo esc_html($title); ?></h3>
-    <?php endif; ?>
-
-    <div class="row">
-        <?php foreach ($items as $item): ?>
-            <div class="col-md-12 text-center" style="padding-bottom: 20px;">
-                <img src="<?php echo esc_url($item['img']); ?>"
-                     alt="<?php echo( $item['extra']['tags'] ? esc_attr($item['extra']['tags']) : esc_attr($item['keyword']) ); ?>"
-                     class="img-thumbnail"/>
+    <div class="row g-3<?php TemplateHelper::rowCols($params, 'row-cols-1 row-cols-md-3'); ?>">
+        <?php foreach ($items as $item) : ?>
+            <?php $this->setItem($item); ?>
+            <div class="col text-center">
+                <?php if ($this->isVisible('img')): ?>
+                    <div class="position-relative">
+                        <div class="ratio<?php TemplateHelper::imgRatio($params, 'ratio-1x1'); ?>">
+                            <?php TemplateHelper::displayImage($item, 190, 170, array('class' => 'object-fit-scale rounded')); ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
                 <div class="text-center">
-                    <p class="small"><?php printf(__('Photo %s on Flickr', 'content-egg-tpl'), '<a href="' . $item['url'] . '" target="_blank" rel="nofollow">' . $item['extra']['author'] . '</a>'); ?></p>
-                    <h4><?php echo esc_html($item['title']); ?></h4>
-                    <p><?php echo wp_kses_post($item['description']); ?></p>
+                    <?php if ($this->isVisible('title')): ?>
+                        <?php TemplateHelper::title($item, 'card-title fs-6 fw-normal lh-base cegg-hover-title cegg-text-truncate-2 mt-1 small', 'div', $params); ?>
+                    <?php endif; ?>
+                    <?php if ($this->isVisible('description', false)): ?>
+                        <div class="cegg-desc-small card-text small lh-sm pt-3"><?php echo \wp_kses_post($item['description']); ?></div>
+                    <?php endif; ?>
+                    <div class="small text-secondary">
+                        <?php
+                        printf(
+                            wp_kses(
+                                /* translators: %s: link to the photo on Flickr */
+                                __('Photo %s on Flickr', 'content-egg-tpl'),
+                                array('a' => array('href' => array(), 'target' => array(), 'rel' => array()))
+                            ),
+                            '<a href="' . esc_url($item['url']) . '" target="_blank" rel="nofollow">' . esc_html($item['extra']['author']) . '</a>'
+                        );
+                        ?>
+                    </div>
+
                 </div>
             </div>
         <?php endforeach; ?>

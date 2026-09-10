@@ -16,7 +16,7 @@ use ContentEgg\application\admin\GeneralConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class RssFetcherModule extends ParserModule
 {
@@ -33,6 +33,11 @@ class RssFetcherModule extends ParserModule
 	public function getParserType()
 	{
 		return self::PARSER_TYPE_CONTENT;
+	}
+
+	public function isDeprecated()
+	{
+		return true;
 	}
 
 	public function isFree()
@@ -60,9 +65,8 @@ class RssFetcherModule extends ParserModule
 		}
 		catch (Exception $e)
 		{
-			throw new \Exception(strip_tags($e->getMessage()));
+			throw new \Exception(esc_html(wp_strip_all_tags($e->getMessage())));
 		}
-
 
 		$results = $this->normaliseResults($results, $entries_per_page);
 

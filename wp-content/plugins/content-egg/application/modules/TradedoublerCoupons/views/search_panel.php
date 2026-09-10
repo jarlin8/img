@@ -1,5 +1,5 @@
-<?php defined( '\ABSPATH' ) || exit; ?>
-<select class="col-md-4 input-sm" ng-model="query_params.<?php echo esc_attr($module_id); ?>.voucherTypeId">
+<?php defined('\ABSPATH') || exit; ?>
+<select class="form-control form-control-sm" ng-model="query_params.<?php echo esc_attr($module_id); ?>.voucherTypeId">
     <option value="">Any voucher type</option>
     <option value="1">Voucher</option>
     <option value="2">Discount</option>

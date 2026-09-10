@@ -14,7 +14,7 @@ use ContentEgg\application\admin\PluginAdmin;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class TradedoublerCouponsModule extends AffiliateParserModule
 {
@@ -73,7 +73,6 @@ class TradedoublerCouponsModule extends AffiliateParserModule
 				$options[$field] = $this->config($field);
 			}
 		}
-		//$options['siteSpecific'] = var_export((bool) $this->config('siteSpecific'), true);
 		//Set to 'iso8601' if you want dates returned in ISO8601 format
 		$options['dateOutputFormat'] = 'iso8601';
 

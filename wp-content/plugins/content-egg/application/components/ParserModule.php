@@ -6,8 +6,6 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\helpers\ImageHelper;
 use ContentEgg\application\helpers\TextHelper;
-use ContentEgg\application\LocalRedirect;
-use ContentEgg\application\admin\GeneralConfig;
 use ContentEgg\application\Plugin;
 
 /**
@@ -15,7 +13,7 @@ use ContentEgg\application\Plugin;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 abstract class ParserModule extends Module
 {
@@ -54,6 +52,26 @@ abstract class ParserModule extends Module
     }
 
     public function isUrlSearchAllowed()
+    {
+        return false;
+    }
+
+    /**
+     * Whether the module supports keyword/product search at all. Base is true;
+     * manual-entry modules (e.g. Offer), whose doRequest() returns nothing,
+     * override this to false so the product-manager Search tab hides them.
+     */
+    public function isSearchable()
+    {
+        return true;
+    }
+
+    /**
+     * Whether the module can search by a GTIN/EAN/UPC code. Base is false;
+     * modules that branch on TextHelper::isEan() in their search override this.
+     * Used to adapt the product-manager search placeholder.
+     */
+    public function isGtinSearchAllowed()
     {
         return false;
     }
@@ -101,8 +119,27 @@ abstract class ParserModule extends Module
             // save img
             if ($this->config('save_img') && !wp_is_post_revision($post_id))
             {
+                // The metabox round-trips img_file, so a non-empty img_file here means this item
+                // already has a locally saved image. If its img no longer matches the saved one,
+                // the user edited or removed the image URL in the metabox and we must honor that
+                // instead of restoring the previously saved value.
+                //
+                // An automatic items update is the one caller that legitimately re-supplies the
+                // module's remote img over the local URL saved for the offer - several modules
+                // refresh it in doRequestItems() - which by value alone is indistinguishable from
+                // such an edit. Reading it as one re-downloads an image we already have on every
+                // price update, leaving product-1.jpg, product-2.jpg, ... behind.
+                $old_img = isset($old_data[$key]['img']) ? $old_data[$key]['img'] : '';
+                $user_changed_img = (!empty($item['img_file']) && $item['img'] !== $old_img
+                    && !ContentManager::isItemsUpdateInProgress());
+                if ($user_changed_img)
+                {
+                    // drop the stale local reference so a new URL is downloaded and a removed image stays removed
+                    $item['img_file'] = '';
+                }
+
                 // check old_data also. need for fix behavior with "preview changes" button and by keyword update
-                if (isset($old_data[$key]) && !empty($old_data[$key]['img_file']) && file_exists(ImageHelper::getFullImgPath($old_data[$key]['img_file'])))
+                if (!$user_changed_img && isset($old_data[$key]) && !empty($old_data[$key]['img_file']) && file_exists(ImageHelper::getFullImgPath($old_data[$key]['img_file'])))
                 {
                     // image exists
                     $item['img'] = $old_data[$key]['img'];
@@ -127,9 +164,8 @@ abstract class ParserModule extends Module
 
     public static function getFullImgPath($img_path)
     {
-        $uploads = \wp_upload_dir();
-
-        return trailingslashit($uploads['basedir']) . $img_path;
+        // Delegate to the hardened, traversal-safe resolver.
+        return ImageHelper::getFullImgPath($img_path);
     }
 
     public function defaultTemplateName()
@@ -139,27 +175,9 @@ abstract class ParserModule extends Module
 
     public function viewDataPrepare($data)
     {
-        // cashback integration
-        if (GeneralConfig::getInstance()->option('cashback_integration') == 'enabled' && class_exists('\CashbackTracker\application\Plugin'))
+        if (!is_array($data) || empty($data))
         {
-            foreach ($data as $key => $d)
-            {
-                $data[$key]['url'] = \CashbackTracker\application\components\DeeplinkGenerator::maybeAddTracking($d['url']);
-            }
-        }
-
-        // local redirect
-        if ($this->config('set_local_redirect'))
-        {
-            foreach ($data as $key => $d)
-            {
-                if (isset($d['url']))
-                {
-                    $data[$key]['aff_url'] = $d['url'];
-                } // url without redirect
-
-                $data[$key]['url'] = LocalRedirect::createRedirectUrl($d);
-            }
+            return $data;
         }
 
         return $data;
@@ -172,14 +190,8 @@ abstract class ParserModule extends Module
 
         if (!$token || $force)
         {
-            try
-            {
-                list($token, $expires_in) = $this->requestAccessToken();
-            }
-            catch (\Exception $e)
-            {
-                return false;
-            }
+            list($token, $expires_in) = $this->requestAccessToken();
+
             \set_transient($transient_name, $token, (int) $expires_in);
         }
 
@@ -202,6 +214,7 @@ abstract class ParserModule extends Module
     {
         list($keywords, $groups) = ContentManager::prepareMultipleKeywords($keyword);
 
+        $this->search_notice = null;
         $results = array();
         foreach ($keywords as $i => $keyword)
         {
@@ -214,10 +227,21 @@ abstract class ParserModule extends Module
             }
             catch (\Exception $e)
             {
-                if (count($keywords) == 1)
-                    throw new \Exception($e->getMessage(), $e->getCode());
-                else
+                $kcount     = count($keywords);
+                $code       = (int) $e->getCode();
+                $retryable  = [408, 425, 429, 500, 502, 503, 504]; // timeouts, rate limit, transient 5xx
+
+                // If multiple keywords AND error is retryable → skip to next keyword
+                if ($kcount > 1 && in_array($code, $retryable, true))
+                {
                     continue;
+                }
+
+                // Otherwise, rethrow (single keyword, or non-retryable error)
+                throw new \RuntimeException(
+                    $this->formatErrorMessage($e->getMessage()),
+                    (int) ($code ?: 0)
+                );
             }
 
             if (!empty($groups[$i]))
@@ -228,6 +252,11 @@ abstract class ParserModule extends Module
                 }
             }
 
+            foreach ($data as $key => $d)
+            {
+                $data[$key]->module_id = $this->getId();
+            }
+
             $results = array_merge($results, $data);
         }
 
@@ -236,9 +265,42 @@ abstract class ParserModule extends Module
         return $results;
     }
 
+    /**
+     * Sanitize an exception message before it is shown in the metabox search
+     * results (rendered via ng-bind-html). Default: plain text, all tags
+     * stripped. Modules may override to allow safe inline HTML — e.g. an
+     * actionable link in an error hint.
+     */
+    protected function formatErrorMessage($message)
+    {
+        return esc_html(wp_strip_all_tags($message));
+    }
+
+    protected $search_notice = null;
+
+    /**
+     * A soft, user-facing notice about the last interactive search — guidance
+     * rather than a failure (e.g. "no results, try a direct URL"). Shown as an
+     * info notice in the metabox, separate from thrown errors; null when none.
+     */
+    public function getSearchNotice()
+    {
+        return $this->search_notice;
+    }
+
+    /**
+     * Declarative search-filter descriptors for editor UIs (REST GET /modules).
+     * Keys must match the query params the search pipeline understands.
+     */
+    public function getSearchFilters()
+    {
+        return array();
+    }
+
     private static function filterDuplicateItems(array $items)
     {
         $results = array();
+
         foreach ($items as $item)
         {
             $dup = false;

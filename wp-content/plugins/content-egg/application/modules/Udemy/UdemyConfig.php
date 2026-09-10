@@ -11,17 +11,17 @@ use ContentEgg\application\components\AffiliateParserModuleConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class UdemyConfig extends AffiliateParserModuleConfig
 {
 
 	public function options()
 	{
-		$optiosn = array(
-			'client_id'                    => array(
-				'title'       => 'Client Id <span class="cegg_required">*</span>',
-				'description' => __('Sign up on udemy.com and go to <a href="https://www.udemy.com/user/edit-api-clients">API Clients</a> page in your user profile.', 'content-egg'),
+		$options = array(
+			'client_id' => array(
+				'title'       => 'Client ID' . ' <span class="cegg_required">*</span>',
+				'description' => sprintf(__('Refer to the <a target="_blank" href="%s">documentation</a> to find your Client ID.', 'content-egg'), 'https://ce-docs.keywordrush.com/modules/affiliate/udemy'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
@@ -34,10 +34,10 @@ class UdemyConfig extends AffiliateParserModuleConfig
 				),
 				'section'     => 'default',
 			),
-			'client_secret'                => array(
-				'title'       => 'Client Secret <span class="cegg_required">*</span>',
-				'description' => __('Sign up on udemy.com and go to <a href="https://www.udemy.com/user/edit-api-clients">API Clients</a> page in your user profile.', 'content-egg'),
-				'callback'    => array($this, 'render_input'),
+			'client_secret' => array(
+				'title'       => 'Client Secret' . ' <span class="cegg_required">*</span>',
+				'description' => sprintf(__('Refer to the <a target="_blank" href="%s">documentation</a> to find your Client Secret.', 'content-egg'), 'https://ce-docs.keywordrush.com/modules/affiliate/udemy'),
+				'callback'    => array($this, 'render_password'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -50,8 +50,8 @@ class UdemyConfig extends AffiliateParserModuleConfig
 				'section'     => 'default',
 			),
 			'deeplink'                     => array(
-				'title'       => 'Deeplink',
-				'description' => __('Set this parameter if you want to have commissions. Rakuten <a href="https://pubhelp.rakutenadvertising.com/hc/en-us/articles/360061257872-How-do-I-create-a-deep-link-">Guide to Deep Linking</a>', 'content-egg'),
+				'title'       => 'Deeplink' . '**',
+				'description' => sprintf(__('Refer to the <a target="_blank" href="%s">documentation</a> for setting up your <a target="_blank" href="%s">Deeplink</a>.', 'content-egg'), 'https://ce-docs.keywordrush.com/modules/affiliate/udemy#generating-a-deeplink-on-rakuten-a-dvertising', 'https://ce-docs.keywordrush.com/modules/deeplink-settings'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
@@ -65,7 +65,7 @@ class UdemyConfig extends AffiliateParserModuleConfig
 			),
 			'entries_per_page'             => array(
 				'title'       => __('Results', 'content-egg'),
-				'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
+				'description' => __('Specify the number of results to display for a single search query.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 8,
 				'validator'   => array(
@@ -79,8 +79,8 @@ class UdemyConfig extends AffiliateParserModuleConfig
 				),
 			),
 			'entries_per_page_update'      => array(
-				'title'       => __('Results for updates and autoblogging', 'content-egg'),
-				'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg'),
+				'title'       => __('Results for Updates and Autoblogging', 'content-egg'),
+				'description' => __('Specify the number of results for automatic updates and autoblogging.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 6,
 				'validator'   => array(
@@ -344,6 +344,15 @@ class UdemyConfig extends AffiliateParserModuleConfig
 				),
 				'default'          => '',
 			),
+			'description_type'          => array(
+				'title'            => __('Description type', 'content-egg'),
+				'callback'         => array($this, 'render_dropdown'),
+				'dropdown_options' => array(
+					'headline'          => __('Headline', 'content-egg'),
+					'full'     => __('Full description', 'content-egg'),
+				),
+				'default'          => 'headline',
+			),
 			'save_img'                     => array(
 				'title'       => __('Save images', 'content-egg'),
 				'description' => __('Save images on server', 'content-egg'),
@@ -353,6 +362,7 @@ class UdemyConfig extends AffiliateParserModuleConfig
 			),
 		);
 
-		return array_merge(parent::options(), $optiosn);
+		$options = array_merge(parent::options(), $options);
+		return self::moveRequiredUp($options);
 	}
 }

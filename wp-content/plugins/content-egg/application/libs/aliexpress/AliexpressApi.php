@@ -4,14 +4,14 @@ namespace ContentEgg\application\libs\aliexpress;
 
 defined('\ABSPATH') || exit;
 
-use ContentEgg\application\libs\RestClient;
+use ContentEgg\application\libs\RestClient;;
 
 /**
  * AliexpressApi class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  * REST Aliexpress API
  * @link: http://portals.aliexpress.com/help/help_center_API.html
@@ -68,7 +68,6 @@ class AliexpressApi extends RestClient
 		}
 
 		$response = $this->restGet('/api.listPromotionProduct/' . $this->getApiKey(), $options);
-
 		return $this->_decodeResponse($response);
 	}
 

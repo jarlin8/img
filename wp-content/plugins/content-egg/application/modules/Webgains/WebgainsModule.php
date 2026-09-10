@@ -15,10 +15,15 @@ use ContentEgg\application\modules\Webgains\models\WebgainsProductModel;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class WebgainsModule extends AffiliateFeedParserModule
 {
+    public function isGtinSearchAllowed()
+    {
+        return true;
+    }
+
 
 	public function info()
 	{
@@ -120,6 +125,23 @@ class WebgainsModule extends AffiliateFeedParserModule
 			$product['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
 		}
 
+		$product['category'] = '';
+		if (!empty($data['category_name']))
+		{
+			$product['category'] = mb_substr(\sanitize_text_field((string) $data['category_name']), 0, 191);
+		}
+
+		$brand = '';
+		if (!empty($data['brand']))
+		{
+			$brand = $data['brand'];
+		}
+		elseif (!empty($data['manufacturer']))
+		{
+			$brand = $data['manufacturer'];
+		}
+		$product['brand'] = $brand !== '' ? mb_substr(\sanitize_text_field((string) $brand), 0, 191) : '';
+
 		$product['product'] = serialize($data);
 
 		return $product;
@@ -127,7 +149,7 @@ class WebgainsModule extends AffiliateFeedParserModule
 
 	public function doRequest($keyword, $query_params = array(), $is_autoupdate = false)
 	{
-		$this->maybeImportProducts();
+		$this->maybeScheduleImport();
 
 		if ($is_autoupdate)
 		{
@@ -144,7 +166,7 @@ class WebgainsModule extends AffiliateFeedParserModule
 		}
 		elseif (filter_var($keyword, FILTER_VALIDATE_URL))
 		{
-			$results = $this->product_model->searchByUrl($keyword, $this->config('partial_url_match'), $limit);
+			$results = $this->product_model->searchByUrl($keyword, $this->config('partial_url_match'), $limit, $this->config('ignore_query_string'));
 		}
 		else
 		{
@@ -153,7 +175,7 @@ class WebgainsModule extends AffiliateFeedParserModule
 			{
 				$options['price_min'] = (float) $query_params['price_min'];
 			}
-			if (!empty($query_params['price_min']))
+			if (!empty($query_params['price_max']))
 			{
 				$options['price_max'] = (float) $query_params['price_max'];
 			}
@@ -233,7 +255,7 @@ class WebgainsModule extends AffiliateFeedParserModule
 
 	public function doRequestItems(array $items)
 	{
-		$this->maybeImportProducts();
+		$this->maybeScheduleImport();
 		foreach ($items as $key => $item)
 		{
 			$product = $this->product_model->searchById($item['unique_id']);
@@ -313,5 +335,13 @@ class WebgainsModule extends AffiliateFeedParserModule
 	public function renderUpdatePanel()
 	{
 		$this->render('update_panel', array('module_id' => $this->getId()));
+	}
+
+	public static function getPriceParamMap()
+	{
+		return [
+			'min' => 'price_min',
+			'max' => 'price_max',
+		];
 	}
 }

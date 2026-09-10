@@ -7,52 +7,35 @@ defined('\ABSPATH') || exit;
 use ContentEgg\application\components\AffiliateParserModule;
 use ContentEgg\application\components\ContentProduct;
 use ContentEgg\application\admin\PluginAdmin;
+use ContentEgg\application\components\LinkHandler;
 use ContentEgg\application\helpers\TextHelper;
-use ContentEgg\application\libs\cj\CjGraphQlApi;
+use ContentEgg\application\libs\cj\CjGraphQlApi;;
 
 /**
  * CjProductsModule class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class CjProductsModule extends AffiliateParserModule
 {
+    public function isGtinSearchAllowed()
+    {
+        return true;
+    }
+
 
 	private $api_client = null;
 
 	public function info()
 	{
-		/*
-		if (\is_admin())
-			\add_action('admin_notices', array(__CLASS__, 'updateNotice'));
-		 *
-		 */
-
 		return array(
 			'name'          => 'CJ Products',
 			'api_agreement' => 'http://www.cj.com/legal/ws-terms',
 			'description'   => __('Adds products from CJ.com. You must have approval from each program separately.', 'content-egg'),
 			'docs_uri'      => 'https://ce-docs.keywordrush.com/modules/affiliate/cjproducts',
 		);
-	}
-
-	public static function updateNotice()
-	{
-		if (!CjProductsConfig::getInstance()->option('is_active'))
-		{
-			return;
-		}
-
-		if (CjProductsConfig::getInstance()->option('cid'))
-		{
-			return;
-		}
-
-		echo '<div class="notice notice-warning is-dismissible">';
-		echo '<p>' . sprintf(__('CJ launched a new Product Search API. Please visit <a href="%s">CJ Product settings</a> to get started with the new API.', 'content-egg'), \get_admin_url(\get_current_blog_id(), 'admin.php?page=content-egg-modules--CjProducts')) . '</p>';
-		echo '</div>';
 	}
 
 	public static function getMerchantDomainPairs()
@@ -100,6 +83,7 @@ class CjProductsModule extends AffiliateParserModule
 		}
 		else
 		{
+			$keyword = preg_replace('/[\'"]/', '', $keyword);
 			$shoppingProducts .= sprintf(',keywords: "%s"', addslashes($keyword));
 		}
 
@@ -119,7 +103,6 @@ class CjProductsModule extends AffiliateParserModule
 		{
 			$shoppingProducts .= sprintf(',currency: "%s"', $currency);
 		}
-
 
 		$fields = array(
 			'adId',
@@ -326,14 +309,16 @@ class CjProductsModule extends AffiliateParserModule
 			$content->orig_url  = $r['link'];
 			$used_urls[]        = $r['link'];
 			$content->domain    = TextHelper::getHostName($content->orig_url);
-			if (isset($r['linkCode']['clickUrl']))
-			{
+
+			if ($deeplink = $this->config('deeplink'))
+				$content->url =  LinkHandler::createAffUrl($content->orig_url, $deeplink);
+			elseif (isset($r['linkCode']['clickUrl']))
 				$content->url = $r['linkCode']['clickUrl'];
-			}
 			else
-			{
 				$content->url = $content->orig_url;
-			}
+
+			$content->url = $this->applySid($content->url, (array) $content);
+
 			$content->img          = $r['imageLink'];
 			$content->manufacturer = $r['brand'];
 			$content->availability = $r['availability'];
@@ -381,6 +366,44 @@ class CjProductsModule extends AffiliateParserModule
 		}
 
 		return $data;
+	}
+
+	public function viewDataPrepare($data)
+	{
+		$deeplink = $this->config('deeplink');
+		$sid      = $this->config('sid');
+
+		if (!$deeplink && !$sid)
+			return $data;
+
+		foreach ($data as $key => $d)
+		{
+			if ($deeplink)
+				$data[$key]['url'] =  LinkHandler::createAffUrl($data[$key]['orig_url'], $deeplink, $d);
+
+			if ($sid)
+				$data[$key]['url'] = $this->applySid($data[$key]['url'], $d);
+		}
+
+		return parent::viewDataPrepare($data);
+	}
+
+	/**
+	 * Append the CJ "sid" SubID parameter to an affiliate URL.
+	 *
+	 * The configured value may contain {{placeholders}} which are resolved per link
+	 * and sanitized to a CJ-safe token (ASCII only, max 64 characters).
+	 */
+	private function applySid($url, array $item)
+	{
+		if (!$sid = $this->config('sid'))
+			return $url;
+
+		$sid = LinkHandler::resolveSubId($sid, $item, 64);
+		if ($sid === '')
+			return $url;
+
+		return LinkHandler::getUrlWithTail($url, 'sid=' . $sid);
 	}
 
 	private function getCJClient()

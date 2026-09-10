@@ -4,16 +4,14 @@ namespace ContentEgg\application\libs\google;
 
 defined('\ABSPATH') || exit;
 
-use ContentEgg\application\libs\RestClient;
-
-use function ContentEgg\prnx;
+use ContentEgg\application\libs\RestClient;;
 
 /**
  * GNews class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
@@ -29,8 +27,6 @@ class GNews extends RestClient
 	protected $_responseTypes = array(
 		'rss'
 	);
-
-	//protected $_uri = 'https://news.google.com/news?hl={lang}&ie=UTF-8&output=rss&q={keyword}';
 
 	/**
 	 * Constructor

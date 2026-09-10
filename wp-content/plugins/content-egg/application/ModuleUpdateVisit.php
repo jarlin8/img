@@ -7,13 +7,14 @@ defined('\ABSPATH') || exit;
 use ContentEgg\application\components\ModuleManager;
 use ContentEgg\application\components\ContentManager;
 use ContentEgg\application\admin\GeneralConfig;
+use ContentEgg\application\vendor\CrawlerDetect\CrawlerDetect;
 
 /**
  * ModuleUpdateVisit class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class ModuleUpdateVisit
 {
@@ -39,14 +40,9 @@ class ModuleUpdateVisit
 
         if (GeneralConfig::getInstance()->option('filter_bots'))
         {
-            if (!class_exists('\Jaybizzle\CrawlerDetect'))
-                require_once \ContentEgg\PLUGIN_PATH . 'application/vendor/CrawlerDetect.php';
-
-            $CrawlerDetect = new \Jaybizzle\CrawlerDetect\CrawlerDetect();
-            // Check the user agent of the current 'visitor'
-            if ($CrawlerDetect->isCrawler())
+            $cd = new CrawlerDetect();
+            if ($cd->isCrawler())
             {
-                // true if crawler user agent detected
                 return;
             }
         }
@@ -70,7 +66,7 @@ class ModuleUpdateVisit
         if (empty($post))
             return;
 
-        foreach (ModuleManager::getInstance()->getAffiliateParsers(true) as $module)
+        foreach (ModuleManager::getInstance()->getParsers(true) as $module)
         {
             $is_visit_update = in_array($module->config('update_mode'), array('visit', 'visit_cron'));
             $is_data_exists = ContentManager::isDataExists($post->ID, $module->getId());

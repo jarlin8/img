@@ -7,18 +7,18 @@ defined('\ABSPATH') || exit;
 use ContentEgg\application\components\ContentManager;
 use ContentEgg\application\components\ModuleManager;
 use ContentEgg\application\components\ContentProduct;
+use ContentEgg\application\components\ProductScanState;
 
 /**
  * ProductModel class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class ProductModel extends Model
 {
 
-    const TRANSIENT_LAST_SYNC_DATE = 'cegg_products_last_sync';
     const PRODUCTS_TTL = 3600;
 
     public function tableName()
@@ -68,19 +68,43 @@ class ProductModel extends Model
 
     public function scanProducts()
     {
-        $per_page = 100;
+        global $wpdb;
+        $per_page  = 100;
         $meta_keys = $this->getCeMetaKeys();
-        $sql_part = $this->getDb()->postmeta . ' WHERE meta_key IN (' . join(',', $meta_keys) . ') LIMIT ' . $per_page;
-        $sql = 'SELECT SQL_CALC_FOUND_ROWS * FROM ' . $sql_part;
-        $products = $this->getDb()->get_results($sql);
-        $total = (int) $this->getDb()->get_var('SELECT FOUND_ROWS();');
-        $this->processProducts($products);
 
-        for ($page = 2; $page <= ceil($total / $per_page); $page++)
+        if (empty($meta_keys))
         {
-            $offset = ($page - 1) * $per_page;
-            $sql = 'SELECT * FROM ' . $sql_part . ' OFFSET ' . $offset;
-            $this->processProducts($this->getDb()->get_results($sql));
+            return;
+        }
+
+        // --- 1.  Build the “posts in good standing” clause  --------------------
+        $placeholders = implode(',', array_fill(0, count($meta_keys), '%s'));
+        $sql_base = "
+        FROM {$wpdb->postmeta}   pm
+        INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+        WHERE p.post_status <> %s
+          AND pm.meta_key IN ($placeholders)
+    ";
+
+        // --- 2.  How many rows are we going to process?  ----------------------
+        $count_sql  = $wpdb->prepare("SELECT COUNT(*) $sql_base", array_merge(['trash'], $meta_keys));
+
+        $total      = (int) $wpdb->get_var($count_sql);
+        if (! $total)
+        {
+            return;
+        }
+
+        // --- 3.  Page through the rows  ---------------------------------------
+        for ($offset = 0; $offset < $total; $offset += $per_page)
+        {
+            $paged_sql = $wpdb->prepare(
+                "SELECT pm.* $sql_base LIMIT %d OFFSET %d",
+                array_merge(['trash'], $meta_keys, [$per_page, $offset])
+            );
+
+            $products = $wpdb->get_results($paged_sql);
+            $this->processProducts($products);
         }
     }
 
@@ -90,7 +114,7 @@ class ProductModel extends Model
         $meta_keys = array();
         foreach ($module_ids as $module_id)
         {
-            $meta_keys[] = "'" . \esc_sql(ContentManager::META_PREFIX_DATA . $module_id) . "'";
+            $meta_keys[] = ContentManager::META_PREFIX_DATA . $module_id;
         }
 
         return $meta_keys;
@@ -98,11 +122,11 @@ class ProductModel extends Model
 
     public function maybeScanProducts($forced = false)
     {
-        if (!$this->getLastSync() || $forced)
+        if ($forced || ProductScanState::isDue(self::PRODUCTS_TTL))
         {
             $this->truncateTable();
             ProductModel::model()->scanProducts();
-            \set_transient(self::TRANSIENT_LAST_SYNC_DATE, time(), self::PRODUCTS_TTL);
+            ProductScanState::touch();
 
             return true;
         }
@@ -112,7 +136,7 @@ class ProductModel extends Model
 
     public function getLastSync()
     {
-        return \get_transient(self::TRANSIENT_LAST_SYNC_DATE);
+        return ProductScanState::get();
     }
 
     private function processProducts(array $metas)

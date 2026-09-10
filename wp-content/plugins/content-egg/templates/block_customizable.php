@@ -2,16 +2,12 @@
 
 /*
  * Name: Customizable (use with "show" parameter)
- * Modules:
  * Module Types: PRODUCT
- *
  */
-
-__('Customizable (use with "show" parameter)', 'content-egg-tpl');
 
 use ContentEgg\application\helpers\TemplateHelper;
 
-use function ContentEgg\prn;
+defined('\ABSPATH') || exit;
 
 ?>
 
@@ -22,33 +18,30 @@ use function ContentEgg\prn;
         switch ($params['show'])
         {
             case 'title':
-                echo \esc_html($item['title']);
+                echo esc_html(TemplateHelper::truncate($item['title']));
                 break;
             case 'img':
-                echo '<img src="' . \esc_attr($item['img']) . '" alt="' . \esc_attr($item['title']) . '" />';
+                TemplateHelper::displayImage($item, 190, 170, array('class' => 'object-fit-scale img-thumbnail'));
                 break;
             case 'price':
-                if ($item['price'])
-                    echo esc_html(TemplateHelper::formatPriceCurrency($item['price'], $item['currencyCode']));
+                TemplateHelper::price($item, $params);
                 break;
             case 'priceold':
-                echo esc_html(TemplateHelper::formatPriceCurrency($item['priceOld'], $item['currencyCode']));
+                TemplateHelper::oldPrice($item, $params);
                 break;
             case 'currencycode':
-                echo \esc_html($item['currencyCode']);
+                TemplateHelper::currencyCode($item, $params);
                 break;
             case 'button':
-                echo '<span class="egg-container"><a';
-                TemplateHelper::printRel();
-                echo ' target="_blank" href="' . esc_url_raw($item['url']) . '" class="btn btn-danger">';
-                TemplateHelper::buyNowBtnText(true, $item);
-                echo '</a></span>';
+                echo '<div class="cegg5-container">';
+                TemplateHelper::button($item, $params);
+                echo '</div>';
                 break;
             case 'stock_status':
-                echo esc_html(TemplateHelper::getStockStatusStr($item));
+                TemplateHelper::stockStatus($item, $params);
                 break;
             case 'description':
-                echo wp_kses_post($item['description']);
+                TemplateHelper::description($item);
                 break;
             case 'url':
                 echo esc_url_raw($item['url']);
@@ -57,9 +50,24 @@ use function ContentEgg\prn;
                 echo esc_html(TemplateHelper::getLastUpdateFormatted($item['module_id']));
                 break;
             case 'img+url':
-                echo '<a ' . TemplateHelper::printRel(false) . ' target="_blank" href=" ' . esc_url_raw($item['url']) . '">';
-                echo '<img src="' . \esc_attr($item['img']) . '" alt="' . \esc_attr($item['title']) . '" class="cegg-cust-img" />';
-                echo '</a>';
+                TemplateHelper::openATag($item);
+                TemplateHelper::displayImage($item, 190, 170, array('class' => 'object-fit-scale img-thumbnail'));
+                TemplateHelper::closeATag();
+                break;
+            case 'title+url':
+                TemplateHelper::openATag($item);
+                echo esc_html(TemplateHelper::truncate($item['title']));
+                TemplateHelper::closeATag();
+                break;
+            case 'merchant':
+                TemplateHelper::merchant($item);
+                break;
+            case 'coupon':
+                // Opt-in by field name, like every other case here - this
+                // template renders exactly what the author lists and nothing
+                // more, so the chip must be asked for.
+                if ($coupon = $this->couponChip())
+                    TemplateHelper::couponChip($item, $coupon, $params);
                 break;
             default:
                 break;

@@ -6,12 +6,14 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\libs\RestClient;
 
+
+
 /**
  * WalmartApi class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link httpS://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  * @link: https://walmart.io/docs/affiliate/introduction
  */
@@ -94,7 +96,7 @@ class WalmartApi extends RestClient
     /**
      * @link: https://walmart.io/docs/affiliate/onboarding-guide
      */
-    public function restGet($path, array $query = null)
+    public function restGet($path, ?array $query = null)
     {
         $timestamp = (string) round(microtime(true)) . '555';
         $headers = array(
@@ -121,8 +123,18 @@ class WalmartApi extends RestClient
         $pkeyid = openssl_get_privatekey($this->private_key);
         openssl_sign($message, $signature, $pkeyid, OPENSSL_ALGO_SHA256);
         $signature = base64_encode($signature);
-        openssl_free_key($pkeyid);
 
         return $signature;
+    }
+
+    protected function myErrorHandler($response)
+    {
+        $response_code = (int) \wp_remote_retrieve_response_code($response);
+        $data = $this->_decodeResponse(\wp_remote_retrieve_body($response));
+
+        if ($response_code == 400 && isset($data['errors'][0]['code']) && (int)$data['errors'][0]['code'] === 4023) // 'UPC not found'
+            return json_encode([]);
+
+        return parent::myErrorHandler($response);
     }
 }

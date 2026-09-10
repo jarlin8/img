@@ -7,32 +7,73 @@ defined('\ABSPATH') || exit;
 use ContentEgg\application\components\AffiliateParserModule;
 use ContentEgg\application\components\ContentProduct;
 use ContentEgg\application\admin\PluginAdmin;
+use ContentEgg\application\components\ContentManager;
+use ContentEgg\application\components\LinkHandler;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\libs\lomadee\LomadeeApi;
 
-/**
- * LomadeeProductsModule class file
- *
- * @author keywordrush.com <support@keywordrush.com>
- * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
- */
 class LomadeeProductsModule extends AffiliateParserModule
 {
-
 	private $api_client = null;
 
 	public function info()
 	{
+		add_action('admin_notices', array($this, 'maybeShowApprovalNotice'));
+
 		return array(
-			'name'        => 'Lomadee Products',
-			'description' => __('Lomadee.com affiliate network.', 'content-egg'),
+			'name' => 'Lomadee Products',
 		);
+	}
+
+	public static function getPriceParamMap()
+	{
+		return array(
+			'min' => 'min_price',
+			'max' => 'max_price',
+		);
+	}
+
+	/**
+	 * Show admin notice when some advertisers require approval for link generation.
+	 */
+	public function maybeShowApprovalNotice()
+	{
+		if (!is_admin())
+		{
+			return;
+		}
+
+		if (!get_transient('cegg_lomadee_approval_notice'))
+		{
+			return;
+		}
+
+		$message = __(
+			'CE:Lomadee: Some affiliate links could not be generated because advertiser approval is required. Please request/await approval in your Lomadee account. Content Egg will automatically try again every 24 hours.',
+			'content-egg'
+		);
+
+		$domains = get_transient('cegg_lomadee_approval_domains');
+		if (is_array($domains) && !empty($domains))
+		{
+			$domains = array_slice(array_values(array_unique($domains)), -20);
+			$message .= ' ' . sprintf(
+				__('Advertisers: %s', 'content-egg'),
+				implode(', ', array_map('sanitize_text_field', $domains))
+			);
+		}
+
+		echo '<div class="notice notice-warning"><p>' . esc_html($message) . '</p></div>';
+	}
+
+	public function isDeprecated()
+	{
+		return false;
 	}
 
 	public function releaseVersion()
 	{
-		return '4.3.0';
+		return '18.14.0';
 	}
 
 	public function getParserType()
@@ -47,84 +88,176 @@ class LomadeeProductsModule extends AffiliateParserModule
 
 	public function isItemsUpdateAvailable()
 	{
-		return true;
+		return false;
 	}
 
 	public function doRequest($keyword, $query_params = array(), $is_autoupdate = false)
 	{
 		$options = array();
 
-		if ($is_autoupdate)
+		$limit = $is_autoupdate ? $this->config('entries_per_page_update') : $this->config('entries_per_page');
+		$options['limit'] = (int) $limit;
+
+		// Optional filters from config
+		$organizationIds = $this->config('organizationIds');
+		if ($organizationIds !== '')
 		{
-			$limit = $this->config('entries_per_page_update');
+			$organizationIds = TextHelper::commaList($organizationIds);
+			$options['organizationIds'] = $organizationIds;
 		}
-		else
+
+		$min_price = $this->config('min_price');
+		if ($min_price !== '')
 		{
-			$limit = $this->config('entries_per_page');
+			$options['min_price'] = $min_price;
 		}
 
-		$options['size'] = $limit;
-
-		$params = array(
-			'categoryId',
-			'storeId',
-			'sort',
-		);
-
-		foreach ($params as $param)
+		$max_price = $this->config('max_price');
+		if ($max_price !== '')
 		{
-			$value = $this->config($param);
-			if ($value !== '')
+			$options['max_price'] = $max_price;
+		}
+
+		$options['isAvailable'] = (bool) $this->config('isAvailable');
+
+		// Allow overrides from $query_params (metabox)
+		foreach (array('min_price', 'max_price') as $p)
+		{
+			if (isset($query_params[$p]) && $query_params[$p] !== '' && $query_params[$p] !== null)
 			{
-				$options[$param] = $value;
+				$options[$p] = $query_params[$p];
 			}
 		}
 
-		if (!empty($query_params['storeId']))
-		{
-			$options['storeId'] = (int) $query_params['storeId'];
-		}
+		$results = $this->getApiClient()->products($keyword, $options);
 
-		$results = $this->getApiClient()->offers($keyword, $options);
-		if (!isset($results['offers']) || !is_array($results['offers']))
+		if (!isset($results['data']) || !is_array($results['data']))
 		{
 			return array();
 		}
 
-		return $this->prepareResults($results['offers']);
+		return $this->prepareResults($results['data']);
 	}
 
 	private function prepareResults($results)
 	{
 		$data = array();
-		//$orig_urls = array();
-		foreach ($results as $key => $r)
+
+		foreach ($results as $p)
 		{
 			$content = new ContentProduct;
 
-			$content->unique_id    = $r['id'] . '-' . $r['store']['id']; // offer id
-			$content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
-			$content->title        = $r['name'];
-			$content->url          = $r['link'];
-			$content->img          = $r['thumbnail'];
-			$content->price        = $r['price'];
-			$content->currencyCode = 'BRL';
-			$content->merchant     = trim($r['store']['name']);
+			$opt = $this->getPrimaryOption($p);
 
-			if ($domain = self::getMerchantDomain($content->merchant))
+			$product_id = isset($p['id']) ? (string) $p['id'] : '';
+			$mongo_id   = isset($p['_id']) ? (string) $p['_id'] : '';
+			$seller     = !empty($opt['seller']) ? trim((string) $opt['seller']) : '';
+
+			// Unique ID: stable product id + seller (if any), fallback to _id
+			$uid_base = $product_id !== '' ? $product_id : $mongo_id;
+			$content->unique_id = $uid_base . ($seller !== '' ? '-' . $seller : '');
+
+			// Title / Description
+			$content->title       = !empty($p['name']) ? (string) $p['name'] : '';
+			$content->description = !empty($p['description']) ? (string) $p['description'] : '';
+
+			// URL
+			$content->orig_url = !empty($p['url']) ? (string) $p['url'] : '';
+			$content->url = !empty($p['url']) ? (string) $p['url'] : '';
+
+			$content->domain = TextHelper::getHostName($content->orig_url);
+
+			// Images (primary + gallery)
+			$content->img = $this->getPrimaryImageUrl($p, $opt);
+
+			$images = $this->collectImageUrls($p, $opt);
+			if ($images)
 			{
-				$content->domain = $domain;
+				$content->images = $images;
+			}
+
+			// Price / Old price (from first option pricing)
+			$price    = $this->getOptionPrice($opt, 'price');
+			$listPrice = $this->getOptionPrice($opt, 'listPrice');
+
+			if ($price !== null)
+			{
+				$content->price = $price;
+			}
+
+			if ($listPrice !== null && $price !== null && $listPrice > $price)
+			{
+				$content->priceOld = $listPrice;
+			}
+
+			// Currency
+			$content->currencyCode = 'BRL';
+
+			// Merchant
+			$content->merchant = $seller;
+			if (!$content->merchant && !empty($content->domain))
+			{
+				$content->merchant = $content->domain;
+			}
+
+			// EAN
+			if (!empty($opt['ean']))
+			{
+				$content->ean = (string) $opt['ean'];
+			}
+
+			// Category (best effort)
+			if (!empty($p['categories']) && is_array($p['categories']))
+			{
+				$names = array();
+				foreach ($p['categories'] as $cat)
+				{
+					if (!empty($cat['name']))
+					{
+						$names[] = (string) $cat['name'];
+					}
+				}
+				if ($names)
+				{
+					$content->category = $names[0];
+					$content->categoryPath = $names;
+				}
+			}
+
+			// Stock / availability
+			$available = null;
+			if (isset($p['available']))
+			{
+				$available = (bool) $p['available'];
+			}
+
+			$stock_value = null;
+			if (isset($opt['stocks'][0]['value']))
+			{
+				$stock_value = (int) $opt['stocks'][0]['value'];
+			}
+
+			if ($available === false)
+			{
+				$content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
 			}
 			else
 			{
-				$merchant = strtolower($r['store']['name']);
-				if (TextHelper::isValidDomainName($merchant))
-				{
-					$content->domain = $merchant;
-				}
+				$content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
 			}
+
+			// Extra fields
 			$content->extra = new ExtraDataLomadeeProducts();
-			ExtraDataLomadeeProducts::fillAttributes($content->extra, $r);
+			$content->extra->product_id      = $product_id;
+			$content->extra->product_mongo_id = $mongo_id;
+			$content->extra->organizationId  = !empty($p['organizationId']) ? (string) $p['organizationId'] : '';
+			$content->extra->createdAt       = !empty($p['createdAt']) ? (string) $p['createdAt'] : '';
+			$content->extra->updatedAt       = !empty($p['updatedAt']) ? (string) $p['updatedAt'] : '';
+			$content->extra->lastUpdate      = !empty($p['lastUpdate']) ? (string) $p['lastUpdate'] : '';
+
+			$content->extra->seller          = $seller;
+			$content->extra->stock_value     = $stock_value;
+			$content->extra->option_id       = !empty($opt['id']) ? (string) $opt['id'] : '';
 
 			$data[] = $content;
 		}
@@ -132,50 +265,233 @@ class LomadeeProductsModule extends AffiliateParserModule
 		return $data;
 	}
 
-	public function doRequestItems(array $items)
+	private function getPrimaryOption(array $product)
 	{
-		// assign new data
-		foreach ($items as $unique_id => $item)
+		if (!empty($product['options']) && is_array($product['options']))
 		{
-			$parts    = explode('-', $unique_id);
-			$offer_id = $parts[0];
-			$store_id = $parts[1];
+			// Prefer first available option
+			foreach ($product['options'] as $opt)
+			{
+				if (isset($opt['available']) && $opt['available'])
+				{
+					return $opt;
+				}
+			}
+			// Otherwise first option
+			return reset($product['options']);
+		}
+
+		return array();
+	}
+
+	private function getOptionPrice(array $opt, $field)
+	{
+		if (!empty($opt['pricing']) && is_array($opt['pricing']) && !empty($opt['pricing'][0]) && isset($opt['pricing'][0][$field]))
+		{
+			return (float) $opt['pricing'][0][$field];
+		}
+		return null;
+	}
+
+	private function getPrimaryImageUrl(array $product, array $opt)
+	{
+		if (!empty($opt['images'][0]['url']))
+		{
+			return (string) $opt['images'][0]['url'];
+		}
+		if (!empty($product['images'][0]['url']))
+		{
+			return (string) $product['images'][0]['url'];
+		}
+		return '';
+	}
+
+	private function collectImageUrls(array $product, array $opt)
+	{
+		$urls = array();
+
+		foreach (array($opt, $product) as $src)
+		{
+			if (!empty($src['images']) && is_array($src['images']))
+			{
+				foreach ($src['images'] as $img)
+				{
+					if (!empty($img['url']))
+					{
+						$urls[] = (string) $img['url'];
+					}
+				}
+			}
+		}
+
+		$urls = array_values(array_unique(array_filter($urls)));
+		return $urls;
+	}
+
+	public function viewDataPrepare($data)
+	{
+
+		if (empty($data) || !is_array($data))
+		{
+			return $data;
+		}
+
+		// Need a valid post ID to save generated affiliate links back to DB
+		global $post;
+		$post_id = (!empty($post) && !empty($post->ID)) ? (int) $post->ID : 0;
+
+		if ($post_id <= 0)
+		{
+			return $data;
+		}
+
+		if (is_admin())
+		{
+			$default_limit   = 3;
+		}
+		else
+		{
+			$default_limit   = 5;
+		}
+		$max_to_generate = (int) apply_filters('cegg_lomadee_max_affiliate_links_per_request', $default_limit);
+		if ($max_to_generate < 0)
+		{
+			$max_to_generate = 0;
+		}
+
+		$generated_count = 0;
+		$changed         = false;
+
+		$subid = (string)$this->config('subid');
+
+		foreach ($data as $key => $d)
+		{
+			if ($generated_count >= $max_to_generate)
+			{
+				break;
+			}
+
+			$orig_url = isset($d['orig_url']) ? trim((string) $d['orig_url']) : '';
+			$url      = isset($d['url']) ? trim((string) $d['url']) : '';
+
+			if ($orig_url === '' || $url === '')
+			{
+				continue;
+			}
+
+			// Generate only if we still have the direct product URL
+			if ($orig_url !== $url)
+			{
+				continue;
+			}
+
+			$organizationId = isset($d['extra']['organizationId']) ? trim((string) $d['extra']['organizationId']) : '';
+			if ($organizationId === '')
+			{
+				continue;
+			}
+
+			// Skip orgs that require approval (avoid repeated API calls)
+			$block_key = 'cegg_lomadee_org_block_' . md5($organizationId);
+			if (get_transient($block_key))
+			{
+				continue;
+			}
+
+			// Resolve dynamic placeholders
+			$mdasc = (string) LinkHandler::getUrlTemplate($orig_url, $subid, $d);
 
 			try
 			{
-				$result = $this->getApiClient()->offer($offer_id, $store_id);
+				$affiliate_url = $this->getApiClient()->generateAffiliateLink($orig_url, $organizationId, $mdasc);
+				$generated_count++;
+
+				if ($affiliate_url)
+				{
+					$data[$key]['url'] = $affiliate_url;
+					$changed = true;
+				}
 			}
 			catch (\Exception $e)
 			{
-				/**
-				 * Offer IDs were changed after updating API to v3
-				 * So no way to track stock status and price for existing products?
-				 */
-				if ($e->getCode() == 404)
+				$msg  = strtolower((string) $e->getMessage());
+				$code = (int) $e->getCode();
+
+				$domain = '';
+				if (!empty($d['domain']))
 				{
-					$items[$unique_id]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
+					$domain = (string) $d['domain'];
 				}
-				//$items[$unique_id]['stock_status'] = ContentProduct::STOCK_STATUS_UNKNOWN;
+
+				// Approval required -> block this organization for a while to avoid spam
+				if ($code === 403 && strpos($msg, 'approval') !== false)
+				{
+					set_transient($block_key, 1, DAY_IN_SECONDS);
+
+					$list_key = 'cegg_lomadee_approval_domains';
+					$domains  = get_transient($list_key);
+					if (!is_array($domains))
+					{
+						$domains = array();
+					}
+
+					if ($domain !== '' && !in_array($domain, $domains, true))
+					{
+						$domains[] = $domain;
+
+						// cap list to last 20 domains
+						if (count($domains) > 20)
+						{
+							$domains = array_slice($domains, -20);
+						}
+
+						set_transient($list_key, $domains, DAY_IN_SECONDS);
+					}
+
+					// Trigger admin notice flag
+					set_transient('cegg_lomadee_approval_notice', 1, DAY_IN_SECONDS);
+
+					continue;
+				}
+
+				// Domain not allowed -> block this domain for longer to avoid repeated failures
+				if ($code === 400 && strpos($msg, 'domain_not_allowed') !== false)
+				{
+					set_transient($block_key, 1, WEEK_IN_SECONDS);
+					continue;
+				}
+
+				// Rate limit / throttling: stop trying this time
+				if (
+					$code === 429 ||
+					strpos($msg, '429') !== false ||
+					strpos($msg, 'rate') !== false ||
+					strpos($msg, 'limit') !== false ||
+					strpos($msg, 'too many') !== false
+				)
+				{
+					break;
+				}
+
 				continue;
 			}
-			if (!$result || !isset($result['offers']))
-			{
-				$items[$unique_id]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-				continue;
-			}
-			$items[$unique_id]['price']        = $result['offers'][0]['price'];
-			$items[$unique_id]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
-			$items[$unique_id]['url']          = $result['offers'][0]['link'];
 		}
 
-		return $items;
+		// Save once if something changed
+		if ($changed)
+		{
+			$module_id = $this->getId();
+			ContentManager::saveData($data, $module_id, $post_id);
+		}
+
+		return $data;
 	}
 
 	private function getApiClient()
 	{
 		if ($this->api_client === null)
 		{
-			$this->api_client = new LomadeeApi('15071999399311f734bd1', $this->config('sourceId'));
+			$this->api_client = new LomadeeApi($this->config('api_key'));
 		}
 
 		return $this->api_client;
@@ -196,245 +512,8 @@ class LomadeeProductsModule extends AffiliateParserModule
 		$this->render('search_panel', array('module_id' => $this->getId()));
 	}
 
-	public static function getMerchantDomains()
+	public function renderUpdatePanel()
 	{
-		return array(
-			'2 AM Gaming '                    => '2amgaming.com',
-			'About Home'                      => 'abouthome.com.br',
-			'Alfaparf Milano'                 => 'loja.alfaparfmilano.com.br',
-			'Almundo'                         => 'almundo.com.br',
-			'Alto Giro'                       => 'altogiro.net',
-			'Amazon'                          => 'amazon.com.br',
-			'Amêndoas Confeitadas'            => 'amendoasconfeitadas.com.br',
-			'Americanas.com'                  => 'americanas.com.br',
-			'Americanas'                      => 'americanas.com.br',
-			'Anhanguera Vestibular'           => 'vestibulares.com.br',
-			'Anker'                           => 'ankeroficial.com.br',
-			'April Seguro Viagens'            => 'aprilbrasil.com.br',
-			'Aramis'                          => 'aramis.com.br',
-			'Arena Warrior'                   => 'arenawarrior.com.br',
-			'Assine Abril'                    => 'assine-abril.com',
-			'Asus'                            => 'loja.asus.com.br',
-			'Atrio Esportes'                  => 'atrioesportes.com.br',
-			'Aurea Beauty'                    => 'aureanutrition.com.br',
-			'Baitashop'                       => 'baitashop.com.br',
-			'Banggood'                        => 'banggood.com',
-			'Barceló'                         => 'barcelo.com',
-			'BC Suplementos'                  => 'bcsuplementos.com.br',
-			'Beline'                          => 'beline.com.br',
-			'Betec'                           => 'loja.betec.com.br',
-			'Blow Back'                       => 'lojablowback.com.br',
-			'Box Viva'                        => 'boxviva.com.br',
-			'BRA Lingerie'                    => 'bralingerie.com.br',
-			'Brastemp'                        => 'loja.brastemp.com.br',
-			'BugaLupa'                        => 'bugalupa.com.br',
-			'BugShop'                         => 'bugshop.com.br',
-			'Byoushop'                        => 'byoushop.com.br',
-			'Cabana Magazine'                 => 'cabanamagazine.com.br',
-			'Camisaria Colombo'               => 'camisariacolombo.com.br',
-			'Cartão Animal'                   => 'loja.cartaoanimal.com.br',
-			'Carter\'s'                       => 'cartersoshkosh.com.br',
-			'Catho Educação'                  => 'catho.com.br',
-			'Cavuca.com'                      => 'cavuca.com.br',
-			'Centauro'                        => 'centauro.com.br',
-			'Center Bike'                     => 'centerbikemaringa.com.br',
-			'Central Ar'                      => 'centralar.com.br',
-			'Cereja sem Bolo'                 => 'cerejasembolo.com.br',
-			'ChicBest'                        => 'chicbest.com',
-			'Chico Rei'                       => 'chicorei.com',
-			'Ciclic'                          => 'ciclic.com.br',
-			'Classic Tennis'                  => 'classictennis.com.br',
-			'Clique Bem Estar'                => 'cliquebemestar.com.br',
-			'Clube Marisol'                   => 'clubemarisol.com.br',
-			'Clube Paladar'                   => 'clubepaladar.com.br',
-			'Color Brinque'                   => 'colorbrinque.com.br',
-			'Comix'                           => 'comix.com.br',
-			'Conoy Cosmetics'                 => 'conoycosmetics.com',
-			'Consul'                          => 'loja.consul.com.br',
-			'CPM Office'                      => 'cpmoffice.com.br',
-			'DarkSide Books'                  => 'darksidebooks.com.br',
-			'Deans'                           => 'deans.com.br',
-			'Dermage'                         => 'dermage.com.br',
-			'Descomplica'                     => 'descomplica.com.br',
-			'Despachante DOK'                 => 'despachantedok.com.br',
-			'Doce Erva'                       => 'doceerva.com.br',
-			'Dona Coelha'                     => 'donacoelha.com',
-			'Dresslily'                       => 'dresslily.com',
-			'Drogaria Pacheco'                => 'drogariaspacheco.com.br',
-			'Drogaria São Paulo'              => 'drogariasaopaulo.com.br',
-			'E-cota Auto'                     => 'e-cota.com',
-			'Editora Foco'                    => 'editorafoco.com.br',
-			'Elare'                           => 'elare.com.br',
-			'Electrolux'                      => 'loja.electrolux.com.br',
-			'EletroAlmeida'                   => 'eletroalmeida.com.br',
-			'Eneba'                           => 'eneba.com.br',
-			'Escala Verde'                    => 'escalaverde.com.br',
-			'Etna'                            => 'etna.com.br',
-			'Fata'                            => 'fata.com.br',
-			'Ferramentas Kennedy'             => 'ferramentaskennedy.com.br',
-			'Foreo'                           => 'foreo.com',
-			'Found IT'                        => 'foundit.com.br',
-			'Frio Peças'                      => 'friopecas.com.br',
-			'Gear Best'                       => 'gearbest.com',
-			'Girafa'                          => 'girafa.com.br',
-			'Go Read'                         => 'goreadassineabril.com',
-			'Gourmetzinho'                    => 'gourmetzinhocomidinhas.com.br',
-			'Grupo A'                         => 'grupoa.com.br',
-			'Guitarpedia'                     => 'guitarpedia.com.br',
-			'Gym Chef Comida Fit'             => 'gymchef.com.br',
-			'Hang Loose'                      => 'hangloose.com.br',
-			'Happy Hair'                      => 'happyhair.com.br',
-			'Hermoso Compadre'                => 'hermosocompadre.com.br',
-			'HFBrazil'                        => 'hfbrazil.com.br',
-			'Hipervarejo'                     => 'hipervarejo.com.br',
-			'Home is...'                      => 'homeis.com.br',
-			'Hostinger'                       => 'hostinger.com.br',
-			'Impacta'                         => 'impacta.com.br',
-			'Inbox Shoes'                     => 'inboxshoes.com.br',
-			'IORANE'                          => 'shoponline.iorane.com.br',
-			'Ipemig'                          => 'estude-ipemig.com',
-			'Iridium labs '                   => 'iridiumlabs.com.br',
-			'iRobot'                          => 'irobotloja.com.br',
-			'Jocar'                           => 'jocar.com.br',
-			'Joico'                           => 'joico.com.br',
-			'K9 Fashion'                      => 'k9fashion.com.br',
-			'Kit Led'                         => 'kitled.com.br',
-			'KitchenAid'                      => 'kitchenaid.com.br',
-			'Klin'                            => 'klin.com.br',
-			'Koralle'                         => 'koralle.com.br',
-			'Latifundio'                      => 'latifundio.com.br',
-			'Lenovo Brasil'                   => 'lenovo.com',
-			'Leveros'                         => 'leveros.com.br',
-			'Levok'                           => 'levok.com.br',
-			'Livraria Cultura'                => 'livrariacultura.com.br',
-			'Livraria da Travessa'            => 'travessa.com.br',
-			'Livraria Florence'               => 'livrariaflorence.com.br',
-			'Loja do Café'                    => 'lojadocafe.com.br',
-			'Loja do Mecânico'                => 'lojadomecanico.com.br',
-			'Lomadee'                         => 'lomadee.com',
-			'Lovoo'                           => 'pt.lovoo.com',
-			'LTPerformance'                   => 'ltperformance.com.br',
-			'Magazine Pag Menos'              => 'magazinepagmenos.com.br',
-			'Magrela Shop'                    => 'magrelashop.com.br',
-			'Mais Barato Store '              => 'maisbaratostore.com.br',
-			'Malwee'                          => 'malwee.com.br',
-			'Mamorena'                        => 'mamorena.com.br',
-			'Mania Pop'                       => 'maniapop.com.br',
-			'Max Milhas'                      => 'maxmilhas.com.br',
-			'Megaton Suplementos'             => 'megatonsuplementos.com.br',
-			'Milla Cabelos'                   => 'millacabelos.com.br',
-			'Mirage'                          => 'mirage.com.br',
-			'MMPlace'                         => 'mmplace.com.br',
-			'Mobiliata'                       => 'mobiliata.com.br',
-			'Mobly'                           => 'mobly.com.br',
-			'Mr Deal'                         => 'mrdeal.com.br',
-			'Multikids'                       => 'lojamultikids.com.br',
-			'Multikids baby'                  => 'multikidsbaby.com.br',
-			'MultiLaser'                      => 'lojamultilaser.com.br',
-			'Mundo Infantil Store'            => 'mundoinfantilstore.com.br',
-			'Nathus Brasil'                   => 'nathusbrasil.com.br',
-			'Natue'                           => 'natue.com.br',
-			'Netshoes'                        => 'netshoes.com.br',
-			'newbeach'                        => 'newbeach.com.br',
-			'Newchic'                         => 'pt.newchic.com',
-			'Nextel'                          => 'nextel.com.br',
-			'Nike'                            => 'nike.com.br',
-			'NordVPN'                         => 'nordvpn.com',
-			'NutriBullet'                     => 'nutribulletbrasil.com.br',
-			'Nuuvem'                          => 'nuuvem.com',
-			'Ordenato'                        => 'ordenato.com.br',
-			'Organomix'                       => 'organomix.com.br',
-			'Ouro e Prata'                    => 'viacaoouroeprata.com.br',
-			'PagSeguro'                       => 'pagseguro.uol.com.br',
-			'Par Perfeito'                    => 'parperfeito.com.br',
-			'Passagens Aéreas '               => 'passagensaereas.com.br',
-			'PB Kids'                         => 'pbkids.com.br',
-			'Pierre Cardin - Feminina'        => 'pierrecardin.com.br',
-			'Pierre Cardin Store - Masculina' => 'store.pierrecardin.com.br',
-			'Pipocaweb'                       => 'pipocaweb.com.br',
-			'Plantei'                         => 'plantei.com.br',
-			'Pneu Store'                      => 'pneustore.com.br',
-			'Pollia'                          => 'pollia.com.br',
-			'Portal Pós'                      => 'portalpos.com.br',
-			'Porto de Letras'                 => 'portodeletras.com.br',
-			'Porto Faz'                       => 'portosegurofaz.com.br',
-			'Positivo'                        => 'loja.meupositivo.com.br',
-			'Positivo Casa Inteligente'       => 'positivocasainteligente.com.br',
-			'Prime Home Decor'                => 'primehomedecor.com.br',
-			'Pulse Sound'                     => 'pulsesound.com.br',
-			'Q48 Superfoods'                  => 'q48superfoods.com.br',
-			'Quantum'                         => 'meuquantum.com.br',
-			'QUINTA DELL\'ARTE'               => 'quintadellarte.com.br',
-			'Recco'                           => 'recco.com.br',
-			'Repassa'                         => 'repassa.com.br',
-			'Reppara'                         => 'reppara.com.br',
-			'ReservaCool'                     => 'reservacool.com.br',
-			'Resultados Digitais'             => 'materiais.resultadosdigitais.com.br',
-			'Ri Happy'                        => 'rihappy.com.br',
-			'Ribsol Energia Solar'            => 'ribsolenergiasolar.com.br',
-			'RZM Shop'                        => 'rzmshop.com.br',
-			'Sam\'s Club Premium'             => 'seja-socio-samsclub.com',
-			'Samsonite'                       => 'samsonite.com.br',
-			'Santori'                         => 'santorioficial.com.br',
-			'Sapatilhas BH'                   => 'sapatilhasbh.com.br',
-			'Segundo Ciclo'                   => 'segundociclo.com.br',
-			'Seja-Lev'                        => 'seja-lev.com',
-			'Sem Parar'                       => 'semparar.com.br%2Fassine-promo',
-			'Seu Bebê Precisa'                => 'seubebeprecisa.com.br',
-			'Shop RVX'                        => 'shoprvx.com.br',
-			'Shoptime'                        => 'shoptime.com.br',
-			'Sieno Perfumes'                  => 'sieno.com.br',
-			'Sosô Lingerie'                   => 'sosolingerie.com.br',
-			'StarTech'                        => 'startech.com.br',
-			'Stoodi'                          => 'stoodi.com.br',
-			'Submarino'                       => 'submarino.com.br',
-			'Suplementos mais baratos'        => 'suplementosmaisbaratos.com',
-			'Swift'                           => 'swift.com.br',
-			'Tá Barato Tô Levando'            => 'tabaratotolevando.com.br',
-			'TAP Air Portugal'                => 'flytap.com',
-			'TNG'                             => 'tng.com.br',
-			'Track&Field'                     => 'tf.com.br',
-			'Travel Mobile '                  => 'travelmobile.biz',
-			'Uitech'                          => 'uitech.com.br',
-			'UltraBikes '                     => 'ultrabikes.com.br',
-			'UltraSports'                     => 'ultrasports.com.br',
-			'Uniflores'                       => 'uniflores.com.br',
-			'unifórmula online'               => 'uniformulaonline.com.br',
-			'Universo Kids'                   => 'lojauniversokids.com',
-			'Unopar EAD Vestibular'           => 'vestibular.unoparead.com.br',
-			'Usaflex'                         => 'usaflex.com.br',
-			'Use Camisetas'                   => 'usecamisetas.com',
-			'Vaio'                            => 'loja.br.vaio.com',
-			'Valejet'                         => 'valejet.com',
-			'Veni perfumaria'                 => 'veni.com.br',
-			'Vhita'                           => 'vhita.com.br',
-			'Vibra Comigo'                    => 'vibracomigo.com.br',
-			'Viggore'                         => 'viggore.com.br',
-			'Vissla'                          => 'vissla.com.br',
-			'Vital Atman'                     => 'vitalatman.com.br',
-			'Vitrine Casual'                  => 'vitrinecasual.com.br',
-			'Volcom'                          => 'volcom.com.br',
-			'Weego'                           => 'lojaweego.com.br',
-			'Yori Cosméticos'                 => 'yori.store',
-			'Zaful'                           => 'br.zaful.com',
-			'Zait Jeans'                      => 'zait.com.br',
-			'Zalika Cosméticos'               => 'zalikacosmeticos.com.br',
-			'Zandara Store'                   => 'zandarastore.com.br',
-			'Zattini'                         => 'zattini.com.br',
-			'Zona Cerealista'                 => 'zonacerealista.com.br',
-		);
-	}
-
-	public static function getMerchantDomain($merchant)
-	{
-		$list = self::getMerchantDomains();
-		if (isset($list[$merchant]))
-		{
-			return $list[$merchant];
-		}
-		else
-		{
-			return false;
-		}
+		$this->render('update_panel', array('module_id' => $this->getId()));
 	}
 }

@@ -11,17 +11,17 @@ use ContentEgg\application\components\ParserModuleConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class QwantImagesConfig extends ParserModuleConfig
 {
 
 	public function options()
 	{
-		$optiosn = array(
+		$options = array(
 			'entries_per_page'        => array(
 				'title'       => __('Results', 'content-egg'),
-				'description' => __('Number of results for a single query.', 'content-egg'),
+				'description' => __('Specify the number of results to display for a single search query.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 10,
 				'validator'   => array(
@@ -36,8 +36,8 @@ class QwantImagesConfig extends ParserModuleConfig
 				'section'     => 'default',
 			),
 			'entries_per_page_update' => array(
-				'title'       => __('Results for autoblogging ', 'content-egg'),
-				'description' => __('Number of results for autoblogging.', 'content-egg'),
+				'title'       => __('Results for autoupdates ', 'content-egg'),
+				'description' => __('Maximum number of results returned for keyword autoupdates and other automatic searches.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 6,
 				'validator'   => array(
@@ -50,6 +50,13 @@ class QwantImagesConfig extends ParserModuleConfig
 					),
 				),
 				'section'     => 'default',
+			),
+			'locale'                  => array(
+				'title'            => __('Locale', 'content-egg'),
+				'callback'         => array($this, 'render_dropdown'),
+				'dropdown_options' => self::locales(),
+				'default'          => 'en_US',
+				'section'          => 'default',
 			),
 			'safesearch'              => array(
 				'title'            => __('Safe search', 'content-egg'),
@@ -70,7 +77,8 @@ class QwantImagesConfig extends ParserModuleConfig
 			),
 		);
 
-		return array_merge(parent::options(), $optiosn);
+		$options = array_merge(parent::options(), $options);
+		return self::moveRequiredUp($options);
 	}
 
 	static public function marketCodes()
@@ -120,5 +128,67 @@ class QwantImagesConfig extends ParserModuleConfig
 		);
 
 		return array_combine($codes, $codes);
+	}
+
+	static public function locales()
+	{
+		$locales = [
+			"bg_bg",
+			"br_fr",
+			"ca_ad",
+			"ca_es",
+			"ca_fr",
+			"co_fr",
+			"cs_cz",
+			"cy_gb",
+			"da_dk",
+			"de_at",
+			"de_ch",
+			"de_de",
+			"ec_ca",
+			"el_gr",
+			"en_au",
+			"en_ca",
+			"en_gb",
+			"en_ie",
+			"en_my",
+			"en_nz",
+			"en_us",
+			"es_ad",
+			"es_ar",
+			"es_cl",
+			"es_co",
+			"es_es",
+			"es_mx",
+			"es_pe",
+			"et_ee",
+			"eu_es",
+			"eu_fr",
+			"fc_ca",
+			"fi_fi",
+			"fr_ad",
+			"fr_be",
+			"fr_ca",
+			"fr_ch",
+			"fr_fr",
+			"gd_gb",
+			"he_il",
+			"hu_hu",
+			"it_ch",
+			"it_it",
+			"ko_kr",
+			"nb_no",
+			"nl_be",
+			"nl_nl",
+			"pl_pl",
+			"pt_ad",
+			"pt_pt",
+			"ro_ro",
+			"sv_se",
+			"th_th",
+			"zh_cn",
+			"zh_hk"
+		];
+		return array_combine($locales, $locales);
 	}
 }

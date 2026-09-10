@@ -11,14 +11,14 @@ use ContentEgg\application\components\ParserModuleConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class RelatedKeywordsConfig extends ParserModuleConfig
 {
 
 	public function options()
 	{
-		$optiosn = array(
+		$options = array(
 			'subscription_key'        => array(
 				'title'       => 'Subscription Key <span class="cegg_required">*</span>',
 				'description' => __('Key access to Bing Autosuggest API. You can get <a href="https://azure.microsoft.com/en-us/try/cognitive-services/?api=autosuggest-api">here</a>.', 'content-egg') .
@@ -37,7 +37,7 @@ class RelatedKeywordsConfig extends ParserModuleConfig
 			),
 			'entries_per_page'        => array(
 				'title'       => __('Results', 'content-egg'),
-				'description' => __('Number of results for a single query.', 'content-egg'),
+				'description' => __('Specify the number of results to display for a single search query.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 10,
 				'validator'   => array(
@@ -52,8 +52,8 @@ class RelatedKeywordsConfig extends ParserModuleConfig
 				'section'     => 'default',
 			),
 			'entries_per_page_update' => array(
-				'title'       => __('Results for autoblogging ', 'content-egg'),
-				'description' => __('Number of results for autoblogging.', 'content-egg'),
+				'title'       => __('Results for autoupdates ', 'content-egg'),
+				'description' => __('Maximum number of results returned for keyword autoupdates and other automatic searches.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 5,
 				'validator'   => array(
@@ -78,7 +78,8 @@ class RelatedKeywordsConfig extends ParserModuleConfig
 		$parent  = parent::options();
 		unset($parent['featured_image']);
 
-		return array_merge($parent, $optiosn);
+		$options = array_merge(parent::options(), $options);
+		return self::moveRequiredUp($options);
 	}
 
 	static public function marketCodes()

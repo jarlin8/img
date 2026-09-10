@@ -11,18 +11,18 @@ use ContentEgg\application\components\ParserModuleConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class PixabayConfig extends ParserModuleConfig
 {
 
 	public function options()
 	{
-		$optiosn = array(
+		$options = array(
 			'key'                     => array(
 				'title'       => 'API Key <span class="cegg_required">*</span>',
 				'description' => __('Key access to Pixabay API. You can get <a href="https://pixabay.com/api/docs/">here</a> (you need to have account).', 'content-egg'),
-				'callback'    => array($this, 'render_input'),
+				'callback'    => array($this, 'render_password'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -36,7 +36,7 @@ class PixabayConfig extends ParserModuleConfig
 			),
 			'entries_per_page'        => array(
 				'title'       => __('Results', 'content-egg'),
-				'description' => __('Number of results for a single query.', 'content-egg'),
+				'description' => __('Specify the number of results to display for a single search query.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 20,
 				'validator'   => array(
@@ -51,8 +51,8 @@ class PixabayConfig extends ParserModuleConfig
 				'section'     => 'default',
 			),
 			'entries_per_page_update' => array(
-				'title'       => __('Results for autoblogging ', 'content-egg'),
-				'description' => __('Number of results for autoblogging.', 'content-egg'),
+				'title'       => __('Results for autoupdates ', 'content-egg'),
+				'description' => __('Maximum number of results returned for keyword autoupdates and other automatic searches.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 5,
 				'validator'   => array(
@@ -66,19 +66,14 @@ class PixabayConfig extends ParserModuleConfig
 				),
 				'section'     => 'default',
 			),
-			'image_size'              => array(
-				'title'            => __('Size', 'content-egg'),
-				'description'      => __('Height size of image', 'content-egg'),
+			'size'              => array(
+				'title'            => __('Image size', 'content-egg'),
 				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
-					'_180' => '180px',
-					'_340' => '340px',
-					'_640' => '640px',
-					'_960' => '960px',
+					'medium' => __('Medium', 'content-egg'),
+					'large' => __('Large', 'content-egg'),
 				),
-				'default'          => '_640',
-				'section'          => 'default',
-				'metaboxInit'      => true,
+				'default'          => 'large',
 			),
 			'image_type'              => array(
 				'title'            => __('Type of image', 'content-egg'),
@@ -173,6 +168,7 @@ class PixabayConfig extends ParserModuleConfig
 			),
 		);
 
-		return array_merge(parent::options(), $optiosn);
+		$options = array_merge(parent::options(), $options);
+		return self::moveRequiredUp($options);
 	}
 }

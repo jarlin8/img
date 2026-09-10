@@ -9,12 +9,14 @@ use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\admin\PluginAdmin;
 use ContentEgg\application\Plugin;
 
+
+
 /**
  * Module abstract class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 abstract class Module
 {
@@ -41,6 +43,7 @@ abstract class Module
 		}
 
 		$info = $this->info();
+
 		if (!empty($info['name']))
 		{
 			$this->name = $info['name'];
@@ -49,6 +52,21 @@ abstract class Module
 		{
 			$this->name = $this->id;
 		}
+
+		if ($this->isClone())
+		{
+			if ($name = ModuleName::getInstance()->getName($this->getId()))
+			{
+				$this->name = $name;
+			}
+			else
+			{
+				$this->name .= ' ' . $this->getCloneNum();
+			}
+
+			$this->name .= ' [Clone]';
+		}
+
 		if (!empty($info['api_agreement']))
 		{
 			$this->api_agreement = $info['api_agreement'];
@@ -164,6 +182,11 @@ abstract class Module
 		return ModuleManager::configFactory($this->getId());
 	}
 
+	public function option($opt_name, $default = null)
+	{
+		return $this->config($opt_name, $default);
+	}
+
 	public function config($opt_name, $default = null)
 	{
 		if (!$this->getConfigInstance()->option_exists($opt_name))
@@ -224,6 +247,15 @@ abstract class Module
 		return false;
 	}
 
+	// Affiliate Egg is an affiliate-parser concept; the real check lives on
+	// AffiliateParserModule. Default false here so isAeParser() is always safe to
+	// call on ANY module (video/image/content/coupon), matching isAffiliateParser
+	// above — otherwise non-affiliate modules fatal with "undefined method".
+	public function isAeParser()
+	{
+		return false;
+	}
+
 	public function isParser()
 	{
 		return false;
@@ -271,9 +303,15 @@ abstract class Module
 		return '';
 	}
 
+	public function releaseVersionFree()
+	{
+		return '';
+	}
+
 	public function isNew()
 	{
-		if (!$module_version = $this->releaseVersion())
+		$module_version = Plugin::isFree() ? $this->releaseVersionFree() : $this->releaseVersion();
+		if (!$module_version)
 		{
 			return false;
 		}
@@ -328,5 +366,30 @@ abstract class Module
 		{
 			return 'inactive';
 		}
+	}
+
+	public function isClone()
+	{
+		if (strpos($this->getId(), '__clone') !== false)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public function getCloneNum()
+	{
+		if (!$this->isClone())
+			return '';
+
+		$parts = explode('__', $this->getId());
+		$clone_num = end($parts);
+		$clone_num = str_replace('clone', '', $clone_num);
+		$clone_num = intval($clone_num);
+
+		return $clone_num;
 	}
 }

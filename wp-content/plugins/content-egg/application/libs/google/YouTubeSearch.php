@@ -11,7 +11,7 @@ use ContentEgg\application\libs\RestClient;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  * @link: https://developers.google.com/youtube/v3/docs/search/list
  *
@@ -77,9 +77,7 @@ class YouTubeSearch extends RestClient
                     break;
             }
         }
-        //\ContentEgg\prn($_query);
-        //\ContentEgg\prn($this->_decodeResponse($this->restGet('/search', $_query)));
-        //exit;
+
         $response = $this->restGet('/search', $_query);
 
         return $this->_decodeResponse($response);

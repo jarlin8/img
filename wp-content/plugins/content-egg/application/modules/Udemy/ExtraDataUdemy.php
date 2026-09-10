@@ -11,7 +11,7 @@ use ContentEgg\application\components\ExtraData;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class ExtraDataUdemy extends ExtraData
 {
@@ -43,4 +43,5 @@ class ExtraDataUdemy extends ExtraData
 	public $objectives_summary = array();
 	public $target_audiences = array();
 	public $bestseller_badge_content = array();
+	public $video_url;
 }

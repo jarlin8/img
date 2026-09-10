@@ -13,16 +13,13 @@ use ContentEgg\application\components\ExtraData;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\components\LinkHandler;
 use ContentEgg\application\helpers\TemplateHelper;
-use ContentEgg\application\Plugin;
-
-use function ContentEgg\prnx;
 
 /**
  * EbayModule class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class EbayModule extends AffiliateParserModule
 {
@@ -32,37 +29,23 @@ class EbayModule extends AffiliateParserModule
 
     public function info()
     {
-        if (\is_admin() && !Plugin::isFree())
-        {
-            \add_action('admin_notices', array(__CLASS__, 'updateNotice'));
-        }
-
         return array(
             'name' => 'Ebay (legacy)',
-            'docs_uri' => 'https://ce-docs.keywordrush.com/modules/affiliate/ebay-legacy',
+            'docs_uri' => 'https://ce-docs.keywordrush.com/modules/affiliate/ebay',
+        );
+    }
+
+    public static function getPriceParamMap()
+    {
+        return array(
+            'min' => 'min_price',
+            'max' => 'max_price',
         );
     }
 
     public function isDeprecated()
     {
         return true;
-    }
-
-    public static function updateNotice()
-    {
-        if (!EbayConfig::getInstance()->option('is_active'))
-        {
-            return;
-        }
-
-        if (EbayConfig::getInstance()->option('cert_id'))
-        {
-            return;
-        }
-
-        echo '<div class="notice notice-warning is-dismissible">';
-        echo '<p>' . sprintf(__('Starting on July 1, 2021, applications using Shopping API calls must authenticate with an OAuth application access token. Please visit <a href="%s">Ebay module settings</a> to get started with the new API authentication.', 'content-egg'), \get_admin_url(\get_current_blog_id(), 'admin.php?page=content-egg-modules--Ebay')) . '</p>';
-        echo '</div>';
     }
 
     public function getParserType()

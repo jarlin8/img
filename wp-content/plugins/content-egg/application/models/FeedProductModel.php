@@ -6,12 +6,14 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\helpers\TextHelper;
 
+use function ContentEgg\prnx;
+
 /**
  * FeedProductModel class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 abstract class FeedProductModel extends Model
 {
@@ -24,6 +26,8 @@ abstract class FeedProductModel extends Model
                     price float(12,2) DEFAULT NULL,
                     title text,
                     ean varchar(13) DEFAULT NULL,
+                    category varchar(191) DEFAULT NULL,
+                    brand varchar(191) DEFAULT NULL,
                     orig_url text,
                     product text,
                     PRIMARY KEY  (id),
@@ -31,26 +35,52 @@ abstract class FeedProductModel extends Model
                     KEY orig_url (orig_url(60)),
                     KEY ean (ean(13)),
                     KEY price (price),
+                    KEY category (category),
+                    KEY brand (brand),
                     FULLTEXT (title)
                     ) $this->charset_collate;";
     }
 
-    public function searchByUrl($url, $partial_match = false, $limit = 1)
+    public function searchByUrl($url, $partial_match = false, $limit = 1, $ignore_query_string = false)
     {
-        $like = $this->getDb()->esc_like($url);
-        if ($partial_match)
-        {
-            $like .= '%';
-        }
+        $db    = $this->getDb();
+        $table = $this->tableName();
 
-        if (!$partial_match)
+        $limit = (int) $limit;
+        if ($limit < 1)
         {
             $limit = 1;
         }
 
-        $sql = $this->getDb()->prepare('SELECT * FROM ' . $this->tableName() . ' WHERE orig_url LIKE %s LIMIT %d', $like, $limit);
+        if ($ignore_query_string)
+        {
+            $qpos = strpos($url, '?');
+            if ($qpos !== false)
+            {
+                $url = substr($url, 0, $qpos);
+            }
+        }
 
-        return $this->getDb()->get_results($sql, \ARRAY_A);
+        $like = $db->esc_like($url);
+
+        if ($partial_match)
+        {
+            // STARTS WITH: only trailing %
+            $like .= '%';
+        }
+        else
+        {
+            // exact match => no wildcard, limit 1
+            $limit = 1;
+        }
+
+        $sql = $db->prepare(
+            "SELECT * FROM {$table} WHERE orig_url LIKE %s LIMIT %d",
+            $like,
+            $limit
+        );
+
+        return $db->get_results($sql, ARRAY_A);
     }
 
     public function searchByEan($ean, $limit = 10, $options = array())

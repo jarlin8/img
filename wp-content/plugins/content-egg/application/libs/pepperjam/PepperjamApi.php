@@ -11,7 +11,7 @@ use ContentEgg\application\libs\RestClient;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  * @link: http://help.pepperjamnetwork.com/publisher/api
  */
@@ -56,7 +56,7 @@ class PepperjamApi extends RestClient
 		return $this->_decodeResponse($response);
 	}
 
-	public function restGet($path, array $query = null)
+	public function restGet($path, ?array $query = null)
 	{
 		$query['apiKey'] = $this->api_key;
 		$query['format'] = $this->getResponseType();

@@ -15,7 +15,7 @@ use ContentEgg\application\helpers\TextHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class CityadsProductsModule extends AffiliateParserModule
 {
@@ -141,6 +141,7 @@ class CityadsProductsModule extends AffiliateParserModule
 			$content->img          = $r['image'];
 			$content->manufacturer = $r['brand'];
 			$content->rating       = $r['rating'];
+			$content->ratingDecimal      = $r['rating'];
 			$content->category     = $r['category'];
 			$content->merchant     = $r['offer_name'];
 			$content->upc          = $r['upc'];

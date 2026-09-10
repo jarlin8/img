@@ -16,7 +16,7 @@ use ContentEgg\application\admin\PluginAdmin;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class FlickrModule extends ParserModule
 {
@@ -65,7 +65,6 @@ class FlickrModule extends ParserModule
 			$options['per_page'] = $this->config('entries_per_page');
 		}
 
-
 		if ($this->config('user_id'))
 		{
 			$options['user_id'] = $this->config('user_id');
@@ -81,8 +80,8 @@ class FlickrModule extends ParserModule
 
 		if (!empty($results['stat']) && $results['stat'] == 'fail')
 		{
-			throw new \Exception($results['message']);
-		};
+			throw new \Exception(esc_html(wp_strip_all_tags($results['message'])));
+		}
 
 		if (!isset($results['photos']) || !isset($results['photos']['photo']) || !is_array($results['photos']['photo']))
 		{

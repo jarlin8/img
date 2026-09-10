@@ -11,7 +11,7 @@ use ContentEgg\application\helpers\TextHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class PriceAlertModel extends Model
 {
@@ -34,10 +34,10 @@ class PriceAlertModel extends Model
                     module_id varchar(255) NOT NULL,
                     post_id bigint(20) unsigned DEFAULT NULL,
                     create_date datetime NOT NULL,
-                    complet_date datetime NOT NULL default '0000-00-00 00:00:00',                    
+                    complet_date datetime NOT NULL default '0000-00-00 00:00:00',
                     email varchar(255) NOT NULL,
-                    price float(12,2) DEFAULT NULL,                    
-                    start_price float(12,2) DEFAULT NULL,                    
+                    price float(12,2) DEFAULT NULL,
+                    start_price float(12,2) DEFAULT NULL,
                     status tinyint(1) DEFAULT 0,
                     activkey varchar(16) NOT NULL,
                     PRIMARY KEY  (id),
@@ -69,7 +69,7 @@ class PriceAlertModel extends Model
 		return parent::save($item);
 	}
 
-	public function cleanOld($days, $optimize = true, $date_field = 'complet_date')
+	public function cleanOld($days, $optimize = false, $date_field = 'complet_date')
 	{
 		$this->deleteAll('status = ' . self::STATUS_DELETED . ' AND TIMESTAMPDIFF( DAY, ' . $date_field . ', "' . \current_time('mysql') . '") > ' . $days);
 		if ($optimize)

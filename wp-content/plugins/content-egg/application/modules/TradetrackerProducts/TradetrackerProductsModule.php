@@ -8,17 +8,22 @@ use ContentEgg\application\components\AffiliateParserModule;
 use ContentEgg\application\libs\tradetracker\TradetrackerSoap;
 use ContentEgg\application\components\ContentProduct;
 use ContentEgg\application\admin\PluginAdmin;
-use ContentEgg\application\helpers\TextHelper;
+use ContentEgg\application\helpers\TextHelper;;
 
 /**
  * TradetrackerProductsModule class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class TradetrackerProductsModule extends AffiliateParserModule
 {
+    public function isGtinSearchAllowed()
+    {
+        return true;
+    }
+
 
     private $api_client = null;
 
@@ -80,47 +85,38 @@ class TradetrackerProductsModule extends AffiliateParserModule
             }
         }
 
-        /*
-          if (!empty($query_params['priceFrom']))
-          $options['priceFrom'] = (float)$query_params['priceFrom'];
-          if (!empty($query_params['priceTo']))
-          $options['priceTo'] = (float)$query_params['priceTo'];
-         *
-         */
+        $keywords = array($keyword);
 
-        $results = $this->getApiClient()->getFeedProducts($keyword, $options);
-        if (!is_array($results))
+        if (TextHelper::isEan($keyword))
         {
-            return array();
-        }
-        if (!isset($results[0]) && isset($results['identifier']))
-        {
-            $results = array($results);
+            $keywords[] = preg_replace('/^0/', '', $keyword, 1);
+            $keywords[] = ltrim($keyword, '0');
+            $keywords[] = TextHelper::fixEan($keyword, 13);
+            $keywords[] = TextHelper::fixEan($keyword, 12);
+
+            $keywords = array_unique($keywords);
         }
 
-        return $this->prepareResults($results);
+        $all_results = array();
+        foreach ($keywords as $k)
+        {
+            $results = $this->getApiClient()->getFeedProducts($k, $options);
+
+            if (!is_array($results))
+                continue;
+
+            if (!isset($results[0]) && isset($results['identifier']))
+                $results = array($results);
+
+            $all_results = array_merge($all_results, $results);
+        }
+
+        return $this->prepareResults($all_results);
     }
 
     private function prepareResults($results)
     {
-        // filter dublicates
-        $filtered = array();
-        foreach ($results as $key => $r)
-        {
-            $is_dublicate = false;
-            foreach ($filtered as $f)
-            {
-                if ($r['identifier'] == $f['identifier'] && $r['name'] == $f['name'])
-                {
-                    $is_dublicate = true;
-                    break;
-                }
-            }
-            if (!$is_dublicate)
-            {
-                $filtered[] = $r;
-            }
-        }
+        $filtered = $this->filterDuplicateResults($results);
 
         $data = array();
         foreach ($filtered as $key => $r)
@@ -155,6 +151,7 @@ class TradetrackerProductsModule extends AffiliateParserModule
                 unset($r['additional'][$k]);
             }
             $content->extra->additional = $r['additional'];
+            $content->ean = TextHelper::sanitizeEan($content->ean);
 
             // Common data
             $content->unique_id = $r['identifier'] . '-' . rand(0, 99999);
@@ -190,6 +187,71 @@ class TradetrackerProductsModule extends AffiliateParserModule
         }
 
         return $data;
+    }
+
+    private function filterDuplicateResults(array $results)
+    {
+        $filtered = [];
+        $seenByIdName       = [];
+        $seenByNameImgPrice = [];
+        $seenByUparam       = [];
+
+        foreach ($results as $r)
+        {
+            // 1) Check identifier + name
+            $idNameKey = $r['identifier'] . '|' . $r['name'];
+            if (isset($seenByIdName[$idNameKey]))
+            {
+                continue;
+            }
+
+            // 2) Check name + img + price
+            if (isset($r['img']))
+            {
+                $imgKey = $r['name'] . '|' . $r['img'] . '|' . $r['price'];
+                if (isset($seenByNameImgPrice[$imgKey]))
+                {
+                    continue;
+                }
+            }
+
+            // 3) Check the 'u' parameter in productURL
+            $uParamKey = null;
+            $parsed    = parse_url($r['productURL']);
+
+            if (isset($parsed['query']))
+            {
+                parse_str($parsed['query'], $qs);
+
+                if (isset($qs['u']))
+                {
+                    $uParamKey = $qs['u'];
+                    if (isset($seenByUparam[$uParamKey]))
+                    {
+                        continue;
+                    }
+                }
+            }
+
+            // If we reach here, no duplicate
+            $filtered[] = $r;
+
+            if (!empty($imgKey))
+            {
+                $seenByIdName[$idNameKey] = true;
+                if (!isset($seenByNameImgPrice[$imgKey]))
+                    $seenByNameImgPrice[$imgKey] = true;
+
+                $seenByNameImgPrice[$imgKey] = true;
+            }
+
+            if ($uParamKey !== null)
+            {
+                $seenByUparam[$uParamKey] = true;
+            }
+        }
+
+        return $filtered;
     }
 
     public function doRequestItems(array $items)
@@ -288,15 +350,15 @@ class TradetrackerProductsModule extends AffiliateParserModule
             return false;
         }
 
-        if ($p1['sku'] && $p1['sku'] == $p2['sku'])
+        if (!empty($p1['sku']) && !empty($p2['sku']) && $p1['sku'] == $p2['sku'])
         {
             return true;
         }
-        if ($p1['ean'] && $p1['ean'] == $p2['ean'])
+        if (!empty($p1['ean']) && !empty($p2['ean']) && $p1['ean'] == $p2['ean'])
         {
             return true;
         }
-        if ($p1['img'] && $p1['img'] == $p2['img'])
+        if (!empty($p1['img']) && !empty($p2['img']) && $p1['img'] == $p2['img'])
         {
             return true;
         }

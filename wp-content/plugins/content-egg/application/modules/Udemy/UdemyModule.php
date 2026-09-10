@@ -10,14 +10,14 @@ use ContentEgg\application\admin\PluginAdmin;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\libs\udemy\UdemyApi;
 use ContentEgg\application\modules\Udemy\ExtraDataUdemy;
-use ContentEgg\application\components\LinkHandler;
+use ContentEgg\application\components\LinkHandler;;
 
 /**
  * UdemyModule class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class UdemyModule extends AffiliateParserModule
 {
@@ -28,8 +28,12 @@ class UdemyModule extends AffiliateParserModule
 	{
 		return array(
 			'name'        => 'Udemy',
-			'description' => sprintf(__('Adds cources from %s.', 'content-egg'), 'Udemy.com'),
 		);
+	}
+
+	public function isDeprecated()
+	{
+		return true;
 	}
 
 	public function releaseVersion()
@@ -68,7 +72,10 @@ class UdemyModule extends AffiliateParserModule
 		$options['page_size'] = $limit;
 		$options['page']      = 1;
 
-		$options['fields[course]'] = '@all,-description';
+		$options['fields[course]'] = '@all';
+
+		if ($this->config('description_type') == 'headline')
+			$options['fields[course]'] .= ',-description';
 
 		$params = array(
 			'language',
@@ -103,6 +110,11 @@ class UdemyModule extends AffiliateParserModule
 			}
 		}
 
+		if ($name = self::extractUdemyCourseNameFromUrl($keyword))
+		{
+			$keyword = $name;
+		}
+
 		$results = $this->getApiClient()->search($keyword, $options);
 
 		if (!isset($results['results']) || !is_array($results['results']))
@@ -130,8 +142,25 @@ class UdemyModule extends AffiliateParserModule
 			{
 				$content->orig_url = 'https://www.udemy.com' . $content->orig_url;
 			}
-			$content->url         = LinkHandler::createAffUrl($content->orig_url, $deeplink);
-			$content->description = $r['headline'];
+			$content->url = LinkHandler::createAffUrl($content->orig_url, $deeplink);
+
+			if ($this->config('description_type') == 'headline' && $r['headline'])
+			{
+				$content->description = $r['headline'];
+			}
+			elseif ($r['description'])
+			{
+				$content->description = $r['description'];
+				$content->subtitle = $r['headline'];
+			}
+
+			if (isset($r['what_you_will_learn_data']['items']) && is_array($r['what_you_will_learn_data']['items']))
+			{
+				$content->short_description = '<ul>' . implode('', array_map(function ($item)
+				{
+					return '<li>' . $item . '</li>';
+				}, $r['what_you_will_learn_data']['items'])) . '</ul>';
+			}
 
 			if (!empty($r['discount_price']))
 			{
@@ -144,13 +173,22 @@ class UdemyModule extends AffiliateParserModule
 				$content->price        = (float) $r['price_detail']['amount'];
 				$content->currencyCode = $r['price_detail']['currency'];
 			}
-			$content->img          = $r['image_480x270'];
+
+			if (isset($r['image_750x422']))
+				$content->img = $r['image_750x422'];
+			elseif (isset($r['image_480x270']))
+				$content->img = $r['image_480x270'];
+
 			$content->rating       = TextHelper::ratingPrepare($r['avg_rating']);
+			$content->ratingDecimal       = round((float)$r['avg_rating'], 2);
 			$content->reviewsCount = (int) $r['num_reviews'];
 			$content->category     = $r['primary_category']['title'];
 
 			$content->extra = new ExtraDataUdemy();
 			ExtraDataUdemy::fillAttributes($content->extra, $r);
+			if (!empty($r['promo_asset']['download_urls']['Video'][0]['file']))
+				$content->extra->video_url = $r['promo_asset']['download_urls']['Video'][0]['file'];
+
 			$data[] = $content;
 		}
 
@@ -191,7 +229,6 @@ class UdemyModule extends AffiliateParserModule
 				$items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
 			}
 
-			// new url for theme sync
 			$items[$key]['url'] = LinkHandler::createAffUrl($item['orig_url'], $deeplink, $item);
 		}
 
@@ -206,6 +243,23 @@ class UdemyModule extends AffiliateParserModule
 		}
 
 		return $this->api_client;
+	}
+
+	private static function extractUdemyCourseNameFromUrl($url)
+	{
+		if (!filter_var($url, FILTER_VALIDATE_URL))
+		{
+			return "";
+		}
+
+		$path = parse_url($url, PHP_URL_PATH);
+
+		if (preg_match("#/course/([^/]+)/?#", $path, $matches))
+		{
+			return str_replace("-", " ", $matches[1]);
+		}
+
+		return "";
 	}
 
 	public function viewDataPrepare($data)

@@ -11,7 +11,7 @@ use ContentEgg\application\libs\RestClient;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
@@ -57,13 +57,13 @@ class ShareasaleApi extends RestClient
 
 		if (!$result && strstr($response, 'Error Code'))
 		{
-			throw new \Exception(trim(strip_tags($response)));
+			throw new \Exception(esc_html(trim(wp_strip_all_tags($response))));
 		}
 
 		return $result;
 	}
 
-	public function restGet($path, array $query = null)
+	public function restGet($path, ?array $query = null)
 	{
 		$query['XMLFormat'] = 1;
 		$query['token']     = $this->token;

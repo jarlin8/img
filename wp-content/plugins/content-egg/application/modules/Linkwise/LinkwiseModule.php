@@ -16,7 +16,7 @@ use ContentEgg\application\modules\Linkwise\ExtraDataLinkwise;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class LinkwiseModule extends AffiliateParserModule
 {
@@ -64,7 +64,6 @@ class LinkwiseModule extends AffiliateParserModule
 			$limit = $this->config('entries_per_page');
 		}
 		$options['limit'] = (int) $limit;
-
 
 		// price filter
 		if (!empty($query_params['min_price']))
@@ -294,5 +293,13 @@ class LinkwiseModule extends AffiliateParserModule
 	public function renderUpdatePanel()
 	{
 		$this->render('update_panel', array('module_id' => $this->getId()));
+	}
+
+	public static function getPriceParamMap()
+	{
+		return [
+			'min' => 'min_price',
+			'max' => 'max_price',
+		];
 	}
 }

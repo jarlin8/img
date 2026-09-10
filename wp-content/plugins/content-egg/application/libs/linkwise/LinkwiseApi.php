@@ -11,7 +11,7 @@ use ContentEgg\application\libs\RestClient;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
@@ -62,7 +62,7 @@ class LinkwiseApi extends RestClient
 		return $this->_decodeResponse($response);
 	}
 
-	public function restGet($path, array $query = null)
+	public function restGet($path, ?array $query = null)
 	{
 		$query['format'] = $this->getResponseType();
 		$this->setCustomHeaders(array('Authorization' => 'Basic ' . base64_encode($this->api_username . ':' . $this->api_password)));

@@ -19,7 +19,7 @@ use ContentEgg\application\Translator;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class WooIntegrator
 {
@@ -49,6 +49,15 @@ class WooIntegrator
         {
             \add_filter('woocommerce_product_single_add_to_cart_text', array(__CLASS__, 'customButtonText'), 10, 2);
             \add_filter('woocommerce_product_add_to_cart_text', array(__CLASS__, 'customButtonText'), 10, 2);
+        }
+
+        if (GeneralConfig::getInstance()->option('woocommerce_shortcode_single'))
+        {
+            \add_action('woocommerce_single_product_summary', array(__CLASS__, 'addShortcodeSingle'), 20);
+        }
+        if (GeneralConfig::getInstance()->option('woocommerce_shortcode_archive'))
+        {
+            \add_action('woocommerce_after_shop_loop_item', array(__CLASS__, 'addShortcodeArchive'), 20);
         }
     }
 
@@ -84,13 +93,13 @@ class WooIntegrator
         {
             foreach ($data as $item)
             {
-                if (!$is_product_sync && !empty($item['woo_sync']))
+                if (!$is_product_sync && !empty($item['woo_sync']) && filter_var($item['woo_sync'], FILTER_VALIDATE_BOOLEAN))
                 {
                     self::wooSync($item, $module_id, $post_id);
                     $is_product_sync = true;
                 }
 
-                if (!$is_attr_sync && !empty($item['woo_attr']))
+                if (!$is_attr_sync && !empty($item['woo_attr']) && filter_var($item['woo_attr'], FILTER_VALIDATE_BOOLEAN))
                 {
                     self::wooCreateAttr($item, $module_id, $post_id);
                     $is_attr_sync == true;
@@ -212,9 +221,12 @@ class WooIntegrator
 
         // image
         FeaturedImage::doAction($post_id, $item);
+        GalleryScheduler::maybeSchedulePendingImages($post_id, $item);
 
         if ($product->get_type() == 'external' && \apply_filters('cegg_sync_woo_url_allowed', true))
+        {
             $product->set_product_url($item['url']);
+        }
 
         // brand taxonomy (Rehub feature)
         if (self::isRehubTheme())
@@ -224,6 +236,27 @@ class WooIntegrator
                 \wp_set_object_terms($post_id, \sanitize_text_field($item['manufacturer']), 'store', true);
             elseif ($sync_brand == 'store' && \apply_filters('cegg_sync_store', true) && $item['domain'])
                 \wp_set_object_terms($post_id, \sanitize_text_field($item['domain']), 'store', true);
+        }
+
+        // Map manufacturer or store to the WooCommerce product_brand taxonomy
+        $syncWooBrand = GeneralConfig::getInstance()->option('sync_woo_brand');
+        if (in_array($syncWooBrand, ['brand', 'store'], true))
+        {
+            $termValue = '';
+            if ('brand' === $syncWooBrand && ! empty($item['manufacturer']))
+            {
+                $termValue = $item['manufacturer'];
+            }
+            elseif ('store' === $syncWooBrand && ! empty($item['domain']))
+            {
+                $termValue = $item['domain'];
+            }
+
+            if ($termValue)
+            {
+                $sanitizedTerm = sanitize_text_field($termValue);
+                wp_set_object_terms($post_id, $sanitizedTerm, 'product_brand', true);
+            }
         }
 
         if (isset($item['stock_status']))
@@ -238,9 +271,40 @@ class WooIntegrator
         // update meta
         self::setMetaSyncUniqueId($post_id, $module_id, $item['unique_id']);
 
+        $product = \apply_filters('cegg_before_woo_product_save', $product, $item, $module_id, $post_id);
+
         $res = $product->save();
 
-        if (GeneralConfig::getInstance()->option('sync_ean') == 'enabled' && self::isEanForWoocommerceActive())
+        // Sync native WooCommerce GTIN/EAN -> _global_unique_id
+        if (GeneralConfig::getInstance()->option('sync_gtin') === 'enabled')
+        {
+            $gtin_raw = '';
+
+            if (! empty($item['gtin']))
+            {
+                $gtin_raw = (string) $item['gtin'];
+            }
+            elseif (! empty($item['ean']))
+            {
+                $gtin_raw = (string) $item['ean'];
+            }
+
+            $gtin_sanitized  = sanitize_text_field($gtin_raw);
+            $gtin_normalized = apply_filters('cegg_wc_normalize_gtin', $gtin_sanitized);
+
+            $meta_key = '_global_unique_id';
+
+            if ($gtin_normalized !== '')
+            {
+                \update_post_meta($post_id, $meta_key, $gtin_normalized);
+            }
+            else
+            {
+                \delete_post_meta($post_id, $meta_key);
+            }
+        }
+
+        if (GeneralConfig::getInstance()->option('sync_ean') === 'enabled' && self::isEanForWoocommerceActive())
         {
             $field = \apply_filters('cegg_alg_ean_field', '_alg_ean');
             if (!empty($item['ean']))
@@ -259,7 +323,9 @@ class WooIntegrator
         }
 
         if (isset($item['stock_status']) && $item['stock_status'] == ContentProduct::STOCK_STATUS_OUT_OF_STOCK && $outofstock_woo == 'move_to_trash')
+        {
             \wp_trash_post($product->get_id());
+        }
 
         return $res;
     }
@@ -675,5 +741,21 @@ class WooIntegrator
         }
 
         return $price;
+    }
+
+    public static function addShortcodeSingle()
+    {
+        if (!$shortcode = GeneralConfig::getInstance()->option('woocommerce_shortcode_single'))
+            return;
+
+        echo \do_shortcode($shortcode);
+    }
+
+    public static function addShortcodeArchive()
+    {
+        if (!$shortcode = GeneralConfig::getInstance()->option('woocommerce_shortcode_archive'))
+            return;
+
+        echo \do_shortcode($shortcode);
     }
 }

@@ -11,7 +11,7 @@ use ContentEgg\application\components\ExtraData;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class ExtraDataAffilinetProducts extends ExtraData
 {
@@ -20,14 +20,12 @@ class ExtraDataAffilinetProducts extends ExtraData
 	public $LastShopUpdate;
 	public $LastProductChange;
 	public $Score;
-	//public $ProductId;
 	public $ArticleNumber;
 	public $ShopId;
 	public $ShopCategoryId;
 	public $AffilinetCategoryId;
 	public $ShopCategoryPath;
 	public $AffilinetCategoryPath;
-	//public $DeliveryTime; //Currently not in use
 	public $Brand;
 	public $Distributor;
 	public $Keywords;

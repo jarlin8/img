@@ -11,14 +11,14 @@ use ContentEgg\application\components\ParserModuleConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class BingImagesConfig extends ParserModuleConfig
 {
 
 	public function options()
 	{
-		$optiosn = array(
+		$options = array(
 			'subscription_key'        => array(
 				'title'       => 'Subscription Key <span class="cegg_required">*</span>',
 				'description' => __('Key access to Bing Search API. You can get <a href="https://azure.microsoft.com/en-us/try/cognitive-services/?api=bing-image-search-api">here</a>.', 'content-egg')
@@ -37,7 +37,7 @@ class BingImagesConfig extends ParserModuleConfig
 			),
 			'entries_per_page'        => array(
 				'title'       => __('Results', 'content-egg'),
-				'description' => __('Number of results for a single query.', 'content-egg'),
+				'description' => __('Specify the number of results to display for a single search query.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 16,
 				'validator'   => array(
@@ -52,8 +52,8 @@ class BingImagesConfig extends ParserModuleConfig
 				'section'     => 'default',
 			),
 			'entries_per_page_update' => array(
-				'title'       => __('Results for autoblogging ', 'content-egg'),
-				'description' => __('Number of results for autoblogging.', 'content-egg'),
+				'title'       => __('Results for autoupdates ', 'content-egg'),
+				'description' => __('Maximum number of results returned for keyword autoupdates and other automatic searches.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 6,
 				'validator'   => array(
@@ -213,7 +213,8 @@ class BingImagesConfig extends ParserModuleConfig
 			),
 		);
 
-		return array_merge(parent::options(), $optiosn);
+		$options = array_merge(parent::options(), $options);
+		return self::moveRequiredUp($options);
 	}
 
 	static public function marketCodes()

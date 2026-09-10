@@ -1,8 +1,6 @@
 <?php
 
-namespace ContentEgg\application\libs;
-
-use function ContentEgg\prnx;
+namespace ContentEgg\application\libs;;
 
 defined('\ABSPATH') || exit;
 
@@ -11,7 +9,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  */
 class ParserClient
@@ -53,11 +51,12 @@ class ParserClient
 	public static function getHttpClient($opts = array())
 	{
 		$_opts = array(
-			'sslverify'   => false,
+			'sslverify'   => WpHttpClient::sslVerifyDefault(),
 			'redirection' => 3,
 			'timeout'     => 60,
-			'user-agent'  => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:121.0) Gecko/20100101 Firefox/121.0',
+			'user-agent'  => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:136.0) Gecko/20100101 Firefox/136.0',
 		);
+
 		if ($opts)
 		{
 			$_opts = $opts + $_opts;
@@ -99,6 +98,7 @@ class ParserClient
 	public function loadHtml($url, $query = null)
 	{
 		$this->_html = $this->restGet($url, $query);
+
 		if (!$this->_html)
 			throw new \Exception('Can\'t load HTML Document.');
 	}
@@ -133,10 +133,10 @@ class ParserClient
 
 	protected function getResult($response)
 	{
-		if (\is_wp_error($response))
+		if (is_wp_error($response))
 		{
-			$error_mess = "HTTP request fails: " . $response->get_error_code() . " - " . $response->get_error_message() . '.';
-			throw new \Exception($error_mess);
+			$error_mess = 'HTTP request fails: ' . esc_html($response->get_error_code()) . ' - ' . esc_html($response->get_error_message()) . '.';
+			throw new \Exception(esc_html($error_mess));
 		}
 
 		$response_code = (int) \wp_remote_retrieve_response_code($response);
@@ -144,11 +144,28 @@ class ParserClient
 		if ($response_code != 200)
 		{
 			$response_message = \wp_remote_retrieve_response_message($response);
-			$error_mess       = "HTTP request status fails: " . $response_code . " - " . $response_message . '.';
-			throw new \Exception($error_mess, $response_code);
+			$error_mess       = $this->formatHttpError($response, $response_code, $response_message);
+			throw new \Exception(esc_html($error_mess), (int) $response_code);
 		}
 
 		return \wp_remote_retrieve_body($response);
+	}
+
+	/**
+	 * Build the exception message for a failed HTTP request.
+	 *
+	 * Overridable so a subclass can surface a provider's error body. Never
+	 * include the request URL: several scraping services carry the user's
+	 * api_key in the query string.
+	 *
+	 * @param array|\WP_Error $response
+	 * @param int             $code
+	 * @param string          $message
+	 * @return string
+	 */
+	protected function formatHttpError($response, $code, $message)
+	{
+		return "HTTP request status fails: " . $code . " - " . $message . '.';
 	}
 
 	public function decodeCharset($str, $fix_encoding = true)

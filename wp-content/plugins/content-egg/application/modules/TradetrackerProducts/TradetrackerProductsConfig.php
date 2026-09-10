@@ -7,11 +7,11 @@ defined('\ABSPATH') || exit;
 use ContentEgg\application\components\AffiliateParserModuleConfig;
 
 /**
- * AffiliatewindowConfig class file
+ * TradetrackerProductsConfig class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class TradetrackerProductsConfig extends AffiliateParserModuleConfig
 {
@@ -29,21 +29,21 @@ class TradetrackerProductsConfig extends AffiliateParserModuleConfig
 					array(
 						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'required'),
 						'when'    => 'is_active',
-						'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'Username'),
+						'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'Customer ID'),
 					),
 				),
 				'section'     => 'default',
 			),
 			'passphrase'              => array(
 				'title'     => 'Passphrase <span class="cegg_required">*</span>',
-				'callback'  => array($this, 'render_input'),
+				'callback'  => array($this, 'render_password'),
 				'default'   => '',
 				'validator' => array(
 					'trim',
 					array(
 						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'required'),
 						'when'    => 'is_active',
-						'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'Password'),
+						'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'Passphrase'),
 					),
 				),
 				'section'   => 'default',
@@ -105,7 +105,7 @@ class TradetrackerProductsConfig extends AffiliateParserModuleConfig
 			),
 			'entries_per_page'        => array(
 				'title'       => __('Results', 'content-egg'),
-				'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
+				'description' => __('Specify the number of results to display for a single search query.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 10,
 				'validator'   => array(
@@ -115,8 +115,8 @@ class TradetrackerProductsConfig extends AffiliateParserModuleConfig
 				'section'     => 'default',
 			),
 			'entries_per_page_update' => array(
-				'title'       => __('Results for updates and autoblogging', 'content-egg'),
-				'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg'),
+				'title'       => __('Results for Updates and Autoblogging', 'content-egg'),
+				'description' => __('Specify the number of results for automatic updates and autoblogging.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 6,
 				'validator'   => array(
@@ -198,7 +198,7 @@ class TradetrackerProductsConfig extends AffiliateParserModuleConfig
 				'section'     => 'default',
 			),
 			'stock_status'            => array(
-				'title'            => __('Stock status', 'content-egg') . ' (beta)',
+				'title'            => __('Stock status', 'content-egg'),
 				'description'      => __('Set this status if the product is not found.', 'content-egg'),
 				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
@@ -214,7 +214,8 @@ class TradetrackerProductsConfig extends AffiliateParserModuleConfig
 		$parent['ttl_items']['description'] = __('Time in seconds for updating prices. 0 - never update.', 'content-egg')
 			. ' ' . __('Experimental feature for this module.', 'content-egg');
 
-		return array_merge($parent, $options);
+		$options = array_merge($parent, $options);
+		return self::moveRequiredUp($options);
 	}
 
 	public static function getCurrencyByLocale($locale)

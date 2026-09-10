@@ -6,13 +6,16 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\AffiliateParserModule;
 use ContentEgg\application\libs\amazon\AmazonApi;
+use ContentEgg\application\libs\amazon\AmazonCreatorsApi;
 use ContentEgg\application\components\ContentProduct;
 use ContentEgg\application\admin\PluginAdmin;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\helpers\ArrayHelper;
 use ContentEgg\application\helpers\TemplateHelper;
 use ContentEgg\application\libs\amazon\AmazonLocales;
+use ContentEgg\application\Plugin;
 
+use function ContentEgg\prn;
 use function ContentEgg\prnx;
 
 /**
@@ -20,20 +23,88 @@ use function ContentEgg\prnx;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class AmazonModule extends AffiliateParserModule
 {
+    public function isGtinSearchAllowed()
+    {
+        return true;
+    }
 
-    private $api_client = null;
+    const NOTICE_KEY = 'amazon_creators';
+
+    /** @var AmazonApi|null */
+    private $api_client_paapi5 = null;
+
+    /** @var AmazonCreatorsApi[] Creators API clients, one per region group (NA/EU/FE). */
+    private $api_clients_creators = array();
 
     public function info()
     {
+        if (\is_admin())
+        {
+            \add_action('admin_notices', array(__CLASS__, 'updateNotice'));
+        }
+
         return array(
             'name' => 'Amazon',
-            'description' => __('Adds products from Amazon.', 'content-egg'),
             'docs_uri' => 'https://ce-docs.keywordrush.com/modules/affiliate/amazon',
         );
+    }
+
+    public static function updateNotice()
+    {
+        $config = AmazonConfig::getInstance();
+
+        if (!$config->option('is_active'))
+        {
+            return;
+        }
+
+        // Already migrated
+        if ($config->option('creators_credential_id') && $config->option('creators_credential_secret'))
+        {
+            //return;
+        }
+
+        // Auto-dismiss: once user opens Amazon module settings page at least once
+        if (\is_admin())
+        {
+            $page = isset($_GET['page']) ? (string) $_GET['page'] : '';
+            if ($page === 'content-egg-modules--Amazon')
+            {
+                // mark as "seen"
+                \update_option('cegg_amazon_creators_notice_seen', 1, false);
+                return; // don't show notice on the settings page
+            }
+        }
+
+        // If already "seen", don't show anymore
+        if (\get_option('cegg_amazon_creators_notice_seen'))
+        {
+            return;
+        }
+
+        $settings_url = esc_url(\get_admin_url(\get_current_blog_id(), 'admin.php?page=content-egg-modules--Amazon'));
+
+        echo '<div class="notice notice-warning is-dismissible">';
+        echo '<p>' . wp_kses(
+            sprintf(
+                /* translators: %s: URL to Amazon module settings page */
+                __(
+                    '<strong>Action required:</strong> Amazon is moving key Product Advertising API features to the new <strong>Creators API</strong>. To keep product prices and availability updates working smoothly, open <a href="%s">Amazon module settings</a> and add your Creators API <em>Credential ID</em> and <em>Credential Secret</em>.',
+                    'content-egg'
+                ),
+                $settings_url
+            ),
+            array(
+                'a' => array('href' => array()),
+                'strong' => array(),
+                'em' => array(),
+            )
+        ) . '</p>';
+        echo '</div>';
     }
 
     public function getParserType()
@@ -41,17 +112,12 @@ class AmazonModule extends AffiliateParserModule
         return self::PARSER_TYPE_PRODUCT;
     }
 
-    public function defaultTemplateName()
+    public function defaultTemeName()
     {
         return 'data_item';
     }
 
     public function isItemsUpdateAvailable()
-    {
-        return true;
-    }
-
-    public function isFree()
     {
         return true;
     }
@@ -74,9 +140,18 @@ class AmazonModule extends AffiliateParserModule
 
         $associate_tag = $this->getAssociateTagForLocale($locale);
 
-        $client = $this->getAmazonClient();
-        $client->setLocale($locale);
-        $client->setAssociateTag($associate_tag);
+        if ($is_autoupdate)
+        {
+            $total = $this->config('entries_per_page_update');
+        }
+        else
+        {
+            $total = $this->config('entries_per_page');
+        }
+
+        $client = $this->getAmazonClient($locale);
+
+        $this->configureClientForLocale($client, $locale);
 
         $options = $this->getCommonRequestParameters();
         $options['PartnerTag'] = $associate_tag;
@@ -84,6 +159,14 @@ class AmazonModule extends AffiliateParserModule
         if ($asin = AmazonModule::parseAsinFromUrl($keyword))
         {
             $keyword = $asin;
+        }
+
+        if ($node = self::extractNodeId($keyword))
+        {
+            $options['BrowseNodeId'] = $node;
+            $payload['Actor'] = "*";
+            $payload['SearchIndex'] = "All";
+            return $this->searchByKeyword($client, $options, $query_params, $total);
         }
 
         if (TextHelper::isAsin($keyword) && !TextHelper::isEan($keyword))
@@ -101,14 +184,6 @@ class AmazonModule extends AffiliateParserModule
             else
             {
                 $options['Keywords'] = $keyword;
-            }
-            if ($is_autoupdate)
-            {
-                $total = $this->config('entries_per_page_update');
-            }
-            else
-            {
-                $total = $this->config('entries_per_page');
             }
 
             return $this->searchByKeyword($client, $options, $query_params, $total);
@@ -135,10 +210,16 @@ class AmazonModule extends AffiliateParserModule
     protected function searchByASINs($client, array $options)
     {
         $data = $client->GetItems($options);
+        if ($this->isCreatorsClient($client))
+        {
+            $data = $this->normalizeCreatorsResponse($data);
+        }
+
         if (!is_array($data) || !isset($data['ItemsResult']['Items']))
         {
             return array();
         }
+
         $items = $data['ItemsResult']['Items'];
         $this->addVariationSummary($client, $options, $items);
 
@@ -162,10 +243,22 @@ class AmazonModule extends AffiliateParserModule
                 continue;
             }
 
-            $options['ASIN'] = $item['ASIN'];
+            // Creators API expects lowerCamelCase request params.
+            // Pass "Asin" (so payload normalizer turns it into "asin").
+            if ($this->isCreatorsClient($client))
+            {
+                $options['Asin'] = $item['ASIN'];
+                unset($options['ASIN']);
+            }
+            else
+            {
+                $options['ASIN'] = $item['ASIN'];
+                unset($options['Asin']);
+            }
 
             if (\apply_filters('cegg_amazon_one_request_per_second', true))
                 sleep(1);
+
             try
             {
                 $data = $client->GetVariations($options);
@@ -174,6 +267,12 @@ class AmazonModule extends AffiliateParserModule
             {
                 continue;
             }
+
+            if ($this->isCreatorsClient($client))
+            {
+                $data = $this->normalizeCreatorsResponse($data);
+            }
+
             if (isset($data['VariationsResult']['VariationSummary']))
             {
                 $items[$i]['VariationSummary'] = $data['VariationsResult']['VariationSummary'];
@@ -223,11 +322,11 @@ class AmazonModule extends AffiliateParserModule
         }
 
         // v4 module options mapping
-        if ($v = $this->config('search_index'))
+        if (empty($options['SearchIndex']) && $v = $this->config('search_index'))
         {
             $options['SearchIndex'] = $v;
         }
-        if ($v = $this->config('brouse_node'))
+        if (empty($options['BrowseNodeId']) && $v = $this->config('brouse_node'))
         {
             $options['BrowseNodeId'] = $v;
         }
@@ -256,38 +355,69 @@ class AmazonModule extends AffiliateParserModule
             $options['SortBy'] = $this->config('SortBy');
         }
 
-        if ($total <= 10)
+        // Guard: nothing to fetch
+        $total = (int) $total;
+        if ($total <= 0)
         {
-            $options['ItemCount'] = $total;
+            return [];
         }
 
-        // Paging Through Results
-        $pages_count = ceil($total / 10);
-        $results = array();
-        for ($i = 0; $i < $pages_count; $i++)
+        // Determine per-page (1..10). If $total <= 10, request exactly that many per page.
+        $perPage = 10;
+        if ($total <= 10)
         {
-            // Product Advertising API 5.0 is allowed an initial usage limit up to a maximum of 1 request per second
+            $perPage = max(1, $total);
+            $options['ItemCount'] = $perPage + 1; // looks like a PA API bug — it returns one fewer item than requested
+        }
+
+        $maxApiPages   = 10; // hard limit for SearchItems
+        $pagesToFetch  = (int) ceil($total / $perPage);
+        $pagesToFetch  = min($pagesToFetch, $maxApiPages);
+
+        $results = [];
+        for ($i = 0; $i < $pagesToFetch; $i++)
+        {
             if ($i > 0 && \apply_filters('cegg_amazon_one_request_per_second', true))
+            {
                 sleep(1);
+            }
 
             $options['ItemPage'] = $i + 1;
 
-            $data = $client->SearchItems($options);
-            if (!is_array($data) || !isset($data['SearchResult']['Items']))
+            $resp = $client->SearchItems($options);
+            if ($this->isCreatorsClient($client))
+            {
+                $resp = $this->normalizeCreatorsResponse($resp);
+            }
+
+            if (!is_array($resp) || empty($resp['SearchResult']['Items']))
             {
                 break;
             }
-            if (isset($data['SearchResult']['TotalResultCount']))
+
+            // Derive available pages from API response (and cap it)
+            if (isset($resp['SearchResult']['TotalResultCount']))
             {
-                $totalPages = (int) $data['SearchResult']['TotalResultCount'] / 10;
+                $availablePages = (int) ceil(((int) $resp['SearchResult']['TotalResultCount']) / $perPage);
+                $availablePages = min($availablePages, $maxApiPages);
             }
             else
             {
-                $totalPages = 1;
+                $availablePages = 1;
             }
-            $data = array_slice($data['SearchResult']['Items'], 0, $total - count($results));
-            $results = array_merge($results, $this->prepareResults($data, $client->getLocale(), $client->getAssociateTag()));
-            if ($totalPages <= $i + 1)
+
+            // Don’t exceed requested total
+            $items     = $resp['SearchResult']['Items'];
+            $remaining = $total - count($results);
+            $items     = array_slice($items, 0, max(0, $remaining));
+
+            $results = array_merge(
+                $results,
+                $this->prepareResults($items, $client->getLocale(), $client->getAssociateTag())
+            );
+
+            // Stop if we hit our goal or the last available page
+            if (count($results) >= $total || ($i + 1) >= $availablePages)
             {
                 break;
             }
@@ -363,6 +493,7 @@ class AmazonModule extends AffiliateParserModule
         // assign new data
         foreach ($items as $unique_id => $item)
         {
+
             if (!isset($new[$unique_id]))
             {
                 $items[$unique_id]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
@@ -390,7 +521,7 @@ class AmazonModule extends AffiliateParserModule
                 $items[$unique_id]['img'] = $result->img;
             }
 
-            // all extra fields
+            // all extra fields for API data only
             $items[$unique_id]['extra'] = ArrayHelper::object2Array($result->extra);
         }
 
@@ -401,9 +532,13 @@ class AmazonModule extends AffiliateParserModule
     {
         $associate_tag = $this->getAssociateTagForLocale($locale);
 
-        $client = $this->getAmazonClient();
-        $client->setLocale($locale);
-        $client->setAssociateTag($associate_tag);
+        $client = $this->getAmazonClient($locale);
+        $this->configureClientForLocale($client, $locale);
+
+        if ($this->isCreatorsClient($client) && method_exists($client, 'setCredentialVersion'))
+        {
+            $client->setCredentialVersion(AmazonLocales::getCreatorsCredentialVersion($locale));
+        }
 
         $options = $this->getCommonRequestParameters();
         $options['PartnerTag'] = $associate_tag;
@@ -426,7 +561,6 @@ class AmazonModule extends AffiliateParserModule
         {
             $data[] = $this->prepareResult($r, $locale, $associate_tag);
         }
-
         return $data;
     }
 
@@ -455,14 +589,71 @@ class AmazonModule extends AffiliateParserModule
         $extra->locale = $locale;
         $extra->associate_tag = $associate_tag;
         $extra->addToCartUrl = $this->generateAddToCartUrl($locale, $extra->ASIN);
-        if (isset($r['ItemInfo']['ByLineInfo']['Manufacturer']))
+
+        $byLine = $r['ItemInfo']['ByLineInfo'] ?? [];
+        $brand        = $byLine['Brand']['DisplayValue'] ?? '';
+        $manufacturer = $byLine['Manufacturer']['DisplayValue'] ?? '';
+        $source = apply_filters(
+            'cegg_amazon_manufacturer_source',
+            'manufacturer',
+            $r,
+            [
+                'brand'        => $brand,
+                'manufacturer' => $manufacturer,
+            ]
+        );
+        $source = is_string($source) ? strtolower(trim($source)) : 'manufacturer';
+        if (!in_array($source, ['manufacturer', 'brand'], true))
         {
-            $content->manufacturer = $r['ItemInfo']['ByLineInfo']['Manufacturer']['DisplayValue'];
+            $source = 'manufacturer';
+        }
+        $value = ($source === 'brand') ? $brand : $manufacturer;
+        if ($value === '')
+        {
+            $value = $manufacturer ?: $brand;
+        }
+
+        // Let user override/modify the final value
+        $value = apply_filters(
+            'cegg_amazon_manufacturer_value',
+            $value,
+            $source,
+            $r,
+            [
+                'brand'        => $brand,
+                'manufacturer' => $manufacturer,
+            ]
+        );
+
+        if ($value !== '')
+        {
+            $content->manufacturer = $value;
         }
 
         if (isset($r['ItemInfo']['Classifications']['Binding']))
         {
             $content->category = $r['ItemInfo']['Classifications']['Binding']['DisplayValue'];
+        }
+
+        $content->categoryPath = array();
+        $browseNodes = null;
+        if (isset($r['BrowseNodeInfo']['BrowseNodes']) && is_array($r['BrowseNodeInfo']['BrowseNodes']))
+        {
+            $browseNodes = $r['BrowseNodeInfo']['BrowseNodes'];
+        }
+        elseif (isset($r['BrowseNodes']) && is_array($r['BrowseNodes']))
+        {
+            $browseNodes = $r['BrowseNodes'];
+        }
+
+        if ($browseNodes)
+        {
+            $mainNode = reset($browseNodes);
+            $content->categoryPath = $this->extractBrowseNodePathForBreadcrumb($mainNode);
+            if (empty($content->category) && !empty($content->categoryPath))
+            {
+                $content->category = end($content->categoryPath);
+            }
         }
 
         if (isset($r['ItemInfo']['ExternalIds']['EANs']))
@@ -480,9 +671,12 @@ class AmazonModule extends AffiliateParserModule
             $content->orig_url = $content->url;
             $content->url = $extra->addToCartUrl;
         }
+
         if (isset($r['ItemInfo']['Features']['DisplayValues']))
         {
-            $extra->itemAttributes['Feature'] = $r['ItemInfo']['Features']['DisplayValues'];
+            $features = $r['ItemInfo']['Features']['DisplayValues'];
+            if ($features && is_array($features))
+                $content->description = "<ul>\n<li>" . join("</li>\n<li>", $features) . "</li>\n</ul>";
         }
 
         if (!empty($r['Images']['Variants']))
@@ -496,6 +690,15 @@ class AmazonModule extends AffiliateParserModule
                     'LargeImage' => $v['Large']['URL'],
                 );
                 $extra->imageSet[] = $image;
+            }
+        }
+
+        $content->images = array();
+        if ($extra->imageSet && is_array($extra->imageSet))
+        {
+            foreach ($extra->imageSet as $key => $image)
+            {
+                $content->images[] = $image['LargeImage'];
             }
         }
 
@@ -553,119 +756,580 @@ class AmazonModule extends AffiliateParserModule
         return $content;
     }
 
-    private function getAmazonClient()
+    private function getAmazonClient($locale = null)
     {
-        if ($this->api_client === null)
+        $mode = $this->resolveApiMode();
+
+        if ($mode === 'creators')
         {
-            $access_key_id = $this->config('access_key_id');
-            $secret_access_key = $this->config('secret_access_key');
-            $associate_tag = $this->config('associate_tag');
-            $this->api_client = new AmazonApi($access_key_id, $secret_access_key, $associate_tag);
+            // Creators credentials are per region group (NA/EU/FE), so cache one
+            // client per group and pick it by the requested locale's region.
+            $locale = $locale ?: (string) ($this->config('locale') ?: 'us');
+            $group  = AmazonLocales::getCreatorsRegionGroup($locale);
+
+            if (!isset($this->api_clients_creators[$group]))
+            {
+                $cred = $this->getCreatorsCredential($locale);
+                $associate_tag = (string) $this->config('associate_tag');
+
+                if ($cred['id'] === '' || $cred['secret'] === '')
+                {
+                    throw new \Exception(esc_html(sprintf(
+                        /* translators: %s: Amazon Creators region group (NA/EU/FE) */
+                        __('Creators API credentials are not configured for the %s region. Please enter a Credential ID and Secret for this region (or a Primary credential) in module settings.', 'content-egg'),
+                        $group
+                    )));
+                }
+
+                $client = new AmazonCreatorsApi($cred['id'], $cred['secret'], $associate_tag, $locale);
+                $client->setMajorVersion($this->resolveCreatorsMajorVersion($cred['id']));
+                $this->api_clients_creators[$group] = $client;
+            }
+
+            return $this->api_clients_creators[$group];
         }
 
-        return $this->api_client;
+        // Default/fallback: PA-API 5.0
+        if ($this->api_client_paapi5 === null)
+        {
+            $access_key_id = (string) $this->config('access_key_id');
+            $secret_access_key = (string) $this->config('secret_access_key');
+            $associate_tag = (string) $this->config('associate_tag');
+
+            if ($access_key_id === '' || $secret_access_key === '')
+            {
+                throw new \Exception(esc_html__('PA-API 5.0 credentials are not configured. Please enter Access Key and Secret Key in module settings (or switch to Creators API).', 'content-egg'));
+            }
+
+            $this->api_client_paapi5 = new AmazonApi($access_key_id, $secret_access_key, $associate_tag);
+        }
+
+        return $this->api_client_paapi5;
     }
 
-    static private function fillOfferVars($r, $content, $extra)
+    /**
+     * Resolve the Creators credential (id/secret) to use for a locale, choosing the
+     * locale's region-specific pair and falling back to the Primary pair.
+     *
+     * @param string $locale
+     * @return array{id:string, secret:string, group:string}
+     */
+    private function getCreatorsCredential($locale)
     {
-        $offer = null;
-        $content->price = 0;
-        $content->priceOld = 0;
+        return AmazonLocales::getCreatorsCredentialForLocale($locale, $this->creatorsConfigSnapshot());
+    }
 
-        if (isset($r['Offers']['Listings'][0]))
-        {
-            $offer = $r['Offers']['Listings'][0];
-            $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
-            if (isset($offer['Availability']['Message']))
-            {
-                $content->availability = $offer['Availability']['Message'];
-            }
+    /**
+     * Snapshot of the module's Creators credential options (Primary + per-region),
+     * shaped for AmazonLocales::getCreatorsCredentialForLocale().
+     *
+     * @return array<string,string>
+     */
+    private function creatorsConfigSnapshot()
+    {
+        return array(
+            'creators_credential_id'        => (string) $this->config('creators_credential_id'),
+            'creators_credential_secret'    => (string) $this->config('creators_credential_secret'),
+            'creators_credential_id_na'     => (string) $this->config('creators_credential_id_na'),
+            'creators_credential_secret_na' => (string) $this->config('creators_credential_secret_na'),
+            'creators_credential_id_eu'     => (string) $this->config('creators_credential_id_eu'),
+            'creators_credential_secret_eu' => (string) $this->config('creators_credential_secret_eu'),
+            'creators_credential_id_fe'     => (string) $this->config('creators_credential_id_fe'),
+            'creators_credential_secret_fe' => (string) $this->config('creators_credential_secret_fe'),
+        );
+    }
 
-            if (isset($offer['Price']))
-            {
-                $content->price = $offer['Price']['Amount'];
-                $content->currencyCode = $offer['Price']['Currency'];
-            }
-            if (isset($offer['SavingBasis']))
-            {
-                $content->priceOld = $offer['SavingBasis']['Amount'];
-            }
-        }
-        else
+    private function resolveApiMode()
+    {
+        $mode = (string) $this->config('api_mode');
+        if ($mode === '')
         {
-            $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-        }
-
-        if (isset($r['Offers']['Summaries']))
-        {
-            foreach ($r['Offers']['Summaries'] as $s)
-            {
-                if ($s['Condition']['Value'] == 'New' && isset($s['LowestPrice']))
-                {
-                    $extra->lowestNewPrice = $s['LowestPrice']['Amount'];
-                    $extra->totalNew = (int) $s['OfferCount'];
-                }
-                elseif ($s['Condition']['Value'] == 'Used' && isset($s['LowestPrice']))
-                {
-                    $extra->lowestUsedPrice = $s['LowestPrice']['Amount'];
-                    $extra->totalUsed = (int) $s['OfferCount'];
-                }
-            }
-        }
-        if ($offer)
-        {
-            $extra->IsEligibleForSuperSaverShipping = filter_var($offer['DeliveryInfo']['IsFreeShippingEligible'], FILTER_VALIDATE_BOOLEAN);
-            if (isset($offer['DeliveryInfo']['IsAmazonFulfilled']))
-            {
-                $extra->IsAmazonFulfilled = filter_var($offer['DeliveryInfo']['IsAmazonFulfilled'], FILTER_VALIDATE_BOOLEAN);
-            }
-            $extra->IsPrimeEligible = filter_var($offer['DeliveryInfo']['IsPrimeEligible'], FILTER_VALIDATE_BOOLEAN);
-            $extra->IsBuyBoxWinner = filter_var($offer['IsBuyBoxWinner'], FILTER_VALIDATE_BOOLEAN);
-            $extra->IsPrimeExclusive = filter_var($offer['ProgramEligibility']['IsPrimeExclusive'], FILTER_VALIDATE_BOOLEAN);
-            $extra->IsPrimePantry = filter_var($offer['ProgramEligibility']['IsPrimePantry'], FILTER_VALIDATE_BOOLEAN);
-            $extra->ViolatesMAP = filter_var($offer['ViolatesMAP'], FILTER_VALIDATE_BOOLEAN);
-            $extra->Condition = $offer['Condition']['Value'];
-            $extra->MerchantName = $offer['MerchantInfo']['Name'];
-            if (isset($offer['Price']['PricePerUnit']))
-            {
-                $extra->PricePerUnit = $offer['Price']['PricePerUnit'];
-            }
-            if (isset($offer['Price']['DisplayAmount']))
-            {
-                $extra->DisplayAmount = $offer['Price']['DisplayAmount'];
-                if (preg_match('/\((.+?)\)/', $extra->DisplayAmount, $matches))
-                {
-                    $extra->pricePerUnitDisplay = $matches[1];
-                }
-            }
+            $mode = 'auto';
         }
 
-        // fix for parent ASIN
-        if (isset($r['VariationSummary']) && isset($r['VariationSummary']['Price']))
+        if ($mode === 'auto')
         {
-            $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
-            $content->price = $r['VariationSummary']['Price']['LowestPrice']['Amount'];
-            $content->currencyCode = $r['VariationSummary']['Price']['LowestPrice']['Currency'];
-            $content->priceOld = 0;
+            // Prefer Creators if configured, otherwise fall back to PA-API 5.0.
+            if ($this->isCreatorsConfigured())
+            {
+                return 'creators';
+            }
+            return 'paapi5';
         }
 
-        // fix for used prices
-        if ($content->price == $extra->lowestUsedPrice && $extra->lowestNewPrice)
+        if ($mode !== 'creators' && $mode !== 'paapi5')
         {
-            $content->price = $extra->lowestNewPrice;
+            return 'auto';
+        }
+
+        return $mode;
+    }
+
+    private function isCreatorsConfigured()
+    {
+        $snap = $this->creatorsConfigSnapshot();
+        foreach (array('', '_na', '_eu', '_fe') as $suffix)
+        {
+            if ($snap['creators_credential_id' . $suffix] !== '' && $snap['creators_credential_secret' . $suffix] !== '')
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Resolve Creators API major version ('v2' or 'v3') from config or auto-detection.
+     *
+     * @param string|null $credential_id
+     * @return string 'v2' or 'v3'
+     */
+    private function resolveCreatorsMajorVersion($credential_id = null)
+    {
+        $configured = (string) $this->config('creators_credential_version');
+
+        if ($configured === 'v2' || $configured === 'v3')
+        {
+            return $configured;
+        }
+
+        // Auto-detect from credential ID format
+        if ($credential_id === null)
+        {
+            $credential_id = (string) $this->config('creators_credential_id');
+        }
+
+        return AmazonLocales::detectCredentialMajorVersion($credential_id);
+    }
+
+    private function isCreatorsClient($client)
+    {
+        return ($client instanceof AmazonCreatorsApi);
+    }
+
+    private static function normalizeCreatorsResponse(array $data): array
+    {
+        // Creators responses are lowerCamelCase; PA-API parsing expects UpperCamelCase + acronyms.
+        // This will convert the whole response tree, including top-level envelopes:
+        // itemsResult -> ItemsResult, searchResult -> SearchResult, variationsResult -> VariationsResult, etc.
+        return self::mapCreatorsArrayToPaApi($data);
+    }
+
+    /**
+     * Recursively maps Creators API response arrays to PA-API-like casing/keys.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    private static function mapCreatorsArrayToPaApi($value)
+    {
+        if (!is_array($value))
+        {
+            return $value;
+        }
+
+        $out = array();
+
+        foreach ($value as $k => $v)
+        {
+            // Preserve numeric indexes (lists)
+            if (is_int($k))
+            {
+                $out[$k] = self::mapCreatorsArrayToPaApi($v);
+                continue;
+            }
+
+            $newKey = self::mapCreatorsKeyToPaApi((string) $k);
+            $out[$newKey] = self::mapCreatorsArrayToPaApi($v);
+        }
+
+        return $out;
+    }
+
+    private static function mapCreatorsKeyToPaApi(string $key): string
+    {
+        // Fast path: exact matches for acronyms / special keys.
+        static $map = array(
+            // Core IDs / URLs
+            'asin'         => 'ASIN',
+            'parentASIN'   => 'ParentASIN',
+            'detailPageURL' => 'DetailPageURL',
+            'url'          => 'URL',
+
+            // External IDs (Creators may use different casing; normalize)
+            'eans'         => 'EANs',
+            'EANs'         => 'EANs',
+            'upcs'         => 'UPCs',
+            'UPCs'         => 'UPCs',
+            'gtins'        => 'GTINs',
+            'GTINs'        => 'GTINs',
+
+            // Common objects
+            'itemInfo'        => 'ItemInfo',
+            'byLineInfo'      => 'ByLineInfo',
+            'browseNodeInfo'  => 'BrowseNodeInfo',
+            'customerReviews' => 'CustomerReviews',
+            'offersV2'        => 'OffersV2',
+
+            // Images
+            'hiRes' => 'HiRes',
+
+            // Results envelopes / fields
+            'itemsResult'      => 'ItemsResult',
+            'searchResult'     => 'SearchResult',
+            'variationsResult' => 'VariationsResult',
+
+            // Lists / counts
+            'itemIds'   => 'ItemIds',
+            'itemIdType' => 'ItemIdType',
+        );
+
+        if (isset($map[$key]))
+        {
+            return $map[$key];
+        }
+
+        // Generic: Creators lowerCamelCase -> UpperCamelCase.
+        // This preserves existing internal acronyms (e.g. violatesMAP => ViolatesMAP).
+        // It will also convert already-capitalized keys safely (e.g. 'Money' stays 'Money').
+        return ucfirst($key);
+    }
+
+    /**
+     * Override token caching to support multiple Amazon Creators regions (NA/EU/FE)
+     * and avoid collisions if user changes credentials.
+     *
+     * @param bool $force
+     * @param string|null $locale
+     * @return string
+     */
+    public function getAccessToken($force = false, $locale = null)
+    {
+        $locale = $locale ?: (string) ($this->config('locale') ?: 'us');
+
+        $suffix = $this->getCreatorsTokenCacheKeySuffix($locale);
+        $transient_name = Plugin::slug() . '-' . $this->getId() . '-access_token-' . $suffix;
+
+        $token = \get_transient($transient_name);
+
+        if (!$token || $force)
+        {
+            list($token, $expires_in) = $this->requestAccessToken($locale);
+
+            // Refresh a bit earlier than actual expiry
+            $ttl = (int) $expires_in;
+            if ($ttl > 120)
+            {
+                $ttl = $ttl - 60;
+            }
+
+            \set_transient($transient_name, $token, $ttl);
+        }
+
+        return $token;
+    }
+
+    private function getCreatorsTokenCacheKeySuffix($locale)
+    {
+        $group = AmazonLocales::getCreatorsRegionGroup($locale);
+        $id = $this->getCreatorsCredential($locale)['id'];
+        $major = $this->resolveCreatorsMajorVersion($id);
+
+        $id_hash = $id !== '' ? substr(md5($id), 0, 10) : 'noid';
+
+        return strtolower($group) . '-' . $major . '-' . $id_hash;
+    }
+
+    /**
+     * Called by getAccessToken().
+     *
+     * @param string|null $locale
+     * @return array [token, expires_in]
+     */
+    public function requestAccessToken($locale = null)
+    {
+        $locale = $locale ?: (string) ($this->config('locale') ?: 'us');
+
+        $cred = $this->getCreatorsCredential($locale);
+        $credential_id = $cred['id'];
+        $credential_secret = $cred['secret'];
+        $associate_tag = (string) $this->config('associate_tag');
+
+        $api_client = new AmazonCreatorsApi($credential_id, $credential_secret, $associate_tag, $locale);
+        $api_client->setMajorVersion($this->resolveCreatorsMajorVersion($credential_id));
+
+        try
+        {
+            $response = $api_client->requestAccessToken();
+        }
+        catch (\Exception $e)
+        {
+            $raw = (string) $e->getMessage();
+
+            if (strpos($raw, 'invalid_client') !== false || strpos($raw, '{"error":"invalid_client"}') !== false)
+            {
+                $msg = __(
+                    'Amazon Creators API: Invalid client credentials. Please verify your Credential ID and Credential Secret. This can also happen if you created credentials for a different region/locale (NA/EU/FE). Make sure your Amazon module locale matches the region where the credentials were created, or generate new Creators API credentials for the correct region in Associates Central.',
+                    'content-egg'
+                );
+
+                throw new \Exception(esc_html($msg), (int) $e->getCode());
+            }
+
+            throw $e;
+        }
+
+        if (empty($response['access_token']) || empty($response['expires_in']))
+        {
+            throw new \Exception('Amazon Creators API: Invalid token response format.');
+        }
+
+        return array((string) $response['access_token'], (int) $response['expires_in']);
+    }
+
+    private function configureClientForLocale($client, $locale)
+    {
+        $associate_tag = $this->getAssociateTagForLocale($locale);
+
+        $client->setLocale($locale);
+        $client->setAssociateTag($associate_tag);
+
+        if ($this->isCreatorsClient($client))
+        {
+            // Inject cached token (or request a new one if needed)
+            $client->setAccessToken($this->getAccessToken(false, $locale));
         }
     }
 
-    public function getAssociateTagForLocale($locale)
+    private function fillOfferVars($r, $content, $extra)
     {
-        if ($locale == $this->config('locale'))
+        $content->price = 0.0;
+        $content->priceOld = 0.0;
+        $content->currencyCode = null;
+        $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
+        unset($extra->lowestNewPrice, $extra->lowestUsedPrice, $extra->totalNew, $extra->totalUsed);
+
+        $price_mode = $this->config('price_mode');
+
+        $listing = null;
+
+        if (!empty($r['OffersV2']['Listings']) && is_array($r['OffersV2']['Listings']))
+        {
+            $listings = $r['OffersV2']['Listings'];
+
+            if ($price_mode === 'prime')
+            {
+                foreach ($listings as $l)
+                {
+                    if (($l['DealDetails']['AccessType'] ?? null) === 'PRIME_EXCLUSIVE')
+                    {
+                        $listing = $l;
+                        break;
+                    }
+                }
+                if (!$listing)
+                {
+                    foreach ($listings as $l)
+                    {
+                        if (($l['DealDetails']['AccessType'] ?? null) === 'PRIME_EARLY_ACCESS')
+                        {
+                            $listing = $l;
+                            break;
+                        }
+                    }
+                }
+                if (!$listing)
+                {
+                    foreach ($listings as $l)
+                    {
+                        if (filter_var($l['IsBuyBoxWinner'] ?? false, FILTER_VALIDATE_BOOLEAN))
+                        {
+                            $listing = $l;
+                            break;
+                        }
+                    }
+                }
+                if (!$listing)
+                {
+                    $listing = $listings[0];
+                }
+            }
+            elseif ($price_mode === 'all')
+            {
+                foreach ($listings as $l)
+                {
+                    $access = $l['DealDetails']['AccessType'] ?? 'ALL';
+                    if ($access === 'ALL')
+                    {
+                        $listing = $l;
+                        break;
+                    }
+                }
+                if (!$listing)
+                {
+                    foreach ($listings as $l)
+                    {
+                        if (filter_var($l['IsBuyBoxWinner'] ?? false, FILTER_VALIDATE_BOOLEAN))
+                        {
+                            $listing = $l;
+                            break;
+                        }
+                    }
+                }
+                if (!$listing)
+                {
+                    $listing = $listings[0];
+                }
+            }
+            else
+            {
+                foreach ($listings as $l)
+                {
+                    if (filter_var($l['IsBuyBoxWinner'] ?? false, FILTER_VALIDATE_BOOLEAN))
+                    {
+                        $listing = $l;
+                        break;
+                    }
+                }
+                if (!$listing)
+                {
+                    $listing = $listings[0];
+                }
+            }
+        }
+
+        if ($listing)
+        {
+            if (!empty($listing['Availability']))
+            {
+                $availabilityType = $listing['Availability']['Type'] ?? null;
+                $content->availability = $listing['Availability']['Message'] ?? null;
+
+                $extra->AvailabilityType = $availabilityType;
+                $extra->AvailabilityMessage = $listing['Availability']['Message'] ?? null;
+                if (isset($listing['Availability']['MinOrderQuantity'])) $extra->MinOrderQuantity = (int) $listing['Availability']['MinOrderQuantity'];
+                if (isset($listing['Availability']['MaxOrderQuantity'])) $extra->MaxOrderQuantity = (int) $listing['Availability']['MaxOrderQuantity'];
+
+                $inStockValues  = array('IN_STOCK', 'IN_STOCK_SCARCE', 'PREORDER', 'AVAILABLE_DATE', 'LEADTIME');
+                $outStockValues = array('OUT_OF_STOCK', 'UNAVAILABLE');
+
+                if (in_array($availabilityType, $inStockValues, true))
+                {
+                    $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
+                }
+                elseif (in_array($availabilityType, $outStockValues, true))
+                {
+                    $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
+                }
+            }
+
+            if (!empty($listing['Price']['Money']))
+            {
+                $content->price = (float) ($listing['Price']['Money']['Amount'] ?? 0);
+                $content->currencyCode = $listing['Price']['Money']['Currency'] ?? null;
+                $extra->DisplayAmount = $listing['Price']['Money']['DisplayAmount'] ?? null;
+            }
+
+            if (!empty($listing['Price']['SavingBasis']['Money']))
+            {
+                $content->priceOld = (float) ($listing['Price']['SavingBasis']['Money']['Amount'] ?? 0);
+                $extra->SavingBasisAmount = isset($listing['Price']['SavingBasis']['Money']['Amount']) ? (float) $listing['Price']['SavingBasis']['Money']['Amount'] : null;
+                $extra->SavingBasisCurrency = $listing['Price']['SavingBasis']['Money']['Currency'] ?? null;
+                $extra->SavingBasisDisplayAmount = $listing['Price']['SavingBasis']['Money']['DisplayAmount'] ?? null;
+                $extra->SavingBasisType = $listing['Price']['SavingBasis']['SavingBasisType'] ?? null;
+                $extra->SavingBasisTypeLabel = $listing['Price']['SavingBasis']['SavingBasisTypeLabel'] ?? null;
+            }
+
+            if (!empty($listing['Price']['Savings']))
+            {
+                $extra->SavingsAmount = isset($listing['Price']['Savings']['Money']['Amount']) ? (float) $listing['Price']['Savings']['Money']['Amount'] : null;
+                if (!empty($listing['Price']['Savings']['Percentage']))
+                {
+                    $extra->SavingsPercentage = (int) $listing['Price']['Savings']['Percentage'];
+                }
+                if (!empty($listing['Price']['Savings']['Money']['DisplayAmount']))
+                {
+                    $extra->SavingsDisplay = $listing['Price']['Savings']['Money']['DisplayAmount'];
+                }
+            }
+
+            if (!empty($listing['Price']['PricePerUnit']))
+            {
+                $ppu = $listing['Price']['PricePerUnit'];
+                if (isset($ppu['Amount']))   $extra->PricePerUnitAmount = (float) $ppu['Amount'];
+                if (isset($ppu['Currency'])) $extra->PricePerUnitCurrency = $ppu['Currency'];
+                if (!empty($ppu['DisplayAmount'])) $extra->pricePerUnitDisplay = $ppu['DisplayAmount'];
+            }
+            elseif (!empty($extra->DisplayAmount) && preg_match('/\(([^)]+)\)/', $extra->DisplayAmount, $m))
+            {
+                $extra->pricePerUnitDisplay = $m[1];
+            }
+
+            $extra->IsBuyBoxWinner = filter_var($listing['IsBuyBoxWinner'] ?? false, FILTER_VALIDATE_BOOLEAN);
+            $extra->ViolatesMAP    = filter_var($listing['ViolatesMAP']    ?? false, FILTER_VALIDATE_BOOLEAN);
+            $extra->Condition      = $listing['Condition']['Value']        ?? null;
+            $extra->SubCondition   = $listing['Condition']['SubCondition'] ?? null;
+            $extra->ConditionNote  = $listing['Condition']['ConditionNote'] ?? null;
+            $extra->MerchantName   = $listing['MerchantInfo']['Name']      ?? null;
+            $extra->MerchantId     = $listing['MerchantInfo']['Id']        ?? null;
+            $extra->ListingType    = $listing['Type'] ?? ($listing['ListingType'] ?? null);
+
+            if (!empty($listing['DealDetails']))
+            {
+                $extra->DealAccessType  = $listing['DealDetails']['AccessType'] ?? null;
+                $extra->DealBadge       = $listing['DealDetails']['Badge']      ?? null;
+                $content->promo         = $extra->DealBadge;
+                $extra->DealStartTime   = $listing['DealDetails']['StartTime']  ?? null;
+                $extra->DealEndTime     = $listing['DealDetails']['EndTime']    ?? null;
+                if (isset($listing['DealDetails']['PercentClaimed']))
+                {
+                    $extra->DealPercentClaimed = (int) $listing['DealDetails']['PercentClaimed'];
+                }
+                if (isset($listing['DealDetails']['EarlyAccessDurationInMilliseconds']))
+                {
+                    $extra->DealEarlyAccessDurationInMilliseconds = (int) $listing['DealDetails']['EarlyAccessDurationInMilliseconds'];
+                }
+                $extra->IsPrimeExclusive   = ($extra->DealAccessType === 'PRIME_EXCLUSIVE');
+                $extra->IsPrimeEarlyAccess = ($extra->DealAccessType === 'PRIME_EARLY_ACCESS');
+                $extra->IsPrimeEligible    = in_array($extra->DealAccessType, array('PRIME_EARLY_ACCESS', 'PRIME_EXCLUSIVE'), true);
+            }
+
+            $extra->priorityListing = ($price_mode !== 'buybox' && !$extra->IsBuyBoxWinner);
+
+            if ($content->price > 0 && $content->stock_status === ContentProduct::STOCK_STATUS_OUT_OF_STOCK)
+            {
+                $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
+            }
+        }
+
+        if (!$content->price && !empty($r['VariationSummary']['Price']['LowestPrice']))
+        {
+            $lp = $r['VariationSummary']['Price']['LowestPrice'];
+            $content->price = (float) ($lp['Amount'] ?? 0);
+            $content->currencyCode = $lp['Currency'] ?? $content->currencyCode;
+            $content->priceOld = 0.0;
+            $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
+        }
+    }
+
+    public function getAssociateTagForLocale(string $locale)
+    {
+        $defaultLocale = (string) $this->config('locale');
+
+        if ($locale === $defaultLocale)
         {
             return $this->config('associate_tag');
         }
-        else
+
+        $key = 'associate_tag_' . $locale;
+
+        $tag = $this->config($key);
+        if ($tag === null || $tag === '')
         {
-            return $this->config('associate_tag_' . $locale);
+            $tag = $this->config('associate_tag');
         }
+
+        return $tag;
     }
 
     /**
@@ -698,17 +1362,8 @@ class AmazonModule extends AffiliateParserModule
         $this->render('update_panel', array('module_id' => $this->getId()));
     }
 
-    private static function pricePenniesDenomination($amount)
-    {
-        return TextHelper::pricePenniesDenomination($amount, false);
-    }
-
     public static function parseAsinFromUrl($url)
     {
-        if (!filter_var($url, FILTER_VALIDATE_URL))
-        {
-            return false;
-        }
         $regex = '~/(?:exec/obidos/ASIN/|o/|gp/product/|gp/offer-listing/|(?:(?:[^"\'/]*)/)?dp/|)([0-9A-Z]{10})(?:(?:/|\?|\#)(?:[^"\'\s]*))?~isx';
         if (preg_match($regex, $url, $matches))
         {
@@ -725,25 +1380,6 @@ class AmazonModule extends AffiliateParserModule
         return $this->getAmazonAddToCartUrl($locale) .
             '?ASIN.1=' . $asin . '&Quantity.1=1' .
             '&AssociateTag=' . $this->getAssociateTagForLocale($locale);
-    }
-
-    private static function formatProductUrl($url)
-    {
-        if (!strstr($url, '%'))
-        {
-            return $url;
-        }
-
-        if (!$parts = parse_url($url))
-        {
-            return $urls;
-        }
-
-        // fix % in url: https://www.amazon.in/Optimum-Nutrition-100%-Whey-Standard/dp/B002DYJ00C
-        $parts['path'] = str_replace('%', '', $parts['path']);
-        $result = $parts['scheme'] . '://' . $parts['host'] . $parts['path'] . '?' . $parts['query'];
-
-        return $result;
     }
 
     public function viewDataPrepare($data)
@@ -791,6 +1427,44 @@ class AmazonModule extends AffiliateParserModule
             {
                 $data[$key]['url'] = TextHelper::addUrlParam($data[$key]['url'], 'tag', $forced_tag);
             }
+
+            // Amazon Global Earning
+            $global_earning = $this->config('global_earning');
+            if ($global_earning == 'search_results')
+            {
+                // send to local search results instead of a similar product
+                $data[$key]['url'] = TextHelper::addUrlParam($data[$key]['url'], 'gaOptInStatus', 'false');
+            }
+            elseif ($global_earning == 'no_redirect')
+            {
+                // keep the shopper in this module's store
+                $data[$key]['url'] = TextHelper::addUrlParam($data[$key]['url'], 'creatorsDisableRedirect', 'true');
+            }
+
+            // hide prices?
+            $hp = $this->config('hide_prices');
+            if ($hp == 'hide_24')
+            {
+                $last_update = TemplateHelper::getLastUpdate($this->getId());
+                if ($last_update)
+                    $lt = time() - $last_update;
+                else
+                    $lt = 0;
+            }
+            else
+                $lt = 0;
+
+            if ($hp == 'hide' || ($hp == 'hide_24' && $lt > \DAY_IN_SECONDS))
+            {
+                $data[$key]['price'] = '';
+                $data[$key]['priceOld'] = '';
+                $data[$key]['stock_status'] = 0;
+                $data[$key]['extra']['totalNew'] = '';
+                $data[$key]['extra']['totalUsed'] = '';
+                $data[$key]['extra']['lowestNewPrice'] = '';
+                $data[$key]['extra']['lowestUsedPrice'] = '';
+                $data[$key]['extra']['PricePerUnit'] = '';
+            }
         }
 
         return parent::viewDataPrepare($data);
@@ -799,14 +1473,19 @@ class AmazonModule extends AffiliateParserModule
     public static function getResources()
     {
         return array(
+            // Reviews
             "CustomerReviews.Count",
             "CustomerReviews.StarRating",
+
+            // Images
             "Images.Primary.Small",
             "Images.Primary.Medium",
             "Images.Primary.Large",
             "Images.Variants.Small",
             "Images.Variants.Medium",
             "Images.Variants.Large",
+
+            // Item info
             "ItemInfo.ByLineInfo",
             "ItemInfo.ContentInfo",
             "ItemInfo.ContentRating",
@@ -818,28 +1497,113 @@ class AmazonModule extends AffiliateParserModule
             "ItemInfo.TechnicalInfo",
             "ItemInfo.Title",
             "ItemInfo.TradeInInfo",
-            "Offers.Listings.Availability.MaxOrderQuantity",
-            "Offers.Listings.Availability.Message",
-            "Offers.Listings.Availability.MinOrderQuantity",
-            "Offers.Listings.Availability.Type",
-            "Offers.Listings.Condition",
-            "Offers.Listings.Condition.SubCondition",
-            "Offers.Listings.DeliveryInfo.IsAmazonFulfilled",
-            "Offers.Listings.DeliveryInfo.IsFreeShippingEligible",
-            "Offers.Listings.DeliveryInfo.IsPrimeEligible",
-            "Offers.Listings.DeliveryInfo.ShippingCharges",
-            "Offers.Listings.IsBuyBoxWinner",
-            "Offers.Listings.LoyaltyPoints.Points",
-            "Offers.Listings.MerchantInfo",
-            "Offers.Listings.Price",
-            "Offers.Listings.ProgramEligibility.IsPrimeExclusive",
-            "Offers.Listings.ProgramEligibility.IsPrimePantry",
-            "Offers.Listings.Promotions",
-            "Offers.Listings.SavingBasis",
-            "Offers.Summaries.HighestPrice",
-            "Offers.Summaries.LowestPrice",
-            "Offers.Summaries.OfferCount",
+
+            // Browse Nodes
+            "BrowseNodeInfo.BrowseNodes",
+            "BrowseNodeInfo.BrowseNodes.Ancestor",
+            "BrowseNodeInfo.BrowseNodes.SalesRank",
+            "BrowseNodeInfo.WebsiteSalesRank",
+
+            // Offers V2
+            "OffersV2.Listings.Availability",
+            "OffersV2.Listings.Condition",
+            "OffersV2.Listings.DealDetails",
+            "OffersV2.Listings.IsBuyBoxWinner",
+            "OffersV2.Listings.LoyaltyPoints",
+            "OffersV2.Listings.MerchantInfo",
+            "OffersV2.Listings.Price",
+            "OffersV2.Listings.Type",
+
+            // Misc
             "ParentASIN"
         );
+    }
+
+    public static function extractNodeId($url)
+    {
+        $parsedUrl = parse_url($url);
+        if (!$parsedUrl || !isset($parsedUrl['query']))
+        {
+            return null;
+        }
+
+        parse_str($parsedUrl['query'], $queryParams);
+        return isset($queryParams['node']) ? $queryParams['node'] : null;
+    }
+
+    /**
+     * Build category path (root -> leaf) from a BrowseNode structure
+     * in a way that roughly matches Amazon's breadcrumb.
+     *
+     * @param array $node Single browse node (with optional nested 'Ancestor')
+     * @return array
+     */
+    private function extractBrowseNodePathForBreadcrumb(array $node)
+    {
+        $path = array();
+
+        $walker = function (array $n) use (&$walker, &$path)
+        {
+            // Recurse to the top ancestor first
+            if (isset($n['Ancestor']) && is_array($n['Ancestor']))
+            {
+                $walker($n['Ancestor']);
+            }
+
+            // Prefer DisplayName (matches site UI best)
+            $label = null;
+            if (!empty($n['DisplayName']))
+            {
+                $label = $n['DisplayName'];
+            }
+            elseif (!empty($n['ContextFreeName']))
+            {
+                $label = $n['ContextFreeName'];
+            }
+
+            if ($label === null)
+            {
+                return;
+            }
+
+            $label = trim($label);
+
+            // Skip generic "Categories" level
+            $ignore = array('Categories');
+            if (in_array($label, $ignore, true))
+            {
+                return;
+            }
+
+            // Avoid duplicates
+            if (!in_array($label, $path, true))
+            {
+                $path[] = $label;
+            }
+        };
+
+        $walker($node);
+
+        return $path;
+    }
+
+    public static function getPriceParamMap()
+    {
+        return [
+            'min' => 'minimum_price',
+            'max' => 'maximum_price',
+        ];
+    }
+
+    public static function getLocaleParamMap()
+    {
+        return 'locale';
+    }
+
+    public static function getSortByNewestParamMap()
+    {
+        return [
+            'SortBy' => 'NewestArrivals',
+        ];
     }
 }

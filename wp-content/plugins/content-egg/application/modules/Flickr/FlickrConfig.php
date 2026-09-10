@@ -11,14 +11,14 @@ use ContentEgg\application\components\ParserModuleConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class FlickrConfig extends ParserModuleConfig
 {
 
 	public function options()
 	{
-		$optiosn = array(
+		$options = array(
 			'api_key'                 => array(
 				'title'       => 'API Key <span class="cegg_required">*</span>',
 				'description' => __('The key for use Flickr API. You can get <a href="http://www.flickr.com/services/api/misc.api_keys.html">here</a>.', 'content-egg'),
@@ -36,7 +36,7 @@ class FlickrConfig extends ParserModuleConfig
 			),
 			'entries_per_page'        => array(
 				'title'       => __('Results', 'content-egg'),
-				'description' => __('Number of results for a single query', 'content-egg'),
+				'description' => __('Specify the number of results to display for a single search query', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => '18',
 				'validator'   => array(
@@ -46,8 +46,8 @@ class FlickrConfig extends ParserModuleConfig
 				'section'     => 'default',
 			),
 			'entries_per_page_update' => array(
-				'title'       => __('Results for autoblogging ', 'content-egg'),
-				'description' => __('Number of results for autoblogging.', 'content-egg'),
+				'title'       => __('Results for autoupdates ', 'content-egg'),
+				'description' => __('Maximum number of results returned for keyword autoupdates and other automatic searches.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 5,
 				'validator'   => array(
@@ -100,7 +100,7 @@ class FlickrConfig extends ParserModuleConfig
 					'800p'  => __('800 pixels on the long side', 'content-egg'),
 					'1024p' => __('1024 pixels on the long side', 'content-egg'),
 				),
-				'default'          => '500p',
+				'default'          => '1024p',
 				'section'          => 'default',
 			),
 			'save_img'                => array(
@@ -134,6 +134,7 @@ class FlickrConfig extends ParserModuleConfig
 			),
 		);
 
-		return array_merge(parent::options(), $optiosn);
+		$options = array_merge(parent::options(), $options);
+		return self::moveRequiredUp($options);
 	}
 }

@@ -6,14 +6,17 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\libs\ParserClient;
+use ContentEgg\application\libs\scrap\Scrap;
+use ContentEgg\application\libs\scrap\ScrapArrayConfig;
+use ContentEgg\application\libs\scrap\ScrapFactory;
+use ContentEgg\application\libs\scrap\ScrapRequest;
 
-use function ContentEgg\prn;
 use function ContentEgg\prnx;
 
 /**
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  */
 class AmazonClient extends ParserClient
@@ -21,9 +24,14 @@ class AmazonClient extends ParserClient
     protected $locale;
     protected $canonical_domain;
 
-    protected $scraperapi_token;
-    protected $proxycrawl_token;
-    protected $scrapingdog_token;
+    /** @var Scrap|null */
+    protected $scrap;
+
+    /** @var ScrapRequest|null Request being executed, set by setUrl(). */
+    protected $scrap_request;
+
+    const DEFAULT_TIMEOUT = 60;
+    const USER_AGENT      = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:138.0) Gecko/20100101 Firefox/138.0';
 
     public function __construct($locale)
     {
@@ -37,60 +45,211 @@ class AmazonClient extends ParserClient
         $this->canonical_domain = 'https://www.' . $host;
     }
 
+    public function setScrap(Scrap $scrap)
+    {
+        $this->scrap = $scrap;
+    }
+
+    /**
+     * @return Scrap|null
+     */
+    public function getScrap()
+    {
+        return $this->scrap;
+    }
+
+    /**
+     * Context handed to the provider, so it can geo-target by Amazon locale.
+     */
+    public function getScrapContext()
+    {
+        return array('locale' => $this->locale);
+    }
+
+    /**
+     * Build the outbound request without executing it.
+     *
+     * Split out of setUrl() so request construction can be tested: the parent
+     * setUrl() performs the HTTP fetch immediately.
+     *
+     * @return ScrapRequest
+     */
+    public function buildScrapRequest($url)
+    {
+        $request = new ScrapRequest($url);
+
+        if ($this->scrap)
+        {
+            $this->scrap->applyTo($request, $this->getScrapContext());
+        }
+
+        $request->url = \apply_filters('cegg_amazon_client_url', $request->url);
+
+        return $request;
+    }
+
+    /**
+     * Select a provider by slug using a one-off token.
+     *
+     * @deprecated Use setScrap() with a ScrapFactory-created provider.
+     */
+    protected function setScrapBySlug($slug, $token, $option_key)
+    {
+        $provider = ScrapFactory::create($slug, new ScrapArrayConfig(array($option_key => $token)));
+
+        if ($provider)
+        {
+            $this->setScrap($provider);
+        }
+    }
+
+    /** @deprecated */
     public function setScraperapiToken($token)
     {
-        $this->scraperapi_token = $token;
+        $this->setScrapBySlug('scraperapi', $token, 'scraperapi_token');
     }
 
+    /** @deprecated */
     public function setProxycrawlToken($token)
     {
-        $this->proxycrawl_token = $token;
+        $this->setScrapBySlug('crawlbase', $token, 'proxycrawl_token');
     }
 
+    /** @deprecated */
     public function setScrapingdogToken($token)
     {
-        $this->scrapingdog_token = $token;
+        $this->setScrapBySlug('scrapingdog', $token, 'scrapingdog_token');
+    }
+
+    /** @deprecated */
+    public function setScrapeowlToken($token)
+    {
+        $this->setScrapBySlug('scrapeowl', $token, 'scrapeowl_token');
     }
 
     public function setUrl($url)
     {
-        if ($this->scraperapi_token)
-            $url = 'http://api.scraperapi.com?api_key=' . urlencode($this->scraperapi_token) . '&url=' . urlencode($url);
-        elseif ($this->proxycrawl_token)
-            $url = 'https://api.proxycrawl.com/?token=' . urlencode($this->proxycrawl_token) . '&url=' . urlencode($url);
-        elseif ($this->scrapingdog_token)
-            $url = 'https://api.scrapingdog.com/scrape?api_key=' . urlencode($this->scrapingdog_token) . '&url=' . urlencode($url);
+        $this->scrap_request = $this->buildScrapRequest($url);
 
-        parent::setUrl($url);
+        parent::setUrl($this->scrap_request->url);
     }
 
     public function restGet($uri, $query = null)
     {
+        $request = $this->scrap_request;
+
+        // Only replay the struct onto the URL it was built for; ParserClient
+        // reuses restGet() for other fetches.
+        $applies = ($request && $request->url === $uri);
+
         $client = self::getHttpClient();
         $client->resetParameters();
         $client->setUri($uri);
 
+        // Set these every call: getHttpClient() is a shared static whose
+        // constructor opts are ignored after first creation, and a provider
+        // timeout must not leak into later requests in this process.
+        $client->setUserAgent(self::USER_AGENT);
+        $client->setTimeout($applies && $request->timeout ? $request->timeout : self::DEFAULT_TIMEOUT);
+
+        $method = 'GET';
+
+        if ($applies)
+        {
+            // After resetParameters(), which clears all but accept-charset.
+            foreach ($request->headers as $header_name => $header_value)
+            {
+                $client->setHeaders($header_name, $header_value);
+            }
+
+            if ($request->body !== null)
+            {
+                $client->setRawData($request->body);
+            }
+
+            $method = $request->method;
+        }
+
         if ($query)
             $client->setParameterGet($query);
 
-        $body = $this->getResult($client->request('GET'));
+        $body = $this->getResult($client->request($method));
+
+        if ($this->scrap)
+            $body = $this->scrap->filterResponseBody($body);
 
         // fix html
         $body = preg_replace('/<table id="HLCXComparisonTable".+?<\/table>/uims', '', $body);
-        //$body = preg_replace('/<head>.+?<\/head>/uims', '', $body);
+
+        $html = preg_replace('/<head\b[^>]*>(.*?)<\/head>/uims', '', $body);
+        if ($html)
+            $body = $html;
+
         $body = preg_replace('/<script.*?>.*?<\/script>/uims', '', $body);
         $body = preg_replace('/<style.*?>.*?<\/style>/uims', '', $body);
 
         return $this->decodeCharset($body);
     }
 
-    public function search($keyword, $max)
+    /**
+     * Scraping services return actionable errors in the response body, which
+     * the base class discards. Surface a bounded, sanitized excerpt.
+     */
+    protected function formatHttpError($response, $code, $message)
     {
-        $url = $this->getSearchUrl($keyword);
+        $error = parent::formatHttpError($response, $code, $message);
+
+        if (!$this->scrap)
+        {
+            return $error;
+        }
+
+        $body = trim((string) \wp_remote_retrieve_body($response));
+
+        if ($body === '')
+        {
+            return $error;
+        }
+
+        // sanitize_text_field strips tags and control characters; the excerpt
+        // is bounded so a full error page cannot flood a notice or log.
+        $body = \sanitize_text_field($body);
+        $body = $this->redactSecrets($body);
+        $body = function_exists('mb_substr') ? mb_substr($body, 0, 300) : substr($body, 0, 300);
+
+        // No request URL is added here, and redactSecrets() scrubs any the
+        // provider echoed back to us.
+        return $error . ' ' . strtoupper($this->scrap->getSlug()) . ': ' . $body;
+    }
+
+    /**
+     * Strip credentials from provider error text.
+     *
+     * Providers echo the request back on failure, and several carry the user's
+     * key as api_key= or token= in the query string, so the body itself can
+     * leak it into logs and admin notices.
+     */
+    protected function redactSecrets($text)
+    {
+        if ($this->scrap && ($token = $this->scrap->getToken()))
+        {
+            $text = str_replace($token, '***', $text);
+        }
+
+        // Catch keys we do not hold, e.g. echoed from a different account.
+        $text = preg_replace('~\b(api[_-]?key|token|auth|access[_-]?token)=[^\s&"\']+~i', '$1=***', $text);
+
+        return (string) $text;
+    }
+
+    public function search($keyword, $limit, $max_price, $p_n_date = '')
+    {
+        $url = $this->getSearchUrl($keyword, $max_price, $p_n_date);
         $this->setUrl($url);
 
-        $urls = $this->parseCatalog($max);
-        $urls = array_slice($urls, 0, $max);
+        $urls = $this->parseCatalog($limit);
+
+        $urls = array_slice($urls, 0, $limit);
 
         $products = array();
         foreach ($urls as $url)
@@ -118,17 +277,27 @@ class AmazonClient extends ParserClient
 
         $product['title'] = (string) $this->parseTitle();
         if (!$product['title'])
-            throw new \Exception(sprintf('The product URL can not be parsed: %s', $url));
+        {
+            throw new \Exception(
+                sprintf(
+                    'The product URL can not be parsed: %s',
+                    esc_url($url)
+                )
+            );
+        }
 
         $product['url'] = $url;
         $product['description'] = TextHelper::sanitizeHtml((string) $this->parseDescription());
         $product['price'] = TextHelper::parsePriceAmount((string) $this->parsePrice());
         $product['priceOld'] = TextHelper::parsePriceAmount((string) $this->parseOldPrice());
+        if ($product['price'] >= $product['priceOld'])
+            $product['priceOld'] = 0;
         $product['img'] = (string) $this->parseImg();
         $product['manufacturer'] = (string) $this->parseManufacturer();
         $product['currencyCode'] = (string) $this->getCurrency();
         $product['features'] = (array) $this->parseFeatures();
         $product['extra'] = (array) $this->parseExtra();
+        $product['promo'] = \sanitize_text_field((string) $this->parsePromo());
 
         if ((bool) $this->isInStock())
             $product['stock_status'] = 1;
@@ -138,11 +307,21 @@ class AmazonClient extends ParserClient
         return $product;
     }
 
-    public function getSearchUrl($keyword)
+    public function getSearchUrl($keyword, $max_price = 0, $p_n_date = '')
     {
         $keyword = urlencode($keyword);
         $keyword = str_replace('%20', '+', $keyword);
         $url = $this->canonical_domain . '/s?k=' . $keyword;
+
+        if ($max_price)
+        {
+            $url .= '&rh=p_36%3A-' . TextHelper::pricePenniesDenomination($max_price);
+        }
+
+        if ($p_n_date)
+        {
+            $url .= '&p_n_date=' . urlencode($p_n_date);
+        }
 
         return $url;
     }
@@ -150,6 +329,9 @@ class AmazonClient extends ParserClient
     public function parseCatalog($max)
     {
         $xpath = array(
+            ".//div[contains(@class, 'SEARCH_RESULTS')]//a[contains(@class, 'a-link-normal') and contains(@href, '/dp/')]/@href",
+            ".//span[@data-component-type='s-search-results']//a[contains(@class, 'a-link-normal') and contains(@href, '/dp/')]/@href",
+            ".//div[contains(@class, 's-main-slot')]//h2[contains(@class, 'a-color-base')]//a[contains(@class, 'a-link-normal') and contains(@href, '/dp/')]/@href",
             ".//div[@class='p13n-desktop-grid']//a[@class='a-link-normal']/@href",
             ".//*[@class='aok-inline-block zg-item']/a[@class='a-link-normal']/@href",
             ".//h3[@class='newaps']/a/@href",
@@ -180,6 +362,9 @@ class AmazonClient extends ParserClient
         // picassoRedirect fix
         foreach ($urls as $i => $url)
         {
+            if (strstr($url, 'app.primevideo.com'))
+                unset($urls[$i]);
+
             if (!strstr($url, '/gp/slredirect/picassoRedirect.html/'))
                 continue;
             $parts = parse_url($url);
@@ -200,14 +385,19 @@ class AmazonClient extends ParserClient
                 $res[] = $this->canonical_domain . '/dp/' . $asin . '/';
         }
 
+        $res = array_unique($res);
+        $res = array_values($res);
+
         return $res;
     }
 
     public function parseTitle()
     {
+
         $paths = array(
             ".//h1[@id='title']/span",
             ".//*[@id='fine-ART-ProductLabelArtistNameLink']",
+            ".//meta[@name='title']/@content",
             ".//h1",
         );
 
@@ -275,20 +465,23 @@ class AmazonClient extends ParserClient
         if (!$this->isInStock())
             return 0;
 
-        $price = $this->xpathScalar(".//span[@id='style_name_0_price']/span[contains(@class, 'olpWrapper')]");
-        if ($price && strstr($price, ' options from '))
-        {
-            $parts = explode('options from', $price);
-            return $parts[1];
-        }
-
         $paths = array(
+            ".//span[@id='subscriptionPrice']//span[@data-a-color='price']//span[@class='a-offscreen']",
+            ".//table[@class='a-lineitem a-align-top']//span[@data-a-color='price']//span[@class='a-offscreen']",
+            ".//*[contains(@class, 'priceToPay')]//*[@class='a-offscreen']",
+            ".//*[@class='a-price aok-align-center reinventPricePriceToPayMargin priceToPay']",
             ".//div[@class='a-section a-spacing-none aok-align-center']//span[@class='a-offscreen']",
+            ".//span[contains(@class, 'a-price') and contains(@class, 'priceToPay')]//span[@class='a-offscreen']",
+            ".//h5//span[@id='price']",
+            ".//span[@class='a-price a-text-price header-price a-size-base a-text-normal']//span[@class='a-offscreen']",
             ".//span[@class='a-price a-text-price a-size-medium apexPriceToPay']//span[@class='a-offscreen']",
+            ".//span[contains(@class, 'priceToPay')]",
             ".//div[@class='a-section a-spacing-small a-spacing-top-small']//a/span[@class='a-size-base a-color-price']",
+            ".//div[@class='a-section a-spacing-none aok-align-center']//span[@class='a-offscreen']",
             ".//*[@id='priceblock_dealprice']",
             ".//span[@id='priceblock_ourprice']",
             ".//span[@id='priceblock_saleprice']",
+            ".//div[@class='twisterSlotDiv addTwisterPadding']//span[@id='color_name_0_price']",
             ".//input[@name='displayedPrice']/@value",
             ".//*[@id='unqualifiedBuyBox']//*[@class='a-color-price']",
             ".//*[@class='dv-button-text']",
@@ -302,11 +495,14 @@ class AmazonClient extends ParserClient
             ".//span[@class='slot-price']//span[@class='a-size-base a-color-price a-color-price']",
             ".//span[@class='a-button-inner']//span[contains(@class, 'a-color-price')]",
             ".//div[@id='booksHeaderSection']//span[@id='price']",
-            ".//table[@class='a-lineitem a-align-top']//span[@class='a-offscreen']",
-            ".//span[contains(@class, 'a-price')]//span[@class='a-offscreen']",
+            ".//div[@class='a-box-inner a-padding-base']//span[@class='a-color-price aok-nowrap']",
+            ".//span[@id='kindle-price']",
+            ".//span[contains(@class, 'a-price')]//span/@aria-hidden",
+            ".//span[contains(@class, 'a-price')]//span[@class='a-price-whole']",
         );
 
-        $price = $this->xpathScalar($paths);
+        $price = (string) $this->xpathScalar($paths);
+        $price = str_replace('R$', '', $price);
 
         if (!$price && $price = $this->xpathScalar(".//span[@id='priceblock_ourprice']//*[@class='buyingPrice' or @class='price-large']"))
         {
@@ -320,6 +516,9 @@ class AmazonClient extends ParserClient
             $price = $tprice[0];
         }
 
+        $parts = explode('opzioni', $price);
+        $price = end($parts);
+
         return $price;
     }
 
@@ -329,6 +528,7 @@ class AmazonClient extends ParserClient
             return;
 
         $paths = array(
+            ".//*[not(@class='pricePerUnit')]//span[@class='a-price a-text-price a-size-base']//span[@class='a-offscreen']",
             ".//*[@id='price']//span[@class='a-text-strike']",
             ".//div[@id='price']//td[contains(@class,'a-text-strike')]",
             "(.//*[@id='price']//span[@class='a-text-strike'])[2]",
@@ -336,8 +536,10 @@ class AmazonClient extends ParserClient
             ".//*[@id='price']//span[contains(@class, 'priceBlockStrikePriceString')]",
             ".//span[@id='rentListPrice']",
             ".//span[@id='listPrice']",
-            ".//span[@class='a-price a-text-price']//span[@aria-hidden='true']/text()",
+            ".//span[@class='a-size-small a-color-secondary aok-align-center basisPrice']//span[@class='a-price a-text-price']/span[@class='a-offscreen']",
+            ".//span[@class='a-size-small a-color-secondary aok-align-center basisPrice']//span[@class='a-offscreen']",
         );
+
         return $this->xpathScalar($paths);
     }
 
@@ -365,7 +567,7 @@ class AmazonClient extends ParserClient
             ".//div[@id='imgTagWrapperId']//img/@src",
         );
 
-        $img = $this->xpathScalar($paths);
+        $img = (string) $this->xpathScalar($paths);
 
         if (preg_match('/^data:image/', $img))
             $img = '';
@@ -375,20 +577,20 @@ class AmazonClient extends ParserClient
 
         if (!$img)
         {
-            $dynamic = $this->xpathScalar(".//img[@id='landingImage' or @id='imgBlkFront']/@data-a-dynamic-image");
+            $dynamic = (string) $this->xpathScalar(".//img[@id='landingImage' or @id='imgBlkFront']/@data-a-dynamic-image");
             if (preg_match('/"(https:\/\/.+?)"/', $dynamic, $matches))
                 $img = $matches[1];
         }
         if (!$img)
         {
-            $img = $this->xpathScalar(".//img[@id='imgBlkFront']/@src");
+            $img = (string) $this->xpathScalar(".//img[@id='imgBlkFront']/@src");
             if (preg_match('/^data:image/', $img))
                 $img = '';
         }
 
         if (!$img)
         {
-            $img = $this->xpathScalar(".//*[contains(@class, 'imageThumb thumb')]/img/@src");
+            $img = (string) $this->xpathScalar(".//*[contains(@class, 'imageThumb thumb')]/img/@src");
             $img = preg_replace('/\._.+?\_.jpg/', '.jpg', $img);
         }
 
@@ -397,18 +599,26 @@ class AmazonClient extends ParserClient
         $img = str_replace('._SL1000_.', '._AC_SL520_.', $img);
         $img = str_replace('._AC_SL1500_.', '._AC_SL520_.', $img);
         $img = str_replace('._AC_UL1192_.', '._AC_SL520_.', $img);
+        $img = str_replace('._AC_SL1000_.', '._AC_SL520_.', $img);
 
         return $img;
     }
 
     public function isInStock()
     {
-        if ($this->xpathScalar(".//div[@id='availability']/span[contains(@class,'a-color-success')]"))
+        $xpath = array(
+            ".//div[@id='outOfStock']//span[@class='a-color-price a-text-bold']",
+            ".//div[@id='availability']/span/text()",
+            ".//div[@id='outOfStockBuyBox_feature_div']//span[@class='a-color-price a-text-bold']",
+            ".//div[@id='outOfStock']//span[contains(@class, 'a-color-price')]",
+        );
+
+        if (!$availability = $this->xpathScalar($xpath))
             return true;
 
-        $availability = trim($this->xpathScalar(".//div[@id='availability']/span/text()"));
+        $availability = trim((string) $availability);
 
-        if ($availability == 'Currently unavailable.' || $availability == 'Şu anda mevcut değil.' || $availability == 'Attualmente non disponibile.' || $availability == 'Momenteel niet verkrijgbaar.')
+        if (in_array($availability, array('Currently unavailable.', 'Şu anda mevcut değil.', 'Attualmente non disponibile.', 'Momenteel niet verkrijgbaar.', 'Al momento non disponibile.', 'Não disponível.')))
             return false;
 
         return true;
@@ -473,8 +683,14 @@ class AmazonClient extends ParserClient
         if (!$extra['rating'])
             $extra['rating'] = $this->prepareRating((float) $this->xpathScalar(".//*[@id='acrPopover']//i[contains(@class, 'a-icon a-icon-star')]"));
 
-        $extra['ratingDecimal'] = (float) str_replace(',', '.', $this->xpathScalar(".//*[@id='acrPopover']//i[contains(@class, 'a-icon a-icon-star')]"));
-        $extra['ratingCount'] = (int) str_replace(',', '', $this->xpathScalar(".//*[@id='acrCustomerReviewText']"));
+        $extra['ratingDecimal'] = (float) str_replace(',', '.', (string) $this->xpathScalar(".//*[@id='acrPopover']//i[contains(@class, 'a-icon a-icon-star')]"));
+
+        $xpath = array(
+            ".//*[@id='acrCustomerReviewText']"
+        );
+        $ratingCount = (string) $this->xpathScalar($xpath);
+        $ratingCount = preg_replace('/\D/', '', $ratingCount);
+        $extra['ratingCount'] = (int)  $ratingCount;
 
         if ($asin = self::parseAsinFromUrl($this->getUrl()))
         {
@@ -510,6 +726,14 @@ class AmazonClient extends ParserClient
     public function getFeaturesXpath()
     {
         return array(
+            array(
+                'name' => ".//div[@id='prodDetails']//table//th",
+                'value' => ".//div[@id='prodDetails']//table//td",
+            ),
+            array(
+                'name' => ".//div[@id='productOverview_feature_div']//table//td[1]",
+                'value' => ".//div[@id='productOverview_feature_div']//table//td[2]",
+            ),
             array(
                 'name' => ".//table[contains(@id, 'productDetails_techSpec_section')]//th",
                 'value' => ".//table[contains(@id, 'productDetails_techSpec_section')]//td",
@@ -573,12 +797,14 @@ class AmazonClient extends ParserClient
         if (strstr($this->parsePrice(), 'ILS'))
             return 'ILS';
 
+        if (strstr($this->parsePrice(), 'kr'))
+            return 'SEK';
+
         return AmazonLocales::getCurrencyCode($this->locale);
     }
 
     public function parseFeatures()
     {
-
         if (!$xpaths = $this->getFeaturesXpath())
             return array();
 
@@ -626,6 +852,7 @@ class AmazonClient extends ParserClient
                 $feature['name'] = ucfirst(\sanitize_text_field(trim($names[$i], " \r\n:-")));
                 $feature['value'] = trim(\sanitize_text_field($values[$i]), " \r\n:-");
                 $feature['value'] = preg_replace('/(\x{200e}|\x{200f})/u', '', $feature['value']);
+                $feature['value'] = str_replace('See more', '', $feature['value']);
                 if (in_array($feature['name'], array('Condition', 'Customer Reviews', 'Best Sellers Rank', 'Amazon Best Sellers Rank', 'Average Customer Review', 'Warranty', 'Item #')))
                     continue;
                 $features[] = $feature;
@@ -634,6 +861,17 @@ class AmazonClient extends ParserClient
             if ($features)
                 return $features;
         }
+
         return array();
+    }
+
+    public function parsePromo()
+    {
+        $paths = array(
+            ".//label[contains(@id, 'couponText')]/text()",
+            ".//span[@data-csa-c-owner='PromotionsDiscovery']//div[@class='a-alert-content']/text()",
+        );
+
+        return $this->xpathScalar($paths);
     }
 }

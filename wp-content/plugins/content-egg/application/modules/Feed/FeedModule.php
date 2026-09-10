@@ -4,10 +4,13 @@ namespace ContentEgg\application\modules\Feed;
 
 defined('\ABSPATH') || exit;
 
+use ContentEgg\application\admin\GeneralConfig;
 use ContentEgg\application\admin\PluginAdmin;
 use ContentEgg\application\components\AffiliateFeedParserModule;
-use ContentEgg\application\modules\Feed\FeedName;
+use ContentEgg\application\components\ai\ModulePrompt;
+use ContentEgg\application\components\ModuleName;
 use ContentEgg\application\helpers\TextHelper;
+use ContentEgg\application\helpers\ProductHelper;
 use ContentEgg\application\components\ContentProduct;
 use ContentEgg\application\components\LinkHandler;
 
@@ -19,14 +22,20 @@ use function ContentEgg\prnx;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class FeedModule extends AffiliateFeedParserModule
 {
+    public function isGtinSearchAllowed()
+    {
+        return true;
+    }
+
+    private bool $aiMappingDone = false;
 
     public function info()
     {
-        if (!$name = FeedName::getInstance()->getName($this->getId()))
+        if (!$name = ModuleName::getInstance()->getName($this->getId()))
         {
             $name = '+ ' . __('Add new', 'content-egg');
         }
@@ -81,16 +90,29 @@ class FeedModule extends AffiliateFeedParserModule
         return $classname::model();
     }
 
-    public function isZippedFeed()
+    public function isCompressedFeed(): bool
     {
-        if ($this->config('archive_format') == 'zip')
+        if ($this->isZippedFeed() || $this->isGzipFeed())
         {
             return true;
         }
-        else
-        {
-            return false;
-        }
+
+        return false;
+    }
+
+    public function getArchiveFormat(): string
+    {
+        return strtolower((string) $this->config('archive_format'));
+    }
+
+    public function isGzipFeed(): bool
+    {
+        return $this->getArchiveFormat() === 'gz';
+    }
+
+    public function isZippedFeed(): bool
+    {
+        return $this->getArchiveFormat() === 'zip';
     }
 
     public function getFeedUrl()
@@ -105,16 +127,40 @@ class FeedModule extends AffiliateFeedParserModule
         return $url;
     }
 
+    public function getProductsTtl()
+    {
+        $ttl = (int) $this->config('sync_interval', static::PRODUCTS_TTL);
+
+        if ($ttl < 3600)
+        {
+            $ttl = static::PRODUCTS_TTL;
+        }
+
+        $ttl = (int) \apply_filters('cegg_feed_products_ttl', $ttl);
+        $ttl = (int) \apply_filters('cegg_feed_products_module_ttl', $ttl, $this->getId());
+
+        return $ttl;
+    }
+
     protected function feedProductPrepare(array $data)
     {
+        $format = $this->config('feed_format');
+
+        if (in_array($format, ['csv', 'json'], true))
+        {
+            $this->maybeAiAutomap($data);
+        }
+
         $mapped_data = $this->mapProduct($data);
         $missed = array();
         if (empty($mapped_data['description']))
-            $mapped_data['description'] = '';
-
-        foreach (array_keys(FeedConfig::mappingFields()) as $field)
         {
-            if (FeedConfig::isMappingFieldRequared($field) && !isset($mapped_data[$field]))
+            $mapped_data['description'] = '';
+        }
+
+        foreach (array_keys($this->getConfigInstance()->mappingFields()) as $field)
+        {
+            if ($this->getConfigInstance()->isMappingFieldRequared($field) && !isset($mapped_data[$field]))
             {
                 $missed[] = $field;
             }
@@ -122,25 +168,35 @@ class FeedModule extends AffiliateFeedParserModule
 
         if ($missed)
         {
-            throw new \Exception(sprintf('Required mapping fields are missing in the feed: %s.', join(', ', $missed)));
+            throw new \Exception(
+                sprintf(
+                    esc_html__(
+                        'The following required mapping fields are missing from the feed: %s.',
+                        'content-egg'
+                    ),
+                    esc_html(implode(', ', $missed))
+                )
+            );
         }
 
         $product = array();
         $product['id'] = sanitize_text_field($mapped_data['id']);
-        $product['title'] = \sanitize_text_field($mapped_data['title']);
+        $product['title'] = sanitize_text_field($mapped_data['title']);
 
         if (!$product['id'] || !$product['title'])
         {
             return false;
         }
 
+        $price_decimal_separator = $this->config('price_decimal_separator');
+
         if (isset($mapped_data['sale price']) && (float) $mapped_data['sale price'])
         {
-            $product['price'] = (float) TextHelper::parsePriceAmount($mapped_data['sale price']);
+            $product['price'] = (float) TextHelper::parsePriceAmount($mapped_data['sale price'], $price_decimal_separator);
         }
         else
         {
-            $product['price'] = (float) TextHelper::parsePriceAmount($mapped_data['price']);
+            $product['price'] = (float) TextHelper::parsePriceAmount($mapped_data['price'], $price_decimal_separator);
         }
 
         $product['stock_status'] = ContentProduct::STOCK_STATUS_UNKNOWN;
@@ -148,7 +204,9 @@ class FeedModule extends AffiliateFeedParserModule
         if (!empty($mapped_data['availability']))
         {
             $availability = strtolower($mapped_data['availability']);
-            if (strstr($availability, 'out of stock') || strstr($availability, 'outofstock'))
+            $normalized = strtolower(preg_replace('/[\s_-]+/', '', $availability));
+            // Matches: "out of stock", "out-of-stock", "out_of_stock", "outofstock"
+            if (strpos($normalized, 'outofstock') !== false)
             {
                 $product['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
             }
@@ -178,6 +236,18 @@ class FeedModule extends AffiliateFeedParserModule
             $product['ean'] = '';
         }
 
+        $product['category'] = '';
+        if (!empty($mapped_data['category']))
+        {
+            $product['category'] = mb_substr(sanitize_text_field((string) $mapped_data['category']), 0, 191);
+        }
+
+        $product['brand'] = '';
+        if (!empty($mapped_data['brand']))
+        {
+            $product['brand'] = mb_substr(sanitize_text_field((string) $mapped_data['brand']), 0, 191);
+        }
+
         if (!empty($mapped_data['direct link']))
         {
             $product['orig_url'] = $mapped_data['direct link'];
@@ -191,14 +261,14 @@ class FeedModule extends AffiliateFeedParserModule
             $product['orig_url'] = $mapped_data['affiliate link'];
         }
 
-        $product['product'] = serialize($data);
+        $product['product'] = serialize((array) $data);
 
         return $product;
     }
 
     public function doRequest($keyword, $query_params = array(), $is_autoupdate = false)
     {
-        $this->maybeImportProducts();
+        $this->maybeScheduleImport();
 
         if ($is_autoupdate)
             $limit = $this->config('entries_per_page_update');
@@ -208,13 +278,17 @@ class FeedModule extends AffiliateFeedParserModule
         $options = array();
         if (!empty($query_params['price_min']))
             $options['price_min'] = (float) $query_params['price_min'];
-        if (!empty($query_params['price_min']))
+        if (!empty($query_params['price_max']))
             $options['price_max'] = (float) $query_params['price_max'];
 
         if (TextHelper::isEan($keyword))
+        {
             $results = $this->product_model->searchByEan($keyword, $limit, $options);
+        }
         elseif (filter_var($keyword, FILTER_VALIDATE_URL))
-            $results = $this->product_model->searchByUrl($keyword, $this->config('partial_url_match'), $limit);
+        {
+            $results = $this->product_model->searchByUrl($keyword, $this->config('partial_url_match'), $limit, $this->config('ignore_query_string'));
+        }
         else
         {
             $options['search_type'] = $this->config('search_type');
@@ -229,7 +303,7 @@ class FeedModule extends AffiliateFeedParserModule
 
     public function doRequestItems(array $items)
     {
-        $this->maybeImportProducts();
+        $this->maybeScheduleImport();
         $deeplink = $this->config('deeplink');
         foreach ($items as $key => $item)
         {
@@ -241,6 +315,7 @@ class FeedModule extends AffiliateFeedParserModule
             }
 
             $product = $this->product_model->searchById($item['unique_id']);
+
             if (!$product)
             {
                 if ($this->product_model->count())
@@ -259,38 +334,41 @@ class FeedModule extends AffiliateFeedParserModule
             if (isset($r['availability']))
                 $items[$key]['availability'] = $r['availability'];
 
+            if (isset($r['image ​​link']))
+            {
+                $imgUrls = self::splitImageUrlList($r['image ​​link']);
+                $items[$key]['img'] = self::normalizeImageUrl($imgUrls[0] ?? $r['image ​​link']);
+            }
+
             if (isset($r['shipping cost']))
                 $items[$key]['shipping_cost'] = self::extractShippingCost($r['shipping cost']);
             else
                 $items[$key]['shipping_cost'] = null;
 
             $items[$key]['stock_status'] = $product['stock_status'];
+
+            $price_decimal_separator = $this->config('price_decimal_separator');
             if (!empty($r['sale price']))
             {
-                $items[$key]['price'] = (float) TextHelper::parsePriceAmount($r['sale price']);
-                if (isset($r['price']) && (float) TextHelper::parsePriceAmount($r['price']) > $items[$key]['price'])
+                $items[$key]['price'] = (float) TextHelper::parsePriceAmount($r['sale price'], $price_decimal_separator);
+                if (isset($r['price']) && (float) TextHelper::parsePriceAmount($r['price'], $price_decimal_separator) > $items[$key]['price'])
                 {
-                    $items[$key]['priceOld'] = (float) TextHelper::parsePriceAmount($r['price']);
+                    $items[$key]['priceOld'] = (float) TextHelper::parsePriceAmount($r['price'], $price_decimal_separator);
                 }
             }
             else
             {
-                $items[$key]['price'] = (float) TextHelper::parsePriceAmount($r['price']);
+                $items[$key]['price'] = (float) TextHelper::parsePriceAmount($r['price'], $price_decimal_separator);
                 $items[$key]['priceOld'] = 0;
             }
 
+            $items[$key]['url'] = $r['affiliate link'];
+
             if ($deeplink)
-            {
                 $items[$key]['url'] = LinkHandler::createAffUrl($items[$key]['orig_url'], $deeplink, $item);
-            }
 
             if (!empty($r['description']) && \apply_filters('cegg_feed_description_update', false))
-            {
                 $items[$key]['description'] = $r['description'];
-            }
-
-            if (!empty($r['affiliate link']))
-                $items[$key]['affiliate link'] = $r['affiliate link'];
         }
 
         return $items;
@@ -303,12 +381,10 @@ class FeedModule extends AffiliateFeedParserModule
 
         foreach ($results as $product)
         {
-            if (!$r = unserialize($product['product']))
-            {
+            if (!$pdata = unserialize($product['product']))
                 continue;
-            }
 
-            $r = $this->mapProduct($r);
+            $r = $this->mapProduct($pdata);
 
             $content = new ContentProduct;
 
@@ -316,17 +392,19 @@ class FeedModule extends AffiliateFeedParserModule
             $content->title = $r['title'];
             $content->url = $r['affiliate link'];
 
+            $price_decimal_separator = $this->config('price_decimal_separator');
+
             if (!empty($r['sale price']))
             {
-                $content->price = (float) TextHelper::parsePriceAmount($r['sale price']);
-                if (isset($r['price']) && (float) TextHelper::parsePriceAmount($r['price']) > $content->price)
+                $content->price = (float) TextHelper::parsePriceAmount($r['sale price'], $price_decimal_separator);
+                if (isset($r['price']) && (float) TextHelper::parsePriceAmount($r['price'], $price_decimal_separator) > $content->price)
                 {
-                    $content->priceOld = (float) TextHelper::parsePriceAmount($r['price']);
+                    $content->priceOld = (float) TextHelper::parsePriceAmount($r['price'], $price_decimal_separator);
                 }
             }
             else
             {
-                $content->price = (float) TextHelper::parsePriceAmount($r['price']);
+                $content->price = (float) TextHelper::parsePriceAmount($r['price'], $price_decimal_separator);
             }
 
             if ($content->price)
@@ -358,6 +436,23 @@ class FeedModule extends AffiliateFeedParserModule
                 $content->short_description = $r['short description'];
             }
 
+            if (!empty($r['subtitle']))
+            {
+                $content->subtitle = $r['subtitle'];
+            }
+
+            $content->images = [];
+            foreach (['additional image link', 'additional image link 2', 'additional image link 3', 'additional image link 4'] as $field)
+            {
+                if (!empty($r[$field]))
+                {
+                    $content->images = array_merge(
+                        $content->images,
+                        TextHelper::getArrayFromCommaList($r[$field])
+                    );
+                }
+            }
+
             if (isset($r['shipping cost']))
                 $content->shipping_cost = self::extractShippingCost($r['shipping cost']);
             else
@@ -377,11 +472,17 @@ class FeedModule extends AffiliateFeedParserModule
             {
                 $content->category = $r['category'];
 
-                if (strstr($r['category'], '>'))
+                $separators = apply_filters('cegg_feed_category_separators', array('>', '|'), $r);
+                $separators = is_array($separators) ? $separators : array();
+
+                $path = ProductHelper::parseCategoryPath((string) $content->category, $separators);
+
+                // A single label parses to one segment equal to itself; only a
+                // genuinely delimited value becomes a path.
+                if ($path && $path !== array(trim((string) $content->category)))
                 {
-                    $content->categoryPath = explode('>', $content->category);
-                    $content->categoryPath = array_map('trim', $content->categoryPath);
-                    $content->category = end($content->categoryPath);
+                    $content->categoryPath = $path;
+                    $content->category     = end($path);
                 }
             }
 
@@ -389,13 +490,23 @@ class FeedModule extends AffiliateFeedParserModule
             {
                 $content->availability = $r['availability'];
             }
-            if (isset($r['image ​​link']) && filter_var($r['image ​​link'], FILTER_VALIDATE_URL))
+            if (isset($r['image ​​link']))
             {
-                $content->img = $r['image ​​link'];
+                $imgUrls = self::splitImageUrlList($r['image ​​link']);
+                $img = self::normalizeImageUrl($imgUrls[0] ?? $r['image ​​link']);
+                if (filter_var($img, FILTER_VALIDATE_URL))
+                {
+                    $content->img = $img;
+                    if (count($imgUrls) > 1)
+                    {
+                        $content->images = array_merge($content->images, array_slice($imgUrls, 1));
+                    }
+                }
             }
 
             $content->orig_url = $product['orig_url'];
             $content->stock_status = $product['stock_status'];
+
             $content->ean = $product['ean'];
 
             if ($content->orig_url != $content->url)
@@ -406,6 +517,10 @@ class FeedModule extends AffiliateFeedParserModule
             {
                 $content->domain = $this->config('domain');
             }
+
+            $content->merchant = \apply_filters('cegg_feed_merchant_name', '', $content->domain);
+
+            $content->features = $this->mapAttributes($pdata);
 
             if ($deeplink)
             {
@@ -440,14 +555,76 @@ class FeedModule extends AffiliateFeedParserModule
 
     public function viewDataPrepare($data)
     {
-        if (!$deeplink = $this->config('deeplink'))
-        {
-            return parent::viewDataPrepare($data);
-        }
+        $deeplink        = (string) $this->config('deeplink');
+        $rawParamsString = (string) $this->config('tracking_params');
+        $rawParamsString = trim(sanitize_text_field($rawParamsString));
 
-        foreach ($data as $key => $d)
+        foreach ($data as $key => $item)
         {
-            $data[$key]['url'] = LinkHandler::createAffUrl($d['orig_url'], $deeplink, $d);
+            $baseUrl = '';
+            if (!empty($deeplink) && !empty($item['orig_url']))
+            {
+                $baseUrl = LinkHandler::createAffUrl($item['orig_url'], $deeplink, $item);
+            }
+            else
+            {
+                $baseUrl = !empty($item['url']) ? $item['url'] : (!empty($item['orig_url']) ? $item['orig_url'] : '');
+            }
+
+            if ($rawParamsString === '')
+            {
+                $data[$key]['url'] = $baseUrl;
+                continue;
+            }
+
+            // Parse tracking params: accept "name=value&name2=value2" (also tolerates commas/newlines)
+            // Example: clickref={{post_id}}  OR  subId1=mysite1&subId2={{post_id}}
+            $pairs = preg_split('/[&\n,]+/', $rawParamsString);
+            $resolvedParams = array();
+            $paramNames     = array();
+
+            foreach ($pairs as $pair)
+            {
+                $pair = trim($pair);
+                if ($pair === '')
+                {
+                    continue;
+                }
+
+                // Split into name and value at the first "="
+                $eqPos = strpos($pair, '=');
+                $name  = $eqPos === false ? $pair : substr($pair, 0, $eqPos);
+                $valueTemplate = $eqPos === false ? '' : substr($pair, $eqPos + 1);
+
+                // Sanitize name
+                $name = trim($name);
+                $name = preg_replace('/[^a-zA-Z0-9_.\-]/', '', $name);
+
+                if ($name === '')
+                {
+                    continue;
+                }
+
+                $valueTemplate = trim($valueTemplate);
+
+                // Resolve dynamic placeholders
+                $value = (string) LinkHandler::getUrlTemplate($baseUrl, $valueTemplate, $item);
+
+                $resolvedParams[$name] = $value;
+                $paramNames[] = $name;
+            }
+
+            if (!empty($resolvedParams))
+            {
+                $url = remove_query_arg($paramNames, $baseUrl);
+                $url = add_query_arg($resolvedParams, $url);
+
+                $data[$key]['url'] = esc_url_raw($url);
+            }
+            else
+            {
+                $data[$key]['url'] = $baseUrl;
+            }
         }
 
         return parent::viewDataPrepare($data);
@@ -455,11 +632,50 @@ class FeedModule extends AffiliateFeedParserModule
 
     public function mapProduct(array $data)
     {
-        $mapped_data = array();
         $mapping = $this->config('mapping');
+
+        // Awin feeds trick for multiple image support
+        if (isset($mapping['additional image link']) && $mapping['additional image link'] === 'alternate_image')
+        {
+            $mapping['additional image link 2'] = 'alternate_image_two';
+            $mapping['additional image link 3'] = 'alternate_image_three';
+            $mapping['additional image link 4'] = 'alternate_image_four';
+        }
+
+        $mapped_data = array();
 
         foreach ($mapping as $field => $feed_field)
         {
+            // regex syntax: [regex][pattern][feed_field]
+            if (strpos($feed_field, '[regex]') === 0)
+            {
+                $parts = explode('][', $feed_field);
+                if (count($parts) == 3)
+                {
+                    $pattern = trim($parts[1], '[]');
+                    $feed_field = trim($parts[2], '[]');
+
+                    if (!isset($data[$feed_field]))
+                        continue;
+
+                    if (strpos($pattern, chr(0)) !== false || !trim($pattern))
+                        continue;
+
+                    if (@preg_match($pattern, $data[$feed_field], $matches))
+                    {
+                        if (count($matches) > 1)
+                            $mapped_data[$field] = $matches[1];
+                        else
+                            $mapped_data[$field] = $matches[0];
+                    }
+                    else
+                    {
+                        $mapped_data[$field] = '';
+                    }
+                }
+                continue;
+            }
+
             if (isset($data[$feed_field]))
             {
                 $mapped_data[$field] = $data[$feed_field];
@@ -469,31 +685,346 @@ class FeedModule extends AffiliateFeedParserModule
         return $mapped_data;
     }
 
-    public static function extractShippingCost($shipping_cost)
+    protected function mapAttributes(array $data)
     {
-        $shipping_cost = \apply_filters('cegg_shipping_cost_value', $shipping_cost);
+        $mapping = $this->config('mapping');
+        if (!isset($mapping['attributes']) || !$mapping['attributes'])
+            return array();
 
-        if (strstr($shipping_cost, ':') && strstr($shipping_cost, ','))
+        $fieldsToExtract = TextHelper::getArrayFromCommaList($mapping['attributes']);
+
+        $attributes = array();
+        foreach ($fieldsToExtract as $field)
         {
-            $parts = explode(',', $shipping_cost);
-            $shipping_cost = reset($parts);
-        }
-        elseif (strstr($shipping_cost, ':'))
-        {
-            $parts = explode(':', $shipping_cost);
-            foreach ($parts as $p)
+            $parts = explode('->', $field);
+            if (count($parts) == 2)
             {
-                if (strstr($p, 'EUR') || strstr($p, 'USD'))
+                $field = $parts[0];
+                $name = $parts[1];
+            }
+            else
+            {
+                $name = $field;
+            }
+
+            $value = $data[$field];
+            $value = preg_replace('/,\s*/', ', ', $value);
+
+            if (isset($data[$field]))
+            {
+                $attributes[] = array(
+                    'name' => $name,
+                    'value' => $value
+                );
+            }
+        }
+
+        return $attributes;
+    }
+
+    protected function maybeAiAutomap($data)
+    {
+        // only once per feed
+        if ($this->aiMappingDone)
+        {
+            return null;
+        }
+
+        $this->aiMappingDone = true;
+
+        if ($this->getLastImportError())
+        {
+            throw new \RuntimeException('Cannot perform AI mapping due to previous import errors.');
+        }
+
+        $mapping = $this->config('mapping');
+
+        if ($this->getConfigInstance()->isAllRequiredFieldsFilled($mapping))
+        {
+            return null;
+        }
+
+        if ($this->config('auto_mapping') !== 'enabled')
+        {
+            return null;
+        }
+
+        return $this->aiAutomap($data);
+    }
+
+    /**
+     * Perform AI-driven mapping of raw product data to platform-standard fields.
+     *
+     * @param array|string $data  A single product row/node in CSV (array), XML (string) or JSON (string) form.
+     */
+    protected function aiAutomap($data): array
+    {
+        $prompt     = $this->getPrompt();
+        $fields     = $this->buildNormalizedFieldList();
+        $excluded   = ['product node', 'attributes', 'short description', 'isbn', 'subtitle'];
+
+        $fieldNames = array_values(array_diff(array_keys($fields), $excluded));
+
+        if ($data instanceof \SimpleXMLElement)
+        {
+            $data = $data->asXML();
+            if ($data === false)
+            {
+                throw new \RuntimeException('Failed to serialize XML node for AI mapping.');
+            }
+        }
+
+        try
+        {
+            $format      = $this->config('feed_format');
+            $suggestions = $this->askAiForMapping($prompt, $format, $data, $fieldNames);
+        }
+        catch (\Throwable $e)
+        {
+            $message = sprintf(
+                /* translators: %s: exception message */
+                esc_html__('AI mapping failed: %s', 'content-egg'),
+                esc_html($e->getMessage())
+            );
+
+            throw new \RuntimeException(
+                esc_html($message),
+                0
+            );
+        }
+
+        $suggestions = $this->normaliseSuggestionKeys($suggestions);
+
+        $mapping = $this->applyAiSuggestions($suggestions);
+        $this->persistMapping($mapping);
+
+        if (!$this->getConfigInstance()->isAllRequiredFieldsFilled($mapping))
+        {
+            $missing = implode(', ', $this->getConfigInstance()->missingRequired($mapping));
+            throw new \RuntimeException(
+                sprintf(
+                    esc_html__(
+                        'AI mapping did not cover required fields: %s. Please map them manually.',
+                        'content-egg'
+                    ),
+                    esc_html($missing)
+                )
+            );
+        }
+
+        return $mapping;
+    }
+
+    /**
+     * Instantiate and return a ModulePrompt configured with the API key.
+     */
+    protected function getPrompt(): ModulePrompt
+    {
+        $apiKey = GeneralConfig::getInstance()->option('system_ai_key');
+        if (!$apiKey)
+        {
+            throw new \RuntimeException(
+                esc_html__(
+                    'OpenAI API key is not configured. Please add it under Content Egg → Settings → AI → OpenAI API Key.',
+                    'content-egg'
+                )
+            );
+        }
+
+        return new ModulePrompt($apiKey);
+    }
+
+    /**
+     * Retrieve and normalize the list of allowed mapping fields.
+     */
+    private function buildNormalizedFieldList(): array
+    {
+        $fields = $this->getConfigInstance()->mappingFields();
+        $normalized = [];
+
+        foreach (array_keys($fields) as $field)
+        {
+            $normalized[$this->stripControlChars($field)] = true;
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * Remove zero‑width and other control characters from a string.
+     */
+    private function stripControlChars(string $value): string
+    {
+        return preg_replace('/\p{Cf}/u', '', $value) ?? $value;
+    }
+
+    /**
+     * Build the final mapping from AI suggestions.
+     */
+    private function applyAiSuggestions(array $suggestions): array
+    {
+        $mapping = [];
+
+        $allFields = array_keys($this->getConfigInstance()->mappingFields());
+        $currentMapping = $this->config('mapping');
+
+        if (!empty($this->product_node))
+        {
+            $allFields[] = 'product node';
+            $suggestions['product node'] = $this->product_node;
+        }
+
+        foreach ($allFields as $field)
+        {
+            if (!empty($suggestions[$field]) && $suggestions[$field] !== 'unknown')
+            {
+                $mapping[$field] = $suggestions[$field];
+            }
+            else
+            {
+                if (isset($currentMapping[$field]))
                 {
-                    $shipping_cost = $p;
-                    break;
+                    $mapping[$field] = $currentMapping[$field];
+                }
+                else
+                {
+                    $mapping[$field] = '';
                 }
             }
         }
 
-        if ($shipping_cost == '')
-            return '';
+        return $mapping;
+    }
 
-        return (float) TextHelper::parsePriceAmount($shipping_cost);
+    /**
+     * Persist the mapping to the database and current configuration instance
+     */
+    private function persistMapping(array $mapping): void
+    {
+        $this->getConfigInstance()->set_current('mapping', $mapping);
+        FeedConfig::updateOption('mapping', $mapping, 'content-egg_' . $this->getId());
+    }
+
+    /**
+     * Decide which AI prompt method to call for the given format.
+     */
+    private function askAiForMapping($prompt, $format, $data, $fieldNames): array
+    {
+        switch ($format)
+        {
+            case 'csv':
+                return $prompt->suggestFieldsMappingCsv($data, $fieldNames);
+            case 'xml':
+                return $prompt->suggestFieldsMappingXml($data, $fieldNames);
+            case 'json':
+                return $prompt->suggestFieldsMappingJson($data, $fieldNames);
+            default:
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        esc_html__('Unsupported format: %s', 'content-egg'),
+                        esc_html($format)
+                    )
+                );
+        }
+    }
+
+    private function normaliseSuggestionKeys(array $suggestions): array
+    {
+        $aliases = [
+            'image link' => 'image ​​link',
+        ];
+
+        foreach ($aliases as $from => $to)
+        {
+            if (isset($suggestions[$from]) && !isset($suggestions[$to]))
+            {
+                $suggestions[$to] = $suggestions[$from];
+                unset($suggestions[$from]);
+            }
+        }
+
+        return $suggestions;
+    }
+
+    protected function mapXmlData(\SimpleXMLElement $node): array
+    {
+        $this->maybeAiAutomap($node);
+
+        return parent::mapXmlData($node);
+    }
+
+    public static function getPriceParamMap()
+    {
+        return [
+            'min' => 'price_min',
+            'max' => 'price_max',
+        ];
+    }
+
+    /**
+     * Split an image field that may contain several comma-separated image URLs.
+     *
+     * A plain explode(',') breaks when a single URL legally contains commas
+     * (e.g. query params like ?io=transform:fit,height:800,width:800). To keep
+     * multi-image support without shredding such URLs, we only split on a comma
+     * that begins a new URL, i.e. one immediately followed by http://, https://
+     * or a protocol-relative //. Feed image URLs are always absolute, so this is
+     * a reliable boundary.
+     *
+     * @param string|array $str
+     * @return array
+     */
+    public static function splitImageUrlList($str)
+    {
+        if (is_array($str))
+        {
+            return $str;
+        }
+
+        $str = trim((string) $str);
+        if ($str === '')
+        {
+            return array();
+        }
+
+        $parts = preg_split('#\s*,\s*(?=(?:https?:)?//)#i', $str);
+        $parts = array_map('trim', $parts);
+        $parts = array_filter($parts, 'strlen');
+
+        return array_values($parts);
+    }
+
+    public static function normalizeImageUrl($url, $defaultScheme = 'https', $baseUrl = null)
+    {
+        if (!$url)
+        {
+            return $url;
+        }
+
+        $url = trim($url);
+
+        if (strpos($url, '//') === 0)
+        {
+            $scheme = rtrim($defaultScheme, ':');
+            return $scheme . ':' . $url;
+        }
+
+        if (preg_match('#^https?://#i', $url))
+        {
+            return $url;
+        }
+
+        if (preg_match('#^(data:|blob:)#i', $url))
+        {
+            return $url;
+        }
+
+        if ($baseUrl !== null && strpos($url, '/') === 0)
+        {
+            $baseUrl = rtrim($baseUrl, '/');
+            return $baseUrl . $url;
+        }
+
+        return $url;
     }
 }

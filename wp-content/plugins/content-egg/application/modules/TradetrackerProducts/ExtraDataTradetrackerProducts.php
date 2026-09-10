@@ -11,7 +11,7 @@ use ContentEgg\application\components\ExtraData;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class ExtraDataTradetrackerProducts extends ExtraData
 {
@@ -22,4 +22,5 @@ class ExtraDataTradetrackerProducts extends ExtraData
 	public $stock;
 	public $categoryPath;
 	public $subcategories;
+	public $additional;
 }

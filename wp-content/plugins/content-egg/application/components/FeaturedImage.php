@@ -8,16 +8,14 @@ use ContentEgg\application\components\ModuleManager;
 use ContentEgg\application\components\ContentManager;
 use ContentEgg\application\helpers\ImageHelper;
 use ContentEgg\application\admin\GeneralConfig;
-use ContentEgg\application\components\ExternalFeaturedImage;
-
-use function ContentEgg\prnx;
+use ContentEgg\application\components\ExternalFeaturedImage;;
 
 /**
  * FeaturedImage class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class FeaturedImage
 {
@@ -74,6 +72,32 @@ class FeaturedImage
         }
 
         self::setFeaturedImage($post_id);
+    }
+
+    /**
+     * Force a specific data item as the post's featured image, overriding any
+     * current one. Routes to the local (sideload/attach) or external (URL meta)
+     * path by the external_featured_images option — so it honors the user's
+     * "Save images to your server" and external-featured-image settings, exactly
+     * like the automatic featured-image logic. Unlike doAction() there is no
+     * has_post_thumbnail guard: this is an explicit, user-chosen override.
+     */
+    public static function forceSet($post_id, $item)
+    {
+        $img = !empty($item['img_large']) ? $item['img_large'] : ($item['img'] ?? '');
+        if (empty($img))
+        {
+            return false;
+        }
+
+        if (GeneralConfig::getInstance()->option('external_featured_images') == 'disabled')
+        {
+            return self::setFeaturedImage($post_id, $item);
+        }
+
+        // External mode: store the URL directly (updateExternalMeta has no
+        // internal-priority guard, so the explicit choice always wins).
+        return ExternalFeaturedImage::updateExternalMeta($img, $post_id);
     }
 
     public static function setFeaturedImage($post_id, $item = null)

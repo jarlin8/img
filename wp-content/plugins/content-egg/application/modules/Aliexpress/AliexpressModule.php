@@ -16,7 +16,7 @@ use ContentEgg\application\components\LinkHandler;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class AliexpressModule extends AffiliateParserModule
 {
@@ -28,6 +28,14 @@ class AliexpressModule extends AffiliateParserModule
 		return array(
 			'name'     => 'Aliexpress (legacy)',
 			'docs_uri' => 'https://ce-docs.keywordrush.com/modules/affiliate/aliexpress',
+		);
+	}
+
+	public static function getPriceParamMap()
+	{
+		return array(
+			'min' => 'original_price_from',
+			'max' => 'original_price_to',
 		);
 	}
 

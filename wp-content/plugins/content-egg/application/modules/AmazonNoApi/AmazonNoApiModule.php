@@ -7,25 +7,31 @@ defined('\ABSPATH') || exit;
 use ContentEgg\application\components\AffiliateParserModule;
 use ContentEgg\application\components\ContentProduct;
 use ContentEgg\application\admin\PluginAdmin;
+use ContentEgg\application\components\LinkHandler;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\libs\amazon\AmazonLocales;
 use ContentEgg\application\modules\Amazon\AmazonModule;
 use ContentEgg\application\modules\AmazonNoApi\ExtraDataAmazonNoApi;
 use ContentEgg\application\helpers\ArrayHelper;
+use ContentEgg\application\libs\scrap\ScrapFactory;
 use ContentEgg\application\libs\amazon\AmazonClient;
-
-use function ContentEgg\prn;
-use function ContentEgg\prnx;
+use ContentEgg\application\components\ModuleManager;
+use ContentEgg\application\helpers\TemplateHelper;
 
 /**
  * AmazonNoApiModule class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class AmazonNoApiModule extends AffiliateParserModule
 {
+    public function isGtinSearchAllowed()
+    {
+        return true;
+    }
+
     private $api_client = null;
 
     public function info()
@@ -75,12 +81,30 @@ class AmazonNoApiModule extends AffiliateParserModule
         else
             $locale = $this->config('locale');
 
+        $p_n_date = '';
+        if (!empty($query_params['p_n_date']))
+        {
+            $p_n_date = $query_params['p_n_date'];
+        }
+
         if ($is_autoupdate)
             $limit = $this->config('entries_per_page_update');
         else
             $limit = $this->config('entries_per_page');
 
+        // for TMN under XX
+        if (!empty($query_params['maximum_price']))
+            $max_price = (float)$query_params['maximum_price'];
+        else
+            $max_price = 0;
+
         $keyword = trim($keyword);
+
+        if ($asin = AmazonModule::parseAsinFromUrl($keyword))
+        {
+            $keyword = $asin;
+        }
+
         if (TextHelper::isAsin($keyword))
         {
             $host = AmazonLocales::getDomain($locale);
@@ -92,25 +116,35 @@ class AmazonNoApiModule extends AffiliateParserModule
 
         try
         {
-
             if (filter_var($keyword, FILTER_VALIDATE_URL) && AmazonModule::parseAsinFromUrl($keyword))
             {
                 if ($result = $client->product($keyword))
                     $results = array($result);
             }
             else
-                $results = $client->search($keyword, $limit);
+                $results = $client->search($keyword, $limit, $max_price, $p_n_date);
         }
         catch (\Exception $e)
         {
 
             if ($e->getCode() == 503)
             {
-                $m = sprintf('It seems your server IP has been blocked by Amazon. To resolve this, please activate the <a target="_blank" href="%s">built-in scraping services</a> in the module settings.', 'https://ce-docs.keywordrush.com/modules/affiliate/amazon-no-api-module');
-                throw new \Exception($m, $e->getCode());
+                $m = wp_kses(
+                    sprintf(
+                        /* translators: %s: URL to Amazon module documentation */
+                        __('It seems your server IP has been blocked by Amazon. To resolve this, please activate the <a target="_blank" href="%s">built-in scraping services</a> in the module settings.', 'content-egg'),
+                        esc_url('https://ce-docs.keywordrush.com/modules/affiliate/amazon-no-api-module')
+                    ),
+                    array('a' => array('href' => array(), 'target' => array()))
+                );
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception message is escaped above.
+                throw new \Exception(esc_html($m), $e->getCode());
             }
             else
-                throw new \Exception($e->getMessage(), $e->getCode());
+            {
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception message is escaped below.
+                throw new \Exception(esc_html($e->getMessage()), $e->getCode());
+            }
         }
 
         if (!$results)
@@ -119,8 +153,33 @@ class AmazonNoApiModule extends AffiliateParserModule
         return $this->prepareResults($results, $locale);
     }
 
+    private function doRequestItemsApi(array $items)
+    {
+        if ($this->config('api_updates') != 'enabled')
+            return array();
+
+        if (!ModuleManager::getInstance()->isModuleActive('Amazon'))
+            return array();
+
+        $module = ModuleManager::getInstance()->factory('Amazon');
+
+        try
+        {
+            $updated_data = $module->doRequestItems($items);
+        }
+        catch (\Exception $e)
+        {
+            return array();
+        }
+
+        return $updated_data;
+    }
+
     public function doRequestItems(array $items)
     {
+        if ($res = $this->doRequestItemsApi($items))
+            return $res;
+
         @set_time_limit(300);
 
         $i = 0;
@@ -160,13 +219,19 @@ class AmazonNoApiModule extends AffiliateParserModule
 
             $items[$key]['price'] = $product->price;
             $items[$key]['priceOld'] = $product->priceOld;
-            $items[$key]['currencyCode'] = $product->currencyCode;
-            $items[$key]['currency'] = TextHelper::currencyTyping($product->currencyCode);
+
+            if ($product->currencyCode)
+            {
+                $items[$key]['currencyCode'] = $product->currencyCode;
+                $items[$key]['currency'] = TextHelper::currencyTyping($product->currencyCode);
+            }
             $items[$key]['stock_status'] = $product->stock_status;
             $items[$key]['rating'] = $product->rating;
-            $items[$key]['ratingDecimal'] = $product->ratingDecimal;
+            $items[$key]['reviewsCount'] = $product->reviewsCount;
+            // $items[$key]['ratingDecimal'] = $product->ratingDecimal; //top listing tmplate
             $items[$key]['url'] = $product->url;
             $items[$key]['img'] = $product->img;
+            $items[$key]['promo'] = TextHelper::truncate($product->promo);
             $items[$key]['extra'] = ArrayHelper::object2Array($product->extra);
         }
 
@@ -222,15 +287,23 @@ class AmazonNoApiModule extends AffiliateParserModule
         if (isset($r['extra']['categoryPath']))
             $content->categoryPath = $r['extra']['categoryPath'];
 
+        if (!empty($r['ratingCount']))
+            $content->reviewsCount = (int) $r['ratingCount'];
+
         $extra->ASIN = $asin;
         $extra->locale = $locale;
         $extra->associate_tag = $associate_tag;
         $extra->addToCartUrl = $this->generateAddToCartUrl($locale, $extra->ASIN);
 
-        if ($this->config('link_type') == 'add_to_cart')
-            $content->url = $extra->addToCartUrl;
+        if ($deeplink = $this->config('deeplink'))
+            $content->url =  LinkHandler::createAffUrl($content->orig_url, $deeplink);
         else
-            $content->url = \add_query_arg('tag', $associate_tag, $content->orig_url);
+        {
+            if ($this->config('link_type') == 'add_to_cart')
+                $content->url = $extra->addToCartUrl;
+            else
+                $content->url = \add_query_arg('tag', $associate_tag, $content->orig_url);
+        }
 
         ExtraDataAmazonNoApi::fillAttributes($extra, $r);
 
@@ -253,31 +326,33 @@ class AmazonNoApiModule extends AffiliateParserModule
         {
             $this->api_client = new AmazonClient($locale);
 
-            $services = array('scraperapi', 'proxycrawl', 'scrapingdog');
-            foreach ($services as $service)
+            if ($scrap = ScrapFactory::resolve($this->getConfigInstance()))
             {
-                if ($token_value = $this->config($service . '_token'))
-                {
-                    $method = 'set' . ucfirst($service) . 'Token';
-                    $this->api_client->$method($token_value);
-                    break;
-                }
+                $this->api_client->setScrap($scrap);
             }
         }
 
         return $this->api_client;
     }
 
-    public function getAssociateTagForLocale($locale)
+    public function getAssociateTagForLocale(string $locale)
     {
-        if ($locale == $this->config('locale'))
+        $defaultLocale = (string) $this->config('locale');
+
+        if ($locale === $defaultLocale)
         {
             return $this->config('associate_tag');
         }
-        else
+
+        $key = 'associate_tag_' . $locale;
+
+        $tag = $this->config($key);
+        if ($tag === null || $tag === '')
         {
-            return $this->config('associate_tag_' . $locale);
+            $tag = $this->config('associate_tag');
         }
+
+        return $tag;
     }
 
     /**
@@ -314,23 +389,68 @@ class AmazonNoApiModule extends AffiliateParserModule
 
     public function viewDataPrepare($data)
     {
+        $deeplink = $this->config('deeplink');
+
         foreach ($data as $key => $d)
         {
-            $tag_id = $this->getAssociateTagForLocale($d['extra']['locale']);
-
-            if (strstr($data[$key]['url'], 'AssociateTag='))
-                $data[$key]['url'] = TextHelper::addUrlParam($data[$key]['url'], 'AssociateTag', $tag_id);
+            if ($deeplink)
+                $data[$key]['url'] =  LinkHandler::createAffUrl($data[$key]['orig_url'], $deeplink, $d);
             else
-                $data[$key]['url'] = TextHelper::addUrlParam($data[$key]['url'], 'tag', $tag_id);
-
-            if ($this->config('hide_prices') == 'hide')
             {
-                $data[$key]['price'] = 0;
-                $data[$key]['priceOld'] = 0;
+                $tag_id = $this->getAssociateTagForLocale($d['extra']['locale']);
+
+                if (strstr($data[$key]['url'], 'AssociateTag='))
+                    $data[$key]['url'] = TextHelper::addUrlParam($data[$key]['url'], 'AssociateTag', $tag_id);
+                else
+                    $data[$key]['url'] = TextHelper::addUrlParam($data[$key]['url'], 'tag', $tag_id);
+            }
+
+            // Amazon Global Earning
+            $global_earning = $this->config('global_earning');
+            if ($global_earning == 'search_results')
+            {
+                // send to local search results instead of a similar product
+                $data[$key]['url'] = TextHelper::addUrlParam($data[$key]['url'], 'gaOptInStatus', 'false');
+            }
+            elseif ($global_earning == 'no_redirect')
+            {
+                // keep the shopper in this module's store
+                $data[$key]['url'] = TextHelper::addUrlParam($data[$key]['url'], 'creatorsDisableRedirect', 'true');
+            }
+
+            $hp = $this->config('hide_prices');
+            if ($hp == 'hide_24')
+            {
+                $last_update = TemplateHelper::getLastUpdate($this->getId());
+                if ($last_update)
+                    $lt = time() - $last_update;
+                else
+                    $lt = 0;
+            }
+            else
+                $lt = 0;
+
+            if ($hp == 'hide' || ($hp == 'hide_24' && $lt > \DAY_IN_SECONDS))
+            {
+                $data[$key]['price'] = '';
+                $data[$key]['priceOld'] = '';
                 $data[$key]['stock_status'] = 0;
             }
         }
 
         return parent::viewDataPrepare($data);
+    }
+
+    public static function getLocaleParamMap()
+    {
+        return 'locale';
+    }
+
+    public static function getSortByNewestParamMap()
+    {
+        return [
+            //'p_n_date' => '1249088011', // Items released in the last 30 days
+            'p_n_date' => '1249089011', // Items released in the last 90 days
+        ];
     }
 }

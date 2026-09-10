@@ -14,11 +14,10 @@ use ContentEgg\application\components\stopwatch\Stopwatch;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class ModuleUpdateScheduler extends Scheduler
 {
-
     const CRON_TAG = 'cegg_module_updater_cron';
     const BYKEYWORD_UPDATE_LIMIT_FOR_MODULE = 100;
     const ITEMS_UPDATE_LIMIT_FOR_MODULE = 100;
@@ -176,7 +175,7 @@ class ModuleUpdateScheduler extends Scheduler
     {
         $schedules['ten_min'] = array(
             'interval' => 60 * 10,
-            'display' => __('Every 10 minutes'),
+            'display' => __('Every 10 minutes', 'content-egg'),
         );
         return $schedules;
     }

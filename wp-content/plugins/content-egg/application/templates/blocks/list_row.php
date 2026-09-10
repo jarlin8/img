@@ -2,78 +2,163 @@
 defined('\ABSPATH') || exit;
 
 use ContentEgg\application\helpers\TemplateHelper;
+
 ?>
 
-<div class="cegg-list-logo-title cegg-mt5 cegg-mb15 visible-xs text-center">
-    <img src="https://testingcf.jsdelivr.net/gh/jarlin8/OSS@main/icons/favicon/<?php echo esc_attr($item['domain']); ?>.svg" height="18" width="18">
-    <a<?php TemplateHelper::printRel(); ?> target="_blank" href="<?php echo esc_url_raw($item['url']); ?>"><?php echo esc_html(TemplateHelper::truncate($item['title'], 100)); ?></a>
-</div>
-<div class="row-products">
-    <div class="col-md-2 col-sm-2 col-xs-12 cegg-image-cell">
-        <?php if ($item['img']) : ?>
-            <a<?php TemplateHelper::printRel(); ?> target="_blank" href="<?php echo esc_url_raw($item['url']); ?>">
-                <?php TemplateHelper::displayImage($item, 130, 100); ?>
-                </a>
-            <?php endif; ?>
-    </div>
-    <div class="col-md-5 col-sm-5 col-xs-12 cegg-desc-cell hidden-xs">
-        <div class="cegg-no-top-margin cegg-list-logo-title">
-            <img src="https://testingcf.jsdelivr.net/gh/jarlin8/OSS@main/icons/favicon/<?php echo esc_attr($item['domain']); ?>.svg" height="18" width="18">
-            <a<?php TemplateHelper::printRel(); ?> target="_blank" href="<?php echo esc_url_raw($item['url']); ?>"><?php echo esc_html(TemplateHelper::truncate($item['title'], 100)); ?></a>
+<div class="cegg-list-card cegg-card position-relative <?php echo $i < count($items) - 1 ? ' mb-3' : ''; ?><?php TemplateHelper::border($params); ?>">
+
+    <?php if ($this->isVisible('number', false)): ?>
+        <div class="position-absolute top-50 z-3 start-0 translate-middle">
+            <?php TemplateHelper::number($item, $params, $i); ?>
         </div>
+    <?php endif; ?>
 
-    </div>
-    <div class="col-md-3 col-sm-3 col-xs-12 cegg-price-cell text-center">
-        <div class="cegg-price-row">
+    <div class="row p-2 p-md-3">
 
-            <?php if ($item['price']) : ?>
-                <div class="cegg-price cegg-price-color cegg-price-<?php echo \esc_attr(TemplateHelper::getStockStatusClass($item)); ?>"><?php echo esc_html(TemplateHelper::formatPriceCurrency($item['price'], $item['currencyCode'])); ?></div>
-            <?php endif; ?>
-            <?php if ($item['priceOld']) : ?>
-                <div class="text-muted">
-                    <s><?php echo esc_html(TemplateHelper::formatPriceCurrency($item['priceOld'], $item['currencyCode'])); ?></s>
-                </div>
-            <?php endif; ?>
-            <?php if ($stock_status = TemplateHelper::getStockStatusStr($item)) : ?>
-                <div title="<?php echo \esc_attr(sprintf(TemplateHelper::__('Last updated on %s'), TemplateHelper::getLastUpdateFormatted($item['module_id'], $post_id))); ?>" class="cegg-lineheight15 stock-status status-<?php echo \esc_attr(TemplateHelper::getStockStatusClass($item)); ?>">
-                    <?php echo \esc_html($stock_status); ?>
-                </div>
-            <?php endif; ?>
+        <div class="col-3 col-md-2 cegg-list-card-img-col" style="max-width: 150px;">
 
-            <?php if ($item['module_id'] == 'Amazon') : ?>
+            <?php if ($this->isVisible('img')): ?>
+                <div class="position-relative">
 
-                <?php if (!empty($item['extra']['totalNew']) && $item['extra']['totalNew'] > 1) : ?>
-                    <div class="cegg-font60 cegg-lineheight15">
-                        <?php echo esc_html(sprintf(TemplateHelper::__('%d new from %s'), $item['extra']['totalNew'], TemplateHelper::formatPriceCurrency($item['extra']['lowestNewPrice'], $item['currencyCode']))); ?>
+                    <?php if ($this->isVisible('percentageSaved', false)): ?>
+                        <div class="badge bg-danger position-absolute top-0 start-0 translate-middle z-3">-<?php echo esc_html($item['percentageSaved']); ?>%</div>
+                    <?php endif; ?>
+                    <div class="ratio<?php TemplateHelper::imgRatio($params, 'ratio-1x1'); ?>">
+                        <?php TemplateHelper::displayImage($item, 190, 170, array('class' => 'object-fit-scale rounded')); ?>
                     </div>
-                <?php endif; ?>
-                <?php if (!empty($item['extra']['totalUsed'])) : ?>
-                    <div class="cegg-font60 cegg-lineheight15">
-                        <?php echo esc_html(sprintf(TemplateHelper::__('%d used from %s'), $item['extra']['totalUsed'], TemplateHelper::formatPriceCurrency($item['extra']['lowestUsedPrice'], $item['currencyCode']))); ?>
-                    </div>
+                </div>
+
+            <?php endif; ?>
+
+        </div>
+        <div class="col-9 col-md-7 align-self-center">
+            <div class="cegg-list-card-body">
+
+                <?php if ($this->isVisible('badge')): ?>
+                    <?php TemplateHelper::badge3($item); ?>
                 <?php endif; ?>
 
-            <?php endif; ?>
-            <?php if ($item['price'] && ($item['module_id'] == 'Amazon' || $item['module_id'] == 'AmazonNoApi')) : ?>
-                <div class="cegg-font60 cegg-lineheight15">
-                    <?php echo esc_html(sprintf(TemplateHelper::__('as of %s'), TemplateHelper::dateFormatFromGmtAmazon($item['module_id'], $item['last_update']))); ?>
-                    <?php TemplateHelper::printAmazonDisclaimer(); ?>
-                </div>
-            <?php endif; ?>
-        </div>
-    </div>
-    <div class="col-md-2 col-sm-2 col-xs-12 cegg-btn-cell">
-        <div class="cegg-btn-row">
-            <a<?php TemplateHelper::printRel(); ?> target="_blank" href="<?php echo esc_url_raw($item['url']); ?>" class="btn btn-danger btn-block"><span><?php TemplateHelper::buyNowBtnText(true, $item, $btn_text); ?></span></a>
-        </div>
-        <?php if ($merchant = TemplateHelper::getMerchantName($item)) : ?>
-            <div class="text-center">
-                <small class="text-muted title-case">
-                    <?php echo \esc_html($merchant); ?>
-                    <?php TemplateHelper::printShopInfo($item); ?>
-                </small>
+                <?php if ($this->isVisible('title')): ?>
+                    <?php TemplateHelper::title($item, 'card-title fs-6 fw-normal cegg-text-truncate-2', 'div', $params); ?>
+                <?php endif; ?>
+
+                <?php if ($this->isVisible('subtitle')): ?>
+                    <div class="card-subtitle fs-6 text-body-secondary cegg-text-truncate-2"><?php TemplateHelper::subtitle($item); ?></div>
+                <?php endif; ?>
+
+                <?php if ($this->isVisible('rating')): ?>
+                    <div class="pt-0 fs-5">
+                        <?php TemplateHelper::ratingStars($item, true); ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($this->isVisible('promo')): ?>
+                    <div class="cegg-card-promo text-success small pt-1">
+                        <?php TemplateHelper::promo($item); ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($this->isVisible('cashback') && TemplateHelper::getCashbackStr($item)): ?>
+                    <div class="cegg-card-cashback text-success small pt-1">
+                        <?php TemplateHelper::cashback($item); ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php // The wide column, beside the promo - the price column it used
+                      // to sit in is the narrowest part of the row while this one has
+                      // room to spare. ?>
+                <?php if ($coupon = $this->couponChip()): ?>
+                    <div class="cegg-coupon-wrap"><?php TemplateHelper::couponChip($item, $coupon, $params); ?></div>
+                <?php endif; ?>
+
+                <?php if ($this->isVisible('description', false)): ?>
+                    <div class="cegg-desc-small card-text small lh-sm  pt-3"><?php echo \wp_kses_post($item['description']); ?></div>
+                <?php endif; ?>
             </div>
-        <?php endif; ?>
+        </div>
 
+        <div class="col-9 col-md-3 offset-3 offset-md-0 pe-3 text-center">
+
+            <?php if ($this->isVisible('price')): ?>
+                <div class="cegg-card-price lh-1 mt-1 ">
+
+                    <div class="hstack justify-content-md-center gap-2">
+                        <?php if ($this->isVisible('priceOld')): ?>
+                            <del class="cegg-old-price fs-6 text-body-tertiary fw-normal"><?php TemplateHelper::oldPrice($item); ?></del>
+
+                        <?php endif; ?>
+                        <div class="cegg-price fs-5 lh-1 mb-0<?php TemplateHelper::priceClass($item); ?>">
+                            <?php TemplateHelper::price($item); ?>
+                        </div>
+                    </div>
+                    <div class="hstack justify-content-md-center gap-2">
+
+                        <?php if ($this->isVisible('prime', false)): ?>
+                            <div class="pt-2 small">
+                                <?php TemplateHelper::prime($item); ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if ($this->isVisible('stock_status', false)): ?>
+                            <div class="cegg-stock-status pt-2 small">
+                                <?php TemplateHelper::stockStatus($item); ?>
+                            </div>
+                        <?php endif; ?>
+
+                    </div>
+
+                </div>
+            <?php endif; ?>
+
+            <?php if ($this->isVisible('button')): ?>
+                <?php $variants = TemplateHelper::getButtonVariants($item, $params); ?>
+
+                <div class="cegg-card-button pt-3 position-static">
+                    <div class="d-grid<?php echo count($variants) > 1 ? ' gap-2' : ''; ?> position-static">
+                        <?php foreach ($variants as $idx => $pair): ?>
+                            <?php list($btnItem, $btnParams) = $pair; ?>
+
+                            <?php
+                            if ($idx === 0)
+                            {
+                                // primary action stretches over the whole card
+                                $attrs = array('class' => 'stretched-link');
+                            }
+                            else
+                            {
+                                // keep secondary action clickable above stretched overlay
+                                $attrs = array('class' => 'position-relative z-3 pe-auto');
+                            }
+
+                            TemplateHelper::button($btnItem, $btnParams, $attrs);
+                            ?>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+            <?php else: ?>
+                <?php TemplateHelper::link(' ', $item, $params, array('class' => 'stretched-link')); ?>
+            <?php endif; ?>
+
+            <?php if ($this->isVisible('shop_info')) : ?>
+                <div class="position-relative mt-1 fs-6 z-3 small text-truncate">
+                    <small><?php TemplateHelper::shopInfo($item); ?></small>
+                </div>
+            <?php elseif ($this->isVisible('merchant')): ?>
+                <div class="cegg-merchant small fs-6 text-body-secondary text-truncate">
+                    <small><?php TemplateHelper::merchant($item); ?></small>
+                </div>
+            <?php endif; ?>
+
+            <?php // Fallback only: with no title column there is nowhere else. ?>
+            <?php if (!$this->isVisible('title') && ($coupon = $this->couponChip())): ?>
+                <div class="cegg-coupon-wrap"><?php TemplateHelper::couponChip($item, $coupon, $params, true); ?></div>
+            <?php endif; ?>
+            <?php if ($this->isVisible('coupons', false)) : ?>
+                <div class="position-relative fs-6 z-3 small text-truncate">
+                    <small><?php TemplateHelper::coupons($item); ?></small>
+                </div>
+            <?php endif; ?>
+        </div>
     </div>
 </div>

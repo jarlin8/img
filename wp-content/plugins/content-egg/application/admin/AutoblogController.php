@@ -9,12 +9,14 @@ use ContentEgg\application\models\AutoblogModel;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\AutoblogScheduler;
 
+
+
 /**
  * AutoblogController class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class AutoblogController
 {
@@ -75,7 +77,17 @@ class AutoblogController
     public function add_admin_menu()
     {
         \add_submenu_page(Plugin::slug, __('Autoblogging', 'content-egg') . ' &lsaquo; Content Egg', __('Autoblogging', 'content-egg'), 'manage_options', self::slug, array($this, 'actionIndex'));
-        \add_submenu_page(Plugin::slug, __('Add autoblogging', 'content-egg') . ' &lsaquo; Content Egg', __('Add autoblogging', 'content-egg'), 'manage_options', 'content-egg-autoblog-edit', array($this, 'actionUpdate'));
+        $hook = \add_submenu_page('', __('Add autoblogging', 'content-egg') . ' &lsaquo; Content Egg', __('Add autoblogging', 'content-egg'), 'manage_options', 'content-egg-autoblog-edit', array($this, 'actionUpdate'));
+
+        // Parentless submenu: get_admin_page_title() cannot resolve it, so
+        // $title reaches admin-header.php as null. See ShopsController.
+        if ($hook)
+            \add_action('load-' . $hook, function ()
+            {
+                $GLOBALS['title'] = empty($_GET['id'])
+                    ? __('Add autoblogging', 'content-egg')
+                    : __('Edit autoblogging', 'content-egg');
+            });
         \add_submenu_page('options.php', __('Add autoblogging - bulk mode', 'content-egg') . ' &lsaquo; Content Egg', __('Add autoblogging - bulk mode', 'content-egg'), 'manage_options', 'content-egg-autoblog-edit--batch', array($this, 'actionUpdate'));
     }
 
@@ -90,6 +102,8 @@ class AutoblogController
             AutoblogModel::model()->run((int) $_GET['id']);
         }
         \wp_enqueue_script('content-egg-blockUI', \ContentEgg\PLUGIN_RES . '/js/jquery.blockUI.js', array('jquery'));
+        \wp_enqueue_style('cegg-bootstrap5-full');
+
         $table = new AutoblogTable(AutoblogModel::model());
         $table->prepare_items();
         PluginAdmin::getInstance()->render('autoblog_index', array('table' => $table));
@@ -145,6 +159,7 @@ class AutoblogController
             $item['user_id'] = isset($pitem['user_id']) ? absint($pitem['user_id']) : '';
             $item['template_body'] = isset($pitem['template_body']) ? \wp_kses_post($pitem['template_body']) : '';
             $item['template_title'] = isset($pitem['template_title']) ? trim(\sanitize_text_field($pitem['template_title'])) : '';
+            $item['template_title'] = str_replace('ed__', '%Feed__', $item['template_title']);
             $item['template_slug'] = isset($pitem['template_slug']) ? trim(\sanitize_text_field($pitem['template_slug'])) : '';
             $item['post_type'] = isset($pitem['post_type']) ? sanitize_key($pitem['post_type']) : null;
             $item['category'] = isset($pitem['category']) ? intval($pitem['category']) : null;
@@ -238,6 +253,8 @@ class AutoblogController
         \add_meta_box('autoblog_metabox', 'Autoblog data', array($this, 'metaboxAutoblogCreateHandler'), 'autoblog_create', 'normal', 'default');
 
         $item['amazon_categs'] = $this->amazon_categs;
+
+        \wp_enqueue_style('cegg-bootstrap5-full');
 
         PluginAdmin::getInstance()->render('autoblog_edit', array(
             'item' => $item,

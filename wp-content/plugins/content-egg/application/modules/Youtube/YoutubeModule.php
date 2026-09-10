@@ -11,14 +11,12 @@ use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\admin\PluginAdmin;
 use ContentEgg\application\admin\GeneralConfig;
 
-use function ContentEgg\prnx;
-
 /**
  * YoutubeModule class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class YoutubeModule extends ParserModule
 {
@@ -54,7 +52,14 @@ class YoutubeModule extends ParserModule
 		if (!empty($query_params['relevanceLanguage']))
 			$params['relevanceLanguage'] = $query_params['relevanceLanguage'];
 		else
-			$params['relevanceLanguage'] = GeneralConfig::getInstance()->option('lang');
+		{
+			$lang = GeneralConfig::getInstance()->option('lang');
+			$parts = explode('_', $lang);
+			$l = reset($parts);
+			if ($l == 'br')
+				$l = 'pt';
+			$params['relevanceLanguage'] = $l;
+		}
 
 		$params['key'] = $this->config('api_key');
 
@@ -70,13 +75,12 @@ class YoutubeModule extends ParserModule
 
 		try
 		{
-			//$keyword = str_replace('-', ' ', $keyword);
 			$client = new YouTubeSearch('json');
 			$data   = $client->search($keyword, $params);
 		}
 		catch (\Exception $e)
 		{
-			throw new \Exception(strip_tags($e->getMessage()));
+			throw new \Exception(esc_html(wp_strip_all_tags($e->getMessage())));
 		}
 
 		if (!isset($data['items']) || !isset($data['items'][0]))
@@ -95,6 +99,7 @@ class YoutubeModule extends ParserModule
 			$content            = new Content;
 			$content->unique_id = $guid;
 			$content->title     = strip_tags($r['snippet']['title']);
+			$content->domain    = 'youtube.com';
 			$content->img       = isset($r['snippet']['thumbnails']) ? $r['snippet']['thumbnails']['high']['url'] : '';
 
 			if (isset($r['snippet']['description']) && !is_array($r['snippet']['description']))

@@ -20,10 +20,15 @@ use ContentEgg\application\Plugin;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class WalmartModule extends AffiliateParserModule
 {
+    public function isGtinSearchAllowed()
+    {
+        return true;
+    }
+
 
     private $api_client = null;
 
@@ -54,7 +59,13 @@ class WalmartModule extends AffiliateParserModule
         }
 
         echo '<div class="notice notice-warning is-dismissible">';
-        echo '<p>' . sprintf(__('<a href="%s">Walmart module</a> requires the OpenSSL PHP extension!', 'content-egg'), \get_admin_url(\get_current_blog_id(), 'admin.php?page=content-egg-modules--Walmart')) . '</p>';
+        echo '<p>' . wp_kses(
+            sprintf(
+                __('<a href="%s">Walmart module</a> requires the OpenSSL PHP extension!', 'content-egg'),
+                esc_url(get_admin_url(get_current_blog_id(), 'admin.php?page=content-egg-modules--Walmart'))
+            ),
+            array('a' => array('href' => array()))
+        ) . '</p>';
         echo '</div>';
     }
 
@@ -156,6 +167,7 @@ class WalmartModule extends AffiliateParserModule
             {
                 $price_min = 0;
             }
+
             if (!empty($query_params['price_max']))
             {
                 $price_max = (float) $query_params['price_max'];
@@ -237,9 +249,30 @@ class WalmartModule extends AffiliateParserModule
                 $content->manufacturer = $r['brandName'];
             }
             $content->img = $r['largeImage'];
+
+            $content->images = [];
+            if (!empty($r['imageEntities']) && is_array($r['imageEntities']))
+            {
+                foreach ($r['imageEntities'] as $image)
+                {
+                    if (!empty($image['largeImage']))
+                    {
+                        if ($image['largeImage'] == $content->img)
+                        {
+                            continue;
+                        }
+                        $content->images[] = $image['largeImage'];
+                    }
+                }
+
+                $content->images = array_unique($content->images);
+                $content->images = array_values($content->images);
+            }
+
             if (!empty($r['customerRating']))
             {
                 $content->rating = TextHelper::ratingPrepare($r['customerRating']);
+                $content->ratingDecimal = TextHelper::ratingPrepare($r['customerRating']);
             }
             if (!empty($r['numReviews']))
             {
@@ -282,7 +315,7 @@ class WalmartModule extends AffiliateParserModule
 
             $content->currencyCode = 'USD';
             $content->orig_url = TextHelper::parseOriginalUrl($r['productTrackingUrl'], 'u');
-            $content->url = $this->generateAffiliateUrl($content->orig_url, $r);
+            $content->url = $this->applySubIds($this->generateAffiliateUrl($content->orig_url, $r), (array) $content);
 
             $content->extra = new ExtraDataWalmart();
             ExtraDataWalmart::fillAttributes($content->extra, $r);
@@ -387,18 +420,22 @@ class WalmartModule extends AffiliateParserModule
             {
                 $items[$key]['reviewsCount'] = (int) $r['numReviews'];
             }
-            $items[$key]['availability'] = $r['stock'];
 
-            if ($r['stock'] == 'Not available')
+            if (!empty($r['stock']))
             {
-                $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-            }
-            else
-            {
-                $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
+                $items[$key]['availability'] = $r['stock'];
+
+                if ($r['stock'] == 'Not available')
+                {
+                    $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
+                }
+                else
+                {
+                    $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
+                }
             }
 
-            $items[$key]['url'] = $this->generateAffiliateUrl($item['orig_url'], $r);
+            $items[$key]['url'] = $this->applySubIds($this->generateAffiliateUrl($item['orig_url'], $r), $items[$key]);
 
             if (!empty($r['salePrice']))
             {
@@ -417,6 +454,51 @@ class WalmartModule extends AffiliateParserModule
         }
 
         return $items;
+    }
+
+    public function viewDataPrepare($data)
+    {
+        if ($this->hasSubIds())
+        {
+            foreach ($data as $key => $d)
+            {
+                $data[$key]['url'] = $this->applySubIds($d['url'], $d);
+            }
+        }
+
+        return parent::viewDataPrepare($data);
+    }
+
+    private function hasSubIds()
+    {
+        return (bool) ($this->config('subId1') || $this->config('subId2') || $this->config('subId3'));
+    }
+
+    /**
+     * Append Impact SubId1..SubId3 parameters to a Walmart (Impact Radius) affiliate URL.
+     *
+     * Each configured value may contain {{placeholders}} which are resolved per link
+     * and sanitized to an Impact-safe token (max 255 characters).
+     */
+    private function applySubIds($url, array $item)
+    {
+        foreach (array('subId1', 'subId2', 'subId3') as $param)
+        {
+            if (!$value = $this->config($param))
+            {
+                continue;
+            }
+
+            $value = LinkHandler::resolveSubId($value, $item, 255);
+            if ($value === '')
+            {
+                continue;
+            }
+
+            $url = LinkHandler::getUrlWithTail($url, $param . '=' . $value);
+        }
+
+        return $url;
     }
 
     private function generateAffiliateUrl($url, array $r)
@@ -532,5 +614,20 @@ EOD;
     public function renderUpdatePanel()
     {
         $this->render('update_panel', array('module_id' => $this->getId()));
+    }
+
+    public static function getPriceParamMap()
+    {
+        return [
+            'min' => 'price_min',
+            'max' => 'price_max',
+        ];
+    }
+
+    public static function getSortByNewestParamMap()
+    {
+        return [
+            'sort' => 'new'
+        ];
     }
 }

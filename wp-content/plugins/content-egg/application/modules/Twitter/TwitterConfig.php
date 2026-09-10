@@ -11,7 +11,7 @@ use ContentEgg\application\components\ParserModuleConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class TwitterConfig extends ParserModuleConfig
 {
@@ -81,7 +81,7 @@ class TwitterConfig extends ParserModuleConfig
 			),
 			'entries_per_page'          => array(
 				'title'       => __('Results', 'content-egg'),
-				'description' => __('Number of results for a single query', 'content-egg'),
+				'description' => __('Specify the number of results to display for a single search query', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 12,
 				'validator'   => array(
@@ -96,8 +96,8 @@ class TwitterConfig extends ParserModuleConfig
 				'section'     => 'default',
 			),
 			'entries_per_page_update'   => array(
-				'title'       => __('Results for autoblogging ', 'content-egg'),
-				'description' => __('Number of results for autoblogging.', 'content-egg'),
+				'title'       => __('Results for autoupdates ', 'content-egg'),
+				'description' => __('Maximum number of results returned for keyword autoupdates and other automatic searches.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 5,
 				'validator'   => array(

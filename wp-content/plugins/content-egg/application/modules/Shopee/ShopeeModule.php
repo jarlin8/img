@@ -14,14 +14,12 @@ use ContentEgg\application\libs\shopee\ShopeeLocales;
 use ContentEgg\application\components\LinkHandler;
 use ContentEgg\application\helpers\ArrayHelper;
 
-use function ContentEgg\prnx;
-
 /**
  * ShopeeModule class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class ShopeeModule extends AffiliateParserModule
 {
@@ -38,6 +36,14 @@ class ShopeeModule extends AffiliateParserModule
     public function releaseVersion()
     {
         return '11.2.0';
+    }
+
+    public static function getPriceParamMap()
+    {
+        return array(
+            'min' => 'price_min',
+            'max' => 'price_max',
+        );
     }
 
     public function getParserType()
@@ -127,7 +133,6 @@ class ShopeeModule extends AffiliateParserModule
 
     public function doRequestItems(array $items)
     {
-
         $node = join(', ', self::getProductFields());
 
         foreach ($items as $unique_id => $item)
@@ -149,11 +154,13 @@ class ShopeeModule extends AffiliateParserModule
 
             // assign new data
             $fields = array(
+                'url',
                 'price',
                 'priceOld',
                 'availability',
                 'stock_status',
             );
+
             foreach ($fields as $field)
             {
                 $items[$unique_id][$field] = $result->$field;
@@ -179,17 +186,25 @@ class ShopeeModule extends AffiliateParserModule
     private function prepareResult($r, $locale)
     {
         $content = new ContentProduct;
-
         $content->unique_id = $r['itemId'];
         $content->title = $r['productName'];
         $content->orig_url = $r['productLink'];
-        $content->url = $this->generateAffiliateUrl($content->orig_url);
+
+        if ($deeplink = $this->config('deeplink'))
+            $content->url = LinkHandler::createAffUrl($content->orig_url, $deeplink);
+        else
+            $content->url = $r['offerLink'];
+
         if (isset($r['price']))
             $content->price = (float) $r['price'];
         elseif (isset($r['priceMin']))
             $content->price = (float) $r['priceMin'];
         elseif (isset($r['priceMax']))
             $content->price = (float) $r['priceMax'];
+
+        $discount_rate = (int)$r['priceDiscountRate'];
+        if ($discount_rate > 0 && $discount_rate < 100 && $content->price)
+            $content->priceOld = number_format($content->price * 100 / (100 - $discount_rate), 2, '.', '');
 
         if (isset($r['ratingStar']))
         {
@@ -213,14 +228,6 @@ class ShopeeModule extends AffiliateParserModule
         if ($deeplink = $this->config('deeplink'))
             return LinkHandler::createAffUrl($url, $deeplink);
 
-        if ($affiliate_id = $this->config('affiliate_id'))
-        {
-            $aff_url = 'https://shope.ee/an_redir?origin_link=' . urlencode($url) . '&affiliate_id=' . urlencode($affiliate_id);
-            if ($sub_id = $this->config('sub_id'))
-                $aff_url .= '&sub_id=' . urlencode($sub_id);
-
-            return $aff_url;
-        }
         return $url;
     }
 
@@ -228,7 +235,14 @@ class ShopeeModule extends AffiliateParserModule
     {
         foreach ($data as $key => $d)
         {
-            $data[$key]['url'] = $this->generateAffiliateUrl($d['orig_url']);
+            if ($this->config('deeplink'))
+            {
+                $data[$key]['url'] = $this->generateAffiliateUrl($d['orig_url']);
+            }
+            elseif (isset($d['extra']['offerLink']))
+            {
+                $data[$key]['url'] = $d['extra']['offerLink'];
+            }
         }
 
         return parent::viewDataPrepare($data);
@@ -249,30 +263,6 @@ class ShopeeModule extends AffiliateParserModule
         PluginAdmin::render('_metabox_search_results', array('module_id' => $this->getId()));
     }
 
-    private function searchById($keyword, $options)
-    {
-        if ($pid = self::parsePidFromUrl($keyword))
-            $keyword = $pid;
-
-        if (!preg_match('~\d{7,12}~', $keyword))
-            return false;
-
-        $client = $this->getApiClient();
-        try
-        {
-            $items = $client->searchSku($keyword, $options);
-        }
-        catch (\Exception $e)
-        {
-            return false;
-        }
-
-        if (!$items || !isset($items['products']))
-            return false;
-
-        return $items;
-    }
-
     private static function parseIdFromUrl($url)
     {
         if (!filter_var($url, FILTER_VALIDATE_URL))
@@ -284,8 +274,13 @@ class ShopeeModule extends AffiliateParserModule
         $id = end($parts);
         if (is_numeric($id))
             return (int) $id;
-        else
-            return '';
+
+        $parts = explode('.', $url);
+        $id = end($parts);
+        if (is_numeric($id))
+            return (int) $id;
+
+        return '';
     }
 
     private static function isProductId($str)

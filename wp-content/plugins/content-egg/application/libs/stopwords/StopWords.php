@@ -9,7 +9,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  */
 class StopWords
@@ -21,7 +21,7 @@ class StopWords
 	{
 		if (!self::isLangAvailable($lang))
 		{
-			throw new \Exception("StopWords do not support '$lang' language.");
+			throw new \Exception(sprintf("StopWords do not support '%s' language.", esc_html($lang)));
 		}
 
 		return require dirname(__FILE__) . DIRECTORY_SEPARATOR . 'words' . DIRECTORY_SEPARATOR . $lang . '.php';

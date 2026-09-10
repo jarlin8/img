@@ -6,15 +6,16 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\admin\GeneralConfig;
 use ContentEgg\application\components\ModuleManager;
-
-use function ContentEgg\prnx;
+use ContentEgg\application\components\ModuleName;
+use ContentEgg\application\components\ParserModule;
+use ContentEgg\application\Plugin;;
 
 /**
  * AdminHelper class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  */
 class AdminHelper
@@ -135,11 +136,57 @@ class AdminHelper
 
 			if ($module->isAffiliateParser() && $module->isProductParser() && $module->isFeedParser())
 			{
+				// The "+ Add new [Feed]" placeholder (next free slot) is surfaced
+				// as a dedicated "Add a feed" button, not as a list row.
+				if (self::isAddNewFeedModule($module))
+				{
+					continue;
+				}
+
 				$results[] = $module;
 			}
 		}
 
 		return $results;
+	}
+
+	/**
+	 * The generic Feed placeholder module for the next free slot (Feed__N),
+	 * or null when the feed limit is reached. Used for the "Add a feed" button.
+	 */
+	public static function getAddNewFeedModule()
+	{
+		$modules = ModuleManager::getInstance()->getConfigurableModules();
+
+		foreach ($modules as $module)
+		{
+			if ($module->isDeprecated())
+			{
+				continue;
+			}
+
+			if ($module->isAffiliateParser() && $module->isProductParser() && $module->isFeedParser()
+				&& self::isAddNewFeedModule($module))
+			{
+				return $module;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * True for the generic Feed placeholder ("+ Add new [Feed]"): a Feed__N
+	 * module with no assigned name. Configured feeds always have a name.
+	 */
+	private static function isAddNewFeedModule($module)
+	{
+		if (strpos($module->getId(), ModuleManager::FEED_MODULES_PREFIX . '__') !== 0)
+		{
+			return false;
+		}
+
+		return !ModuleName::getInstance()->getName($module->getId());
 	}
 
 	public static function getCouponModules()
@@ -162,6 +209,26 @@ class AdminHelper
 		return $results;
 	}
 
+	public static function getMediaModules()
+	{
+		$modules = ModuleManager::getInstance()->getConfigurableModules();
+		$results = array();
+		foreach ($modules as $module)
+		{
+			if ($module->isDeprecated() && !$module->isActive())
+			{
+				continue;
+			}
+
+			if (in_array($module->getParserType(), array(ParserModule::PARSER_TYPE_IMAGE, ParserModule::PARSER_TYPE_VIDEO), true))
+			{
+				$results[] = $module;
+			}
+		}
+
+		return $results;
+	}
+
 	public static function getContentModules()
 	{
 		$modules = ModuleManager::getInstance()->getConfigurableModules();
@@ -173,12 +240,173 @@ class AdminHelper
 				continue;
 			}
 
-			if (!$module->isAffiliateParser())
+			if ($module->getParserType() === ParserModule::PARSER_TYPE_CONTENT)
 			{
 				$results[] = $module;
 			}
 		}
 
 		return $results;
+	}
+
+	public static function isAiEnabled()
+	{
+		if (GeneralConfig::getInstance()->option('ai_key'))
+			return true;
+		else
+			return false;
+	}
+
+	public static function getPostCategoryList()
+	{
+		$terms = \get_terms(array(
+			'taxonomy' => 'category',
+			'hide_empty' => false,
+		));
+
+		if (!$terms || \is_wp_error($terms))
+		{
+			return array();
+		}
+
+		$categories = array();
+
+		foreach ($terms as $term)
+		{
+			$categories[$term->term_id . '.'] = $term->name . ' [' . $term->term_id . ']';
+		}
+
+		return $categories;
+	}
+
+	public static function getSysAiWarning()
+	{
+		$has_ai_api_key = (bool) GeneralConfig::getInstance()->option('system_ai_key');
+
+		if (! $has_ai_api_key)
+		{
+			$openai_url = 'https://platform.openai.com/api-keys';
+			$settings_url = admin_url('admin.php?page=content-egg');
+
+			$ai_warning = sprintf(
+				'<div class="cegg-warning-box" role="alert">'
+					.   '<strong>%s</strong> %s '
+					.   '<a href="%s" target="_blank" rel="noopener noreferrer" class="cegg-link">%s</a>. '
+					.   '<a href="%s" class="cegg-link">%s</a>'
+					. '</div>',
+				esc_html__('Warning:',           'content-egg'),
+				esc_html__('You need to set up an', 'content-egg'),
+				esc_url($openai_url),
+				esc_html__('OpenAI API key',     'content-egg'),
+				esc_url($settings_url),
+				esc_html__('Go to Settings',     'content-egg')
+			);
+		}
+		else
+		{
+			$ai_warning = '';
+		}
+
+		return $ai_warning;
+	}
+
+	public static function getAiWarning()
+	{
+		$has_ai_api_key = (bool) GeneralConfig::getInstance()->option('ai_key');
+
+		if (! $has_ai_api_key)
+		{
+			$settings_url = admin_url('admin.php?page=content-egg');
+
+			$ai_warning = sprintf(
+				'<div class="cegg-warning-box" role="alert">'
+					. '<strong>%s</strong> %s <i>%s</i>. '
+					. '<a href="%s" class="cegg-link">%s</a>'
+					. '</div>',
+				esc_html__('Warning:', 'content-egg'),
+				esc_html__('You need to set up an', 'content-egg'),
+				esc_html__('AI API key', 'content-egg'),
+				esc_url($settings_url),
+				esc_html__('Go to Settings', 'content-egg')
+			);
+		}
+		else
+		{
+			$ai_warning = '';
+		}
+
+		return $ai_warning;
+	}
+
+	public static function echoPlaceholderDescription(): void
+	{
+		$text = esc_html__('Available placeholders:', 'content-egg');
+
+		$placeholders = [
+			'<code>%AI.title%</code>',
+			'<code>%AI.content%</code>',
+			'<code>%PRODUCT.title%</code>',
+			'<code>%PRODUCT.price%</code>',
+			'<code>%PRODUCT.domain%</code>',
+			'<code>%PRODUCT.url%</code>',
+			'<code>%PRODUCT.keyword%</code>',
+			'<code>%PRODUCT.ATTRIBUTE.attribute-name%</code>',
+			'<code>%RANDOM(1,10)%</code>',
+		];
+
+		$html = sprintf(
+			'<p class="description" style="margin-top: 0.8em;">%s %s</p>',
+			$text,
+			implode(', ', $placeholders)
+		);
+
+		echo wp_kses($html, [
+			'p'    => ['class' => true, 'style' => true],
+			'code' => [],
+		]);
+	}
+
+	public static function getProFeatureWarning(): string
+	{
+		if (Plugin::isPro())
+		{
+			return '';
+		}
+
+		$url = Plugin::pluginPricingUrl('ce_pro_badge', 'pro_badge_click');
+		return sprintf('<a href="%s" target="_blank" class="cegg-pro-link"><span class="cegg-badge cegg-badge-pro">PRO Feature</span></a>', esc_url($url));
+	}
+
+	public static function redirect($url, $status = 302, $fallback = '')
+	{
+		$default   = $fallback ?: home_url('/');
+		$location  = wp_validate_redirect($url, $default);
+
+		if (! $location)
+		{
+			wp_die(esc_html__('Invalid redirect URL.', 'text-domain'));
+		}
+
+		if (! headers_sent())
+		{
+			wp_safe_redirect($location, $status);
+			exit;
+		}
+
+		// Fallback: headers already sent.
+		nocache_headers();
+
+		$js_url = wp_json_encode($location);
+
+		echo '<!doctype html><html><head>';
+		printf(
+			'<meta http-equiv="refresh" content="%s">',
+			esc_attr('0;url=' . $location)
+		);
+		echo '</head><body>';
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Safe JSON-encoded redirect URL.
+		printf('<script>window.location.href=%s;</script>', $js_url);
+		echo '</body></html>';
+		exit;
 	}
 }

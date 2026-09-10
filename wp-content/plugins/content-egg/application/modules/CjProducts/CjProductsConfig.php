@@ -11,7 +11,7 @@ use ContentEgg\application\components\AffiliateParserModuleConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class CjProductsConfig extends AffiliateParserModuleConfig
 {
@@ -22,7 +22,7 @@ class CjProductsConfig extends AffiliateParserModuleConfig
             'access_token' => array(
                 'title' => 'Personal access token <span class="cegg_required">*</span>',
                 'description' => __('A Personal Access Token is a unique identification string for your account. You can get it <a target="_blank" href="https://developers.cj.com/account/personal-access-tokens">here</a>.', 'content-egg'),
-                'callback' => array($this, 'render_input'),
+                'callback' => array($this, 'render_password'),
                 'default' => '',
                 'validator' => array(
                     'trim',
@@ -63,7 +63,7 @@ class CjProductsConfig extends AffiliateParserModuleConfig
             ),
             'entries_per_page' => array(
                 'title' => __('Results', 'content-egg'),
-                'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
+                'description' => __('Specify the number of results to display for a single search query.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 10,
                 'validator' => array(
@@ -72,8 +72,8 @@ class CjProductsConfig extends AffiliateParserModuleConfig
                 ),
             ),
             'entries_per_page_update' => array(
-                'title' => __('Results for updates and autoblogging', 'content-egg'),
-                'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg'),
+                'title' => __('Results for Updates and Autoblogging', 'content-egg'),
+                'description' => __('Specify the number of results for automatic updates and autoblogging.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 6,
                 'validator' => array(
@@ -130,6 +130,33 @@ class CjProductsConfig extends AffiliateParserModuleConfig
         $parent = parent::options();
         $parent['update_mode']['default'] = 'cron';
 
-        return self::moveRequiredUp(array_merge($parent, $options));
+        $options = array_merge($parent, $options);
+
+        $options['deeplink'] = array(
+            'title' => __('Deeplink', 'content-egg'),
+            'description' => sprintf(__('You can set the <a target="_blank" href="%s">deeplink</a> to generate custom affiliate URLs, but usually, this option does not need to be configured.', 'content-egg'), 'https://ce-docs.keywordrush.com/modules/deeplink-settings'),
+            'callback' => array($this, 'render_input'),
+            'default' => '',
+            'validator' => array(
+                'trim',
+            ),
+            'section' => 'default',
+        );
+
+        $options['sid'] = array(
+            'title' => __('Sub ID', 'content-egg'),
+            'description' => sprintf(
+                __('Optional CJ SID used to track conversions by page, campaign, or channel. Enter a fixed value or use dynamic placeholders (e.g., {{post_id}}, {{post_slug}}, {{item_sku}}) to set it per link automatically. Max 64 ASCII characters; non-ASCII characters are converted automatically. <a target="_blank" href="%s">Placeholder guide</a>.', 'content-egg'),
+                'https://ce-docs.keywordrush.com/features/subid-tracking'
+            ),
+            'callback' => array($this, 'render_input'),
+            'default' => '',
+            'validator' => array(
+                'trim',
+            ),
+            'section' => 'default',
+        );
+
+        return self::moveRequiredUp($options);
     }
 }

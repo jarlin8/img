@@ -11,14 +11,14 @@ use ContentEgg\application\components\AffiliateParserModuleConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class TradetrackerCouponsConfig extends AffiliateParserModuleConfig
 {
 
 	public function options()
 	{
-		$optiosn = array(
+		$options = array(
 			'customerID'                   => array(
 				'title'       => 'Customer ID <span class="cegg_required">*</span>',
 				'description' => __('You can find your Customer ID and Passphrase by logging onto your TradeTracker account and navagating to "Creatives -> <a href="https://affiliate.tradetracker.com/webService/index">Web Services</a>". You may need to request access first by clicking the "request access" link.', 'content-egg'),
@@ -94,7 +94,7 @@ class TradetrackerCouponsConfig extends AffiliateParserModuleConfig
 			),
 			'entries_per_page'             => array(
 				'title'       => __('Results', 'content-egg'),
-				'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
+				'description' => __('Specify the number of results to display for a single search query.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 10,
 				'validator'   => array(
@@ -104,8 +104,8 @@ class TradetrackerCouponsConfig extends AffiliateParserModuleConfig
 				'section'     => 'default',
 			),
 			'entries_per_page_update'      => array(
-				'title'       => __('Results for updates and autoblogging', 'content-egg'),
-				'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg'),
+				'title'       => __('Results for Updates and Autoblogging', 'content-egg'),
+				'description' => __('Specify the number of results for automatic updates and autoblogging.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 6,
 				'validator'   => array(
@@ -159,15 +159,6 @@ class TradetrackerCouponsConfig extends AffiliateParserModuleConfig
 				'default'     => false,
 				'section'     => 'default',
 			),
-			'materialBannerDimensionID'    => array(
-				'title'     => __('Banner Dimension ID', 'content-egg'),
-				'callback'  => array($this, 'render_input'),
-				'default'   => '',
-				'validator' => array(
-					'trim',
-				),
-				'section'   => 'default',
-			),
 			'save_img'                     => array(
 				'title'       => __('Save images', 'content-egg'),
 				'description' => __('Save images on server', 'content-egg'),
@@ -177,6 +168,7 @@ class TradetrackerCouponsConfig extends AffiliateParserModuleConfig
 			),
 		);
 
-		return array_merge(parent::options(), $optiosn);
+		$options = array_merge(parent::options(), $options);
+		return self::moveRequiredUp($options);
 	}
 }

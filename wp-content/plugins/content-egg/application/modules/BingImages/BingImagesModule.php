@@ -15,7 +15,7 @@ use ContentEgg\application\helpers\TextHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class BingImagesModule extends ParserModule
 {
@@ -86,7 +86,7 @@ class BingImagesModule extends ParserModule
 		}
 		catch (Exception $e)
 		{
-			throw new \Exception(strip_tags($e->getMessage()));
+			throw new \Exception(esc_html(wp_strip_all_tags($e->getMessage())));
 		}
 
 		if (!isset($results['value']) || !is_array($results['value']))

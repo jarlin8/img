@@ -4,16 +4,14 @@ namespace ContentEgg\application\libs\aliexpress;
 
 defined('\ABSPATH') || exit;
 
-use ContentEgg\application\libs\RestClient;
-
-use function ContentEgg\prnx;
+use ContentEgg\application\libs\RestClient;;
 
 /**
  * Aliexpress2Api class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  * Aliexpress Affiliates API
  * @link: https://developers.aliexpress.com/en/doc.htm?apiName=aliexpress.affiliate.product.query&docId=118192&docType=1
@@ -23,7 +21,6 @@ require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATO
 
 class Aliexpress2Api extends RestClient
 {
-    const API_URI_BASE_TAOBAO = 'http://gw.api.taobao.com/router/rest';
     const API_URI_BASE_ALIEXPRESS = 'https://api-sg.aliexpress.com/sync';
 
     protected $app_key;
@@ -41,21 +38,12 @@ class Aliexpress2Api extends RestClient
      *
      * @param string $responseType
      */
-    public function __construct($app_key, $app_secret, $platform = 'taobao')
+    public function __construct($app_key, $app_secret)
     {
         $this->app_key = $app_key;
         $this->app_secret = $app_secret;
         $this->setResponseType('json');
-        $this->setPlatform($platform);
-    }
-
-    public function setPlatform($platform)
-    {
-        $this->platform = $platform;
-        if ($this->platform == 'taobao')
-            $this->setUri(self::API_URI_BASE_TAOBAO);
-        else
-            $this->setUri(self::API_URI_BASE_ALIEXPRESS);
+        $this->setUri(self::API_URI_BASE_ALIEXPRESS);
     }
 
     /**
@@ -118,7 +106,7 @@ class Aliexpress2Api extends RestClient
         return strtoupper(md5($stringToBeSigned));
     }
 
-    public function restGet($path, array $query = null)
+    public function restGet($path, ?array $query = null)
     {
         $query['app_key'] = $this->app_key;
         $query['v'] = $this->api_version;
@@ -160,7 +148,7 @@ class Aliexpress2Api extends RestClient
 
         if ($mess)
         {
-            throw new \Exception($mess, $code);
+            throw new \Exception(esc_html($mess), (int) $code);
         }
 
         return parent::myErrorHandler($response);

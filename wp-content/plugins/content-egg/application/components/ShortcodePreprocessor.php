@@ -4,7 +4,7 @@ namespace ContentEgg\application\components;
 
 use ContentEgg\application\admin\GeneralConfig;
 use ContentEgg\application\EggShortcode;
-use ContentEgg\application\components\ModuleManager;
+use ContentEgg\application\components\ModuleManager;;
 
 defined('\ABSPATH') || exit;
 
@@ -13,7 +13,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class ShortcodePreprocessor
 {
@@ -70,7 +70,7 @@ class ShortcodePreprocessor
                 continue;
 
             $module = ModuleManager::getInstance()->factory($module_id);
-            if (!$module->isAffiliateParser())
+            if (!$module->isParser())
                 continue;
 
             $keywords = array_unique($keywords);

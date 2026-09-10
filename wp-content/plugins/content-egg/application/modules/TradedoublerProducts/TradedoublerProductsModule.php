@@ -8,17 +8,22 @@ use ContentEgg\application\components\AffiliateParserModule;
 use ContentEgg\application\libs\tradedoubler\TradedoublerProducts;
 use ContentEgg\application\components\ContentProduct;
 use ContentEgg\application\admin\PluginAdmin;
-use ContentEgg\application\helpers\TextHelper;
+use ContentEgg\application\helpers\TextHelper;;
 
 /**
  * TradedoublerProductsModule class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class TradedoublerProductsModule extends AffiliateParserModule
 {
+    public function isGtinSearchAllowed()
+    {
+        return true;
+    }
+
 
 	private $api_client = null;
 
@@ -117,6 +122,8 @@ class TradedoublerProductsModule extends AffiliateParserModule
 
 	private function prepareResults($results)
 	{
+		$results = $this->filterDuplicateResults($results);
+
 		$data = array();
 		foreach ($results as $key => $r)
 		{
@@ -146,7 +153,6 @@ class TradedoublerProductsModule extends AffiliateParserModule
 			$content->url          = $r['offers'][0]['productUrl'];
 			$content->currencyCode = $r['offers'][0]['priceHistory'][0]['price']['currency'];
 			$content->currency     = TextHelper::currencyTyping($content->currencyCode);
-			// $content->merchant = $r['offers'][0]['programName']; // Microsoft Public Affiliate Program UK (GBP)
 			$content->logo = $r['offers'][0]['programLogo'];
 
 			if (isset($r['offers'][0]['availability']) && in_array($r['offers'][0]['availability'], array(
@@ -195,16 +201,27 @@ class TradedoublerProductsModule extends AffiliateParserModule
 				if ($field['name'] == 'Rating')
 				{
 					$content->rating = $field['value'];
+					$content->ratingDecimal = $field['value'];
 					break;
 				}
 			}
 			if (isset($r['identifiers']))
 			{
 				$content->ean  = (!empty($r['identifiers']['ean'])) ? $r['identifiers']['ean'] : '';
-				$content->mpn  = (!empty($r['identifiers']['mpn'])) ? $r['identifiers']['mpn'] : '';
+				$content->upc  = (!empty($r['identifiers']['mpn'])) ? $r['identifiers']['mpn'] : '';
 				$content->sku  = (!empty($r['identifiers']['sku'])) ? $r['identifiers']['sku'] : '';
 				$content->upc  = (!empty($r['identifiers']['upc'])) ? $r['identifiers']['upc'] : '';
 				$content->isbn = (!empty($r['identifiers']['isbn'])) ? $r['identifiers']['isbn'] : '';
+			}
+
+			$content->images = array();
+			foreach ($r['fields'] as $field)
+			{
+				if ($field['name'] == 'additional_image_link')
+				{
+					$content->images[] = $field['value'];
+					break;
+				}
 			}
 
 			if (isset($r['categories']) && isset($r['categories'][0]['name']))
@@ -278,6 +295,117 @@ class TradedoublerProductsModule extends AffiliateParserModule
 		return $items;
 	}
 
+	private function filterDuplicateResults(array $results)
+	{
+		$filtered = [];
+		$seenByIdName = [];
+		$seenByNameImgPrice = [];
+		$seenByUrl = [];
+
+		foreach ($results as $r)
+		{
+			$name = isset($r['name']) ? $r['name'] : '';
+
+			$identifier = '';
+			$price = '';
+			$img = '';
+			$fallbackLink = '';
+
+			if (!empty($r['fields']) && is_array($r['fields']))
+			{
+				foreach ($r['fields'] as $field)
+				{
+					if (!isset($field['name'], $field['value']))
+					{
+						continue;
+					}
+					switch ($field['name'])
+					{
+						case 'id':
+							$identifier = $field['value'];
+							break;
+						case 'price_full':
+							$price = $field['value'];
+							break;
+						case 'image_link':
+							$img = $field['value'];
+							break;
+						case 'link':
+							$fallbackLink = $field['value'];
+							break;
+					}
+				}
+			}
+
+			$productURL = '';
+			if (
+				!empty($r['offers'])
+				&& is_array($r['offers'])
+				&& isset($r['offers'][0]['productUrl'])
+				&& !empty($r['offers'][0]['productUrl'])
+			)
+			{
+				$productURL = $r['offers'][0]['productUrl'];
+			}
+			else
+			{
+				$productURL = $fallbackLink;
+			}
+
+			$parsed = parse_url($productURL);
+			$cleanUrl = $productURL;
+
+			if (!empty($parsed['query']))
+			{
+				parse_str($parsed['query'], $qs);
+				if (!empty($qs['u']))
+				{
+					$cleanUrl = $qs['u'];
+				}
+			}
+
+			if (preg_match('/url\((.*?)\)/', $cleanUrl, $m))
+			{
+				$decoded = urldecode($m[1]);
+				if (!empty($decoded))
+				{
+					$cleanUrl = $decoded;
+				}
+			}
+
+			$idNameKey = $identifier . '|' . $name;
+			if (isset($seenByIdName[$idNameKey]))
+			{
+				continue;
+			}
+
+			$imgKey = $name . '|' . $img . '|' . $price;
+			if (isset($seenByNameImgPrice[$imgKey]))
+			{
+				continue;
+			}
+
+			if (!empty($cleanUrl))
+			{
+				if (isset($seenByUrl[$cleanUrl]))
+				{
+					continue;
+				}
+			}
+
+			$filtered[] = $r;
+
+			$seenByIdName[$idNameKey] = true;
+			$seenByNameImgPrice[$imgKey] = true;
+			if (!empty($cleanUrl))
+			{
+				$seenByUrl[$cleanUrl] = true;
+			}
+		}
+
+		return $filtered;
+	}
+
 	private function getOriginalUrl($url)
 	{
 		if (preg_match('/.+url\((.+?)\)/', $url, $matches))
@@ -313,5 +441,12 @@ class TradedoublerProductsModule extends AffiliateParserModule
 	public function renderSearchPanel()
 	{
 		$this->render('search_panel', array('module_id' => $this->getId()));
+	}
+
+	public static function getSortByNewestParamMap()
+	{
+		return [
+			'SortBy' => 'modificationDateDesc',
+		];
 	}
 }

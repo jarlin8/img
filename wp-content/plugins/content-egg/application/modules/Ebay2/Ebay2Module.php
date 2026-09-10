@@ -11,19 +11,22 @@ use ContentEgg\application\admin\PluginAdmin;
 use ContentEgg\application\components\ExtraData;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\components\LinkHandler;
-use ContentEgg\application\helpers\TemplateHelper;
-
-use function ContentEgg\prnx;
+use ContentEgg\application\helpers\TemplateHelper;;
 
 /**
  * Ebay2Module class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class Ebay2Module extends AffiliateParserModule
 {
+    public function isGtinSearchAllowed()
+    {
+        return true;
+    }
+
 
     private $api_client_browse = null;
 
@@ -542,8 +545,19 @@ class Ebay2Module extends AffiliateParserModule
             $content->img = $r['image']['imageUrl'];
         }
 
-        $content->price = (float) $r['price']['value'];
-        $content->currencyCode = $r['price']['currency'];
+        if (isset($r['price']['value']))
+            $content->price = (float) $r['price']['value'];
+        elseif (isset($r['currentBidPrice']['value']))
+            $content->price = (float) $r['currentBidPrice']['value'];
+
+        if (isset($r['price']['currency']))
+        {
+            $content->currencyCode = $r['price']['currency'];
+        }
+        else
+        {
+            $content->currencyCode = Ebay2Config::getCurrencyByLocale($locale);
+        }
         $content->currency = TextHelper::currencyTyping($content->currencyCode);
 
         if (isset($r['marketingPrice']['originalPrice']))
@@ -581,17 +595,25 @@ class Ebay2Module extends AffiliateParserModule
 
         if (isset($r['additionalImages']) && is_array($r['additionalImages']))
         {
+            $content->images = [];
             foreach ($r['additionalImages'] as $ai)
             {
                 $extra->images[] = $ai['imageUrl'];
+                $content->images[] = preg_replace("/s-l\d+\.jpg/", "s-l1600.jpg", $ai['imageUrl']);
             }
         }
 
         $extra->priorityListing = filter_var($extra->priorityListing, FILTER_VALIDATE_BOOLEAN);
 
-        if (isset($r['shippingOptions']) && $r['shippingOptions'][0]['shippingCostType'] == 'FIXED' && !(float) $r['shippingOptions'][0]['shippingCost']['value'])
+        if (isset($r['shippingOptions'][0]['shippingCost']) && (float) $r['shippingOptions'][0]['shippingCost']['value'])
+        {
+            $content->shipping_cost = $r['shippingOptions'][0]['shippingCost']['value'];
+        }
+
+        if (isset($r['shippingOptions'][0]['shippingCostType']) && $r['shippingOptions'][0]['shippingCostType'] == 'FIXED' && !(float) $r['shippingOptions'][0]['shippingCost']['value'])
         {
             $extra->IsEligibleForSuperSaverShipping = true;
+            $content->shipping_cost = 0;
         }
 
         $content->extra = $extra;
@@ -614,8 +636,16 @@ class Ebay2Module extends AffiliateParserModule
     public function requestAccessToken()
     {
         $api_client = $this->getEbayClientBrowse();
-        $response = $api_client->requestAccessToken();
-
+        try
+        {
+            $response = $api_client->requestAccessToken();
+        }
+        catch (\Exception $e)
+        {
+            throw new \Exception(
+                'Ebay Browse API: ' . esc_html(wp_strip_all_tags($e->getMessage())) . ' - ' . esc_html($e->getCode())
+            );
+        }
         if (empty($response['access_token']) || empty($response['expires_in']))
         {
             throw new \Exception('Ebay Browse API: Invalid Response Format.');
@@ -667,5 +697,25 @@ class Ebay2Module extends AffiliateParserModule
             return $matches[1];
         else
             return false;
+    }
+
+    public static function getPriceParamMap()
+    {
+        return [
+            'min' => 'min_price',
+            'max' => 'max_price',
+        ];
+    }
+
+    public static function getLocaleParamMap()
+    {
+        return 'locale';
+    }
+
+    public static function getSortByNewestParamMap()
+    {
+        return [
+            'sort_order' => 'newlyListed'
+        ];
     }
 }

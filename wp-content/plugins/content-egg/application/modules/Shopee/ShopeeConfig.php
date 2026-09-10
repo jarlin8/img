@@ -12,7 +12,7 @@ use ContentEgg\application\libs\shopee\ShopeeLocales;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class ShopeeConfig extends AffiliateParserModuleConfig
 {
@@ -46,17 +46,12 @@ class ShopeeConfig extends AffiliateParserModuleConfig
                 ),
             ),
             'affiliate_id' => array(
-                'title' => 'Affiliate ID <span class="cegg_required">*</span>',
+                'title' => 'Affiliate ID (deprecated)',
                 'description' => '',
                 'callback' => array($this, 'render_input'),
                 'default' => '',
                 'validator' => array(
                     'trim',
-                    array(
-                        'call' => array('\ContentEgg\application\helpers\FormValidator', 'required'),
-                        'when' => 'is_active',
-                        'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'Affiliate ID'),
-                    ),
                 ),
                 'section' => 'default',
             ),
@@ -66,15 +61,6 @@ class ShopeeConfig extends AffiliateParserModuleConfig
                 'dropdown_options' => self::getLocalesList(),
                 'default'  => self::getDefaultLocale(),
                 'section'  => 'default',
-            ),
-            'sub_id' => array(
-                'title' => 'Sub ID',
-                'description' => '',
-                'callback' => array($this, 'render_input'),
-                'default' => '',
-                'validator' => array(
-                    'trim',
-                ),
             ),
             'deeplink' => array(
                 'title' => 'Deeplink',
@@ -88,7 +74,7 @@ class ShopeeConfig extends AffiliateParserModuleConfig
             ),
             'entries_per_page' => array(
                 'title' => __('Results', 'content-egg'),
-                'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
+                'description' => __('Specify the number of results to display for a single search query.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 10,
                 'validator' => array(
@@ -103,7 +89,7 @@ class ShopeeConfig extends AffiliateParserModuleConfig
             ),
             'entries_per_page_update' => array(
                 'title' => __('Results for updates', 'content-egg'),
-                'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg'),
+                'description' => __('Specify the number of results for automatic updates and autoblogging.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 6,
                 'validator' => array(

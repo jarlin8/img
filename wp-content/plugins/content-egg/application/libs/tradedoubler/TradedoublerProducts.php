@@ -11,7 +11,7 @@ use ContentEgg\application\libs\RestClient;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  * @link: http://dev.tradedoubler.com/products/publisher/
  *
@@ -84,5 +84,13 @@ class TradedoublerProducts extends RestClient
 		$params['tdId'] = $product_id;
 
 		return $this->query($params);
+	}
+
+	public static function getPriceParamMap()
+	{
+		return [
+			'min' => 'minPrice',
+			'max' => 'maxPrice',
+		];
 	}
 }

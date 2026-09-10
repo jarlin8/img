@@ -2,6 +2,8 @@
 
 namespace ContentEgg\application\libs;
 
+
+
 defined('\ABSPATH') || exit;
 
 /**
@@ -12,7 +14,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  */
 class WpHttpClient
@@ -289,6 +291,21 @@ class WpHttpClient
 	public function setSslVerify($value)
 	{
 		$this->sslverify = $value;
+	}
+
+	/**
+	 * Default TLS certificate verification for outbound requests.
+	 *
+	 * Verification is ON by default. It can be overridden for a host with a
+	 * broken CA bundle via the CEGG_SSLVERIFY constant (wp-config.php) or the
+	 * 'cegg_http_sslverify' filter. Disabling it exposes the API keys and
+	 * response data carried by these requests to man-in-the-middle attacks,
+	 * so leave it enabled unless a specific host genuinely requires otherwise.
+	 */
+	public static function sslVerifyDefault()
+	{
+		$verify = defined('CEGG_SSLVERIFY') ? (bool) \CEGG_SSLVERIFY : true;
+		return (bool) \apply_filters('cegg_http_sslverify', $verify);
 	}
 
 	public function setUserAgent($value)

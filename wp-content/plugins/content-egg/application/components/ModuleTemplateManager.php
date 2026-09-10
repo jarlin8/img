@@ -12,7 +12,7 @@ use ContentEgg\application\components\ModuleManager;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class ModuleTemplateManager extends TemplateManager
 {
@@ -78,22 +78,12 @@ class ModuleTemplateManager extends TemplateManager
         return $this->module_id;
     }
 
-    public function getTemplatesList($short_mode = false)
+    public function getTemplatesList($short_mode = false, $exclude_custom = false)
     {
-        $templates = parent::getTemplatesList($short_mode);
+        $templates = parent::getTemplatesList($short_mode, $exclude_custom);
         $templates = \apply_filters('content_egg_module_templates', $templates, $this->getModuleId());
 
         return $templates;
-    }
-
-    public function render($view_name, array $_data = array())
-    {
-        if (!self::isCustomTemplate($view_name))
-        {
-            $this->enqueueProductsStyle();
-        }
-
-        return parent::render($view_name, $_data);
     }
 
     public function renderPartialModule($view_name, $module_ids = array(), $data = array())

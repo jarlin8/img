@@ -15,7 +15,7 @@ use ContentEgg\application\helpers\TextHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class ShareasaleModule extends AffiliateParserModule
 {
@@ -29,6 +29,11 @@ class ShareasaleModule extends AffiliateParserModule
             'description' => __('Adds products from Shareasale.com. You must have approval from each program separately.', 'content-egg'),
             'docs_uri' => 'https://ce-docs.keywordrush.com/modules/affiliate/shareasale',
         );
+    }
+
+    public function isDeprecated()
+    {
+        return true;
     }
 
     public function getParserType()

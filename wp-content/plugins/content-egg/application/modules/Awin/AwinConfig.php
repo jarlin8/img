@@ -11,15 +11,15 @@ use ContentEgg\application\components\AffiliateFeedParserModuleConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class AwinConfig extends AffiliateFeedParserModuleConfig
 {
 
 	public function options()
 	{
-		$optiosn = array(
-			'datafeed_url'            => array(
+		$options = array(
+			'datafeed_url' 	  => array(
 				'title'       => 'Datafeed Download URL <span class="cegg_required">*</span>',
 				'description' => sprintf(__('Go to ToolBox -> <a target="_blank" href="%s">Create-a-Feed</a>. Read more <a href="%s">here</a>.', 'content-egg'), 'http://wiki.awin.com/index.php/Downloading_feeds_using_Create-a-Feed', 'https://ce-docs.keywordrush.com/modules/affiliate/awin'),
 				'callback'    => array($this, 'render_input'),
@@ -33,9 +33,21 @@ class AwinConfig extends AffiliateFeedParserModuleConfig
 					),
 				),
 			),
+			'subid' => array(
+				'title'       => __('Sub ID', 'content-egg') . '**',
+				'description' => sprintf(
+					__('Optional Sub ID (clickref) added to AWIN affiliate links for tracking. You can use a fixed value or dynamic placeholders (e.g., {{post_id}}, {{item_unique_id}}) to generate values automatically. <a href="%s" target="_blank">See placeholder guide</a>.', 'content-egg'),
+					'https://ce-docs.keywordrush.com/features/subid-tracking'
+				),
+				'callback'    => array($this, 'render_input'),
+				'default'     => '',
+				'validator'   => array(
+					'trim',
+				),
+			),
 			'entries_per_page'        => array(
 				'title'       => __('Results', 'content-egg'),
-				'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
+				'description' => __('Specify the number of results to display for a single search query.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 10,
 				'validator'   => array(
@@ -50,7 +62,7 @@ class AwinConfig extends AffiliateFeedParserModuleConfig
 			),
 			'entries_per_page_update' => array(
 				'title'       => __('Results for updates', 'content-egg'),
-				'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg'),
+				'description' => __('Specify the number of results for automatic updates and autoblogging.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 6,
 				'validator'   => array(
@@ -87,6 +99,7 @@ class AwinConfig extends AffiliateFeedParserModuleConfig
 			),
 		);
 
-		return array_merge(parent::options(), $optiosn);
+		$options = array_merge(parent::options(), $options);
+		return self::moveRequiredUp($options);
 	}
 }

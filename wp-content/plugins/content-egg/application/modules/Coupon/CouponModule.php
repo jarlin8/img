@@ -8,12 +8,14 @@ use ContentEgg\application\components\AffiliateParserModule;
 use ContentEgg\application\admin\PluginAdmin;
 use ContentEgg\application\helpers\TextHelper;
 
+
+
 /**
  * OfferModule class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class CouponModule extends AffiliateParserModule
 {
@@ -29,6 +31,32 @@ class CouponModule extends AffiliateParserModule
 	public function getParserType()
 	{
 		return self::PARSER_TYPE_COUPON;
+	}
+
+	public function isSearchable()
+	{
+		// Manual-entry only (the coupon counterpart of Offer): doRequest()
+		// returns nothing, so the Search tab hides this module and coupons are
+		// added through "Add coupon".
+		return false;
+	}
+
+	/**
+	 * Normalize a start/end date to unix seconds. Accepts a JS millisecond
+	 * epoch (the Angular metabox), a unix-seconds epoch (the editor's REST path,
+	 * already sanitized by ProductDataService), or a parseable date string.
+	 * Mirrors ProductDataService's `date` sanitizer so both entry points agree.
+	 */
+	private static function normalizeDate($value)
+	{
+		if (is_numeric($value))
+		{
+			$n = (int) $value;
+			// > ~Nov 2286 in seconds → it's really milliseconds.
+			return $n > 100000000000 ? intdiv($n, 1000) : $n;
+		}
+
+		return strtotime((string) $value) ?: '';
 	}
 
 	public function releaseVersion()
@@ -57,67 +85,45 @@ class CouponModule extends AffiliateParserModule
 		$return = array();
 		foreach ($data as $key => $item)
 		{
-			$item['title']       = trim(sanitize_text_field($item['title']));
-			$item['description'] = trim(\wp_kses_post($item['description']));
-			$item['url']         = trim($item['url']);
-			$item['img']         = trim($item['img']);
+			$item['title']       = trim(sanitize_text_field((string)$item['title']));
+			$item['description'] = trim(\wp_kses_post((string)$item['description']));
+			$item['url']         = trim((string)$item['url']);
+			$item['img']         = trim((string)$item['img']);
+
 			if (!empty($item['code']))
-			{
-				$item['code'] = trim(sanitize_text_field($item['code']));
-			}
+				$item['code'] = trim(sanitize_text_field((string)$item['code']));
 
 			if (!empty($item['domain']))
 			{
-				$item['domain'] = strip_tags($item['domain']);
-				if ($d = TextHelper::getHostName($item['domain']))
-				{
+				$item['domain'] = strip_tags((string)$item['domain']);
+				if ($d = TextHelper::getHostName((string)$item['domain']))
 					$item['domain'] = $d;
-				}
 			}
+			else
+				$item['domain'] = TextHelper::getHostName($item['url']);
 
 			if (!empty($item['startDate']))
 			{
-				if (is_numeric($item['startDate']))
-				{
-					$item['startDate'] = $item['startDate'] / 1000;
-				}
-				else
-				{
-					$item['startDate'] = strtotime($item['startDate']);
-				}
+				$item['startDate'] = self::normalizeDate($item['startDate']);
 			}
 			if (!$item['startDate'])
-			{
 				$item['startDate'] = '';
-			}
+
 			if (!empty($item['endDate']))
 			{
-				if (is_numeric($item['endDate']))
-				{
-					$item['endDate'] = $item['endDate'] / 1000;
-				}
-				else
-				{
-					$item['endDate'] = strtotime($item['endDate']);
-				}
+				$item['endDate'] = self::normalizeDate($item['endDate']);
 			}
 			if (!$item['endDate'])
-			{
 				$item['endDate'] = '';
-			}
 
 			if (!$item['title'])
-			{
 				continue;
-			}
+
 			if (!filter_var($item['url'], FILTER_VALIDATE_URL))
-			{
 				continue;
-			}
+
 			if ($item['img'] && !filter_var($item['img'], FILTER_VALIDATE_URL))
-			{
 				continue;
-			}
 
 			$return[$key] = $item;
 		}

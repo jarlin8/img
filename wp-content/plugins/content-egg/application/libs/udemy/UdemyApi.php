@@ -4,14 +4,14 @@ namespace ContentEgg\application\libs\udemy;
 
 defined('\ABSPATH') || exit;
 
-use ContentEgg\application\libs\RestClient;
+use ContentEgg\application\libs\RestClient;;
 
 /**
  * UdemyApi class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  * @link: https://www.udemy.com/developers
  */
@@ -69,7 +69,7 @@ class UdemyApi extends RestClient
 		return $this->_decodeResponse($response);
 	}
 
-	public function restGet($path, array $query = null)
+	public function restGet($path, ?array $query = null)
 	{
 		$this->setCustomHeaders(array(
 			'Accept'        => 'application/json, text/plain, */*',

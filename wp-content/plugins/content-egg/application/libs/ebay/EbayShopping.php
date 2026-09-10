@@ -11,7 +11,7 @@ use ContentEgg\application\libs\RestClient;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  * Ebay Shopping API
  * @link: http://developer.ebay.com/DevZone/finding/Concepts/FindingAPIGuide.html
@@ -87,7 +87,7 @@ class EbayShopping extends RestClient
 		return $this->_decodeResponse($response);
 	}
 
-	public function restGet($path, array $query = null)
+	public function restGet($path, ?array $query = null)
 	{
 		if ($this->access_token)
 		{

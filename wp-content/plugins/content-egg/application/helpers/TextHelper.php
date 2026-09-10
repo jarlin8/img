@@ -2,8 +2,6 @@
 
 namespace ContentEgg\application\helpers;
 
-use function ContentEgg\prnx;
-
 defined('\ABSPATH') || exit;
 
 /**
@@ -11,10 +9,13 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class TextHelper
 {
+
+    /** Marker prefixing each list item when HTML is flattened to text. */
+    const BULLET = '• ';
 
     public static function truncate($string, $length = 80, $etc = '...', $charset = 'UTF-8', $break_words = false, $middle = false)
     {
@@ -213,6 +214,33 @@ class TextHelper
         return $truncate;
     }
 
+    /**
+     * Flatten (sanitized) HTML to readable plain text while preserving line structure.
+     * Each list item becomes a "• "-prefixed line and each block boundary / <br> becomes a
+     * newline, so items and paragraphs don't glue together when the remaining tags are stripped.
+     * Returns plain text with \n line breaks and no HTML (callers convert to <br> if they want HTML).
+     */
+    public static function htmlToText($html, $bullet = self::BULLET)
+    {
+        $html = (string) $html;
+
+        // Opening <li> → bulleted new line; trailing \s* keeps the bullet glued to the
+        // item text even when the source pads it (Amazon emits "<li>\nText"). Block
+        // closers and <br> → new line.
+        $html = preg_replace('~<li\b[^>]*>\s*~i', "\n" . $bullet, $html);
+        $html = preg_replace('~</(?:p|div|li|tr|td|th|h[1-6]|blockquote)>|<br\s*/?>~i', "\n", $html);
+
+        $text = \wp_strip_all_tags($html);
+
+        // Normalize whitespace: unify newlines, collapse runs, trim each line's edges.
+        $text = str_replace(array("\r\n", "\r"), "\n", $text);
+        $text = preg_replace('~[ \t]+~', ' ', $text);
+        $text = preg_replace('~ *\n *~', "\n", $text);
+        $text = preg_replace('~\n{2,}~', "\n", $text);
+
+        return trim($text);
+    }
+
     public static function clear($str)
     {
         return preg_replace('/[^a-zA-Z0-9_]/', '', $str);
@@ -378,6 +406,11 @@ class TextHelper
 
     public static function commaList($str, $input_delimer = ',', $return_delimer = ',')
     {
+        if (is_array($str))
+        {
+            $str = implode($input_delimer, $str);
+        }
+
         $parts = explode($input_delimer, $str);
         $parts = array_map('trim', $parts);
 
@@ -405,29 +438,129 @@ class TextHelper
         return $result;
     }
 
-    public static function parsePriceAmount($money)
+    public static function parsePriceAmount(string $money, string $price_decimal_separator = 'auto'): float
     {
-        if (is_float($money) || is_int($money))
-            return $money;
+        // 1. Keep only digits, dots, commas and minus sign.
+        $clean = preg_replace('/[^\d.,-]+/u', '', $money);
 
-        if (strstr($money, '-'))
+        if ($clean === null || $clean === '')
         {
-            $parts = explode('-', $money);
-            $money = $parts[0];
+            return 0.0;
         }
 
-        $cleanString = preg_replace('/([^0-9\.,])/i', '', $money);
-        $onlyNumbersString = preg_replace('/([^0-9])/i', '', $money);
-        $separatorsCountToBeErased = strlen($cleanString) - strlen($onlyNumbersString) - 1;
-        $stringWithCommaOrDot = preg_replace('/([,\.])/', '', $cleanString, $separatorsCountToBeErased);
-        $removedThousendSeparator = preg_replace('/(\.|,)(?=[0-9]{3,}$)/', '', $stringWithCommaOrDot);
+        // 2. Detect and strip leading minus.
+        $negative = false;
+        if ($clean[0] === '-')
+        {
+            $negative = true;
+            $clean = substr($clean, 1);
+        }
 
-        $p = (float) str_replace(',', '.', $removedThousendSeparator);
+        if ($clean === '')
+        {
+            return 0.0;
+        }
 
-        if ($p >= 1000000000000)
-            return (float) $money;
+        $lastDot   = strrpos($clean, '.');
+        $lastComma = strrpos($clean, ',');
 
-        return $p;
+        // 3. Decide which (if any) mark is the decimal separator.
+        $decimalSep = null;
+
+        // If a fixed decimal separator is configured, honor it.
+        if ($price_decimal_separator === '.' || $price_decimal_separator === ',')
+        {
+            $decimalSep = $price_decimal_separator;
+        }
+        else
+        {
+            // Auto-detect mode
+            if ($lastDot !== false && $lastComma !== false)
+            {
+                // Both present: whichever comes last is almost always the decimal separator.
+                $decimalSep = ($lastDot > $lastComma) ? '.' : ',';
+            }
+            else
+            {
+                // Only one type of separator is present: need heuristics.
+                $sep = null;
+                $pos = null;
+
+                if ($lastDot !== false)
+                {
+                    $sep = '.';
+                    $pos = $lastDot;
+                }
+                elseif ($lastComma !== false)
+                {
+                    $sep = ',';
+                    $pos = $lastComma;
+                }
+
+                if ($sep !== null && $pos !== null)
+                {
+                    $digitsAfter = strlen($clean) - $pos - 1;
+
+                    /**
+                     * Heuristic:
+                     *  - 0 digits after: separator is thousands (e.g. "1." → 1).
+                     *  - 1–2 digits after: treat as decimal (e.g. "10,5", "10.50").
+                     *  - ≥3 digits after: treat as thousands (e.g. "10,000", "1.234").
+                     */
+                    if ($digitsAfter > 0 && $digitsAfter <= 2)
+                    {
+                        $decimalSep = $sep;
+                    }
+                }
+            }
+        }
+
+        // 4. Strip thousands separators & normalize decimal to dot.
+        if ($decimalSep === '.')
+        {
+            // Dot is decimal, commas are thousands.
+            $number = str_replace(',', '', $clean);
+        }
+        elseif ($decimalSep === ',')
+        {
+            // Comma is decimal, dots are thousands.
+            $number = str_replace('.', '', $clean);
+            $number = str_replace(',', '.', $number);
+        }
+        else
+        {
+            // No decimal separator: remove all separators, treat as integer.
+            $number = str_replace([',', '.'], '', $clean);
+        }
+
+        // 5. Cast and round to 2 decimal places.
+        $value = (float) $number;
+        if ($negative)
+        {
+            $value = -$value;
+        }
+
+        return round($value, 2);
+    }
+
+    protected static function decideSingleSeparator(string $str, string $sep, int $pos): ?string
+    {
+        // Multiple occurrences → thousands
+        if (substr_count($str, $sep) > 1)
+        {
+            return null;
+        }
+
+        $digitsAfter  = strlen($str) - $pos - 1;
+        $digitsBefore = $pos;
+
+        // Looks like thousands if exactly 3 digits after and ≤3 digits before
+        if ($digitsAfter === 3 && $digitsBefore <= 3)
+        {
+            return null;
+        }
+
+        return $sep;
     }
 
     public static function parseCurrencyCode($money)
@@ -439,9 +572,10 @@ class TextHelper
             '₹' => 'INR',
             'Rs.' => 'INR',
             '€' => 'EUR',
-            'руб' => 'RUR',
+            '₫' => 'VND',
             'грн' => 'UAH'
         );
+
         foreach ($currencies as $symbol => $code)
         {
             if (strstr($money, $symbol))
@@ -469,13 +603,16 @@ class TextHelper
 
     public static function getHostName($url)
     {
+        $url = (string)$url;
         $url = trim($url);
-
+        if (!parse_url($url, PHP_URL_HOST))
+            return '';
         return TextHelper::getDomainWithoutSubdomain(strtolower(str_ireplace('www.', '', parse_url($url, PHP_URL_HOST))));
     }
 
     public static function isValidDomainName($domain)
     {
+        $domain = (string)$domain;
         return preg_match('/^(?!\-)(?:[a-zA-Z\d\-]{0,62}[a-zA-Z\d]\.){1,126}(?!\d+)[a-zA-Z\d]{1,63}$/', $domain);
     }
 
@@ -543,6 +680,10 @@ class TextHelper
 
     public static function getArrayFromCommaList($str)
     {
+        if (is_array($str))
+        {
+            return $str;
+        }
         return explode(",", TextHelper::commaList($str));
     }
 
@@ -573,6 +714,24 @@ class TextHelper
         }
 
         return false;
+    }
+
+    /**
+     * Normalize a feed-supplied barcode and return it only if it's a
+     * checksum-valid EAN/GTIN; otherwise return ''. Guards against treating
+     * arbitrary merchant feed text (or an empty value, which fixEan() would
+     * otherwise zero-pad into a spuriously "valid" all-zero EAN) as a GTIN.
+     */
+    public static function sanitizeEan($barcode)
+    {
+        if (!$barcode)
+        {
+            return '';
+        }
+
+        $ean = self::fixEan($barcode);
+
+        return self::isEan($ean) ? $ean : '';
     }
 
     public static function fixEan($barcode, $n = 13)
@@ -1264,7 +1423,7 @@ class TextHelper
             'h4' => array(),
             'h5' => array(),
             'h6' => array(),
-            'div' => array(),
+            'div' => array('class' => array(), 'style' => array()),
         );
 
         return \wp_kses($string, $allowed_html);
@@ -1272,6 +1431,7 @@ class TextHelper
 
     public static function isHtmlTagDetected($string)
     {
+        $string = (string) $string;
         if ($string != strip_tags($string))
             return true;
         else
@@ -1313,5 +1473,65 @@ class TextHelper
         $excerpt_more = apply_filters('excerpt_more', ' ' . '[&hellip;]');
         $text = wp_trim_words($text, $excerpt_length, $excerpt_more);
         return apply_filters('wp_trim_excerpt', $text, $raw_excerpt);
+    }
+
+    static public function isUrl($url)
+    {
+        return filter_var($url, FILTER_VALIDATE_URL);
+    }
+
+    public static function countWords($text, $lang = '')
+    {
+        if (!$text)
+            return 0;
+
+        if (is_array($text))
+        {
+            $to_string = array();
+            array_walk_recursive($text, function ($v) use (&$to_string)
+            {
+                $to_string[] = $v;
+            });
+            $to_string = implode(' ', $to_string);
+
+            $text = $to_string;
+        }
+
+        $symbol_to_word_ratio = array(
+            'Chinese' => 0.70,
+            'Korean' => 0.5,
+            'Japanese' => 0.5,
+            'Thai' => 0.20,
+        );
+
+        if ($lang && isset($symbol_to_word_ratio[$lang]))
+        {
+            $count_characters = self::countCharacters($text);
+            return round($count_characters * $symbol_to_word_ratio[$lang]);
+        }
+
+        $words = preg_split("/[\n\r\t ]+/", $text, 0, PREG_SPLIT_NO_EMPTY);
+        return count($words);
+    }
+
+    public static function countCharacters($text)
+    {
+        if (!$text)
+            return 0;
+
+        if (is_array($text))
+        {
+            $to_string = array();
+            array_walk_recursive($text, function ($v) use (&$to_string)
+            {
+                $to_string[] = $v;
+            });
+            $to_string = implode(' ', $to_string);
+
+            $text = $to_string;
+        }
+
+        $text = preg_replace("/[\n\r\t ]+/", '', $text);
+        return mb_strlen($text, 'UTF-8');
     }
 }

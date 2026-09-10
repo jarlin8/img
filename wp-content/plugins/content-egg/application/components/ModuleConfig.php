@@ -12,7 +12,7 @@ use ContentEgg\application\admin\PluginAdmin;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 abstract class ModuleConfig extends Config
 {
@@ -68,6 +68,13 @@ abstract class ModuleConfig extends Config
 
 	public function settings_page()
 	{
+		\wp_enqueue_style('cegg-bootstrap5-full');
+
+		if (\ContentEgg\application\admin\FeedWizardController::maybeRenderWizard($this))
+		{
+			return;
+		}
+
 		PluginAdmin::render('module_settings', array('module' => $this->getModuleInstance(), 'config' => $this));
 	}
 

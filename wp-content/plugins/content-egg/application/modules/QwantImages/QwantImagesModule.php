@@ -8,14 +8,13 @@ use ContentEgg\application\components\ParserModule;
 use ContentEgg\application\libs\qwant\QwantApi;
 use ContentEgg\application\components\Content;
 use ContentEgg\application\admin\PluginAdmin;
-use ContentEgg\application\admin\GeneralConfig;
 
 /**
  * BingImagesModule class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class QwantImagesModule extends ParserModule
 {
@@ -30,6 +29,11 @@ class QwantImagesModule extends ParserModule
 	public function releaseVersion()
 	{
 		return '4.3.0';
+	}
+
+	public function isDeprecated()
+	{
+		return true;
 	}
 
 	public function getParserType()
@@ -62,7 +66,7 @@ class QwantImagesModule extends ParserModule
 		{
 			$options['safesearch'] = 0;
 		}
-		// $options['locale'] = GeneralConfig::getInstance()->option('lang');
+		$options['locale'] = QwantImagesConfig::getInstance()->option('locale');
 
 		$api_client = new QwantApi();
 		$results    = $api_client->images($keyword, $options);

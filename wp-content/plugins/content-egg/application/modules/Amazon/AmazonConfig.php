@@ -12,7 +12,7 @@ use ContentEgg\application\libs\amazon\AmazonLocales;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class AmazonConfig extends AffiliateParserModuleConfig
 {
@@ -20,44 +20,109 @@ class AmazonConfig extends AffiliateParserModuleConfig
 	public function options()
 	{
 		$options = array(
-			'access_key_id'           => array(
-				'title'       => 'Access Key <span class="cegg_required">*</span>',
-				'description' => sprintf(__('For information about getting an Access Key, see <a target="_blank" href="%s">Register for Product Advertising API</a>.', 'content-egg'), 'https://webservices.amazon.com/paapi5/documentation/register-for-pa-api.html'),
+			'api_mode' => array(
+				'title'            => __('API mode', 'content-egg') . ' <span class="cegg_required">*</span>',
+				'description'      => implode('<br>', array(
+					__('Creators API is the recommended integration for Amazon going forward.', 'content-egg'),
+					__('Auto mode will try Creators API first (if configured) and fall back to PA-API 5.0.', 'content-egg'),
+					__('PA-API 5.0 is deprecated and should be used only if you cannot migrate yet.', 'content-egg'),
+				)),
+				'callback'         => array($this, 'render_dropdown'),
+				'dropdown_options' => array(
+					'auto'     => __('Auto', 'content-egg'),
+					'creators' => __('Creators API', 'content-egg'),
+					'paapi5'   => __('PA-API 5.0 (deprecated)', 'content-egg'),
+				),
+				'default'          => 'auto',
+				'section'          => 'default',
+			),
+			'creators_credential_id' => array(
+				'title'       => __('Credential ID (Creators API) — Primary', 'content-egg'),
+				'description' => implode('<br>', array(
+					__('Creators API Credential ID. Create it in Associates Central → Tools → Creators API.', 'content-egg'),
+					__('Used for any marketplace region that does not have its own credential set below. A single Primary credential is all you need for a single-region setup.', 'content-egg'),
+				)),
+				'callback'    => array($this, 'render_input'),
+				'default'     => '',
+				'validator'   => array(
+					'trim',
+				),
+				'section'     => 'default',
+			),
+			'creators_credential_secret' => array(
+				'title'       => __('Credential Secret (Creators API) — Primary', 'content-egg'),
+				'description' => __('Creators API Credential Secret for the Primary credential above.', 'content-egg'),
+				'callback'    => array($this, 'render_password'),
+				'default'     => '',
+				'validator'   => array(
+					'trim',
+				),
+				'section'     => 'default',
+			),
+			'creators_credential_version' => array(
+				'title'            => __('Credential Version (Creators API)', 'content-egg') . '**',
+				'description'      => __('Auto-detects based on Credential ID format. Override only if auto-detection fails.', 'content-egg'),
+				'callback'         => array($this, 'render_dropdown'),
+				'dropdown_options' => array(
+					'auto' => __('Auto', 'content-egg'),
+					'v2'   => __('v2.x (Cognito)', 'content-egg'),
+					'v3'   => __('v3.x (LwA)', 'content-egg'),
+				),
+				'default'          => 'auto',
+				'section'          => 'default',
+			),
+			// --- Deprecated PA-API 5.0 options (kept for backward compatibility) ---
+			'access_key_id' => array(
+				'title'       => __('Access Key (PA-API 5.0) — deprecated', 'content-egg') . '',
+				'description' => implode('<br>', array(
+					__('Deprecated: PA-API 5.0 credentials will be phased out. Please migrate to Creators API.', 'content-egg'),
+					sprintf(
+						__('For information about getting an Access Key, see <a target="_blank" href="%s">Register for Product Advertising API</a>.', 'content-egg'),
+						'https://webservices.amazon.com/paapi5/documentation/register-for-pa-api.html'
+					),
+				)),
 				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
 					array(
 						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'required'),
-						'when'    => 'is_active',
-						'message' => __('The "Access Key" can not be empty', 'content-egg'),
+						'when'    => array('is_active' => 1, 'api_mode' => 'paapi5'),
+						'message' => __('The "Access Key" can not be empty.', 'content-egg'),
 					),
 				),
 				'section'     => 'default',
 			),
-			'secret_access_key'       => array(
-				'title'       => 'Secret Key <span class="cegg_required">*</span>',
-				'description' => sprintf(__('A key that is used in conjunction with the Access Key ID to cryptographically sign an API request. To retrieve your Secret Access Key, refer to <a target="_blank" href="%s">Register for Product Advertising API</a>.', 'content-egg'), 'https://webservices.amazon.com/paapi5/documentation/register-for-pa-api.html'),
+			'secret_access_key' => array(
+				'title'       => __('Secret Key (PA-API 5.0) — deprecated', 'content-egg') . '',
+				'description' => implode('<br>', array(
+					__('Deprecated: PA-API 5.0 credentials will be phased out. Please migrate to Creators API.', 'content-egg'),
+					sprintf(
+						__('A key that is used in conjunction with the Access Key ID to cryptographically sign an API request. To retrieve your Secret Access Key, refer to <a target="_blank" href="%s">Register for Product Advertising API</a>.', 'content-egg'),
+						'https://webservices.amazon.com/paapi5/documentation/register-for-pa-api.html'
+					),
+				)),
 				'callback'    => array($this, 'render_password'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
 					array(
 						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'required'),
-						'when'    => 'is_active',
+						'when'    => array('is_active' => 1, 'api_mode' => 'paapi5'),
 						'message' => __('The "Secret Key" can not be empty.', 'content-egg'),
 					),
 					array(
 						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'exact_length'),
 						'arg'     => 40,
+						'when'    => array('is_active' => 1, 'api_mode' => 'paapi5'),
 						'message' => sprintf(__('The field "%s" must have an exact length of value: %d.', 'content-egg'), 'Secret Key', 40),
 					),
 				),
 				'section'     => 'default',
 			),
-			'associate_tag'           => array(
-				'title'       => __('Default Associate Tag', 'content-egg') . ' <span class="cegg_required">*</span>',
-				'description' => __('An alphanumeric token that uniquely identifies you as an Associate. To obtain an Associate Tag, refer to <a target="_blank" href="https://webservices.amazon.com/paapi5/documentation/troubleshooting/sign-up-as-an-associate.html">Becoming an Associate</a>.', 'content-egg'),
+			'associate_tag' => array(
+				'title'       => __('Associate Tag', 'content-egg') . ' <span class="cegg_required">*</span>',
+				'description' => __('Your Associate/Partner Tag (applies to both Creators API and PA-API 5.0).', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
@@ -65,7 +130,7 @@ class AmazonConfig extends AffiliateParserModuleConfig
 					array(
 						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'required'),
 						'when'    => 'is_active',
-						'message' => __('The "Tracking ID" can not be empty.', 'content-egg'),
+						'message' => __('The "Associate Tag" can not be empty.', 'content-egg'),
 					),
 				),
 				'section'     => 'default',
@@ -78,6 +143,24 @@ class AmazonConfig extends AffiliateParserModuleConfig
 				'default'          => self::getDefaultLocale(),
 				'section'          => 'default',
 			),
+			'price_mode' => array(
+				'title'             => __('Price source', 'content-egg') . '**',
+				'description' => implode('<br>', array(
+					__('Choose which offer price to display.', 'content-egg'),
+					__('“Buy Box” picks the current Buy Box winner.', 'content-egg'),
+					__('“Prime exclusive” shows prices for Prime-only deals.', 'content-egg'),
+					__('“All customers” shows prices available to everyone.', 'content-egg'),
+				)),
+
+				'callback'          => array($this, 'render_dropdown'),
+				'dropdown_options'  => array(
+					'buybox' => __('Buy Box', 'content-egg'),
+					'prime'  => __('Prime exclusive', 'content-egg'),
+					'all'    => __('All customers', 'content-egg'),
+				),
+				'default'           => 'buybox',
+				'section'           => 'default',
+			),
 			'forced_urls_update'      => array(
 				'title'       => __('Forced links update', 'content-egg'),
 				'description' => __('Override/update existing links with new Tracking ID.', 'content-egg'),
@@ -87,7 +170,7 @@ class AmazonConfig extends AffiliateParserModuleConfig
 			),
 			'entries_per_page'        => array(
 				'title'       => __('Results', 'content-egg'),
-				'description' => __('Specify the number of results to display for one search query.', 'content-egg') . ' ' .
+				'description' => __('Specify the number of results to display for a single search query.', 'content-egg') . ' ' .
 					__('It needs a bit more time to get more than 10 results in one request', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 10,
@@ -104,7 +187,7 @@ class AmazonConfig extends AffiliateParserModuleConfig
 			),
 			'entries_per_page_update' => array(
 				'title'       => __('Results for updates', 'content-egg'),
-				'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg') . ' ' .
+				'description' => __('Specify the number of results for automatic updates and autoblogging.', 'content-egg') . ' ' .
 					__('It needs a bit more time to get more than 10 results in one request.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 3,
@@ -130,9 +213,20 @@ class AmazonConfig extends AffiliateParserModuleConfig
 				'default'          => 'product',
 				'section'          => 'default',
 			),
+			'hide_prices' => array(
+				'title' => __('Prices', 'content-egg') . '**',
+				'description' => __('Amazon mandates that prices be updated at least every 24 hours if displayed on your site. Without API access, maintaining this update frequency is challenging, so consider hiding prices until you obtain API access. "Outdated prices" refers to updates that occurred more than 24 hours ago.', 'content-egg'),
+				'callback' => array($this, 'render_dropdown'),
+				'dropdown_options' => array(
+					'hide' => __('Hide prices', 'content-egg'),
+					'hide_24' => __('Hide outdated prices', 'content-egg'),
+					'display' => __('Display prices', 'content-egg'),
+				),
+				'default' => 'display',
+			),
 			'search_index'            => array(
 				'title'       => __('Search Index', 'content-egg'),
-				'description' => sprintf(__('Indicates the product category to search. SearchIndex values differ by marketplace. For list of search index values, refer <a target="_blank" href="%s">Locale Reference</a>.', 'content-egg'), 'https://webservices.amazon.com/paapi5/documentation/locale-reference.html'),
+				'description' => sprintf(__('Indicates the product category to search. SearchIndex values differ by marketplace. For list of search index values, refer <a target="_blank" href="%s">Locale Reference</a>.', 'content-egg'), 'https://affiliate-program.amazon.com/creatorsapi/docs/en-us/locale-reference#topics'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
@@ -241,7 +335,7 @@ class AmazonConfig extends AffiliateParserModuleConfig
 			),
 			'CurrencyOfPreference'    => array(
 				'title'       => __('Currency of preference', 'content-egg'),
-				'description' => sprintf(__('Currency of preference in which the prices information should be returned in response. By default the prices are returned in the default currency of the marketplace. Expected currency code format is the ISO 4217 currency code (i.e. USD, EUR etc.). For information on default currency and valid currencies for a marketplace, refer <a target="_blank" href="%s">Locale Reference</a>.', 'content-egg'), 'https://webservices.amazon.com/paapi5/documentation/locale-reference.html#topics'),
+				'description' => sprintf(__('Currency of preference in which the prices information should be returned in response. By default the prices are returned in the default currency of the marketplace. Expected currency code format is the ISO 4217 currency code (i.e. USD, EUR etc.). For information on default currency and valid currencies for a marketplace, refer <a target="_blank" href="%s">Locale Reference</a>.', 'content-egg'), 'https://affiliate-program.amazon.com/creatorsapi/docs/en-us/locale-reference#topics'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
@@ -251,7 +345,7 @@ class AmazonConfig extends AffiliateParserModuleConfig
 			),
 			'LanguagesOfPreference'   => array(
 				'title'       => __('Languages of preference', 'content-egg'),
-				'description' => sprintf(__('Languages in order of preference in which the item information should be returned in response. By default the item information is returned in the default language of the marketplace. Expected locale format is the ISO 639 language code followed by underscore followed by the ISO 3166 country code (i.e. en_US, fr_CA etc.). For information on default language and valid languages for a marketplace, refer <a target="_blank" href="%s">Locale Reference</a>.', 'content-egg'), 'https://webservices.amazon.com/paapi5/documentation/locale-reference.html#topics'),
+				'description' => sprintf(__('Languages in order of preference in which the item information should be returned in response. By default the item information is returned in the default language of the marketplace. Expected locale format is the ISO 639 language code followed by underscore followed by the ISO 3166 country code (i.e. en_US, fr_CA etc.). For information on default language and valid languages for a marketplace, refer <a target="_blank" href="%s">Locale Reference</a>.', 'content-egg'), 'https://affiliate-program.amazon.com/creatorsapi/docs/en-us/locale-reference#topics'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
@@ -343,9 +437,10 @@ class AmazonConfig extends AffiliateParserModuleConfig
 			);
 		}
 
-		$parent                         = parent::options();
+		$parent = parent::options();
 		$parent['ttl_items']['default'] = 86400;
-		$options                        = array_merge($parent, $options);
+
+		$options = array_merge($parent, $options);
 
 		$options['forced_tag'] = array(
 			'title'       => __('Forced Associate Tag', 'content-egg'),
@@ -355,6 +450,72 @@ class AmazonConfig extends AffiliateParserModuleConfig
 			'validator'   => array(
 				'trim',
 			),
+		);
+
+		$options['global_earning'] = array(
+			'title'            => __('Global Earning', 'content-egg'),
+			'description'      => __('Amazon redirects international shoppers to their local store. "Similar product" and "Search results" control what happens when the exact product is not available there: Amazon can offer a substitute, which may be from a different brand, or local search results. "No redirect" turns the redirect off entirely and keeps shoppers in this module\'s store, so you earn no international commissions.', 'content-egg')
+				. ' ' . __('This is an experimental feature of the module.', 'content-egg'),
+			'callback'         => array($this, 'render_dropdown'),
+			'dropdown_options' => array(
+				'local_matches'  => __('Similar product', 'content-egg'),
+				'search_results' => __('Search results', 'content-egg'),
+				'no_redirect'    => __('No redirect', 'content-egg'),
+			),
+			'default'          => 'local_matches',
+		);
+
+		// --- Per-region Creators API credentials (optional; for multi-region catalogs) ---
+		// A Creators credential is scoped to one region group (NA/EU/FE). Fill these
+		// only if your products span more than one region; each locale automatically
+		// uses the credential for its region, falling back to the Primary credential.
+		$options['creators_credential_id_na'] = array(
+			'title'       => __('Credential ID — NA region', 'content-egg'),
+			'description' => __('Optional. Creators API Credential ID for North America (US, CA, MX, BR). Leave blank to use the Primary credential.', 'content-egg'),
+			'callback'    => array($this, 'render_input'),
+			'default'     => '',
+			'validator'   => array('trim'),
+			'section'     => 'default',
+		);
+		$options['creators_credential_secret_na'] = array(
+			'title'       => __('Credential Secret — NA region', 'content-egg'),
+			'description' => __('Optional. Creators API Credential Secret for North America (US, CA, MX, BR).', 'content-egg'),
+			'callback'    => array($this, 'render_password'),
+			'default'     => '',
+			'validator'   => array('trim'),
+			'section'     => 'default',
+		);
+		$options['creators_credential_id_eu'] = array(
+			'title'       => __('Credential ID — EU region', 'content-egg'),
+			'description' => __('Optional. Creators API Credential ID for Europe (UK, DE, FR, IT, ES, NL, IE, BE, SE, PL, TR, AE, EG, SA, IN). Leave blank to use the Primary credential.', 'content-egg'),
+			'callback'    => array($this, 'render_input'),
+			'default'     => '',
+			'validator'   => array('trim'),
+			'section'     => 'default',
+		);
+		$options['creators_credential_secret_eu'] = array(
+			'title'       => __('Credential Secret — EU region', 'content-egg'),
+			'description' => __('Optional. Creators API Credential Secret for Europe.', 'content-egg'),
+			'callback'    => array($this, 'render_password'),
+			'default'     => '',
+			'validator'   => array('trim'),
+			'section'     => 'default',
+		);
+		$options['creators_credential_id_fe'] = array(
+			'title'       => __('Credential ID — FE region', 'content-egg'),
+			'description' => __('Optional. Creators API Credential ID for the Far East (JP, AU, SG). Leave blank to use the Primary credential.', 'content-egg'),
+			'callback'    => array($this, 'render_input'),
+			'default'     => '',
+			'validator'   => array('trim'),
+			'section'     => 'default',
+		);
+		$options['creators_credential_secret_fe'] = array(
+			'title'       => __('Credential Secret — FE region', 'content-egg'),
+			'description' => __('Optional. Creators API Credential Secret for the Far East (JP, AU, SG).', 'content-egg'),
+			'callback'    => array($this, 'render_password'),
+			'default'     => '',
+			'validator'   => array('trim'),
+			'section'     => 'default',
 		);
 
 		return self::moveRequiredUp($options);
@@ -373,12 +534,12 @@ class AmazonConfig extends AffiliateParserModuleConfig
 		return 'us';
 	}
 
-	public static function getActiveLocalesList()
+	public function getActiveLocalesList()
 	{
 		$locales = self::getLocalesList();
 		$active  = array();
 
-		$default            = self::getInstance()->option('locale');
+		$default = $this->option('locale');
 		$active[$default] = $locales[$default];
 
 		foreach ($locales as $locale => $name)
@@ -387,7 +548,7 @@ class AmazonConfig extends AffiliateParserModuleConfig
 			{
 				continue;
 			}
-			if (self::getInstance()->option('associate_tag_' . $locale))
+			if ($this->option('associate_tag_' . $locale))
 			{
 				$active[$locale] = $name;
 			}

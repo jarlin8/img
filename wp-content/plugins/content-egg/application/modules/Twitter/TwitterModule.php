@@ -16,7 +16,7 @@ use ContentEgg\application\admin\GeneralConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class TwitterModule extends ParserModule
 {
@@ -27,6 +27,11 @@ class TwitterModule extends ParserModule
 			'name'          => 'Twitter',
 			'api_agreement' => 'https://dev.twitter.com/terms/api-terms',
 		);
+	}
+
+	public function isDeprecated()
+	{
+		return true;
 	}
 
 	public function getParserType()
@@ -65,7 +70,7 @@ class TwitterModule extends ParserModule
 		}
 		catch (Exception $e)
 		{
-			throw new \Exception(strip_tags($e->getMessage()));
+			throw new \Exception(esc_html(wp_strip_all_tags($e->getMessage())));
 		}
 
 		if (!isset($results['statuses']) || !is_array($results['statuses']))
@@ -97,7 +102,6 @@ class TwitterModule extends ParserModule
 			$content->url = 'http://twitter.com/' . $extra->author;
 
 			$content->profileImage = strip_tags($r['user']['profile_image_url']);
-
 
 			$content->extra = $extra;
 			$data[]         = $content;

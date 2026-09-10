@@ -11,23 +11,27 @@ use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\libs\bestbuy\BestbuyApi;
 use ContentEgg\application\components\LinkHandler;
 use ContentEgg\application\modules\Bestbuy\ExtraDataBestbuy;
-use ContentEgg\application\helpers\ArrayHelper;
-
+use ContentEgg\application\helpers\ArrayHelper;;
 
 /**
  * BestbuyModule class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class BestbuyModule extends AffiliateParserModule
 {
+    public function isGtinSearchAllowed()
+    {
+        return true;
+    }
+
 
     public function info()
     {
         return array(
-            'name' => 'Bestbuy (beta)',
+            'name' => 'Bestbuy',
             'description' => sprintf(__('Adds products from %s.', 'content-egg'), 'bestbuy.com'),
             'docs_uri' => 'https://ce-docs.keywordrush.com/modules/affiliate/bestbuy',
         );
@@ -36,6 +40,14 @@ class BestbuyModule extends AffiliateParserModule
     public function releaseVersion()
     {
         return '11.0.0';
+    }
+
+    public static function getPriceParamMap()
+    {
+        return array(
+            'min' => 'price_min',
+            'max' => 'price_max',
+        );
     }
 
     public function getParserType()
@@ -105,6 +117,8 @@ class BestbuyModule extends AffiliateParserModule
         $content->title = $r['name'];
         $content->url = $r['affiliateUrl'];
         $content->rating = TextHelper::ratingPrepare($r['customerReviewAverage']);
+        if (isset($r['rating']))
+            $content->ratingDecimal = round((float) $r['rating'], 2);
         $content->reviewsCount = (int) $r['customerReviewCount'];
         $content->price = (float) $r['salePrice'];
         if ((float) $r['regularPrice'] > $content->price)
@@ -325,7 +339,6 @@ class BestbuyModule extends AffiliateParserModule
         {
             return false;
         }
-
 
         if (!$items || !isset($items['products']))
             return false;

@@ -11,7 +11,7 @@ use ContentEgg\application\libs\RestClient;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  * @link: https://bestbuyapis.github.io/api-documentation/#overview
  */
@@ -63,7 +63,7 @@ class BestbuyApi extends RestClient
         return $this->_decodeResponse($response);
     }
 
-    public function restGet($path, array $query = null)
+    public function restGet($path, ?array $query = null)
     {
         $query['apiKey'] = $this->apiKey;
         $query['format'] = 'json';

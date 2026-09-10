@@ -15,7 +15,7 @@ use ContentEgg\application\libs\trovaprezzi\TrovaprezziApi;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class TrovaprezziModule extends AffiliateParserModule
 {
@@ -206,5 +206,13 @@ class TrovaprezziModule extends AffiliateParserModule
         );
 
         return \apply_filters('cegg_trovaprezzi_merchant2domain', $m2d);
+    }
+
+    public static function getPriceParamMap()
+    {
+        return [
+            'min' => 'min_price',
+            'max' => 'max_price',
+        ];
     }
 }

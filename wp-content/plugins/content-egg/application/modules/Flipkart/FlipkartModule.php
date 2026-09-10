@@ -9,16 +9,14 @@ use ContentEgg\application\libs\flipkart\FlipkartApi;
 use ContentEgg\application\components\ContentProduct;
 use ContentEgg\application\admin\PluginAdmin;
 use ContentEgg\application\helpers\TextHelper;
-use ContentEgg\application\components\LinkHandler;
-
-use function ContentEgg\prnx;
+use ContentEgg\application\components\LinkHandler;;
 
 /**
  * FlipkartModule class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class FlipkartModule extends AffiliateParserModule
 {

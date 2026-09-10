@@ -6,6 +6,7 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\AffiliateFeedParserModule;
 use ContentEgg\application\components\ContentProduct;
+use ContentEgg\application\components\DurableTransient;
 use ContentEgg\application\admin\PluginAdmin;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\modules\Daisycon\models\DaisyconProductModel;
@@ -16,10 +17,15 @@ use ContentEgg\application\libs\daisycon\DaisyconApi;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class DaisyconModule extends AffiliateFeedParserModule
 {
+    public function isGtinSearchAllowed()
+    {
+        return true;
+    }
+
 
     const TRANSIENT_PROGRAMS = 'cegg_daisycon_programs';
 
@@ -36,6 +42,14 @@ class DaisyconModule extends AffiliateFeedParserModule
             'name' => 'Daisycon',
             'description' => sprintf(__('Adds products from %s.', 'content-egg'), 'Daisycon'),
             'docs_uri' => 'https://ce-docs.keywordrush.com/modules/affiliate/daisycon',
+        );
+    }
+
+    public static function getPriceParamMap()
+    {
+        return array(
+            'min' => 'price_min',
+            'max' => 'price_max',
         );
     }
 
@@ -76,11 +90,6 @@ class DaisyconModule extends AffiliateFeedParserModule
     public function getProductModel()
     {
         return DaisyconProductModel::model();
-    }
-
-    public function isZippedFeed()
-    {
-        return false;
     }
 
     public function isUrlSearchAllowed()
@@ -125,6 +134,18 @@ class DaisyconModule extends AffiliateFeedParserModule
             $product['ean'] = '';
         }
 
+        $product['category'] = '';
+        if (!empty($data['category']))
+        {
+            $product['category'] = mb_substr(sanitize_text_field((string) $data['category']), 0, 191);
+        }
+
+        $product['brand'] = '';
+        if (!empty($data['brand']))
+        {
+            $product['brand'] = mb_substr(sanitize_text_field((string) $data['brand']), 0, 191);
+        }
+
         $product['product'] = serialize($data);
 
         return $product;
@@ -132,7 +153,7 @@ class DaisyconModule extends AffiliateFeedParserModule
 
     public function doRequest($keyword, $query_params = array(), $is_autoupdate = false)
     {
-        $this->maybeImportProducts();
+        $this->maybeScheduleImport();
 
         if ($is_autoupdate)
         {
@@ -154,7 +175,7 @@ class DaisyconModule extends AffiliateFeedParserModule
                 $url_without_domain = $keyword;
             }
 
-            $results = $this->product_model->searchByUrl($url_without_domain, $this->config('partial_url_match'), $limit);
+            $results = $this->product_model->searchByUrl($url_without_domain, $this->config('partial_url_match'), $limit, $this->config('ignore_query_string'));
         }
         else
         {
@@ -163,7 +184,7 @@ class DaisyconModule extends AffiliateFeedParserModule
             {
                 $options['price_min'] = (float) $query_params['price_min'];
             }
-            if (!empty($query_params['price_min']))
+            if (!empty($query_params['price_max']))
             {
                 $options['price_max'] = (float) $query_params['price_max'];
             }
@@ -286,7 +307,7 @@ class DaisyconModule extends AffiliateFeedParserModule
 
     public function doRequestItems(array $items)
     {
-        $this->maybeImportProducts();
+        $this->maybeScheduleImport();
         foreach ($items as $key => $item)
         {
             $product = $this->product_model->searchById($item['unique_id']);
@@ -325,7 +346,7 @@ class DaisyconModule extends AffiliateFeedParserModule
 
     protected function getProgram($program_id)
     {
-        $programs = \get_transient(self::TRANSIENT_PROGRAMS);
+        $programs = DurableTransient::get(self::TRANSIENT_PROGRAMS);
         if ($programs && isset($programs[$program_id]))
         {
             return $programs[$program_id];
@@ -354,7 +375,9 @@ class DaisyconModule extends AffiliateFeedParserModule
         );
 
         $programs[$program_id] = $program;
-        \set_transient(self::TRANSIENT_PROGRAMS, $programs, 0);
+        // Durable so an object-cache flush does not force a refetch per program,
+        // but still refreshed periodically -- program metadata does change.
+        DurableTransient::set(self::TRANSIENT_PROGRAMS, $programs, 30 * DAY_IN_SECONDS);
 
         return $program;
     }

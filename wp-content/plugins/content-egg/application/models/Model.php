@@ -2,6 +2,10 @@
 
 namespace ContentEgg\application\models;
 
+use ContentEgg\application\Plugin;
+
+
+
 defined('\ABSPATH') || exit;
 
 /**
@@ -9,7 +13,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 abstract class Model
 {
@@ -17,6 +21,7 @@ abstract class Model
     public static $db;
     private static $models = array();
     protected $charset_collate = '';
+    protected $write_table;
 
     abstract public function tableName();
 
@@ -296,6 +301,80 @@ abstract class Model
         $this->getDb()->query('TRUNCATE TABLE ' . $this->tableName());
     }
 
+    /**
+     * Redirect batch inserts to another table (used for staging imports).
+     * Pass null to restore the default table.
+     */
+    public function setWriteTable(?string $table)
+    {
+        $this->write_table = $table;
+    }
+
+    public function writeTableName()
+    {
+        return $this->write_table ? $this->write_table : $this->tableName();
+    }
+
+    public function stagingTableName()
+    {
+        return $this->tableName() . '_staging';
+    }
+
+    public function retiredTableName()
+    {
+        return $this->tableName() . '_old';
+    }
+
+    /**
+     * Create a fresh, empty staging copy of the live table.
+     */
+    public function createStagingTable()
+    {
+        $db = $this->getDb();
+
+        $db->query('DROP TABLE IF EXISTS `' . $this->stagingTableName() . '`');
+        $db->query('CREATE TABLE `' . $this->stagingTableName() . '` LIKE `' . $this->tableName() . '`');
+
+        $query = $db->prepare('SHOW TABLES LIKE %s', $db->esc_like($this->stagingTableName()));
+        if ($db->get_var($query) != $this->stagingTableName())
+        {
+            throw new \Exception('Failed to create staging table for feed import.');
+        }
+    }
+
+    /**
+     * Atomically replace the live table with the staging table.
+     * RENAME TABLE is atomic in MySQL, so readers never see a partial catalog.
+     */
+    public function swapStagingTable()
+    {
+        $db = $this->getDb();
+
+        $db->query('DROP TABLE IF EXISTS `' . $this->retiredTableName() . '`');
+
+        $result = $db->query(
+            'RENAME TABLE `' . $this->tableName() . '` TO `' . $this->retiredTableName() . '`, `'
+                . $this->stagingTableName() . '` TO `' . $this->tableName() . '`'
+        );
+
+        if ($result === false)
+        {
+            throw new \Exception('Failed to activate imported products (table swap).');
+        }
+
+        $db->query('DROP TABLE IF EXISTS `' . $this->retiredTableName() . '`');
+    }
+
+    /**
+     * Remove staging leftovers from a crashed or failed import.
+     */
+    public function dropStagingTables()
+    {
+        $db = $this->getDb();
+        $db->query('DROP TABLE IF EXISTS `' . $this->stagingTableName() . '`');
+        $db->query('DROP TABLE IF EXISTS `' . $this->retiredTableName() . '`');
+    }
+
     public function isTableExists()
     {
         $query = $this->getDb()->prepare('SHOW TABLES LIKE %s', $this->getDb()->esc_like($this->tableName()));
@@ -312,29 +391,63 @@ abstract class Model
 
     public function multipleInsert(array $items, $per_request = 200)
     {
-        $fields = array_keys(reset($items));
-        $sql = 'INSERT INTO ' . $this->tableName() . ' (' . join(',', $fields) . ') VALUES ';
-        $placeholder = str_repeat('%s, ', count($fields));
-        $placeholder = '(' . rtrim($placeholder, " ,") . ')';
-
-        reset($items);
-        $request_count = ceil(count($items) / $per_request);
-        for ($i = 0; $i < $request_count; $i++)
+        if (empty($items))
         {
-            $query = $sql;
-            $values = array();
-            $place_holders = array();
-            for ($j = $i * $per_request; $j < $i * $per_request + $per_request; $j++)
-            {
-                if (!isset($items[$j]))
-                {
-                    break;
-                }
-                $query .= $this->getDb()->prepare($placeholder, $items[$j]) . ', ';
-            }
-            $query = rtrim($query, " ,") . ';';
-
-            $this->getDb()->query($query);
+            return;
         }
+
+        global $wpdb;
+        $firstRow = reset($items);
+        $fields   = array_keys($firstRow);
+        $escaped_columns = array_map(function ($col)
+        {
+            return "`" . str_replace("`", "``", $col) . "`";
+        }, $fields);
+        $columns = implode(',', $escaped_columns);
+
+        $colCount  = count($fields);
+        $oneRowTpl = '(' . rtrim(str_repeat('%s, ', $colCount), ', ') . ')';
+
+        $batches = array_chunk($items, $per_request);
+        foreach ($batches as $batch)
+        {
+            $placeholders = array_fill(0, count($batch), $oneRowTpl);
+            $valuesSql    = implode(',', $placeholders);
+
+            $allValues = [];
+            foreach ($batch as $row)
+            {
+                foreach ($fields as $columnName)
+                {
+                    $allValues[] = $row[$columnName];
+                }
+            }
+
+            $prefix  = $wpdb->prefix;
+            $rawName = $this->writeTableName();
+            if (substr($rawName, 0, strlen($prefix)) === $prefix)
+            {
+                $table = $rawName;
+            }
+            else
+            {
+                $table = $prefix . $rawName;
+            }
+
+            $sql    = "INSERT INTO `{$table}` ({$columns}) VALUES {$valuesSql};";
+            $prepared = $wpdb->prepare($sql, ...$allValues);
+            $result   = $wpdb->query($prepared);
+
+            if ($result === false && Plugin::isDevEnvironment())
+            {
+                error_log('DB INSERT ERROR: ' . $wpdb->last_error . ' SQL: ' . $wpdb->last_query);
+            }
+        }
+    }
+
+    public function dropTable()
+    {
+
+        $this->getDb()->query('DROP TABLE IF EXISTS ' . $this->tableName());
     }
 }

@@ -12,7 +12,7 @@ use ContentEgg\application\Plugin;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class Ebay2Config extends AffiliateParserModuleConfig
 {
@@ -56,7 +56,6 @@ class Ebay2Config extends AffiliateParserModuleConfig
                 'default' => '',
                 'validator' => array(
                     'trim',
-                    'absint',
                 ),
             ),
             'custom_id' => array(
@@ -87,7 +86,7 @@ class Ebay2Config extends AffiliateParserModuleConfig
             ),
             'entries_per_page' => array(
                 'title' => __('Results', 'content-egg'),
-                'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
+                'description' => __('Specify the number of results to display for a single search query.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 10,
                 'validator' => array(
@@ -101,8 +100,8 @@ class Ebay2Config extends AffiliateParserModuleConfig
                 ),
             ),
             'entries_per_page_update' => array(
-                'title' => __('Results for updates and autoblogging', 'content-egg'),
-                'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg'),
+                'title' => __('Results for Updates and Autoblogging', 'content-egg'),
+                'description' => __('Specify the number of results for automatic updates and autoblogging.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 9,
                 'validator' => array(
@@ -406,5 +405,10 @@ class Ebay2Config extends AffiliateParserModuleConfig
         $transient_name = Plugin::slug() . '-' . $id . '-access_token';
         \delete_transient($transient_name);
         return true;
+    }
+
+    public function getActiveLocalesList()
+    {
+        return Ebay2Config::getLocalesList();
     }
 }

@@ -10,7 +10,7 @@ use ContentEgg\application\Plugin;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class Aliexpress2Config extends AffiliateParserModuleConfig
 {
@@ -34,7 +34,7 @@ class Aliexpress2Config extends AffiliateParserModuleConfig
             ),
             'app_secret' => array(
                 'title' => 'App Secret <span class="cegg_required">*</span>',
-                'callback' => array($this, 'render_input'),
+                'callback' => array($this, 'render_password'),
                 'default' => '',
                 'validator' => array(
                     'trim',
@@ -46,7 +46,7 @@ class Aliexpress2Config extends AffiliateParserModuleConfig
                 ),
             ),
             'api_platform' => array(
-                'title' => __('API platform <span class="cegg_required">*</span>', 'content-egg'),
+                'title' => __('API platform', 'content-egg') . ' (deprecated)',
                 'description' => sprintf(__('Select the "Aliexpress open platform" for developer accounts <a target="_blank" href="%s">registered</a> after March 01, 2023, as well as after <a target="_blank" href="%s">migrating</a> your existing account to the new open platform.', 'content-egg'), 'https://open.aliexpress.com/doc/doc.htm?nodeId=27493&docId=118729#/?docId=1234', 'https://open.aliexpress.com/doc/doc.htm?nodeId=27493&docId=118729#/?docId=1236'),
                 'callback' => array($this, 'render_dropdown'),
                 'dropdown_options' => array(
@@ -56,7 +56,7 @@ class Aliexpress2Config extends AffiliateParserModuleConfig
                 'default' => self::getDefaultApiPlatform(),
             ),
             'tracking_id' => array(
-                'title' => 'Tracking ID',
+                'title' => 'Tracking ID' . '**',
                 'description' => sprintf(__('Set this field if you want to send traffic through AliExpress Portals. You can find your Tracking ID <a target="_blank" href="%s">here</a>.', 'content-egg'), 'http://portals.aliexpress.com/track_id_manage.htm'),
                 'callback' => array($this, 'render_input'),
                 'default' => '',
@@ -75,7 +75,7 @@ class Aliexpress2Config extends AffiliateParserModuleConfig
             ),
             'entries_per_page' => array(
                 'title' => __('Results', 'content-egg'),
-                'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
+                'description' => __('Specify the number of results to display for a single search query.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 10,
                 'validator' => array(
@@ -89,8 +89,8 @@ class Aliexpress2Config extends AffiliateParserModuleConfig
                 ),
             ),
             'entries_per_page_update' => array(
-                'title' => __('Results for updates and autoblogging', 'content-egg'),
-                'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg'),
+                'title' => __('Results for Updates and Autoblogging', 'content-egg'),
+                'description' => __('Specify the number of results for automatic updates and autoblogging.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 10,
                 'validator' => array(

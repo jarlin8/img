@@ -11,7 +11,7 @@ use ContentEgg\application\libs\RestClient;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  * @link: https://developers.kelkoogroup.com/
  */
@@ -66,7 +66,7 @@ class KelkooApi extends RestClient
 	/**
 	 * @link: https://developers.kelkoogroup.com/app/documentation/navigate/_publisher/shoppingAPIPublic/_/_Guides/AuthenticationWithJWTGuide
 	 */
-	public function restGet($path, array $query = null)
+	public function restGet($path, ?array $query = null)
 	{
 		$this->setCustomHeaders(array(
 			'Authorization' => 'Bearer ' . $this->token,

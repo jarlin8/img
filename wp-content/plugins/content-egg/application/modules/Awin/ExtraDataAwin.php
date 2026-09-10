@@ -11,12 +11,13 @@ use ContentEgg\application\components\ExtraData;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  */
 class ExtraDataAwin extends ExtraData
 {
 
+	public $aw_product_id;
 	public $merchant_product_id;
 	public $merchant_id;
 	public $merchant_category;

@@ -9,7 +9,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  * @link: http://wiki.affiliatewindow.com/index.php/ProductServe_API
  */
@@ -47,7 +47,13 @@ class AffiliatewindowSoap
 		}
 		catch (\SoapFault $fault)
 		{
-			throw new \Exception("SOAP Fault: (faultcode: {$fault->faultcode}, faultstring: {$fault->faultstring} )");
+			throw new \Exception(
+				sprintf(
+					esc_html__('SOAP Fault: (faultcode: %s, faultstring: %s)', 'content-egg'),
+					esc_html($fault->faultcode),
+					esc_html($fault->faultstring)
+				)
+			);
 		}
 	}
 
@@ -64,7 +70,13 @@ class AffiliatewindowSoap
 		}
 		catch (\SoapFault $fault)
 		{
-			throw new \Exception("SOAP Fault: (faultcode: {$fault->faultcode}, faultstring: {$fault->faultstring})");
+			throw new \Exception(
+				sprintf(
+					esc_html__('SOAP Fault: (faultcode: %s, faultstring: %s)', 'content-egg'),
+					esc_html($fault->faultcode),
+					esc_html($fault->faultstring)
+				)
+			);
 		}
 
 		return $response;

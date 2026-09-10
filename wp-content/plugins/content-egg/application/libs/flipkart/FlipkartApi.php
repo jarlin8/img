@@ -6,14 +6,14 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\libs\RestClient;
 
-use function ContentEgg\prnx;
+use function ContentEgg\prnx;;
 
 /**
  * FlipkartApi class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  * @link: https://affiliate.flipkart.com/api-docs/
  *
@@ -98,7 +98,7 @@ class FlipkartApi extends RestClient
 		return $this->_decodeResponse($response);
 	}
 
-	public function restGet($path, array $query = null)
+	public function restGet($path, ?array $query = null)
 	{
 		$this->setCustomHeaders(array(
 			'Fk-Affiliate-Id'    => $this->getTrackingId(),

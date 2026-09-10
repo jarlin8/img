@@ -15,7 +15,7 @@ use ContentEgg\application\helpers\TextHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class LomadeeCouponsModule extends AffiliateParserModule
 {
@@ -28,6 +28,11 @@ class LomadeeCouponsModule extends AffiliateParserModule
 			'name'        => 'Lomadee Coupons',
 			'description' => sprintf(__('Adds coupons from %s.', 'content-egg'), __('Lomadee affiliate network', 'content-egg')),
 		);
+	}
+
+	public function isDeprecated()
+	{
+		return true;
 	}
 
 	public function releaseVersion()

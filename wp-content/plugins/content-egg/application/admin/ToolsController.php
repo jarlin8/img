@@ -9,13 +9,17 @@ use ContentEgg\application\helpers\FileHelper;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\components\ContentManager;
 use ContentEgg\application\components\ModuleManager;
+use ContentEgg\application\helpers\AdminHelper;
+use ContentEgg\application\helpers\LogoHelper;;
+use ContentEgg\application\components\ShopStore;
+use ContentEgg\application\components\ShopMigration;
 
 /**
  * ToolsController class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link httsp://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class ToolsController
 {
@@ -27,25 +31,61 @@ class ToolsController
         \add_action('admin_menu', array($this, 'actionHandler'));
     }
 
-    public function actionHandler()
+    public function actionHandler(): void
     {
-        if (empty($GLOBALS['pagenow']) || $GLOBALS['pagenow'] != 'admin.php')
+
+        if (empty($GLOBALS['pagenow']) || $GLOBALS['pagenow'] !== 'admin.php')
+        {
             return;
+        }
 
-        if (empty($_GET['page']) || $_GET['page'] != 'content-egg-tools')
+        $page = isset($_REQUEST['page']) ? sanitize_key(wp_unslash($_REQUEST['page'])) : '';
+        if ($page !== 'content-egg-tools')
+        {
             return;
+        }
 
-        if (!empty($_GET['action']) && $_GET['action'] == 'subscribers-export')
-            $this->actionSubscribersExport();
+        if (! current_user_can('manage_options'))
+        {
+            wp_die(
+                'You do not have sufficient permissions to perform this action.',
+                'Access Denied',
+                ['response' => 403]
+            );
+        }
 
-        if (!empty($_GET['action']) && $_GET['action'] == 'offer-urls-export')
-            $this->actionOfferUrlsExport();
+        $action = isset($_REQUEST['action']) ? sanitize_key(wp_unslash($_REQUEST['action'])) : '';
 
-        if (!empty($_GET['action']) && $_GET['action'] == 'feed-export')
-            $this->actionFeedDataExport();
+        if (! $action)
+        {
+            return;
+        }
+
+        $routes = [
+            'subscribers-export'      => 'actionSubscribersExport',
+            'offer-urls-export'       => 'actionOfferUrlsExport',
+            'feed-export'             => 'actionFeedDataExport',
+            'feed-reset'             => 'actionFeedDataReset',
+            'feed-cache-clear'        => 'actionFeedCacheClear',
+            'feed-reschedule'         => 'actionFeedReschedule',
+            'export-module-settings'  => 'actionExportModuleSettings',
+            'import-module-settings'  => 'actionImportModuleSettings',
+            'export-plugin-settings'  => 'actionExportPluginSettings',
+            'import-plugin-settings'  => 'actionImportPluginSettings',
+            'clear-logo-cache'  => 'actionClearLogoCache',
+        ];
+
+        if (empty($routes[$action]) || ! method_exists($this, $routes[$action]))
+        {
+            return;
+        }
+
+        check_admin_referer("cegg_{$action}");
+
+        call_user_func([$this, $routes[$action]]);
     }
 
-    public function actionSubscribersExport()
+    private function actionSubscribersExport()
     {
         if (!\current_user_can('administrator'))
             die('You do not have permission to view this page.');
@@ -92,7 +132,7 @@ class ToolsController
         exit;
     }
 
-    public function actionOfferUrlsExport()
+    private function actionOfferUrlsExport()
     {
         if (!\current_user_can('administrator'))
             die('You do not have permission to view this page.');
@@ -137,7 +177,7 @@ class ToolsController
         exit;
     }
 
-    public function actionFeedDataExport()
+    private function actionFeedDataExport()
     {
         if (!\current_user_can('administrator'))
             die('You do not have permission to view this page.');
@@ -170,5 +210,274 @@ class ToolsController
         $results = array_map('sanitize_text_field', $results);
         echo join("\r\n", $results); // phpcs:ignore
         exit;
+    }
+    private function actionFeedDataReset()
+    {
+        if (!\current_user_can('administrator'))
+            die('You do not have permission to view this page.');
+
+        if (isset($_GET['module']))
+            $module_id = TextHelper::clear(\sanitize_text_field(wp_unslash($_GET['module'])));
+        else
+            die('Module param can not be empty.');
+
+        if (!ModuleManager::getInstance()->moduleExists($module_id))
+            die('The module does not exist.');
+
+        $module = ModuleManager::getInstance()->factory($module_id);
+
+        if (!$module->isFeedModule())
+            die('This module does not support data reset.');
+
+        $config = $module->getConfigInstance();
+        $is_active = $config->option('is_active');
+        $module->requestForceRefresh();
+        $module->refreshFeedData($is_active);
+
+        $redirect_url = admin_url(sprintf('admin.php?page=content-egg-modules--%s', $module_id));
+        $redirect_url = AdminNotice::add2Url($redirect_url, 'feed_reseted', 'success');
+
+        AdminHelper::redirect($redirect_url);
+    }
+
+    private function actionFeedCacheClear()
+    {
+        if (!\current_user_can('administrator'))
+            die('You do not have permission to view this page.');
+
+        if (isset($_GET['module']))
+            $module_id = TextHelper::clear(\sanitize_text_field(wp_unslash($_GET['module'])));
+        else
+            die('Module param can not be empty.');
+
+        if (!ModuleManager::getInstance()->moduleExists($module_id))
+            die('The module does not exist.');
+
+        $module = ModuleManager::getInstance()->factory($module_id);
+
+        if (!$module->isFeedModule())
+            die('This module does not support feed cache.');
+
+        $module->feedFileCache()->delete();
+
+        $redirect_url = admin_url(sprintf('admin.php?page=content-egg-modules--%s', $module_id));
+        $redirect_url = AdminNotice::add2Url($redirect_url, 'feed_cache_cleared', 'success');
+
+        AdminHelper::redirect($redirect_url);
+    }
+
+    private function actionFeedReschedule()
+    {
+        if (!\current_user_can('administrator'))
+            die('You do not have permission to view this page.');
+
+        if (isset($_GET['module']))
+            $module_id = TextHelper::clear(\sanitize_text_field(wp_unslash($_GET['module'])));
+        else
+            die('Module param can not be empty.');
+
+        if (!ModuleManager::getInstance()->moduleExists($module_id))
+            die('The module does not exist.');
+
+        $module = ModuleManager::getInstance()->factory($module_id);
+
+        if (!$module->isFeedModule())
+            die('This module does not support feed sync.');
+
+        $redirect_url = admin_url(sprintf('admin.php?page=content-egg-modules--%s', $module_id));
+
+        // An import can start between rendering the button and clicking it.
+        if ($module->isImportInProgress())
+        {
+            $redirect_url = AdminNotice::add2Url($redirect_url, 'feed_sync_in_progress', 'warning');
+        }
+        else
+        {
+            $module->rescheduleImport();
+            $redirect_url = AdminNotice::add2Url($redirect_url, 'feed_sync_scheduled', 'success');
+        }
+
+        AdminHelper::redirect($redirect_url);
+    }
+
+    private static function actionExportModuleSettings()
+    {
+        if (! current_user_can('manage_options'))
+        {
+            wp_die('You do not have sufficient permissions to export settings.', 403);
+        }
+
+        $settings = ModuleManager::getInstance()->getOptionsList();
+
+        $json = wp_json_encode($settings, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+
+        if (false === $json)
+        {
+            wp_die('Export failed: could not encode settings.');
+        }
+
+        $site_slug = sanitize_title(wp_parse_url(home_url(), PHP_URL_HOST));
+        $filename  = sprintf(
+            '%s-module-settings-%s.json',
+            $site_slug,
+            gmdate('Ymd-His')
+        );
+
+        nocache_headers();
+        header('Content-Type: application/json; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Content-Length: ' . strlen($json));
+
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        echo $json;
+        exit;
+    }
+
+    private function actionImportModuleSettings(): void
+    {
+        if (! current_user_can('manage_options'))
+        {
+            wp_die('You do not have sufficient permissions to import settings.', 'Access Denied', ['response' => 403]);
+        }
+
+        if (empty($_FILES['settings_file']['tmp_name']) || ! is_uploaded_file($_FILES['settings_file']['tmp_name']))
+        {
+            wp_die('No file uploaded or upload failed.', 'Import Error', ['response' => 400]);
+        }
+
+        $json = file_get_contents($_FILES['settings_file']['tmp_name']);
+        if (!$json)
+        {
+            wp_die('Failed to read uploaded file.', 'Import Error', ['response' => 400]);
+        }
+
+        $settings = json_decode($json, true);
+        if (!is_array($settings))
+        {
+            wp_die('Invalid JSON format.', 'Import Error', ['response' => 400]);
+        }
+
+        $redirect_url = \admin_url('admin.php?page=content-egg-modules');
+
+        if (ModuleManager::getInstance()->importOptions($settings))
+        {
+            $redirect_url = AdminNotice::add2Url($redirect_url, 'module_settings_imported', 'success');
+        }
+        else
+        {
+            $redirect_url = AdminNotice::add2Url($redirect_url, 'settings_import_error', 'error');
+        }
+
+        AdminHelper::redirect($redirect_url);
+    }
+
+    private static function actionExportPluginSettings()
+    {
+        if (! current_user_can('manage_options'))
+        {
+            wp_die('You do not have sufficient permissions to export settings.', 403);
+        }
+
+        $settings[GeneralConfig::getInstance()->option_name()] = GeneralConfig::getInstance()->getOptionValues();
+
+        // Shops live outside the settings option, so they are not in
+        // getOptionValues() and would silently not travel with an export.
+        $settings[ShopStore::OPTION] = ShopStore::all();
+
+        $json = wp_json_encode($settings, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+
+        if (false === $json)
+        {
+            wp_die('Export failed: could not encode settings.');
+        }
+
+        $site_slug = sanitize_title(wp_parse_url(home_url(), PHP_URL_HOST));
+        $filename  = sprintf(
+            '%s-plugin-settings-%s.json',
+            $site_slug,
+            gmdate('Ymd-His')
+        );
+
+        nocache_headers();
+        header('Content-Type: application/json; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Content-Length: ' . strlen($json));
+
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        echo $json;
+        exit;
+    }
+
+    private function actionImportPluginSettings()
+    {
+        if (! current_user_can('manage_options'))
+        {
+            wp_die('You do not have sufficient permissions to import settings.', 'Access Denied', ['response' => 403]);
+        }
+
+        if (empty($_FILES['settings_file']['tmp_name']) || ! is_uploaded_file($_FILES['settings_file']['tmp_name']))
+        {
+            wp_die('No file uploaded or upload failed.', 'Import Error', ['response' => 400]);
+        }
+
+        $json = file_get_contents($_FILES['settings_file']['tmp_name']);
+        if (!$json)
+        {
+            wp_die('Failed to read uploaded file.', 'Import Error', ['response' => 400]);
+        }
+
+        $settings = json_decode($json, true);
+        if (!is_array($settings))
+        {
+            wp_die('Invalid JSON format.', 'Import Error', ['response' => 400]);
+        }
+
+        $redirect_url = \admin_url('admin.php?page=content-egg');
+
+        if (GeneralConfig::getInstance()->importOptions($settings))
+        {
+            if (isset($settings[ShopStore::OPTION]) && is_array($settings[ShopStore::OPTION]))
+            {
+                $shops = array();
+                foreach ($settings[ShopStore::OPTION] as $shop)
+                {
+                    if (!is_array($shop))
+                        continue;
+
+                    if ($shop = ShopStore::sanitizeShop($shop))
+                        $shops[$shop['domain']] = $shop;
+                }
+
+                ShopStore::replaceAll($shops);
+            }
+
+            // A pre-95 export file carries merchant_names / merchants instead,
+            // and importOptions() has just written them back into the settings
+            // row. Re-fold, or the import lands as a site with no shops at all.
+            \delete_option(ShopStore::OPTION_MIGRATED);
+            ShopMigration::maybeRun();
+
+            $redirect_url = AdminNotice::add2Url($redirect_url, 'plugin_settings_imported', 'success');
+        }
+        else
+        {
+            $redirect_url = AdminNotice::add2Url($redirect_url, 'settings_import_error', 'error');
+        }
+
+        AdminHelper::redirect($redirect_url);
+    }
+
+    private function actionClearLogoCache()
+    {
+        if (! current_user_can('manage_options'))
+        {
+            wp_die('You do not have sufficient permissions.', 'Access Denied', ['response' => 403]);
+        }
+        LogoHelper::purgeCachedLogos();
+
+        $redirect_url = \admin_url('admin.php?page=content-egg');
+        $redirect_url = AdminNotice::add2Url($redirect_url, 'plugin_purged_cached_logos', 'success');
+
+        AdminHelper::redirect($redirect_url);
     }
 }

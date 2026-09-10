@@ -4,31 +4,42 @@ namespace ContentEgg\application;
 
 defined('\ABSPATH') || exit;
 
-use ContentEgg\application\admin\GeneralConfig;
 use ContentEgg\application\helpers\CurrencyHelper;
 use ContentEgg\application\components\ExternalFeaturedImage;
 use ContentEgg\application\components\AggregateOffer;
 use ContentEgg\application\components\StructuredData;
 use ContentEgg\application\components\ShortcodePreprocessor;
 use ContentEgg\application\components\command\CommandFactory;
+use ContentEgg\application\components\Pattern;
+use ContentEgg\application\admin\GeneralConfig;
+use ContentEgg\application\admin\import\AutoImportScheduler;
+use ContentEgg\application\blocks\productblock\ProductBlock;
+use ContentEgg\application\blocks\couponblock\CouponBlock;
+use ContentEgg\application\blocks\mediablock\MediaBlock;
+use ContentEgg\application\admin\import\ProductImportScheduler;
+use ContentEgg\application\admin\ProductMapMaintenance;
+use ContentEgg\application\components\LinkIndexIndexer;
+use ContentEgg\application\components\OfferCountService;
+use ContentEgg\application\components\PostSaveDataNotifier;
+use ContentEgg\application\components\TemplateManager;
+use ContentEgg\application\EggBlocks\EggBlocksLoader;
+use ContentEgg\application\licensing\LicenseGate;
 
 /**
  * Plugin class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  */
 class Plugin
 {
-    const version = '12.5.0';
-    const db_version = 56;
-    const wp_requires = '4.6.1';
+    const version = '21.11.1';
+    const db_version = 96;
+    const wp_requires = '6.0';
     const slug = 'content-egg';
     const short_slug = 'cegg';
     const name = 'Content Egg';
-    const api_base = 'https://www.keywordrush.com/api/v1';
-    const api_base2 = '';
     const product_id = 302;
     const website = 'https://www.keywordrush.com';
     const supportUri = 'https://www.keywordrush.com/contact';
@@ -37,6 +48,7 @@ class Plugin
     private static $instance = null;
     private static $is_pro = null;
     private static $is_envato = null;
+    private static $is_blocked = null;
 
     public static function getInstance()
     {
@@ -46,54 +58,141 @@ class Plugin
         return self::$instance;
     }
 
+    public static function registerComponents()
+    {
+        LocalRedirector::initAction();
+
+        // Register widgets early
+        \add_action('widgets_init', function ()
+        {
+            \register_widget(\ContentEgg\application\PriceMoversWidget::class);
+            \register_widget(\ContentEgg\application\ProductSearchWidget::class);
+        });
+    }
+
     private function __construct()
     {
         $this->loadTextdomain();
-        if (self::isFree() || (self::isPro() && self::isActivated()) || self::isEnvato())
+
+        // Self-hosted plugin updates + wordpress.org slug-collision defense.
+        // Registered on the core boot (not admin-only) so the WordPress background
+        // update cron sees the plugin too. The defense (keeping the same-slug free
+        // plugin from overwriting Pro) must run for EVERY Pro install regardless of
+        // license state; advertising updates still gates on a server-issued token
+        // and an unblocked license.
+        if (self::isPro())
+        {
+            $offer_updates = (string) \get_option(LicenseGate::OPT_TOKEN, '') !== '' && !self::isBlocked();
+            new Autoupdate(null, null, $offer_updates);
+        }
+
+        if (self::isFree() || (self::isPro() && self::isActivated()) || (self::isEnvato() && self::isActivated()))
         {
             EggShortcode::getInstance();
             BlockShortcode::getInstance();
             ShortcodePreprocessor::initAction();
+            Pattern::initAction();
+            ProductBlock::initAction();
+            CouponBlock::initAction();
+            MediaBlock::initAction();
+
+            // Group the four core data blocks (products, coupons, images, videos)
+            // under their own "Content Egg" inserter category, separate from the
+            // editorial "Egg Blocks". Priority 11 keeps it above Egg Blocks.
+            add_filter('block_categories_all', function (array $categories): array
+            {
+                array_unshift($categories, array(
+                    'slug'  => 'content-egg',
+                    'title' => 'Content Egg',
+                    'icon'  => null,
+                ));
+                return $categories;
+            }, 11);
+            EggBlocksLoader::initAction();
+            GalleryScheduler::initAction();
+            ProductMapMaintenance::initAction();
+            LinkIndexIndexer::initAction();
+            \add_action('wp_loaded', array($this, 'registerScripts'));
 
             if (!\is_admin())
             {
-                \add_action('wp_loaded', array($this, 'registerScripts'));
                 \add_action('amp_post_template_css', array($this, 'registerAmpStyles'));
                 ModuleViewer::getInstance()->init();
                 ModuleUpdateVisit::getInstance()->init();
-                LocalRedirect::initAction();
                 CurrencyHelper::getInstance(GeneralConfig::getInstance()->option('lang'));
                 ProductSearch::initAction();
                 StructuredData::initAction();
             }
+            ImageProxy::getInstance()->init();
             PriceAlert::getInstance()->init();
+            MaintenanceScheduler::initAction();
             AutoblogScheduler::initAction();
             ModuleUpdateScheduler::initAction();
+            ProductPrefillScheduler::initAction();
+            ImageOptimizeScheduler::initAction();
+            ProductImportScheduler::initAction();
+            AutoImportScheduler::initAction();
+            LinkIndexScheduler::initAction();
             WooIntegrator::initAction();
+            OfferCountService::initAction();
+            PostSaveDataNotifier::initAction();
+            AmazonWooCheckout::initAction();
             ExternalFeaturedImage::initAction();
             AggregateOffer::initAction();
+            AffiliateDisclaimer::initAction();
+            ClicksRestController::getInstance()->init();
+            BlockRenderRestController::getInstance()->init();
+            ModulesRestController::getInstance()->init();
+            PostProductsRestController::getInstance()->init();
+            AgentAccessRestController::getInstance()->init();
             if (!self::isFree())
+            {
                 DataRestController::getInstance()->init();
-
-            new ProductSearchWidget;
-            new PriceMoversWidget;
+            }
 
             CommandFactory::initAction();
+            abilities\AbilitiesRegistrar::initAction();
         }
+
+        if (self::isPaidBuild())
+            MaintenanceCron::register();
     }
 
     public function registerScripts()
     {
-        \wp_register_style('egg-bootstrap', \ContentEgg\PLUGIN_RES . '/bootstrap/css/egg-bootstrap.min.css', array(), '' . Plugin::version() . '');
+        \wp_register_style('cegg-bootstrap5', \ContentEgg\PLUGIN_RES . '/site/bootstrap/css/cegg-bootstrap.min.css', array(), Plugin::version());
+        \wp_register_style('cegg-bootstrap5-full', \ContentEgg\PLUGIN_RES . '/site/bootstrap/css/cegg-bootstrap.full.min.css', array(), Plugin::version());
+        \wp_register_style('cegg-products', \ContentEgg\PLUGIN_RES . '/site/css/cegg-products.min.css', array(), Plugin::version());
+        // Attach color-variant CSS to the handle so it travels with cegg-products
+        // wherever it's loaded (including the iframed block editor canvas).
+        if ($variant_css = TemplateManager::getVariantCss())
+        {
+            \wp_add_inline_style('cegg-products', $variant_css);
+        }
+        \wp_register_script('cegg-bootstrap5', \ContentEgg\PLUGIN_RES . '/site/bootstrap/js/bootstrap.min.js');
+        \wp_register_script('cegg-chartjs', \ContentEgg\PLUGIN_RES . '/vendor/chartjs/chart.js');
+        \wp_register_script('cegg-chartjs-adapter-date-fns', \ContentEgg\PLUGIN_RES . '/vendor/chartjs/chartjs-adapter-date-fns.js', array('cegg-chartjs'));
+        \wp_register_script('cegg-products-view', \ContentEgg\PLUGIN_RES . '/js/cegg-products-view-min.js', array(), Plugin::version());
+
+        //deprecated
+        \wp_register_style('egg-bootstrap', \ContentEgg\PLUGIN_RES . '/bootstrap/css/egg-bootstrap.min.css', array(), Plugin::version());
         \wp_register_script('bootstrap', \ContentEgg\PLUGIN_RES . '/bootstrap/js/bootstrap.min.js', array('jquery'), null, false);
         \wp_register_script('bootstrap-tab', \ContentEgg\PLUGIN_RES . '/bootstrap/js/tab.js', array('jquery'), null, false);
         \wp_register_script('bootstrap-tooltip', \ContentEgg\PLUGIN_RES . '/bootstrap/js/tooltip.js', array('jquery'), null, false);
         \wp_register_script('bootstrap-modal', \ContentEgg\PLUGIN_RES . '/bootstrap/js/modal.js', array('jquery'), null, false);
         \wp_register_script('bootstrap-popover', \ContentEgg\PLUGIN_RES . '/bootstrap/js/popover.js', array('bootstrap-tooltip'), null, false);
-        \wp_register_style('egg-products', \ContentEgg\PLUGIN_RES . '/css/products.css', array(), '11' . Plugin::version());
+        \wp_register_style('egg-products', \ContentEgg\PLUGIN_RES . '/css/products.css', array(), Plugin::version());
         \wp_register_script('raphaeljs', \ContentEgg\PLUGIN_RES . '/js/morrisjs/raphael.min.js', array('jquery'));
         \wp_register_script('morrisjs', \ContentEgg\PLUGIN_RES . '/js/morrisjs/morris.min.js', array('raphaeljs'));
         \wp_register_style('morrisjs', \ContentEgg\PLUGIN_RES . '/js/morrisjs/morris.min.css');
+    }
+
+    public static function isDevEnvironment()
+    {
+        if (defined('CONTENT_EGG_DEBUG') && CONTENT_EGG_DEBUG)
+            return true;
+        else
+            return false;
     }
 
     public static function version()
@@ -123,7 +222,7 @@ class Plugin
 
     public static function getApiBase()
     {
-        return self::api_base;
+        return Installer::API_URL;
     }
 
     public static function isFree()
@@ -173,28 +272,40 @@ class Plugin
             return false;
     }
 
-    public static function apiRequest($params = array())
+    public static function isPaidBuild(): bool
     {
-        $api_urls = array(self::api_base);
-        if (self::api_base2)
-            $api_urls[] = self::api_base2;
-
-        foreach ($api_urls as $api_url)
-        {
-            $response = \wp_remote_post($api_url, $params);
-            if (\is_wp_error($response))
-                continue;
-
-            $response_code = (int) \wp_remote_retrieve_response_code($response);
-            if ($response_code == 200)
-                return $response;
-            else
-                return false;
-        }
+        if (class_exists('\\ContentEgg\\application\\Autoupdate', true))
+            return true;
+        if (\file_exists(\ContentEgg\PLUGIN_PATH . 'application/modules/Bolcom/ExtraDataBolcom.php'))
+            return true;
+        if (class_exists('\\ContentEgg\\application\\admin\\EnvatoConfig', true) || \get_option(self::slug . '_env_install'))
+            return true;
         return false;
     }
 
-    private function loadTextdomain()
+    public static function isBlocked(): bool
+    {
+        if (self::$is_blocked === null)
+        {
+            if (!self::isPaidBuild())
+                self::$is_blocked = false;
+            else
+                self::$is_blocked = (new LicenseGate())->isBlocked();
+        }
+        return self::$is_blocked;
+    }
+
+    public static function canDeactivateLicense(): bool
+    {
+        return (new LicenseGate())->canDeactivate();
+    }
+
+    public static function apiRequest($body)
+    {
+        return Installer::apiRequest($body);
+    }
+
+    public function loadTextdomain()
     {
         // plugin admin
         \load_plugin_textdomain('content-egg', false, dirname(\plugin_basename(\ContentEgg\PLUGIN_FILE)) . '/languages/');
@@ -221,9 +332,38 @@ class Plugin
         return 'https://www.keywordrush.com/';
     }
 
-    public static function pluginSiteUrl()
+    public static function pluginSiteUrl(string $campaign = 'general', string $page = 'landing', ?string $content = null): string
     {
-        return self::getPluginDomain() . 'contentegg?utm_source=cegg&utm_medium=referral&utm_campaign=plugin';
+        $base = rtrim(self::getPluginDomain(), '/');
+        $path = ($page === 'pricing') ? '/contentegg/pricing' : '/contentegg';
+
+        $utmSource = Plugin::isFree() ? 'cefree' : 'cepro';
+
+        $params = [
+            'utm_source'   => $utmSource,
+            'utm_medium'   => 'referral',
+            'utm_campaign' => $campaign,
+            'utm_content'  => $content,
+        ];
+
+        $params = array_filter($params, static function ($v)
+        {
+            return $v !== null && $v !== '';
+        });
+
+        $query = http_build_query($params);
+
+        return $base . $path . ($query !== '' ? ('?' . $query) : '');
+    }
+
+    public static function pluginLandingUrl(string $campaign = 'general', ?string $content = null): string
+    {
+        return self::pluginSiteUrl($campaign, 'landing', $content);
+    }
+
+    public static function pluginPricingUrl(string $campaign = 'general', ?string $content = null): string
+    {
+        return self::pluginSiteUrl($campaign, 'pricing', $content);
     }
 
     public static function pluginDocsUrl()

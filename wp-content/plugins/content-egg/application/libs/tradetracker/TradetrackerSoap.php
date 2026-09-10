@@ -9,7 +9,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2023 keywordrush.com
+ * @copyright Copyright &copy; 2026 keywordrush.com
  *
  * @link: https://affiliate.tradetracker.com/webService
  */
@@ -58,7 +58,7 @@ class TradetrackerSoap
 		}
 		catch (\SoapFault $fault)
 		{
-			throw new \Exception("SOAP Fault: (faultcode: {$fault->faultcode}, faultstring: {$fault->faultstring} )");
+			throw new \Exception('SOAP Fault: (faultcode: ' . esc_html($fault->faultcode) . ', faultstring: ' . esc_html($fault->faultstring) . ' )');
 		}
 	}
 
@@ -80,7 +80,7 @@ class TradetrackerSoap
 		}
 		catch (\SoapFault $fault)
 		{
-			throw new \Exception("SOAP Fault: (faultcode: {$fault->faultcode}, faultstring: {$fault->faultstring})");
+			throw new \Exception('SOAP Fault: (faultcode: ' . esc_html($fault->faultcode) . ', faultstring: ' . esc_html($fault->faultstring) . ' )');
 		}
 
 		return json_decode(json_encode($response), true);
@@ -99,7 +99,7 @@ class TradetrackerSoap
 		}
 		catch (\SoapFault $fault)
 		{
-			throw new \Exception("SOAP Fault: (faultcode: {$fault->faultcode}, faultstring: {$fault->faultstring})");
+			throw new \Exception('SOAP Fault: (faultcode: ' . esc_html($fault->faultcode) . ', faultstring: ' . esc_html($fault->faultstring) . ')');
 		}
 
 		return json_decode(json_encode($response), true);
