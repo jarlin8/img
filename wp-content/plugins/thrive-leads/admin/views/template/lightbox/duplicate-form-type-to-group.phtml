@@ -1,0 +1,26 @@
+<div class="tvd-modal-content">
+	<p><?php echo __( 'Select the Lead Group you want to duplicate this form type into.', 'thrive-leads' ) ?></p>
+
+	<div class="tvd-input-field tve-duplicate-select-wrapper">
+		<select id="tve-duplicate-target-group" style="width: 100%;">
+			<option value=""><?php echo __( '-- Select a Lead Group --', 'thrive-leads' ) ?></option>
+		</select>
+	</div>
+
+	<p class="tve-duplicate-error" style="display: none; color: #F44336;"></p>
+	<p class="tve-no-groups-message" style="display: none;"><?php echo __( 'No other Lead Groups available. Please create another group first.', 'thrive-leads' ) ?></p>
+</div>
+<div class="tvd-modal-footer">
+	<div class="tvd-row">
+		<div class="tvd-col tvd-s12 tvd-m6">
+			<a href="javascript:void(0)"
+			   class="tvd-btn-flat tvd-btn-flat-secondary tvd-btn-flat-dark tvd-modal-close tvd-waves-effect"
+			   tabindex="3"><?php echo __( 'Cancel', 'thrive-leads' ) ?></a>
+		</div>
+		<div class="tvd-col tvd-s12 tvd-m6">
+			<a href="javascript:void(0)"
+			   class="tvd-waves-effect tvd-waves-light tvd-btn-flat tvd-btn-flat-primary tvd-btn-flat-dark tvd-right tve-confirm-duplicate-to-group tvd-disabled"
+			   tabindex="2"><?php echo __( 'Duplicate', 'thrive-leads' ) ?></a>
+		</div>
+	</div>
+</div>

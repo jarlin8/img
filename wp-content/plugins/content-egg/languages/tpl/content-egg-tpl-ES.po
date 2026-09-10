@@ -1,0 +1,467 @@
+# Copyright (C) 2016 Content Egg
+# This file is distributed under the same license as the Content Egg package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Content Egg 2.2.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/content-egg\n"
+"POT-Creation-Date: 2026-06-06T14:15:40+00:00\n"
+"PO-Revision-Date: 2019-12-16 21:59+0200\n"
+"Last-Translator: Sizam themes <sizamtheme@gmail.com>\n"
+"Language-Team: \n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.4\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. Plugin Name of the plugin
+#: content-egg.php
+msgid "Content Egg<stripfree> Pro</stripfree>"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: content-egg.php
+#, fuzzy
+msgid "https://www.keywordrush.com/contentegg"
+msgstr "http://www.keywordrush.com/contentegg"
+
+#. Description of the plugin
+#: content-egg.php
+msgid ""
+"Multi-network affiliate plugin — imports, price comparison, automation, and "
+"structured blocks for affiliate content."
+msgstr ""
+
+#. Author of the plugin
+#: content-egg.php
+msgid "keywordrush.com"
+msgstr "keywordrush.com"
+
+#. Author URI of the plugin
+#: content-egg.php
+#, fuzzy
+msgid "https://www.keywordrush.com"
+msgstr "http://www.keywordrush.com"
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:34
+msgid "What to look for"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:40
+msgid "Look for"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:41
+msgid "Avoid"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:100
+msgid "High"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:101
+msgid "Low"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:102
+msgid "Medium"
+msgstr ""
+
+#: application/EggBlocks/blocks/faq/FaqRenderer.php:72
+msgid "Frequently Asked Questions"
+msgstr ""
+
+#: application/EggBlocks/blocks/key-takeaways/KeyTakeawaysRenderer.php:38
+msgid "Key Takeaways"
+msgstr ""
+
+#: application/EggBlocks/blocks/methodology/MethodologyRenderer.php:41
+msgid "Methodology"
+msgstr ""
+
+#: application/EggBlocks/blocks/myth-fact/MythFactRenderer.php:32
+msgid "Myth vs Fact"
+msgstr ""
+
+#: application/EggBlocks/blocks/myth-fact/MythFactRenderer.php:35
+msgid "Myth"
+msgstr ""
+
+#: application/EggBlocks/blocks/myth-fact/MythFactRenderer.php:36
+msgid "Fact"
+msgstr ""
+
+#: application/EggBlocks/blocks/myth-fact/MythFactRenderer.php:37
+msgid "Why it matters"
+msgstr ""
+
+#: application/EggBlocks/blocks/pricing/PricingRenderer.php:51
+msgid "Most popular"
+msgstr ""
+
+#. translators: %s: price lower bound
+#: application/EggBlocks/blocks/pricing/PricingRenderer.php:105
+#, php-format
+msgid "From %s"
+msgstr ""
+
+#: application/EggBlocks/blocks/pricing/variants/PricingListVariant.php:58
+msgid "From"
+msgstr ""
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:36
+#, fuzzy
+msgid "Pros"
+msgstr "Pros:"
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:37
+#, fuzzy
+msgid "Cons"
+msgstr "Contras:"
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:38
+msgid "Best for"
+msgstr ""
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:39
+msgid "Not for"
+msgstr ""
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:40
+msgid "Quick take:"
+msgstr ""
+
+#: application/EggBlocks/blocks/rating-breakdown/RatingBreakdownRenderer.php:106
+msgid "Category"
+msgstr ""
+
+#: application/EggBlocks/blocks/rating-breakdown/RatingBreakdownRenderer.php:138
+#, fuzzy
+msgid "out of 10"
+msgstr "En stock"
+
+#. translators: %s is the numeric star rating out of 5
+#: application/EggBlocks/blocks/rating-breakdown/RatingBreakdownRenderer.php:215
+#, fuzzy, php-format
+msgid "%s out of 5 stars"
+msgstr "En stock"
+
+#: application/EggBlocks/blocks/related-posts/RelatedPostsRenderer.php:32
+msgid "Related Articles"
+msgstr ""
+
+#: application/EggBlocks/blocks/section-header/SectionHeaderRenderer.php:67
+msgid "Step"
+msgstr ""
+
+#: application/EggBlocks/blocks/specifications/SpecificationsRenderer.php:33
+msgid "Key specs"
+msgstr ""
+
+#: application/EggBlocks/blocks/step-list/StepListRenderer.php:38
+#, fuzzy
+msgid "Step List"
+msgstr "Lista"
+
+#. translators: 1: review count, 2: platform name
+#: application/EggBlocks/blocks/testimonial/variants/CardsVariant.php:36
+#, php-format
+msgid "from %1$s reviews on %2$s"
+msgstr ""
+
+#. translators: 1: review count, 2: platform name
+#: application/EggBlocks/blocks/testimonial/variants/DefaultVariant.php:35
+#, php-format
+msgid "based on %1$s reviews · %2$s"
+msgstr ""
+
+#: application/EggBlocks/blocks/toc/TocRenderer.php:34
+msgid "In this article"
+msgstr ""
+
+#: application/EggBlocks/blocks/toc/variants/CompactVariant.php:15
+#: application/EggBlocks/blocks/toc/variants/DefaultVariant.php:15
+#: application/EggBlocks/blocks/toc/variants/NumberedVariant.php:15
+msgid "Table of contents"
+msgstr ""
+
+#~ msgid "as of"
+#~ msgstr "A partir de"
+
+#, fuzzy
+#~| msgid "Price"
+#~ msgid "Price Drops"
+#~ msgstr "Precio"
+
+#, fuzzy
+#~| msgid "Product card"
+#~ msgid "Product Search..."
+#~ msgstr "Ficha de producto"
+
+#, fuzzy
+#~| msgid "Last updated on"
+#~ msgid "Last updated on %s"
+#~ msgstr "Última actualización:"
+
+#, fuzzy
+#~| msgid "Buy It Now"
+#~ msgid "Buy Now"
+#~ msgstr "Comprar ahora"
+
+#~ msgid "Shop Sale"
+#~ msgstr "Tienda "
+
+#, fuzzy
+#~| msgid "Features"
+#~ msgid "Future"
+#~ msgstr "Características"
+
+#, fuzzy
+#~| msgid "Last updated on"
+#~ msgid "Last feed import: %s."
+#~ msgstr "Última actualización:"
+
+#, fuzzy
+#~| msgid "ratings"
+#~ msgid "Rating"
+#~ msgstr "Valoraciones"
+
+#~ msgid "d"
+#~ msgstr "d"
+
+#~ msgid "h"
+#~ msgstr "h"
+
+#~ msgid "m"
+#~ msgstr "m"
+
+#~ msgid "Price"
+#~ msgstr "Precio"
+
+#~ msgid "in stock"
+#~ msgstr "disponible"
+
+#~ msgid "Grid"
+#~ msgstr "Cuadrícula"
+
+#~ msgid "Product card"
+#~ msgstr "Ficha de producto"
+
+#~ msgid "Coupons"
+#~ msgstr "Cupones"
+
+#~ msgid "Compare"
+#~ msgstr "Comparar"
+
+#~ msgid "User Rating"
+#~ msgstr "Valoración del usuario"
+
+#~ msgid "ratings"
+#~ msgstr "Valoraciones"
+
+#~ msgid "See all reviews"
+#~ msgstr "Ver todas las reviews"
+
+#~ msgid "Too low to display"
+#~ msgstr "Demasiado bajo para mostrar"
+
+#~ msgid "Free shipping"
+#~ msgstr "Envío gratuito"
+
+#~ msgid "new"
+#~ msgstr "Nuevo"
+
+#~ msgid "from"
+#~ msgstr "Desde"
+
+#~ msgid "used"
+#~ msgstr "Usado"
+
+#~ msgid "Shop Now"
+#~ msgstr "Comprar ahora"
+
+#~ msgid "Features"
+#~ msgstr "Características"
+
+#~ msgid "User Reviews"
+#~ msgstr "Reviews del usuario"
+
+#~ msgid "Expert Reviews"
+#~ msgstr "Reviews expertas"
+
+#~ msgid "Barcodes"
+#~ msgstr "Código de barras"
+
+#~ msgid "Images"
+#~ msgstr "Imágenes"
+
+#~ msgid "Image"
+#~ msgstr "Imagen"
+
+#~ msgid "Gallery"
+#~ msgstr "Galería"
+
+#~ msgid "Universal"
+#~ msgstr "Universal"
+
+#~ msgid "Ends:"
+#~ msgstr "Finaliza:"
+
+#~ msgid "Simple"
+#~ msgstr "Simple"
+
+#, fuzzy
+#~| msgid "Last updated on"
+#~ msgid "Last update: "
+#~ msgstr "Última actualización:"
+
+#~ msgid "Buy It Now"
+#~ msgstr "Comprar ahora"
+
+#~ msgid "VIEW THIS ITEM"
+#~ msgstr "Ver este producto"
+
+#~ msgid "Bids:"
+#~ msgstr "Pujas"
+
+#~ msgid "Item condition:"
+#~ msgstr "Estado del producto:"
+
+#~ msgid "Time left:"
+#~ msgstr "Tiempo restante:"
+
+#~ msgid "Ended:"
+#~ msgstr "Finalizado:"
+
+#~ msgid "EEK:"
+#~ msgstr "EEK:"
+
+#, fuzzy
+#~ msgid "Photo: %s on Flickr"
+#~ msgstr "Foto %s en Flickr"
+
+#~ msgid "Photo %s on Flickr"
+#~ msgstr "Foto %s en Flickr"
+
+#~ msgid "Source:"
+#~ msgstr "Fuente:"
+
+#~ msgid "Customer reviews:"
+#~ msgstr "Opinión de los usuarios:"
+
+#~ msgid "Average price"
+#~ msgstr "Precio Medio:"
+
+#~ msgid "Data from Yandex.Market"
+#~ msgstr "Datos de Yandex.Market"
+
+#, fuzzy
+#~| msgid "Free shipping"
+#~ msgid "Shipping:"
+#~ msgstr "Envío gratuito"
+
+#~ msgid "free"
+#~ msgstr "Gratis"
+
+#~ msgid "Pickup"
+#~ msgstr "Recogida"
+
+#~ msgid "In stock"
+#~ msgstr "Disponible"
+
+#~ msgid "Not available"
+#~ msgstr "No disponible"
+
+#~ msgid "Visit store"
+#~ msgstr "Visitar la tienda"
+
+#~ msgid "Customer reviews"
+#~ msgstr "Opinión de los usuarios"
+
+#~ msgid "Comment:"
+#~ msgstr "Comentario:"
+
+#~ msgid "All reviews on Yandex.Market"
+#~ msgstr "Todas las reviews en Yandex.Market"
+
+#~ msgid "Reviews:"
+#~ msgstr "Reviews:"
+
+#~ msgid "Description"
+#~ msgstr "Descripción:"
+
+#, fuzzy
+#~| msgid "ratings"
+#~ msgid "Rating:"
+#~ msgstr "Valoraciones"
+
+#, fuzzy
+#~| msgid "Reviews:"
+#~ msgid "reviews"
+#~ msgstr "Reviews:"
+
+#~ msgid "Large"
+#~ msgstr "Grande:"
+
+#~ msgid "Tile"
+#~ msgstr "Tile"
+
+#~ msgid "customer reviews"
+#~ msgstr "opinión de los usuarios"
+
+#, fuzzy
+#~ msgid "User reviews"
+#~ msgstr "Reviews del usuario"
+
+#, fuzzy
+#~ msgid "View all reviews"
+#~ msgstr "Ver todas las reviews"
+
+#, fuzzy
+#~ msgid "Desired Price"
+#~ msgstr "Precio actual"
+
+#~ msgid "Current Price"
+#~ msgstr "Precio actual"
+
+#, fuzzy
+#~ msgid "Highest Price"
+#~ msgstr "Precio actual"
+
+#, fuzzy
+#~ msgid "Lowest Price"
+#~ msgstr "Precio actual"
+
+#~ msgid "Last updated on"
+#~ msgstr "Última actualización:"
+
+#, fuzzy
+#~ msgid "Sorted offers list with product images"
+#~ msgstr "Todas las ofertas"
+
+#, fuzzy
+#~ msgid "Sorted offers list with store logos"
+#~ msgstr "Todas las ofertas"
+
+#~ msgid "BUY THIS ITEM"
+#~ msgstr "Comprar este producto"
+
+#~ msgid "Buy This Item"
+#~ msgstr "Comprar este producto"
+
+#~ msgid "All offers list"
+#~ msgstr "Todas las ofertas"
+
+#~ msgid "Content Egg"
+#~ msgstr "Content Egg"
+
+#~ msgid ""
+#~ "Easily adding auto updating products from affiliate systems and "
+#~ "additional content to posts."
+#~ msgstr ""
+#~ "Añada fácilmente productos auto actualizables de sistemas de afiliación y "
+#~ "contenido adicional a las entradas"
+
+#~ msgid "Coupon code:"
+#~ msgstr "Código del cupón:"

@@ -1,0 +1,493 @@
+# Copyright (C) 2017 Content Egg
+# This file is distributed under the same license as the Content Egg package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Content Egg 3.4.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/content-egg\n"
+"POT-Creation-Date: 2026-06-06T14:15:40+00:00\n"
+"PO-Revision-Date: 2019-05-14 17:55+0000\n"
+"Last-Translator: Aviv <avzn.dev@gmail.com>\n"
+"Language-Team: iw\n"
+"Language: iw\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Loco-Version: 2.2.2; wp-5.2\n"
+
+#. Plugin Name of the plugin
+#: content-egg.php
+msgid "Content Egg<stripfree> Pro</stripfree>"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: content-egg.php
+msgid "https://www.keywordrush.com/contentegg"
+msgstr ""
+
+#. Description of the plugin
+#: content-egg.php
+msgid ""
+"Multi-network affiliate plugin — imports, price comparison, automation, and "
+"structured blocks for affiliate content."
+msgstr ""
+
+#. Author of the plugin
+#: content-egg.php
+msgid "keywordrush.com"
+msgstr ""
+
+#. Author URI of the plugin
+#: content-egg.php
+msgid "https://www.keywordrush.com"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:34
+msgid "What to look for"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:40
+msgid "Look for"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:41
+msgid "Avoid"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:100
+msgid "High"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:101
+msgid "Low"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:102
+msgid "Medium"
+msgstr ""
+
+#: application/EggBlocks/blocks/faq/FaqRenderer.php:72
+msgid "Frequently Asked Questions"
+msgstr ""
+
+#: application/EggBlocks/blocks/key-takeaways/KeyTakeawaysRenderer.php:38
+msgid "Key Takeaways"
+msgstr ""
+
+#: application/EggBlocks/blocks/methodology/MethodologyRenderer.php:41
+msgid "Methodology"
+msgstr ""
+
+#: application/EggBlocks/blocks/myth-fact/MythFactRenderer.php:32
+msgid "Myth vs Fact"
+msgstr ""
+
+#: application/EggBlocks/blocks/myth-fact/MythFactRenderer.php:35
+msgid "Myth"
+msgstr ""
+
+#: application/EggBlocks/blocks/myth-fact/MythFactRenderer.php:36
+msgid "Fact"
+msgstr ""
+
+#: application/EggBlocks/blocks/myth-fact/MythFactRenderer.php:37
+msgid "Why it matters"
+msgstr ""
+
+#: application/EggBlocks/blocks/pricing/PricingRenderer.php:51
+msgid "Most popular"
+msgstr ""
+
+#. translators: %s: price lower bound
+#: application/EggBlocks/blocks/pricing/PricingRenderer.php:105
+#, php-format
+msgid "From %s"
+msgstr ""
+
+#: application/EggBlocks/blocks/pricing/variants/PricingListVariant.php:58
+msgid "From"
+msgstr ""
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:36
+#, fuzzy
+msgid "Pros"
+msgstr "בעד:"
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:37
+#, fuzzy
+msgid "Cons"
+msgstr "נגד:"
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:38
+msgid "Best for"
+msgstr ""
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:39
+msgid "Not for"
+msgstr ""
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:40
+msgid "Quick take:"
+msgstr ""
+
+#: application/EggBlocks/blocks/rating-breakdown/RatingBreakdownRenderer.php:106
+msgid "Category"
+msgstr ""
+
+#: application/EggBlocks/blocks/rating-breakdown/RatingBreakdownRenderer.php:138
+#, fuzzy
+msgid "out of 10"
+msgstr "לא במלאי"
+
+#. translators: %s is the numeric star rating out of 5
+#: application/EggBlocks/blocks/rating-breakdown/RatingBreakdownRenderer.php:215
+#, fuzzy, php-format
+msgid "%s out of 5 stars"
+msgstr "לא במלאי"
+
+#: application/EggBlocks/blocks/related-posts/RelatedPostsRenderer.php:32
+msgid "Related Articles"
+msgstr ""
+
+#: application/EggBlocks/blocks/section-header/SectionHeaderRenderer.php:67
+msgid "Step"
+msgstr ""
+
+#: application/EggBlocks/blocks/specifications/SpecificationsRenderer.php:33
+msgid "Key specs"
+msgstr ""
+
+#: application/EggBlocks/blocks/step-list/StepListRenderer.php:38
+msgid "Step List"
+msgstr ""
+
+#. translators: 1: review count, 2: platform name
+#: application/EggBlocks/blocks/testimonial/variants/CardsVariant.php:36
+#, php-format
+msgid "from %1$s reviews on %2$s"
+msgstr ""
+
+#. translators: 1: review count, 2: platform name
+#: application/EggBlocks/blocks/testimonial/variants/DefaultVariant.php:35
+#, php-format
+msgid "based on %1$s reviews · %2$s"
+msgstr ""
+
+#: application/EggBlocks/blocks/toc/TocRenderer.php:34
+msgid "In this article"
+msgstr ""
+
+#: application/EggBlocks/blocks/toc/variants/CompactVariant.php:15
+#: application/EggBlocks/blocks/toc/variants/DefaultVariant.php:15
+#: application/EggBlocks/blocks/toc/variants/NumberedVariant.php:15
+msgid "Table of contents"
+msgstr ""
+
+#~ msgid "All fields are required."
+#~ msgstr "כל השדות נדרשים."
+
+#~ msgid "Please indicate that you have read and agree to the Privacy Policy."
+#~ msgstr "בבקשה אשרו שקראתם ואתם מסכימים למדיניות הפרטיות של האתר."
+
+#~ msgid "Your email address is invalid."
+#~ msgstr "כתובת הדוא''ל שהכנסת אינה חוקית."
+
+#~ msgid "The price has already been reached."
+#~ msgstr "המוצר כבר הגיע למחיר הרצוי."
+
+#~ msgid "You already tracking this product."
+#~ msgstr "אתה כבר עוקב אחר מוצר זה."
+
+#~ msgid ""
+#~ "We are now tracking this product for you. Please verify your email "
+#~ "address to be notified of price drops."
+#~ msgstr ""
+#~ "אנחנו כעת מנטרים מוצר זה בשבילך. נא וודאו כי כתובת הדוא''ל שהקלדתם תקינה "
+#~ "בכדי לקבל עידכונים על ירידת המחיר."
+
+#~ msgid "Internal Error. Please notify the administrator."
+#~ msgstr "שגיאה פנימית. הינכם מתבקשים להודיע למנהל."
+
+#~ msgid "Welcome to %s"
+#~ msgstr "ברוך הבא ל- %s!"
+
+#~ msgid "Hello,"
+#~ msgstr "שלום,"
+
+#~ msgid "You have successfully set a price drop alert for %s."
+#~ msgstr "הגדרת בהצלחה קבלת התראות על ירידת מחיר עבור %s."
+
+#~ msgid ""
+#~ "We will not send you any price alerts until you verified your email "
+#~ "address."
+#~ msgstr "לא ישלחו התראות על ירידת מחיר עד שתואמת כתובת הדוא''ל שהזנת."
+
+#~ msgid ""
+#~ "Please open this link to validate your email address:<br> <a "
+#~ "href=\"%s\">%s</a>"
+#~ msgstr ""
+#~ "אנא פתח את הקישור כדי לאמת את כתובת הדוא''ל שלך: <br> <a href=\"%s\">%s</"
+#~ "a>"
+
+#~ msgid ""
+#~ "If you don't want to receive any price alerts from us in the future, <a "
+#~ "href=\"%s\">please click here</a>."
+#~ msgstr ""
+#~ "אם אתם לא מעוניינים לקבל התראות מחיר מאיתנו בעתיד, <a href=\"%s\">אנא "
+#~ "לחצו פה</a>."
+
+#~ msgid "Thank You,"
+#~ msgstr "תודה רבה,"
+
+#~ msgid "The %s Team"
+#~ msgstr "צוות %s"
+
+#~ msgid ""
+#~ "Your email has been verified. We will let you know by email when the "
+#~ "Price Drops."
+#~ msgstr ""
+#~ "כתובת הדוא''ל שלך אומתה. הודעה תשלח אליך לדוא''ל עם ירידת מחיר המוצר "
+#~ "למחיר המבוקש.\n"
+
+#~ msgid "Success!"
+#~ msgstr "הצלחת!"
+
+#~ msgid "You are now unsubscribed from our Price Alerts via email."
+#~ msgstr "אינכם רשומים יותר לקבלת התראות על ירידת מחיר דרך הדוא''ל."
+
+#~ msgid "Unsubscribed!"
+#~ msgstr "הוסרת בהצלחה!"
+
+#~ msgid "Your subscription has been deleted from our database."
+#~ msgstr "ההרשמה שלך הוסרה ממאגר המידע."
+
+#~ msgid "  Ok  "
+#~ msgstr "  אישור  "
+
+#~ msgid "Price alert: \"%s\""
+#~ msgstr "התראת ירידת מחיר: \"%s\""
+
+#~ msgid "Good news!"
+#~ msgstr "חדשות טובות!"
+
+#~ msgid "The price target you set for the item has been reached."
+#~ msgstr "מחיר המוצר הגיע למחיר המבוקש שהצבת."
+
+#~ msgid "<a href=\"%s\">Save %s (%s%%) on %s</a>"
+#~ msgstr " <a href=\"%s\">חיסכו %s (%s%%) על %s</a>"
+
+#~ msgid "Desired Price: %s"
+#~ msgstr "מחיר רצוי: \"%s\""
+
+#~ msgid "Current Price: <strong>%s</strong>"
+#~ msgstr "מחיר נוכחי: <strong>%s</strong>"
+
+#~ msgid "as of"
+#~ msgstr "עודכן בתאריך"
+
+#~ msgid "Price dropped from %s to %s"
+#~ msgstr "המחיר ירד מ- %s ל- %s"
+
+#~ msgid "<a href=\"%s\">More info...</a>"
+#~ msgstr "<a href=\"%s\"> פרטים נוספים...</a>"
+
+#~ msgid ""
+#~ "This present alert has now expired. You may <a href=\"%s\">create a new "
+#~ "alert</a> for this item."
+#~ msgstr ""
+#~ "התראת המחיר הנוכחית פגה תוקף. אתם יכולים <a href=\"%s\">ליצור התראה חדשה</"
+#~ "a> עבור מוצר זה."
+
+#~ msgid "Price Drops"
+#~ msgstr "ירידות מחירים"
+
+#~ msgid "Sorry. No products found."
+#~ msgstr "מצטערים. לא נמצאו מוצרים."
+
+#~ msgid "Search Results for \"%s\""
+#~ msgstr " תוצאות חיפוש עבור \"%s\"\n"
+
+#~ msgid "Product Search..."
+#~ msgstr " חיפוש מוצר..."
+
+#~ msgid "Last updated on %s"
+#~ msgstr " עודכן לאחרונה ב- %s"
+
+#~ msgid "Rating"
+#~ msgstr "דירוג"
+
+#~ msgid "Price"
+#~ msgstr "מחיר"
+
+#~ msgid "today"
+#~ msgstr "היום"
+
+#~ msgid "%d days ago"
+#~ msgstr "לפני %d ימים"
+
+#~ msgid "%d day ago"
+#~ msgstr "לפני יום %d"
+
+#~ msgid "in stock"
+#~ msgstr "במלאי"
+
+#~ msgid "Price tracker & alert"
+#~ msgstr "מעקב מחירים והתראות"
+
+#~ msgid "Coupons"
+#~ msgstr "קופונים"
+
+#~ msgid "Compare"
+#~ msgstr "השווה"
+
+#~ msgid "User Rating"
+#~ msgstr "דירוג המשתשמים"
+
+#~ msgid "ratings"
+#~ msgstr "דירוגים"
+
+#~ msgid "Free shipping"
+#~ msgstr "משלוח חינם"
+
+#~ msgid "new"
+#~ msgstr "חדש"
+
+#~ msgid "from"
+#~ msgstr "החל מ:"
+
+#~ msgid "used"
+#~ msgstr "משומש"
+
+#~ msgid "User Reviews"
+#~ msgstr "חוות דעת המשתשמים"
+
+#~ msgid "Images"
+#~ msgstr "תמונות"
+
+#~ msgid "Image"
+#~ msgstr "תמונה"
+
+#~ msgid "Last update: "
+#~ msgstr "עודכן לאחרונה ב:"
+
+#~ msgid "Buy It Now"
+#~ msgstr "קנה עכשיו"
+
+#~ msgid "VIEW THIS ITEM"
+#~ msgstr "צפה במוצר זה"
+
+#~ msgid "Item condition:"
+#~ msgstr "מצב המוצר:"
+
+#~ msgid "Time left:"
+#~ msgstr "הזמן שנשאר:"
+
+#~ msgid "Customer reviews:"
+#~ msgstr "חוות דעת הלקוחות:"
+
+#~ msgid "In stock"
+#~ msgstr "במלאי"
+
+#~ msgid "Visit store"
+#~ msgstr "בקרו בחנות"
+
+#~ msgid "Customer reviews"
+#~ msgstr "חוות דעת הלקוחות"
+
+#~ msgid "Reviews:"
+#~ msgstr "חוות דעת:"
+
+#~ msgid "Rating:"
+#~ msgstr "דירוג:"
+
+#~ msgid "reviews"
+#~ msgstr "חוות דעת"
+
+#~ msgid "offers"
+#~ msgstr "הצעות"
+
+#~ msgid "customer reviews"
+#~ msgstr "חוות דעת הלקוחות"
+
+#~ msgid "User reviews"
+#~ msgstr "חוות דעת המשתשמים"
+
+#~ msgid "Wait For A Price Drop"
+#~ msgstr "חכה לירידה במחיר"
+
+#~ msgid "Your Email"
+#~ msgstr "דוא''ל שלך"
+
+#~ msgid "Desired Price"
+#~ msgstr "מחיר מבוקש"
+
+#~ msgid "SET ALERT"
+#~ msgstr "צור התראה"
+
+#~ msgid "I agree to the <a target=\"_blank\" href=\"%s\">Privacy Policy</a>."
+#~ msgstr "אני מסכים/ה למדיניות הפרטיות"
+
+#~ msgid "You will receive a notification when the price drops."
+#~ msgstr "אתה תקבל התראות על ירידות מחירים."
+
+#~ msgid "Price History"
+#~ msgstr "היסטוריית מחירים"
+
+#~ msgid "Statistics"
+#~ msgstr "סטטיסטיקות"
+
+#~ msgid "Current Price"
+#~ msgstr "מחיר נוכחי"
+
+#~ msgid "Highest Price"
+#~ msgstr "המחיר הגבוה ביותר"
+
+#~ msgid "Lowest Price"
+#~ msgstr "המחיר הנמוך ביותר"
+
+#~ msgid "Since"
+#~ msgstr "החל מתאריך"
+
+#~ msgid "Last price changes"
+#~ msgstr "עדכונים אחרונים במחיר"
+
+#~ msgid "Start date:"
+#~ msgstr "תאריך התחלה:"
+
+#~ msgid "End date:"
+#~ msgstr "תאריך סיום:"
+
+#~ msgid "Last updated on"
+#~ msgstr "עודכן לאחרונה ב-"
+
+#~ msgid "Set Alert for"
+#~ msgstr "צור התראה עבור"
+
+#~ msgid "Create Your Free Price Drop Alert!"
+#~ msgstr "צרו התראה לירידת מחיר המוצר בחינם!"
+
+#~ msgid "Last Amazon price update was:"
+#~ msgstr "עדכון המחיר האחרון מאמזון היה:"
+
+#~ msgid "Price History for"
+#~ msgstr "הסטוריית המחירים עבור"
+
+#~ msgid "Price statistics"
+#~ msgstr "סטטיסטיקת מחירים"
+
+#~ msgid "All prices mentioned above are in %s."
+#~ msgstr "כל המחירים נקובים ב- %s."
+
+#~ msgid "This product is available at %s."
+#~ msgstr "המוצר זה זמין באתר %s."
+
+#~ msgid "At %s you can purchase %s for only %s"
+#~ msgstr ""
+#~ "באתר %s ניתן לקנות את ה- %s עבור %s לא כולל מחיר המשלוח והמיסים על המוצר."
+
+#~ msgid "which is %s%% less than the cost in %s (%s)."
+#~ msgstr "מחיר שהוא נמוך ב-%s%% מהמחיר ב- %s (%s)."
+
+#~ msgid "The lowest price of %s was obtained on %s."
+#~ msgstr "המחיר הנמוך ביותר שנמצא על %s נכון ומעודכן לתאריך %s."

@@ -1,0 +1,7 @@
+{
+    "require": {
+        "psr/log":"~1.0",
+        "yurunsoft/yurun-oauth-login": "~3.0",
+        "yurunsoft/pay-sdk": "~3.0"
+    }
+}

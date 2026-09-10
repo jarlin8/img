@@ -1,0 +1,168 @@
+<html>
+<head>
+    <!-- Disable browser caching of dialog window -->
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="pragma" content="no-cache" />
+    
+    <script>
+    
+    </script>
+    <style type='text/css'>
+	.cpur{margin: 10px;}
+	.tg-list{list-style: none;}
+	.instercode{text-align: center;}
+	.tg-cps-item{list-style: none;margin: 10px 0px;};
+    </style>
+
+</head>
+<body>
+<div class="cpurl">
+	<label>产品地址：</label>
+ 	<input type="text" name="tbk_url" id="tbk_url"/>
+    <input type="submit" name="get_tbk" id="get_tbk" onclick="get_tbk();" value="获取产品信息"/>
+</div>
+<div class="tg-list">
+      <ul>
+          <li style="display:none;" class="tg-cps-item">
+      		<label>产品名称：</label>
+      		<input type="text" name="tbk_lx" id="tbk_lx"/>
+      	</li>
+      	<li class="tg-cps-item">
+      		<label>产品名称：</label>
+      		<input type="text" name="tbk_title" id="tbk_title"/>
+      	</li>
+      	 <li class="tg-cps-item">
+      	 	<label>产品描述：</label>
+      	 	<textarea  name="tbk_desc" id="tbk_desc" cols="36"  rows="4" ></textarea>
+      	 </li>
+      	 <li class="tg-cps-item">
+      	 	<label>产品图片：</label>
+      	 	<input type="text" name="tbk_img" id="tbk_img"/>
+      	 </li>
+      	 <li class="tg-cps-item">
+      	 	<label>产品价格：</label>
+      	 	<input type="text" name="tbk_price" id="tbk_price"/>
+      	 </li>
+      	 <li class="tg-cps-item">
+      	 	<label>产品原价：</label>
+      	 	<input type="text" name="tbk_oldprice" id="tbk_oldprice"/>
+      	 </li>
+      	 <li class="tg-cps-item">
+      	 	<label id="tkl">淘口令：</label>
+      	 	<input type="text" name="tbk_tkl" id="tbk_tkl"/>
+      	 </li>
+      	 <li class="tg-cps-item">
+      	 	<label id="lqdz">领券地址：</label>
+      	 	 <input type="text" name="tbk_lqgm" id="tbk_lqgm"/>
+      	 </li>
+      <input type="hidden" name="tbk_id" id="tbk_id"/>
+      </ul>
+     </div>
+     <div class="instercode">
+      <input type="submit" onclick="insertcode()" name="insert_post" id="insert_post" value="插入文章"/>
+	</div>
+	<script>
+ 
+		var args = top.tinymce.activeEditor.windowManager.getParams();
+        var pluginurl = args.plugin_url;
+        function get_tbk(){
+        	var tbk_url = document.getElementById("tbk_url").value;
+        	var httpRequest = new XMLHttpRequest();
+			httpRequest.open('POST', pluginurl+"/api.php", true); 
+			httpRequest.setRequestHeader("Content-type","application/x-www-form-urlencoded;charset=utf-8");
+		httpRequest.send('url='+escape(tbk_url));
+	
+			httpRequest.onload = function(e){
+				if (httpRequest.status == 200) {
+			        var json = httpRequest.responseText;
+			        json=JSON.parse(json);
+			        console.log(json);
+			        if(json.error){
+                		alert(json.msg);
+	            	 }else{
+	            	     if(json.lx=='pdd'){
+	            	         document.getElementById("tkl").innerText='单独购买：';
+	            	         document.getElementById("lqdz").innerText='拼团购买：';
+	            	     }else{
+	            	         document.getElementById("tkl").innerText='淘口令：';
+	            	         document.getElementById("lqdz").innerText='领券地址：';
+	            	     }
+	            	     document.getElementById("tbk_lx").value=json.lx;
+				        document.getElementById("tbk_id").value=json.msg.tg_goodsid;
+				        document.getElementById("tbk_title").value=json.msg.tg_title;
+				        document.getElementById("tbk_desc").value=json.msg.tg_des;
+				        document.getElementById("tbk_img").value=json.msg.tg_img;
+				        document.getElementById("tbk_price").value=json.msg.tg_actualPrice;
+				        document.getElementById("tbk_oldprice").value=json.msg.tg_originalPrice;
+				        document.getElementById("tbk_tkl").value=json.msg.tg_tpwd;
+				        document.getElementById("tbk_lqgm").value=json.msg.tg_shortUrl;
+	            	 }
+				}else{
+					alert("请求失败");
+				}
+			};
+        	
+        }
+        
+        function insertcode(){
+            var tglx= document.getElementById("tbk_lx").value;
+        	var tgid= document.getElementById("tbk_id").value;
+			var tgtitle= document.getElementById("tbk_title").value;
+			var tgdesc= document.getElementById("tbk_desc").value;
+			var tgimg= document.getElementById("tbk_img").value;
+			var tgoldp=document.getElementById("tbk_oldprice").value;
+			var tgprice=document.getElementById("tbk_price").value;
+			var tgtkl=document.getElementById("tbk_tkl").value;
+			var tglqg=document.getElementById("tbk_lqgm").value;
+			var rands=Math.floor(Math.random()*10);
+			if(tglx=='jd'){
+			 code='<div class="cps-item"><div class="item-embed"><div class="tg-img"><img style="width:150px;" alt="'+tgtitle+'" src="'+tgimg+'"></div><div class="item-title">'+tgtitle+'</div><div class="tg-note">'+tgdesc+'</div><div class="bomoto"><div class="tg-info"><div class="tg-price"><em>￥</em>'+tgprice+'</div><div class="old-price">￥'+tgoldp+'</div><div class="bomm" style="float: right;"><a class="cpsbtn lqm" style="background-color:#FF351A;color: #fff;" target="_blank" rel="nofollow noopener noreferrer" href="'+tglqg+'">京东购买</a></div></div></div></div></div>';
+			}else if(tglx=='pdd'){
+			    code='<div class="cps-item">';
+            	code+='<div class="item-embed">';
+            	code+='<div class="tg-img">';
+            	code+='<img alt="'+tgtitle+'" src="'+tgimg+'" />';
+            	code+='</div>';
+            	code+='<div class="item-title">'+tgtitle+'</div><div class="tg-note">'+tgdesc+'</div>';
+            	code+='<div class="bomoto">';
+            	code+='<div class="tg-info">';
+            	code+='<div class="tg-price">';
+            	code+='<em>￥</em>'+tgprice+'</div>';
+            	code+='<div class="old-price">￥'+tgoldp+'</div></div>';
+            	code+='<div class="tg-btn">';
+            	code+='<div class="bomm">';
+            	code+='<a class="cpsbtn dm" style="color:#fff;" href="'+tgtkl+'" target="_blank" data-clipboard-target="#tb-'+tgid+'-'+rands+'" rel="nofollow noopener noreferrer">单独购买</a>';
+            	code+='</div>';
+            	code+='<div class="bomm">';
+            	code+='<a rel="nofollow" class="cpsbtn lqm pt" style="color: #fff;" target="_blank" href="'+tglqg+'">拼团购买</a>';
+            	code+='</div></div></div></div></div>&nbsp;';
+			}else{
+                code='<div class="cps-item">';
+            	code+='<div class="item-embed">';
+            	code+='<div class="tg-img">';
+            	code+='<img alt="'+tgtitle+'" src="'+tgimg+'" />';
+            	code+='</div>';
+            	code+='<div class="item-title">'+tgtitle+'</div><div class="tg-note">'+tgdesc+'</div>';
+            	code+='<div class="bomoto">';
+            	code+='<div class="tg-info">';
+            	code+='<div class="tg-price">';
+            	code+='<em>￥</em>'+tgprice+'</div>';
+            	code+='<div class="old-price">￥'+tgoldp+'</div>';
+            	code+='<div class="tg-tkl">淘口令：<div id="tb-'+tgid+'-'+rands+'" class="tg-ma">'+tgtkl+'</div></div></div>';
+            	code+='<div class="tg-btn">';
+            	code+='<div class="bomm">';
+            	code+='<a class="cpsbtn cps_copy_btn" style="color:#fff;" data-clipboard-target="#tb-'+tgid+'-'+rands+'">复制淘口令</a>';
+            	code+='</div>';
+            	code+='<div class="bomm">';
+            	code+='<a rel="nofollow" class="cpsbtn lqm" style="color: #fff;" target="_blank" href="'+tglqg+'">淘宝购买</a>';
+            	code+='</div></div></div></div></div>&nbsp;';
+			}
+        	window.parent.tinyMCE.activeEditor.execCommand('mceInsertContent', 0, code); 
+			window.parent.tinyMCE.activeEditor.windowManager.close(); 
+        }
+
+	</script>
+	
+</body>
+</html>

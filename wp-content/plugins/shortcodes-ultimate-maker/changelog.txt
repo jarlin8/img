@@ -1,0 +1,166 @@
+### 1.6.2
+
+- Fixed issue where Windows Defender was treating the plugin as a trojan
+
+
+### 1.6.1
+
+- Updated in-plugin links
+
+
+### 1.6.0
+
+- Added support for WP 5.5 automatic updates
+
+
+### 1.5.15
+
+- Added *Activate License Key* link at the Plugins screen
+- Added .pot file for translations
+- Minor improvements to UI and codebase
+
+
+### 1.5.14
+
+- Fix warnings in PHP compatibility checks (PHP Compatibility Checker plugin)
+
+
+### 1.5.13
+
+- Improved compatibility with OptimizePress
+
+
+### 1.5.12
+
+**Improvements**
+
+- License key at plugin settings page can now be revealed by focusing the *License key* field
+- Compatibility with Shortcodes Ultimate 5.2.0
+
+
+**Fixes**
+
+- Fixed validation errors at shortcode editing screen
+
+
+### 1.5.11
+
+**Fixes**
+
+- Plugin updates now also available from within iThemes sync control panel
+- Plugin updates will be visible even without license key
+- Fullscreen mode for shortcode code editor
+
+**Added**
+
+- Compatibility with SU v5.0.5
+
+
+### 1.5.10
+
+- Added: default attribute value can now contain new lines
+
+
+### 1.5.9
+
+- Fixed: fatal error on plugin activation on PHP < 5.5
+
+
+### 1.5.8
+
+- Fixed: issue in dropdown options field (too angry sanitization)
+- Fixed: validation of shortcode tag name field
+- Improved: compatibility with 'Plugin Organizer'
+- Added: 'Install core plugin' notice
+
+
+### 1.5.7
+
+- Fixed: PHP warning at settings page, when license key is saved
+
+
+### 1.5.6
+
+__IMPORTANT:__ this add-on requires __Shortcodes Ultimate version 5.0.0__ (or higher). Please update Shortcodes Ultimate before updating this add-on.
+
+- Fixed: bug preventing replacement of default shortcodes with custom ones;
+- Fixed: bug when after plugin update some attributes of custom shortcodes are removed;
+- Fixed: PHP Warning: strpos(): Empty needle on line 310;
+- Fixed: 'Invalid license key' error;
+- Fixed: license key deactivation error;
+- Added: saved license key is now hidden at plugin settings page;
+- Updated: 'ru_RU' translation.
+
+
+### 1.5.5
+
+- Improved: compatibility with Shortcodes Ultimate 5+
+- Improved: brand new shortcode editing interface
+- Added: compatibility with PHP 7.2 (where create_function() marked as deprecated)
+- Added: possibility to add custom CSS to custom shortcodes
+- Fixed: code editor now accepts escaped symbols, like <code>\'</code>
+
+
+### 1.5.4
+
+- Compatibility with WP 4.4
+
+
+### 1.5.3
+
+- Added: new attribute type - icon
+- Added: new attribute type - image_source
+
+
+### 1.5.2
+
+- Fixed: code field escaping. Double backticks doesn't stripped anymore
+
+
+### 1.5.1
+
+- Added su_ prefix at Custom shortcodes listing
+
+
+### 1.5.0
+
+- Auto-updates that works!
+
+
+### 1.4.2
+
+- Fixed dropdown options list (at shortcode editing page). Now it accepts values with dashes
+
+
+### 1.4.1
+
+- Improved variables insertion mechanism
+- Added support for nested shortcodes in HTML mode
+- Minor UX improvements
+- Added NL locale
+- New autoupdate system
+- Fixed default content field validation, now it accepts html tags
+
+
+### 1.1.1
+
+- Small fix in auto-update script
+
+
+### 1.1.0
+
+- Updated import/export mechanism
+- Included auto-update script
+
+
+### 1.0.3
+
+- Updated support links
+- Small fixes
+- Updated import/export mechanism
+- Improved UX
+
+
+### 1.0.0
+
+- Initial release

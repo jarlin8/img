@@ -1,0 +1,124 @@
+.sm_beta_batch_update_field {
+	line-height: 1em;
+}
+
+#batchmod_sm_editor_grid input[class^="batch_update_value"] {
+	height: 28px;
+	width:15em !important;
+	border-radius:0.3em;
+}
+
+.batch_update_table td {
+	padding-bottom: 0.5em;
+}
+
+input.batch_update_value[type="text"], input.batch_update_value[type="number"] {
+	height: 2em;
+}
+
+input.batch_update_value[type="text"], input.batch_update_value[type="number"], textarea.batch_update_value {
+	border-radius: 0.3em;
+	width: 14em;
+}
+
+/*Rank Math Plugin*/
+.rank-math-seo-score.good{
+	color: #58bb58;
+}
+
+.rank-math-seo-score.bad{
+	color: #e93f30;
+}
+/* Bulk Edit dialogue CSS */
+#bulk_edit_title.border-red, #sm_schedule_export_form input.border-red{
+  border-color: #ff5b5e !important;
+}
+
+#sa_manager_main .select2-selection--multiple ul.select2-selection__rendered {
+  max-height: 8rem;
+  overflow-y: auto !important;
+  cursor: pointer;
+}
+
+/* scheduled exports CSV modal css */
+#sa_manager_main #sm_schedule_export_form .sa_bulk_edit_content {
+  margin-left: 1rem;
+  height: 2.3rem;
+}
+#sa_manager_main #sm_interval_unit{
+  margin-left: 0.5rem !important;
+}
+#sa_manager_main #sm_schedule_export_order_statuses, #sa_manager_main #sm_schedule_export_email, #sa_manager_main #sm_schedule_export_start_time, #sm_schedule_export_form .export-interval-section{
+  width: 73%;
+}
+#sa_manager_main .sm-schedule-export-fields-error{
+  color: #FF5B5E ;
+}
+.sm-schedule-export-order-status-select2-dropdown{
+  z-index: 9990 !important;
+}
+#sa_manager_main .sm-schedule-export-order-status-select2-container{
+  padding: 0 0.5rem;
+}
+#sa_manager_main .sm-schedule-export-order-status-select2-container .select2-search__field{
+  border: none !important;
+}
+.sm-schedule-export-order-status-select2-container .select2-search--inline, .sm-schedule-export-order-status-select2-container .select2-search__field, #sa_manager_main #sm_schedule_export_interval, #sa_manager_main #sm_schedule_export_interval_unit{
+  width: 100% !important;
+}
+.sm-schedule-export-order-status-select2-container ul li.select2-search--inline{
+  margin-bottom: 0;
+}
+#sm_schedule_export_form .field-parent{
+  justify-content: space-between;
+}
+#sm_schedule_export_form .field-parent:not(:first-of-type) {
+  margin-top: 1rem;
+}
+#sm_schedule_export_form .select2-container{
+  width: 73% !important;
+}
+#sa_manager_main .export-interval-section #sm_schedule_export_interval{
+  margin-left: 0;
+}
+#sm_schedule_export_form .scheduled-export-modal-note ul li{
+  list-style: disc;
+  margin-left: 1rem;
+}
+#sa_manager_main .sm-scheduled-export-modal .modal-body{
+  max-height: 27rem !important;
+}
+#sa_manager_main #edit_product_attributes #table_edit_attributes .chosen-choices{
+  padding: 0.5rem 0.5rem 0.35rem 0.5rem;
+}
+/* Bullk update subscription price modal CSS*/
+#sa_manager_main #sm-be-update-subscription-price-modal-content ul{
+  list-style-type: disc;
+  margin-left: 1rem;
+  margin-top: 0.5rem;
+}
+body #sa_manager_main .sm-be-update-subscription-price-modal{
+  width: 32% !important;
+}
+/* AI assistant CSS*/
+.sm-ai-assistant-icon {
+	cursor: pointer;
+}
+#sa_manager_main .sm-ai-input-container .description{
+  font-style: italic;
+}
+#sa_manager_main #sm_ai_mic_btn {
+	border-radius: 50%;
+	background: #f3f4f6;
+	transition: background 0.2s;
+  align-items: center;
+}
+#sa_manager_main #sm_ai_mic_btn:hover {
+	background: #e0e7ff;
+}
+#sa_manager_main #sm_ai_prompt_input:focus{
+  box-shadow: none;
+}
+#sa_manager_main .sm-ai-input-container .sm-ai-prompt-input-parent.active{
+  border-color: #2271B5;
+}

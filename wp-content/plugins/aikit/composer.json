@@ -1,0 +1,34 @@
+{
+    "require": {
+        "guzzlehttp/guzzle": "^7.4",
+        "duzun/hquery": "^3.0"
+    },
+    "config": {
+        "platform": {
+            "php": "7.4.0"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "AIKit\\Dependencies\\": "dependencies/"
+        }
+    },
+    "extra": {
+        "mozart": {
+            "dep_namespace": "AIKit\\Dependencies\\",
+            "dep_directory": "/dependencies/",
+            "classmap_directory": "/classes/dependencies/",
+            "classmap_prefix": "AIKit_"
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "php mozart.phar compose",
+            "composer dump-autoload"
+        ],
+        "post-update-cmd": [
+            "php mozart.phar compose",
+            "composer dump-autoload"
+        ]
+    }
+}

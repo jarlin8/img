@@ -1,0 +1,178 @@
+# Copyright (C) 2026 keywordrush.com
+# This file is distributed under the same license as the Content Egg<stripfree> Pro</stripfree> plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Content Egg<stripfree> Pro</stripfree> 20.2.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/content-egg\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-06-06T14:15:40+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: content-egg-tpl\n"
+
+#. Plugin Name of the plugin
+#: content-egg.php
+msgid "Content Egg<stripfree> Pro</stripfree>"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: content-egg.php
+msgid "https://www.keywordrush.com/contentegg"
+msgstr ""
+
+#. Description of the plugin
+#: content-egg.php
+msgid "Multi-network affiliate plugin — imports, price comparison, automation, and structured blocks for affiliate content."
+msgstr ""
+
+#. Author of the plugin
+#: content-egg.php
+msgid "keywordrush.com"
+msgstr ""
+
+#. Author URI of the plugin
+#: content-egg.php
+msgid "https://www.keywordrush.com"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:34
+msgid "What to look for"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:40
+msgid "Look for"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:41
+msgid "Avoid"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:100
+msgid "High"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:101
+msgid "Low"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:102
+msgid "Medium"
+msgstr ""
+
+#: application/EggBlocks/blocks/faq/FaqRenderer.php:72
+msgid "Frequently Asked Questions"
+msgstr ""
+
+#: application/EggBlocks/blocks/key-takeaways/KeyTakeawaysRenderer.php:38
+msgid "Key Takeaways"
+msgstr ""
+
+#: application/EggBlocks/blocks/methodology/MethodologyRenderer.php:41
+msgid "Methodology"
+msgstr ""
+
+#: application/EggBlocks/blocks/myth-fact/MythFactRenderer.php:32
+msgid "Myth vs Fact"
+msgstr ""
+
+#: application/EggBlocks/blocks/myth-fact/MythFactRenderer.php:35
+msgid "Myth"
+msgstr ""
+
+#: application/EggBlocks/blocks/myth-fact/MythFactRenderer.php:36
+msgid "Fact"
+msgstr ""
+
+#: application/EggBlocks/blocks/myth-fact/MythFactRenderer.php:37
+msgid "Why it matters"
+msgstr ""
+
+#: application/EggBlocks/blocks/pricing/PricingRenderer.php:51
+msgid "Most popular"
+msgstr ""
+
+#. translators: %s: price lower bound
+#: application/EggBlocks/blocks/pricing/PricingRenderer.php:105
+#, php-format
+msgid "From %s"
+msgstr ""
+
+#: application/EggBlocks/blocks/pricing/variants/PricingListVariant.php:58
+msgid "From"
+msgstr ""
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:36
+msgid "Pros"
+msgstr ""
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:37
+msgid "Cons"
+msgstr ""
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:38
+msgid "Best for"
+msgstr ""
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:39
+msgid "Not for"
+msgstr ""
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:40
+msgid "Quick take:"
+msgstr ""
+
+#: application/EggBlocks/blocks/rating-breakdown/RatingBreakdownRenderer.php:106
+msgid "Category"
+msgstr ""
+
+#: application/EggBlocks/blocks/rating-breakdown/RatingBreakdownRenderer.php:138
+msgid "out of 10"
+msgstr ""
+
+#. translators: %s is the numeric star rating out of 5
+#: application/EggBlocks/blocks/rating-breakdown/RatingBreakdownRenderer.php:215
+#, php-format
+msgid "%s out of 5 stars"
+msgstr ""
+
+#: application/EggBlocks/blocks/related-posts/RelatedPostsRenderer.php:32
+msgid "Related Articles"
+msgstr ""
+
+#: application/EggBlocks/blocks/section-header/SectionHeaderRenderer.php:67
+msgid "Step"
+msgstr ""
+
+#: application/EggBlocks/blocks/specifications/SpecificationsRenderer.php:33
+msgid "Key specs"
+msgstr ""
+
+#: application/EggBlocks/blocks/step-list/StepListRenderer.php:38
+msgid "Step List"
+msgstr ""
+
+#. translators: 1: review count, 2: platform name
+#: application/EggBlocks/blocks/testimonial/variants/CardsVariant.php:36
+#, php-format
+msgid "from %1$s reviews on %2$s"
+msgstr ""
+
+#. translators: 1: review count, 2: platform name
+#: application/EggBlocks/blocks/testimonial/variants/DefaultVariant.php:35
+#, php-format
+msgid "based on %1$s reviews · %2$s"
+msgstr ""
+
+#: application/EggBlocks/blocks/toc/TocRenderer.php:34
+msgid "In this article"
+msgstr ""
+
+#: application/EggBlocks/blocks/toc/variants/CompactVariant.php:15
+#: application/EggBlocks/blocks/toc/variants/DefaultVariant.php:15
+#: application/EggBlocks/blocks/toc/variants/NumberedVariant.php:15
+msgid "Table of contents"
+msgstr ""

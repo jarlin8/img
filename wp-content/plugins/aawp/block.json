@@ -1,0 +1,13 @@
+{
+    "apiVersion": 2,
+    "name": "aawp/aawp-block",
+    "title": "AAWP",
+    "category": "widgets",
+    "description": "The best WordPress plugin for Amazon Affiliates.",
+    "supports": {
+        "html": true
+    },
+    "textdomain": "aawp",
+    "editorScript": "file:./assets/block/dist/index.js",
+    "editorStyle": "file:./assets/block/dist/index.css"
+}

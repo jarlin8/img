@@ -1,0 +1,16 @@
+.wdt-empty-checkbox-filter {
+    margin-top: 10px !important;
+    color: #999;
+}
+
+.wpDataTablesFilter .wpDataTableFilterSection#wdt-pf-search-filters-button-block {
+    display: inline-block;
+    margin-bottom: 0;
+    padding-top: 42px;
+}
+
+/* TODO - Widget search button */
+button.wdt-pf-search-filters-button:before {
+    font-family: WPDataTablesIcons;
+    content: "\1F50D";
+}

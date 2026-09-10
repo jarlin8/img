@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<!--[if IE 8]>    <html class="ie8" lang="zh-CN"> <![endif]-->
+<!--[if IE 9]>    <html class="ie9" lang="zh-CN"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)] lang="zh-CN"><![endif]-->
+<html lang="zh-CN">
+<head><meta charset="UTF-8" /><script>if(navigator.userAgent.match(/MSIE|Internet Explorer/i)||navigator.userAgent.match(/Trident\/7\..*?rv:11/i)){var href=document.location.href;if(!href.match(/[?&]nowprocket/)){if(href.indexOf("?")==-1){if(href.indexOf("#")==-1){document.location.href=href+"?nowprocket=1"}else{document.location.href=href.replace("#","?nowprocket=1#")}}else{if(href.indexOf("#")==-1){document.location.href=href+"&nowprocket=1"}else{document.location.href=href.replace("#","&nowprocket=1#")}}}}</script><script>class RocketLazyLoadScripts{constructor(){this.triggerEvents=["keydown","mousedown","mousemove","touchmove","touchstart","touchend","wheel"],this.userEventHandler=this._triggerListener.bind(this),this.touchStartHandler=this._onTouchStart.bind(this),this.touchMoveHandler=this._onTouchMove.bind(this),this.touchEndHandler=this._onTouchEnd.bind(this),this.clickHandler=this._onClick.bind(this),this.interceptedClicks=[],window.addEventListener("pageshow",(e=>{this.persisted=e.persisted})),window.addEventListener("DOMContentLoaded",(()=>{this._preconnect3rdParties()})),this.delayedScripts={normal:[],async:[],defer:[]},this.allJQueries=[]}_addUserInteractionListener(e){document.hidden?e._triggerListener():(this.triggerEvents.forEach((t=>window.addEventListener(t,e.userEventHandler,{passive:!0}))),window.addEventListener("touchstart",e.touchStartHandler,{passive:!0}),window.addEventListener("mousedown",e.touchStartHandler),document.addEventListener("visibilitychange",e.userEventHandler))}_removeUserInteractionListener(){this.triggerEvents.forEach((e=>window.removeEventListener(e,this.userEventHandler,{passive:!0}))),document.removeEventListener("visibilitychange",this.userEventHandler)}_onTouchStart(e){"HTML"!==e.target.tagName&&(window.addEventListener("touchend",this.touchEndHandler),window.addEventListener("mouseup",this.touchEndHandler),window.addEventListener("touchmove",this.touchMoveHandler,{passive:!0}),window.addEventListener("mousemove",this.touchMoveHandler),e.target.addEventListener("click",this.clickHandler),this._renameDOMAttribute(e.target,"onclick","rocket-onclick"))}_onTouchMove(e){window.removeEventListener("touchend",this.touchEndHandler),window.removeEventListener("mouseup",this.touchEndHandler),window.removeEventListener("touchmove",this.touchMoveHandler,{passive:!0}),window.removeEventListener("mousemove",this.touchMoveHandler),e.target.removeEventListener("click",this.clickHandler),this._renameDOMAttribute(e.target,"rocket-onclick","onclick")}_onTouchEnd(e){window.removeEventListener("touchend",this.touchEndHandler),window.removeEventListener("mouseup",this.touchEndHandler),window.removeEventListener("touchmove",this.touchMoveHandler,{passive:!0}),window.removeEventListener("mousemove",this.touchMoveHandler)}_onClick(e){e.target.removeEventListener("click",this.clickHandler),this._renameDOMAttribute(e.target,"rocket-onclick","onclick"),this.interceptedClicks.push(e),e.preventDefault(),e.stopPropagation(),e.stopImmediatePropagation()}_replayClicks(){window.removeEventListener("touchstart",this.touchStartHandler,{passive:!0}),window.removeEventListener("mousedown",this.touchStartHandler),this.interceptedClicks.forEach((e=>{e.target.dispatchEvent(new MouseEvent("click",{view:e.view,bubbles:!0,cancelable:!0}))}))}_renameDOMAttribute(e,t,n){e.hasAttribute&&e.hasAttribute(t)&&(event.target.setAttribute(n,event.target.getAttribute(t)),event.target.removeAttribute(t))}_triggerListener(){this._removeUserInteractionListener(this),"loading"===document.readyState?document.addEventListener("DOMContentLoaded",this._loadEverythingNow.bind(this)):this._loadEverythingNow()}_preconnect3rdParties(){let e=[];document.querySelectorAll("script[type=rocketlazyloadscript]").forEach((t=>{if(t.hasAttribute("src")){const n=new URL(t.src).origin;n!==location.origin&&e.push({src:n,crossOrigin:t.crossOrigin||"module"===t.getAttribute("data-rocket-type")})}})),e=[...new Map(e.map((e=>[JSON.stringify(e),e]))).values()],this._batchInjectResourceHints(e,"preconnect")}async _loadEverythingNow(){this.lastBreath=Date.now(),this._delayEventListeners(),this._delayJQueryReady(this),this._handleDocumentWrite(),this._registerAllDelayedScripts(),this._preloadAllScripts(),await this._loadScriptsFromList(this.delayedScripts.normal),await this._loadScriptsFromList(this.delayedScripts.defer),await this._loadScriptsFromList(this.delayedScripts.async);try{await this._triggerDOMContentLoaded(),await this._triggerWindowLoad()}catch(e){}window.dispatchEvent(new Event("rocket-allScriptsLoaded")),this._replayClicks()}_registerAllDelayedScripts(){document.querySelectorAll("script[type=rocketlazyloadscript]").forEach((e=>{e.hasAttribute("src")?e.hasAttribute("async")&&!1!==e.async?this.delayedScripts.async.push(e):e.hasAttribute("defer")&&!1!==e.defer||"module"===e.getAttribute("data-rocket-type")?this.delayedScripts.defer.push(e):this.delayedScripts.normal.push(e):this.delayedScripts.normal.push(e)}))}async _transformScript(e){return await this._littleBreath(),new Promise((t=>{const n=document.createElement("script");[...e.attributes].forEach((e=>{let t=e.nodeName;"type"!==t&&("data-rocket-type"===t&&(t="type"),n.setAttribute(t,e.nodeValue))})),e.hasAttribute("src")?(n.addEventListener("load",t),n.addEventListener("error",t)):(n.text=e.text,t());try{e.parentNode.replaceChild(n,e)}catch(e){t()}}))}async _loadScriptsFromList(e){const t=e.shift();return t?(await this._transformScript(t),this._loadScriptsFromList(e)):Promise.resolve()}_preloadAllScripts(){this._batchInjectResourceHints([...this.delayedScripts.normal,...this.delayedScripts.defer,...this.delayedScripts.async],"preload")}_batchInjectResourceHints(e,t){var n=document.createDocumentFragment();e.forEach((e=>{if(e.src){const i=document.createElement("link");i.href=e.src,i.rel=t,"preconnect"!==t&&(i.as="script"),e.getAttribute&&"module"===e.getAttribute("data-rocket-type")&&(i.crossOrigin=!0),e.crossOrigin&&(i.crossOrigin=e.crossOrigin),n.appendChild(i)}})),document.head.appendChild(n)}_delayEventListeners(){let e={};function t(t,n){!function(t){function n(n){return e[t].eventsToRewrite.indexOf(n)>=0?"rocket-"+n:n}e[t]||(e[t]={originalFunctions:{add:t.addEventListener,remove:t.removeEventListener},eventsToRewrite:[]},t.addEventListener=function(){arguments[0]=n(arguments[0]),e[t].originalFunctions.add.apply(t,arguments)},t.removeEventListener=function(){arguments[0]=n(arguments[0]),e[t].originalFunctions.remove.apply(t,arguments)})}(t),e[t].eventsToRewrite.push(n)}function n(e,t){let n=e[t];Object.defineProperty(e,t,{get:()=>n||function(){},set(i){e["rocket"+t]=n=i}})}t(document,"DOMContentLoaded"),t(window,"DOMContentLoaded"),t(window,"load"),t(window,"pageshow"),t(document,"readystatechange"),n(document,"onreadystatechange"),n(window,"onload"),n(window,"onpageshow")}_delayJQueryReady(e){let t=window.jQuery;Object.defineProperty(window,"jQuery",{get:()=>t,set(n){if(n&&n.fn&&!e.allJQueries.includes(n)){n.fn.ready=n.fn.init.prototype.ready=function(t){e.domReadyFired?t.bind(document)(n):document.addEventListener("rocket-DOMContentLoaded",(()=>t.bind(document)(n)))};const t=n.fn.on;n.fn.on=n.fn.init.prototype.on=function(){if(this[0]===window){function e(e){return e.split(" ").map((e=>"load"===e||0===e.indexOf("load.")?"rocket-jquery-load":e)).join(" ")}"string"==typeof arguments[0]||arguments[0]instanceof String?arguments[0]=e(arguments[0]):"object"==typeof arguments[0]&&Object.keys(arguments[0]).forEach((t=>{delete Object.assign(arguments[0],{[e(t)]:arguments[0][t]})[t]}))}return t.apply(this,arguments),this},e.allJQueries.push(n)}t=n}})}async _triggerDOMContentLoaded(){this.domReadyFired=!0,await this._littleBreath(),document.dispatchEvent(new Event("rocket-DOMContentLoaded")),await this._littleBreath(),window.dispatchEvent(new Event("rocket-DOMContentLoaded")),await this._littleBreath(),document.dispatchEvent(new Event("rocket-readystatechange")),await this._littleBreath(),document.rocketonreadystatechange&&document.rocketonreadystatechange()}async _triggerWindowLoad(){await this._littleBreath(),window.dispatchEvent(new Event("rocket-load")),await this._littleBreath(),window.rocketonload&&window.rocketonload(),await this._littleBreath(),this.allJQueries.forEach((e=>e(window).trigger("rocket-jquery-load"))),await this._littleBreath();const e=new Event("rocket-pageshow");e.persisted=this.persisted,window.dispatchEvent(e),await this._littleBreath(),window.rocketonpageshow&&window.rocketonpageshow({persisted:this.persisted})}_handleDocumentWrite(){const e=new Map;document.write=document.writeln=function(t){const n=document.currentScript,i=document.createRange(),r=n.parentElement;let o=e.get(n);void 0===o&&(o=n.nextSibling,e.set(n,o));const s=document.createDocumentFragment();i.setStart(s,0),s.appendChild(i.createContextualFragment(t)),r.insertBefore(s,o)}}async _littleBreath(){Date.now()-this.lastBreath>45&&(await this._requestAnimFrame(),this.lastBreath=Date.now())}async _requestAnimFrame(){return document.hidden?new Promise((e=>setTimeout(e))):new Promise((e=>requestAnimationFrame(e)))}static run(){const e=new RocketLazyLoadScripts;e._addUserInteractionListener(e)}}RocketLazyLoadScripts.run();</script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- feeds & pingback -->
+<link rel="profile" href="http://gmpg.org/xfn/11" />
+<link rel="pingback" href="https://hvk.dyj.mybluehost.me/xmlrpc.php" />
+		<script type="rocketlazyloadscript" data-rocket-type="text/javascript">
+			window.flatStyles = window.flatStyles || ''
+
+			window.lightspeedOptimizeStylesheet = function () {
+				const currentStylesheet = document.querySelector( '.tcb-lightspeed-style:not([data-ls-optimized])' )
+
+				if ( currentStylesheet ) {
+					try {
+						if ( currentStylesheet.sheet && currentStylesheet.sheet.cssRules ) {
+							if ( window.flatStyles ) {
+								if ( this.optimizing ) {
+									setTimeout( window.lightspeedOptimizeStylesheet.bind( this ), 24 )
+								} else {
+									this.optimizing = true;
+
+									let rulesIndex = 0;
+
+									while ( rulesIndex < currentStylesheet.sheet.cssRules.length ) {
+										const rule = currentStylesheet.sheet.cssRules[ rulesIndex ]
+										/* remove rules that already exist in the page */
+										if ( rule.type === CSSRule.STYLE_RULE && window.flatStyles.includes( `${rule.selectorText}{` ) ) {
+											currentStylesheet.sheet.deleteRule( rulesIndex )
+										} else {
+											rulesIndex ++
+										}
+									}
+									/* optimize, mark it such, move to the next file, append the styles we have until now */
+									currentStylesheet.setAttribute( 'data-ls-optimized', '1' )
+
+									window.flatStyles += currentStylesheet.innerHTML
+
+									this.optimizing = false
+								}
+							} else {
+								window.flatStyles = currentStylesheet.innerHTML
+								currentStylesheet.setAttribute( 'data-ls-optimized', '1' )
+							}
+						}
+					} catch ( error ) {
+						console.warn( error )
+					}
+
+					if ( currentStylesheet.parentElement.tagName !== 'HEAD' ) {
+						/* always make sure that those styles end up in the head */
+						const stylesheetID = currentStylesheet.id;
+						/**
+						 * make sure that there is only one copy of the css
+						 * e.g display CSS
+						 */
+						if ( ( ! stylesheetID || ( stylesheetID && ! document.querySelector( `head #${stylesheetID}` ) ) ) ) {
+							document.head.prepend( currentStylesheet )
+						} else {
+							currentStylesheet.remove();
+						}
+					}
+				}
+			}
+
+			window.lightspeedOptimizeFlat = function ( styleSheetElement ) {
+				if ( document.querySelectorAll( 'link[href*="thrive_flat.css"]' ).length > 1 ) {
+					/* disable this flat if we already have one */
+					styleSheetElement.setAttribute( 'disabled', true )
+				} else {
+					/* if this is the first one, make sure he's in head */
+					if ( styleSheetElement.parentElement.tagName !== 'HEAD' ) {
+						document.head.append( styleSheetElement )
+					}
+				}
+			}
+		</script>
+		<title>2022年行骗中的5716家虚假外汇平台 &#8211; 开户通</title>
+<style type="text/css" id="tcb-style-base-post-12613"  onLoad="typeof window.lightspeedOptimizeStylesheet === 'function' && window.lightspeedOptimizeStylesheet()" class="tcb-lightspeed-style">.thrv-page-section { position: relative; box-sizing: border-box !important; }.thrv-page-section .tve-page-section-out { position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; box-sizing: border-box; transition: box-shadow 0.5s ease 0s, -webkit-box-shadow 0.5s ease 0s; overflow: hidden; }.thrv-page-section .tve-page-section-in { box-sizing: border-box; margin-right: auto; margin-left: auto; position: relative; z-index: 1; min-height: 40px; }.tve-page-section-in > .thrv_wrapper:first-child { margin-top: 0px; }.tve-page-section-in > .thrv_wrapper:last-child { margin-bottom: 0px; }.thrv_wrapper .tve-content-box-background { position: absolute; width: 100%; left: 0px; top: 0px; overflow: hidden; background-clip: padding-box; height: 100% !important; }.thrv_wrapper.thrv-content-box { box-sizing: border-box; position: relative; min-height: 10px; }.thrv_wrapper.thrv-content-box div:not(.thrv_icon):not(.ui-resizable-handle):not(.tve-auxiliary-icon-element) { box-sizing: border-box; }.tve-cb { display: inline-block; vertical-align: middle; clear: both; overflow: visible; width: 100%; z-index: 1; position: relative; min-height: 10px; }.thrv-button { max-width: 100%; margin-left: auto; margin-right: auto; display: table !important; }.thrv-button.thrv_wrapper { padding: 0px; }.thrv-button .tcb-plain-text { cursor: pointer; }a.tcb-button-link { background-color: rgb(26, 188, 156); padding: 12px 15px; font-size: 18px; box-sizing: border-box; display: inline-flex; -webkit-box-align: center; align-items: center; overflow: hidden; width: 100%; text-align: center; line-height: 1.2em; }a.tcb-button-link:hover { background-color: rgb(21, 162, 136); }.thrv-button a.tcb-button-link { color: rgb(255, 255, 255); text-decoration: none !important; }a.tcb-button-link > span::before { position: absolute; content: ""; display: none; top: -100px; bottom: -100px; width: 1px; left: 10px; background-color: rgb(0, 121, 0); }span.tcb-button-texts { color: inherit; display: block; -webkit-box-flex: 1; flex: 1 1 0%; position: relative; }span.tcb-button-texts > span { display: block; padding: 0px; }.tve_image_caption { position: relative; }.tve_image_caption:not(.tcb-mm-image.tve-tab-image) { height: auto !important; }.tve_image_caption .tve_image { max-width: 100%; width: 100%; }.tcb-plain-text { cursor: text; }.thrv_text_element { overflow-wrap: break-word; }.thrive-symbol-shortcode { position: relative; }article { box-sizing: border-box; transition: opacity 1s ease-in-out 0s; width: 100%; }.tcb-clear::after { display: block; height: 0px; content: ""; }.svg-shape-bottom { fill: rgb(255, 255, 255); }.thrv_wrapper .svg-shape-bottom { position: absolute; left: 0px; }.tve_ea_thrive_animation { opacity: 0; }.tve_ea_thrive_animation.tve_anim_start { opacity: 1; transition: all 0.5s ease-out 0s; }.tve_ea_thrive_animation.tve_anim_shutter_out_vertical { opacity: 1; visibility: visible !important; }.tve_ea_thrive_animation.tve_anim_shutter_out_vertical > .tcb-button-link { position: relative; }.tve_ea_thrive_animation.tve_anim_shutter_out_vertical > .tcb-button-link > span { position: relative; z-index: 1; }.tve_ea_thrive_animation.tve_anim_shutter_out_vertical > .tcb-button-link::before { content: ""; position: absolute; inset: 0px; }.tve_ea_thrive_animation.tve_anim_shutter_out_vertical > .tcb-button-link::after { visibility: visible; content: ""; position: absolute; inset: 0px; border-radius: 0px; transform: scaleY(0); transform-origin: 50% center; transition-property: transform, -webkit-transform; transition-duration: 0.3s; transition-timing-function: ease-out; }.tve_ea_thrive_animation.tve_anim_shutter_out_vertical.tve_anim_start > .tcb-button-link::after,.tve_ea_thrive_animation.tve_anim_shutter_out_vertical:hover > .tcb-button-link::after { transform: scaleY(1) !important; }.tcb-flex-row { display: flex; flex-flow: row nowrap; -webkit-box-align: stretch; align-items: stretch; -webkit-box-orient: horizontal; -webkit-box-direction: normal; -webkit-box-pack: justify; justify-content: space-between; margin-top: 0px; margin-left: -15px; padding-bottom: 15px; padding-top: 15px; }.tcb-flex-col { -webkit-box-flex: 1; flex: 1 1 auto; padding-top: 0px; padding-left: 15px; }.tcb-flex-row .tcb-flex-col { box-sizing: border-box; }.tcb-col { height: 100%; display: flex; -webkit-box-orient: vertical; -webkit-box-direction: normal; flex-direction: column; position: relative; }.tcb-flex-row .tcb-col { box-sizing: border-box; }html { text-rendering: auto !important; }html body { text-rendering: auto !important; }.thrv_wrapper { margin-top: 20px; margin-bottom: 20px; padding: 1px; }.thrv_wrapper div { box-sizing: content-box; }.thrv_symbol .thrv_wrapper:not(.thrv_icon) { box-sizing: border-box !important; }.thrv_wrapper.tve-elem-default-pad { padding: 20px; }.thrv_wrapper.thrv_text_element,.thrv_wrapper.thrv-page-section,.thrv_wrapper.thrv_symbol { margin: 0px; }.thrv_wrapper.thrv-columns { margin-top: 10px; margin-bottom: 10px; padding: 0px; }p { font-size: 1em; }.tve_image { border-radius: 0px; box-shadow: none; }div .tve_image_caption { padding: 0px; max-width: 100% !important; box-sizing: border-box !important; }.tve_image_caption .tve_image_frame { display: block; max-width: 100%; position: relative; overflow: hidden; }.tve_image_caption .tve_image { display: block; padding: 0px; height: auto; }.thrv_wrapper.thrv_contentbox_shortcode { position: relative; }@media (max-width: 767px){html,body { overflow-x: hidden !important; width: 100vw !important; }.tcb-flex-row { -webkit-box-orient: vertical; -webkit-box-direction: normal; flex-direction: column; }.tcb-flex-row.v-2 { -webkit-box-orient: horizontal; -webkit-box-direction: normal; flex-direction: row; }.tcb-flex-row.v-2:not(.tcb-mobile-no-wrap) { flex-wrap: wrap; }.tcb-flex-row.v-2:not(.tcb-mobile-no-wrap) > .tcb-flex-col { width: 100%; -webkit-box-flex: 1; flex: 1 0 390px; max-width: 100% !important; }}@media not all, not all{.tcb-flex-col { width: 100%; }.tcb-col { display: block; }}@media screen and (max-device-width: 480px){body { text-size-adjust: none; }}</style><meta name='robots' content='max-image-preview:large' />
+<link rel='dns-prefetch' href='//cdn.dendou.la' />
+<link rel='dns-prefetch' href='//cdn.jsdelivr.net' />
+<link rel="alternate" type="application/rss+xml" title="开户通 &raquo; Feed" href="https://hvk.dyj.mybluehost.me/feed" />
+<link rel="alternate" type="application/rss+xml" title="开户通 &raquo; 评论Feed" href="https://hvk.dyj.mybluehost.me/comments/feed" />
+<link data-minify="1" rel='stylesheet' id='rhstyle-css'  href='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rewise/style.css?ver=1659238986' type='text/css' media='all' />
+<link data-minify="1" rel='stylesheet' id='rhslidingpanel-css'  href='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/css/slidingpanel.css?ver=1659238986' type='text/css' media='all' />
+<link data-minify="1" rel='stylesheet' id='rhcompare-css'  href='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/css/dynamiccomparison.css?ver=1659238986' type='text/css' media='all' />
+<link data-minify="1" rel='stylesheet' id='wc-blocks-vendors-style-css'  href='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/plugins/woocommerce/packages/woocommerce-blocks/build/wc-blocks-vendors-style.css?ver=1659238986' type='text/css' media='all' />
+<link data-minify="1" rel='stylesheet' id='wc-blocks-style-css'  href='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/plugins/woocommerce/packages/woocommerce-blocks/build/wc-blocks-style.css?ver=1659238986' type='text/css' media='all' />
+<style id='global-styles-inline-css' type='text/css'>
+body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--color--main: var(--rehub-main-color);--wp--preset--color--secondary: var(--rehub-sec-color);--wp--preset--color--buttonmain: var(--rehub-main-btn-bg);--wp--preset--color--cyan-grey: #abb8c3;--wp--preset--color--orange-light: #fcb900;--wp--preset--color--red: #cf2e2e;--wp--preset--color--red-bright: #f04057;--wp--preset--color--vivid-green: #00d084;--wp--preset--color--orange: #ff6900;--wp--preset--color--blue: #0693e3;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--duotone--dark-grayscale: url('#wp-duotone-dark-grayscale');--wp--preset--duotone--grayscale: url('#wp-duotone-grayscale');--wp--preset--duotone--purple-yellow: url('#wp-duotone-purple-yellow');--wp--preset--duotone--blue-red: url('#wp-duotone-blue-red');--wp--preset--duotone--midnight: url('#wp-duotone-midnight');--wp--preset--duotone--magenta-yellow: url('#wp-duotone-magenta-yellow');--wp--preset--duotone--purple-green: url('#wp-duotone-purple-green');--wp--preset--duotone--blue-orange: url('#wp-duotone-blue-orange');--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--font-family--system-font: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;--wp--preset--font-family--rh-nav-font: var(--rehub-nav-font,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif);--wp--preset--font-family--rh-head-font: var(--rehub-head-font,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif);--wp--preset--font-family--rh-btn-font: var(--rehub-btn-font,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif);--wp--preset--font-family--rh-body-font: var(--rehub-body-font,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif);}body { margin: 0; }.wp-site-blocks > .alignleft { float: left; margin-right: 2em; }.wp-site-blocks > .alignright { float: right; margin-left: 2em; }.wp-site-blocks > .aligncenter { justify-content: center; margin-left: auto; margin-right: auto; }h1{font-size: 29px;line-height: 34px;margin-top: 10px;margin-bottom: 31px;}h2{font-size: 25px;line-height: 31px;margin-top: 10px;margin-bottom: 31px;}h3{font-size: 20px;line-height: 28px;margin-top: 10px;margin-bottom: 25px;}h4{font-size: 18px;line-height: 24px;margin-top: 10px;margin-bottom: 18px;}h5{font-size: 16px;line-height: 20px;margin-top: 10px;margin-bottom: 15px;}h6{font-size: 14px;line-height: 20px;margin-top: 0px;margin-bottom: 10px;}a{color: var(--rehub-link-color, violet);}.wp-block-post-title{margin-top: 4px;margin-right: 0;margin-bottom: 15px;margin-left: 0;}.wp-block-image{margin-top: 0px;margin-bottom: 31px;}.wp-block-media-text{margin-top: 0px;margin-bottom: 31px;}.wp-block-post-content{font-size: 16px;line-height: 28px;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-main-color{color: var(--wp--preset--color--main) !important;}.has-secondary-color{color: var(--wp--preset--color--secondary) !important;}.has-buttonmain-color{color: var(--wp--preset--color--buttonmain) !important;}.has-cyan-grey-color{color: var(--wp--preset--color--cyan-grey) !important;}.has-orange-light-color{color: var(--wp--preset--color--orange-light) !important;}.has-red-color{color: var(--wp--preset--color--red) !important;}.has-red-bright-color{color: var(--wp--preset--color--red-bright) !important;}.has-vivid-green-color{color: var(--wp--preset--color--vivid-green) !important;}.has-orange-color{color: var(--wp--preset--color--orange) !important;}.has-blue-color{color: var(--wp--preset--color--blue) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-main-background-color{background-color: var(--wp--preset--color--main) !important;}.has-secondary-background-color{background-color: var(--wp--preset--color--secondary) !important;}.has-buttonmain-background-color{background-color: var(--wp--preset--color--buttonmain) !important;}.has-cyan-grey-background-color{background-color: var(--wp--preset--color--cyan-grey) !important;}.has-orange-light-background-color{background-color: var(--wp--preset--color--orange-light) !important;}.has-red-background-color{background-color: var(--wp--preset--color--red) !important;}.has-red-bright-background-color{background-color: var(--wp--preset--color--red-bright) !important;}.has-vivid-green-background-color{background-color: var(--wp--preset--color--vivid-green) !important;}.has-orange-background-color{background-color: var(--wp--preset--color--orange) !important;}.has-blue-background-color{background-color: var(--wp--preset--color--blue) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-main-border-color{border-color: var(--wp--preset--color--main) !important;}.has-secondary-border-color{border-color: var(--wp--preset--color--secondary) !important;}.has-buttonmain-border-color{border-color: var(--wp--preset--color--buttonmain) !important;}.has-cyan-grey-border-color{border-color: var(--wp--preset--color--cyan-grey) !important;}.has-orange-light-border-color{border-color: var(--wp--preset--color--orange-light) !important;}.has-red-border-color{border-color: var(--wp--preset--color--red) !important;}.has-red-bright-border-color{border-color: var(--wp--preset--color--red-bright) !important;}.has-vivid-green-border-color{border-color: var(--wp--preset--color--vivid-green) !important;}.has-orange-border-color{border-color: var(--wp--preset--color--orange) !important;}.has-blue-border-color{border-color: var(--wp--preset--color--blue) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}.has-system-font-font-family{font-family: var(--wp--preset--font-family--system-font) !important;}.has-rh-nav-font-font-family{font-family: var(--wp--preset--font-family--rh-nav-font) !important;}.has-rh-head-font-font-family{font-family: var(--wp--preset--font-family--rh-head-font) !important;}.has-rh-btn-font-font-family{font-family: var(--wp--preset--font-family--rh-btn-font) !important;}.has-rh-body-font-font-family{font-family: var(--wp--preset--font-family--rh-body-font) !important;}
+</style>
+<style id='woocommerce-inline-inline-css' type='text/css'>
+.woocommerce form .form-row .required { visibility: visible; }
+</style>
+<link data-minify="1" rel='stylesheet' id='parent-style-css'  href='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/style.css?ver=1659238986' type='text/css' media='all' />
+<link data-minify="1" rel='stylesheet' id='rehubicons-css'  href='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/iconstyle.css?ver=1659238986' type='text/css' media='all' />
+<link data-minify="1" rel='stylesheet' id='rhajaxsearch-css'  href='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/css/ajaxsearch.css?ver=1659238986' type='text/css' media='all' />
+<link data-minify="1" rel='stylesheet' id='rhsingle-css'  href='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/css/single.css?ver=1659238992' type='text/css' media='all' />
+<link data-minify="1" rel='stylesheet' id='rehub-woocommerce-css'  href='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/css/woocommerce.css?ver=1659238986' type='text/css' media='all' />
+<style id='rocket-lazyload-inline-css' type='text/css'>
+.rll-youtube-player{position:relative;padding-bottom:56.23%;height:0;overflow:hidden;max-width:100%;}.rll-youtube-player:focus-within{outline: 2px solid currentColor;outline-offset: 5px;}.rll-youtube-player iframe{position:absolute;top:0;left:0;width:100%;height:100%;z-index:100;background:0 0}.rll-youtube-player img{bottom:0;display:block;left:0;margin:auto;max-width:100%;width:100%;position:absolute;right:0;top:0;border:none;height:auto;-webkit-transition:.4s all;-moz-transition:.4s all;transition:.4s all}.rll-youtube-player img:hover{-webkit-filter:brightness(75%)}.rll-youtube-player .play{height:100%;width:100%;left:0;top:0;position:absolute;background:url(https://hvk.dyj.mybluehost.me/wp-content/plugins/wp-rocket/assets/img/youtube.png) no-repeat center;background-color: transparent !important;cursor:pointer;border:none;}.wp-embed-responsive .wp-has-aspect-ratio .rll-youtube-player{position:absolute;padding-bottom:0;width:100%;height:100%;top:0;bottom:0;left:0;right:0}
+</style>
+<link data-minify="1" rel='stylesheet' id='select2-css'  href='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/plugins/woocommerce/assets/css/select2.css?ver=1659238986' type='text/css' media='all' />
+<script type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-includes/js/jquery/jquery.min.js?ver=3.6.0' id='jquery-core-js' defer></script>
+<script type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.3.2' id='jquery-migrate-js' defer></script>
+<script type='text/javascript' id='rehub-postview-js-extra'>
+/* <![CDATA[ */
+var postviewvar = {"rhpost_ajax_url":"https:\/\/hvk.dyj.mybluehost.me\/wp-content\/plugins\/rehub-framework\/includes\/rehub_ajax.php","post_id":"12613"};
+/* ]]> */
+</script>
+<script type="rocketlazyloadscript" data-minify="1" data-rocket-type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/plugins/rehub-framework/assets/js/postviews.js?ver=1659238992' id='rehub-postview-js' defer></script>
+<script type="rocketlazyloadscript" data-rocket-type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-includes/js/imagesloaded.min.js?ver=4.1.4' id='imagesloaded-js' defer></script>
+<script type="rocketlazyloadscript" data-rocket-type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-includes/js/masonry.min.js?ver=4.2.2' id='masonry-js' defer></script>
+<script type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-includes/js/jquery/jquery.masonry.min.js?ver=3.1.2b' id='jquery-masonry-js' defer></script>
+<script type='text/javascript' id='tve_frontend-js-extra'>
+/* <![CDATA[ */
+var tve_frontend_options = {"ajaxurl":"https:\/\/hvk.dyj.mybluehost.me\/wp-admin\/admin-ajax.php","is_editor_page":"","page_events":[],"is_single":"1","social_fb_app_id":"","dash_url":"https:\/\/hvk.dyj.mybluehost.me\/wp-content\/plugins\/thrive-visual-editor\/thrive-dashboard","queried_object":{"ID":12613,"post_author":"1"},"query_vars":{"page":"","name":"last-fake-forex-brokers"},"$_POST":[],"translations":{"Copy":"\u590d\u5236","empty_username":"\u9519\u8bef\uff1a\u7528\u6237\u540d\u5b57\u6bb5\u4e3a\u7a7a\u3002","empty_password":"\u9519\u8bef\uff1a\u5bc6\u7801\u5b57\u6bb5\u4e3a\u7a7a\u3002","empty_login":"\u9519\u8bef\uff1a\u8f93\u5165\u7528\u6237\u540d\u6216\u7535\u5b50\u90ae\u4ef6\u5730\u5740\u3002","min_chars":"\u81f3\u5c11\u9700\u8981%s \u4e2a\u5b57\u7b26","no_headings":"No headings found","registration_err":{"required_field":"<strong>Error<\/strong>: This field is required","required_email":"<strong>\u9519\u8bef<\/strong>\uff1a\u8bf7\u8f93\u5165\u60a8\u7684\u7535\u5b50\u90ae\u7bb1\u5730\u5740\u3002","invalid_email":"<strong>Error<\/strong>: The email address isn&#8217;t correct.","passwordmismatch":"<strong>Error<\/strong>: Password mismatch"}},"routes":{"posts":"https:\/\/hvk.dyj.mybluehost.me\/wp-json\/tcb\/v1\/posts"},"nonce":"dd64710649","allow_video_src":"","lead_generation_custom_tag_apis":["activecampaign","aweber","convertkit","drip","klicktipp","mailchimp","sendlane","zapier"],"post_request_data":[],"ip":"67.222.38.82","current_user":[],"post_id":"12613","post_title":"2022\u5e74\u884c\u9a97\u4e2d\u76845716\u5bb6\u865a\u5047\u5916\u6c47\u5e73\u53f0","post_type":"post","post_url":"https:\/\/hvk.dyj.mybluehost.me\/last-fake-forex-brokers.html","is_lp":"","woo_rest_routes":{"shop":"https:\/\/hvk.dyj.mybluehost.me\/wp-json\/tcb\/v1\/woo\/render_shop","product_categories":"https:\/\/hvk.dyj.mybluehost.me\/wp-json\/tcb\/v1\/woo\/render_product_categories","product_variations":"https:\/\/hvk.dyj.mybluehost.me\/wp-json\/tcb\/v1\/woo\/variations"},"conditional_display":{"is_tooltip_dismissed":false}};
+/* ]]> */
+</script>
+<script type="rocketlazyloadscript" data-rocket-type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-content/plugins/thrive-visual-editor/editor/js/dist/modules/general.min.js?ver=3.11' id='tve_frontend-js' defer></script>
+<link rel="https://api.w.org/" href="https://hvk.dyj.mybluehost.me/wp-json/" /><link rel="alternate" type="application/json" href="https://hvk.dyj.mybluehost.me/wp-json/wp/v2/posts/12613" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://hvk.dyj.mybluehost.me/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://hvk.dyj.mybluehost.me/wp-includes/wlwmanifest.xml" /> 
+<meta name="generator" content="WordPress 6.0.1" />
+<meta name="generator" content="WooCommerce 6.7.0" />
+<link rel="canonical" href="https://hvk.dyj.mybluehost.me/last-fake-forex-brokers.html" />
+<link rel='shortlink' href='https://hvk.dyj.mybluehost.me/?p=12613' />
+<link rel="alternate" type="application/json+oembed" href="https://hvk.dyj.mybluehost.me/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fhvk.dyj.mybluehost.me%2Flast-fake-forex-brokers.html" />
+<link rel="alternate" type="text/xml+oembed" href="https://hvk.dyj.mybluehost.me/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fhvk.dyj.mybluehost.me%2Flast-fake-forex-brokers.html&#038;format=xml" />
+<style type="text/css" id="tve_global_variables">:root{--tcb-background-author-image:url(https://secure.gravatar.com/avatar/c9ff27b39a2038e7403a44d73ccfcfaf?s=256&d=mm&r=g);--tcb-background-user-image:url();--tcb-background-featured-image-thumbnail:url(https://hvk.dyj.mybluehost.me/wp-content/plugins/thrive-visual-editor/editor/css/images/featured_image.png);}</style><link rel="preload" href="https://hvk.dyj.mybluehost.me/wp-content/themes/rehub-theme/fonts/rhicons.woff2?3oibrk" as="font" type="font/woff2" crossorigin="crossorigin"><style type="text/css"> @media (min-width:1025px){header .logo-section{padding:15px 0;}}.rate-line .filled,.rate_bar_wrap .review-top .overall-score,.rate-bar-bar,.top_rating_item .score.square_score,.radial-progress .circle .mask .fill{background-color:#ff0033;}.meter-wrapper .meter,.rate_bar_wrap_two_reviews .score_val{border-color:#ff0033;}body .user-review-criteria .rate-bar-bar{background-color:#001fff;}.userstar-rating span:before{color:#001fff;}.rate_bar_wrap_two_reviews .user-review-criteria .score_val{border-color:#001fff;}nav.top_menu > ul > li > a{padding:11px 15px 15px 15px;font-size:17px}nav.top_menu > ul > li > a{font-size:18px}nav.top_menu > ul > li > a{font-weight:normal;}header .main-nav,.main-nav.dark_style,.header_one_row .main-nav{background:none repeat scroll 0 0 #fffccb!important;box-shadow:none;}.main-nav{border-bottom:none;border-top:none;}.dl-menuwrapper .dl-menu{margin:0 !important}nav.top_menu > ul > li > a{color:#36383d !important;}nav.top_menu > ul > li > a:hover{box-shadow:none;}.responsive_nav_wrap .user-ava-intop:after,.dl-menuwrapper button i,.responsive_nav_wrap .rh-header-icon{color:#36383d !important;}.dl-menuwrapper button svg line{stroke:#36383d !important;}#main_header,.is-sticky .logo_section_wrap,.sticky-active.logo_section_wrap{background-color:#fffeeb !important}.main-nav.white_style{border-top:none}nav.top_menu > ul:not(.off-canvas) > li > a:after{top:auto;bottom:0}.header-top{border:none;}.footer-bottom{background-color:#fffeeb !important}.footer-bottom .footer_widget{border:none !important} .widget .title:after{border-bottom:2px solid #2f73ff;}.rehub-main-color-border,nav.top_menu > ul > li.vertical-menu.border-main-color .sub-menu,.rh-main-bg-hover:hover,.wp-block-quote,ul.def_btn_link_tabs li.active a,.wp-block-pullquote{border-color:#2f73ff;}.wpsm_promobox.rehub_promobox{border-left-color:#2f73ff!important;}.color_link{color:#2f73ff !important;}.featured_slider:hover .score,.top_chart_controls .controls:hover,article.post .wpsm_toplist_heading:before{border-color:#2f73ff;}.btn_more:hover,.tw-pagination .current{border:1px solid #2f73ff;color:#fff}.rehub_woo_review .rehub_woo_tabs_menu li.current{border-top:3px solid #2f73ff;}.gallery-pics .gp-overlay{box-shadow:0 0 0 4px #2f73ff inset;}.post .rehub_woo_tabs_menu li.current,.woocommerce div.product .woocommerce-tabs ul.tabs li.active{border-top:2px solid #2f73ff;}.rething_item a.cat{border-bottom-color:#2f73ff}nav.top_menu ul li ul.sub-menu{border-bottom:2px solid #2f73ff;}.widget.deal_daywoo,.elementor-widget-wpsm_woofeatured .deal_daywoo{border:3px solid #2f73ff;padding:20px;background:#fff;}.deal_daywoo .wpsm-bar-bar{background-color:#2f73ff !important} #buddypress div.item-list-tabs ul li.selected a span,#buddypress div.item-list-tabs ul li.current a span,#buddypress div.item-list-tabs ul li a span,.user-profile-div .user-menu-tab > li.active > a,.user-profile-div .user-menu-tab > li.active > a:focus,.user-profile-div .user-menu-tab > li.active > a:hover,.news_in_thumb:hover a.rh-label-string,.news_out_thumb:hover a.rh-label-string,.col-feat-grid:hover a.rh-label-string,.carousel-style-deal .re_carousel .controls,.re_carousel .controls:hover,.openedprevnext .postNavigation .postnavprev,.postNavigation .postnavprev:hover,.top_chart_pagination a.selected,.flex-control-paging li a.flex-active,.flex-control-paging li a:hover,.btn_more:hover,body .tabs-menu li:hover,body .tabs-menu li.current,.featured_slider:hover .score,#bbp_user_edit_submit,.bbp-topic-pagination a,.bbp-topic-pagination a,.custom-checkbox label.checked:after,.slider_post .caption,ul.postpagination li.active a,ul.postpagination li:hover a,ul.postpagination li a:focus,.top_theme h5 strong,.re_carousel .text:after,#topcontrol:hover,.main_slider .flex-overlay:hover a.read-more,.rehub_chimp #mc_embed_signup input#mc-embedded-subscribe,#rank_1.rank_count,#toplistmenu > ul li:before,.rehub_chimp:before,.wpsm-members > strong:first-child,.r_catbox_btn,.wpcf7 .wpcf7-submit,.wpsm_pretty_hover li:hover,.wpsm_pretty_hover li.current,.rehub-main-color-bg,.togglegreedybtn:after,.rh-bg-hover-color:hover a.rh-label-string,.rh-main-bg-hover:hover,.rh_wrapper_video_playlist .rh_video_currently_playing,.rh_wrapper_video_playlist .rh_video_currently_playing.rh_click_video:hover,.rtmedia-list-item .rtmedia-album-media-count,.tw-pagination .current,.dokan-dashboard .dokan-dash-sidebar ul.dokan-dashboard-menu li.active,.dokan-dashboard .dokan-dash-sidebar ul.dokan-dashboard-menu li:hover,.dokan-dashboard .dokan-dash-sidebar ul.dokan-dashboard-menu li.dokan-common-links a:hover,#ywqa-submit-question,.woocommerce .widget_price_filter .ui-slider .ui-slider-range,.rh-hov-bor-line > a:after,nav.top_menu > ul:not(.off-canvas) > li > a:after,.rh-border-line:after,.wpsm-table.wpsm-table-main-color table tr th,.rh-hov-bg-main-slide:before,.rh-hov-bg-main-slidecol .col_item:before{background:#2f73ff;}@media (max-width:767px){.postNavigation .postnavprev{background:#2f73ff;}}.rh-main-bg-hover:hover,.rh-main-bg-hover:hover .whitehovered,.user-profile-div .user-menu-tab > li.active > a{color:#fff !important} a,.carousel-style-deal .deal-item .priced_block .price_count ins,nav.top_menu ul li.menu-item-has-children ul li.menu-item-has-children > a:before,.top_chart_controls .controls:hover,.flexslider .fa-pulse,.footer-bottom .widget .f_menu li a:hover,.comment_form h3 a,.bbp-body li.bbp-forum-info > a:hover,.bbp-body li.bbp-topic-title > a:hover,#subscription-toggle a:before,#favorite-toggle a:before,.aff_offer_links .aff_name a,.rh-deal-price,.commentlist .comment-content small a,.related_articles .title_cat_related a,article em.emph,.campare_table table.one td strong.red,.sidebar .tabs-item .detail p a,.footer-bottom .widget .title span,footer p a,.welcome-frase strong,article.post .wpsm_toplist_heading:before,.post a.color_link,.categoriesbox:hover h3 a:after,.bbp-body li.bbp-forum-info > a,.bbp-body li.bbp-topic-title > a,.widget .title i,.woocommerce-MyAccount-navigation ul li.is-active a,.category-vendormenu li.current a,.deal_daywoo .title,.rehub-main-color,.wpsm_pretty_colored ul li.current a,.wpsm_pretty_colored ul li.current,.rh-heading-hover-color:hover h2 a,.rh-heading-hover-color:hover h3 a,.rh-heading-hover-color:hover h4 a,.rh-heading-hover-color:hover h5 a,.rh-heading-hover-color:hover h3,.rh-heading-hover-color:hover h2,.rh-heading-hover-color:hover h4,.rh-heading-hover-color:hover h5,.rh-heading-hover-color:hover .rh-heading-hover-item a,.rh-heading-icon:before,.widget_layered_nav ul li.chosen a:before,.wp-block-quote.is-style-large p,ul.page-numbers li span.current,ul.page-numbers li a:hover,ul.page-numbers li.active a,.page-link > span:not(.page-link-title),blockquote:not(.wp-block-quote) p,span.re_filtersort_btn:hover,span.active.re_filtersort_btn,.deal_daywoo .price,div.sortingloading:after{color:#2f73ff;}a{color:#2f73ff;} .page-link > span:not(.page-link-title),.widget.widget_affegg_widget .title,.widget.top_offers .title,.widget.cegg_widget_products .title,header .header_first_style .search form.search-form [type="submit"],header .header_eight_style .search form.search-form [type="submit"],.filter_home_pick span.active,.filter_home_pick span:hover,.filter_product_pick span.active,.filter_product_pick span:hover,.rh_tab_links a.active,.rh_tab_links a:hover,.wcv-navigation ul.menu li.active,.wcv-navigation ul.menu li:hover a,form.search-form [type="submit"],.rehub-sec-color-bg,input#ywqa-submit-question,input#ywqa-send-answer,.woocommerce button.button.alt,.tabsajax span.active.re_filtersort_btn,.wpsm-table.wpsm-table-sec-color table tr th,.rh-slider-arrow,.rh-hov-bg-sec-slide:before,.rh-hov-bg-sec-slidecol .col_item:before{background:#2f73ff !important;color:#fff !important;outline:0}.widget.widget_affegg_widget .title:after,.widget.top_offers .title:after,.widget.cegg_widget_products .title:after{border-top-color:#2f73ff !important;}.page-link > span:not(.page-link-title){border:1px solid #2f73ff;}.page-link > span:not(.page-link-title),.header_first_style .search form.search-form [type="submit"] i{color:#fff !important;}.rh_tab_links a.active,.rh_tab_links a:hover,.rehub-sec-color-border,nav.top_menu > ul > li.vertical-menu.border-sec-color > .sub-menu,body .rh-slider-thumbs-item--active{border-color:#2f73ff}.rh_wrapper_video_playlist .rh_video_currently_playing,.rh_wrapper_video_playlist .rh_video_currently_playing.rh_click_video:hover{background-color:#2f73ff;box-shadow:1200px 0 0 #2f73ff inset;}.rehub-sec-color{color:#2f73ff} form.search-form input[type="text"]{border-radius:4px}.news .priced_block .price_count,.blog_string .priced_block .price_count,.main_slider .price_count{margin-right:5px}.right_aff .priced_block .btn_offer_block,.right_aff .priced_block .price_count{border-radius:0 !important}form.search-form.product-search-form input[type="text"]{border-radius:4px 0 0 4px;}form.search-form [type="submit"]{border-radius:0 4px 4px 0;}.rtl form.search-form.product-search-form input[type="text"]{border-radius:0 4px 4px 0;}.rtl form.search-form [type="submit"]{border-radius:4px 0 0 4px;}.price_count,.rehub_offer_coupon,#buddypress .dir-search input[type=text],.gmw-form-wrapper input[type=text],.gmw-form-wrapper select,#buddypress a.button,.btn_more,#main_header .wpsm-button,#rh-header-cover-image .wpsm-button,#wcvendor_image_bg .wpsm-button,input[type="text"],textarea,input[type="tel"],input[type="password"],input[type="email"],input[type="url"],input[type="number"],.def_btn,input[type="submit"],input[type="button"],input[type="reset"],.rh_offer_list .offer_thumb .deal_img_wrap,.grid_onsale,.rehub-main-smooth,.re_filter_instore span.re_filtersort_btn:hover,.re_filter_instore span.active.re_filtersort_btn,#buddypress .standard-form input[type=text],#buddypress .standard-form textarea,.blacklabelprice{border-radius:4px}.news-community,.woocommerce .products.grid_woo .product,.rehub_chimp #mc_embed_signup input.email,#mc_embed_signup input#mc-embedded-subscribe,.rh_offer_list,.woo-tax-logo,#buddypress div.item-list-tabs ul li a,#buddypress form#whats-new-form,#buddypress div#invite-list,#buddypress #send-reply div.message-box,.rehub-sec-smooth,.rate-bar-bar,.rate-bar,#wcfm-main-contentainer #wcfm-content,.wcfm_welcomebox_header{border-radius:5px}#rhSplashSearch form.search-form input[type="text"],#rhSplashSearch form.search-form [type="submit"]{border-radius:0 !important} .woocommerce .woo-button-area .masked_coupon,.woocommerce a.woo_loop_btn,.woocommerce .button.checkout,.woocommerce input.button.alt,.woocommerce a.add_to_cart_button:not(.flat-woo-btn),.woocommerce-page a.add_to_cart_button:not(.flat-woo-btn),.woocommerce .single_add_to_cart_button,.woocommerce div.product form.cart .button,.woocommerce .checkout-button.button,.priced_block .btn_offer_block,.priced_block .button,.rh-deal-compact-btn,input.mdf_button,#buddypress input[type="submit"],#buddypress input[type="button"],#buddypress input[type="reset"],#buddypress button.submit,.wpsm-button.rehub_main_btn,.wcv-grid a.button,input.gmw-submit,#ws-plugin--s2member-profile-submit,#rtmedia_create_new_album,input[type="submit"].dokan-btn-theme,a.dokan-btn-theme,.dokan-btn-theme,#wcfm_membership_container a.wcfm_submit_button,.woocommerce button.button,.rehub-main-btn-bg,.woocommerce #payment #place_order,.wc-block-grid__product-add-to-cart.wp-block-button .wp-block-button__link{background:none #43c801 !important;color:#ffffff !important;fill:#ffffff !important;border:none !important;text-decoration:none !important;outline:0;box-shadow:-1px 6px 19px rgba(67,200,1,0.2) !important;border-radius:4px !important;}.rehub-main-btn-bg > a{color:#ffffff !important;}.woocommerce a.woo_loop_btn:hover,.woocommerce .button.checkout:hover,.woocommerce input.button.alt:hover,.woocommerce a.add_to_cart_button:not(.flat-woo-btn):hover,.woocommerce-page a.add_to_cart_button:not(.flat-woo-btn):hover,.woocommerce a.single_add_to_cart_button:hover,.woocommerce-page a.single_add_to_cart_button:hover,.woocommerce div.product form.cart .button:hover,.woocommerce-page div.product form.cart .button:hover,.woocommerce .checkout-button.button:hover,.priced_block .btn_offer_block:hover,.wpsm-button.rehub_main_btn:hover,#buddypress input[type="submit"]:hover,#buddypress input[type="button"]:hover,#buddypress input[type="reset"]:hover,#buddypress button.submit:hover,.small_post .btn:hover,.ap-pro-form-field-wrapper input[type="submit"]:hover,.wcv-grid a.button:hover,#ws-plugin--s2member-profile-submit:hover,.rething_button .btn_more:hover,#wcfm_membership_container a.wcfm_submit_button:hover,.woocommerce #payment #place_order:hover,.woocommerce button.button:hover,.rehub-main-btn-bg:hover,.rehub-main-btn-bg:hover > a,.wc-block-grid__product-add-to-cart.wp-block-button .wp-block-button__link:hover{background:none #43c801 !important;color:#ffffff !important;border-color:transparent;box-shadow:-1px 6px 13px rgba(67,200,1,0.4) !important;}.rehub_offer_coupon:hover{border:1px dashed #43c801;}.rehub_offer_coupon:hover i.far,.rehub_offer_coupon:hover i.fal,.rehub_offer_coupon:hover i.fas{color:#43c801}.re_thing_btn .rehub_offer_coupon.not_masked_coupon:hover{color:#43c801 !important}.woocommerce a.woo_loop_btn:active,.woocommerce .button.checkout:active,.woocommerce .button.alt:active,.woocommerce a.add_to_cart_button:not(.flat-woo-btn):active,.woocommerce-page a.add_to_cart_button:not(.flat-woo-btn):active,.woocommerce a.single_add_to_cart_button:active,.woocommerce-page a.single_add_to_cart_button:active,.woocommerce div.product form.cart .button:active,.woocommerce-page div.product form.cart .button:active,.woocommerce .checkout-button.button:active,.wpsm-button.rehub_main_btn:active,#buddypress input[type="submit"]:active,#buddypress input[type="button"]:active,#buddypress input[type="reset"]:active,#buddypress button.submit:active,.ap-pro-form-field-wrapper input[type="submit"]:active,.wcv-grid a.button:active,#ws-plugin--s2member-profile-submit:active,.woocommerce #payment #place_order:active,input[type="submit"].dokan-btn-theme:active,a.dokan-btn-theme:active,.dokan-btn-theme:active,.woocommerce button.button:active,.rehub-main-btn-bg:active,.wc-block-grid__product-add-to-cart.wp-block-button .wp-block-button__link:active{background:none #43c801 !important;box-shadow:0 1px 0 #999 !important;top:2px;color:#ffffff !important;}.rehub_btn_color,.rehub_chimp_flat #mc_embed_signup input#mc-embedded-subscribe{background-color:#43c801;border:1px solid #43c801;color:#ffffff;text-shadow:none}.rehub_btn_color:hover{color:#ffffff;background-color:#43c801;border:1px solid #43c801;}.rething_button .btn_more{border:1px solid #43c801;color:#43c801;}.rething_button .priced_block.block_btnblock .price_count{color:#43c801;font-weight:normal;}.widget_merchant_list .buttons_col{background-color:#43c801 !important;}.widget_merchant_list .buttons_col a{color:#ffffff !important;}.rehub-svg-btn-fill svg{fill:#43c801;}.rehub-svg-btn-stroke svg{stroke:#43c801;}@media (max-width:767px){#float-panel-woo-area{border-top:1px solid #43c801}}:root{--rehub-main-color:#2f73ff;--rehub-sec-color:#2f73ff;--rehub-main-btn-bg:#43c801;--rehub-link-color:#2f73ff;}@media screen and (min-width:1140px){.rh-boxed-container .rh-outer-wrap{width:1120px}.rh-container,.content{width:1080px;}.centered-container .vc_col-sm-12 > * > .wpb_wrapper,.vc_section > .vc_row,body .elementor-section.elementor-section-boxed > .elementor-container,.wp-block-cover__inner-container{max-width:1080px}.vc_row.vc_rehub_container > .vc_col-sm-8,.main-side:not(.full_width){width:755px}.vc_row.vc_rehub_container>.vc_col-sm-4,.sidebar,.side-twocol{width:300px}.side-twocol .columns{height:200px}.main_slider.flexslider .slides .slide{height:418px;line-height:418px}.main_slider.flexslider{height:418px}.main-side,.gallery-pics{width:728px;}.main_slider.flexslider{width:calc(100% - 325px);}.main_slider .flex-overlay h2{font-size:36px;line-height:34px}.offer_grid .offer_thumb img,.offer_grid figure img,figure.eq_figure img{height:130px}header .logo{max-width:300px;}.rh_video_playlist_column_full .rh_container_video_playlist{width:320px !important}.rh_video_playlist_column_full .rh_wrapper_player{width:calc(100% - 320px) !important;}.rehub_chimp h3{font-size:20px}.outer_mediad_left{margin-left:-690px !important}.outer_mediad_right{margin-left:570px !important}}.re-line-badge.badge_1,.re-ribbon-badge.badge_1 span{background:#f9cc50;}.re-line-badge.re-line-table-badge.badge_1:before{border-top-color:#f9cc50}.re-line-badge.re-line-table-badge.badge_1:after{border-bottom-color:#f9cc50}.re-line-badge.badge_2,.re-ribbon-badge.badge_2 span{background:#43c801;}.re-line-badge.re-line-table-badge.badge_2:before{border-top-color:#43c801}.re-line-badge.re-line-table-badge.badge_2:after{border-bottom-color:#43c801}.re-line-badge.badge_3,.re-ribbon-badge.badge_3 span{background:#ff0000;}.re-line-badge.re-line-table-badge.badge_3:before{border-top-color:#ff0000}.re-line-badge.re-line-table-badge.badge_3:after{border-bottom-color:#ff0000}#bprh-full-header-image{background:url("https://cdn.fendou.la/welaowei8/2019/02/orion.jpg?x-oss-process=style%2Ffull") no-repeat center top !important;background-size:cover;}</style><style>.widget {margin-bottom:0px;margin-top: 0px;}
+.eq_grid .col_item {border: 1px solid #dcdcdc85;}
+h2 {font-weight: 400;}
+#topcontrol.rehub_scroll {background: #2f73ff;}
+.wpsm-accordion h3.wpsm-accordion-trigger a {font-weight: bolder;}
+.title_single_area h1 {color: #2f73ff; text-align: center;}
+.rh-cat-list-title { margin: 0 0 8px 0; display: flex;}
+.sidebar{padding-left: 20px;}
+form.search-form input[type="text"] {border-radius: 80px;}
+.custom_search_box input[type="text"] {border: 1px solid #ececec;border-radius: 80px;}
+.custom_search_box button[type="submit"] {border-radius: 80px!important;}
+form.search-form [type="submit"] {border-radius: 80px;background: rgba(0,0,0,0)!important; color: #333!important;}
+.fa-search:before {font-size:18px;}
+.fal { font-weight: 500;line-height: unset;}
+.postNavigation a {background: #2f73ff;}
+.wpsm_toplist_heading{padding-top: 5px;}
+.re-ribbon-badge span {font: 400 16px/28px;}
+.re-line-badge.re-line-small-label {font-size: 15px;line-height: 16px; font-weight: 400;}
+.woocommerce .onfeatured {font: 500 15px/18px;}
+.woocommerce .onsale{font: 400 14px/16px;}
+.woocommerce div.product .woocommerce-tabs ul.tabs li a {font-size: 16px;}
+.toc_widget_list.no_bullets li {padding-top: 5px;border-bottom: 1px dashed #1111115e;}
+h2{color: #2f73ff;}
+.wpsm_recent_posts_list .item-small-news:not(.border-lightgrey) {padding: 2px 0;}
+.widget .tabs-item > div{padding: 5px 0;}
+.rh_post_layout_outside .title_single_area h1 {font-size: 24px;font-weight: 500;}
+.post-meta-big a {
+    text-decoration: none;
+    color: #111;
+    font-size: medium;
+    font-weight: 400;}
+.small_post .meta, .small_post h2 { font-weight: 400;}
+blockquote p {
+    margin: 0 0 5px 0 !important;
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 400;
+    padding: 0;
+    font-style: normal;
+    color: blue;}
+blockquote {padding: 8px 5% 13px 5%;}
+.title_single_area h1 {
+    font-size: 24px;
+    line-height: 30px;
+    margin: 0 0 10px 0;
+    word-break: break-word;
+    font-weight: 500;
+}
+.widget .title, .widget h2 {margin: 0 0 8px 0;}
+.widget .title {border-bottom: 1px solid #f70606;padding-bottom: 8px;}
+.sidebar .widget {margin-bottom: 15px;}
+h3 {margin: 10px 0 10px 0;}
+article strong, .post strong {font-weight: 400;}
+article p, .post p {
+    margin: 0 0 10px 0;}
+.hot.menu-item.menu-item-type-custom.menu-item-object-custom a {font: 17px;padding:11px 15px 15px;}
+nav.top_menu > ul > li > a {font-size: 18px;}
+.woocommerce-MyAccount-navigation ul li a {font-weight: 500;font-size: 16px;}
+.rh-post-layout-image-mask {position: unset;}
+.table_view_charts .top_chart_item figure a {padding-top: 38px;}
+.alignright.hideonmobile{display:none}
+.woocommerce-result-count{display:none}
+.woocommerce-ordering{display:none}
+.wpsm-cat-title{display:none}
+#mobile-trigger-sidebar{display:none}
+.re-favorites-posts + .post_share{display:none}
+.pricefont110{display:none}
+.cat_store_for_grid{display:none}
+.yith_woo_chart{display:none}
+.price-woo-compare-chart{display:none}
+.cegg-rating{display:none}
+.deal-box-price{display:none}
+.meta_for_grid{display:none}
+.woolist_meta.mb10{display:none}
+.rehub-main-font.price.font110.mb15.fontbold{display:none}
+.avatar.avatar-48.photo{display:none}
+.def_btn.fontnormal.r_show_hide{font-size: 15px;}
+.read_full.font70{font-size:90%;}
+.priced_block {margin-bottom:8px;}
+#page-9151.post.mb0{padding-bottom: 300px;}
+.woocommerce table thead th{background:#2f73ffd4;}
+.wpsm-comptable td {padding: 5px;}
+.top_table_block .top_rating_heading{background: #2f73ff;}
+.wpdt-c .wpDataTablesWrapper .dataTables_filter{border:solid 1px #0083c2;opacity:1;border-radius:6px;}
+.profile-avatar {position: inherit;}
+.mce-content-body {line-height: 20px;}
+.rehub_woo_review .rehub_woo_tabs_menu li {display:initial;padding: 10px 8px;}
+.rehub_woo_review .offer_thumb{display:none}
+.rehub_feat_block, .rehub_bordered_block {margin-top:7px;}
+.tradingview-widget-copyright{display:none}
+.search-wrap{display:none}
+.rev-in-compare-flip{display:none}
+.wpDataTablesWrapper {background:#fffeeb;padding: 0 16px 0 16px;}
+.wpsm_cons ul li:before {content: '\f057';font-weight: 900;
+}
+.table_view_charts li {padding: 7px;font-size:15px;}
+.post ul.list-unstyled {font-size: 16px;}
+.row_chart_1.heading_row_chart{display:none}
+.row_chart_8.heading_row_chart.sub_heading_row_chart{display:none}
+.row_chart_13.heading_row_chart.sub_heading_row_chart{display:none}
+.row_chart_17.heading_row_chart.sub_heading_row_chart{display:none}
+.table_view_charts .sticky-wrapper.is-sticky .row_chart_0.image_row_chart.row-is-different {height: 150px!important;}
+.listitem_column.listbuild_image{min-width:60px;}
+.font90{font-size:100%;}
+.rank-math-question{color:#006fe5;}
+.rank-math-step-title{font-weight: 500;color: #2f73ff;}
+.listitem_column.listbuild_btn {min-width: 100px;}
+.tg{border-collapse:collapse;border-color:#9ABAD9;border-spacing:0;}
+.tg td{background-color:#EBF5FF;border-color:#9ABAD9;border-style:solid;border-width:1px;color:#444;font-size:15px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#409cff;border-color:#9ABAD9;border-style:solid;border-width:1px;color:#fff;font-size:18px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+@media screen and(max-width: 860px) {.tg {width: auto !important;}.tg col {width:auto !important;}.tg-wrap {overflow-x: auto;-webkit-overflow-scrolling: touch;margin: auto 0px;}}
+.clearbox {
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 20px;
+}
+.meta_v_label.mr5.rtlml5{font-weight:800;}
+.meta_icon_label{font-weight:800;color: #d71e15;}
+.post-meta span {font-style: normal; font-weight: bolder;}
+span.date_meta:before{ font-size: 14px;line-height: 12px;vertical-align: middle; padding-right: 5px; content: "\f2f7"; font-style:normal;color: #f9cc50;}
+.rhi-ellipsis-v:before {content: "\f0ca";}
+.re-line-badge span:before {display:none}
+.re-line-badge span:after {display:none}
+.float-panel-woo-image img {width: 100%;}
+.table_view_charts .top_chart_item .sticky-wrapper.is-sticky figure {height: auto;}
+.table_view_charts .top_chart_item figure {display: inherit;
+}
+.top_rating_item h2, .top_rating_item .top_rating_title{font-size: 22px;}
+span.postview_meta:before {color: #f9cc50;}
+div.float-panel-woo-price.rh-flex-center-align.font120.rh-flex-right-align{display:none}</style>	<noscript><style>.woocommerce-product-gallery{ opacity: 1 !important; }</style></noscript>
+	<style type="text/css" id="thrive-default-styles"></style>			<style class="tve_custom_style">@media (min-width:300px){[data-css="tve-u-16bbfc2fb95"]{margin-bottom:30px !important;}[data-css="tve-u-16bbfc2fb96"]{line-height:32px !important;}:not(#tve) [data-css="tve-u-16bbfc2fb96"]{color:rgb(52,52,52) !important;font-family:inherit !important;font-size:16px !important;}:not(#tve) [data-css="tve-u-16bbfc2fb94"] >:first-child{color:rgba(51,51,51,0.29);}[data-css="tve-u-16bbfc2fb94"]{font-size:23px;width:23px;height:23px;float:left;z-index:3;position:relative;margin-bottom:0px !important;margin-top:0px !important;margin-right:20px !important;}[data-css="tve-u-16bbfc2fb91"]{max-width:100%;padding:40px !important;margin-bottom:0px !important;margin-top:0px !important;}[data-css="tve-u-16bbfc2fb92"]{box-shadow:rgba(0,0,0,0.2) 0px 3px 3px 0px,rgba(255,255,255,0.4) 0px 0px 0px 1px inset,rgba(0,0,0,0.05) 0px 0px 0px 1px;background-color:rgb(239,239,239) !important;background-image:linear-gradient(rgb(248,247,247) 0%,rgb(238,238,238) 100%) !important;background-size:auto !important;background-position:0px 0px !important;background-attachment:scroll !important;background-repeat:no-repeat !important;}[data-css="tve-u-16bc16f3e00"]{float:none;margin-left:auto !important;margin-right:auto !important;}:not(#tve) [data-css="tve-u-172f668f093"]{color:rgb(255,0,0) !important;--tcb-applied-color:rgb(255,0,0)!important;}:not(#tve) [data-css="tve-u-172f6695176"]{color:rgb(254,0,0) !important;--tcb-applied-color:rgb(254,0,0)!important;}[data-css="tve-u-172f669b5d0"]{text-decoration:underline !important;}:not(#tve) [data-css="tve-u-172f66a6a4b"]{color:rgb(255,2,2) !important;--tcb-applied-color:rgb(255,2,2)!important;}[data-css="tve-u-172f66cd12f"]{color:rgb(249,0,0) !important;}[data-css="tve-u-172f66cd133"]{font-weight:normal !important;}:not(#tve) [data-css="tve-u-172f66da286"]{color:rgb(255,0,0) !important;--tcb-applied-color:rgb(255,0,0)!important;}:not(#tve) [data-css="tve-u-172f66ea880"]{font-weight:var(--g-regular-weight,normal)!important;}[data-css="tve-u-172f66ff3a9"]{color:rgb(0,0,0) !important;}[data-css="tve-u-172f66ff3af"]{color:rgb(0,0,0) !important;}:not(#tve) [data-css="tve-u-172f670252c"]{font-weight:var(--g-regular-weight,normal)!important;}[data-css="tve-u-172f6705a35"]{color:rgb(255,0,0) !important;}[data-css="tve-u-172f67081b9"]{color:rgb(255,0,0) !important;}:not(#tve) [data-css="tve-u-172f6708602"]{font-weight:var(--g-regular-weight,normal)!important;}:not(#tve) [data-css="tve-u-172f670ace6"]{color:rgb(255,0,0) !important;--tcb-applied-color:rgb(255,0,0)!important;}:not(#tve) [data-css="tve-u-172f670c228"]{color:rgb(255,0,0) !important;--tcb-applied-color:rgb(255,0,0)!important;}[data-css="tve-u-172f670e0ec"]{color:rgb(255,0,0) !important;}[data-css="tve-u-172f670e0ee"]{color:rgb(255,0,0) !important;}:not(#tve) [data-css="tve-u-172f673608d"]{font-weight:var(--g-bold-weight,bold)!important;}[data-css="tve-u-172f673707a"]{color:rgb(51,51,51) !important;}:not(#tve) [data-css="tve-u-172f67439fa"]{font-weight:var(--g-regular-weight,normal)!important;}:not(#tve) [data-css="tve-u-172f6744b17"]{font-weight:var(--g-regular-weight,normal)!important;}:not(#tve) [data-css="tve-u-172f6745dc4"]{font-weight:var(--g-regular-weight,normal)!important;}:not(#tve) [data-css="tve-u-172f6746753"]{font-weight:var(--g-regular-weight,normal)!important;}:not(#tve) [data-css="tve-u-172f6748a27"]{font-weight:var(--g-regular-weight,normal)!important;}:not(#tve) [data-css="tve-u-172f6748a29"]{font-weight:var(--g-regular-weight,normal)!important;}:not(#tve) [data-css="tve-u-172f6748a2b"]{font-weight:var(--g-regular-weight,normal)!important;}:not(#tve) [data-css="tve-u-172f6748a2c"]{font-weight:var(--g-regular-weight,normal)!important;color:rgb(51,51,51) !important;--tcb-applied-color:rgb(51,51,51)!important;}[data-css="tve-u-172f67a8a75"]{color:rgb(255,0,0) !important;}[data-css="tve-u-1752536e68f"]{float:none;margin:5px auto !important;}}@media (max-width:1023px){[data-css="tve-u-16bbfc2fb95"]{margin-bottom:0px !important;}[data-css="tve-u-16bbfc2fb91"]{padding-top:20px !important;padding-bottom:38px !important;}}@media (max-width:767px){[data-css="tve-u-16bbfc2fb91"]{padding:3px !important;}}</style> 			<noscript><style id="rocket-lazyload-nojs-css">.rll-youtube-player, [data-lazy-src]{display:none !important;}</style></noscript></head>
+<body class="post-template-default single single-post postid-12613 single-format-standard wp-embed-responsive theme-rehub-theme woocommerce-no-js">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-dark-grayscale"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0 0.49803921568627" /><feFuncG type="table" tableValues="0 0.49803921568627" /><feFuncB type="table" tableValues="0 0.49803921568627" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-grayscale"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0 1" /><feFuncG type="table" tableValues="0 1" /><feFuncB type="table" tableValues="0 1" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-purple-yellow"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0.54901960784314 0.98823529411765" /><feFuncG type="table" tableValues="0 1" /><feFuncB type="table" tableValues="0.71764705882353 0.25490196078431" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-blue-red"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0 1" /><feFuncG type="table" tableValues="0 0.27843137254902" /><feFuncB type="table" tableValues="0.5921568627451 0.27843137254902" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-midnight"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0 0" /><feFuncG type="table" tableValues="0 0.64705882352941" /><feFuncB type="table" tableValues="0 1" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-magenta-yellow"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0.78039215686275 1" /><feFuncG type="table" tableValues="0 0.94901960784314" /><feFuncB type="table" tableValues="0.35294117647059 0.47058823529412" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-purple-green"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0.65098039215686 0.40392156862745" /><feFuncG type="table" tableValues="0 1" /><feFuncB type="table" tableValues="0.44705882352941 0.4" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-blue-orange"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0.098039215686275 1" /><feFuncG type="table" tableValues="0 0.66274509803922" /><feFuncB type="table" tableValues="0.84705882352941 0.41960784313725" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg>	               
+<!-- Outer Start -->
+<div class="rh-outer-wrap">
+    <div id="top_ankor"></div>
+    <!-- HEADER -->
+            <header id="main_header" class="white_style width-100p position-relative">
+            <div class="header_wrap">
+                                                                                    <!-- Logo section -->
+<div class="rh-stickme header_five_style logo_section_wrap header_one_row">
+    <div class="rh-container tabletblockdisplay mb0 disabletabletpadding">
+        <div class="logo-section rh-flex-center-align tabletblockdisplay disabletabletpadding mb0">
+            <div class="logo hideontablet">
+                                    <a href="https://hvk.dyj.mybluehost.me" class="logo_image"><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20180%2028'%3E%3C/svg%3E" alt="开户通" height="28" width="180" data-lazy-src="https://cdn.fendou.la/bluehost/fxlogan.svg" /><noscript><img src="https://cdn.fendou.la/bluehost/fxlogan.svg" alt="开户通" height="28" width="180" /></noscript></a>
+                       
+            </div> 
+            <!-- Main Navigation -->
+            <div class="main-nav mob-logo-enabled rh-flex-grow1 rh-flex-center-align rh-flex-justify-center  white_style">      
+                <nav class="top_menu"><ul id="menu-%e5%af%bc%e8%88%aa%e8%8f%9c%e5%8d%95" class="menu"><li id="menu-item-27327" class="menu-item menu-item-type-post_type menu-item-object-page current_page_parent"><a href="https://hvk.dyj.mybluehost.me/blog">评测文章</a></li>
+<li id="menu-item-27328" class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://hvk.dyj.mybluehost.me/brokers">经纪商推荐</a></li>
+<li id="menu-item-27753" class="menu-item menu-item-type-post_type menu-item-object-post current-menu-item"><a href="https://hvk.dyj.mybluehost.me/last-fake-forex-brokers.html">虚假平台</a></li>
+<li id="menu-item-27754" class="menu-item menu-item-type-custom menu-item-object-custom"><a href="https://hvk.dyj.mybluehost.me/compare?compareids=20641,11542,10424,10406">对比挑选</a></li>
+<li id="menu-item-27755" class="menu-item menu-item-type-custom menu-item-object-custom"><a href="https://hvk.dyj.mybluehost.me/broker-cat/fca">FCA监管</a></li>
+</ul></nav>                <div class="responsive_nav_wrap rh_mobile_menu">
+                    <div id="dl-menu" class="dl-menuwrapper rh-flex-center-align">
+                        <button id="dl-trigger" class="dl-trigger" aria-label="Menu">
+                            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                                <g>
+                                    <line stroke-linecap="round" id="rhlinemenu_1" y2="7" x2="29" y1="7" x1="3"/>
+                                    <line stroke-linecap="round" id="rhlinemenu_2" y2="16" x2="18" y1="16" x1="3"/>
+                                    <line stroke-linecap="round" id="rhlinemenu_3" y2="25" x2="26" y1="25" x1="3"/>
+                                </g>
+                            </svg>
+                        </button>
+                        <div id="mobile-menu-icons" class="rh-flex-center-align rh-flex-right-align">
+                            <button class='icon-search-onclick' aria-label='Search'><i class='rhicon rhi-search'></i></button>
+                        </div>
+                    </div>
+                                    </div>
+            </div>  
+             
+                    
+            <div class="header-actions-logo">
+                <div class="rh-flex-center-align">
+                                                                                                                                                                <span class="act-rehub-login-popup wpsm-button white medium  rh-flex-right-align mobileinmenu ml10 mr5" data-type="login"><i class="rhicon rhi-sign-in"></i><span>登陆/注册</span></span> 
+                                         
+                      
+                                                                               
+                                         
+                </div> 
+            </div>                        
+            <!-- /Main Navigation -->                                                        
+        </div>
+    </div>
+</div>
+<!-- /Logo section -->  
+                
+
+            </div>  
+        </header>
+            
+
+    <!-- CONTENT -->
+<div class="rh-container"> 
+    <div class="rh-content-wrap clearfix">
+	    <!-- Main Side -->
+        <div class="main-side single full_width clearfix"> 
+            <div class="rh-post-wrapper">           
+                                                        <article class="post-inner post post-12613 type-post status-publish format-standard has-post-thumbnail hentry category-compare-forex-brokers tag-forex-broker" id="post-12613">
+                        <style scoped>
+                .full_width .post-inner{max-width:960px; margin-left:auto; margin-right:auto}
+            </style> 
+                        <!-- Title area -->
+                        <div class="rh_post_layout_default rh_post_layout_center text-center">
+                            <div class="title_single_area mb15">
+                                <div class="rh-cat-list-title"><a class="rh-cat-label-title rh-cat-120" href="https://hvk.dyj.mybluehost.me/category/compare-forex-brokers" title="查看该项目的所有评测交易指南">交易指南</a></div>            
+                                <h1>2022年行骗中的5716家虚假外汇平台</h1>                                
+                                <div class="meta post-meta mb20 flowhidden">
+                                     		<span class="date_meta">
+  			 				2020-05-20 			 		</span>	
+						<span class="postview_meta">22276 </span>
+			
+	 
+                                </div>       
+                            </div>
+                                                            <div class="top_share">
+                                    	<div class="post_share">
+	    <div class="social_icon  row_social_inpost"><div class="favour_in_row favour_btn_red"><div class="heart_thumb_wrap text-center"><span class="flowhidden cell_wishlist"><span class="heartplus" data-post_id="12613" data-informer="0"><span class="ml5 rtlmr5 wishaddwrap" id="wishadd12613">Save</span><span class="ml5 rtlmr5 wishaddedwrap" id="wishadded12613">Saved</span><span class="ml5 rtlmr5 wishremovedwrap" id="wishremoved12613">已删除</span> </span></span><span id="wishcount12613" class="thumbscount">0</span> </div></div><span data-href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fhvk.dyj.mybluehost.me%2Flast-fake-forex-brokers.html" class="fb share-link-image" data-service="facebook"><i class="rhicon rhi-facebook"></i></span><span data-href="https://twitter.com/share?url=https%3A%2F%2Fhvk.dyj.mybluehost.me%2Flast-fake-forex-brokers.html&text=2022%E5%B9%B4%E8%A1%8C%E9%AA%97%E4%B8%AD%E7%9A%845716%E5%AE%B6%E8%99%9A%E5%81%87%E5%A4%96%E6%B1%87%E5%B9%B3%E5%8F%B0" class="tw share-link-image" data-service="twitter"><i class="rhicon rhi-twitter"></i></span><span data-href="https://pinterest.com/pin/create/button/?url=https%3A%2F%2Fhvk.dyj.mybluehost.me%2Flast-fake-forex-brokers.html&amp;media=&amp;description=2022%E5%B9%B4%E8%A1%8C%E9%AA%97%E4%B8%AD%E7%9A%845716%E5%AE%B6%E8%99%9A%E5%81%87%E5%A4%96%E6%B1%87%E5%B9%B3%E5%8F%B0" class="pn share-link-image" data-service="pinterest"><i class="rhicon rhi-pinterest-p"></i></span><span data-href="mailto:?subject=2022%E5%B9%B4%E8%A1%8C%E9%AA%97%E4%B8%AD%E7%9A%845716%E5%AE%B6%E8%99%9A%E5%81%87%E5%A4%96%E6%B1%87%E5%B9%B3%E5%8F%B0&body=退房 https%3A%2F%2Fhvk.dyj.mybluehost.me%2Flast-fake-forex-brokers.html - %E5%BC%80%E6%88%B7%E9%80%9A" class="in share-link-image" data-service="email"><i class="rhicon rhi-envelope"></i></span></div>	</div>
+                                </div>
+                                <div class="clearfix"></div> 
+                                                    </div>
+                        
+                        										                        
+                                       
+                          
+
+                        
+<p><strong>直接在搜索框内输入你要查找的外汇平台比如：<a href="https://www.ifttt.fun/go/atfx-cn/" target="_blank" rel="noreferrer noopener">ATFX</a>&nbsp;表格底部有黑平台杀猪盘等防外汇诈骗指南</strong></p>
+
+
+<div class="wpsm_promobox" style="background-color:#f8f8f8 !important; color:#333; border-left-width:3px !important;border-left-color:#7c03fc!important;border-left-style:solid"><a href="https://www.ifttt.fun/go/atfx-cn/" class="wpsm-button rehub_main_btn" target="_blank" rel="nofollow"><span>ATFX官网开户</span></a><div class="title_promobox"><strong>ATFX最佳交易平台</strong> <strong><a href="https://we.laowei8.com/is-real-fca.html#atfx-fca">FCA监管</a></strong></div><p>支持贵金属、股票指数、差价合约、大宗商品交易 <mark class="has-inline-color has-red-color"><strong>出入金当天到账</strong></mark> 可申请ECN账户</p></div>
+
+<p>[wpdatatable id=13]</p>
+
+
+
+<h2 id="防骗指南-杀猪盘行骗流程揭秘">防骗指南</h2>
+
+
+
+<div class="wp-block-rank-math-faq-block"><div class="rank-math-faq-item"><h3 class="rank-math-question">虚假诈骗黑平台有哪些特点？</h3><div class="rank-math-answer">1.提供没有监管能力的无效部门和协会，声称有注册牌照；<br>2.瞎编或者改称注册监管部门的名称；<br>3.用普通有限公司注册号，来编造监管部门的注册号；<br>4.入金帐号为第三方私人账户 (非客户本人名称的个人账户)；<br>5.交易网站地址和公司注册地不符，没有可靠的地址;很多用的是网络电话，可以转接到任何国家。<br>6.超高杠杆，5000倍，3000倍。<br>7.使用假的MT4软件，一定要用MT4官网软件，并查看是否可以找到该经纪商。</div></div><div class="rank-math-faq-item"><h3 class="rank-math-question">如何判断经纪商是不是黑平台？</h3><div class="rank-math-answer">1、去万网查下该网站域名-查域名注册时间。<br>如果注册时间非常的新，这个网站是刚申请，加上运营准备，估计如果运营没多久的话。<br>这样的平台风险系数当然很高！至少是不会有监管的。<br>2、查所属国的监管，目前全球主要外汇监管机构有：瑞士FINMA、英国FSA、美国NFA、香港SFC、澳洲ASIC。<a class="rank-math-link" href="https://we.laowei8.com/is-real-fca.html" target="_blank" rel="noreferrer noopener"><strong>怎样查询外汇交易平台是否受到FCA监管？</strong></a><br>宣称受其他监管机构监管的平台，要考察其真实性和监管力度（当然目前有许多代理注册黑平台的都帮忙搞定。<br>其实说白了，就是在监管上查个类似的id号，然后把自己的公司名称往上面靠，让客户误以为这个公司就是那个监管公司。<br>3、最实用的一招，看该公司在其宣称的所属国家是否有运营。<br>4、入金收款人为个人名字或皮包公司的肯定是黑平台。<br>5、送金奖励非常诱人的，例如入金1000送100，远大于一年期存款收益了，多为黑平台，不要贪便宜。<br>6、开户和入金非常容易，便捷的，多为黑平台。<a href="https://we.laowei8.com/avoid-forex-scam.html#how-to"><strong>外汇黑平台</strong>-如何判断外汇交易平台是不是黑平台？</a></div></div><div class="rank-math-faq-item"><h3 class="rank-math-question">外汇黑平台的骗人套路有哪些？</h3><div class="rank-math-answer">1.出入金正常，不喊单，不搞小动作。 这种是<strong>良心黑</strong><br>2.出入金正常，喊单，估计重仓，带着你亏，带你爆仓。这种是<strong>真心黑</strong><br>3.资金只能进，不能出，一般也喊单。这种是<strong>透心黑</strong>。</div></div><div class="rank-math-faq-item"><h3 class="rank-math-question">什么是对冲平台呢？</h3><div class="rank-math-answer"><strong>对冲在外汇市场中最为常见，重在避开单线买卖的风险 。</strong><br>对冲交易是指进行两笔行情相关、方向相反、数量相当、盈亏相抵的交易。<br>在黄金市场来说，同一时间买入一手黄金，作买多。<br>另外亦要沽出一手黄金，即沽空。<br><strong>理论上，买多沽空一手黄金，要银码一样，才算是真正的对冲盘，否则两边大小不一样就做不到对冲的功能。</strong><br>对冲平台就是通过把交易订单提交到市场进行多空对冲，盈亏在市场上进行，平台所有交易单都可以在市场上形成对冲相抵，平台无需担心客户盈亏!</div></div><div class="rank-math-faq-item"><h3 class="rank-math-question">什么是外汇对赌平台？</h3><div class="rank-math-answer">对赌平台，资金在公司内部流动，没有进入现货市场！<br>准确的说，是没流动，资金直接进了公司账户。<br>其实这时候，对于对赌平台来说，钱已经是他们的了！等客户亏完了，就完事了。<br>可能你会想，那我赚钱了呢？<br>赚钱了的话，客户如果出金，公司就要亏钱，尤其是大资金客户，公司是不可能赔本的，所以出金迟迟拖延或者找各种理由不让出金！<br>大行情的时候再让你大亏几笔，元气大伤，（美联储会议议息，伯南克讲话等）最终以爆仓而结束！</div></div><div class="rank-math-faq-item"><h3 class="rank-math-question">什么是杀猪盘？</h3><div class="rank-math-answer">所谓杀猪盘，通俗来讲就是一种通过网络交友的方式诱导受害者参加外汇、股票或数字资产等交易的诈骗手段。这种诈骗方式最大的特点，是平台通常会通过网络方式跟交易者“打好关系”，以便在日后牟取更大利益。</div></div><div class="rank-math-faq-item"><h3 class="rank-math-question">杀猪盘的行骗流程是怎样的？</h3><div class="rank-math-answer">1.诈骗者通常会把被骗的受害者叫做<strong>“猪”</strong>，他们会按照一些既定的剧本去包装自己，接近对方。<br>2.与交易者拉关系、套近乎的阶段称之为<strong>“养猪”</strong>，诈骗分子的人设、交友套路被称为“猪饲料”，社交平台是<strong>“猪圈”</strong>。<br>3.待打好关系、时机成熟后，开始引诱交易者投资再收割韭菜的阶段，就叫做<strong>“杀猪”</strong>。<br>流水的“猪圈”和“猪饲料”，铁打的套路，总有不少交易者会相继入坑。远的不说，就是今年之内，行内已经爆出多起杀猪盘事件，让交易者们心头一凛。</div></div><div class="rank-math-faq-item"><h3 class="rank-math-question">杀猪盘与资金盘的区别？</h3><div class="rank-math-answer">资金盘和杀猪盘一样，都善于用洗脑式的宣传攻势宣扬平台的合规性，并通过捏造监管信息、套牌等方式打造高端形象，但两者在资金安全、平台维护、系统操作方面都存在许多天然的缺陷。最大的区别只在于，资金盘前期在资金链尚未破裂的时候，收益尚且还有一定保障，杀猪盘则时时处于危险之中。</div></div><div class="rank-math-faq-item"><h3 class="rank-math-question">杀猪盘的特点有哪些？</h3><div class="rank-math-answer"><strong>①杠杆倍数夸张，随便就能开到数百倍，</strong>资金盘一般都是固定倍数（因为要营造和大型监管机构接轨的假象）。<br><strong>②（号称）拥有数量惊人的操盘手团队。</strong>杀猪盘说白了就是针对交易者的个人性格投其所好，所以会提供大量交易风格、策略各不相同的交易员充当操盘手，实际上只是为了伺机放大亏损侵吞利润和本金。<br><strong>③手续费率飘忽不定，出入金流程频繁更改。</strong><br><strong>④过度营销，无时无刻不在各种社交平台、群聊吹嘘平台收益。</strong><br><strong>其次，学会分辨平台的APP和MT4软件是否存在盗版现象，是判断平台资质的最直接方法。</strong></div></div><div class="rank-math-faq-item"><h3 class="rank-math-question">如何判断一个平台MT4是不是盗版？</h3><div class="rank-math-answer"><strong>①查看安装包的属性，如果找不到数字签名基本就可以确定是盗版软件。</strong>手机版则可以通过查找版本号里面的版本许可，看有没有迈达克的官方授权标识。<br><strong>②查看服务器数量。</strong>在电脑端右下角点击查看服务器的动态变化数字，就可以看到服务器的数量。一般来说，正版的MT4服务器不少于3个。<br>③<strong>直接到迈达克官网留言或通过MT4手机端搜索平台名字进行核实。</strong></div></div><div class="rank-math-faq-item"><h3 class="rank-math-question">交易者如何避免被杀猪盘坑？</h3><div class="rank-math-answer"><strong>面对陌生人突如其来的交易建议，多留一个心眼；</strong><br><strong>面对诱人的赠金、红包等诱惑，多一分克制；</strong><br><strong>对平台和带你入局的“好友”心生疑虑时，进行多一番思考。</strong><br>希望这“三多”原则，能帮各位及时识别各种杀猪盘套路，以免蒙受损失。</div></div><div class="rank-math-faq-item"><h3 class="rank-math-question">杀猪盘诈骗平台的3大常见特点是？</h3><div class="rank-math-answer">平台杀猪的方式可以有千万种，但总的来说离不开几条原则。<br><br><strong>第一，通过系统或规则漏洞侵占交易者利润，比如夸张的滑点等。</strong>此外，<strong>卡盘</strong>导致交易者无法平仓，也是各种案例中常见的利用系统漏洞杀猪的手段。<br><br>当交易者盈利之后想平仓时，部分平台会通过后台修改系统的方式，人为扩大点差。<strong>比如TradeMax就被爆出过平仓时滑点数百点，最夸张的时候其平台上的白银报价更是出现过高达近千点的点差。</strong><br><br><strong>第二，以各种理由在短时间内禁止用户出金，实际上却是在偷偷转移资金为跑路做准备。</strong><br><br>美狮外汇就是一个最典型的例子。自去年12月以来，该平台就以升级系统为由，对客户实行强行锁仓。当时有舆论称，美狮外汇此举只是为了防止客户大批量出金造成恐慌，但不会对用户的长期利益造成损失，只需要耐心等待平台完成升级恢复正常即可。<br><br>为了让自己的“系统升级”这个理由站得住脚，美狮外汇甚至在客户群里大搞新系统“全国启动说明会”，一切看起来那么真实。<br><br><strong>然而，这一次所谓的升级居然花费了4个月的时间。</strong>更令交易者绝望的是，升级完成后平台又告知需要跟单满3个月才能提取本金，然后<strong>操盘手却通过一番骚操作亏掉大部分本金和盈利，大量交易者血本无归。</strong><br><br>BESSEME·柏尚国际的操作更加简单直接——<strong>由客服告知用户，账号被他人登入操作后已失效，非但无法出金还要倒过来向客户追讨损失。</strong>而最无法令人信服的是，客服由始至终都未能提供账号的登陆和操作历史纪录。<br><br><strong>第三，直接威胁封号。</strong>来到这一步，说明平台已经准备和客户撕破脸，交易者的损失怕是难以避免了。</div></div></div>
+
+
+
+<hr class="wp-block-separator has-alpha-channel-opacity" />
+
+
+
+<p>外汇投资有两种“盘”你肯定耳熟能详，一种是恋爱“杀猪盘”；一种是圈钱“资金盘”。</p>
+
+
+
+<p>这两种“盘”的本质就诈骗！杀猪盘在社区已经讲过多次，今天主要说说资金盘，与一般投资骗局相比，资金盘骗局具备以下特征。</p>
+
+
+
+<p>1、<strong>资金盘幕后组织拥有十分强大的洗脑能力</strong>，能以一套“逻辑自洽”的投资理论将入坑投资者忽悠得深信不疑，有的人还会将自己的亲朋好友一起拉入，甚至很多投资者在资金盘崩盘后还依旧对其深信不疑。</p>
+
+
+
+<p>2、<strong>资金盘持续时间长</strong>，一个资金盘从开盘运营到崩盘跑路，短则数月长则数年，投资者被骗的过程也会长达数年，在此期间或许存在短暂的盈利，但绝大部分到最后都已亏损告终。</p>
+
+
+
+<p>3、<strong>资金盘涉案资金更大，被骗投资者更多</strong>。一般的黑平台涉案金额达到几百上千万已经很大了，而资金盘的涉案金额往往能够达到数亿、数十亿，甚至百亿。</p>
+
+
+
+<p>鉴于以上特征，资金盘的危害性比黑平台更大，涉及范围更广。其本身具备恐怖的洗脑特征，因此普通民众遇到资金盘时不仅难以分辨，更难以抵挡“高回报”诱惑，在不知不觉中入坑。</p>
+
+
+
+<hr class="wp-block-separator has-alpha-channel-opacity" />
+
+
+
+<p>其实辨别资金盘，就看它是否具备以下特征：</p>
+
+
+
+<h2>1、宣传“高收益高回报”、“保本保收益”、“稳赚不赔”</h2>
+
+
+
+<p>多数投资者都喜欢较为稳定的、风险性较低的投资，而资金盘和其他骗局投资者为了诱惑普通投资者上当，都会进行&#8221;保本保息&#8221;&nbsp; 、“稳赚不赔”、“高盈利”等违反投资常识的虚假宣传。</p>
+
+
+
+<p>投资一定是有风险的，这个是常识，但很多人都不愿意接受，说直白点就是不愿承担风险就能赚到大钱，因此也就很容易被骗。</p>
+
+
+
+<h2>&nbsp;2、使用拉人头、发展分级会员的传销模式&nbsp;</h2>
+
+
+
+<p>资金盘之所以能在短时间内迅速的聚集数十亿资金，发展出上百万会员，靠的就是传销模式，也就是说资金盘就是一个另类的传销。</p>
+
+
+
+<p>传销，顾名思义就是传播和销售，传播就是拉人头、发展会员，销售就是让发展的会员必须购买产品或投资，如此下一级会员又不断发展新的会员，通过传销的模式把盘子不断扩大、做大。</p>
+
+
+
+<h2>&nbsp;3、设置“庞氏骗局”式的提现限制&nbsp;</h2>
+
+
+
+<p>所谓提现限制并不是如一般投资骗局一样，以各种荒唐的借口或直接粗暴地拒绝提现。资金盘的提现限制是，会员想要提现则必须完成做任务、拉人头、加大投资等设定目标，当然绝大部分会员是等不到提现这一天的，但为了吸引更多投资者入盘，前期完成设定目标的部分投资者是可以获得一些盈利的。</p>
+
+
+
+<p>这就和“庞氏骗局”一样，把后面进来的大多数投资者的钱拿出一小部分，给前面进来的极少数投资者分红，而这其中的大部分资金被资金盘的幕后操盘者卷走瓜分。</p>
+
+
+
+<h2>&nbsp;4、无监管、假监管、无效监管的平台&nbsp;</h2>
+
+
+
+<p>监管是鉴别外汇投资平台是否为黑平台的重要依据，同理资金盘作为投资骗局的一种，其必然也是无监管、假监管或者是使用无效监管的平台。</p>
+
+
+
+<p>无监管就是平台根本就没有监管，也根本不提有无监管这回事，当然这种平台在资金盘中非常罕见。</p>
+
+
+
+<p>假监管就是平台假冒某国监管机构的监管，堂而皇之地假冒他国机构监管，让不懂监管的投资者信以为真，<strong>这种资金盘的代表有钜富金融（假冒瑞士FINMA监管）、德汇（假冒多国监管）等。</strong></p>
+
+
+
+<p>无效监管就是平台虽然取得了某国的金融牌照，但该牌照根本无监管金融衍生品交易的权限，以此欺骗迷惑投资者，<strong>这种资金盘的代表有普顿（印尼衍生品结算所牌照）、海汇国际（加拿大FINTRAC牌照）、IDS（圣文森特监管）等。</strong></p>
+
+
+
+<p>其实，只要具备以上特征的任何1个，都可以算是投资黑平台；而同时具备以上4个特征的，必定是资金盘，投资者应注意和远离！</p>
+                        <div class="clearfix"></div>
+                        
+
+
+                 
+
+
+               
+
+    		<div class="related_articles pt25 border-top mb0 clearfix">
+		<div class="related_title rehub-main-font font120 fontbold mb35">
+							你可能喜欢的文章 					</div>
+		<div class="columned_grid_module rh-flex-eq-height col_wrap_fourth mb0" >
+																	  
+<article class="col_item column_grid rh-heading-hover-color rh-bg-hover-color no-padding two_column_mobile"> 
+    <div class="button_action abdposright pr5 pt5">
+        <div class="floatleft mr5">
+                                    <div class="heart_thumb_wrap text-center"><span class="flowhidden cell_wishlist"><span class="heartplus" data-post_id="11875" data-informer="1"><span class="ml5 rtlmr5 wishaddedwrap" id="wishadded11875">已赞</span><span class="ml5 rtlmr5 wishremovedwrap" id="wishremoved11875">取赞</span> </span></span><span id="wishcount11875" class="thumbscount">1</span> </div>  
+        </div>                                                           
+    </div> 
+        
+    <figure class="mb20 position-relative text-center">             
+        <a href="https://hvk.dyj.mybluehost.me/exness-detail.html" class="">
+                                                <img width="336" height="220" src="https://hvk.dyj.mybluehost.me/wp-content/themes/rehub-theme/images/default/noimage_336_220.png" data-src="" alt="2022无限杠杆外汇平台EXNESS精准评测" data-skip-lazy="" class="lazyload " >                                    </a>
+    </figure>
+        <div class="content_constructor">
+        <h3 class="mb15 mt0 font110 mobfont100 fontnormal lineheight20"><a href="https://hvk.dyj.mybluehost.me/exness-detail.html">2022无限杠杆外汇平台EXNESS精准评测</a></h3>
+                                 
+         
+                            <div class="rh-flex-center-align mb15 mobileblockdisplay">
+                                                <div >
+                    						
+		 
+				    			
+	            
+                </div>
+                               
+            </div>
+         
+            </div>                                   
+</article>																	  
+<article class="col_item column_grid rh-heading-hover-color rh-bg-hover-color no-padding two_column_mobile"> 
+    <div class="button_action abdposright pr5 pt5">
+        <div class="floatleft mr5">
+                                    <div class="heart_thumb_wrap text-center"><span class="flowhidden cell_wishlist"><span class="heartplus" data-post_id="11178" data-informer="0"><span class="ml5 rtlmr5 wishaddedwrap" id="wishadded11178">已赞</span><span class="ml5 rtlmr5 wishremovedwrap" id="wishremoved11178">取赞</span> </span></span><span id="wishcount11178" class="thumbscount">0</span> </div>  
+        </div>                                                           
+    </div> 
+        
+    <figure class="mb20 position-relative text-center">             
+        <a href="https://hvk.dyj.mybluehost.me/xm-forex-broker-guide.html" class="">
+                                                <img width="336" height="220" src="https://hvk.dyj.mybluehost.me/wp-content/themes/rehub-theme/images/default/noimage_336_220.png" data-src="" alt="XM外汇开户指南-XM外汇开户前必读" data-skip-lazy="" class="lazyload " >                                    </a>
+    </figure>
+        <div class="content_constructor">
+        <h3 class="mb15 mt0 font110 mobfont100 fontnormal lineheight20"><a href="https://hvk.dyj.mybluehost.me/xm-forex-broker-guide.html">XM外汇开户指南-XM外汇开户前必读</a></h3>
+                                 
+         
+                            <div class="rh-flex-center-align mb15 mobileblockdisplay">
+                                                <div >
+                    						
+		 
+				    			
+	            
+                </div>
+                               
+            </div>
+         
+            </div>                                   
+</article>																	  
+<article class="col_item column_grid rh-heading-hover-color rh-bg-hover-color no-padding two_column_mobile"> 
+    <div class="button_action abdposright pr5 pt5">
+        <div class="floatleft mr5">
+                                    <div class="heart_thumb_wrap text-center"><span class="flowhidden cell_wishlist"><span class="heartplus" data-post_id="12630" data-informer="1"><span class="ml5 rtlmr5 wishaddedwrap" id="wishadded12630">已赞</span><span class="ml5 rtlmr5 wishremovedwrap" id="wishremoved12630">取赞</span> </span></span><span id="wishcount12630" class="thumbscount">1</span> </div>  
+        </div>                                                           
+    </div> 
+        
+    <figure class="mb20 position-relative text-center">             
+        <a href="https://hvk.dyj.mybluehost.me/294-forex-rank.html" class="">
+                                                <img width="336" height="220" src="https://hvk.dyj.mybluehost.me/wp-content/themes/rehub-theme/images/default/noimage_336_220.png" data-src="" alt="294家外汇黄金交易平台评测排行榜" data-skip-lazy="" class="lazyload " >                                    </a>
+    </figure>
+        <div class="content_constructor">
+        <h3 class="mb15 mt0 font110 mobfont100 fontnormal lineheight20"><a href="https://hvk.dyj.mybluehost.me/294-forex-rank.html">294家外汇黄金交易平台评测排行榜</a></h3>
+                                 
+         
+                            <div class="rh-flex-center-align mb15 mobileblockdisplay">
+                                                <div >
+                    						
+		 
+				    			
+	            
+                </div>
+                               
+            </div>
+         
+            </div>                                   
+</article>																	  
+<article class="col_item column_grid rh-heading-hover-color rh-bg-hover-color no-padding two_column_mobile"> 
+    <div class="button_action abdposright pr5 pt5">
+        <div class="floatleft mr5">
+                                    <div class="heart_thumb_wrap text-center"><span class="flowhidden cell_wishlist"><span class="heartplus" data-post_id="14523" data-informer="0"><span class="ml5 rtlmr5 wishaddedwrap" id="wishadded14523">已赞</span><span class="ml5 rtlmr5 wishremovedwrap" id="wishremoved14523">取赞</span> </span></span><span id="wishcount14523" class="thumbscount">0</span> </div>  
+        </div>                                                           
+    </div> 
+        
+    <figure class="mb20 position-relative text-center">             
+        <a href="https://hvk.dyj.mybluehost.me/reliable-ecn-mode.html" class="">
+                                                <img width="336" height="220" src="https://hvk.dyj.mybluehost.me/wp-content/themes/rehub-theme/images/default/noimage_336_220.png" data-src="" alt="靠谱的ECN模式的外汇黄金平台有哪些?" data-skip-lazy="" class="lazyload " >                                    </a>
+    </figure>
+        <div class="content_constructor">
+        <h3 class="mb15 mt0 font110 mobfont100 fontnormal lineheight20"><a href="https://hvk.dyj.mybluehost.me/reliable-ecn-mode.html">靠谱的ECN模式的外汇黄金平台有哪些?</a></h3>
+                                 
+         
+                            <div class="rh-flex-center-align mb15 mobileblockdisplay">
+                                                <div >
+                    						
+		 
+				    			
+	            
+                </div>
+                               
+            </div>
+         
+            </div>                                   
+</article>		</div></div>   
+                    </article>                   
+                                <div id="comments" class="clearfix">
+</div>            </div>
+		</div>	
+        <!-- /Main Side -->  
+        <!-- Sidebar -->
+                <!-- /Sidebar -->
+    </div>
+</div>
+<!-- /CONTENT -->      
+
+<!-- FOOTER -->
+			
+		
+	 				<div class="footer-bottom white_style">
+							<style scoped>
+              .footer-bottom.white_style{border-top: 1px solid #eee;}
+              .footer-bottom.white_style .footer_widget {color: #111;}
+              .footer-bottom.white_style .footer_widget .title, .footer-bottom.white_style .footer_widget h2, .footer-bottom.white_style .footer_widget a, .footer-bottom .footer_widget.white_style ul li a{color: #000;}
+
+            </style>						<div class="rh-container clearfix">
+									
+			</div>	
+		</div>
+				<footer id='theme_footer' class="pt20 pb20 white_style">
+							<style scoped>
+              footer#theme_footer.white_style { background: none #fff; border-top: 1px solid #eee;}
+              footer#theme_footer.white_style div.f_text, footer#theme_footer.white_style div.f_text a:not(.rehub-main-color) {color: #000;}
+            </style>						<div class="rh-container clearfix">
+				<div class="footer_most_bottom mobilecenterdisplay mobilepadding">
+					<div class="f_text font80">
+						<span class="f_text_span"><p style="text-align:center;font-size: 14px;"> © 2012-2022   <a href="https://we.laowei8.com/question" target="_blank"> 问答FAQ</a>     <a href="https://we.laowei8.com/category/compare-forex-brokers" target="_blank">外汇平台对比</a>  <a href="https://we.laowei8.com/category/best-broker" target="_blank">最佳平台推荐</a>    <a href="https://we.laowei8.com/category/forex-college" target="_blank">交易学院</a>    <a href="https://we.laowei8.com/category/how-to" target="_blank">如何选交易平台</a></p></span>
+							
+					</div>		
+				</div>
+			</div>
+		</footer>
+					<!-- FOOTER -->
+</div><!-- Outer End -->
+<span class="rehub_scroll" id="topcontrol" data-scrollto="#top_ankor"><i class="rhicon rhi-chevron-up"></i></span>
+<script type="rocketlazyloadscript" data-rocket-type='text/javascript'>window.addEventListener('DOMContentLoaded', function() {( $ => {
+	/**
+	 * Displays toast message from storage, it is used when the user is redirected after login
+	 */
+	if ( window.sessionStorage ) {
+		$( window ).on( 'tcb_after_dom_ready', () => {
+			let message = sessionStorage.getItem( 'tcb_toast_message' );
+
+			if ( message ) {
+				tcbToast( sessionStorage.getItem( 'tcb_toast_message' ), false );
+				sessionStorage.removeItem( 'tcb_toast_message' );
+			}
+		} );
+	}
+
+	/**
+	 * Displays toast message
+	 */
+	function tcbToast( message, error, callback ) {
+		/* Also allow "message" objects */
+		if ( typeof message !== 'string' ) {
+			message = message.message || message.error || message.success;
+		}
+		if ( ! error ) {
+			error = false;
+		}
+		TCB_Front.notificationElement.toggle( message, error ? 'error' : 'success', callback );
+	}
+} )( typeof ThriveGlobal === 'undefined' ? jQuery : ThriveGlobal.$j );
+});</script>    <div id="logo_mobile_wrapper"><a href="https://hvk.dyj.mybluehost.me" class="logo_image_mobile"><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20160%2050'%3E%3C/svg%3E" alt="开户通" width="160" height="50" data-lazy-src="https://cdn.fendou.la/bluehost/fxlogan.svg" /><noscript><img src="https://cdn.fendou.la/bluehost/fxlogan.svg" alt="开户通" width="160" height="50" /></noscript></a></div>   
+
+                 
+
+    <div id="rhmobpnlcustom" class="rhhidden"><div id="rhmobtoppnl" style="background-color: #ffffff;" class="pr15 pl15 pb15 pt15"><div class="text-center"><a href="https://hvk.dyj.mybluehost.me"><img id="mobpanelimg" src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20150%2045'%3E%3C/svg%3E" alt="Logo" width="150" height="45" data-lazy-src="https://cdn.fendou.la/bluehost/fxlogan.svg" /><noscript><img id="mobpanelimg" src="https://cdn.fendou.la/bluehost/fxlogan.svg" alt="Logo" width="150" height="45" /></noscript></a></div></div></div>    
+     
+	<div id="rhslidingMenu">
+		<div id="slide-menu-mobile"></div>
+	</div>
+	<div id="rhSplashSearch">
+		<div class="search-header-contents">
+			<div id="close-src-splash" class="rh-close-btn rh-hovered-scale position-relative text-center cursorpointer rh-circular-hover abdposright rtlposleft mt15 mr20 ml30" style="z-index:999"><span><i class="rhicon rhi-times whitebg roundborder50p rh-shadow4" aria-hidden="true"></i></span></div>
+			<form  role="search" method="get" class="search-form" action="https://hvk.dyj.mybluehost.me/">
+  	<input type="text" name="s" placeholder="搜索......" class="re-ajax-search" autocomplete="off" data-posttype="post,page,product">
+  	<input type="hidden" name="post_type" value="post,page,product" />  	<button type="submit" class="btnsearch hideonmobile" aria-label="搜索......"><i class="rhicon rhi-search"></i></button>
+</form>
+<div class="re-aj-search-wrap rhscrollthin"></div>  
+		</div>
+	</div>
+
+							
+					<div id="rehub-login-popup-block" class="rhhidden">
+									<!-- Register form -->
+					<div id="rehub-register-popup">
+					<div class="rehub-register-popup">	 
+						<div class="re_title_inmodal">注册新帐户</div>
+												<form id="rehub_registration_form_modal" action="https://hvk.dyj.mybluehost.me/" method="POST">
+														<div class="re-form-group mb20">
+								<label>用户名</label>
+								<input class="re-form-input required" name="rehub_user_login" type="text"/>
+							</div>
+							<div class="re-form-group mb20">
+								<label for="rehub_user_email">邮箱</label>
+								<input class="re-form-input required" name="rehub_user_email" id="rehub_user_email" type="email"/>
+							</div>
+							<div class="re-form-group mb20">
+								<label for="rehub_user_signonpassword">密码<span class="alignright font90">最少6个符号</span></label>
+								<input class="re-form-input required" name="rehub_user_signonpassword" id="rehub_user_signonpassword" type="password"/>
+							</div>
+							<div class="re-form-group mb20">
+								<label for="rehub_user_confirmpassword">确认密码</label>
+								<input class="re-form-input required" name="rehub_user_confirmpassword" id="rehub_user_confirmpassword" type="password"/>
+							</div>										
+							
+							<div class="re-form-group mb20">
+								<input type="hidden" name="action" value="rehub_register_member_popup_function"/>
+								<button class="wpsm-button rehub_main_btn" type="submit">注册</button>
+							</div>
+							<input type="hidden" id="register-security" name="register-security" value="25e8b36e4a" /><input type="hidden" name="_wp_http_referer" value="/last-fake-forex-brokers.html" />						</form>
+						<div class="rehub-errors"></div>
+						<div class="rehub-login-popup-footer">已经有账号？ <span class="act-rehub-login-popup color_link" data-type="login">登录</span></div>
+					</div>
+					</div>
+				
+				<!-- Login form -->
+				<div id="rehub-login-popup">
+			 	<div class="rehub-login-popup">
+					<div class="re_title_inmodal">登录</div>
+															
+					<form id="rehub_login_form_modal" action="https://hvk.dyj.mybluehost.me/" method="post">
+												<div class="re-form-group mb20">
+							<label>用户名</label>
+							<input class="re-form-input required" name="rehub_user_login" type="text"/>
+						</div>
+						<div class="re-form-group mb20">
+							<label for="rehub_user_pass">密码</label>
+							<input class="re-form-input required" name="rehub_user_pass" id="rehub_user_pass" type="password"/>
+															<a href="https://hvk.dyj.mybluehost.me/my-account/lost-password" class="alignright">忘记密码？</a>
+														
+						</div>
+						<div class="re-form-group mb20">
+							<label for="rehub_remember"><input name="rehub_remember" id="rehub_remember" type="checkbox" value="forever" />
+							记住我</label>
+						</div>						
+						<div class="re-form-group mb20">
+							<input type="hidden" name="action" value="rehub_login_member_popup_function"/>
+							<button class="wpsm-button rehub_main_btn" type="submit">登录</button>
+						</div>
+						<input type="hidden" id="loginsecurity" name="loginsecurity" value="25e8b36e4a" /><input type="hidden" name="_wp_http_referer" value="/last-fake-forex-brokers.html" />					</form>
+					<div class="rehub-errors"></div>
+					<div class="rehub-login-popup-footer">没有账号？ 
+											<span class="act-rehub-login-popup color_link" data-type="register">注册</span>
+										</div>
+				</div>
+				</div>
+
+				<!-- Lost Password form -->
+				<div id="rehub-reset-popup">
+			 	<div class="rehub-reset-popup">
+					<div class="re_title_inmodal">重设密码</div>
+					<form id="rehub_reset_password_form_modal" action="https://hvk.dyj.mybluehost.me/" method="post">
+						<div class="re-form-group mb20">
+							<label for="rehub_user_or_email">用户名或邮箱</label>
+							<input class="re-form-input required" name="rehub_user_or_email" id="rehub_user_or_email" type="text"/>
+						</div>
+						<div class="re-form-group mb20">
+							<input type="hidden" name="action" value="rehub_reset_password_popup_function"/>
+							<button class="wpsm-button rehub_main_btn" type="submit">获取新密码</button>
+						</div>
+						<input type="hidden" id="password-security" name="password-security" value="25e8b36e4a" /><input type="hidden" name="_wp_http_referer" value="/last-fake-forex-brokers.html" />					</form>
+					<div class="rehub-errors"></div>
+					<div class="rehub-login-popup-footer">已经有账号？ <span class="act-rehub-login-popup color_link" data-type="login">登录</span></div>
+				</div>
+				</div>
+			</div>
+			
+				<div id="re-compare-bar" class="from-right rh-sslide-panel">
+			<div id="re-compare-bar-wrap" class="rh-sslide-panel-wrap">
+				<div id="re-compare-bar-heading" class="rh-sslide-panel-heading">
+					<h5 class="rehub-main-color pt15 pb15 pr15 pl20 mt0 mb0 font120">预比较の外汇平台<i class="blackcolor closecomparepanel rh-sslide-close-btn cursorpointer floatright font130 rhi-times-circle rhicon" aria-hidden="true"></i></h5>
+				</div>
+				<div id="re-compare-bar-tabs" class="rh-sslide-panel-tabs abdfullwidth mt30 pb30 pt30 width-100p">
+											<ul class="rhhidden"><li class="re-compare-tab-1168 no-multicats" data-page="1168" data-url="https://hvk.dyj.mybluehost.me/compare">总计 (<span>0</span>)</li></ul>
+						<div><div class="rh-sslide-panel-inner mt10 re-compare-wrap pr20 pl20 re-compare-wrap-1168"></div></div>
+										<span class="re-compare-destin wpsm-button rehub_main_btn" data-compareurl="">对比<i class="rhi-arrow-circle-right rhicon" aria-hidden="true"></i></span>
+				</div>
+			</div>
+		</div>
+					<div id="re-compare-icon-fixed" class="rhhidden">
+				<span class="re-compare-icon-toggle position-relative"><i class="rhicon rhi-shuffle"></i><span class="re-compare-notice rehub-main-color-bg">0</span></span>			</div>
+						
+	<style type="text/css" id="tcb-style-base-tve_notifications-27325"  onLoad="typeof window.lightspeedOptimizeStylesheet === 'function' && window.lightspeedOptimizeStylesheet()" class="tcb-lightspeed-style"></style><style type="text/css" id="tve_notification_styles"></style>
+<div class="tvd-toast tve-fe-message" style="display: none">
+	<div class="tve-toast-message tve-success-message">
+		<div class="tve-toast-icon-container">
+			<span class="tve_tick thrv-svg-icon"></span>
+		</div>
+		<div class="tve-toast-message-container"></div>
+	</div>
+</div>	<script type="rocketlazyloadscript" data-rocket-type="text/javascript">
+		(function () {
+			var c = document.body.className;
+			c = c.replace(/woocommerce-no-js/, 'woocommerce-js');
+			document.body.className = c;
+		})();
+	</script>
+	<link data-minify="1" rel='stylesheet' id='rhpromobox-css'  href='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/css/shortcodes/promobox.css?ver=1659238992' type='text/css' media='all' />
+<link data-minify="1" rel='stylesheet' id='rhcomments-css'  href='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/css/comments.css?ver=1659238992' type='text/css' media='all' />
+<script data-minify="1" type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/js/tablechart.js?ver=1659238986' id='rehubtablechart-js' defer></script>
+<script type='text/javascript' id='rehubcompare-js-extra'>
+/* <![CDATA[ */
+var comparechart = {"item_error_add":"\u8bf7\u5c06\u9879\u76ee\u6dfb\u52a0\u5230\u6b64\u6bd4\u8f83\u7ec4\u6216\u9009\u62e9\u4e0d\u662f\u7a7a\u7ec4","item_error_comp":"\u8bf7\u6dfb\u52a0\u66f4\u591a\u9879\u76ee\u8fdb\u884c\u6bd4\u8f83","comparenonce":"6104db9247"};
+/* ]]> */
+</script>
+<script data-minify="1" type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/js/comparechart.js?ver=1659238986' id='rehubcompare-js' defer></script>
+<script type="rocketlazyloadscript" data-rocket-type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-content/plugins/thrive-visual-editor/editor/js/dist/woo.min.js?ver=3.11' id='tve_woo-js' defer></script>
+<script type="rocketlazyloadscript" data-rocket-type='text/javascript' id='rocket-browser-checker-js-after'>
+"use strict";var _createClass=function(){function defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||!1,descriptor.configurable=!0,"value"in descriptor&&(descriptor.writable=!0),Object.defineProperty(target,descriptor.key,descriptor)}}return function(Constructor,protoProps,staticProps){return protoProps&&defineProperties(Constructor.prototype,protoProps),staticProps&&defineProperties(Constructor,staticProps),Constructor}}();function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor))throw new TypeError("Cannot call a class as a function")}var RocketBrowserCompatibilityChecker=function(){function RocketBrowserCompatibilityChecker(options){_classCallCheck(this,RocketBrowserCompatibilityChecker),this.passiveSupported=!1,this._checkPassiveOption(this),this.options=!!this.passiveSupported&&options}return _createClass(RocketBrowserCompatibilityChecker,[{key:"_checkPassiveOption",value:function(self){try{var options={get passive(){return!(self.passiveSupported=!0)}};window.addEventListener("test",null,options),window.removeEventListener("test",null,options)}catch(err){self.passiveSupported=!1}}},{key:"initRequestIdleCallback",value:function(){!1 in window&&(window.requestIdleCallback=function(cb){var start=Date.now();return setTimeout(function(){cb({didTimeout:!1,timeRemaining:function(){return Math.max(0,50-(Date.now()-start))}})},1)}),!1 in window&&(window.cancelIdleCallback=function(id){return clearTimeout(id)})}},{key:"isDataSaverModeOn",value:function(){return"connection"in navigator&&!0===navigator.connection.saveData}},{key:"supportsLinkPrefetch",value:function(){var elem=document.createElement("link");return elem.relList&&elem.relList.supports&&elem.relList.supports("prefetch")&&window.IntersectionObserver&&"isIntersecting"in IntersectionObserverEntry.prototype}},{key:"isSlowConnection",value:function(){return"connection"in navigator&&"effectiveType"in navigator.connection&&("2g"===navigator.connection.effectiveType||"slow-2g"===navigator.connection.effectiveType)}}]),RocketBrowserCompatibilityChecker}();
+</script>
+<script type='text/javascript' id='rocket-preload-links-js-extra'>
+/* <![CDATA[ */
+var RocketPreloadLinksConfig = {"excludeUris":"\/(?:.+\/)?feed(?:\/(?:.+\/?)?)?$|\/(?:.+\/)?embed\/|\/checkout(.*)|\/cart|\/my-account(.*)|\/wc-api\/v(.*)|(\/[^\/]+)?\/(index\\.php\/)?wp\\-json(\/.*|$)|\/wp-admin|\/logout|\/wp-login.php|\/refer\/|\/go\/|\/recommend\/|\/recommends\/","usesTrailingSlash":"","imageExt":"jpg|jpeg|gif|png|tiff|bmp|webp|avif|pdf|doc|docx|xls|xlsx|php","fileExt":"jpg|jpeg|gif|png|tiff|bmp|webp|avif|pdf|doc|docx|xls|xlsx|php|html|htm","siteUrl":"https:\/\/hvk.dyj.mybluehost.me","onHoverDelay":"100","rateThrottle":"3"};
+/* ]]> */
+</script>
+<script type="rocketlazyloadscript" data-rocket-type='text/javascript' id='rocket-preload-links-js-after'>
+(function() {
+"use strict";var r="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},e=function(){function i(e,t){for(var n=0;n<t.length;n++){var i=t[n];i.enumerable=i.enumerable||!1,i.configurable=!0,"value"in i&&(i.writable=!0),Object.defineProperty(e,i.key,i)}}return function(e,t,n){return t&&i(e.prototype,t),n&&i(e,n),e}}();function i(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}var t=function(){function n(e,t){i(this,n),this.browser=e,this.config=t,this.options=this.browser.options,this.prefetched=new Set,this.eventTime=null,this.threshold=1111,this.numOnHover=0}return e(n,[{key:"init",value:function(){!this.browser.supportsLinkPrefetch()||this.browser.isDataSaverModeOn()||this.browser.isSlowConnection()||(this.regex={excludeUris:RegExp(this.config.excludeUris,"i"),images:RegExp(".("+this.config.imageExt+")$","i"),fileExt:RegExp(".("+this.config.fileExt+")$","i")},this._initListeners(this))}},{key:"_initListeners",value:function(e){-1<this.config.onHoverDelay&&document.addEventListener("mouseover",e.listener.bind(e),e.listenerOptions),document.addEventListener("mousedown",e.listener.bind(e),e.listenerOptions),document.addEventListener("touchstart",e.listener.bind(e),e.listenerOptions)}},{key:"listener",value:function(e){var t=e.target.closest("a"),n=this._prepareUrl(t);if(null!==n)switch(e.type){case"mousedown":case"touchstart":this._addPrefetchLink(n);break;case"mouseover":this._earlyPrefetch(t,n,"mouseout")}}},{key:"_earlyPrefetch",value:function(t,e,n){var i=this,r=setTimeout(function(){if(r=null,0===i.numOnHover)setTimeout(function(){return i.numOnHover=0},1e3);else if(i.numOnHover>i.config.rateThrottle)return;i.numOnHover++,i._addPrefetchLink(e)},this.config.onHoverDelay);t.addEventListener(n,function e(){t.removeEventListener(n,e,{passive:!0}),null!==r&&(clearTimeout(r),r=null)},{passive:!0})}},{key:"_addPrefetchLink",value:function(i){return this.prefetched.add(i.href),new Promise(function(e,t){var n=document.createElement("link");n.rel="prefetch",n.href=i.href,n.onload=e,n.onerror=t,document.head.appendChild(n)}).catch(function(){})}},{key:"_prepareUrl",value:function(e){if(null===e||"object"!==(void 0===e?"undefined":r(e))||!1 in e||-1===["http:","https:"].indexOf(e.protocol))return null;var t=e.href.substring(0,this.config.siteUrl.length),n=this._getPathname(e.href,t),i={original:e.href,protocol:e.protocol,origin:t,pathname:n,href:t+n};return this._isLinkOk(i)?i:null}},{key:"_getPathname",value:function(e,t){var n=t?e.substring(this.config.siteUrl.length):e;return n.startsWith("/")||(n="/"+n),this._shouldAddTrailingSlash(n)?n+"/":n}},{key:"_shouldAddTrailingSlash",value:function(e){return this.config.usesTrailingSlash&&!e.endsWith("/")&&!this.regex.fileExt.test(e)}},{key:"_isLinkOk",value:function(e){return null!==e&&"object"===(void 0===e?"undefined":r(e))&&(!this.prefetched.has(e.href)&&e.origin===this.config.siteUrl&&-1===e.href.indexOf("?")&&-1===e.href.indexOf("#")&&!this.regex.excludeUris.test(e.href)&&!this.regex.images.test(e.href))}}],[{key:"run",value:function(){"undefined"!=typeof RocketPreloadLinksConfig&&new n(new RocketBrowserCompatibilityChecker({capture:!0,passive:!0}),RocketPreloadLinksConfig).init()}}]),n}();t.run();
+}());
+</script>
+<script type='text/javascript' id='tve-dash-frontend-js-extra'>
+/* <![CDATA[ */
+var tve_dash_front = {"ajaxurl":"https:\/\/hvk.dyj.mybluehost.me\/wp-admin\/admin-ajax.php","force_ajax_send":"1","is_crawler":"","recaptcha":[],"post_id":"12613"};
+/* ]]> */
+</script>
+<script type="rocketlazyloadscript" data-rocket-type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-content/plugins/thrive-visual-editor/thrive-dashboard/js/dist/frontend.min.js?ver=3.9' id='tve-dash-frontend-js' defer></script>
+<script data-minify="1" type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/js/inview.js?ver=1659238986' id='rhinview-js' defer></script>
+<script data-minify="1" type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/js/pgwmodal.js?ver=1659238986' id='rhpgwmodal-js' defer></script>
+<script data-minify="1" type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/js/unveil.js?ver=1659238986' id='rhunveil-js' defer></script>
+<script data-minify="1" type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/js/hoverintent.js?ver=1659238986' id='rhhoverintent-js' defer></script>
+<script data-minify="1" type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/js/countdown.js?ver=1659238986' id='rhcountdown-js' defer></script>
+<script type='text/javascript' id='rehub-js-extra'>
+/* <![CDATA[ */
+var wishcached = {"rh_ajax_url":"https:\/\/hvk.dyj.mybluehost.me\/wp-content\/plugins\/rehub-framework\/includes\/rehub_ajax.php","userid":"0"};
+var rhscriptvars = {"back":"\u8fd4\u56de","ajax_url":"\/wp-admin\/admin-ajax.php","fin":"\u5c31\u8fd9\u6837","noresults":"\u672a\u627e\u5230\u7ed3\u679c","your_rating":"\u4f60\u7684\u8bc4\u5206:","addedcart":"Added to Cart","nonce":"d3529675d6","hotnonce":"25e5deb4a5","wishnonce":"c7e97eda77","searchnonce":"ca8c743a10","filternonce":"734e88f524","rating_tabs_id":"328e8fcd70","max_temp":"500","min_temp":"-500","helpnotnonce":"315594c32d"};
+/* ]]> */
+</script>
+<script data-minify="1" type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/js/custom.js?ver=1659238986' id='rehub-js' defer></script>
+<script type="rocketlazyloadscript" data-rocket-type='text/javascript' id='rehub-js-after'>window.addEventListener('DOMContentLoaded', function() {
+            jQuery(document).ready(function($) {
+            	var retina = window.devicePixelRatio > 1 ? true : false;
+            	if(retina) {
+                	jQuery(".logo_image img").attr("src", "https://cdn.fendou.la/bluehost/fxlogan.svg");
+            	}
+            });
+});</script>
+<script data-minify="1" type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/js/jquery.sticky.js?ver=1659238986' id='rhsticky-js' defer></script>
+<script type="rocketlazyloadscript" data-minify="1" data-rocket-type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/js/ajaxsearch.js?ver=1659238986' id='rehubajaxsearch-js' defer></script>
+<script type="rocketlazyloadscript" data-rocket-type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-includes/js/comment-reply.min.js?ver=6.0.1' id='comment-reply-js' defer></script>
+<script type="rocketlazyloadscript" data-rocket-type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-content/plugins/woocommerce/assets/js/selectWoo/selectWoo.full.min.js?ver=1.0.9-wc.6.7.0' id='selectWoo-js' defer></script>
+<script type="rocketlazyloadscript" data-minify="1" data-rocket-type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/js/userlogin.js?ver=1659238990' id='rehubuserlogin-js' defer></script>
+<script data-minify="1" type='text/javascript' src='https://hvk.dyj.mybluehost.me/wp-content/cache/min/3/wp-content/themes/rehub-theme/js/wishcount.js?ver=1659238986' id='rhwishcount-js' defer></script>
+<script type="rocketlazyloadscript" data-rocket-type="text/javascript">var tcb_post_lists=JSON.parse('[]');</script><script>window.lazyLoadOptions=[{elements_selector:"img[data-lazy-src],.rocket-lazyload,iframe[data-lazy-src]",data_src:"lazy-src",data_srcset:"lazy-srcset",data_sizes:"lazy-sizes",class_loading:"lazyloading",class_loaded:"lazyloaded",threshold:300,callback_loaded:function(element){if(element.tagName==="IFRAME"&&element.dataset.rocketLazyload=="fitvidscompatible"){if(element.classList.contains("lazyloaded")){if(typeof window.jQuery!="undefined"){if(jQuery.fn.fitVids){jQuery(element).parent().fitVids()}}}}}},{elements_selector:".rocket-lazyload",data_src:"lazy-src",data_srcset:"lazy-srcset",data_sizes:"lazy-sizes",class_loading:"lazyloading",class_loaded:"lazyloaded",threshold:300,}];window.addEventListener('LazyLoad::Initialized',function(e){var lazyLoadInstance=e.detail.instance;if(window.MutationObserver){var observer=new MutationObserver(function(mutations){var image_count=0;var iframe_count=0;var rocketlazy_count=0;mutations.forEach(function(mutation){for(var i=0;i<mutation.addedNodes.length;i++){if(typeof mutation.addedNodes[i].getElementsByTagName!=='function'){continue}
+if(typeof mutation.addedNodes[i].getElementsByClassName!=='function'){continue}
+images=mutation.addedNodes[i].getElementsByTagName('img');is_image=mutation.addedNodes[i].tagName=="IMG";iframes=mutation.addedNodes[i].getElementsByTagName('iframe');is_iframe=mutation.addedNodes[i].tagName=="IFRAME";rocket_lazy=mutation.addedNodes[i].getElementsByClassName('rocket-lazyload');image_count+=images.length;iframe_count+=iframes.length;rocketlazy_count+=rocket_lazy.length;if(is_image){image_count+=1}
+if(is_iframe){iframe_count+=1}}});if(image_count>0||iframe_count>0||rocketlazy_count>0){lazyLoadInstance.update()}});var b=document.getElementsByTagName("body")[0];var config={childList:!0,subtree:!0};observer.observe(b,config)}},!1)</script><script data-no-minify="1" async src="https://hvk.dyj.mybluehost.me/wp-content/plugins/wp-rocket/assets/js/lazyload/17.5/lazyload.min.js"></script><script>function lazyLoadThumb(e){var t='<img data-lazy-src="https://i.ytimg.com/vi/ID/hqdefault.jpg" alt="" width="480" height="360"><noscript><img src="https://i.ytimg.com/vi/ID/hqdefault.jpg" alt="" width="480" height="360"></noscript>',a='<button class="play" aria-label="play Youtube video"></button>';return t.replace("ID",e)+a}function lazyLoadYoutubeIframe(){var e=document.createElement("iframe"),t="ID?autoplay=1";t+=0===this.parentNode.dataset.query.length?'':'&'+this.parentNode.dataset.query;e.setAttribute("src",t.replace("ID",this.parentNode.dataset.src)),e.setAttribute("frameborder","0"),e.setAttribute("allowfullscreen","1"),e.setAttribute("allow", "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"),this.parentNode.parentNode.replaceChild(e,this.parentNode)}document.addEventListener("DOMContentLoaded",function(){var e,t,p,a=document.getElementsByClassName("rll-youtube-player");for(t=0;t<a.length;t++)e=document.createElement("div"),e.setAttribute("data-id",a[t].dataset.id),e.setAttribute("data-query", a[t].dataset.query),e.setAttribute("data-src", a[t].dataset.src),e.innerHTML=lazyLoadThumb(a[t].dataset.id),a[t].appendChild(e),p=e.querySelector('.play'),p.onclick=lazyLoadYoutubeIframe});</script></body>
+</html>
+<!-- This website is like a Rocket, isn't it? Performance optimized by WP Rocket. Learn more: https://wp-rocket.me - Debug: cached@1659238992 -->

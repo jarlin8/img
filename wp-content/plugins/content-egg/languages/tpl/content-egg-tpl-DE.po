@@ -1,0 +1,549 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Content Egg 3.4.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/content-egg\n"
+"POT-Creation-Date: 2026-06-06T14:15:40+00:00\n"
+"PO-Revision-Date: 2022-10-26 13:09+0000\n"
+"Last-Translator: Topollino <topollinchen@gmail.com>\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#. Plugin Name of the plugin
+#: content-egg.php
+msgid "Content Egg<stripfree> Pro</stripfree>"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: content-egg.php
+msgid "https://www.keywordrush.com/contentegg"
+msgstr ""
+
+#. Description of the plugin
+#: content-egg.php
+msgid ""
+"Multi-network affiliate plugin — imports, price comparison, automation, and "
+"structured blocks for affiliate content."
+msgstr ""
+
+#. Author of the plugin
+#: content-egg.php
+msgid "keywordrush.com"
+msgstr "keywordrush.com"
+
+#. Author URI of the plugin
+#: content-egg.php
+msgid "https://www.keywordrush.com"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:34
+msgid "What to look for"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:40
+msgid "Look for"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:41
+msgid "Avoid"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:100
+msgid "High"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:101
+msgid "Low"
+msgstr ""
+
+#: application/EggBlocks/blocks/criteria/CriteriaRenderer.php:102
+msgid "Medium"
+msgstr ""
+
+#: application/EggBlocks/blocks/faq/FaqRenderer.php:72
+msgid "Frequently Asked Questions"
+msgstr ""
+
+#: application/EggBlocks/blocks/key-takeaways/KeyTakeawaysRenderer.php:38
+msgid "Key Takeaways"
+msgstr ""
+
+#: application/EggBlocks/blocks/methodology/MethodologyRenderer.php:41
+msgid "Methodology"
+msgstr ""
+
+#: application/EggBlocks/blocks/myth-fact/MythFactRenderer.php:32
+msgid "Myth vs Fact"
+msgstr ""
+
+#: application/EggBlocks/blocks/myth-fact/MythFactRenderer.php:35
+msgid "Myth"
+msgstr ""
+
+#: application/EggBlocks/blocks/myth-fact/MythFactRenderer.php:36
+msgid "Fact"
+msgstr ""
+
+#: application/EggBlocks/blocks/myth-fact/MythFactRenderer.php:37
+msgid "Why it matters"
+msgstr ""
+
+#: application/EggBlocks/blocks/pricing/PricingRenderer.php:51
+msgid "Most popular"
+msgstr ""
+
+#. translators: %s: price lower bound
+#: application/EggBlocks/blocks/pricing/PricingRenderer.php:105
+#, php-format
+msgid "From %s"
+msgstr ""
+
+#: application/EggBlocks/blocks/pricing/variants/PricingListVariant.php:58
+msgid "From"
+msgstr ""
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:36
+#, fuzzy
+msgid "Pros"
+msgstr "Vorteile:"
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:37
+#, fuzzy
+msgid "Cons"
+msgstr "Nachteile:"
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:38
+msgid "Best for"
+msgstr ""
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:39
+msgid "Not for"
+msgstr ""
+
+#: application/EggBlocks/blocks/pros-cons/ProsConsRenderer.php:40
+msgid "Quick take:"
+msgstr ""
+
+#: application/EggBlocks/blocks/rating-breakdown/RatingBreakdownRenderer.php:106
+msgid "Category"
+msgstr ""
+
+#: application/EggBlocks/blocks/rating-breakdown/RatingBreakdownRenderer.php:138
+#, fuzzy
+msgid "out of 10"
+msgstr "Ausverkauft"
+
+#. translators: %s is the numeric star rating out of 5
+#: application/EggBlocks/blocks/rating-breakdown/RatingBreakdownRenderer.php:215
+#, fuzzy, php-format
+msgid "%s out of 5 stars"
+msgstr "Ausverkauft"
+
+#: application/EggBlocks/blocks/related-posts/RelatedPostsRenderer.php:32
+msgid "Related Articles"
+msgstr ""
+
+#: application/EggBlocks/blocks/section-header/SectionHeaderRenderer.php:67
+msgid "Step"
+msgstr ""
+
+#: application/EggBlocks/blocks/specifications/SpecificationsRenderer.php:33
+msgid "Key specs"
+msgstr ""
+
+#: application/EggBlocks/blocks/step-list/StepListRenderer.php:38
+#, fuzzy
+msgid "Step List"
+msgstr "Liste"
+
+#. translators: 1: review count, 2: platform name
+#: application/EggBlocks/blocks/testimonial/variants/CardsVariant.php:36
+#, php-format
+msgid "from %1$s reviews on %2$s"
+msgstr ""
+
+#. translators: 1: review count, 2: platform name
+#: application/EggBlocks/blocks/testimonial/variants/DefaultVariant.php:35
+#, php-format
+msgid "based on %1$s reviews · %2$s"
+msgstr ""
+
+#: application/EggBlocks/blocks/toc/TocRenderer.php:34
+msgid "In this article"
+msgstr ""
+
+#: application/EggBlocks/blocks/toc/variants/CompactVariant.php:15
+#: application/EggBlocks/blocks/toc/variants/DefaultVariant.php:15
+#: application/EggBlocks/blocks/toc/variants/NumberedVariant.php:15
+msgid "Table of contents"
+msgstr ""
+
+#~ msgid "  Ok  "
+#~ msgstr " Ok "
+
+#~ msgid "<a href=\"%s\">More info...</a>"
+#~ msgstr "<a href=\"%s\">Mehr Informationen...</a>"
+
+#~ msgid "<a href=\"%s\">Save %s (%s%%) on %s</a>"
+#~ msgstr "<a href=\"%s\">Speicher %s (%s%%) bei %s</a>"
+
+#~ msgid "All fields are required."
+#~ msgstr "Alle Felder sind erforderlich."
+
+#~ msgid "All prices mentioned above are in %s."
+#~ msgstr "Alle oben genannten Preise sind in %s."
+
+#~ msgid "All reviews on Yandex.Market"
+#~ msgstr "Alle Bewertungen auf Yandex.Market"
+
+#~ msgid "as of"
+#~ msgstr "Am"
+
+#~ msgid "At %s you can purchase %s for only %s"
+#~ msgstr "Bei %s kannst du %s für nur %s erhalten"
+
+#~ msgid "Average price"
+#~ msgstr "Durchschnittspreis"
+
+#~ msgid "Bids:"
+#~ msgstr "Gebote:"
+
+#, fuzzy
+#~| msgid "Buy It Now"
+#~ msgid "BUY NOW"
+#~ msgstr "Jetzt kaufen"
+
+#~ msgid "Comment:"
+#~ msgstr "Kommentar:"
+
+#~ msgid "Compare"
+#~ msgstr "Vergleichen"
+
+#~ msgid "Coupons"
+#~ msgstr "Gutscheine"
+
+#~ msgid "Current Price"
+#~ msgstr "Aktueller Preis"
+
+#~ msgid "Current Price: <strong>%s</strong>"
+#~ msgstr "Aktueller Preis: <strong>%s</strong>"
+
+#~ msgid "Customer reviews"
+#~ msgstr "Kundenbewertungen"
+
+#~ msgid "Customer reviews:"
+#~ msgstr "Kundenbewertungen:"
+
+#~ msgid "d"
+#~ msgstr "d"
+
+#~ msgid "Data from Yandex.Market"
+#~ msgstr "Daten von Yandex.Market"
+
+#~ msgid "Description"
+#~ msgstr "Beschreibung"
+
+#~ msgid "Desired Price"
+#~ msgstr "Gewünschter Preis"
+
+#~ msgid "Desired Price: %s"
+#~ msgstr "Gewünschter Preis: %s"
+
+# Keine Ahnung was EEK ist
+#~ msgid "EEK:"
+#~ msgstr "EEK:"
+
+#~ msgid "Ended:"
+#~ msgstr "Beendet:"
+
+#~ msgid "Ends:"
+#~ msgstr "Endet:"
+
+#~ msgid "Expert Reviews"
+#~ msgstr "Expertenbewertungen"
+
+#~ msgid "Features"
+#~ msgstr "Eigenschaften"
+
+#~ msgid "free"
+#~ msgstr "kostenlos"
+
+#~ msgid "Free shipping"
+#~ msgstr "Kostenloser Versand"
+
+#~ msgid "from"
+#~ msgstr "ab"
+
+#~ msgid "Gallery"
+#~ msgstr "Galerie"
+
+#~ msgid "Good news!"
+#~ msgstr "Gute Nachrichten!"
+
+#~ msgid "Grid"
+#~ msgstr "Gitter"
+
+#~ msgid "h"
+#~ msgstr "h"
+
+#~ msgid "Hello,"
+#~ msgstr "Hallo,"
+
+#~ msgid "Highest Price"
+#~ msgstr "Höchster Preis"
+
+#~ msgid ""
+#~ "If you don't want to receive any price alerts from us in the future, <a "
+#~ "href=\"%s\">please click here</a>."
+#~ msgstr ""
+#~ "Wenn du in Zukunft keine Preisalarme mehr von uns haben möchtest, <a "
+#~ "href=\"%s\">dann klick bitte hier</a>."
+
+#~ msgid "Image"
+#~ msgstr "Bild"
+
+#~ msgid "Images"
+#~ msgstr "Bilder"
+
+#~ msgid "In stock"
+#~ msgstr "Auf Lager"
+
+#~ msgid "in stock"
+#~ msgstr "Auf Lager"
+
+#~ msgid "Internal Error. Please notify the administrator."
+#~ msgstr "Interner Fehler. Bitte benachrichtige den Administrator."
+
+#~ msgid "Item condition:"
+#~ msgstr "Artikelzustand:"
+
+#~ msgid "Last price changes"
+#~ msgstr "Letzte Preisänderungen"
+
+#~ msgid "Last update: "
+#~ msgstr "Letztes Update: "
+
+#~ msgid "Last updated on %s"
+#~ msgstr "Aktualisiert am %s"
+
+#~ msgid "Lowest Price"
+#~ msgstr "Niedrigster Preis"
+
+#~ msgid "m"
+#~ msgstr "m"
+
+#~ msgid "new"
+#~ msgstr "neu"
+
+#~ msgid "Not available"
+#~ msgstr "Nicht verfügbar"
+
+#~ msgid "number_format_decimal_point"
+#~ msgstr "number_format_decimal_point"
+
+#~ msgid "number_format_thousands_sep"
+#~ msgstr "number_format_thousands_sep"
+
+#~ msgid "OFF"
+#~ msgstr "AUS"
+
+#~ msgid "Photo %s on Flickr"
+#~ msgstr "Foto %s auf Flickr"
+
+#~ msgid "Photo: %s on Flickr"
+#~ msgstr "Foto: %s auf Flickr"
+
+#~ msgid "Pickup"
+#~ msgstr "Abholen"
+
+#~ msgid ""
+#~ "Please open this link to validate your email address:<br> <a "
+#~ "href=\"%s\">%s</a>"
+#~ msgstr ""
+#~ "Bitte öffne diesen Link, um deine E-Mail-Adresse zu bestätigen:<br> <a "
+#~ "href=\"%s\">%s</a>"
+
+#~ msgid "Price"
+#~ msgstr "Preis"
+
+#~ msgid "Price alert: \"%s\""
+#~ msgstr "Preisalarm: \"%s\""
+
+#~ msgid "Price dropped from %s to %s"
+#~ msgstr "Preis fiel von %s auf %s"
+
+#~ msgid "Price History"
+#~ msgstr "Preishistorie"
+
+#~ msgid "Price History for"
+#~ msgstr "Preishistorie für"
+
+#~ msgid "Price statistics"
+#~ msgstr "Preisstatistik"
+
+#~ msgid "Price tracker & alert"
+#~ msgstr "Preistracker & Alarm"
+
+#~ msgid "Product card"
+#~ msgstr "Product card"
+
+#~ msgid ""
+#~ "Product prices and availability are accurate as of the date/time "
+#~ "indicated and are subject to change. Any price and availability "
+#~ "information displayed on Amazon at the time of purchase will apply to the "
+#~ "purchase of this product."
+#~ msgstr ""
+#~ "Produktpreise und -verfügbarkeit gelten zum angegebenen Datum / Zeitpunkt "
+#~ "und können sich ändern. Es gelten alle Preis- und "
+#~ "Verfügbarkeitsinformationen, die bei Amazon zum Zeitpunkt des Kaufs "
+#~ "angezeigt werden, für Kauf dieses Produkts."
+
+#~ msgid "Rating"
+#~ msgstr "Bewertung"
+
+#~ msgid "Requirements"
+#~ msgstr "Anforderungen"
+
+#~ msgid "Reviews:"
+#~ msgstr "Bewertungen:"
+
+#~ msgid "See all reviews"
+#~ msgstr "Alle Bewertungen anschauen"
+
+#~ msgid "SET ALERT"
+#~ msgstr "ALARM SETZEN"
+
+#~ msgid "Shop Now"
+#~ msgstr "Jetzt kaufen"
+
+# Zusammenhang?
+#~ msgid "Shop Sale"
+#~ msgstr "Angebot holen"
+
+#~ msgid "Simple"
+#~ msgstr "Einfach"
+
+#~ msgid "Source:"
+#~ msgstr "Quelle:"
+
+#~ msgid "Specifications"
+#~ msgstr "Spezifikationen"
+
+#~ msgid "Statistics"
+#~ msgstr "Statistiken"
+
+#~ msgid "Success!"
+#~ msgstr "Erfolg!"
+
+#~ msgid "Target audience"
+#~ msgstr "Zielgruppe"
+
+#~ msgid "The lowest price of %s was obtained on %s."
+#~ msgstr "Der niedrigste Preis von %s wurde am %s gefunden."
+
+#~ msgid "The price has already been reached."
+#~ msgstr "Dieser Preis ist bereits erreicht."
+
+#~ msgid "The price target you set for the item has been reached."
+#~ msgstr ""
+#~ "Der gewünscht Preis, den du für den Artikel festgelegt hast, wurde "
+#~ "erreicht."
+
+#~ msgid ""
+#~ "This present alert has now expired. You may <a href=\"%s\">create a new "
+#~ "alert</a> for this item."
+#~ msgstr ""
+#~ "Dieser Alarm ist abgelaufen. Du kannst aber <a href=\"%s\">einen neuen "
+#~ "Alarm</a> für dieses Produkt erstellen."
+
+# Zusammenhang?
+#~ msgid "Tile"
+#~ msgstr "Kacheln"
+
+#~ msgid "Time left:"
+#~ msgstr "Verbleibende Zeit:"
+
+#~ msgid "Too low to display"
+#~ msgstr "Zu niedrig zum Anzeigen"
+
+#~ msgid "Universal"
+#~ msgstr "Universal"
+
+#~ msgid "Unsubscribed!"
+#~ msgstr "Abgemeldet!"
+
+#~ msgid "used"
+#~ msgstr "gebraucht"
+
+#~ msgid "User Rating"
+#~ msgstr "Nutzerwertung"
+
+#~ msgid "User Reviews"
+#~ msgstr "Nutzerwertungen"
+
+#~ msgid "User reviews"
+#~ msgstr "Nuterwertungen"
+
+#~ msgid "View all reviews"
+#~ msgstr "Alle Bewertungen"
+
+#~ msgid "Visit store"
+#~ msgstr "Shop besuchen"
+
+#~ msgid "Wait For A Price Drop"
+#~ msgstr "Auf einen Preisrückgang warten"
+
+#~ msgid ""
+#~ "We are now tracking this product for you. Please verify your email "
+#~ "address to be notified of price drops."
+#~ msgstr ""
+#~ "Wir verfolgen dieses Produkt jetzt für dich. Bitte überprüfe deine E-Mail-"
+#~ "Adresse, um über Preissenkungen benachrichtigt zu werden."
+
+#~ msgid ""
+#~ "We will not send you any price alerts until you verified your email "
+#~ "address."
+#~ msgstr ""
+#~ "Wir dürfen dir keine Preisbenachrichtigungen senden, bis du deine E-Mail-"
+#~ "Adresse bestätigt hast."
+
+#~ msgid "Welcome to %s"
+#~ msgstr "Willkommen bei %s"
+
+#~ msgid "What Will I Learn?"
+#~ msgstr "Was werde ich lernen?"
+
+#~ msgid "which is %s%% less than the cost in %s (%s)."
+#~ msgstr "was %s%% weniger als  %s (%s) ist."
+
+#~ msgid "You already tracking this product."
+#~ msgstr "Du folgst diesem Produkt bereits."
+
+#~ msgid "You are now unsubscribed from our Price Alerts via email."
+#~ msgstr ""
+#~ "Du bist jetzt von unseren Preisbenachrichtigungen per E-Mail abgemeldet."
+
+#~ msgid "You have successfully set a price drop alert for %s."
+#~ msgstr "Du hast erfolgreich deinen Preisalarm für %s gesetzt."
+
+#~ msgid "You will receive a notification when the price drops."
+#~ msgstr ""
+#~ "Du erhälst eine Benachrichtigung, wenn dein gewünschter Preis erreicht "
+#~ "wird."
+
+#~ msgid "Your Email"
+#~ msgstr "Deine Email-Adresse"
+
+#~ msgid "Your email address is invalid."
+#~ msgstr "Deine Email-Adresse ist ungültig."
+
+#~ msgid ""
+#~ "Your email has been verified. We will let you know by email when the "
+#~ "Price Drops."
+#~ msgstr ""
+#~ "Deine Email-Adresse ist nun bestätigt. Wir melden uns wieder, wenn dein "
+#~ "Wunschpreis erreicht wurde."
