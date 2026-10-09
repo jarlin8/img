@@ -5,6 +5,7 @@ namespace ContentEgg\application\admin;
 defined('\ABSPATH') || exit;
 
 use ContentEgg\application\models\PriceAlertModel;
+use ContentEgg\application\helpers\ArrayHelper;
 use ContentEgg\application\helpers\FileHelper;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\components\ContentManager;
@@ -154,7 +155,7 @@ class ToolsController
         $csv_arr = array();
         foreach ($results as $result)
         {
-            if (!$data = unserialize($result['meta_value']))
+            if (!$data = ArrayHelper::unserializeArray($result['meta_value']))
                 continue;
 
             $csv_line = array();

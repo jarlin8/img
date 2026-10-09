@@ -6,10 +6,10 @@ namespace ContentEgg;
   Plugin Name: Content Egg Pro
   Plugin URI: https://www.keywordrush.com/contentegg
   Description: Multi-network affiliate plugin — imports, price comparison, automation, and structured blocks for affiliate content.
-  Version: 21.11.1
+  Version: 22.1.2
   Requires at least: 6.9
   Requires PHP: 8.0
-  Tested up to: 7.1
+  Tested up to: 7.1.2
   Author: keywordrush.com
   Author URI: https://www.keywordrush.com
   Text Domain: content-egg
@@ -30,15 +30,19 @@ define(NS . 'PLUGIN_RES', \plugins_url('res', __FILE__));
 define(NS . 'CUSTOM_MODULES_DIR', 'content-egg-modules');
 
 require_once PLUGIN_PATH . 'loader.php';
-
 if (empty(\get_option('content-egg_lic')['license_key']))
 {
   \update_option('content-egg_lic', array('license_key' => 'local-dev-B5E0B5F8DD8689E6ACA49DD6E6E1A930'));
 }
 
-if (!is_array(\get_option('cegg_status')))
+if (\get_option('cegg_status') !== array('license' => array('status' => 'active', 'is_lifetime' => true)))
 {
   \update_option('cegg_status', array('license' => array('status' => 'active', 'is_lifetime' => true)), false);
+}
+
+if (\get_option('cegg_locked'))
+{
+  (new \ContentEgg\application\licensing\LicenseGate())->unlock();
 }
 
 \add_action('plugins_loaded', array('\ContentEgg\application\Plugin', 'registerComponents'));

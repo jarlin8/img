@@ -85,6 +85,14 @@ class Aliexpress2Api extends RestClient
             $product_id = join(',', $product_id);
         }
 
+        // aliexpress.affiliate.productdetail.get expects "country", unlike
+        // aliexpress.affiliate.product.query which expects "ship_to_country".
+        if (isset($options['ship_to_country']))
+        {
+            $options['country'] = $options['ship_to_country'];
+            unset($options['ship_to_country']);
+        }
+
         $options['product_ids'] = $product_id;
         $options['method'] = 'aliexpress.affiliate.productdetail.get';
 

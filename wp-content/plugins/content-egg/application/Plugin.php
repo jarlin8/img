@@ -34,8 +34,8 @@ use ContentEgg\application\licensing\LicenseGate;
  */
 class Plugin
 {
-    const version = '21.11.1';
-    const db_version = 96;
+    const version = '22.1.2';
+    const db_version = 97;
     const wp_requires = '6.0';
     const slug = 'content-egg';
     const short_slug = 'cegg';
@@ -95,6 +95,7 @@ class Plugin
             ProductBlock::initAction();
             CouponBlock::initAction();
             MediaBlock::initAction();
+            \ContentEgg\application\deals\Deals::init();
 
             // Group the four core data blocks (products, coupons, images, videos)
             // under their own "Content Egg" inserter category, separate from the

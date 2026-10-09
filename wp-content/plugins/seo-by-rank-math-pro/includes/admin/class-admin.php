@@ -11,11 +11,11 @@
 namespace RankMathPro\Admin;
 
 use RankMathPro\Updates;
-use RankMathPro\Status\System_Status;
 use RankMath\Helper;
 use RankMath\Helpers\Param;
 use RankMath\Traits\Hooker;
 use RankMathPro\Google\Adsense;
+use RankMathPro\Setup_Wizard;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -40,13 +40,12 @@ class Admin {
 	 */
 	public function __construct() {
 		$this->action( 'init', 'init_components' );
+		$this->filter( 'rank_math/admin/options/general_data', 'add_general_json_data' );
 		add_filter( 'rank_math/analytics/classic/pro_notice', '__return_empty_string' );
 		$this->filter( 'rank_math/settings/sitemap', 'special_seprator' );
 		$this->action( 'admin_enqueue_scripts', 'enqueue' );
 		$this->filter( 'wp_helpers_notifications_render', 'prevent_pro_notice', 10, 3 );
-
 		new Updates();
-		new System_Status();
 	}
 
 	/**
@@ -54,15 +53,15 @@ class Admin {
 	 */
 	public function init_components() {
 		$components = [
-			'bulk_actions'  => 'RankMathPro\\Admin\\Bulk_Actions',
-			'post_filters'  => 'RankMathPro\\Admin\\Post_Filters',
-			'media_filters' => 'RankMathPro\\Admin\\Media_Filters',
-			'quick_edit'    => 'RankMathPro\\Admin\\Quick_Edit',
-			'trends_tool'   => 'RankMathPro\\Admin\\Trends_Tool',
-			'setup_wizard'  => 'RankMathPro\\Admin\\Setup_Wizard',
-			'links'         => 'RankMathPro\\Admin\\Links',
-			'misc'          => 'RankMathPro\\Admin\\Misc',
-			'csv_import'    => 'RankMathPro\\Admin\\CSV_Import_Export\\CSV_Import_Export',
+			'bulk_actions'       => 'RankMathPro\\Admin\\Bulk_Actions',
+			'post_filters'       => 'RankMathPro\\Admin\\Post_Filters',
+			'media_filters'      => 'RankMathPro\\Admin\\Media_Filters',
+			'quick_edit'         => 'RankMathPro\\Admin\\Quick_Edit',
+			'trends_tool'        => 'RankMathPro\\Admin\\Trends_Tool',
+			'links'              => 'RankMathPro\\Admin\\Links',
+			'misc'               => 'RankMathPro\\Admin\\Misc',
+			'csv_import'         => 'RankMathPro\\Admin\\CSV_Import_Export\\CSV_Import_Export',
+			'licence_activation' => 'RankMathPro\\Admin\\Licence_Activation',
 		];
 
 		if ( Helper::is_amp_active() ) {
@@ -76,7 +75,19 @@ class Admin {
 	}
 
 	/**
-	 * Add Special seprator into sitemap option panel
+	 * Add localized data to use on the General Setttings.
+	 *
+	 * @param array $data Localized data.
+	 *
+	 * @return array
+	 */
+	public function add_general_json_data( $data ) {
+		$data['canActivateImagify'] = Admin_Helper::can_activate_imagify();
+		return $data;
+	}
+
+	/**
+	 * Add Special separator into sitemap option panel
 	 *
 	 * @param array $tabs Hold tabs for optional panel.
 	 *
@@ -86,7 +97,7 @@ class Admin {
 		if ( Helper::is_module_active( 'news-sitemap' ) || Helper::is_module_active( 'video-sitemap' ) || Helper::is_module_active( 'local-seo' ) ) {
 			$tabs['special'] = [
 				'title' => esc_html__( 'Special Sitemaps:', 'rank-math-pro' ),
-				'type'  => 'seprator',
+				'type'  => 'separator',
 			];
 		}
 
@@ -102,27 +113,40 @@ class Admin {
 		}
 	}
 
-
 	/**
 	 * Enqueue assets.
 	 *
 	 * @return void
 	 */
 	public function enqueue() {
-		if ( Param::get( 'page' ) !== 'rank-math-options-general' ) {
+		if ( ! in_array(
+			Param::get( 'page' ),
+			[
+				'rank-math-options-general',
+				'rank-math-options-titles',
+				'rank-math-options-sitemap',
+				'rank-math-options-instant-indexing',
+			],
+			true
+		) ) {
 			return;
 		}
 
 		wp_enqueue_style(
 			'rank-math-pro-general-options',
 			RANK_MATH_PRO_URL . 'assets/admin/css/general-options.css',
-			null,
+			[ 'wp-components' ],
 			rank_math_pro()->version
 		);
 
-		wp_enqueue_script( 'rank-math-pro-general-options', RANK_MATH_PRO_URL . 'assets/admin/js/general-options.js', [ 'wp-hooks' ], rank_math_pro()->version );
+		$settings_file = Helper::is_react_enabled() ? 'settings' : 'general-options';
+
+		wp_enqueue_script( 'rank-math-pro-general-options', RANK_MATH_PRO_URL . "assets/admin/js/{$settings_file}.js", [ 'wp-hooks' , 'lodash', 'jquery', 'wp-i18n', 'wp-api-fetch', 'wp-data', 'rank-math-components', 'wp-core-data' ], rank_math_pro()->version, true );
 
 		Helper::add_json( 'isAdsenseConnected', Adsense::is_adsense_connected() );
+		Helper::add_json( 'choicesPhoneTypes', Helper::choices_phone_types() );
+		Helper::add_json( 'choicesAdditionalOrganizationInfo', Helper::choices_additional_organization_info() );
+		Helper::add_json( 'choicesBusinessTypes', Helper::choices_business_types( true ) );
 	}
 
 	/**
@@ -142,5 +166,4 @@ class Admin {
 
 		return '';
 	}
-
 }

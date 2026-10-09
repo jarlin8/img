@@ -129,6 +129,7 @@ class AmazonModule extends AffiliateParserModule
 
     public function doRequest($keyword, $query_params = array(), $is_autoupdate = false)
     {
+
         if (!empty($query_params['locale']) && AmazonLocales::getLocale($query_params['locale']))
         {
             $locale = $query_params['locale'];

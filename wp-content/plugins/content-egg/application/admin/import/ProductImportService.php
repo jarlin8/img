@@ -17,6 +17,9 @@ use ContentEgg\application\helpers\PostHelper;
 use ContentEgg\application\helpers\WooHelper;
 use ContentEgg\application\Plugin;
 use ContentEgg\application\WooIntegrator;
+use ContentEgg\application\deals\DealPostType;
+use ContentEgg\application\deals\DealsSettings;
+use ContentEgg\application\deals\DealCategoryHelper;
 
 use function ContentEgg\prnx;
 
@@ -162,6 +165,10 @@ class ProductImportService
             // stuck threshold without being stuck. Keep the whole batch alive.
             $this->heartbeat();
 
+            // processJob() switches to the preset author for the insert. Put the
+            // original user back afterwards so it does not carry into the next job.
+            $userId = get_current_user_id();
+
             try
             {
                 $this->processJob($row);
@@ -183,6 +190,13 @@ class ProductImportService
                 $this->queue->markFailed($row['id'], $this->logger->format([
                     'exception' => $msg,
                 ]), microtime(true) - $this->startTime);
+            }
+            finally
+            {
+                if (get_current_user_id() !== $userId)
+                {
+                    wp_set_current_user($userId);
+                }
             }
         }
     }
@@ -723,6 +737,15 @@ class ProductImportService
 
         $isWoo = ($preset['post_type'] ?? 'post') === 'product';
 
+        $isDeal = ($preset['post_type'] ?? 'post') === DealPostType::POST_TYPE;
+
+        if ($isDeal && !DealsSettings::enabled())
+        {
+            throw new \RuntimeException(
+                esc_html__('This preset creates deals, but deals are disabled. Enable them under Content Egg → Settings → Deals.', 'content-egg')
+            );
+        }
+
         if ($isWoo && !\ContentEgg\application\helpers\WooHelper::isWooActive())
         {
             throw new \RuntimeException(
@@ -948,9 +971,10 @@ class ProductImportService
         $bodyTemplate = $preset['body_tpl']  ?? '';
         $wooShortDescTemplate = $preset['woo_short_desc_tpl']  ?? '';
 
-        $postTitle = ProductHelper::replaceImportPatterns($titleTemplate, $sourceProduct, $product, $ai);
-        $postBody = ProductHelper::replaceImportPatterns($bodyTemplate, $sourceProduct, $product, $ai);
-        $wooShortDesc = ProductHelper::replaceImportPatterns($wooShortDescTemplate, $sourceProduct, $product, $ai);
+        // Imported values are filtered; the preset template is kept as written.
+        $postTitle = ProductHelper::replaceImportPatterns($titleTemplate, $sourceProduct, $product, $ai, '', true);
+        $postBody = ProductHelper::replaceImportPatterns($bodyTemplate, $sourceProduct, $product, $ai, '', true);
+        $wooShortDesc = ProductHelper::replaceImportPatterns($wooShortDescTemplate, $sourceProduct, $product, $ai, '', true);
 
         // ---------- 2. Construct post array ----------
         $postArr = [
@@ -958,7 +982,7 @@ class ProductImportService
             'post_content' => $postBody,
             'post_status'  => $preset['post_status'] ?? 'draft',
             'post_author'  => $preset['author_id'],
-            'post_type'    => $isWoo ? 'product' : 'post',
+            'post_type'    => $isWoo ? 'product' : ($isDeal ? DealPostType::POST_TYPE : 'post'),
             'post_name'    => apply_filters(
                 'cegg_import_post_name',
                 TextHelper::sluggable($postTitle),
@@ -1051,6 +1075,13 @@ class ProductImportService
             $taxonomy      = 'product_cat';
             $defaultTermId = (int) $preset['default_woo_cat'];
             $setter        = fn($postId, $termIds) => wp_set_post_terms($postId, $termIds, $taxonomy);
+        }
+        elseif ($isDeal)
+        {
+            $helper        = DealCategoryHelper::class;
+            $taxonomy      = DealPostType::TAX_CATEGORY;
+            $defaultTermId = 0;
+            $setter        = fn($postId, $termIds) => wp_set_post_terms($postId, array_values(array_filter(array_map('absint', (array) $termIds))), $taxonomy);
         }
         else
         {

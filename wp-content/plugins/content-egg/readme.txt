@@ -17,6 +17,34 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+= Version 22.1.2 =
+* New: Clickwise module — min/max price filter for product search.
+* Improved: Block styles now load only on pages that use the blocks.
+* Improved: Price comparison and price history templates fit mobile screens.
+* Improved: Price history chart dates no longer overlap.
+
+= Version 22.1.0 =
+* New: Clickwise module — search Clickwise affiliate products by keyword or EAN, with automatic price and stock updates.
+
+= Version 22.0.0 =
+* Deals are off by default: nothing changes on your site until you turn them on in Settings → Deals.
+* New: Deals. Turn on Settings → Deals to get a Deal post type with ready-made deal pages (price, old price, discount, store, "checked N hours ago", lowest-price-in-30-days badge, countdown, voting), a /deals/ archive with sorting and store/category filters, and a Deals block. Deals expire on their own when the product goes out of stock, its price rises, or its end date passes, and come back when the product does.
+* New: Deals → Add deals creates deals from a list of product links.
+* New: A coupon code per deal, with a one-click Copy button on the deal page, a "Coupon" label on cards, a "With coupon" filter and a coupon-only option in the Deals block.
+* New: Store and category pages for deals — breadcrumbs with BreadcrumbList markup, a store header with logo, deal count and store link, category links, and a link to the store's Cashback Tracker page when Cashback Tracker is installed.
+* New: "Hot" badge for deals whose vote score reaches Settings → Deals → Hot deal score (default 50), with cegg_deal_hot_score and cegg_deal_is_hot filters.
+* New: Deal button text setting, "Get deal at {store}" by default.
+* New: Auto-import rules can require a minimum discount and in-stock products.
+
+= Version 21.13.0 =
+* New: Shop badge — a badge text and color on each shop's Content Egg > Shops page, shown automatically on every offer from that domain unless the offer already has its own badge.
+* Fixed: AliExpress module — "Ship to country" was silently ignored on product-ID lookups and price refreshes, so regional pricing could fall back to a stale price.
+
+= Version 21.12.0 =
+* New: Update keywords by group — one keyword per row with an optional product group, so a single post refreshes several CE Products blocks at once: one EAN per group, one group per block.
+* New: Paste a list into product search — one keyword, product URL or EAN per line — instead of searching for five products one at a time. Results are grouped under the line that found them, each group with its own "Add all", so a URL that finds nothing is one line's problem rather than a failed search.
+* Fixed: Feed setup wizard — analysing a large feed always failed with a 30-second timeout when the feed host ignores range requests, as Admitad and other on-the-fly feed generators do. The analysis now ends the download itself once it has the sample it needs, whatever the feed's size.
+
 = Version 21.11.1 =
 * Fixed: sort=price in a block shortcode was ignored whenever the products carried a manual order (drag-and-drop, the Order field, or a [1] title prefix). An explicit sort now takes priority over that order.
 

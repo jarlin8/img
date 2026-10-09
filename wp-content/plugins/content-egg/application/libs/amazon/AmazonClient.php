@@ -30,6 +30,12 @@ class AmazonClient extends ParserClient
     /** @var ScrapRequest|null Request being executed, set by setUrl(). */
     protected $scrap_request;
 
+    /** @var string|null ASIN of the product page being fetched, set by setUrl(). */
+    protected $page_asin;
+
+    /** @var string|null "N options from X" price of the last response, see extractOlpPrice(). */
+    protected $olp_price;
+
     const DEFAULT_TIMEOUT = 60;
     const USER_AGENT      = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:138.0) Gecko/20100101 Firefox/138.0';
 
@@ -129,6 +135,9 @@ class AmazonClient extends ParserClient
 
     public function setUrl($url)
     {
+        $this->page_asin = self::parseAsinFromUrl($url) ?: null;
+        $this->olp_price = null;
+
         $this->scrap_request = $this->buildScrapRequest($url);
 
         parent::setUrl($this->scrap_request->url);
@@ -173,10 +182,26 @@ class AmazonClient extends ParserClient
         if ($query)
             $client->setParameterGet($query);
 
-        $body = $this->getResult($client->request($method));
+        $response = $client->request($method);
+
+        if ($this->scrap)
+            $this->scrap->checkResponse($response);
+
+        $body = $this->getResult($response);
 
         if ($this->scrap)
             $body = $this->scrap->filterResponseBody($body);
+
+        return $this->prepareBody($body);
+    }
+
+    /**
+     * Turns a raw response into the HTML the parsers work on.
+     */
+    protected function prepareBody($body)
+    {
+        // Must run before the <script> tags are stripped below.
+        $this->olp_price = $this->extractOlpPrice($body);
 
         // fix html
         $body = preg_replace('/<table id="HLCXComparisonTable".+?<\/table>/uims', '', $body);
@@ -189,6 +214,49 @@ class AmazonClient extends ParserClient
         $body = preg_replace('/<style.*?>.*?<\/style>/uims', '', $body);
 
         return $this->decodeCharset($body);
+    }
+
+    /**
+     * The "N options from X" price of a product that has no featured offer.
+     *
+     * With no buy box winner, Amazon renders no price in the page markup. The
+     * only copy is the "olp" slot of the selected variant in the twister
+     * sort-filter JSON, which lives in a <script> tag.
+     *
+     * @return string|null Dot-decimal amount, e.g. "11.13".
+     */
+    protected function extractOlpPrice($body)
+    {
+        if (!$this->page_asin)
+            return null;
+
+        if (!preg_match('~<script[^>]*desktop-twister-sort-filter-data[^>]*>(.*?)</script>~is', $body, $matches))
+            return null;
+
+        $data = json_decode($matches[1], true);
+        if (!is_array($data) || empty($data['sortedDimValuesForAllDims']) || !is_array($data['sortedDimValuesForAllDims']))
+            return null;
+
+        foreach ($data['sortedDimValuesForAllDims'] as $values)
+        {
+            foreach ((array) $values as $value)
+            {
+                if (!is_array($value) || ($value['defaultAsin'] ?? null) !== $this->page_asin)
+                    continue;
+
+                foreach ((array) ($value['slots'] ?? array()) as $slot)
+                {
+                    if (($slot['metaData']['key'] ?? null) !== 'olp')
+                        continue;
+
+                    $price = $slot['displayData']['priceWithoutCurrencySymbol'] ?? null;
+                    if (is_string($price) && preg_match('/^\d+(\.\d{1,2})?$/', $price))
+                        return $price;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -299,10 +367,7 @@ class AmazonClient extends ParserClient
         $product['extra'] = (array) $this->parseExtra();
         $product['promo'] = \sanitize_text_field((string) $this->parsePromo());
 
-        if ((bool) $this->isInStock())
-            $product['stock_status'] = 1;
-        else
-            $product['stock_status'] = -1;
+        $product['stock_status'] = $this->getStockStatus();
 
         return $product;
     }
@@ -329,6 +394,16 @@ class AmazonClient extends ParserClient
     public function parseCatalog($max)
     {
         $xpath = array(
+            // One link per search-result card: the anchor wrapping the product
+            // title. Amazon renders colour/size variants as extra /dp/ links
+            // inside the same card, so any selector that takes every /dp/ link
+            // in the results container returns the first product followed by its
+            // own variants. A 4-product fetch then collapses to a single distinct
+            // product once duplicates are merged. Matching the card and taking
+            // its title link keeps one entry per product, in result order.
+            // Note the anchor wraps the <h2>, not the reverse, so a //h2//a
+            // selector matches nothing here.
+            ".//*[@data-component-type='s-search-result']//a[contains(@href, '/dp/')][.//h2]/@href",
             ".//div[contains(@class, 'SEARCH_RESULTS')]//a[contains(@class, 'a-link-normal') and contains(@href, '/dp/')]/@href",
             ".//span[@data-component-type='s-search-results']//a[contains(@class, 'a-link-normal') and contains(@href, '/dp/')]/@href",
             ".//div[contains(@class, 's-main-slot')]//h2[contains(@class, 'a-color-base')]//a[contains(@class, 'a-link-normal') and contains(@href, '/dp/')]/@href",
@@ -497,11 +572,25 @@ class AmazonClient extends ParserClient
             ".//div[@id='booksHeaderSection']//span[@id='price']",
             ".//div[@class='a-box-inner a-padding-base']//span[@class='a-color-price aok-nowrap']",
             ".//span[@id='kindle-price']",
+        );
+
+        // Broadest selectors, tried last: they also match the prices of other
+        // products in "similar products" carousels.
+        $last_resort_paths = array(
             ".//span[contains(@class, 'a-price')]//span/@aria-hidden",
             ".//span[contains(@class, 'a-price')]//span[@class='a-price-whole']",
         );
 
         $price = (string) $this->xpathScalar($paths);
+
+        // No featured offer: no price in the markup, only "N options from X".
+        // Ahead of the last resorts, which would read a carousel price.
+        if (!$price && $this->olp_price)
+            $price = $this->olp_price;
+
+        if (!$price)
+            $price = (string) $this->xpathScalar($last_resort_paths);
+
         $price = str_replace('R$', '', $price);
 
         if (!$price && $price = $this->xpathScalar(".//span[@id='priceblock_ourprice']//*[@class='buyingPrice' or @class='price-large']"))
@@ -604,7 +693,18 @@ class AmazonClient extends ParserClient
         return $img;
     }
 
+    // parsePrice()/parseOldPrice() only need a yes/no "don't bother looking for
+    // a price" signal, so isInStock() keeps its old true/false contract - true
+    // for both a confirmed in-stock page AND a page with no availability block
+    // at all. getStockStatus() is the finer-grained read used for the stored
+    // stock_status field, where "no availability block" must stay distinguishable
+    // from "confirmed in stock" (see ContentProduct::STOCK_STATUS_UNKNOWN).
     public function isInStock()
+    {
+        return $this->getStockStatus() !== -1;
+    }
+
+    public function getStockStatus()
     {
         $xpath = array(
             ".//div[@id='outOfStock']//span[@class='a-color-price a-text-bold']",
@@ -613,15 +713,23 @@ class AmazonClient extends ParserClient
             ".//div[@id='outOfStock']//span[contains(@class, 'a-color-price')]",
         );
 
-        if (!$availability = $this->xpathScalar($xpath))
-            return true;
+        return self::classifyAvailabilityText($this->xpathScalar($xpath));
+    }
+
+    /**
+     * @return int 1 in stock, -1 out of stock, 0 unknown (no availability block in the response)
+     */
+    public static function classifyAvailabilityText($availability)
+    {
+        if (!$availability)
+            return 0;
 
         $availability = trim((string) $availability);
 
         if (in_array($availability, array('Currently unavailable.', 'Şu anda mevcut değil.', 'Attualmente non disponibile.', 'Momenteel niet verkrijgbaar.', 'Al momento non disponibile.', 'Não disponível.')))
-            return false;
+            return -1;
 
-        return true;
+        return 1;
     }
 
     public function parseExtra()

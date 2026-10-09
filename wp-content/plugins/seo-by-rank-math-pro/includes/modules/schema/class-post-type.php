@@ -30,6 +30,25 @@ class Post_Type {
 		$this->action( 'admin_menu', 'add_menu', 11 );
 		$this->action( 'parent_file', 'parent_file' );
 		$this->action( 'submenu_file', 'submenu_file' );
+		$this->action( 'save_post_rank_math_schema', 'save_post', 10, 2 );
+	}
+
+	/**
+	 * Update the title metadata when the schema template is saved.
+	 *
+	 * @param int     $post_id Post ID.
+	 * @param WP_Post $post Post object.
+	 *
+	 * @return void
+	 */
+	public function save_post( $post_id, $post ) {
+		$schema_meta = current( \RankMath\Schema\DB::get_schemas( $post_id ) );
+		if ( empty( $schema_meta['@type'] ) ) {
+			return;
+		}
+
+		$schema_meta['metadata']['title'] = $post->post_title;
+		update_post_meta( $post_id, 'rank_math_schema_' . Utils::get_primary_type( $schema_meta['@type'] ), $schema_meta );
 	}
 
 	/**
@@ -63,7 +82,7 @@ class Post_Type {
 			'hierarchical'        => false,
 			'public'              => false,
 			'show_ui'             => true,
-			'show_in_menu'        => false,
+			'show_in_menu'        => ! current_user_can( 'manage_options' ) && Helper::has_cap( 'onpage_snippet' ),
 			'menu_position'       => 5,
 			'show_in_admin_bar'   => false,
 			'show_in_nav_menus'   => false,

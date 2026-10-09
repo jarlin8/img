@@ -16,7 +16,7 @@ use RankMath\Helper;
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes\Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -76,7 +76,7 @@ class Widget_Breadcrumbs extends Widget_Base {
 			$this->add_control(
 				'html_disabled_alert',
 				[
-					'raw'             => __( 'Breadcrumbs are disabled in the Rank Math SEO', 'rank-math-pro' ) . ' ' . sprintf( '<a href="%s" target="_blank">%s</a>', admin_url( 'admin.php?page=rank-math-options-general#setting-panel-breadcrumbs' ), __( 'Breadcrumbs Panel', 'rank-math-pro' ) ),
+					'raw'             => __( 'Breadcrumbs are disabled in the Rank Math SEO', 'rank-math-pro' ) . ' ' . sprintf( '<a href="%s" target="_blank">%s</a>', Helper::get_settings_url( 'general', 'breadcrumbs' ), __( 'Breadcrumbs Panel', 'rank-math-pro' ) ),
 					'type'            => Controls_Manager::RAW_HTML,
 					'content_classes' => 'elementor-panel-alert elementor-panel-alert-danger',
 				]
@@ -125,7 +125,7 @@ class Widget_Breadcrumbs extends Widget_Base {
 		$this->add_control(
 			'html_description',
 			[
-				'raw'             => __( 'Additional settings are available in the Rank Math SEO', 'rank-math-pro' ) . ' ' . sprintf( '<a href="%s" target="_blank">%s</a>', admin_url( 'admin.php?page=rank-math-options-general#setting-panel-breadcrumbs' ), __( 'Breadcrumbs Panel', 'rank-math-pro' ) ),
+				'raw'             => __( 'Additional settings are available in the Rank Math SEO', 'rank-math-pro' ) . ' ' . sprintf( '<a href="%s" target="_blank">%s</a>', Helper::get_settings_url( 'general', 'breadcrumbs' ), __( 'Breadcrumbs Panel', 'rank-math-pro' ) ),
 				'type'            => Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-descriptor',
 			]
@@ -146,7 +146,9 @@ class Widget_Breadcrumbs extends Widget_Base {
 			[
 				'name'     => 'typography',
 				'selector' => '{{WRAPPER}}',
-				'scheme'   => Typography::TYPOGRAPHY_2,
+				'global'   => [
+					'default' => Global_Typography::TYPOGRAPHY_SECONDARY,
+				],
 			]
 		);
 

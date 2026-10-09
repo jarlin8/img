@@ -11,6 +11,7 @@
 namespace RankMathPro\Sitemap;
 
 use RankMath\Helper;
+use RankMath\Helpers\DB as DB_Helper;
 use RankMath\Sitemap\Router;
 use RankMath\Sitemap\Providers\Post_Type;
 
@@ -67,7 +68,7 @@ class Video_Provider extends Post_Type {
 						GROUP BY p.ID
 						ORDER BY p.post_modified_gmt DESC";
 
-		$posts       = $wpdb->get_results( $sql, ARRAY_A ); // phpcs:ignore
+		$posts       = DB_Helper::get_results( $sql, ARRAY_A );
 		$total_count = count( $posts );
 		if ( 0 === $total_count ) {
 			return [];
@@ -91,7 +92,7 @@ class Video_Provider extends Post_Type {
 					'lastmod' => $video['post_modified_gmt'],
 				],
 				'video',
-				$video,
+				$sitemap_slug,
 			);
 
 			if ( ! $item ) {
@@ -102,6 +103,32 @@ class Video_Provider extends Post_Type {
 		}
 
 		return $index;
+	}
+
+	/**
+	 * Get count of posts eligible for the video sitemap.
+	 *
+	 * Mirrors get_index_links()'s own VideoObject meta requirement instead of
+	 * the generic Post_Type::get_post_type_count().
+	 *
+	 * @param string $post_types Sitemap type slug — unused, video post types come from settings.
+	 * @return int
+	 */
+	public function get_post_type_count( $post_types ) { // phpcs:ignore
+		$video_post_types = (array) Helper::get_settings( 'sitemap.video_sitemap_post_type', [] );
+		if ( empty( $video_post_types ) ) {
+			return 0;
+		}
+
+		global $wpdb;
+
+		$sql = "SELECT COUNT( DISTINCT p.ID ) FROM {$wpdb->postmeta} as pm
+						INNER JOIN {$wpdb->posts} as p ON pm.post_id = p.ID
+						WHERE pm.meta_key = 'rank_math_schema_VideoObject'
+						AND post_type IN ( '" . join( "', '", esc_sql( $video_post_types ) ) . "' )
+						AND post_status IN ( 'publish', 'inherit' )";
+
+		return (int) DB_Helper::get_var( $sql );
 	}
 
 	/**
@@ -202,7 +229,7 @@ class Video_Provider extends Post_Type {
 			return false;
 		}
 		unset( $canonical );
-		$schemas = get_post_meta( $post->ID, 'rank_math_schema_VideoObject' );
+		$schemas = get_post_meta( $post->ID, 'rank_math_schema_VideoObject' ); // phpcs:ignore
 		if ( empty( $schemas ) ) {
 			return false;
 		}
@@ -248,7 +275,6 @@ class Video_Provider extends Post_Type {
 						ORDER BY p.post_modified DESC
 						LIMIT %d OFFSET %d";
 
-		return $wpdb->get_results( $wpdb->prepare( $sql, $count, $offset ) ); // phpcs:ignore
-
+		return DB_Helper::get_results( $wpdb->prepare( $sql, $count, $offset ) );
 	}
 }

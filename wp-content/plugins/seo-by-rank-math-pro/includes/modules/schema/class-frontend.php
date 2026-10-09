@@ -54,7 +54,6 @@ class Frontend {
 
 		// Schema Preview.
 		$this->filter( 'query_vars', 'add_query_vars' );
-		$this->filter( 'init', 'add_endpoint' );
 		$this->action( 'template_redirect', 'schema_preview_template' );
 	}
 
@@ -66,13 +65,6 @@ class Frontend {
 	public function add_query_vars( $vars ) {
 		$vars[] = 'schema-preview';
 		return $vars;
-	}
-
-	/**
-	 * Add endpoint
-	 */
-	public function add_endpoint() {
-		add_rewrite_endpoint( 'schema-preview', EP_PERMALINK | EP_PAGES | EP_ROOT );
 	}
 
 	/**
@@ -247,7 +239,7 @@ class Frontend {
 	public function convert_schema_to_item_list( $data, $jsonld ) {
 		$schemas = array_filter(
 			$data,
-			function( $schema ) {
+			function ( $schema ) {
 				if ( isset( $schema['@type'] ) && in_array( $schema['@type'], [ 'Course', 'Movie', 'Recipe', 'Restaurant' ], true ) ) {
 					return true;
 				}
@@ -268,7 +260,7 @@ class Frontend {
 		$count = 1;
 		foreach ( $schemas as $id => $schema ) {
 			unset( $data[ $id ] );
-			$schema['url'] = $jsonld->parts['url'] . '#' . $id;
+			$schema['url'] = ( isset( $jsonld->parts['url'] ) ? $jsonld->parts['url'] : '' ) . '#' . $id;
 
 			if ( isset( $schema['isPrimary'] ) ) {
 				unset( $schema['isPrimary'] );
@@ -280,7 +272,7 @@ class Frontend {
 				'item'     => $schema,
 			];
 
-			$count++;
+			++$count;
 		}
 
 		return $data;
@@ -355,7 +347,7 @@ class Frontend {
 
 				foreach ( $schema_data as $key => $value ) {
 					if ( ! isset( $data[ $insert_key ][ $key ] ) ) {
-						$data[ $insert_key ][ $key ] = $value;	
+						$data[ $insert_key ][ $key ] = $value;
 					}
 				}
 			}
@@ -423,7 +415,7 @@ class Frontend {
 	 * @return array
 	 */
 	public function filter_item_list_schema( $schema ) {
-		if ( ! is_archive() ) {
+		if ( ! is_archive() || ! empty( $schema['isCustom'] ) ) {
 			return $schema;
 		}
 
@@ -437,7 +429,7 @@ class Frontend {
 				'url'      => get_the_permalink(),
 			];
 
-			$count++;
+			++$count;
 		}
 
 		wp_reset_postdata();

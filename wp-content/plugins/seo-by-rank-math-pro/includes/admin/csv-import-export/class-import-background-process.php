@@ -39,6 +39,13 @@ class Import_Background_Process extends \WP_Background_Process {
 	protected $action = 'csv_import';
 
 	/**
+	 * Process lock duration, in seconds. Kept above the 1-minute cron health-check interval.
+	 *
+	 * @var int
+	 */
+	protected $queue_lock_time = 300;
+
+	/**
 	 * Importer instance.
 	 *
 	 * @var Importer
@@ -65,10 +72,21 @@ class Import_Background_Process extends \WP_Background_Process {
 	/**
 	 * Start creating batches.
 	 *
-	 * @param int $lines_number The line number to push to queue.
+	 * @param array $line_indices Array of line indices to import.
+	 * @return void
 	 */
-	public function start( $lines_number ) {
-		$chunks = array_chunk( range( 0, $lines_number ), apply_filters( 'rank_math/admin/csv_import_chunk_size', 100 ) );
+	public function start( $line_indices ) {
+		// Purge any leftover batch so it can't run alongside this one.
+		// Uses get_batch() (not get_batches()) and checks ->key (not empty()) — see commit message for why.
+		$stale_batch = $this->get_batch();
+		while ( is_object( $stale_batch ) && ! empty( $stale_batch->key ) ) {
+			$this->delete( $stale_batch->key );
+			$stale_batch = $this->get_batch();
+		}
+
+		$chunk_size = apply_filters( 'rank_math/admin/csv_import_chunk_size', 100 );
+		$chunks     = array_chunk( $line_indices, $chunk_size );
+
 		foreach ( $chunks as $chunk ) {
 			$this->push_to_queue( $chunk );
 		}
@@ -102,11 +120,13 @@ class Import_Background_Process extends \WP_Background_Process {
 	 * @return mixed
 	 */
 	protected function task( $item ) {
+		// Define constant so it can be used in the code elsewhere in the update post hook like save_post to prevent unnecessary actions.
+		if ( ! defined( 'RANK_MATH_IMPORTING_CSV' ) ) {
+			define( 'RANK_MATH_IMPORTING_CSV', true );
+		}
 		try {
 			$this->importer = new Importer();
-			foreach ( $item as $row ) {
-				$this->importer->import_line( $row );
-			}
+			$this->importer->import_batch( $item );
 			$this->importer->batch_done( $item );
 			return false;
 		} catch ( \Exception $error ) {
@@ -120,7 +140,7 @@ class Import_Background_Process extends \WP_Background_Process {
 	 * @return void
 	 */
 	protected function complete() {
-		unlink( get_option( 'rank_math_csv_import' ) );
+		wp_delete_file( get_option( 'rank_math_csv_import' ) );
 		delete_option( 'rank_math_csv_import' );
 		delete_option( 'rank_math_csv_import_total' );
 		delete_option( 'rank_math_csv_import_settings' );

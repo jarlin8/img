@@ -11,7 +11,9 @@ use ContentEgg\application\admin\PluginAdmin;
 use ContentEgg\application\components\ExtraData;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\components\LinkHandler;
-use ContentEgg\application\helpers\TemplateHelper;;
+use ContentEgg\application\helpers\TemplateHelper;
+
+use function ContentEgg\prnx;;
 
 /**
  * Ebay2Module class file
@@ -26,7 +28,6 @@ class Ebay2Module extends AffiliateParserModule
     {
         return true;
     }
-
 
     private $api_client_browse = null;
 
@@ -272,10 +273,19 @@ class Ebay2Module extends AffiliateParserModule
             return false;
         }
 
-        if ($items)
-            return $items;
-        else
+        if (isset($items['total']) && $items['total'] == 0)
+        {
             return false;
+        }
+
+        if ($items)
+        {
+            return $items;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     private function searchByEan($keyword, $options, $query_params)

@@ -20,6 +20,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Admin class.
  *
+ * @method get_pt_default()
  * @codeCoverageIgnore
  */
 class Thumbnail_Overlays {
@@ -31,14 +32,12 @@ class Thumbnail_Overlays {
 	 */
 	public function __construct() {
 		$this->filter( 'rank_math/social/overlay_images', 'add_custom_overlays' );
+		$this->filter( 'rank_math/settings/sanitize_fields', 'sanitize_fields', 10, 3 );
 		$this->filter( 'rank_math/social/overlay_image_position', 'apply_overlay_position', 20, 2 );
 		$this->filter( 'rank_math/social/overlay_image_positions', 'get_position_margins', 20, 4 );
-		$this->action( 'cmb2_admin_init', 'cmb_init' );
-
-		$this->filter( 'cmb2_default_filter', 'get_cmb_default', 20, 2 );
-		$this->filter( 'default_post_metadata', 'get_postmeta_default', 10, 5 );
-		$this->filter( 'default_term_metadata', 'get_termmeta_default', 10, 5 );
-		$this->filter( 'default_user_metadata', 'get_usermeta_default', 10, 5 );
+		$this->filter( 'default_post_metadata', 'get_postmeta_default', 10, 3 );
+		$this->filter( 'default_term_metadata', 'get_termmeta_default', 10, 3 );
+		$this->filter( 'default_user_metadata', 'get_usermeta_default', 10, 3 );
 
 		$this->action( 'admin_init', 'enqueue', 20 );
 	}
@@ -129,6 +128,34 @@ class Thumbnail_Overlays {
 	}
 
 	/**
+	 * Sanitize the Image SEO options.
+	 *
+	 * @param string $sanitized_value The sanitized value.
+	 * @param string $value           Original field value.
+	 * @param string $field_id        Field ID.
+	 *
+	 * @return string
+	 */
+	public function sanitize_fields( $sanitized_value, $value, $field_id ) {
+		if ( $field_id !== 'custom_image_overlays' || ! is_array( $value ) ) {
+			return $sanitized_value;
+		}
+
+		foreach ( $value as $key => $overlay ) {
+			if ( empty( $overlay['image'] ) ) {
+				unset( $value[ $key ] );
+			} elseif ( empty( $overlay['name'] ) ) {
+				Helper::add_notification( esc_html__( 'A Custom Watermark item could not be saved because the name field is empty.', 'rank-math-pro' ), [ 'type' => 'error' ] );
+				unset( $value[ $key ] );
+			} elseif ( empty( $overlay['position'] ) ) {
+				$value[ $key ]['position'] = 'bottom_right';
+			}
+		}
+
+		return $value;
+	}
+
+	/**
 	 * Get margins for GD image manipulation.
 	 *
 	 * @param array    $margins Original margins array.
@@ -175,12 +202,9 @@ class Thumbnail_Overlays {
 	 *                          of values depending on the value of `$single`.
 	 * @param int    $object_id ID of the object metadata is for.
 	 * @param string $meta_key  Metadata key.
-	 * @param bool   $single    Whether to return only the first value of the specified `$meta_key`.
-	 * @param string $meta_type Type of object metadata is for. Accepts 'post', 'comment', 'term', 'user',
-	 *                          or any other object type with an associated meta table.
 	 * @return mixed
 	 */
-	public function get_postmeta_default( $value, $object_id, $meta_key, $single, $meta_type ) {
+	public function get_postmeta_default( $value, $object_id, $meta_key ) {
 		if ( ! $this->is_overlay_field( $meta_key ) ) {
 			return $value;
 		}
@@ -195,12 +219,9 @@ class Thumbnail_Overlays {
 	 *                          of values depending on the value of `$single`.
 	 * @param int    $object_id ID of the object metadata is for.
 	 * @param string $meta_key  Metadata key.
-	 * @param bool   $single    Whether to return only the first value of the specified `$meta_key`.
-	 * @param string $meta_type Type of object metadata is for. Accepts 'post', 'comment', 'term', 'user',
-	 *                          or any other object type with an associated meta table.
 	 * @return mixed
 	 */
-	public function get_termmeta_default( $value, $object_id, $meta_key, $single, $meta_type ) {
+	public function get_termmeta_default( $value, $object_id, $meta_key ) {
 		if ( ! $this->is_overlay_field( $meta_key ) ) {
 			return $value;
 		}
@@ -215,33 +236,14 @@ class Thumbnail_Overlays {
 	 *                          of values depending on the value of `$single`.
 	 * @param int    $object_id ID of the object metadata is for.
 	 * @param string $meta_key  Metadata key.
-	 * @param bool   $single    Whether to return only the first value of the specified `$meta_key`.
-	 * @param string $meta_type Type of object metadata is for. Accepts 'post', 'comment', 'term', 'user',
-	 *                          or any other object type with an associated meta table.
 	 * @return mixed
 	 */
-	public function get_usermeta_default( $value, $object_id, $meta_key, $single, $meta_type ) {
+	public function get_usermeta_default( $value, $object_id, $meta_key ) {
 		if ( ! $this->is_overlay_field( $meta_key ) ) {
 			return $value;
 		}
 
 		return $this->get_meta_default( $meta_key, '', $value );
-	}
-
-	/**
-	 * Set default value for overlay CMB options.
-	 *
-	 * @param mixed  $default Original default value.
-	 * @param object $field   CMB Field object.
-	 * @return mixed
-	 */
-	public function get_cmb_default( $default, $field ) {
-		$meta_key = $field->id();
-		if ( ! $this->is_overlay_field( $meta_key ) ) {
-			return $default;
-		}
-
-		return $this->get_pt_default( $meta_key, get_post_type(), $default );
 	}
 
 	/**
@@ -261,10 +263,10 @@ class Thumbnail_Overlays {
 	 *
 	 * @param string $key       Field ID (custom field name).
 	 * @param string $post_type Post type.
-	 * @param string $default   Default value.
+	 * @param string $defaults   Default value.
 	 * @return mixed
 	 */
-	public function get_meta_default( $key, $post_type, $default = false ) {
+	public function get_meta_default( $key, $post_type, $defaults = false ) {
 		if ( $post_type ) {
 			$pt_default = Helper::get_settings( 'titles.pt_' . $post_type . '_image_overlay' );
 			if ( $pt_default ) {
@@ -285,7 +287,7 @@ class Thumbnail_Overlays {
 			return $global_default;
 		}
 
-		return $default;
+		return $defaults;
 	}
 
 	/**
@@ -317,120 +319,6 @@ class Thumbnail_Overlays {
 	}
 
 	/**
-	 * Hook CMB2 init process.
-	 */
-	public function cmb_init() {
-		$this->action( 'rank_math/admin/settings/global', 'add_thumbnail_watermark_options', 10, 2 );
-		foreach ( Helper::get_accessible_post_types() as $post_type ) {
-			if ( 'attachment' === $post_type && Helper::get_settings( 'general.attachment_redirect_urls', true ) ) {
-				continue;
-			}
-
-			$this->action( "rank_math/admin/settings/post-type-{$post_type}", 'add_thumbnail_watermark_options', 10, 2 );
-		}
-
-		foreach ( Helper::get_accessible_taxonomies() as $slug => $taxonomy ) {
-			if ( ! $this->is_taxonomy_allowed( $taxonomy->name ) ) {
-				continue;
-			}
-			$this->action( "rank_math/admin/settings/taxonomy-{$slug}", 'add_thumbnail_watermark_options', 10, 2 );
-		}
-	}
-
-	/**
-	 * Add Custom Image Overlay option in Titles & Meta settings.
-	 *
-	 * @param object $cmb CMB2 instance.
-	 * @param array  $tab Current settings tab.
-	 */
-	public function add_thumbnail_watermark_options( $cmb, $tab ) {
-		$overlays  = array_merge( [ '' => __( 'Off', 'rank-math-pro' ) ], Helper::choices_overlay_images( 'names' ) );
-		$field_ids = wp_list_pluck( $cmb->prop( 'fields' ), 'id' );
-
-		if ( isset( $tab['post_type'] ) || isset( $tab['taxonomy'] ) ) {
-			$id       = isset( $tab['taxonomy'] ) ? "tax_{$tab['taxonomy']}_image_overlay" : "pt_{$tab['post_type']}_image_overlay";
-			$position = isset( $tab['taxonomy'] ) ? array_search( "remove_{$tab['taxonomy']}_snippet_data", array_keys( $field_ids ), true ) + 1 : $this->get_field_position( $tab['post_type'], $field_ids );
-			$cmb->add_field(
-				[
-					'id'      => $id,
-					'type'    => 'radio_inline',
-					'name'    => esc_html__( 'Default Thumbnail Watermark', 'rank-math-pro' ),
-					'desc'    => esc_html__( 'Select the default watermark that will be applied if no specific watermark is selected.', 'rank-math-pro' ),
-					'options' => $overlays,
-					'default' => '',
-					'classes' => 'default-overlay-field',
-				],
-				++$position
-			);
-
-			return;
-		}
-
-		$fields_position = array_search( 'twitter_card_type', array_keys( $field_ids ), true ) + 1;
-		$overlays_fields = $cmb->add_field(
-			[
-				'id'              => 'custom_image_overlays',
-				'type'            => 'group',
-				'name'            => esc_html__( 'Custom Image Watermarks', 'rank-math-pro' ),
-				'desc'            => esc_html__( 'Add more image watermarks to choose from for the social thumbnails.', 'rank-math-pro' ),
-				'options'         => [
-					'add_button'    => esc_html__( 'Add Watermark', 'rank-math-pro' ),
-					'remove_button' => esc_html__( 'Remove', 'rank-math-pro' ),
-				],
-				'classes'         => 'cmb-group-text-only',
-				'sanitization_cb' => [ $this, 'sanitize_overlays' ],
-			],
-			++$fields_position
-		);
-
-		$cmb->add_group_field(
-			$overlays_fields,
-			[
-				'id'      => 'image',
-				'type'    => 'file',
-				'options' => [
-					'url' => false,
-				],
-				'text'    => [ 'add_upload_file_text' => esc_html__( 'Add Image', 'rank-math-pro' ) ],
-			]
-		);
-
-		$cmb->add_group_field(
-			$overlays_fields,
-			[
-				'id'         => 'name',
-				'type'       => 'text',
-				'attributes' => [
-					'placeholder' => esc_attr__( 'Name*', 'rank-math-pro' ),
-				],
-			]
-		);
-
-		$cmb->add_group_field(
-			$overlays_fields,
-			[
-				'id'      => 'position',
-				'type'    => 'select',
-				'options' => $this->get_position_choices(),
-				'default' => 'bottom_right',
-			]
-		);
-
-		$cmb->add_field(
-			[
-				'id'      => 'default_image_overlay',
-				'type'    => 'radio_inline',
-				'name'    => esc_html__( 'Default Thumbnail Watermark', 'rank-math-pro' ),
-				'desc'    => esc_html__( 'Select the default watermark that will be applied if no specific watermark is selected.', 'rank-math-pro' ),
-				'options' => $overlays,
-				'default' => '',
-				'classes' => 'default-overlay-field',
-			],
-			++$fields_position
-		);
-	}
-
-	/**
 	 * Enqueue assets.
 	 *
 	 * @return void
@@ -458,7 +346,7 @@ class Thumbnail_Overlays {
 	private function get_custom_overlays() {
 		return array_filter(
 			array_map(
-				function( $overlay ) {
+				function ( $overlay ) {
 					return empty( $overlay['name'] ) || empty( $overlay['image'] ) ? false : $overlay;
 				},
 				(array) Helper::get_settings( 'titles.custom_image_overlays' )

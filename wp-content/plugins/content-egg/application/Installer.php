@@ -107,6 +107,7 @@ class Installer
         ImageOptimizeScheduler::clearScheduleEvent();
         MaintenanceCron::clear();
         self::clearFeedSyncEvents();
+        \wp_clear_scheduled_hook(\ContentEgg\application\deals\DealsCron::HOOK);
     }
 
     /**

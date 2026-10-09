@@ -240,6 +240,10 @@ class Aliexpress2Module extends AffiliateParserModule
         {
             $options['tracking_id'] = $tracking_id;
         }
+        if ($ship_to_country = $this->config('ship_to_country'))
+        {
+            $options['ship_to_country'] = $ship_to_country;
+        }
 
         $product_ids = array_keys($items);
 

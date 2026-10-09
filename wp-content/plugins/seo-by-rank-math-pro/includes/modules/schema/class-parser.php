@@ -27,11 +27,11 @@ class Parser {
 	 * @param string $url Url to fetch html from.
 	 */
 	public function from_url( $url ) {
-		$response = wp_remote_get(
+		$response = wp_safe_remote_get(
 			$url,
 			[
 				'timeout'   => 30,
-				'sslverify' => false,
+				'sslverify' => apply_filters( 'https_local_ssl_verify', true ),
 			]
 		);
 
@@ -65,7 +65,10 @@ class Parser {
 
 		$json = [];
 		foreach ( $scripts as $script ) {
-			$json[] = json_decode( trim( $script->nodeValue ) ); // phpcs:ignore
+			$data = json_decode( trim( $script->nodeValue ) ); // phpcs:ignore
+			if ( $data ) {
+				$json[] = $data;
+			}
 		}
 
 		return $json;

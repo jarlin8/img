@@ -33,7 +33,10 @@ class Modules {
 
 		$this->filter( 'rank_math/modules', 'setup_core', 1 );
 		$this->action( 'admin_enqueue_scripts', 'enqueue' );
-		$this->action( 'rank_math/module_changed', 'flush_rewrite_rules', 10, 2 );
+		$this->action( 'rank_math/module_changed', 'flush_rewrite_rules', 10 );
+
+		// Hook for Link Genius module enablement and table recreation.
+		$this->action( 'rank_math/admin/after_create_tables', 'setup_link_genius_schema', 10, 2 );
 	}
 
 	/**
@@ -51,7 +54,7 @@ class Modules {
 			'desc'          => esc_html__( 'Create a News Sitemap for your news-related content. You only need a News sitemap if you plan on posting news-related content on your website.', 'rank-math-pro' ),
 			'class'         => 'RankMathPro\Sitemap\News_Sitemap',
 			'icon'          => 'post',
-			'settings'      => Helper::get_admin_url( 'options-sitemap' ) . '#setting-panel-news-sitemap',
+			'settings'      => Helper::get_settings_url( 'sitemap', 'news-sitemap' ),
 			'probadge'      => defined( 'RANK_MATH_PRO_FILE' ),
 			'disabled'      => ( ! in_array( 'sitemap', $active_modules, true ) ),
 			'dep_modules'   => [ 'sitemap' ],
@@ -63,7 +66,7 @@ class Modules {
 			'desc'          => esc_html__( 'For your video content, a Video Sitemap is a recommended step for better rankings and inclusion in the Video search.', 'rank-math-pro' ),
 			'class'         => 'RankMathPro\Sitemap\Video_Sitemap',
 			'icon'          => 'video',
-			'settings'      => Helper::get_admin_url( 'options-sitemap' ) . '#setting-panel-video-sitemap',
+			'settings'      => Helper::get_settings_url( 'sitemap', 'video-sitemap' ),
 			'probadge'      => defined( 'RANK_MATH_PRO_FILE' ),
 			'disabled'      => ( ! in_array( 'rich-snippet', $active_modules, true ) || ! in_array( 'sitemap', $active_modules, true ) ),
 			'dep_modules'   => [ 'sitemap', 'rich-snippet' ],
@@ -76,15 +79,33 @@ class Modules {
 			'class'         => 'RankMathPro\Podcast\Podcast',
 			'icon'          => 'podcast',
 			'betabadge'     => true,
-			'settings'      => Helper::get_admin_url( 'options-general' ) . '#setting-panel-podcast',
+			'settings'      => Helper::get_settings_url( 'general', 'podcast' ),
 			'probadge'      => defined( 'RANK_MATH_PRO_FILE' ),
 			'disabled'      => ! in_array( 'rich-snippet', $active_modules, true ),
 			'dep_modules'   => [ 'rich-snippet' ],
 			'disabled_text' => esc_html__( 'Please activate Schema module to use this module.', 'rank-math-pro' ),
 		];
 
+		$registered             = \RankMath\Admin\Admin_Helper::get_registration_data();
+		$is_connected           = $registered && ! empty( $registered['username'] ) && ! empty( $registered['api_key'] );
+		$modules['marketplace'] = [
+			'title'         => esc_html__( 'Marketplace', 'rank-math-pro' ),
+			'desc'          => esc_html__( 'Discover handpicked WordPress plugins designed to boost your SEO, improve Core Web Vitals, and accelerate your website\'s growth.', 'rank-math-pro' ),
+			'class'         => 'RankMathPro\Marketplace\Marketplace',
+			'icon'          => 'cart',
+			'probadge'      => defined( 'RANK_MATH_PRO_FILE' ),
+			'disabled'      => ! $is_connected,
+			'disabled_text' => esc_html__( 'Please connect your site to Rank Math to use this module.', 'rank-math-pro' ),
+		];
+
 		// Replace Schema Loader.
 		$modules['rich-snippet']['class'] = '\RankMathPro\Schema\Schema';
+
+		if ( isset( $modules['link-genius'] ) ) {
+			$modules['link-counter']['title'] = $modules['link-genius']['title'];
+			$modules['link-counter']['desc']  = $modules['link-genius']['desc'];
+			unset( $modules['link-genius'] );
+		}
 
 		return $modules;
 	}
@@ -103,11 +124,28 @@ class Modules {
 	 * Function to run when Module is enabled/disabled.
 	 *
 	 * @param string $module Module.
-	 * @param string $state  Module state.
 	 */
-	public function flush_rewrite_rules( $module, $state ) {
+	public function flush_rewrite_rules( $module ) {
 		if ( 'podcast' === $module ) {
 			Helper::schedule_flush_rewrite();
 		}
+	}
+
+	/**
+	 * Set up Link Genius PRO schema when tables are created.
+	 *
+	 * This method is called when FREE plugin creates tables for link-counter module.
+	 * It handles both module enablement and table recreation scenarios.
+	 *
+	 * @param array $tables Tables that were created.
+	 */
+	public function setup_link_genius_schema( $tables ) {
+		// Only proceed if link-counter module tables were created.
+		if ( ! isset( $tables['link-counter'] ) || ! isset( $tables['link-counter']['rank_math_internal_links'] ) ) {
+			return;
+		}
+
+		// Initialize Link Genius PRO schema (columns, indexes, tables).
+		\RankMathPro\Link_Genius\Data\Table_Extension::initialize_schema();
 	}
 }

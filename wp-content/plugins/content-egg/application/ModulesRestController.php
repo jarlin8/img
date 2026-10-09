@@ -9,6 +9,7 @@ use ContentEgg\application\components\ModuleManager;
 use ContentEgg\application\components\ModuleTemplateManager;
 use ContentEgg\application\components\ParserModule;
 use ContentEgg\application\components\ProductSearchService;
+use ContentEgg\application\helpers\TextHelper;
 
 /**
  * ModulesRestController class file
@@ -300,7 +301,7 @@ class ModulesRestController extends \WP_REST_Controller
             return \rest_ensure_response(array(
                 'results' => array(),
                 'error' => '',
-                'notice' => $e->getMessage(),
+                'notice' => TextHelper::plainErrorMessage($e->getMessage()),
                 'feed_importing' => true,
             ));
         }
@@ -313,7 +314,7 @@ class ModulesRestController extends \WP_REST_Controller
             // Parser/API failures use the admin-ajax envelope: HTTP 200 + error field.
             return \rest_ensure_response(array(
                 'results' => array(),
-                'error' => $e->getMessage(),
+                'error' => TextHelper::plainErrorMessage($e->getMessage()),
                 'notice' => '',
             ));
         }

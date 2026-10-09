@@ -262,8 +262,6 @@ class Admin_Helper {
 			'YT'  => __( 'Mayotte', 'rank-math-pro' ),
 			'MX'  => __( 'Mexico', 'rank-math-pro' ),
 			'FM'  => __( 'Micronesia, Federated States of', 'rank-math-pro' ),
-			'MC'  => __( 'Moldova, Republic of', 'rank-math-pro' ),
-			'MP'  => __( 'Northern Mariana Islands', 'rank-math-pro' ),
 			'MC'  => __( 'Monaco', 'rank-math-pro' ),
 			'MN'  => __( 'Mongolia', 'rank-math-pro' ),
 			'MS'  => __( 'Montserrat', 'rank-math-pro' ),
@@ -312,7 +310,8 @@ class Admin_Helper {
 			'ST'  => __( 'Sao Tome and Principe', 'rank-math-pro' ),
 			'SA'  => __( 'Saudi Arabia', 'rank-math-pro' ),
 			'SN'  => __( 'Senegal', 'rank-math-pro' ),
-			'CS'  => __( 'Serbia and Montenegro', 'rank-math-pro' ),
+			'RS'  => __( 'Serbia', 'rank-math-pro' ),
+			'ME'  => __( 'Montenegro', 'rank-math-pro' ),
 			'SC'  => __( 'Seychelles', 'rank-math-pro' ),
 			'SL'  => __( 'Sierra Leone', 'rank-math-pro' ),
 			'SG'  => __( 'Singapore', 'rank-math-pro' ),
@@ -432,7 +431,6 @@ class Admin_Helper {
 			'CUW' => __( 'Curaçao', 'rank-math-pro' ),
 			'CYP' => __( 'Cyprus', 'rank-math-pro' ),
 			'CZE' => __( 'Czechia', 'rank-math-pro' ),
-			'DJI' => __( "Côte d'Ivoire", 'rank-math-pro' ),
 			'DNK' => __( 'Denmark', 'rank-math-pro' ),
 			'DJI' => __( 'Djibouti', 'rank-math-pro' ),
 			'DMA' => __( 'Dominica', 'rank-math-pro' ),
@@ -615,5 +613,181 @@ class Admin_Helper {
 			'ZWE' => __( 'Zimbabwe', 'rank-math-pro' ),
 			'ZZZ' => __( 'Unknown Region', 'rank-math-pro' ),
 		];
+	}
+
+	/**
+	 * Get Keyword Intent for the given Focus Keyword(s).
+	 *
+	 * @param array  $args      Array of arguments to send to the API.
+	 * @param string $endpoint Keyword Intent endpoint.
+	 *
+	 * @return array|string
+	 */
+	public static function determine_search_intent( $args, $endpoint = 'keyword_intent' ) {
+		$registered = Free_Admin_Helper::get_registration_data();
+		$response   = wp_remote_post(
+			CONTENT_AI_URL . '/ai/' . $endpoint,
+			[
+				'body' => array_merge(
+					$args,
+					[
+						'username'       => $registered['username'],
+						'api_key'        => $registered['api_key'],
+						'site_url'       => $registered['site_url'],
+						'plugin_version' => rank_math_pro()->version,
+					]
+				),
+			]
+		);
+
+		if ( is_wp_error( $response ) ) {
+			return [
+				'error' => $response->get_error_message(),
+			];
+		}
+
+		$response = json_decode( wp_remote_retrieve_body( $response ), true );
+		if ( ! empty( $response['error'] ) ) {
+			$errors        = Helper::get_content_ai_errors();
+			$error_message = isset( $response['message'] ) ? $response['message'] : esc_html__( 'Could not generate. Please try again later.', 'rank-math-pro' );
+			if ( isset( $response['err_key'] ) && isset( $errors[ $response['err_key'] ] ) ) {
+				$error_message = $errors[ $response['err_key'] ];
+			}
+
+			return [
+				'error' => $error_message,
+			];
+		}
+
+		return current( $response['results'] );
+	}
+
+	/**
+	 * Update and return the Search Intent
+	 *
+	 * @param array $intent Search Intent to update.
+	 *
+	 * @return array
+	 */
+	public static function get_search_intent( $intent = null ) {
+		$stored_search_intent = (array) get_option( 'rank_math_search_intent', [] );
+		if ( is_null( $intent ) ) {
+			return $stored_search_intent;
+		}
+
+		$stored_search_intent = array_merge( $stored_search_intent, $intent );
+
+		update_option( 'rank_math_search_intent', $stored_search_intent, false );
+
+		return $stored_search_intent;
+	}
+
+	/**
+	 * Check if current user can install the imgagify plugin.
+	 *
+	 * @return boolean
+	 */
+	public static function can_activate_imagify() {
+		return ! defined( 'IMAGIFY_VERSION' ) && current_user_can( 'install_plugins' ) && current_user_can( 'activate_plugins' );
+	}
+
+	/**
+	 * Check if AI traffic only is enabled.
+	 */
+	public static function ai_traffic_enabled() {
+		return isset( $_COOKIE['rank_math_analytics_ai_only'] ) && 'true' === sanitize_text_field( wp_unslash( $_COOKIE['rank_math_analytics_ai_only'] ) );
+	}
+
+	/**
+	 * Get terms from the provided taxonomy.
+	 *
+	 * @param string $taxonomy Taxonomy name.
+	 * @param array  $selected Selected values.
+	 * @param string $search   Searched term.
+	 * @return array
+	 */
+	public static function get_taxonomy_terms( $taxonomy, $selected = [], $search = '' ) {
+		$args = [
+			'taxonomy' => $taxonomy,
+			'search'   => $search,
+			'fields'   => 'id=>name',
+			'number'   => 10,
+		];
+
+		if ( ! empty( $selected ) ) {
+			$args['include'] = $selected;
+			unset( $args['number'] );
+		}
+
+		$terms = get_terms( $args );
+		if ( empty( $terms ) ) {
+			return [];
+		}
+
+		$data = [];
+		foreach ( $terms as $id => $name ) {
+			$data[] = [
+				'value' => $id,
+				'name'  => $name,
+			];
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Get exclude terms data for settings based on selected post types.
+	 *
+	 * @param string $setting_prefix      The setting prefix (e.g., 'news_sitemap' or 'keyword_maps').
+	 * @param array  $excluded_post_types Array of excluded post types.
+	 * @param string $settings_section    The settings section (e.g., 'general' or 'sitemap').
+	 * @return array
+	 */
+	public static function get_exclude_terms_for_settings( $setting_prefix, $excluded_post_types = [], $settings_section = 'general' ) {
+		// Get all public post types, excluding attachment and any excluded post types.
+		$all_post_types = get_post_types( [ 'public' => true ], 'names' );
+		$post_types     = array_diff( $all_post_types, $excluded_post_types, [ 'attachment' ] );
+
+		if ( empty( $post_types ) ) {
+			return [];
+		}
+
+		$exclude_terms = [];
+		foreach ( $post_types as $post_type ) {
+			$taxonomies = Helper::get_object_taxonomies( $post_type, 'objects' );
+			if ( empty( $taxonomies ) ) {
+				continue;
+			}
+
+			$terms = Helper::get_settings( "{$settings_section}.{$setting_prefix}_exclude_{$post_type}_terms", [] );
+
+			$post_type_obj   = get_post_type_object( $post_type );
+			$post_type_label = $post_type_obj->labels->singular_name;
+
+			foreach ( $taxonomies as $taxonomy => $data ) {
+				if ( empty( $data->show_ui ) ) {
+					continue;
+				}
+
+				$selected = [];
+				if ( isset( $terms[ $taxonomy ] ) ) {
+					$selected = $terms[ $taxonomy ];
+				}
+
+				if ( isset( $terms[0] ) && isset( $terms[0][ $taxonomy ] ) ) {
+					$selected = $terms[0][ $taxonomy ];
+				}
+
+				$taxonomy_terms = self::get_taxonomy_terms( $taxonomy, $selected );
+				if ( empty( $taxonomy_terms ) ) {
+					continue;
+				}
+
+				$exclude_terms[ $post_type ][ $taxonomy ] = $taxonomy_terms;
+			}
+		}
+
+		// Ensure we return an object in JSON, not an array.
+		return ! empty( $exclude_terms ) ? $exclude_terms : (object) [];
 	}
 }

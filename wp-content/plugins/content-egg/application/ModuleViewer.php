@@ -87,6 +87,11 @@ class ModuleViewer
         else
             $post_id = -1;
 
+        // A deal page places its own offer, history and sellers; auto-embedded
+        // module blocks would repeat them under the description.
+        if ($post && $post->post_type === \ContentEgg\application\deals\DealPostType::POST_TYPE)
+            return $content;
+
         $top_modules_priorities = array();
         $bottom_modules_priorities = array();
         foreach (ModuleManager::getInstance()->getModules(true) as $module_id => $module)

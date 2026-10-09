@@ -77,11 +77,15 @@ class Local_Seo {
 	}
 
 	/**
-	 * Intialize.
+	 * Initialize.
 	 */
 	public function init() {
 		if ( ! Helper::get_settings( 'titles.use_multiple_locations', false ) ) {
 			return;
+		}
+
+		if ( function_exists( 'register_block_type' ) ) {
+			new Block_Local_Business();
 		}
 
 		$this->post_singular_name = Helper::get_settings( 'titles.locations_post_type_label', 'Location' );
@@ -187,7 +191,7 @@ class Local_Seo {
 			'supports'           => [ 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'revisions', 'custom-fields', 'page-attributes', 'publicize' ],
 			'rewrite'            => [
 				'slug'       => $post_type_slug,
-				'with_front' => $this->filter( 'locations/front', true ),
+				'with_front' => $this->do_filter( 'locations/front', true ),
 			],
 			'capabilities'       => [
 				'edit_post'          => $capability,

@@ -17,6 +17,7 @@ use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\LocalRedirector;
 use ContentEgg\application\components\ShopStore;
 use ContentEgg\application\components\ShopMigration;
+use ContentEgg\application\deals\DealPostType;
 
 /**
  * GeneralConfig class file
@@ -38,6 +39,26 @@ class GeneralConfig extends Config
     public function option_name()
     {
         return 'contentegg_options';
+    }
+
+    /**
+     * While deals are on, the Deal post type is always a Content Egg post type.
+     * Product search, the Product Manager and the REST product routes all gate
+     * on this option; asking users to also tick "Deals" there would be one more
+     * way for a deal page to have no products.
+     */
+    public function option($opt_name, $default = null)
+    {
+        $value = parent::option($opt_name, $default);
+
+        if ($opt_name === 'post_types' && parent::option('deals_enabled'))
+        {
+            $value = (array) $value;
+            if (!in_array(DealPostType::POST_TYPE, $value, true))
+                $value[] = DealPostType::POST_TYPE;
+        }
+
+        return $value;
     }
 
     public function add_admin_menu()
@@ -177,12 +198,26 @@ class GeneralConfig extends Config
             $this->getPriceAlertOptions(),
             $this->getFrontendSearchOptions(),
             $this->getShopsOptions(),
+            $this->getDealsOptions(),
             $this->getDeprecatedOptions(),
         );
 
         $options = \apply_filters('cegg_general_config', $options);
 
         return $options;
+    }
+
+    /**
+     * Deals is always a Content Egg post type while deals are on (see option()),
+     * so its box is shown ticked and locked rather than as a choice that does
+     * nothing.
+     */
+    public function render_post_types($args)
+    {
+        if (parent::option('deals_enabled'))
+            $args['locked_options'] = array(DealPostType::POST_TYPE => __('always on while Deals are enabled', 'content-egg'));
+
+        $this->render_checkbox_list($args);
     }
 
     public function getPostTypeList()
@@ -282,7 +317,7 @@ class GeneralConfig extends Config
                 'title' => 'Post Types',
                 'description' => __('Select the post types that you want to integrate with the Content Egg plugin.', 'content-egg'),
                 'checkbox_options' => $post_types,
-                'callback' => array($this, 'render_checkbox_list'),
+                'callback' => array($this, 'render_post_types'),
                 'default' => array('post', 'page', 'product'),
                 'section' => __('General settings', 'content-egg'),
             ),
@@ -1429,6 +1464,167 @@ class GeneralConfig extends Config
                 'section' => $section,
             ),
         );
+    }
+
+    private function getDealsOptions()
+    {
+        $section = __('Deals', 'content-egg');
+        $toggle = array(
+            'enabled' => __('Enabled', 'content-egg'),
+            'disabled' => __('Disabled', 'content-egg'),
+        );
+
+        // Default-on settings are dropdowns, not checkboxes: Config::get_current()
+        // reads an unsaved checkbox as false on any install that already has
+        // saved options, so a default-on checkbox would ship switched off.
+        return array(
+            'deals_enabled' => array(
+                'title' => __('Enable deals', 'content-egg'),
+                'description' => __('Adds a Deal post type with ready-made deal pages, a deals archive and deal voting.', 'content-egg'),
+                'callback' => array($this, 'render_checkbox'),
+                'default' => false,
+                'section' => $section,
+            ),
+            'deals_slug' => array(
+                'title' => __('Deal URL slug', 'content-egg'),
+                'description' => __('The URL base of a single deal, e.g. /deal/my-deal/.', 'content-egg'),
+                'callback' => array($this, 'render_input'),
+                'default' => 'deal',
+                'validator' => array(
+                    'trim',
+                    'sanitize_title',
+                    array(
+                        'call' => array($this, 'dealSlugsDiffer'),
+                        'message' => __('The deal slug and the archive slug must differ.', 'content-egg'),
+                    ),
+                ),
+                'section' => $section,
+            ),
+            'deals_archive_slug' => array(
+                'title' => __('Deals archive slug', 'content-egg'),
+                'description' => __('The URL of the deals listing, e.g. /deals/.', 'content-egg'),
+                'callback' => array($this, 'render_input'),
+                'default' => 'deals',
+                'validator' => array(
+                    'trim',
+                    'sanitize_title',
+                    array(
+                        'call' => array($this, 'dealSlugsDiffer'),
+                        'arg' => 'deals_archive_slug',
+                        'message' => __('The deal slug and the archive slug must differ.', 'content-egg'),
+                    ),
+                ),
+                'section' => $section,
+            ),
+            'deals_price_threshold' => array(
+                'title' => __('Expire when the price rises by (%)', 'content-egg'),
+                'description' => __('A deal expires when its price rises more than this above the price it was published at.', 'content-egg'),
+                'callback' => array($this, 'render_input'),
+                'default' => 5,
+                'validator' => array(
+                    'trim',
+                    'absint',
+                    array(
+                        'call' => array('\ContentEgg\application\helpers\FormValidator', 'less_than_equal_to'),
+                        'arg' => 100,
+                        'message' => sprintf(__('The field "%s" can\'t be more than %d.', 'content-egg'), __('Expire when the price rises by (%)', 'content-egg'), 100),
+                    ),
+                ),
+                'section' => $section,
+            ),
+            'deals_auto_reactivate' => array(
+                'title' => __('Reactivate automatically', 'content-egg'),
+                'description' => __('Bring a deal back when the product is back in stock or its price falls back. Deals that ended or that you expired by hand never come back on their own.', 'content-egg'),
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => $toggle,
+                'default' => 'enabled',
+                'section' => $section,
+            ),
+            'deals_hide_expired' => array(
+                'title' => __('Hide expired deals from listings', 'content-egg'),
+                'description' => __('Expired deals keep their page either way.', 'content-egg'),
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => $toggle,
+                'default' => 'enabled',
+                'section' => $section,
+            ),
+            'deals_noindex_expired' => array(
+                'title' => __('Noindex expired deals', 'content-egg'),
+                'description' => __('Ask search engines not to index a deal page once the deal has expired.', 'content-egg'),
+                'callback' => array($this, 'render_checkbox'),
+                'default' => false,
+                'section' => $section,
+            ),
+            'deals_btn_text' => array(
+                'title' => __('Deal button text', 'content-egg'),
+                'description' => sprintf(
+                    __('Text for the buy button on a deal page. Leave empty to use the default: %1$s. Supports tokens: %2$s', 'content-egg'),
+                    '<code>Get deal at %MERCHANT%</code>',
+                    '<code>%MERCHANT%</code>, <code>%DOMAIN%</code>, <code>%PRICE%</code>, <code>%STOCK_STATUS%</code>'
+                ),
+                'callback' => array($this, 'render_input'),
+                'default' => '',
+                'validator' => array('strip_tags'),
+                'section' => $section,
+            ),
+            'deals_voting' => array(
+                'title' => __('Deal voting', 'content-egg'),
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => $toggle,
+                'default' => 'enabled',
+                'section' => $section,
+            ),
+            'deals_voting_logged_in' => array(
+                'title' => __('Only logged-in users can vote', 'content-egg'),
+                'callback' => array($this, 'render_checkbox'),
+                'default' => false,
+                'section' => $section,
+            ),
+            'deals_hot_score' => array(
+                'title' => __('Hot deal score', 'content-egg'),
+                'description' => __('Deals whose vote score reaches this number get a "Hot" badge. 0 turns the badge off.', 'content-egg'),
+                'callback' => array($this, 'render_input'),
+                'default' => 50,
+                'validator' => array('trim', 'absint'),
+                'section' => $section,
+            ),
+            'deals_per_page' => array(
+                'title' => __('Deals per archive page', 'content-egg'),
+                'callback' => array($this, 'render_input'),
+                'default' => 24,
+                'validator' => array('trim', 'absint'),
+                'section' => $section,
+            ),
+        );
+    }
+
+    /**
+     * The single-deal and archive slugs share one rewrite space: equal slugs
+     * would send every deal URL to the archive. Runs on both fields, compared
+     * as they resolve (an empty slug falls back to its default). deals_slug is
+     * validated first, so the archive check sees the single slug that will
+     * actually be saved - a rejected archive keeps its current value.
+     */
+    public function dealSlugsDiffer($value, $field = 'deals_slug')
+    {
+        $other = $field === 'deals_slug' ? 'deals_archive_slug' : 'deals_slug';
+        try
+        {
+            $other_value = $this->get_submitted_value($other);
+        }
+        catch (\Exception $e)
+        {
+            $other_value = $this->option($other);
+        }
+
+        $resolve = function ($slug, $name)
+        {
+            $slug = \sanitize_title(trim((string) $slug));
+
+            return $slug !== '' ? $slug : ($name === 'deals_slug' ? 'deal' : 'deals');
+        };
+
+        return $resolve($value, $field) !== $resolve($other_value, $other);
     }
 
     public function couponsLimitFilter($value)

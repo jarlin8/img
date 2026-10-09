@@ -11,6 +11,7 @@
 namespace RankMathPro\Sitemap;
 
 use RankMath\Helper;
+use RankMath\Helpers\DB as DB_Helper;
 use RankMath\Sitemap\Router;
 use RankMath\Sitemap\Providers\Post_Type;
 
@@ -74,6 +75,7 @@ class News_Provider extends Post_Type {
 				'lastmod' => get_lastpostdate( 'gmt' ),
 			],
 			'news',
+			$this->sitemap_slug,
 		);
 
 		if ( $item ) {
@@ -81,6 +83,16 @@ class News_Provider extends Post_Type {
 		}
 
 		return $index;
+	}
+
+	/**
+	 * Get count of posts eligible for the news sitemap.
+	 *
+	 * @param string $post_types Sitemap type slug — unused, news post types come from settings.
+	 * @return int
+	 */
+	public function get_post_type_count( $post_types ) { // phpcs:ignore
+		return count( $this->get_posts( Helper::get_settings( 'sitemap.news_sitemap_post_type' ), 1000, 0 ) );
 	}
 
 	/**
@@ -160,41 +172,61 @@ class News_Provider extends Post_Type {
 		 * Get posts for the last two days only.
 		 */
 		$sql = "
-            SELECT *
-            FROM {$wpdb->posts}
-            WHERE post_status='publish'
-                AND ( TIMESTAMPDIFF( MINUTE, post_date_gmt, UTC_TIMESTAMP() ) <= ( 48 * 60 ) )
-                AND post_type IN ( '" . join( "', '", esc_sql( $post_types ) ) . "' )
-        ";
+			SELECT *
+			FROM {$wpdb->posts}
+			WHERE post_status='publish'
+				AND ( TIMESTAMPDIFF( MINUTE, post_date_gmt, UTC_TIMESTAMP() ) <= ( 48 * 60 ) )
+				AND post_type IN ( '" . join( "', '", esc_sql( $post_types ) ) . "' )
+		";
 
 		$terms_query = '';
 		foreach ( $post_types as $post_type ) {
-			$terms = current( Helper::get_settings( "sitemap.news_sitemap_exclude_{$post_type}_terms", [] ) );
+			$terms = Helper::get_settings( "sitemap.news_sitemap_exclude_{$post_type}_terms", [] );
+			if ( count( $terms ) === 1 && isset( $terms[0] ) ) {
+				$terms = $terms[0];
+			}
 			if ( empty( $terms ) ) {
 				continue;
 			}
 
 			array_map(
 				function ( $key ) use ( $terms, &$terms_query, $wpdb ) {
+					if ( empty( $terms[ $key ] ) ) {
+						return;
+					}
 					$placeholders = implode( ', ', array_fill( 0, count( $terms[ $key ] ), '%d' ) );
 					$terms_sql    = "(
-                    {$wpdb->posts}.ID NOT IN (
-                        SELECT object_id
-                        FROM {$wpdb->term_relationships}
-                        WHERE term_taxonomy_id IN ($placeholders)
-                    )";
-					// Check mutiple category selected.
-					$terms_or_sql = "
-                    OR {$wpdb->posts}.ID IN (
-                        SELECT DISTINCT object_id
-                        FROM {$wpdb->term_relationships}
-                        WHERE term_taxonomy_id NOT IN ($placeholders)
-                    ))
-                    AND";
+					{$wpdb->posts}.ID NOT IN (
+						SELECT object_id
+						FROM {$wpdb->term_relationships}
+						WHERE term_taxonomy_id IN ($placeholders)
+					)";
+
+					/**
+					 * Filter whether to use strict term exclusion for the news sitemap.
+					 *
+					 * @param bool   $strict Whether to use strict exclusion. Default true.
+					 * @param string $key    Taxonomy key being processed.
+					 * @param array  $terms  Excluded terms grouped by taxonomy.
+					 */
+					$use_all_terms_for_exclude_check = $this->do_filter( 'sitemap/news/use_all_terms_for_exclude_check', true, $key, $terms );
+					if ( $use_all_terms_for_exclude_check ) {
+						// Check mutiple category selected.
+						$terms_or_sql = "
+						OR {$wpdb->posts}.ID IN (
+							SELECT DISTINCT object_id
+							FROM {$wpdb->term_relationships}
+							WHERE term_taxonomy_id NOT IN ($placeholders)
+						))
+						AND";
+					}
 
 					$terms_query .= $wpdb->prepare( $terms_sql, $terms[ $key ] ); // phpcs:ignore
-					$terms_query .= $wpdb->prepare( $terms_or_sql, $terms[ $key ] ); // phpcs:ignore
-
+					if ( $use_all_terms_for_exclude_check ) {
+						$terms_query .= $wpdb->prepare( $terms_or_sql, $terms[ $key ] ); // phpcs:ignore
+					} else {
+						$terms_query .= ') AND';
+					}
 				},
 				array_keys( $terms )
 			);
@@ -209,13 +241,13 @@ class News_Provider extends Post_Type {
 		}
 
 		$sql .= "
-            AND post_password = ''
-            ORDER BY post_date_gmt DESC
-            LIMIT 0, %d
-        ";
+			AND post_password = ''
+			ORDER BY post_date_gmt DESC
+			LIMIT 0, %d
+		";
 
 		$count = max( 1, min( 1000, $count ) );
-		return $wpdb->get_results( $wpdb->prepare( $sql, $count ) ); // phpcs:ignore
+		return DB_Helper::get_results( $wpdb->prepare( $sql, $count ) );
 	}
 
 	/**

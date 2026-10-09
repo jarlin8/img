@@ -281,15 +281,7 @@ class TradetrackerProductsModule extends AffiliateParserModule
 
             $results = $this->prepareResults($results);
 
-            $product = null;
-            foreach ($results as $i => $r)
-            {
-                if ($this->isProductsMatch($item, $r))
-                {
-                    $product = $r;
-                    break;
-                }
-            }
+            $product = $this->findUpdatedProduct($item, $results);
             if (!$product)
             {
                 if ($this->config('stock_status') == 'out_of_stock')
@@ -309,6 +301,56 @@ class TradetrackerProductsModule extends AffiliateParserModule
         }
 
         return $items;
+    }
+
+    /**
+     * Picks the fresh API row for a stored offer.
+     *
+     * A merchant can list pack sizes of one product (100 g, 5 x 100 g, ...) as
+     * separate rows that share the EAN and the product URL, and the API returns
+     * them in varying order. isProductsMatch() would take whichever comes first
+     * and overwrite the price with another variant's, so the row with the same
+     * feed product identifier is tried first.
+     */
+    private function findUpdatedProduct(array $item, array $results)
+    {
+        foreach ($results as $r)
+        {
+            if (self::isSameFeedProduct($item, $r))
+            {
+                return $r;
+            }
+        }
+
+        foreach ($results as $r)
+        {
+            if ($this->isProductsMatch($item, $r))
+            {
+                return $r;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * unique_id is "<feed product identifier>-<random>" (see prepareResults()).
+     * A stored item without that suffix does not match here and falls back to
+     * isProductsMatch().
+     */
+    private static function isSameFeedProduct(array $item, ContentProduct $r)
+    {
+        if (empty($item['unique_id']) || !preg_match('/^(.+)-\d+$/', (string) $r->unique_id, $m))
+        {
+            return false;
+        }
+
+        if (!empty($item['domain']) && $item['domain'] != $r->domain)
+        {
+            return false;
+        }
+
+        return (bool) preg_match('/^' . preg_quote($m[1], '/') . '-\d+$/', (string) $item['unique_id']);
     }
 
     private function getApiClient()

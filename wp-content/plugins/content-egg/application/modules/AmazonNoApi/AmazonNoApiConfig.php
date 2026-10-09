@@ -141,7 +141,7 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig
 
             'brightdata_token' => array(
                 'title' => __('Bright Data API key', 'content-egg') . '**',
-                'description' => sprintf(__('Your <a target="_blank" href="%s">Bright Data</a> API key. Requires a Web Unlocker zone.', 'content-egg'), 'https://brightdata.com/'),
+                'description' => sprintf(__('Your <a target="_blank" href="%s">Bright Data</a> API key. Requires a Web Unlocker zone.', 'content-egg'), 'https://www.keywordrush.com/go/brightdata'),
                 'callback' => array($this, 'render_password'),
                 'default' => '',
                 'validator' => array(

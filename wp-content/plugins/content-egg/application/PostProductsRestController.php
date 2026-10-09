@@ -15,6 +15,7 @@ use ContentEgg\application\components\UpdateSettingsService;
 use ContentEgg\application\helpers\AdminHelper;
 use ContentEgg\application\helpers\ClickStatsHelper;
 use ContentEgg\application\helpers\TemplateHelper;
+use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\models\LinkClicksDailyModel;
 
 /**
@@ -258,6 +259,7 @@ class PostProductsRestController extends \WP_REST_Controller
                     'permission_callback' => array($this, 'permissions_check'),
                     'args' => array(
                         'global_keyword' => array('type' => 'string', 'required' => false),
+                        'global_rows' => array('type' => 'array', 'required' => false),
                         'modules' => array('type' => 'object', 'required' => false),
                         'family' => array('type' => 'string', 'required' => false),
                     ),
@@ -819,12 +821,35 @@ class PostProductsRestController extends \WP_REST_Controller
         $modules = $request->get_param('modules');
         $family = $request->get_param('family');
 
+        // The panel sends either group/keyword rows or the raw string it edits
+        // in Advanced mode. Rows are composed here so the stored value stays a
+        // plain keyword string — the metabox and the update cron read the same
+        // meta and know nothing about rows.
+        $global = $request->has_param('global_keyword') ? $request->get_param('global_keyword') : null;
+        $global_is_composed = false;
+        $rows = $request->get_param('global_rows');
+        if (is_array($rows))
+        {
+            $composed = UpdateSettingsService::composeRows($rows);
+            if ($composed['errors'])
+            {
+                return new \WP_Error(
+                    'cegg_invalid_keyword_rows',
+                    \__('Some keyword rows cannot be saved.', 'content-egg'),
+                    array('status' => 400, 'errors' => $composed['errors'])
+                );
+            }
+            $global = $composed['keyword'];
+            $global_is_composed = true;
+        }
+
         return \rest_ensure_response(
             UpdateSettingsService::saveUpdateSettings(
                 (int) $request['post_id'],
-                $request->has_param('global_keyword') ? $request->get_param('global_keyword') : null,
+                $global,
                 is_array($modules) ? $modules : array(),
-                $family ? \sanitize_text_field((string) $family) : null
+                $family ? \sanitize_text_field((string) $family) : null,
+                $global_is_composed
             )
         );
     }
@@ -905,7 +930,7 @@ class PostProductsRestController extends \WP_REST_Controller
             return \rest_ensure_response(array(
                 'items' => array(),
                 'previous' => array(),
-                'error' => \wp_strip_all_tags($e->getMessage()),
+                'error' => TextHelper::plainErrorMessage($e->getMessage()),
             ));
         }
 
@@ -980,7 +1005,7 @@ class PostProductsRestController extends \WP_REST_Controller
         {
             return \rest_ensure_response(array(
                 'previous' => array(),
-                'error' => \wp_strip_all_tags($e->getMessage()),
+                'error' => TextHelper::plainErrorMessage($e->getMessage()),
             ));
         }
 

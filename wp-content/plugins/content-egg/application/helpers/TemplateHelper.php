@@ -4082,7 +4082,9 @@ class TemplateHelper
             if (self::$price_history_since === null)
                 self::$price_history_since = strtotime($date);
 
-            if ($lowest_item === null || $data['price'] <= $lowest_item['price'])
+            // Strictly lower: the date is when the lowest price was first
+            // reached, not the last day it held (today, while it still holds).
+            if ($lowest_item === null || $data['price'] < $lowest_item['price'])
             {
                 $lowest_item = $data;
                 $lowest_item['date'] = $date;
@@ -4215,6 +4217,70 @@ class TemplateHelper
                     return labels[isoKey(value)] || '';
                 };
 
+                const isNarrow = function(width) {
+                    return width < 576;
+                };
+                const shortDate = new Intl.DateTimeFormat(locale, {
+                    day: 'numeric',
+                    month: 'short'
+                });
+                const priceFormat = new Intl.NumberFormat(locale, {
+                    style: 'currency',
+                    currency: currency
+                });
+                const priceFormatRound = new Intl.NumberFormat(locale, {
+                    style: 'currency',
+                    currency: currency,
+                    maximumFractionDigits: 0
+                });
+                const applyLayout = function(options, width) {
+                    const narrow = isNarrow(width);
+                    const ratio = narrow ? 1.8 : 3;
+                    if (options.aspectRatio === ratio) {
+                        return false;
+                    }
+                    options.aspectRatio = ratio;
+                    options.scales.x.ticks.maxTicksLimit = narrow ? 4 : 8;
+                    return true;
+                };
+                const tickLabel = function(value, chartWidth) {
+                    return isNarrow(chartWidth) ? shortDate.format(new Date(value)) : dateLabel(value);
+                };
+                const dropCrowdedTicks = function(scale) {
+                    const ticks = scale.ticks;
+                    const range = scale.max - scale.min;
+                    if (ticks.length < 2 || range <= 0) {
+                        return;
+                    }
+                    const chart = scale.chart;
+                    const axisWidth = chart.chartArea && chart.chartArea.width > 0 ? chart.chartArea.width : chart.width * 0.85;
+                    const pxPerMs = axisWidth / range;
+                    const g = chart.ctx;
+                    g.save();
+                    g.font = Chart.helpers && Chart.helpers.toFont ? Chart.helpers.toFont(scale.options.ticks.font).string : '12px sans-serif';
+                    const labelWidth = function(tick) {
+                        return g.measureText(tickLabel(tick.value, chart.width)).width;
+                    };
+                    const fits = function(a, b) {
+                        return (b.value - a.value) * pxPerMs >= (labelWidth(a) + labelWidth(b)) / 2 + 12;
+                    };
+                    const kept = [ticks[0]];
+                    for (let i = 1; i < ticks.length - 1; i++) {
+                        if (fits(kept[kept.length - 1], ticks[i])) {
+                            kept.push(ticks[i]);
+                        }
+                    }
+                    const last = ticks[ticks.length - 1];
+                    while (kept.length > 1 && !fits(kept[kept.length - 1], last)) {
+                        kept.pop();
+                    }
+                    if (fits(kept[kept.length - 1], last)) {
+                        kept.push(last);
+                    }
+                    g.restore();
+                    scale.ticks = kept;
+                };
+
                 const data = {
                     datasets: [{
                         data: points,
@@ -4232,6 +4298,11 @@ class TemplateHelper
                     type: 'line',
                     data: data,
                     options: {
+                        onResize: function(chart, size) {
+                            if (applyLayout(chart.options, size.width)) {
+                                chart.resize();
+                            }
+                        },
                         interaction: {
                             intersect: false,
                             mode: 'index'
@@ -4239,13 +4310,15 @@ class TemplateHelper
                         scales: {
                             x: {
                                 type: 'time',
+                                afterBuildTicks: dropCrowdedTicks,
                                 ticks: {
                                     color: color,
                                     source: 'data',
                                     autoSkip: true,
                                     maxTicksLimit: 8,
+                                    maxRotation: 0,
                                     callback: function(value) {
-                                        return dateLabel(value);
+                                        return tickLabel(value, this.chart.width);
                                     }
                                 },
                                 grid: {
@@ -4262,11 +4335,8 @@ class TemplateHelper
                                     color: color,
                                     autoSkip: true,
                                     maxTicksLimit: 6,
-                                    callback: function(value, index, values) {
-                                        return new Intl.NumberFormat(locale, {
-                                            style: 'currency',
-                                            currency: currency
-                                        }).format(value);
+                                    callback: function(value) {
+                                        return (isNarrow(this.chart.width) ? priceFormatRound : priceFormat).format(value);
                                     }
                                 },
                                 grid: {
@@ -4289,10 +4359,7 @@ class TemplateHelper
                                     label: function(tooltipItem) {
                                         const price = tooltipItem.parsed.y;
                                         const merchant = merchants[tooltipItem.dataIndex];
-                                        const formattedPrice = new Intl.NumberFormat(locale, {
-                                            style: 'currency',
-                                            currency: currency
-                                        }).format(price);
+                                        const formattedPrice = priceFormat.format(price);
                                         return `${merchant}: ${formattedPrice}`;
                                     }
                                 }
@@ -4301,6 +4368,7 @@ class TemplateHelper
                     }
                 };
 
+                applyLayout(config.options, ctx.parentNode.clientWidth);
                 const priceHistoryChart = new Chart(ctx, config);
             });
         </script>

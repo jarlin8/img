@@ -64,6 +64,17 @@ abstract class Scrap
     abstract public function applyTo(ScrapRequest $request, array $context);
 
     /**
+     * Inspect the raw response before its body is used, and throw if the
+     * provider reports an error the HTTP status does not show. Default: no-op.
+     *
+     * @param array|\WP_Error $response wp_remote_request() result
+     * @throws \Exception
+     */
+    public function checkResponse($response)
+    {
+    }
+
+    /**
      * Unwrap a provider response envelope. Default: identity.
      *
      * @param string $body

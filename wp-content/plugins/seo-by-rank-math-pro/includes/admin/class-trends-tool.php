@@ -30,6 +30,9 @@ class Trends_Tool {
 	 */
 	public function __construct() {
 		$this->action( 'rank_math/admin/editor_scripts', 'editor_scripts', 20 );
+		if ( Helper::is_site_editor() ) {
+			$this->action( 'enqueue_block_editor_assets', 'editor_scripts', 20 );
+		}
 	}
 
 	/**
@@ -39,7 +42,7 @@ class Trends_Tool {
 	 */
 	public function editor_scripts() {
 		global $pagenow;
-		if ( ! Admin_Helper::is_post_edit() && 'term.php' !== $pagenow && ! Admin_Helper::is_user_edit() ) {
+		if ( ! Admin_Helper::is_post_edit() && ! Helper::is_site_editor() && 'term.php' !== $pagenow && ! Admin_Helper::is_user_edit() ) {
 			return;
 		}
 
@@ -57,6 +60,7 @@ class Trends_Tool {
 			RANK_MATH_PRO_VERSION,
 			true
 		);
+		wp_set_script_translations( 'rank-math-pro-editor', 'rank-math-pro', RANK_MATH_PRO_PATH . 'languages/' );
 		wp_enqueue_style( 'rank-math-pro-editor', RANK_MATH_PRO_URL . 'assets/admin/css/gutenberg.css', [], RANK_MATH_PRO_VERSION );
 	}
 }

@@ -15,9 +15,12 @@ use RankMath\Helpers\Str;
 use RankMath\Admin\Admin_Helper;
 use RankMath\Google\Analytics as Analytics_Free;
 use RankMath\Analytics\Stats;
+use RankMath\Analytics\DB as AnalyticsDB;
+use RankMath\Helpers\DB as DB_Helper;
 use RankMathPro\Google\Adsense;
 use RankMathPro\Analytics\Keywords;
 use RankMath\Admin\Database\Database;
+use Exception;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -157,6 +160,14 @@ class DB {
 	 * @return array
 	 */
 	public static function info() {
+		if ( ! DB_Helper::check_table_exists( 'rank_math_analytics_ga' ) || ! DB_Helper::check_table_exists( 'rank_math_analytics_adsense' ) ) {
+			return [
+				'days' => 0,
+				'rows' => 0,
+				'size' => 0,
+			];
+		}
+
 		global $wpdb;
 
 		$key  = 'rank_math_analytics_data_info';
@@ -169,7 +180,7 @@ class DB {
 
 		$rows = self::get_total_rows();
 
-		$size = $wpdb->get_var( 'SELECT SUM((data_length + index_length)) AS size FROM information_schema.TABLES WHERE table_schema="' . $wpdb->dbname . '" AND table_name IN ( ' . '"' . $wpdb->prefix . 'rank_math_analytics_ga", "' . $wpdb->prefix . 'rank_math_analytics_adsense"' . ' )' ); // phpcs:ignore
+		$size = DB_Helper::get_var( 'SELECT SUM((data_length + index_length)) AS size FROM information_schema.TABLES WHERE table_schema="' . $wpdb->dbname . '" AND table_name IN ( ' . '"' . $wpdb->prefix . 'rank_math_analytics_ga", "' . $wpdb->prefix . 'rank_math_analytics_adsense"' . ' )' ); // phpcs:ignore
 
 		$data = compact( 'days', 'rows', 'size' );
 
@@ -304,85 +315,227 @@ class DB {
 	 * @param  array  $rows        Rows to insert.
 	 */
 	public static function bulk_insert_analytics_data( $date, $rows ) {
-		global $wpdb;
+		try {
+			$rows = self::prepare_rows( $rows );
+			$rows = self::ignore_non_exists_page_rows( $rows );
 
-		$data         = [];
-		$placeholders = [];
-		$columns      = [
-			'created',
-			'page',
-			'pageviews',
-			'visitors',
-		];
-		$columns      = '`' . implode( '`, `', $columns ) . '`';
-		$placeholder  = [
-			'%s',
-			'%s',
-			'%d',
-			'%d',
-		];
+			// Aggregate rows by page + referrer to prevent duplicates.
+			$grouped_rows = [];
+			foreach ( $rows as $row ) {
+				$key = $row['page'] . '|' . ( $row['referrer'] ?? 'null' );
 
-		// Start building SQL, initialise data and placeholder arrays.
-		$sql = "INSERT INTO `{$wpdb->prefix}rank_math_analytics_ga` ( $columns ) VALUES\n";
-
-		// Build placeholders for each row, and add values to data array.
-		foreach ( $rows as $row ) {
-			$page      = '';
-			$pageviews = '';
-			$visitors  = '';
-
-			if ( ! isset( $row['dimensionValues'] ) ) {
-				if ( empty( $row['dimensions'][1] ) || Str::contains( '?', $row['dimensions'][1] ) ) {
-					continue;
+				if ( ! isset( $grouped_rows[ $key ] ) ) {
+					$grouped_rows[ $key ] = [
+						'page'      => $row['page'],
+						'referrer'  => $row['referrer'],
+						'pageviews' => 0,
+					];
 				}
-				$page      = $row['dimensions'][2] . $row['dimensions'][1];
-				$pageviews = $row['metrics'][0]['values'][0];
-				$visitors  = $row['metrics'][0]['values'][1];
-			} else {
-				if ( empty( $row['dimensionValues'][1]['value'] ) || Str::contains( '?', $row['dimensionValues'][1]['value'] ) ) {
-					continue;
-				}
-				$page      = $row['dimensionValues'][0]['value'] . $row['dimensionValues'][1]['value'];
-				$pageviews = $row['metricValues'][0]['value'];
-				$visitors  = $row['metricValues'][1]['value'];
+
+				$grouped_rows[ $key ]['pageviews'] += (int) $row['pageviews'];
 			}
 
-			if ( $page && $pageviews && $visitors ) {
-				$page = ( is_ssl() ? 'https' : 'http' ) . '://' . $page;
+			global $wpdb;
 
-				$data[] = $date;
-				$data[] = str_replace( Helper::get_home_url(), '', self::remove_hash( urldecode( $page ) ) );
-				$data[] = $pageviews;
-				$data[] = $visitors;
+			$pages = array_column( $grouped_rows, 'page' );
+			$pages = array_unique( $pages );
 
-				$placeholders[] = '(' . implode( ', ', $placeholder ) . ')';
+			$records       = DB_Helper::get_results(
+				$wpdb->prepare(
+					"SELECT *
+					FROM {$wpdb->prefix}rank_math_analytics_ga
+					WHERE `created` = %s AND `page` IN ('" . implode( "','", array_map( 'esc_sql', $pages ) ) . "')",
+					$date
+				)
+			);
+			$update        = 0;
+			$existing_rows = [];
+			foreach ( $records as $exists ) {
+				$key                   = $exists->page . '|' . $exists->referrer;
+				$existing_rows[ $key ] = $exists;
 			}
+
+			if ( $existing_rows ) {
+				foreach ( $grouped_rows as $index => $row ) {
+					$key = $row['page'] . '|' . $row['referrer'];
+
+					if ( ! isset( $existing_rows[ $key ] ) ) {
+						continue;
+					}
+
+					$existing  = $existing_rows[ $key ];
+					$pageviews = (int) $existing->pageviews + (int) $row['pageviews'];
+					$query     = $wpdb->prepare(
+						"UPDATE `{$wpdb->prefix}rank_math_analytics_ga` SET `pageviews` = %d WHERE `id` = %d",
+						$pageviews,
+						$existing->id
+					);
+					DB_Helper::query( $query );
+
+					unset( $grouped_rows[ $index ] );
+					++$update;
+				}
+			}
+
+			if ( empty( $grouped_rows ) ) {
+				return [
+					'insert' => 0,
+					'update' => $update,
+				];
+			}
+
+			$columns = [
+				'created',
+				'page',
+				'pageviews',
+				'referrer',
+			];
+			$columns = '`' . implode( '`, `', $columns ) . '`';
+
+			$insert_data         = [];
+			$insert_placeholders = [];
+
+			$placeholder = [
+				'%s',
+				'%s',
+				'%d',
+				'%s',
+			];
+
+			// Start building SQL, initialise data and placeholder arrays.
+			$insert_sql = "INSERT INTO `{$wpdb->prefix}rank_math_analytics_ga` ( $columns ) VALUES\n";
+
+			// Build placeholders for each row, and add values to data array.
+			foreach ( $grouped_rows as $row ) {
+				$insert_data[] = $date; // created.
+				$insert_data[] = $row['page'];
+				$insert_data[] = $row['pageviews'];
+				$insert_data[] = $row['referrer'];
+
+				$insert_placeholders[] = '(' . implode( ', ', $placeholder ) . ')';
+			}
+
+			// Stitch all rows together.
+			$insert_sql .= implode( ",\n", $insert_placeholders );
+
+			// Run the query.  Returns number of affected rows.
+			DB_Helper::query( $wpdb->prepare( $insert_sql, $insert_data ) );
+
+			return [
+				'insert' => count( $insert_placeholders ),
+				'update' => $update,
+			];
+
+		} catch ( Exception $e ) {
+			return [
+				'insert' => 0,
+				'update' => 0,
+			];
 		}
-
-		if ( empty( $placeholders ) ) {
-			return 0;
-		}
-
-		// Stitch all rows together.
-		$sql .= implode( ",\n", $placeholders );
-
-		// Run the query.  Returns number of affected rows.
-		return $wpdb->query( $wpdb->prepare( $sql, $data ) ); // phpcs:ignore
 	}
 
 	/**
-	 * Remove hash part from Url.
+	 * Prepare rows for insertion.
 	 *
-	 * @param  string $url Url to process.
-	 * @return string
+	 * @param array $data Raw data from Google Analytics.
+	 *
+	 * @return array
 	 */
-	public static function remove_hash( $url ) {
-		if ( ! Str::contains( '#', $url ) ) {
-			return $url;
+	public static function prepare_rows( $data ) {
+		$rows = [];
+
+		foreach ( $data as $row ) {
+			$ssm      = $row['sessionSourceMedium'] ?? '';
+			$referrer = self::get_referrer( $ssm );
+
+			// Keep only AI traffic and organic traffic. Skip everything else
+			// (direct, CPC, Plugin internal links, non-AI referrals, etc.).
+			$is_ai      = '' !== $referrer;
+			$is_organic = str_ends_with( strtolower( $ssm ), '/ organic' );
+
+			if ( ! $is_ai && ! $is_organic ) {
+				continue;
+			}
+
+			$page = $row['pagePath'] ?? '';
+
+			try {
+				$page = AnalyticsDB::get_page( $page );
+			} catch ( Exception $e ) {
+				continue;
+			}
+
+			$rows[] = [
+				'page'      => $page,
+				'pageviews' => $row['screenPageViews'] ?? 0,
+				'referrer'  => $referrer,
+			];
 		}
 
-		$url = \explode( '#', $url );
-		return $url[0];
+		return $rows;
+	}
+
+	/**
+	 * Ignore rows
+	 *
+	 * @param array $data The rows to get.
+	 */
+	public static function ignore_non_exists_page_rows( $data ) {
+		global $wpdb;
+
+		$pages = wp_list_pluck( $data, 'page' );
+		$pages = array_unique( $pages );
+
+		$existing_pages = $wpdb->get_col( "SELECT `page` FROM `{$wpdb->prefix}rank_math_analytics_objects` WHERE `page` IN ('" . implode( "','", array_map( 'esc_sql', $pages ) ) . "')" );
+
+		// Keep only pages that exist in the objects table.
+		$data = array_filter(
+			$data,
+			function ( $row ) use ( $existing_pages ) {
+				return in_array( $row['page'], $existing_pages, true );
+			}
+		);
+
+		return $data;
+	}
+
+	/**
+	 * Group referrer.
+	 *
+	 * Identifies the AI source from GA4's sessionSourceMedium dimension.
+	 * Returns empty string for direct traffic or when no AI domain is matched.
+	 *
+	 * @param string $session_source_medium The sessionSourceMedium value (e.g. "chatgpt.com / referral").
+	 */
+	public static function get_referrer( $session_source_medium ) {
+		if ( empty( $session_source_medium ) || '(direct) / (none)' === $session_source_medium ) {
+			return '';
+		}
+
+		$parts  = explode( ' / ', $session_source_medium );
+		$source = strtolower( trim( $parts[0] ) );
+
+		$groups = [
+			'gemini'     => [ 'gemini.google.com' ],
+			'chatgpt'    => [ 'chatgpt.com', 'chat.openai.com' ],
+			'copilot'    => [ 'copilot.microsoft.com' ],
+			'perplexity' => [ 'perplexity.ai' ],
+			'deepseek'   => [ 'chat.deepseek.com' ],
+			'claude'     => [ 'claude.ai' ],
+			'grok'       => [ 'grok.com' ],
+			'meta'       => [ 'meta.ai' ],
+			'mistral'    => [ 'mistral.ai' ],
+		];
+
+		foreach ( $groups as $group => $domains ) {
+			foreach ( $domains as $pattern ) {
+				if ( stripos( $source, $pattern ) !== false ) {
+					return $group;
+				}
+			}
+		}
+
+		return '';
 	}
 
 	/**
@@ -482,7 +635,7 @@ class DB {
 		$sql .= implode( ",\n", $placeholders );
 
 		// Run the query.  Returns number of affected rows.
-		$count = $wpdb->query( $wpdb->prepare( $sql, $data ) ); // phpcs:ignore
+		$count = DB_Helper::query( $wpdb->prepare( $sql, $data ) );
 
 		$total_keywords = Keywords::get()->get_tracked_keywords_count();
 		$response       = \RankMathPro\Admin\Api::get()->keywords_info( $registered['username'], $registered['api_key'], $total_keywords );
@@ -492,7 +645,6 @@ class DB {
 
 		return $count;
 	}
-
 
 	/**
 	 * Get stats from DB for "Presence on Google" widget:
@@ -559,6 +711,8 @@ class DB {
 
 	/**
 	 * Get stats from DB for "Top Statuses" widget.
+	 *
+	 * @param string $page Page URL.
 	 */
 	public static function get_index_verdict( $page ) {
 		$verdict = self::inspections()

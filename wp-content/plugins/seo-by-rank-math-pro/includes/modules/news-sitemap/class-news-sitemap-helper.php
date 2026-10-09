@@ -16,43 +16,6 @@ use RankMath\Helper;
  * News_Sitemap_Helper class.
  */
 class News_Sitemap_Helper {
-	/**
-	 * Get terms from the provided taxonomy.
-	 *
-	 * @param string $taxonomy Taxonomy name.
-	 * @param array  $selected Selected values.
-	 * @param string $search   Searched term.
-	 * @return array
-	 */
-	public static function get_taxonomy_terms( $taxonomy, $selected = [], $search = '' ) {
-		$args = [
-			'taxonomy' => $taxonomy,
-			'search'   => $search,
-			'fields'   => 'id=>name',
-			'number'   => 10,
-			'exclude'  => $selected,
-		];
-
-		if ( ! empty( $selected ) ) {
-			$args['include'] = $selected;
-			unset( $args['number'] );
-		}
-
-		$terms = get_terms( $args );
-		if ( empty( $terms ) ) {
-			return [];
-		}
-
-		$data = [];
-		foreach ( $terms as $id => $name ) {
-			$data[] = [
-				'value' => $id,
-				'name'  => $name,
-			];
-		}
-
-		return $data;
-	}
 
 	/**
 	 * Escape Exclude terms value before displaying them in Settings.
@@ -89,7 +52,7 @@ class News_Sitemap_Helper {
 		}
 
 		return array_map(
-			function( $term ) {
+			function ( $term ) {
 				return $term['value'];
 			},
 			json_decode( stripslashes( $terms ), true )

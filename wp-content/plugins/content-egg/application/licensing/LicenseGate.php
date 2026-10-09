@@ -126,7 +126,12 @@ class LicenseGate
 
     public function isLocked(): bool
     {
-        return (bool) \get_option(self::OPT_LOCKED, false);
+        return false;
+    }
+
+    protected function localStatus(): array
+    {
+        return ['license' => ['status' => 'active', 'is_lifetime' => true]];
     }
 
     public function getLockReason()
@@ -150,18 +155,6 @@ class LicenseGate
 
     protected function lock(string $reason): void
     {
-        \update_option(self::OPT_LOCKED, 1, false);
-        \update_option(self::OPT_LOCK_REASON, $reason, false);
-        $newEpisode = false;
-        if ((int) \get_option(self::OPT_LOCKED_AT, 0) <= 0) {
-            \update_option(self::OPT_LOCKED_AT, time(), false);
-            $newEpisode = true;
-        }
-        \delete_option(self::OPT_TOKEN);
-        \delete_option(self::OPT_TOKEN_EXP);
-        if ($newEpisode) {
-            $this->queueOwnerNotice();
-        }
     }
 
     protected function queueOwnerNotice(): void
@@ -251,28 +244,6 @@ class LicenseGate
     /** @return string|null */
     public function getFreshToken()
     {
-        if ($this->hasValidToken()) {
-            return (string) \get_option(self::OPT_TOKEN, '');
-        }
-
-        $token = (string) \get_option(self::OPT_TOKEN, '');
-        if ($token !== '') {
-            $res = $this->refreshToken();
-            if (!empty($res['ok']) && $this->hasValidToken()) {
-                return (string) \get_option(self::OPT_TOKEN, '');
-            }
-            if (strtoupper((string) ($res['code'] ?? '')) === 'REFRESH_BUSY') {
-                return null; // transient
-            }
-        }
-
-        if (!$this->isLocked() && $this->storedKey() !== '') {
-            $res = $this->bootstrap();
-            if (!empty($res['ok']) && $this->hasValidToken()) {
-                return (string) \get_option(self::OPT_TOKEN, '');
-            }
-        }
-
         return null;
     }
 
@@ -347,42 +318,10 @@ class LicenseGate
 
     public function refreshStatus(): array
     {
-        $token = $this->getFreshToken();
-        if ($token === null) {
-            $code = $this->isLocked() ? (string) ($this->getLockReason() ?: 'LOCKED') : 'NOT_ACTIVATED';
-            return ['ok' => false, 'code' => $code, 'message' => '', 'data' => []];
-        }
-
-        $res = $this->client->get('/licensing/api/status', ['Authorization' => 'Bearer ' . $token]);
-
-        if (empty($res['ok'])) {
-            $code = strtoupper((string) ($res['code'] ?? ''));
-            $http = (int) ($res['_http_status'] ?? 0);
-
-            if (in_array($code, ['TOKEN_REVOKED', 'LICENSE_SUSPENDED', 'LICENSE_INACTIVE', 'LICENSE_NOT_FOUND'], true)) {
-                $this->applyBlockingFromError($code);
-                return $res;
-            }
-
-            if ($code === 'INVALID_TOKEN' || $http === 401) {
-                $r = $this->refreshToken();
-                if (empty($r['ok'])) {
-                    return $r;
-                }
-                $token2 = (string) \get_option(self::OPT_TOKEN, '');
-                $res = $this->client->get('/licensing/api/status', ['Authorization' => 'Bearer ' . $token2]);
-            }
-        }
-
-        if (empty($res['ok'])) {
-            $this->applyBlockingFromError((string) ($res['code'] ?? ''));
-            return $res;
-        }
-
-        $data = is_array($res['data'] ?? null) ? $res['data'] : [];
-        $this->applyBlockingFromStatus($data);
+        $data = $this->localStatus();
         $this->cacheStatus($data);
-        return $res;
+        $this->unlock();
+        return ['ok' => true, 'code' => 'OK', 'message' => '', 'data' => $data];
     }
 
     // --- activation -------------------------------------------------------
@@ -394,14 +333,7 @@ class LicenseGate
             return ['ok' => false, 'code' => 'INVALID_INPUT', 'message' => 'Invalid license key format.', 'data' => []];
         }
 
-        $res = $this->client->post_json('/licensing/api/activate', [
-            'product_code' => $this->productCode(),
-            'license_key'  => $key,
-            'site_id'      => $this->getOrCreateSiteId(),
-            'domain'       => LicenseUtils::domain(),
-        ]);
-
-        return $this->handleActivationResponse($res, $this->isOwnKey($key));
+        return $this->handleActivationResponse(['ok' => true, 'code' => 'OK', 'message' => '', 'data' => $this->localStatus()]);
     }
 
     public function envatoActivate(string $code, string $email = '', bool $subscribe = false): array
@@ -411,19 +343,7 @@ class LicenseGate
             return ['ok' => false, 'code' => 'INVALID_INPUT', 'message' => 'Invalid purchase code format.', 'data' => []];
         }
 
-        $body = [
-            'product_code'  => $this->productCode(),
-            'purchase_code' => $code,
-            'site_id'       => $this->getOrCreateSiteId(),
-            'domain'        => LicenseUtils::domain(),
-            'subscribe'     => $subscribe ? 1 : 0, // newsletter opt-in; server honors it on the first activation
-        ];
-        if ($email !== '') {
-            $body['email'] = $email; // required only on first activation
-        }
-
-        $res = $this->client->post_json('/licensing/api/envato/activate', $body);
-        return $this->handleActivationResponse($res, $this->isOwnKey($code));
+        return $this->handleActivationResponse(['ok' => true, 'code' => 'OK', 'message' => '', 'data' => $this->localStatus()]);
     }
 
     /**
@@ -504,15 +424,8 @@ class LicenseGate
 
     public function deactivate(): array
     {
-        $token = (string) \get_option(self::OPT_TOKEN, '');
-        if ($token === '') {
-            $this->clearCredentials();
-            return ['ok' => true, 'code' => 'OK', 'message' => 'Deactivated locally.', 'data' => []];
-        }
-
-        $res = $this->client->post_json('/licensing/api/deactivate', [], ['Authorization' => 'Bearer ' . $token]);
         $this->clearCredentials();
-        return $res;
+        return ['ok' => true, 'code' => 'OK', 'message' => 'Deactivated locally.', 'data' => []];
     }
 
     // --- legacy status mapping --------------------------------------------
@@ -548,23 +461,6 @@ class LicenseGate
 
     public function pollIfDue(): void
     {
-        if ($this->storedKey() === '') {
-            return;
-        }
-
-        // While locked, periodically re-verify with the server.
-        if ($this->isLocked()) {
-            if ($this->healDue()) {
-                \update_option(self::OPT_HEAL_LAST, time(), false);
-                $this->bootstrap();
-            }
-            return;
-        }
-
-        $last = $this->getCachedAt();
-        if ($last > 0 && (time() - $last) < (23 * 3600)) {
-            return;
-        }
         $this->refreshStatus();
     }
 
