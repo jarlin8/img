@@ -21,6 +21,7 @@ require get_template_directory() . '/inc/classes/class-flatsome.php';
 require get_template_directory() . '/inc/classes/class-flatsome-default.php';
 require get_template_directory() . '/inc/classes/class-flatsome-options.php';
 require get_template_directory() . '/inc/classes/class-flatsome-theme-json.php';
+require get_template_directory() . '/inc/classes/class-flatsome-cache.php';
 require get_template_directory() . '/inc/classes/class-flatsome-upgrade.php';
 require get_template_directory() . '/inc/classes/class-flatsome-base-registration.php';
 require get_template_directory() . '/inc/classes/class-flatsome-wupdates-registration.php';
@@ -28,6 +29,7 @@ require get_template_directory() . '/inc/classes/class-flatsome-registration.php
 require get_template_directory() . '/inc/classes/class-flatsome-envato.php';
 require get_template_directory() . '/inc/classes/class-flatsome-envato-admin.php';
 require get_template_directory() . '/inc/classes/class-flatsome-instagram.php';
+require get_template_directory() . '/inc/classes/class-flatsome-icon.php';
 require get_template_directory() . '/inc/classes/class-flatsome-relay.php';
 require get_template_directory() . '/inc/classes/class-flatsome-shortcode-image-extractor.php';
 require get_template_directory() . '/inc/classes/class-uxthemes-api.php';
@@ -42,7 +44,6 @@ require get_template_directory() . '/inc/functions/function-ajax.php';
 require get_template_directory() . '/inc/functions/function-register.php';
 require get_template_directory() . '/inc/functions/function-upgrade.php';
 require get_template_directory() . '/inc/functions/function-update.php';
-require get_template_directory() . '/inc/functions/function-defaults.php';
 require get_template_directory() . '/inc/functions/function-setup.php';
 require get_template_directory() . '/inc/functions/function-theme-mods.php';
 require get_template_directory() . '/inc/functions/function-plugins.php';
@@ -52,6 +53,7 @@ require get_template_directory() . '/inc/functions/function-fallbacks.php';
 require get_template_directory() . '/inc/functions/function-site-health.php';
 require get_template_directory() . '/inc/functions/fl-template-functions.php';
 require get_template_directory() . '/inc/functions/function-fonts.php';
+require get_template_directory() . '/inc/functions/function-deprecated.php';
 
 // Get Presets for Theme Options and Demos
 require get_template_directory() . '/inc/functions/function-presets.php';
@@ -162,6 +164,7 @@ if ( is_woocommerce_activated() ) {
 	require get_template_directory() . '/inc/woocommerce/class-shipping.php';
 	require get_template_directory() . '/inc/woocommerce/class-mini-cart.php';
 	require get_template_directory() . '/inc/woocommerce/class-buy-now.php';
+	require get_template_directory() . '/inc/woocommerce/class-brands.php';
 }
 
 /**
@@ -233,8 +236,8 @@ require get_template_directory() . '/inc/admin/options/styles/options-type.php';
 /**
  * Theme Admin
  */
-if(current_user_can( 'manage_options')){
-  require get_template_directory() . '/inc/admin/admin-init.php';
+if ( current_user_can( 'manage_options' ) ) {
+	require get_template_directory() . '/inc/admin/admin-init.php';
 }
 
 /**

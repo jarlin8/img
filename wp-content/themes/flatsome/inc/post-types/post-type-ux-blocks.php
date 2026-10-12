@@ -149,11 +149,11 @@ function block_shortcode( $atts, $content = null ) {
 			 && apply_filters( 'flatsome_show_block_edit_tooltip', true ) ) {
 			$edit_link         = ux_builder_edit_url( $post->ID, $post_id );
 			$edit_link_backend = admin_url( 'post.php?post=' . $post_id . '&action=edit' );
-			$html              = '<div class="block-edit-link" data-title="Edit Block: ' . get_the_title( $post_id ) . '"   data-backend="' . esc_url( $edit_link_backend )
+			$html              = '<div class="block-edit-link" data-title="' . esc_attr( 'Edit Block: ' . get_the_title( $post_id ) ) . '"   data-backend="' . esc_url( $edit_link_backend )
 			                     . '" data-link="' . esc_url( $edit_link ) . '"></div>' . $html . '';
 		}
 	} else {
-		$html = '<p class="text-center"><mark>Block <b>"' . esc_html( $id ) . '"</b> not found</mark></p>';
+		$html = '<p class="text-center"><mark>Block <strong>"' . esc_html( $id ) . '"</strong> not found</mark></p>';
 	}
 
 	return do_shortcode( $html );

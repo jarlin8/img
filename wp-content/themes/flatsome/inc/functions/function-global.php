@@ -61,18 +61,6 @@ function flatsome_enqueue_asset( $handle, $entrypoint, $dependencies = array() )
 	wp_enqueue_script( $handle );
 }
 
-/**
- * Get Flatsome option
- *
- * @deprecated in favor of get_theme_mod()
- *
- * @return string
- */
-function flatsome_option($option) {
-	// Get options
-	return get_theme_mod( $option, flatsome_defaults($option) );
-}
-
 if(!function_exists('flatsome_dummy_image')) {
   function flatsome_dummy_image() {
     return get_template_directory_uri().'/assets/img/missing.jpg';
@@ -524,6 +512,7 @@ function flatsome_get_payment_icons_list() {
 		'visa'            => __( 'Visa', 'flatsome-admin' ),
 		'visa1'           => __( 'Visa 2', 'flatsome-admin' ),
 		'visaelectron'    => __( 'Visa Electron', 'flatsome-admin' ),
+		'wero'            => __( 'Wero', 'flatsome-admin' ),
 		'westernunion'    => __( 'Western Union', 'flatsome-admin' ),
 		'wirecard'        => __( 'Wirecard', 'flatsome-admin' ),
 	) );

@@ -12,8 +12,8 @@
  *
  * @see              https://woocommerce.com/document/template-structure/
  * @package          WooCommerce\Templates
- * @version          9.2.0
- * @flatsome-version 3.19.5
+ * @version          9.9.0
+ * @flatsome-version 3.20.0
  *
  * @flatsome-parallel-template {
  * form-login-lightbox-left-panel.php
@@ -39,15 +39,15 @@ do_action( 'woocommerce_before_customer_login_form' ); ?>
 
 			<div class="account-login-inner">
 
-				<h3 class="uppercase"><?php esc_html_e( 'Login', 'woocommerce' ); ?></h3>
+				<h2 class="uppercase h3"><?php esc_html_e( 'Login', 'woocommerce' ); ?></h2>
 
-				<form class="woocommerce-form woocommerce-form-login login" method="post">
+				<form class="woocommerce-form woocommerce-form-login login" method="post" novalidate>
 
 					<?php do_action( 'woocommerce_login_form_start' ); ?>
 
 					<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
 						<label for="username"><?php esc_html_e( 'Username or email address', 'woocommerce' ); ?>&nbsp;<span class="required" aria-hidden="true">*</span><span class="screen-reader-text"><?php esc_html_e( 'Required', 'woocommerce' ); ?></span></label>
-						<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="username" id="username" autocomplete="username" value="<?php echo ( ! empty( $_POST['username'] ) ) ? esc_attr( wp_unslash( $_POST['username'] ) ) : ''; ?>" required aria-required="true" /><?php // @codingStandardsIgnoreLine ?>
+						<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="username" id="username" autocomplete="username" value="<?php echo ( ! empty( $_POST['username'] ) && is_string( $_POST['username'] ) ) ? esc_attr( wp_unslash( $_POST['username'] ) ) : ''; ?>" required aria-required="true" /><?php // @codingStandardsIgnoreLine ?>
 					</p>
 					<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
 						<label for="password"><?php esc_html_e( 'Password', 'woocommerce' ); ?>&nbsp;<span class="required" aria-hidden="true">*</span><span class="screen-reader-text"><?php esc_html_e( 'Required', 'woocommerce' ); ?></span></label>
@@ -80,7 +80,7 @@ do_action( 'woocommerce_before_customer_login_form' ); ?>
 
 			<div class="account-register-inner">
 
-				<h3 class="uppercase"><?php esc_html_e( 'Register', 'woocommerce' ); ?></h3>
+				<h2 class="uppercase h3"><?php esc_html_e( 'Register', 'woocommerce' ); ?></h2>
 
 				<form method="post" class="woocommerce-form woocommerce-form-register register" <?php do_action( 'woocommerce_register_form_tag' ); ?> >
 

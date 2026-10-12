@@ -14,8 +14,8 @@ add_action('flatsome_after_header','flatsome_product_header', 10);
 // Add Transparent Header To Cateogry if Set
 function flatsome_product_header_classes($classes){
 
-    // Add transparent header to product page if set.
-    if(is_product() && flatsome_option('product_header_transparent')){
+	// Add transparent header to product page if set.
+	if ( is_product() && get_theme_mod( 'product_header_transparent', 0 ) ) {
          $classes[] = 'transparent has-transparent nav-dark toggle-nav-dark';
     }
 
@@ -103,8 +103,8 @@ if(!function_exists('flatsome_next_post_link_product')) {
       $next_post = get_next_post(true,'','product_cat');
       if ( is_a( $next_post , 'WP_Post' ) ) { ?>
          <li class="prod-dropdown has-dropdown">
-               <a href="<?php echo get_the_permalink( $next_post->ID ); ?>"  rel="next" class="button icon is-outline circle">
-                  <?php echo get_flatsome_icon('icon-angle-left'); ?>
+               <a href="<?php echo get_the_permalink( $next_post->ID ); ?>" rel="next" class="button icon is-outline circle" aria-label="<?php echo esc_attr__( 'Next product', 'flatsome' ); ?>">
+                  <?php echo get_flatsome_icon('icon-angle-left' ); ?>
               </a>
               <div class="nav-dropdown">
                 <a title="<?php echo get_the_title( $next_post->ID ); ?>" href="<?php echo get_the_permalink( $next_post->ID ); ?>">
@@ -121,8 +121,8 @@ if(!function_exists('flatsome_previous_post_link_product')) {
       $prev_post = get_previous_post(true,'','product_cat');
       if ( is_a( $prev_post , 'WP_Post' ) ) { ?>
          <li class="prod-dropdown has-dropdown">
-               <a href="<?php echo get_the_permalink( $prev_post->ID ); ?>" rel="next" class="button icon is-outline circle">
-                  <?php echo get_flatsome_icon('icon-angle-right'); ?>
+               <a href="<?php echo get_the_permalink( $prev_post->ID ); ?>" rel="previous" class="button icon is-outline circle" aria-label="<?php echo esc_attr__( 'Previous product', 'flatsome' ); ?>">
+                  <?php echo get_flatsome_icon('icon-angle-right' ); ?>
               </a>
               <div class="nav-dropdown">
                   <a title="<?php echo get_the_title( $prev_post->ID ); ?>" href="<?php echo get_the_permalink( $prev_post->ID ); ?>">

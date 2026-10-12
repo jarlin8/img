@@ -72,7 +72,7 @@ class Flatsome_Recent_Post_Widget extends WP_Widget {
 		<li class="recent-blog-posts-li">
 			<div class="flex-row recent-blog-posts align-top pt-half pb-half">
 				<div class="flex-col mr-half">
-					<div class="badge post-date <?php if($is_image == 'false') echo 'badge-small';?> badge-<?php echo flatsome_option('blog_badge_style'); ?>">
+					<div class="badge post-date <?php if($is_image == 'false') echo 'badge-small';?> badge-<?php echo get_theme_mod( 'blog_badge_style', 'outline' ); ?>">
 							<div class="badge-inner bg-fill" <?php echo $image_style;?>>
                                 <?php if($is_date_stamp == 'true' || !has_post_thumbnail() || $is_image == 'false') { ?>
 								<span class="post-date-day"><?php echo get_the_time('d', get_the_ID()); ?></span><br>
@@ -83,7 +83,8 @@ class Flatsome_Recent_Post_Widget extends WP_Widget {
 				</div>
 				<div class="flex-col flex-grow">
 					  <a href="<?php the_permalink() ?>" title="<?php echo esc_attr( get_the_title() ? get_the_title() : get_the_ID() ); ?>"><?php if ( get_the_title() ) the_title(); else the_ID(); ?></a>
-				   	  <span class="post_comments op-7 block is-xsmall"><?php comments_popup_link( '', __( '<strong>1</strong> Comment', 'flatsome' ), __( '<strong>%</strong> Comments', 'flatsome' ) ); ?></span>
+					  <?php /* translators: %s: Post title. */ ?>
+				   	  <span class="post_comments op-8 block is-xsmall"><?php comments_popup_link( '<span class="screen-reader-text">' . sprintf( __( 'No Comments<span class="screen-reader-text"> on %s</span>', 'default' ), get_the_title() ) . '</span>' ); ?></span>
 				</div>
 			</div>
 		</li>

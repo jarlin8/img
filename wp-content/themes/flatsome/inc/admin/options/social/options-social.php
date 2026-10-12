@@ -28,7 +28,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'label'       => __( 'Share Icons Style', 'flatsome-admin' ),
 	'section'     => 'share',
 	'default'     => 'outline',
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'choices'     => array(
 		'small' => $image_url . 'icon-plain.svg',
 		'outline' => $image_url . 'icon-outline.svg',
@@ -45,6 +45,14 @@ Flatsome_Option::add_field( 'option',  array(
 	),
 ));
 
+Flatsome_Option::add_field( 'option', array(
+	'type'      => 'checkbox',
+	'settings'  => 'social_icons_tooltip',
+	'label'     => __( 'Show tooltips', 'flatsome-admin' ),
+	'section'   => 'share',
+	'transport' => flatsome_customizer_transport(),
+	'default'   => 1,
+));
 
 Flatsome_Option::add_field( 'option',  array(
 		'type'        => 'multicheck',
@@ -53,7 +61,7 @@ Flatsome_Option::add_field( 'option',  array(
 		//'description' => __( 'This is the control description', 'flatsome-admin' ),
 		//'help'        => __( 'This is some extra help. You can use this to add some additional instructions for users. The main description should go in the "description" of the field, this is only to be used for help tips.', 'flatsome-admin' ),
 		'section'     => 'share',
-		'transport' => $transport,
+		'transport' => flatsome_customizer_transport(),
 		'active_callback' => array(
 			array(
 				'setting'  => 'custom_share_icons',
@@ -106,7 +114,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'label'       => __( 'Icons Style', 'flatsome-admin' ),
 	'section'     => 'follow',
 	'default'     => 'small',
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'choices'     => array(
 		'small' => $image_url . 'icon-plain.svg',
 		'outline' => $image_url . 'icon-outline.svg',
@@ -116,11 +124,20 @@ Flatsome_Option::add_field( 'option',  array(
 	),
 ));
 
+Flatsome_Option::add_field( 'option', array(
+	'type'      => 'checkbox',
+	'settings'  => 'follow_tooltip',
+	'label'     => __( 'Show tooltips', 'flatsome-admin' ),
+	'section'   => 'follow',
+	'transport' => flatsome_customizer_transport(),
+	'default'   => 1,
+));
+
 Flatsome_Option::add_field( 'option',  array(
 	'type'        => 'text',
 	'settings'     => 'follow_facebook',
 	'label'       => __( 'Facebook', 'flatsome-admin' ),
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	//'description' => __( 'Add Any HTML or Shortcode here...', 'flatsome-admin' ),
 	//'help'        => __( 'This is some extra help. You can use this to add some additional instructions for users. The main description should go in the "description" of the field, this is only to be used for help tips.', 'flatsome-admin' ),
 	'section'     => 'follow',
@@ -131,7 +148,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'type'        => 'text',
 	'settings'     => 'follow_instagram',
 	'label'       => __( 'Instagram', 'flatsome-admin' ),
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	//'description' => __( 'Add Any HTML or Shortcode here...', 'flatsome-admin' ),
 	//'help'        => __( 'This is some extra help. You can use this to add some additional instructions for users. The main description should go in the "description" of the field, this is only to be used for help tips.', 'flatsome-admin' ),
 	'section'     => 'follow',
@@ -142,7 +159,7 @@ Flatsome_Option::add_field( 'option', array(
 	'type'      => 'text',
 	'settings'  => 'follow_tiktok',
 	'label'     => __( 'TikTok', 'flatsome-admin' ),
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'section'   => 'follow',
 	'default'   => '',
 ) );
@@ -160,7 +177,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'type'        => 'text',
 	'settings'     => 'follow_twitter',
 	'label'       => __( 'Twitter', 'flatsome-admin' ),
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	//'description' => __( 'Add Any HTML or Shortcode here...', 'flatsome-admin' ),
 	//'help'        => __( 'This is some extra help. You can use this to add some additional instructions for users. The main description should go in the "description" of the field, this is only to be used for help tips.', 'flatsome-admin' ),
 	'section'     => 'follow',
@@ -181,7 +198,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'settings'     => 'follow_email',
 	'label'       => __( 'E-mail', 'flatsome-admin' ),
 	'section'     => 'follow',
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'default'     => '',
 ));
 
@@ -190,7 +207,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'settings'     => 'follow_phone',
 	'label'       => __( 'Phone', 'flatsome-admin' ),
 	'section'     => 'follow',
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'default'     => '',
 ));
 
@@ -198,7 +215,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'type'        => 'text',
 	'settings'     => 'follow_pinterest',
 	'label'       => __( 'Pinterest', 'flatsome-admin' ),
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'section'     => 'follow',
 	'default'     => '',
 ));
@@ -208,7 +225,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'settings'     => 'follow_rss',
 	'label'       => __( 'RSS', 'flatsome-admin' ),
 	'section'     => 'follow',
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'default'     => '',
 ));
 
@@ -216,7 +233,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'type'        => 'text',
 	'settings'     => 'follow_linkedin',
 	'label'       => __( 'LinkedIn', 'flatsome-admin' ),
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	//'description' => __( 'Add Any HTML or Shortcode here...', 'flatsome-admin' ),
 	//'help'        => __( 'This is some extra help. You can use this to add some additional instructions for users. The main description should go in the "description" of the field, this is only to be used for help tips.', 'flatsome-admin' ),
 	'section'     => 'follow',
@@ -227,7 +244,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'type'        => 'text',
 	'settings'     => 'follow_youtube',
 	'label'       => __( 'YouTube', 'flatsome-admin' ),
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	//'description' => __( 'Add Any HTML or Shortcode here...', 'flatsome-admin' ),
 	//'help'        => __( 'This is some extra help. You can use this to add some additional instructions for users. The main description should go in the "description" of the field, this is only to be used for help tips.', 'flatsome-admin' ),
 	'section'     => 'follow',
@@ -239,7 +256,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'settings'     => 'follow_flickr',
 	'label'       => __( 'Flickr', 'flatsome-admin' ),
 	'section'     => 'follow',
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'default'     => '',
 ));
 
@@ -248,7 +265,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'settings'     => 'follow_500px',
 	'label'       => __( '500px', 'flatsome-admin' ),
 	'section'     => 'follow',
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'default'     => '',
 ));
 
@@ -257,7 +274,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'settings'     => 'follow_vk',
 	'label'       => __( 'VKontakte', 'flatsome-admin' ),
 	'section'     => 'follow',
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'default'     => '',
 ));
 
@@ -266,7 +283,7 @@ Flatsome_Option::add_field( 'option', array(
 	'settings'  => 'follow_telegram',
 	'label'     => __( 'Telegram', 'flatsome-admin' ),
 	'section'   => 'follow',
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'default'   => '',
 ) );
 
@@ -275,7 +292,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'settings'  => 'follow_twitch',
 	'label'     => __( 'Twitch', 'flatsome-admin' ),
 	'section'   => 'follow',
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'default'   => '',
 ));
 
@@ -284,7 +301,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'settings'  => 'follow_discord',
 	'label'     => __( 'Discord', 'flatsome-admin' ),
 	'section'   => 'follow',
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'default'   => '',
 ));
 
@@ -294,7 +311,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'label'       => __( 'SnapChat', 'flatsome-admin' ),
 	'description' => 'Upload a Snapcode image here. You can generate it here: https://accounts.snapchat.com/accounts/snapcodes',
 	'section'     => 'follow',
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 ));
 
 function flatsome_refresh_social( WP_Customize_Manager $wp_customize ) {
@@ -305,20 +322,26 @@ function flatsome_refresh_social( WP_Customize_Manager $wp_customize ) {
   }
 
 	  $wp_customize->selective_refresh->add_partial( 'follow_icons', array(
-	    'selector' => '.follow-icons',
-	    'settings' => array('follow_linkedin','follow_flickr','follow_email','follow_phone','follow_style','follow_facebook','follow_x','follow_twitter','follow_threads','follow_instagram','follow_tiktok','follow_rss','follow_vk','follow_youtube','follow_pinterest','follow_snapchat','follow_500px','follow_telegram','follow_twitch','follow_discord'),
+	    'selector' => '.header-social-icons > .follow-icons',
+	    'settings' => array('follow_style','follow_tooltip','follow_linkedin','follow_flickr','follow_email','follow_phone','follow_facebook','follow_x','follow_twitter','follow_threads','follow_instagram','follow_tiktok','follow_rss','follow_vk','follow_youtube','follow_pinterest','follow_snapchat','follow_500px','follow_telegram','follow_twitch','follow_discord'),
 	    'container_inclusive' => true,
 	    'render_callback' => function() {
-	        return do_shortcode('[follow defaults="true" style="'.flatsome_option('follow_style').'"]');
+	        return flatsome_apply_shortcode( 'follow', array(
+				'style'    => get_theme_mod( 'follow_style', 'small' ),
+				'tooltip'  => get_theme_mod( 'follow_tooltip', 1 ) ? 'true' : 'false',
+			) );
 	    },
 	) );
 
 	$wp_customize->selective_refresh->add_partial( 'social_icons', array(
 	    'selector' => '.share-icons',
-	    'settings' => array('social_icons','social_icons_style'),
+	    'settings' => array('social_icons','social_icons_style', 'social_icons_tooltip'),
 	    'container_inclusive' => true,
 	    'render_callback' => function() {
-	        return do_shortcode('[share]');
+	        return flatsome_apply_shortcode( 'share', array(
+				'style'   => get_theme_mod( 'social_icons_style', 'outline' ),
+				'tooltip' => get_theme_mod( 'social_icons_tooltip', 1 ) ? 'true' : 'false',
+			) );
 	    },
 	) );
 

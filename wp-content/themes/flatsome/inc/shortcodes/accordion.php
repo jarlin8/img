@@ -6,7 +6,6 @@
  *
  * @author UX Themes
  * @package Flatsome/Shortcodes/Accordion
- * @version 3.9.0
  */
 
 $flatsome_accordion_state = array();
@@ -22,6 +21,10 @@ $flatsome_accordion_faq_schema = array();
  */
 function ux_accordion( $atts, $content = null ) {
 	global $flatsome_accordion_state;
+
+	if ( defined( 'WP_CLI' ) && WP_CLI ) {
+		$flatsome_accordion_state = array();
+	}
 
 	extract( shortcode_atts( array(
 		'auto_open'  => '',
@@ -137,7 +140,7 @@ function ux_accordion_item( $atts, $content = null, $tag = '' ) {
 	?>
 	<div id="<?php echo esc_attr( $atts['id'] ); ?>" class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>">
 		<a <?php echo flatsome_html_atts( $link_atts ); ?>>
-			<button class="toggle" aria-label="<?php esc_attr_e( 'Toggle', 'flatsome' ); ?>"><i class="icon-angle-down"></i></button>
+			<button class="toggle" aria-label="<?php esc_attr_e( 'Toggle', 'flatsome' ); ?>"><?php echo get_flatsome_icon( 'icon-angle-down' ); ?></button>
 			<span><?php echo wp_kses_post( $atts['title'] ); ?></span>
 		</a>
 		<div <?php echo flatsome_html_atts( $accordion_inner_atts ); ?>>

@@ -6,6 +6,7 @@ Flatsome_Option::add_section( 'product-page', array(
 ) );
 
 function flatsome_customizer_shop_product_page_options() {
+
 	Flatsome_Option::add_field( '', array(
 		'type'     => 'custom',
 		'settings' => 'custom_title_product_layout',
@@ -72,6 +73,27 @@ function flatsome_customizer_shop_product_page_options() {
 
 	Flatsome_Option::add_field( 'option', array(
 		'type'            => 'radio-image',
+		'settings'        => 'product_offcanvas_sidebar_position',
+		'label'           => __( 'Off-canvas Sidebar Position', 'flatsome-admin' ),
+		'section'         => 'product-page',
+		'default'         => 'left',
+		'transport'       => flatsome_customizer_transport(),
+		'choices'         => array(
+			'left'   => flatsome_customizer_images_uri() . '/overlay-left.svg',
+			'right'  => flatsome_customizer_images_uri() . '/overlay-right.svg',
+			'center' => flatsome_customizer_images_uri() . '/overlay-center.svg',
+		),
+		'active_callback' => array(
+			array(
+				'setting'  => 'product_offcanvas_sidebar',
+				'operator' => '==',
+				'value'    => 1,
+			),
+		),
+	));
+
+	Flatsome_Option::add_field( 'option', array(
+		'type'            => 'radio-image',
 		'settings'        => 'product_header',
 		'label'           => __( 'Product Header', 'flatsome-admin' ),
 		'section'         => 'product-page',
@@ -126,7 +148,7 @@ function flatsome_customizer_shop_product_page_options() {
 						&& get_theme_mod( 'product_layout' ) !== 'gallery-wide'
 						&& get_theme_mod( 'product_layout' ) !== 'custom';
 		},
-		'transport'       => 'postMessage',
+		'transport'       => flatsome_customizer_transport(),
 		'default'         => '6',
 		'choices'         => array(
 			'8' => __( '8/12', 'flatsome-admin' ),
@@ -333,6 +355,17 @@ function flatsome_customizer_shop_product_page_options() {
 
 	Flatsome_Option::add_field( 'option', array(
 		'type'            => 'checkbox',
+		'settings'        => 'product_brands',
+		'label'           => __( 'Show brand image', 'flatsome-admin' ),
+		'active_callback' => array(
+			$hide_on_custom_product,
+		),
+		'section'         => 'product-page',
+		'default'         => 0,
+	) );
+
+	Flatsome_Option::add_field( 'option', array(
+		'type'            => 'checkbox',
 		'settings'        => 'product_info_review_count',
 		'active_callback' => array(
 			$hide_on_custom_product,
@@ -405,7 +438,7 @@ function flatsome_customizer_shop_product_page_options() {
 			$hide_on_gallery_wide,
 			$hide_on_custom_product,
 		),
-		'label'           => __( 'Show Meta / Categories', 'flatsome-admin' ),
+		'label'           => __( 'Show Meta / Categories / Brands', 'flatsome-admin' ),
 		'section'         => 'product-page',
 		'default'         => 1,
 	) );
@@ -471,7 +504,7 @@ function flatsome_customizer_shop_product_page_options() {
 		Flatsome_Option::add_field( 'option', array(
 			'type'        => 'color',
 			'settings'    => 'swatches_color_selected',
-			'transport'   => 'postMessage',
+			'transport'   => flatsome_customizer_transport(),
 			'label'       => __( 'Color :selected', 'flatsome' ),
 			'description' => __( 'Default is Secondary color', 'flatsome-admin' ),
 			'section'     => 'product-page',
@@ -629,7 +662,7 @@ function flatsome_customizer_shop_product_page_options() {
 		'settings' => 'max_related_products',
 		'label'    => __( 'Max number of Related Products', 'flatsome-admin' ),
 		'section'  => 'product-page',
-		'default'  => '12',
+		'default'  => 8,
 	) );
 
 	Flatsome_Option::add_field( '', array(

@@ -37,7 +37,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'label'       => __( 'Single Portfolio Layout', 'flatsome-admin' ),
 	'section'     => 'fl-portfolio',
 	'default' 	  => '',
-	'transport'   => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'choices'     => array(
 		'' => $image_url . 'portfolio.svg',
 		'sidebar-right' => $image_url . 'portfolio-sidebar-right.svg',
@@ -62,7 +62,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'label'       => __( 'Single Portfolio Title', 'flatsome-admin' ),
 	'section'     => 'fl-portfolio',
 	'default' 	  => '',
-	'transport'   => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'choices'     => array(
 		'' => $image_url . 'portfolio-title.svg',
 		'featured' => $image_url . 'portfolio-title-featured.svg',
@@ -136,7 +136,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'label'       => __( 'Portfolio Style', 'flatsome-admin' ),
 	'section'     => 'fl-portfolio',
 	'default' 	  => '',
-	'transport'   => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'choices'     => array(
 		'' => $image_url . 'portfolio-simple.svg',
 		'overlay' => $image_url . 'portfolio-overlay.svg',
@@ -274,7 +274,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'label'       => __( 'Archive Portfolio Title', 'flatsome-admin' ),
 	'section'     => 'fl-portfolio',
 	'default' 	  => '',
-	'transport'   => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'choices'     => array(
 		'' => $image_url . 'portfolio-title.svg',
 		'featured' => $image_url . 'portfolio-title-featured.svg',
@@ -310,7 +310,7 @@ Flatsome_Option::add_field( 'option',  array(
 		'center' => 'Center',
 		'disabled' => 'Disabled'
 	),
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 ));
 
 Flatsome_Option::add_field( 'option',  array(
@@ -319,7 +319,7 @@ Flatsome_Option::add_field( 'option',  array(
 	'label'       => __( 'Filter Nav style', 'flatsome-admin' ),
 	'section'     => 'fl-portfolio',
 	'default' 	  => 'line-grow',
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'choices'     => $nav_styles_img
 ));
 
@@ -336,7 +336,7 @@ function flatsome_refresh_portfolio_partials( WP_Customize_Manager $wp_customize
 		'selector' => '.portfolio-single-page',
 		'settings' => array('portfolio_style','portfolio_layout','portfolio_title'),
 		'render_callback' => function() {
-		    get_template_part('template-parts/portfolio/single-portfolio', flatsome_option('portfolio_layout'));
+			get_template_part( 'template-parts/portfolio/single-portfolio', get_theme_mod( 'portfolio_layout', '' ) );
 		},
 	) );
 
@@ -344,7 +344,7 @@ function flatsome_refresh_portfolio_partials( WP_Customize_Manager $wp_customize
 		'selector' => '.portfolio-archive',
 		'settings' => array('portfolio_archive_title','portfolio_archive_filter','portfolio_style','portfolio_archive_filter_style'),
 		'render_callback' => function() {
-		    get_template_part('template-parts/portfolio/archive-portfolio', flatsome_option('portfolio_archive_layout'));
+			get_template_part( 'template-parts/portfolio/archive-portfolio' );
 		},
 	) );
 

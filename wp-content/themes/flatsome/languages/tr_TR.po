@@ -9,8 +9,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-08-12T17:15:49+00:00\n"
-"PO-Revision-Date: 2024-08-12 17:18\n"
+"POT-Creation-Date: 2024-12-16T13:56:13+00:00\n"
+"PO-Revision-Date: 2024-12-16 14:00\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: flatsome\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -820,7 +820,7 @@ msgid "Show catalog ordering"
 msgstr "Katalog sıralamasını göster"
 
 #: inc/admin/options/shop/options-shop-category.php:766
-#: inc/admin/options/shop/options-shop-product-page.php:475
+#: inc/admin/options/shop/options-shop-product-page.php:488
 msgid "Color :selected"
 msgstr "Renk (seçili - :selected)"
 
@@ -830,27 +830,27 @@ msgstr "Renk (seçili - :selected)"
 msgid "Custom product layout"
 msgstr "Özel ürün sayfası yerleşimi"
 
-#: inc/admin/options/shop/options-shop-product-page.php:436
+#: inc/admin/options/shop/options-shop-product-page.php:449
 msgid "Layout"
 msgstr "Yerleşim"
 
-#: inc/admin/options/shop/options-shop-product-page.php:448
+#: inc/admin/options/shop/options-shop-product-page.php:461
 msgid "Tooltip"
 msgstr "Araç İpucu"
 
-#: inc/admin/options/shop/options-shop-product-page.php:449
+#: inc/admin/options/shop/options-shop-product-page.php:462
 msgid "Show a tooltip with the term or term description."
 msgstr "Terim veya terim açıklamasıyla birlikte bir araç ipucu gösterin."
 
-#: inc/admin/options/shop/options-shop-product-page.php:457
+#: inc/admin/options/shop/options-shop-product-page.php:470
 msgid "Inactive out of stock"
 msgstr "Stokta yoksa deaktif et"
 
-#: inc/admin/options/shop/options-shop-product-page.php:458
+#: inc/admin/options/shop/options-shop-product-page.php:471
 msgid "Show out of stock items as inactive."
 msgstr "Stokta olmayan öğeleri pasif olarak göster."
 
-#: inc/admin/options/shop/options-shop-product-page.php:466
+#: inc/admin/options/shop/options-shop-product-page.php:479
 msgid "Disable deselection"
 msgstr "Seçimi kaldırmayı devre dışı bırak"
 
@@ -942,7 +942,7 @@ msgstr "Daha fazla yükle"
 #: inc/classes/class-flatsome-relay.php:241
 #: inc/classes/class-flatsome-relay.php:289
 #: inc/structure/structure-posts.php:303
-#: woocommerce/loop/pagination.php:46
+#: woocommerce/loop/pagination.php:58
 #: woocommerce/single-product-reviews.php:67
 msgid "Previous"
 msgstr "Önceki"
@@ -950,7 +950,7 @@ msgstr "Önceki"
 #: inc/classes/class-flatsome-relay.php:246
 #: inc/classes/class-flatsome-relay.php:288
 #: inc/structure/structure-posts.php:302
-#: woocommerce/loop/pagination.php:45
+#: woocommerce/loop/pagination.php:57
 #: woocommerce/single-product-reviews.php:66
 msgid "Next"
 msgstr "Sonraki"
@@ -1216,7 +1216,7 @@ msgstr "Flatsome kayıtlı"
 
 #: inc/functions/function-site-health.php:34
 msgid "Register Flatsome to receive updates."
-msgstr "Güncellemeleri almak için Flatsome&apos; u kaydedin."
+msgstr "Güncellemeleri almak için Flatsome&#39; u kaydedin."
 
 #: inc/functions/function-site-health.php:40
 msgid "Flatsome is not registered"
@@ -1230,13 +1230,13 @@ msgstr "Şimdi kayıt ettirin"
 msgid "Flatsome was unable to receive the latest update"
 msgstr "Flatsome, en son güncellemeyi alamadı"
 
-#: inc/integrations/wc-yith-wishlist/yith-wishlist.php:61
-#: inc/integrations/wc-yith-wishlist/yith-wishlist.php:82
-#: template-parts/header/partials/element-wishlist-mobile.php:20
+#: inc/integrations/wc-yith-wishlist/yith-wishlist.php:73
+#: inc/integrations/wc-yith-wishlist/yith-wishlist.php:96
 #: template-parts/header/partials/element-wishlist-mobile.php:21
-#: template-parts/header/partials/element-wishlist.php:18
-#: template-parts/header/partials/element-wishlist.php:23
+#: template-parts/header/partials/element-wishlist-mobile.php:22
+#: template-parts/header/partials/element-wishlist.php:19
 #: template-parts/header/partials/element-wishlist.php:24
+#: template-parts/header/partials/element-wishlist.php:25
 msgid "Wishlist"
 msgstr "İstek Listesi"
 
@@ -1250,26 +1250,26 @@ msgstr[1] "%s Yorum"
 #: inc/shortcodes/follow.php:127
 #: inc/shortcodes/follow.php:128
 msgid "Follow on Facebook"
-msgstr "Facebook&apos; ta takip et"
+msgstr "Facebook&#39; ta takip et"
 
 #: inc/shortcodes/follow.php:141
 #: inc/shortcodes/follow.php:142
 msgid "Follow on Instagram"
-msgstr "Instagram&apos; da takip et"
+msgstr "Instagram&#39; da takip et"
 
 #: inc/shortcodes/follow.php:155
 #: inc/shortcodes/follow.php:156
 msgid "Follow on TikTok"
-msgstr "TikTok&apos; ta takip et"
+msgstr "TikTok&#39; ta takip et"
 
 #: inc/shortcodes/follow.php:172
 #: inc/shortcodes/follow.php:173
 msgid "Follow on SnapChat"
-msgstr "Snapchat&apos; te takip et"
+msgstr "Snapchat&#39; te takip et"
 
 #: inc/shortcodes/follow.php:179
 msgid "Point the SnapChat camera at this to add us to SnapChat."
-msgstr "Bizi SnapChat&apos; e eklemek için bunu kameranıza okutun."
+msgstr "Bizi SnapChat&#39; e eklemek için bunu kameranıza okutun."
 
 #: inc/shortcodes/follow.php:191
 #: inc/shortcodes/follow.php:192
@@ -1279,7 +1279,7 @@ msgstr "X&#39; te takip et"
 #: inc/shortcodes/follow.php:205
 #: inc/shortcodes/follow.php:206
 msgid "Follow on Twitter"
-msgstr "Twitter&apos; da takip et"
+msgstr "Twitter&#39; da takip et"
 
 #: inc/shortcodes/follow.php:219
 #: inc/shortcodes/follow.php:220
@@ -1299,22 +1299,22 @@ msgstr "Bizi arayın"
 #: inc/shortcodes/follow.php:261
 #: inc/shortcodes/follow.php:262
 msgid "Follow on Pinterest"
-msgstr "Pinterest&apos; te takip et"
+msgstr "Pinterest&#39; te takip et"
 
 #: inc/shortcodes/follow.php:275
 #: inc/shortcodes/follow.php:276
 msgid "Subscribe to RSS"
-msgstr "RSS&apos; e abone ol"
+msgstr "RSS&#39; e abone ol"
 
 #: inc/shortcodes/follow.php:289
 #: inc/shortcodes/follow.php:290
 msgid "Follow on LinkedIn"
-msgstr "Linkedin&apos; de takip et"
+msgstr "Linkedin&#39; de takip et"
 
 #: inc/shortcodes/follow.php:303
 #: inc/shortcodes/follow.php:304
 msgid "Follow on YouTube"
-msgstr "YouTube&apos; da takip et"
+msgstr "YouTube&#39; da takip et"
 
 #: inc/shortcodes/follow.php:317
 #: inc/shortcodes/follow.php:318
@@ -1324,27 +1324,27 @@ msgstr "Flickr"
 #: inc/shortcodes/follow.php:331
 #: inc/shortcodes/follow.php:332
 msgid "Follow on 500px"
-msgstr "500px&apos; te takip et"
+msgstr "500px&#39; te takip et"
 
 #: inc/shortcodes/follow.php:345
 #: inc/shortcodes/follow.php:346
 msgid "Follow on VKontakte"
-msgstr "VKontakte&apos; de takip et"
+msgstr "VKontakte&#39; de takip et"
 
 #: inc/shortcodes/follow.php:359
 #: inc/shortcodes/follow.php:360
 msgid "Follow on Telegram"
-msgstr "Telegram&apos; da takip et"
+msgstr "Telegram&#39; da takip et"
 
 #: inc/shortcodes/follow.php:373
 #: inc/shortcodes/follow.php:374
 msgid "Follow on Twitch"
-msgstr "Twitch&apos; te takip et"
+msgstr "Twitch&#39; te takip et"
 
 #: inc/shortcodes/follow.php:387
 #: inc/shortcodes/follow.php:388
 msgid "Follow on Discord"
-msgstr "Discord&apos; da takip et"
+msgstr "Discord&#39; da takip et"
 
 #: inc/shortcodes/portfolio.php:146
 #: woocommerce/product-searchform.php:39
@@ -1358,12 +1358,12 @@ msgstr "Daha fazlası için aşağı kaydırın"
 #: inc/shortcodes/share.php:96
 #: inc/shortcodes/share.php:97
 msgid "Share on WhatsApp"
-msgstr "WhatsApp&apos; ta paylaş"
+msgstr "WhatsApp&#39; ta paylaş"
 
 #: inc/shortcodes/share.php:111
 #: inc/shortcodes/share.php:112
 msgid "Share on Facebook"
-msgstr "Facebook&apos; ta paylaş"
+msgstr "Facebook&#39; ta paylaş"
 
 #: inc/shortcodes/share.php:125
 #: inc/shortcodes/share.php:126
@@ -1373,7 +1373,7 @@ msgstr "X&#39; te paylaş"
 #: inc/shortcodes/share.php:139
 #: inc/shortcodes/share.php:140
 msgid "Share on Twitter"
-msgstr "Twitter&apos; da paylaş"
+msgstr "Twitter&#39; da paylaş"
 
 #: inc/shortcodes/share.php:155
 #: inc/shortcodes/share.php:156
@@ -1393,27 +1393,27 @@ msgstr "Arkadaşına e-posta ile gönder"
 #: inc/shortcodes/share.php:189
 #: inc/shortcodes/share.php:190
 msgid "Pin on Pinterest"
-msgstr "Pinterest&apos; te pinle"
+msgstr "Pinterest&#39; te pinle"
 
 #: inc/shortcodes/share.php:203
 #: inc/shortcodes/share.php:204
 msgid "Share on VKontakte"
-msgstr "VKontakte&apos; de paylaş"
+msgstr "VKontakte&#39; de paylaş"
 
 #: inc/shortcodes/share.php:217
 #: inc/shortcodes/share.php:218
 msgid "Share on LinkedIn"
-msgstr "Linkedin&apos; de paylaş"
+msgstr "Linkedin&#39; de paylaş"
 
 #: inc/shortcodes/share.php:231
 #: inc/shortcodes/share.php:232
 msgid "Share on Tumblr"
-msgstr "Tumblr&apos; da paylaş"
+msgstr "Tumblr&#39; da paylaş"
 
 #: inc/shortcodes/share.php:245
 #: inc/shortcodes/share.php:246
 msgid "Share on Telegram"
-msgstr "Telegram&apos; da paylaş"
+msgstr "Telegram&#39; da paylaş"
 
 #: inc/shortcodes/ux_instagram_feed.php:52
 msgid "Please select an Instagram account"
@@ -1639,7 +1639,7 @@ msgstr "Video"
 msgid "Zoom"
 msgstr "Yakınlaştır"
 
-#: inc/woocommerce/structure-wc-product-page.php:287
+#: inc/woocommerce/structure-wc-product-page.php:307
 msgid "Select options"
 msgstr "Miktarı Seçin"
 

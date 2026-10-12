@@ -12,7 +12,17 @@ function flatsome_lightbox_button() {
 	wp_enqueue_script( 'wc-add-to-cart-variation' );
 
 	global $product;
-	echo '  <a class="quick-view" data-prod="' . $product->get_id() . '" href="#quick-view">' . __( 'Quick View', 'flatsome' ) . '</a>';
+
+	$atts = [
+		'href'          => '#quick-view',
+		'class'         => 'quick-view',
+		'role'          => 'button',
+		'data-prod'     => esc_attr( $product->get_id() ),
+		'aria-haspopup' => 'dialog',
+		'aria-expanded' => 'false',
+	];
+
+	echo '<a ' . flatsome_html_atts( $atts ) . '>' . esc_html__( 'Quick View', 'flatsome' ) . '</a>';
 }
 
 add_action( 'flatsome_product_box_actions', 'flatsome_lightbox_button', 50 );
@@ -32,19 +42,32 @@ if ( get_theme_mod( 'product_info_meta', 1 ) ) {
  */
 function flatsome_quickview() {
 	global $post, $product;
-	$prod_id = $_POST["product"];
-	$post    = get_post( $prod_id );
+
+	if ( ! isset( $_POST['product'] ) ) {
+		wp_die( 'No product id specified.', 'Bad Request', [ 'response' => 400 ] );
+	}
+
+	$prod_id = absint( $_POST['product'] );
 	$product = wc_get_product( $prod_id );
+
+	if (
+		! is_a( $product, 'WC_Product' )
+		|| ! $product->is_visible()
+	) {
+		wp_die( 'Product not found or unavailable.', 'Not Found', [ 'response' => 404 ] );
+	}
+
+	$post = get_post( $prod_id );
+
 	ob_start();
 
 	add_filter( 'woocommerce_add_to_cart_form_action', '__return_empty_string' ); // Disable form action that causes redirect.
 	wc_get_template( 'content-single-product-lightbox.php' );
 	remove_filter( 'woocommerce_add_to_cart_form_action', '__return_empty_string' );
 
-	$output = ob_get_contents();
-	ob_end_clean();
-	echo $output;
-	die();
+	echo ob_get_clean(); // phpcs:ignore WordPress.Security.EscapeOutput
+
+	wp_die();
 }
 
 add_action( 'wp_ajax_flatsome_quickview', 'flatsome_quickview' );

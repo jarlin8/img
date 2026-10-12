@@ -10,10 +10,10 @@
  * happen. When this occurs the version of the template file will be bumped and
  * the readme will list any important changes.
  *
- * @see              https://docs.woocommerce.com/document/template-structure/
+ * @see              https://woocommerce.com/document/template-structure/
  * @package          WooCommerce\Templates
- * @version          9.1.0
- * @flatsome-version 3.19.4
+ * @version          11.1.0
+ * @flatsome-version 3.20.10
  *
  * @flatsome-parallel-template {
  * product-image-default.php
@@ -22,6 +22,8 @@
  * product-image-wide.php
  * }
  */
+
+use Automattic\WooCommerce\Enums\ProductType;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -58,12 +60,15 @@ global $product;
 
 $columns           = apply_filters( 'woocommerce_product_thumbnails_columns', 4 );
 $post_thumbnail_id = $product->get_image_id();
-$wrapper_classes   = apply_filters( 'woocommerce_single_product_image_gallery_classes', array(
-	'woocommerce-product-gallery',
-	'woocommerce-product-gallery--' . ( $product->get_image_id() ? 'with-images' : 'without-images' ),
-	'woocommerce-product-gallery--columns-' . absint( $columns ),
-	'images',
-) );
+$wrapper_classes   = apply_filters(
+	'woocommerce_single_product_image_gallery_classes',
+	array(
+		'woocommerce-product-gallery',
+		'woocommerce-product-gallery--' . ( $post_thumbnail_id ? 'with-images' : 'without-images' ),
+		'woocommerce-product-gallery--columns-' . absint( $columns ),
+		'images',
+	)
+);
 
 $slider_classes = array('product-gallery-slider','slider','slider-nav-small','mb-half');
 
@@ -108,10 +113,10 @@ if(get_theme_mod('product_lightbox','default') == 'disabled'){
                 "rightToLeft": <?php echo $rtl; ?>
        }'>
     <?php
-    if ( $product->get_image_id() ) {
+    if ( $post_thumbnail_id ) {
       $html  = flatsome_wc_get_gallery_image_html( $post_thumbnail_id, true );
     } else {
-		$wrapper_classname = $product->is_type( 'variable' ) && ! empty( $product->get_available_variations( 'image' ) ) ?
+		$wrapper_classname = $product->is_type( fl_woocommerce_version_check( '9.7.0' ) ? ProductType::VARIABLE : 'variable' ) && ! empty( $product->get_visible_children() ) && '' !== $product->get_price() ?
 			'woocommerce-product-gallery__image woocommerce-product-gallery__image--placeholder' :
 			'woocommerce-product-gallery__image--placeholder';
 		$html              = sprintf( '<div class="%s">', esc_attr( $wrapper_classname ) );

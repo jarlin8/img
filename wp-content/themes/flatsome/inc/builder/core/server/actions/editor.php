@@ -47,10 +47,18 @@ function ux_builder_enqueue_editor_assets() {
   $data = ux_builder_editor_data();
   $version = UX_BUILDER_VERSION;
 
+  // `wp-base-styles` defines the `--wp-admin-theme-color` vars used by core
+  // form controls since WP 7.0. Only depend on it where it's registered, since
+  // a missing dependency makes WP_Dependencies skip the whole stylesheet.
+  $editor_deps = array( 'dashicons', 'forms', 'buttons' );
+  if ( wp_style_is( 'wp-base-styles', 'registered' ) ) {
+    $editor_deps[] = 'wp-base-styles';
+  }
+
   wp_enqueue_style(
     'ux-builder-core',
     ux_builder_asset( 'css/builder/core/editor.css' ),
-    array( 'dashicons', 'forms', 'buttons' ),
+    $editor_deps,
     $version
   );
 
@@ -90,7 +98,7 @@ function ux_builder_editor_data() {
   // Get the back URL. Redirect to admin page if user came
   // from admin or to the post if user came from some other place.
   $back_url = isset( $_SERVER['HTTP_REFERER'] )
-    ? esc_url( $_SERVER['HTTP_REFERER'] )
+    ? esc_url_raw( $_SERVER['HTTP_REFERER'] )
     : $current_post->permalink();
 
   // Go back to admin edit screen if not published.

@@ -3,7 +3,7 @@
  * Register form.
  *
  * @package          Flatsome\Templates
- * @flatsome-version 3.19.0
+ * @flatsome-version 3.20.6
  */
 
 if ( $args['form'] ) : ?>
@@ -50,7 +50,7 @@ if ( $args['form'] ) : ?>
 		<?php if ( empty( $issues ) && $registration->get_option( 'domain' ) ) : ?>
 		<p>
 			<?php esc_html_e( 'Registered domain:', 'flatsome' ); ?>
-			<b><?php echo esc_html( $registration->get_option( 'domain' ) ); ?></b>
+			<strong><?php echo esc_html( $registration->get_option( 'domain' ) ); ?></strong>
 			<?php if ( ! $registration->is_public() ) : ?>
 				<code><?php echo esc_html( strtolower( $registration->get_option( 'type' ) ) ); ?></code>
 			<?php endif; ?>
@@ -58,17 +58,15 @@ if ( $args['form'] ) : ?>
 		<?php endif; ?>
 
 		<?php if ( $args['show_terms'] ) : ?>
-			<p>
+			<p style="margin:1em 0 1.3em">
 				<?php if ( $registration->get_code() ) : ?>
 					<input type="hidden" name="flatsome_envato_terms" value="1" />
 					<input type="checkbox" checked readonly onclick="return false;">
 				<?php else : ?>
 					<input type="checkbox" <?php checked( $confirmed ); ?> id="flatsome_envato_terms" name="flatsome_envato_terms">
 				<?php endif; ?>
-				<label for="flatsome_envato_terms" style="display: inline-block;vertical-align: top;width: 90%;margin-top: 2px;font-size: 14px">
-					Confirm that, according to the Envato License Terms, each license entitles one person for a single project.
-					Creating multiple unregistered installations is a copyright violation.
-					<a href="https://themeforest.net/licenses/standard" target="_blank" rel="noopener">More info</a>.
+				<label for="flatsome_envato_terms" style="display: inline-block;vertical-align: top;width: 90%;margin-top: 4px;font-size: 13px;">
+					I confirm that under <a href="https://themeforest.net/licenses/standard" target="_blank" rel="noopener">Envato License Terms</a>, each license is valid for a single project, and creating multiple unregistered installations is a copyright violation. I also acknowledge that all non-PHP and non-HTML assets (including CSS, JavaScript, images, and design) are governed by my Envato license.
 				</label>
 			</p>
 		<?php endif; ?>
@@ -103,7 +101,7 @@ if ( $args['form'] ) : ?>
 </form>
 <?php endif; ?>
 
-<small style="padding-top: 10px; margin-top: 15px; opacity: .8; display: block; border-top: 1px solid #eee;">A purchase code (license) is only valid for <strong>One Domain</strong>. Are you using this theme on a new domain? Purchase a <a href="//bit.ly/buy-flatsome" target="_blank">new license here</a> to get a new purchase code.</small>
+<small style="padding-top: 10px; margin-top: 15px; opacity: .8; display: block; border-top: 1px solid #eee;">Each purchase code is valid for a <strong>Single Domain</strong>. Using this theme on a new domain? Purchase a <a href="//themeforest.net/cart/configure_before_adding/5484319?license=regular&ref=ux-themes" target="_blank" rel="noopener noreferrer">new license here</a>.</small>
 
 <script type="text/javascript">
 function onFlatsomeUnregister() {

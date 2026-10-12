@@ -393,7 +393,14 @@ if ( ! class_exists( 'Envato_Theme_Setup_Wizard' ) ) {
 			) );
 
 			//wp_enqueue_style( 'envato_wizard_admin_styles', $this->plugin_url . '/css/admin.css', array(), $this->version );
-			wp_enqueue_style( 'envato-setup', $this->plugin_url . 'css/envato-setup.css', array( 'wp-admin', 'dashicons', 'install' ), $this->version );
+			// `wp-base-styles` defines the `--wp-admin-theme-color` vars used by core
+			// form controls since WP 7.0. Only depend on it where it's registered, since
+			// a missing dependency makes WP_Dependencies skip the whole stylesheet.
+			$setup_deps = array( 'wp-admin', 'dashicons', 'install' );
+			if ( wp_style_is( 'wp-base-styles', 'registered' ) ) {
+				$setup_deps[] = 'wp-base-styles';
+			}
+			wp_enqueue_style( 'envato-setup', $this->plugin_url . 'css/envato-setup.css', $setup_deps, $this->version );
 
 			//enqueue style for admin notices
 			wp_enqueue_style( 'wp-admin' );
@@ -448,7 +455,7 @@ if ( ! class_exists( 'Envato_Theme_Setup_Wizard' ) ) {
 			<?php do_action( 'admin_print_scripts' ); ?>
 			<?php //do_action( 'admin_head' ); ?>
 		</head>
-		<body class="envato-setup wp-core-ui">
+		<body class="<?php echo esc_attr( flatsome_admin_body_version_classes( 'envato-setup wp-core-ui admin-color-' . sanitize_html_class( get_user_option( 'admin_color' ), 'modern' ) ) ); ?>">
 		<h1 id="wc-logo">
 			<?php
 				$image_url = $this->get_site_logo();
@@ -1129,6 +1136,9 @@ if ( ! class_exists( 'Envato_Theme_Setup_Wizard' ) ) {
 
 					// Make child theme an allowed theme (network enable theme)
 					$allowed_themes = get_site_option( 'allowedthemes' );
+					if ( ! is_array( $allowed_themes ) ) {
+						$allowed_themes = [];
+					}
 					$allowed_themes[ $new_theme_name ] = true;
 					update_site_option( 'allowedthemes', $allowed_themes );
 				}
@@ -2117,11 +2127,11 @@ if ( ! class_exists( 'Envato_Theme_Setup_Wizard' ) ) {
 
 			<p class="error">Item Support <strong>DOES NOT</strong> Include:</p>
 			<ul>
-				<li>Customization services (this is available through <a href="http://studiotracking.envato.com/aff_c?offer_id=4&aff_id=1564&source=DemoInstall" target="_blank">Envato Studio</a>)</li>
-				<li>Installation services (this is available through <a href="http://studiotracking.envato.com/aff_c?offer_id=4&aff_id=1564&source=DemoInstall" target="_blank">Envato Studio</a>)</li>
+				<li>Customization services</li>
+				<li>Installation services</li>
 				<li>Help and Support for non-bundled 3rd party plugins (i.e. plugins you install yourself later on)</li>
 			</ul>
-			<p>More details about item support can be found in the ThemeForest <a href="http://themeforest.net/page/item_support_policy" target="_blank">Item Support Polity</a>. </p>
+			<p>More details about item support can be found in the ThemeForest <a href="https://themeforest.net/page/item_support_policy" target="_blank">Item Support Polity</a>. </p>
 			<p class="envato-setup-actions step">
 				<a href="<?php echo esc_url( $this->get_next_step_link() ); ?>" class="button button-primary button-large button-next"><?php _e( 'Agree and Continue', 'envato_setup' ); ?></a>
 				<?php wp_nonce_field( 'envato-setup' ); ?>
@@ -2140,7 +2150,7 @@ if ( ! class_exists( 'Envato_Theme_Setup_Wizard' ) ) {
 			<h1><?php _e( 'Your Website is Ready!', 'envato_setup' ); ?></h1>
 
 			<p class="lead success">Congratulations! The theme has been activated and your website is ready. Login to your WordPress dashboard to make changes and modify any of the default content to suit your needs.</p>
-			<p>Please come back and <a href="http://themeforest.net/downloads" target="_blank">leave a 5-star rating</a> if you are happy with this theme. <br/>Follow <a  href="https://twitter.com/uxthemes" target="_blank">@uxthemes</a> on Twitter to see updates. Thanks! </p>
+			<p>Please come back and <a href="https://themeforest.net/downloads" target="_blank">leave a 5-star rating</a> if you are happy with this theme. <br/>Follow <a  href="https://twitter.com/uxthemes" target="_blank">@uxthemes</a> on Twitter to see updates. Thanks! </p>
 
 			<div class="envato-setup-next-steps">
 				<div class="envato-setup-next-steps-first">
@@ -2154,10 +2164,10 @@ if ( ! class_exists( 'Envato_Theme_Setup_Wizard' ) ) {
 				<div class="envato-setup-next-steps-last">
 					<h2><?php _e( 'More Resources', 'envato_setup' ); ?></h2>
 					<ul>
-						<li class="documentation"><a href="http://uxthemes.helpscoutdocs.com"><?php _e( 'Theme Documentation', 'envato_setup' ); ?></a></li>
-						<li class="woocommerce documentation"><a href="https://docs.woocommerce.com/document/woocommerce-101-video-series/"><?php _e( 'Learn how to use WooCommerce', 'envato_setup' ); ?></a></li>
+						<li class="documentation"><a href="https://docs.uxthemes.com/"><?php _e( 'Theme Documentation', 'envato_setup' ); ?></a></li>
+						<li class="woocommerce documentation"><a href="https://woocommerce.com/documentation/woocommerce/"><?php _e( 'Learn how to use WooCommerce', 'envato_setup' ); ?></a></li>
 						<li class="howto"><a href="https://wordpress.org/support/"><?php _e( 'Learn how to use WordPress', 'envato_setup' ); ?></a></li>
-						<li class="rating"><a href="http://themeforest.net/downloads"><?php _e( 'Leave an Item Rating', 'envato_setup' ); ?></a></li>
+						<li class="rating"><a href="https://themeforest.net/downloads"><?php _e( 'Leave an Item Rating', 'envato_setup' ); ?></a></li>
 					</ul>
 				</div>
 			</div>

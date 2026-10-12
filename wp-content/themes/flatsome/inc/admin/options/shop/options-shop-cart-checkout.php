@@ -126,6 +126,26 @@ Flatsome_Option::add_field( 'option', array(
 
 Flatsome_Option::add_field( '', array(
 	'type'     => 'custom',
+	'settings' => 'cart_coupon_title',
+	'label'    => '',
+	'section'  => 'cart-checkout',
+	'default'  => '<div class="options-title-divider">Coupon</div>',
+) );
+
+Flatsome_Option::add_field( 'option', array(
+	'type'     => 'select',
+	'settings' => 'cart_coupon_position',
+	'label'    => esc_html__( 'Position', 'flatsome-admin' ),
+	'section'  => 'cart-checkout',
+	'default'  => 'sidebar',
+	'choices'  => array(
+		'sidebar' => esc_html__( 'In Sidebar', 'flatsome-admin' ),
+		'bottom'  => esc_html__( 'Below products', 'flatsome-admin' ),
+	),
+) );
+
+Flatsome_Option::add_field( '', array(
+	'type'     => 'custom',
 	'settings' => 'html_cart_title',
 	'label'    => '',
 	'section'  => 'cart-checkout',
@@ -135,7 +155,7 @@ Flatsome_Option::add_field( '', array(
 Flatsome_Option::add_field( 'option',  array(
 	'type'        => 'textarea',
 	'settings'     => 'html_cart_sidebar',
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'label'       => __( 'Cart Sidebar content', 'flatsome-admin' ),
 	'help'        => __( 'Enter HTML that will show on bottom of cart sidebar' ),
 	'section'     => 'cart-checkout',
@@ -145,7 +165,7 @@ Flatsome_Option::add_field( 'option',  array(
 Flatsome_Option::add_field( 'option',  array(
 	'type'        => 'textarea',
 	'settings'     => 'html_cart_footer',
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'label'       => __( 'After Cart content', 'flatsome-admin' ),
 	'help'        => __( 'Enter HTML or Shortcodes that will show after cart here.' ),
 	'section'     => 'cart-checkout',
@@ -196,7 +216,7 @@ Flatsome_Option::add_field( 'option', array(
 Flatsome_Option::add_field( 'option', array(
 	'type'            => 'checkbox',
 	'settings'        => 'terms_and_conditions_lightbox_buttons',
-	'transport'       => $transport,
+	'transport'       => flatsome_customizer_transport(),
 	'label'           => __( 'Terms and conditions "Agree" button', 'flatsome-admin' ),
 	'section'         => 'woocommerce_checkout',
 	'default'         => 1,
@@ -263,7 +283,7 @@ Flatsome_Option::add_field( 'option', array(
 Flatsome_Option::add_field( 'option',  array(
 	'type'        => 'textarea',
 	'settings'     => 'html_checkout_sidebar',
-	'transport' => $transport,
+	'transport' => flatsome_customizer_transport(),
 	'label'       => __( 'Checkout Sidebar content', 'flatsome-admin' ),
 	'help'        => __( 'Enter HTML that will show on bottom of checkout sidebar' ),
 	'section'     => 'woocommerce_checkout',

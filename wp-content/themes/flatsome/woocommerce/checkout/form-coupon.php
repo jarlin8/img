@@ -10,10 +10,10 @@
  * happen. When this occurs the version of the template file will be bumped and
  * the readme will list any important changes.
  *
- * @see              https://docs.woocommerce.com/document/template-structure/
+ * @see              https://woocommerce.com/document/template-structure/
  * @package          WooCommerce\Templates
- * @version          7.0.1
- * @flatsome-version 3.16.2
+ * @version          9.8.0
+ * @flatsome-version 3.19.12
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -24,14 +24,23 @@ if ( ! wc_coupons_enabled() ) { // @codingStandardsIgnoreLine.
 
 ?>
 <div class="woocommerce-form-coupon-toggle">
-	<?php wc_print_notice( apply_filters( 'woocommerce_checkout_coupon_message', __( 'Have a coupon?', 'woocommerce' ) . ' <a href="#" class="showcoupon">' . __( 'Click here to enter your code', 'woocommerce' ) . '</a>' ), 'notice' ); ?>
+	<?php
+		/**
+		 * Filter checkout coupon message.
+		 *
+		 * @param string $message coupon message.
+		 * @return string Filtered message.
+		 *
+		 * @since 1.0.0
+		 */
+		wc_print_notice( apply_filters( 'woocommerce_checkout_coupon_message', esc_html__( 'Have a coupon?', 'woocommerce' ) . ' <a href="#" role="button" aria-label="' . esc_attr__( 'Enter your coupon code', 'woocommerce' ) . '" aria-controls="woocommerce-checkout-form-coupon" aria-expanded="false" class="showcoupon">' . esc_html__( 'Click here to enter your code', 'woocommerce' ) . '</a>' ), 'notice' );
+	?>
 </div>
 
-<form class="checkout_coupon woocommerce-form-coupon has-border is-dashed" method="post" style="display:none">
+<form class="checkout_coupon woocommerce-form-coupon has-border is-dashed" method="post" style="display:none" id="woocommerce-checkout-form-coupon">
 
-	<p><?php esc_html_e( 'If you have a coupon code, please apply it below.', 'woocommerce' ); ?></p>
 	<div class="coupon">
-		<div class="flex-row medium-flex-wrap">
+		<div class="flex-row medium-flex-wrap gap-half">
 			<div class="flex-col flex-grow">
 				<label for="coupon_code" class="screen-reader-text"><?php esc_html_e( 'Coupon:', 'woocommerce' ); ?></label>
 				<input type="text" name="coupon_code" class="input-text" placeholder="<?php esc_attr_e( 'Coupon code', 'woocommerce' ); ?>" id="coupon_code" value="" />

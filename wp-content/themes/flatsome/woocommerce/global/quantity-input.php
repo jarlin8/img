@@ -10,10 +10,10 @@
  * happen. When this occurs the version of the template file will be bumped and
  * the readme will list any important changes.
  *
- * @see              https://docs.woocommerce.com/document/template-structure/
+ * @see              https://woocommerce.com/document/template-structure/
  * @package          WooCommerce\Templates
- * @version          7.8.0
- * @flatsome-version 3.18.0
+ * @version          10.1.0
+ * @flatsome-version 3.20.0
  *
  * @var bool   $readonly If the input should be set to readonly mode.
  * @var string $type     The input type attribute.
@@ -25,9 +25,19 @@ if ( fl_woocommerce_version_check( '7.4.0' ) ) :
 	/* translators: %s: Quantity. */
 	$label = ! empty( $args['product_name'] ) ? sprintf( esc_html__( '%s quantity', 'woocommerce' ), wp_strip_all_tags( $args['product_name'] ) ) : esc_html__( 'Quantity', 'woocommerce' );
 
-	$qty_start       = '<input type="button" value="-" class="ux-quantity__button ux-quantity__button--minus button minus is-form">';
-	$qty_end         = '<input type="button" value="+" class="ux-quantity__button ux-quantity__button--plus button plus is-form">';
+	$reduce_quantity_label = ! empty( $args['product_name'] )
+		// translators: %s is the name of the product in cart.
+		? sprintf( __( 'Reduce quantity of %s', 'woocommerce' ), wp_strip_all_tags( $args['product_name'] ) )
+		: __( 'Decrease quantity', 'flatsome' );
+	$increase_quantity_label = ! empty( $args['product_name'] )
+		// translators: %s is the name of the product in cart.
+		? sprintf( __( 'Increase quantity of %s', 'woocommerce' ), wp_strip_all_tags( $args['product_name'] ) )
+		: __( 'Increase quantity', 'flatsome' );
+
+	$qty_start       = '<input type="button" value="-" class="ux-quantity__button ux-quantity__button--minus button minus is-form" aria-label="' . esc_attr( $reduce_quantity_label ) . '">';
+	$qty_end         = '<input type="button" value="+" class="ux-quantity__button ux-quantity__button--plus button plus is-form" aria-label="' . esc_attr( $increase_quantity_label ) . '">';
 	$wrapper_classes = array( 'ux-quantity', 'quantity', 'buttons_added' );
+
 	if ( $type === 'hidden' ) {
 		$wrapper_classes[] = 'hidden';
 	}
@@ -54,7 +64,9 @@ if ( fl_woocommerce_version_check( '7.4.0' ) ) :
 			name="<?php echo esc_attr( $input_name ); ?>"
 			value="<?php echo esc_attr( $input_value ); ?>"
 			aria-label="<?php esc_attr_e( 'Product quantity', 'woocommerce' ); ?>"
+			<?php if ( in_array( $type, array( 'text', 'search', 'tel', 'url', 'email', 'password' ), true ) ) : ?>
 			size="4"
+			<?php endif; ?>
 			min="<?php echo esc_attr( $min_value ); ?>"
 			max="<?php echo esc_attr( 0 < $max_value ? $max_value : '' ); ?>"
 			<?php if ( ! $readonly ) : ?>
@@ -115,7 +127,9 @@ elseif ( fl_woocommerce_version_check( '7.2.0' ) ) :
 			title="<?php echo esc_attr_x( 'Qty', 'Product quantity input tooltip', 'woocommerce' ); ?>"
 			size="4"
 			min="<?php echo esc_attr( $min_value ); ?>"
-			max="<?php echo esc_attr( 0 < $max_value ? $max_value : '' ); ?>"
+			<?php if ( 0 < $max_value ) : ?>
+				max="<?php echo esc_attr( $max_value ); ?>"
+			<?php endif; ?>
 			<?php if ( ! $is_readonly ) : ?>
 				step="<?php echo esc_attr( $step ); ?>"
 				placeholder="<?php echo esc_attr( $placeholder ); ?>"

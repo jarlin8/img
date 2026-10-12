@@ -10,11 +10,13 @@
  * happen. When this occurs the version of the template file will be bumped and
  * the readme will list any important changes.
  *
- * @see              https://docs.woocommerce.com/document/template-structure/
- * @package          WooCommerce/Templates
- * @version          9.1.0
- * @flatsome-version 3.19.4
+ * @see              https://woocommerce.com/document/template-structure/
+ * @package          WooCommerce\Templates
+ * @version          10.5.0
+ * @flatsome-version 3.20.8
  */
+
+use Automattic\WooCommerce\Enums\ProductType;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -27,12 +29,15 @@ global $product;
 
 $columns           = apply_filters( 'woocommerce_product_thumbnails_columns', 4 );
 $post_thumbnail_id = $product->get_image_id();
-$wrapper_classes   = apply_filters( 'woocommerce_single_product_image_gallery_classes', array(
-	'woocommerce-product-gallery',
-	'woocommerce-product-gallery--' . ( $product->get_image_id() ? 'with-images' : 'without-images' ),
-	'woocommerce-product-gallery--columns-' . absint( $columns ),
-	'images',
-) );
+$wrapper_classes   = apply_filters(
+	'woocommerce_single_product_image_gallery_classes',
+	array(
+		'woocommerce-product-gallery',
+		'woocommerce-product-gallery--' . ( $post_thumbnail_id ? 'with-images' : 'without-images' ),
+		'woocommerce-product-gallery--columns-' . absint( $columns ),
+		'images',
+	)
+);
 
 $slider_classes = array('product-gallery-slider','slider','slider-nav-small','mb-0');
 $rtl = 'false';
@@ -74,10 +79,10 @@ if(get_theme_mod('product_zoom', 0)){
                 "rightToLeft": <?php echo $rtl; ?>
        }'>
     <?php
-    if ( $product->get_image_id() ) {
+    if ( $post_thumbnail_id ) {
       $html  = flatsome_wc_get_gallery_image_html( $post_thumbnail_id, true );
     } else {
-		$wrapper_classname = $product->is_type( 'variable' ) && ! empty( $product->get_available_variations( 'image' ) ) ?
+		$wrapper_classname = $product->is_type( fl_woocommerce_version_check( '9.7.0' ) ? ProductType::VARIABLE : 'variable' ) && ! empty( $product->get_visible_children() ) && '' !== $product->get_price() ?
 			'woocommerce-product-gallery__image woocommerce-product-gallery__image--placeholder' :
 			'woocommerce-product-gallery__image--placeholder';
 		$html              = sprintf( '<div class="%s">', esc_attr( $wrapper_classname ) );
@@ -147,12 +152,12 @@ if(get_theme_mod('product_zoom', 0)){
         <div class="col is-nav-selected first">
           <a>
             <?php
-              $image_id = get_post_thumbnail_id($post->ID);
-              $image =  wp_get_attachment_image_src( $image_id, apply_filters( 'woocommerce_gallery_thumbnail_size', 'woocommerce_'.$image_size ) );
-              $image_alt = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
-              $image = '<img src="'.$image[0].'" alt="'.$image_alt.'" width="'.$gallery_thumbnail['width'].'" height="'.$gallery_thumbnail['height'].'" class="attachment-woocommerce_thumbnail" />';
-
-              echo $image;
+              $image_id  = get_post_thumbnail_id( $post->ID );
+              $image_alt = trim( wp_strip_all_tags( get_post_meta( $image_id, '_wp_attachment_image_alt', true ) ) );
+              if ( fl_woocommerce_version_check( '9.3.3' ) && function_exists( 'woocommerce_get_alt_from_product_title_and_position' ) && $product ) {
+                $image_alt = empty( $image_alt ) ? woocommerce_get_alt_from_product_title_and_position( $product->get_title(), false, -1 ) : $image_alt;
+              }
+              echo wp_get_attachment_image( $image_id, apply_filters( 'woocommerce_gallery_thumbnail_size', 'woocommerce_'.$image_size ), false, array( 'alt' => esc_attr( $image_alt ) ) );
             ?>
           </a>
         </div>
@@ -168,10 +173,11 @@ if(get_theme_mod('product_zoom', 0)){
 			  continue;
 		  }
 
-        $image_alt = get_post_meta( $attachment_id, '_wp_attachment_image_alt', true );
-        $image = '<img src="'.$image[0].'" alt="'.$image_alt.'" width="'.$gallery_thumbnail['width'].'" height="'.$gallery_thumbnail['height'].'"  class="attachment-woocommerce_thumbnail" />';
-
-        echo apply_filters( 'woocommerce_single_product_image_thumbnail_html', sprintf( '<div class="col"><a>%s</a></div>', $image ), $attachment_id, $post->ID, $image_class );
+        $image_alt = trim( wp_strip_all_tags( get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) ) );
+        if ( fl_woocommerce_version_check( '9.3.3' ) && function_exists( 'woocommerce_get_alt_from_product_title_and_position' ) && $product ) {
+          $image_alt = empty( $image_alt ) ? woocommerce_get_alt_from_product_title_and_position( $product->get_title(), false, $loop ) : $image_alt;
+        }
+        echo apply_filters( 'woocommerce_single_product_image_thumbnail_html', sprintf( '<div class="col"><a>%s</a></div>', wp_get_attachment_image( $attachment_id, apply_filters( 'woocommerce_gallery_thumbnail_size', 'woocommerce_'.$image_size ), false, array( 'alt' => esc_attr( $image_alt ) ) ) ), $attachment_id, $post->ID, $image_class );
 
         $loop++;
       }
